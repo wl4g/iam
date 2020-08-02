@@ -1,4 +1,4 @@
-### A CAS-based SSO unified authentication implementation, supporting WeChat, QQ, Facebook and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.
+### A Unified identity authentication and access control management implementation, supporting wechat/qq/facebook and other SNS authentication, opensaml API authorization, built-in interface level AOP secondary authentication implementation.
 
 #### Quick Start
 - 1，Server integration:
