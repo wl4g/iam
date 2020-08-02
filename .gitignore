@@ -21,3 +21,40 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Customization ignore suffix
+target/
+.settings/
+.idea/
+.project
+*.iml
+
+pom.properties
+.mymetadata
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.classpath
+bin/
+logs/
+*.log
+.gradle/
+build/
+out/
+*.ipr
+*.iws
+*.ids
+.DS_Store
+work/
+.vagrant/
+thriftproto
+*.pyc
+rebel.xml
+rebel-remote.xml/show-service/
+classes
+*.class
+MANIFEST.MF
+*.csv
+*.cache*
