@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.iam.common.cache.CacheKey.*;
-import static com.wl4g.devops.support.redis.jedis.CompositeJedisOperator.RedisProtoUtil.isSuccess;
+import static com.wl4g.devops.support.redis.jedis.JedisOperator.RedisProtoUtil.isSuccess;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
@@ -32,7 +32,7 @@ import com.google.common.base.Charsets;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 import com.wl4g.devops.iam.common.cache.CacheKey.Serializer;
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperator;
+import com.wl4g.devops.support.redis.jedis.JedisOperator;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.components.tools.common.collection.Collections2.safeMap;
@@ -51,9 +51,9 @@ public class JedisIamCache implements IamCache {
 	final protected SmartLogger log = getLogger(getClass());
 
 	private String name;
-	private CompositeJedisOperator jedisAdapter;
+	private JedisOperator jedisAdapter;
 
-	public JedisIamCache(String name, CompositeJedisOperator jedisAdapter) {
+	public JedisIamCache(String name, JedisOperator jedisAdapter) {
 		notNull(name, "'name' must not be null");
 		notNull(jedisAdapter, "'jedisAdapter' must not be null");
 		this.name = name;

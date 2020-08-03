@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorFactory;
+import com.wl4g.devops.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 import redis.clients.jedis.ScanParams;
@@ -42,7 +42,7 @@ import redis.clients.jedis.ScanParams;
 public class ScanCursorTests {
 
 	@Autowired
-	private CompositeJedisOperatorFactory factory;
+	private JedisOperatorFactory factory;
 
 	@Test
 	public void test1() {

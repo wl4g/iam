@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.support.redis.jedis.CompositeJedisOperator.RedisProtoUtil.keyFormat;
+import static com.wl4g.devops.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperator;
+import com.wl4g.devops.support.redis.jedis.JedisOperator;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching
@@ -40,9 +40,9 @@ public class JedisIamCacheManager implements IamCacheManager {
 	final private Map<String, IamCache> caching = new ConcurrentHashMap<>();
 
 	private String prefix;
-	private CompositeJedisOperator jedisOperator;
+	private JedisOperator jedisOperator;
 
-	public JedisIamCacheManager(String prefix, CompositeJedisOperator jedisOperator) {
+	public JedisIamCacheManager(String prefix, JedisOperator jedisOperator) {
 		notNullOf(prefix, "prefix");
 		notNullOf(jedisOperator, "jedisOperator");
 		// e.g: iam-server => iam_server
@@ -50,7 +50,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 		this.jedisOperator = jedisOperator;
 	}
 
-	public CompositeJedisOperator getJedisOperator() {
+	public JedisOperator getJedisOperator() {
 		return jedisOperator;
 	}
 
