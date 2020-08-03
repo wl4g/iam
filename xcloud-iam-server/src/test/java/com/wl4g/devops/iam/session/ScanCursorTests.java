@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorFactory;
 import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 import redis.clients.jedis.ScanParams;
@@ -42,11 +42,12 @@ import redis.clients.jedis.ScanParams;
 public class ScanCursorTests {
 
 	@Autowired
-	private CompositeJedisOperatorsAdapter jedisAdapter;
+	private CompositeJedisOperatorFactory factory;
 
 	@Test
 	public void test1() {
-		byte[] data = jedisAdapter.get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
+		byte[] data = factory.getJedisOperator()
+				.get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
 		System.out.println("IamSession: " + ProtostuffUtils.deserialize(data, IamSession.class));
 	}
 
@@ -55,7 +56,7 @@ public class ScanCursorTests {
 		byte[] match = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisAdapter, null, params) {
+		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getJedisOperator(), null, params) {
 		}.open();
 		System.out.println("ScanResult: " + sc);
 		while (sc.hasNext()) {

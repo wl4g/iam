@@ -36,7 +36,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisOperator;
 import com.wl4g.devops.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.support.redis.jedis.ScanCursor.CursorWrapper;
 
@@ -72,8 +72,8 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
 		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
-		CompositeJedisOperatorsAdapter jedisAdapter = ((JedisIamCacheManager) cacheManager).getJedisAdapter();
-		return new ScanCursor<IamSession>(jedisAdapter, cursor, IamSession.class, params) {
+		CompositeJedisOperator jedisOperator = ((JedisIamCacheManager) cacheManager).getJedisOperator();
+		return new ScanCursor<IamSession>(jedisOperator, cursor, IamSession.class, params) {
 			@Override
 			public synchronized IamSession next() {
 				IamSession s = super.next();

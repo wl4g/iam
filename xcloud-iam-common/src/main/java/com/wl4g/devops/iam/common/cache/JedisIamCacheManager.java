@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter.RedisProtoUtil.keyFormat;
+import static com.wl4g.devops.support.redis.jedis.CompositeJedisOperator.RedisProtoUtil.keyFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisOperator;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching
@@ -40,18 +40,18 @@ public class JedisIamCacheManager implements IamCacheManager {
 	final private Map<String, IamCache> caching = new ConcurrentHashMap<>();
 
 	private String prefix;
-	private CompositeJedisOperatorsAdapter jedisAdapter;
+	private CompositeJedisOperator jedisOperator;
 
-	public JedisIamCacheManager(String prefix, CompositeJedisOperatorsAdapter jedisAdapter) {
+	public JedisIamCacheManager(String prefix, CompositeJedisOperator jedisOperator) {
 		notNullOf(prefix, "prefix");
-		notNullOf(jedisAdapter, "jedisAdapter");
+		notNullOf(jedisOperator, "jedisOperator");
 		// e.g: iam-server => iam_server
 		this.prefix = keyFormat(prefix, '_');
-		this.jedisAdapter = jedisAdapter;
+		this.jedisOperator = jedisOperator;
 	}
 
-	public CompositeJedisOperatorsAdapter getJedisAdapter() {
-		return jedisAdapter;
+	public CompositeJedisOperator getJedisOperator() {
+		return jedisOperator;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +72,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 		String cacheName = getCacheName(name);
 		IamCache cache = caching.get(cacheName);
 		if (Objects.isNull(cache)) {
-			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisAdapter)));
+			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisOperator)));
 		}
 		return cache;
 	}
