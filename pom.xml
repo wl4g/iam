@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-iam</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud Identity Authentication Management</name>
+	<name>XCloud IAM(Identity Authentication Management)</name>
 	<url>https://iam.xcloud.wl4g.com</url>
 	<description>A CAS-based SSO unified authentication implementation, supporting wechat/qq/facebook/... and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 	<parent>
