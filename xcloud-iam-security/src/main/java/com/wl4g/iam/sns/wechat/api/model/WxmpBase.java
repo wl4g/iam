@@ -28,8 +28,8 @@ import static java.util.Objects.isNull;
  */
 public class WxmpBase {
 
-	private String errcode;
-	private String errmsg;
+	private String errcode = "0";
+	private String errmsg = "ok";
 
 	public WxmpBase() {
 		super();

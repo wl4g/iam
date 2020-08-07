@@ -2,6 +2,8 @@ package com.wl4g.iam.sns.wechat.api.model;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * WechatMp APIs credentials bean of {@link WxmpAccessToken}
  *
@@ -14,11 +16,13 @@ public class WxmpAccessToken extends WxmpBase {
 	/**
 	 * Credential token value
 	 */
+	@JsonProperty("access_token")
 	private String token;
 
 	/**
 	 * Effective time of voucher, unit: seconds
 	 */
+	@JsonProperty("expires_in")
 	private int expiresIn;
 
 	public String getToken() {

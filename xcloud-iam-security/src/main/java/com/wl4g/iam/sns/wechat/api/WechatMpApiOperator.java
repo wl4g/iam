@@ -23,6 +23,7 @@ import static java.util.Objects.nonNull;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.log.SmartLogger;
@@ -61,8 +62,13 @@ public class WechatMpApiOperator implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO
+		// TODO Customization configuration
 		this.restTemplate = new RestTemplate();
+		// MappingJackson2HttpMessageConverter converter = new
+		// MappingJackson2HttpMessageConverter();
+		// converter.getObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+		// false);
+		// this.restTemplate.setMessageConverters(singletonList(converter));
 	}
 
 	/**
@@ -78,8 +84,7 @@ public class WechatMpApiOperator implements InitializingBean {
 		if (nonNull(token)) {
 			// Create wxmp menus
 			WxmpBase res = restTemplate
-					.getForEntity(DEFAULT_MENU_CREATE_URI, WxmpAccessToken.class, singletonMap("ACCESS_TOKEN", token.getToken()))
-					.getBody();
+					.postForObject(DEFAULT_MENU_CREATE_URI, menu, WxmpBase.class, singletonMap("ACCESS_TOKEN", token.getToken()));
 			log.info("Create wxmp menus result: {}", res);
 			return WxmpBase.isSuccess(res);
 		}
@@ -98,20 +103,23 @@ public class WechatMpApiOperator implements InitializingBean {
 	 * @throws InvalidAccessTokenException
 	 */
 	public WxmpAccessToken getWxmpAccessToken(String appId, String appSecret) throws InvalidAccessTokenException {
-		WxmpAccessToken token = restTemplate
-				.getForEntity(DEFAULT_ACCESSTOKEN_URI, WxmpAccessToken.class, new HashMap<String, String>() {
+		ResponseEntity<WxmpAccessToken> resp = restTemplate.getForEntity(DEFAULT_ACCESSTOKEN_URI, WxmpAccessToken.class,
+				new HashMap<String, String>() {
 					private static final long serialVersionUID = 1L;
 					{
 						put("APPID", appId);
 						put("APPSECRET", appSecret);
 					}
-				}).getBody();
+				});
 
-		if (nonNull(token) && WxmpBase.isSuccess(token)) {
-			return token;
+		if (nonNull(resp)) {
+			WxmpAccessToken token = resp.getBody();
+			if (nonNull(token) && WxmpBase.isSuccess(token)) {
+				return resp.getBody();
+			}
 		}
 
-		throw new InvalidAccessTokenException("wechatmp", token.getErrmsg());
+		throw new InvalidAccessTokenException("wechatmp", resp.toString());
 	}
 
 	/**
