@@ -45,6 +45,7 @@ import com.wl4g.iam.sns.qq.QQOauth2Template;
 import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
 import com.wl4g.iam.sns.wechat.WechatMpOauth2Template;
 import com.wl4g.iam.sns.wechat.WechatOauth2Template;
+import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
 
 /**
  * SNS resource configuration
@@ -61,7 +62,7 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 		return new SnsProperties();
 	}
 
-	// Social provider template's
+	// Social provider oauth2 template's
 	//
 
 	@Bean
@@ -87,7 +88,7 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	//
-	// SNS handler's
+	// SNS security handler's
 	//
 
 	@Bean
@@ -138,6 +139,15 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 	@Bean
 	public PrefixHandlerMapping snsControllerPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_SNS_BASE, SnsController.class);
+	}
+
+	//
+	// SNS api operator's
+	//
+
+	@Bean
+	public WechatMpApiOperator wechatMpApiOperator(IamProperties config, SnsProperties snsConfig) {
+		return new WechatMpApiOperator(config, snsConfig);
 	}
 
 }

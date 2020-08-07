@@ -33,7 +33,7 @@ import com.wl4g.iam.sns.wechat.model.WxUserInfo;
  * @since
  */
 public class WechatMpOauth2Template
-		extends BasedWechatOauth2Template<WechatMpSocialProperties, WxAccessToken, WxBasedOpenId, WxUserInfo> {
+		extends AbstractWechatOauth2Template<WechatMpSocialProperties, WxAccessToken, WxBasedOpenId, WxUserInfo> {
 
 	final public static String PROVIDER_ID = "wechatmp";
 

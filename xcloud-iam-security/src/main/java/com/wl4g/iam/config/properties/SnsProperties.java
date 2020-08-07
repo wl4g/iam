@@ -36,10 +36,14 @@ public class SnsProperties {
 	 */
 	private long oauth2ConnectExpireMs = 60_1000L;
 
+	private DingtalkSocialProperties dingtalk = new DingtalkSocialProperties();
+	private LinkedinSocialProperties linkedin = new LinkedinSocialProperties();
+	private TwitterSocialProperties twitter = new TwitterSocialProperties();
+	private GithubSocialProperties github = new GithubSocialProperties();
+	private GoogleSocialProperties google = new GoogleSocialProperties();
+	private FacebookSocialProperties facebook = new FacebookSocialProperties();
 	private QQSocialProperties qq = new QQSocialProperties();
-
 	private WechatSocialProperties wechat = new WechatSocialProperties();
-
 	private WechatMpSocialProperties wechatMp = new WechatMpSocialProperties();
 
 	public long getOauth2ConnectExpireMs() {
@@ -48,6 +52,54 @@ public class SnsProperties {
 
 	public void setOauth2ConnectExpireMs(long connectExpireMs) {
 		this.oauth2ConnectExpireMs = connectExpireMs;
+	}
+
+	public DingtalkSocialProperties getDingtalk() {
+		return dingtalk;
+	}
+
+	public void setDingtalk(DingtalkSocialProperties dingtalk) {
+		this.dingtalk = dingtalk;
+	}
+
+	public LinkedinSocialProperties getLinkedin() {
+		return linkedin;
+	}
+
+	public void setLinkedin(LinkedinSocialProperties linkedin) {
+		this.linkedin = linkedin;
+	}
+
+	public TwitterSocialProperties getTwitter() {
+		return twitter;
+	}
+
+	public void setTwitter(TwitterSocialProperties twitter) {
+		this.twitter = twitter;
+	}
+
+	public GithubSocialProperties getGithub() {
+		return github;
+	}
+
+	public void setGithub(GithubSocialProperties github) {
+		this.github = github;
+	}
+
+	public GoogleSocialProperties getGoogle() {
+		return google;
+	}
+
+	public void setGoogle(GoogleSocialProperties google) {
+		this.google = google;
+	}
+
+	public FacebookSocialProperties getFacebook() {
+		return facebook;
+	}
+
+	public void setFacebook(FacebookSocialProperties facebook) {
+		this.facebook = facebook;
 	}
 
 	public QQSocialProperties getQq() {
@@ -109,6 +161,72 @@ public class SnsProperties {
 		public void setRedirectUrl(String redirectUrl) {
 			this.redirectUrl = redirectUrl;
 		}
+
+	}
+
+	/**
+	 * Dingtalk open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class DingtalkSocialProperties extends AbstractSocialProperties {
+
+	}
+
+	/**
+	 * Linkedin open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class LinkedinSocialProperties extends AbstractSocialProperties {
+
+	}
+
+	/**
+	 * Twitter open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class TwitterSocialProperties extends AbstractSocialProperties {
+
+	}
+
+	/**
+	 * Github open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class GithubSocialProperties extends AbstractSocialProperties {
+
+	}
+
+	/**
+	 * Google open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class GoogleSocialProperties extends AbstractSocialProperties {
+
+	}
+
+	/**
+	 * Facebook open platform configuration properties
+	 *
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年2月17日
+	 * @since
+	 */
+	public static class FacebookSocialProperties extends AbstractSocialProperties {
 
 	}
 
