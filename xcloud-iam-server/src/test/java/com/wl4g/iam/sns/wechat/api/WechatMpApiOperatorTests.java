@@ -103,7 +103,7 @@ public class WechatMpApiOperatorTests {
 	}
 
 	@Test
-	public void createWxmpMenu() {
+	public void createWxmpMenuCase1() {
 		System.out.println("Creating wxmp menu... " + menu);
 		System.out.println("Create wxmp menu result: " + operator.createWxmpMenu(menu));
 	}
