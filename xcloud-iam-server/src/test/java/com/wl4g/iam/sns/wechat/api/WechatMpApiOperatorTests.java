@@ -25,8 +25,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.IamServer;
+import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpButton;
-import com.wl4g.iam.sns.wechat.api.model.menu.WxmpCommonButton;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpComplexButton;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpMenu;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
@@ -39,12 +39,13 @@ import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
  * @since
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IamServer.class)
+@SpringBootTest(classes = IamServer.class, properties = { "spring.cloud.devops.iam.sns.wechat-mp.app-id=${APP_ID}",
+		"spring.cloud.devops.iam.sns.wechat-mp.app-secret=${APP_SECRET}" })
 @FixMethodOrder(MethodSorters.JVM)
 public class WechatMpApiOperatorTests {
 
-	public static final String WXMP_APPID = "<yourAppId>";
-	public static final String WXMP_APPSECRET = "<yourAppSecret>";
+	@Autowired
+	private SnsProperties snsConfig;
 
 	@Autowired
 	private WechatMpApiOperator operator;
@@ -53,53 +54,63 @@ public class WechatMpApiOperatorTests {
 
 	@Before
 	public void wrapWxmpMenu() {
-		WxmpCommonButton btn1 = new WxmpCommonButton();
-		btn1.setName("最新资讯");
-		btn1.setType("click");
-		btn1.setKey("latest_news");
+		WxmpComplexButton btn1 = new WxmpComplexButton();
+		btn1.setName("XCloud DevOps");
+		WxmpViewButton btn11 = new WxmpViewButton();
+		btn11.setName("菜单11");
+		btn11.setType("view");
+		btn11.setUrl("http://wl4g.com/mb-product-energy.html");
+		WxmpViewButton btn12 = new WxmpViewButton();
+		btn12.setName("菜单12");
+		btn12.setType("view");
+		btn12.setUrl("http://wl4g.com/mb-product-solution.html");
+		WxmpViewButton btn13 = new WxmpViewButton();
+		btn13.setName("菜单13");
+		btn13.setType("view");
+		btn13.setUrl("http://wl4g.com/mb-product-service.html");
+		btn1.setSub_button(new WxmpViewButton[] { btn11, btn12, btn13 });
 
-		WxmpViewButton btn2 = new WxmpViewButton();
-		btn2.setName("我的报告");
-		btn2.setType("view");
-		btn2.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WXMP_APPID
-				+ "&redirect_uri=<yourServiceUri>&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
-
+		WxmpComplexButton btn2 = new WxmpComplexButton();
+		btn2.setName("关于我们");
 		WxmpViewButton btn21 = new WxmpViewButton();
-		btn21.setName("联系我们");
+		btn21.setName("公司简介");
 		btn21.setType("view");
-		btn21.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WXMP_APPID
-				+ "&redirect_uri=<yourServiceUri>&response_type=code&scope=snsapi_base&state=2#wechat_redirect");
-
+		btn21.setUrl("http://wl4g.com/mb-about-introduce.html");
 		WxmpViewButton btn22 = new WxmpViewButton();
-		btn22.setName("服务产品");
+		btn22.setName("联系我们");
 		btn22.setType("view");
-		btn22.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WXMP_APPID
-				+ "&redirect_uri=<yourServiceUri>&response_type=code&scope=snsapi_base&state=3#wechat_redirect");
+		btn22.setUrl("http://wl4g.com/mb-about-contact.html");
+		WxmpViewButton btn23 = new WxmpViewButton();
+		btn23.setName("最新动态");
+		btn23.setType("view");
+		btn23.setUrl("http://wl4g.com/mb-about-dynamic.html");
+		btn2.setSub_button(new WxmpViewButton[] { btn21, btn22, btn23 });
 
-		WxmpComplexButton mainBtn1 = new WxmpComplexButton();
-		mainBtn1.setName("关于我们");
-		mainBtn1.setSub_button(new WxmpViewButton[] { btn21, btn22 });
-
+		WxmpComplexButton btn3 = new WxmpComplexButton();
+		btn3.setName("菜单3");
 		WxmpViewButton btn31 = new WxmpViewButton();
-		btn31.setName("我的订单");
+		btn31.setName("菜单31");
 		btn31.setType("view");
-		btn31.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WXMP_APPID
-				+ "&redirect_uri=<yourServiceUri>&response_type=code&scope=snsapi_base&state=4#wechat_redirect");
-
+		// String redirect_uri =
+		// "https://sso-services.wl4g.com/sso/sns/wechatmp/callback?which=client_auth";
+		// 无需redirect_url参数，iam已支持自动检测使用默认值
+		// String redirect_uri =
+		// "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile%26redirect_url%3Dhttps://m-services.wl4g.com/#/index";
+		String redirect_uri = "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile";
+		btn31.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + snsConfig.getWechatMp().getAppId()
+				+ "&redirect_uri=" + redirect_uri + "&response_type=code&scope=snsapi_userinfo#wechat_redirect");
 		WxmpViewButton btn32 = new WxmpViewButton();
-		btn32.setName("我的报告");
+		btn32.setName("菜单32");
 		btn32.setType("view");
-		btn32.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WXMP_APPID
-				+ "&redirect_uri=<yourServiceUri>&response_type=code&scope=snsapi_base&state=5#wechat_redirect");
-
-		WxmpComplexButton mainBtn2 = new WxmpComplexButton();
-		mainBtn2.setName("会员专属");
-		mainBtn2.setSub_button(new WxmpViewButton[] { btn31, btn32 });
+		btn32.setUrl("http://wl4g.com/mb-wl4g-app.html");
+		WxmpViewButton btn33 = new WxmpViewButton();
+		btn33.setName("菜单33");
+		btn33.setType("view");
+		btn33.setUrl("http://wl4g.com/mb-ad-service.html");
+		btn3.setSub_button(new WxmpViewButton[] { btn31, btn32, btn33 });
 
 		menu = new WxmpMenu();
-		menu.setButton(new WxmpButton[] { btn1, btn2 });
-		// All have secondary sub menu items
-		// menu.setButton(new WxmpButton[] { mainBtn1, mainBtn2 });
+		menu.setButton(new WxmpButton[] { btn1, btn2, btn3 });
 	}
 
 	@Test
@@ -107,5 +118,4 @@ public class WechatMpApiOperatorTests {
 		System.out.println("Creating wxmp menu... " + menu);
 		System.out.println("Created wxmp menu result: " + operator.createWxmpMenu(menu));
 	}
-
 }
