@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.handler;
+package com.wl4g.iam.common.handler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,14 +31,14 @@ import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**
- * IAM authentication handler.
+ * Iam central authenticating handler.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since
  */
-public interface AuthenticationHandler {
+public interface AuthenticatingHandler {
 
 	/**
 	 * Assertion the validity of the request parameters before executing the
@@ -49,7 +49,9 @@ public interface AuthenticationHandler {
 	 * @param redirectUrl
 	 * @throws IllegalCallbackDomainException
 	 */
-	void checkAuthenticateRedirectValidity(String appName, String redirectUrl) throws IllegalCallbackDomainException;
+	default void checkAuthenticateRedirectValidity(String appName, String redirectUrl) throws IllegalCallbackDomainException {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Assertion whether the current login account has permission to access the
@@ -61,7 +63,9 @@ public interface AuthenticationHandler {
 	 *            From source application
 	 * @throws IllegalApplicationAccessException
 	 */
-	void assertApplicationAccessAuthorized(String principal, String appName) throws IllegalApplicationAccessException;
+	default void assertApplicationAccessAuthorized(String principal, String appName) throws IllegalApplicationAccessException {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Validate application request ticket
@@ -89,7 +93,7 @@ public interface AuthenticationHandler {
 	 * The Iam server logs out with two entries: <br/>
 	 * 1: access http://iam-client/logout <br/>
 	 * 2: direct access http://iam-server/logout <br/>
-	 * {@link com.wl4g.iam.web.CentralAuthenticatorEndpoint#logout()}
+	 * {@link com.wl4g.iam.web.CentralAuthenticatingEndpoint#logout()}
 	 * {@link com.wl4g.iam.filter.LogoutAuthenticationFilter#preHandle()}
 	 *
 	 * @param forced

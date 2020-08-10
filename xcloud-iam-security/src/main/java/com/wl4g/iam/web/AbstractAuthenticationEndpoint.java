@@ -23,11 +23,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.iam.handler.AuthenticationHandler;
 
 /**
  * IAM abstract basic authenticator internal controller
@@ -36,7 +36,7 @@ import com.wl4g.iam.handler.AuthenticationHandler;
  * @version v1.0 2019年1月22日
  * @since
  */
-public abstract class AbstractAuthenticatorEndpoint extends BaseController implements InitializingBean {
+public abstract class AbstractAuthenticationEndpoint extends BaseController implements InitializingBean {
 
 	/**
 	 * IAM server properties configuration
@@ -48,7 +48,7 @@ public abstract class AbstractAuthenticatorEndpoint extends BaseController imple
 	 * Authentication handler
 	 */
 	@Autowired
-	protected AuthenticationHandler authHandler;
+	protected AuthenticatingHandler authHandler;
 
 	/**
 	 * IAM server security coprocessor.
@@ -70,7 +70,7 @@ public abstract class AbstractAuthenticatorEndpoint extends BaseController imple
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
+		// Ignore
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.client.annotation;
+package com.wl4g.iam.test.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,13 +23,10 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.iam.client.config.IamClientTestAutoConfiguration;
+import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 
 /**
- * [Not yet implements !!!]</br>
- * 
- * It is used for convenient debugging in the development phase. Note: it is
+ * It is used for convenient mock debugging in the development phase. Note: it is
  * mutually exclusive with {@link EnableIamClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
@@ -39,9 +36,7 @@ import com.wl4g.iam.client.config.IamClientTestAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@Import({ IamClientTestAutoConfiguration.class })
-@Reserved
-@Deprecated
-public @interface EnableIamClientTest {
+@Import({ MockIamAutoConfiguration.class })
+public @interface EnableIamMockTest {
 
 }

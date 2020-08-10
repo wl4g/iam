@@ -17,7 +17,7 @@ package com.wl4g.iam.config;
 
 import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.iam.annotation.LoginAuthController;
-import com.wl4g.iam.web.LoginAuthenticatorEndpoint;
+import com.wl4g.iam.web.LoginAuthenticationEndpoint;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 
@@ -35,12 +35,12 @@ import org.springframework.context.annotation.Bean;
 public class LoginAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	public LoginAuthenticatorEndpoint loginAuthenticatorController() {
-		return new LoginAuthenticatorEndpoint();
+	public LoginAuthenticationEndpoint loginAuthenticationEndpoint() {
+		return new LoginAuthenticationEndpoint();
 	}
 
 	@Bean
-	public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
+	public PrefixHandlerMapping loginAuthenticationEndpointPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_LOGIN_BASE, LoginAuthController.class);
 	}
 

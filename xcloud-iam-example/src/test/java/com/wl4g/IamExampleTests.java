@@ -13,4 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam;
+package com.wl4g;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+
+import com.wl4g.iam.client.annotation.EnableIamClient;
+import com.wl4g.iam.test.annotation.EnableIamMockTest;
+
+@EnableIamMockTest
+@EnableIamClient
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+public class IamExampleTests {
+
+	public static void main(String[] args) {
+		SpringApplication.run(IamExample.class, args);
+	}
+
+}

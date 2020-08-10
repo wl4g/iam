@@ -81,7 +81,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2018年11月22日
  * @since
  */
-public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
+public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler {
 
 	/**
 	 * IAM session DAO.
@@ -342,7 +342,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param subject
 	 * @param model
 	 * @throws InvalidGrantTicketException
-	 * @see {@link com.wl4g.iam.handler.CentralAuthenticationHandler#loggedin}
+	 * @see {@link com.wl4g.iam.handler.CentralAuthenticatingHandler#loggedin}
 	 */
 	private void assertGrantingTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {

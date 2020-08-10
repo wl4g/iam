@@ -19,6 +19,7 @@
 		<module>xcloud-iam-example</module>
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-server</module>
+		<module>xcloud-iam-test</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

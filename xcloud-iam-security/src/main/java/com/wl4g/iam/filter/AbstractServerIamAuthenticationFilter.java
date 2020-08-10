@@ -53,6 +53,7 @@ import com.wl4g.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.filter.AbstractIamAuthenticationFilter;
+import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.common.web.model.SessionInfo;
 import com.wl4g.iam.common.web.servlet.IamCookie;
@@ -61,7 +62,6 @@ import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.iam.handler.AuthenticationHandler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -104,7 +104,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * IAM authentication handler
 	 */
 	@Autowired
-	protected AuthenticationHandler authHandler;
+	protected AuthenticatingHandler authHandler;
 
 	/**
 	 * IAM security configure handler

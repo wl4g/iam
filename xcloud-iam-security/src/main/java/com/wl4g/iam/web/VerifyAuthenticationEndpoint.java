@@ -54,7 +54,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @since
  */
 @VerifyAuthController
-public class VerifyAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
+public class VerifyAuthenticationEndpoint extends AbstractAuthenticationEndpoint {
 
 	/**
 	 * Verify CAPTCHA apply model key-name.

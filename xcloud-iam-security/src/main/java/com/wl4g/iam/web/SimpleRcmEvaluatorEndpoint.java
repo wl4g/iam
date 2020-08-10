@@ -51,7 +51,7 @@ import com.wl4g.iam.web.model.SimpleRcmTokenResult;
  * @since
  */
 @SimpleRcmController
-public class SimpleRcmEvaluatorEndpoint extends AbstractAuthenticatorEndpoint {
+public class SimpleRcmEvaluatorEndpoint extends AbstractAuthenticationEndpoint {
 
 	@Autowired
 	protected SimpleRcmEvaluatorHandler handler;

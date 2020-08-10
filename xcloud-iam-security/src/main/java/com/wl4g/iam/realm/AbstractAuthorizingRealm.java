@@ -47,6 +47,7 @@ import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
+import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
@@ -55,7 +56,6 @@ import com.wl4g.iam.common.subject.IamPrincipalInfoWrapper;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.iam.handler.AuthenticationHandler;
 
 /**
  * Multiple realm routing processing.
@@ -95,7 +95,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	 * IAM authentication handler
 	 */
 	@Autowired
-	protected AuthenticationHandler authHandler;
+	protected AuthenticatingHandler authHandler;
 
 	/**
 	 * IAM security configure handler

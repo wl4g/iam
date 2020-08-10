@@ -30,7 +30,7 @@ import com.wl4g.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.iam.handler.CentralAuthenticationHandler.*;
+import static com.wl4g.iam.handler.CentralAuthenticatingHandler.*;
 import static java.util.Objects.nonNull;
 
 /**

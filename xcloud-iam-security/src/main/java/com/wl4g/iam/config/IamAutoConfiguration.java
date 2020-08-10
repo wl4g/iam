@@ -77,7 +77,7 @@ import com.wl4g.iam.filter.SmsAuthenticationFilter;
 import com.wl4g.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.iam.filter.WechatMpAuthenticationFilter;
-import com.wl4g.iam.handler.CentralAuthenticationHandler;
+import com.wl4g.iam.handler.CentralAuthenticatingHandler;
 import com.wl4g.iam.handler.risk.SimpleRcmEvaluatorHandler;
 import com.wl4g.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.iam.realm.DingtalkAuthorizingRealm;
@@ -99,7 +99,7 @@ import com.wl4g.iam.verification.SimpleJPEGSecurityVerifier;
 import com.wl4g.iam.verification.SmsSecurityVerifier;
 import com.wl4g.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.iam.verification.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.iam.web.CentralAuthenticatorEndpoint;
+import com.wl4g.iam.web.CentralAuthenticatingEndpoint;
 
 /**
  * IAM server auto configuration.
@@ -532,8 +532,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticationHandler centralAuthenticationHandler() {
-		return new CentralAuthenticationHandler();
+	public CentralAuthenticatingHandler centralAuthenticationHandler() {
+		return new CentralAuthenticatingHandler();
 	}
 
 	@Bean
@@ -579,12 +579,12 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticatorEndpoint centralAuthenticatorController() {
-		return new CentralAuthenticatorEndpoint();
+	public CentralAuthenticatingEndpoint centralAuthenticatingEndpoint() {
+		return new CentralAuthenticatingEndpoint();
 	}
 
 	@Bean
-	public PrefixHandlerMapping iamCentralAuthenticatorControllerPrefixHandlerMapping() {
+	public PrefixHandlerMapping iamCentralAuthenticatingEndpointPrefixHandlerMapping() {
 		return super.newIamControllerPrefixHandlerMapping(URI_S_BASE);
 	}
 

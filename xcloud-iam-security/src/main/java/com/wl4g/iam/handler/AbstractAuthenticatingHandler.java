@@ -28,20 +28,21 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.iam.common.cache.IamCacheManager;
+import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 
 /**
- * Abstract IAM authentication handler.
+ * Abstract base iam authenticating handler.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public abstract class AbstractAuthenticatingHandler implements AuthenticatingHandler, InitializingBean {
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
