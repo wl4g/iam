@@ -17,6 +17,7 @@ package com.wl4g.iam.test.handler;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.System.currentTimeMillis;
 
 import java.util.Date;
 import java.util.Locale;
@@ -39,8 +40,8 @@ import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.iam.test.configure.MockApplicationConfigurar;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 
 /**
  * Default mock central authenticating handler implements
@@ -57,6 +58,9 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	@Autowired
 	protected AbstractIamProperties<? extends ParamProperties> config;
 
+	@Autowired
+	protected MockApplicationConfigurar configurar;
+
 	@Override
 	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel param) {
 		log.debug("Mock validate. param: {}", param);
@@ -66,13 +70,14 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		hasTextOf(grantAppname, "grantAppname");
 
 		// Grant attributes
-		assertion.setValidFromDate(new Date());
-		assertion.setValidUntilDate(new Date());
+		long now = currentTimeMillis();
+		assertion.setValidFromDate(new Date(now));
+		assertion.setValidUntilDate(new Date(now + 7200_000));
 
 		// Principal info
-		PrincipalOrganization organ = new PrincipalOrganization();
 		SimplePrincipalInfo pinfo = new SimplePrincipalInfo("<Mock principalId>", "<Mock principal>", "<Mock storedCredentials>",
-				"<Mock roles>", "<Mock permissions>", organ).withStoredCredentials("<Mock Credentials>");
+				"<Mock roles>", "<Mock permissions>", configurar.getMockOrganization())
+						.withStoredCredentials("<Mock Credentials>");
 		assertion.setPrincipalInfo(pinfo);
 
 		// Grants roles and permissions attributes

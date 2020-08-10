@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Import;
 import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 
 /**
- * It is used for convenient mock debugging in the development phase. Note: it is
- * mutually exclusive with {@link EnableIamClient}
+ * It is used for convenient mock debugging in the development phase. Note: it
+ * is mutually exclusive with {@link EnableIamClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-20
@@ -38,5 +38,46 @@ import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 @Documented
 @Import({ MockIamAutoConfiguration.class })
 public @interface EnableIamMockTest {
+
+	/**
+	 * Mock authentication principal roles.
+	 * 
+	 * @return
+	 */
+	String roles();
+
+	/**
+	 * Mock authentication principal permissions.
+	 * 
+	 * @return
+	 */
+	String permissions();
+
+	/**
+	 * Mock authentication principal organizations.
+	 * 
+	 * @return
+	 */
+	IamMockOrganization[] organizations();
+
+	/**
+	 * {@link IamMockOrganization}
+	 * 
+	 * @see
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.TYPE, ElementType.METHOD })
+	@Documented
+	public @interface IamMockOrganization {
+		String organizationCode();
+
+		String parent();
+
+		int type();
+
+		String name();
+
+		int areaId();
+	}
 
 }
