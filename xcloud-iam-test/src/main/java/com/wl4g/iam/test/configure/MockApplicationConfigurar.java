@@ -61,25 +61,11 @@ public class MockApplicationConfigurar implements InitializingBean {
 	@Autowired
 	protected IamClientProperties config;
 
-	/** Mock roles */
-	protected String roles;
+	/** Mock config of {@link IamMockTestConfigWrapper} */
+	protected IamMockTestConfigWrapper wrapper;
 
-	/** Mock permissions */
-	protected String permissions;
-
-	/** {@link PrincipalOrganization} */
-	protected PrincipalOrganization mockOrganization;
-
-	public String getRoles() {
-		return roles;
-	}
-
-	public String getPermissions() {
-		return permissions;
-	}
-
-	public PrincipalOrganization getMockOrganization() {
-		return mockOrganization;
+	public IamMockTestConfigWrapper getMockConfigWrapper() {
+		return wrapper;
 	}
 
 	@Override
@@ -105,7 +91,7 @@ public class MockApplicationConfigurar implements InitializingBean {
 		EnableIamMockTest anno = findAnnotation(bootClass, EnableIamMockTest.class);
 
 		// Organizations
-		this.mockOrganization = new PrincipalOrganization();
+		PrincipalOrganization mockOrgan = new PrincipalOrganization();
 		if (nonNull(anno.organizations())) {
 			for (IamMockOrganization org : anno.organizations()) {
 				String type = resolveMixValueIfNecessary(org.type());
@@ -115,18 +101,21 @@ public class MockApplicationConfigurar implements InitializingBean {
 				String name = resolveMixValueIfNecessary(org.name());
 				String areaId = resolveMixValueIfNecessary(org.areaId());
 				isTrue(isNumeric(areaId), "areaId: '%s' must be of numeric type", areaId);
-				this.mockOrganization.getOrganizations()
+				mockOrgan.getOrganizations()
 						.add(new OrganizationInfo(organCode, parent, parseIntOrNull(type), name, parseIntOrNull(areaId)));
 			}
 		}
-		log.info("Resolved mock organizations: {}", toJSONString(mockOrganization));
 
+		// PrincipalId/principal
+		String principalId = resolveMixValueIfNecessary(anno.principalId());
+		String principal = resolveMixValueIfNecessary(anno.principal());
 		// Roles/permissions.
-		this.roles = resolveMixValueIfNecessary(anno.roles());
-		log.info("Resolved mock roles: {}", roles);
+		String roles = resolveMixValueIfNecessary(anno.roles());
+		String permissions = resolveMixValueIfNecessary(anno.permissions());
 
-		this.permissions = resolveMixValueIfNecessary(anno.permissions());
-		log.info("Resolved mock permissions: {}", permissions);
+		this.wrapper = new IamMockTestConfigWrapper(principalId, principal, roles, permissions, mockOrgan);
+		log.info("Resolved mock configuration: {}", toJSONString(wrapper));
+
 	}
 
 	/**
@@ -178,6 +167,60 @@ public class MockApplicationConfigurar implements InitializingBean {
 			return prefixValue.concat(resolvedValue).concat(stuffixValue);
 		}
 		return text;
+	}
+
+	/**
+	 * {@link IamMockTestConfigWrapper}
+	 *
+	 * @since
+	 */
+	public static class IamMockTestConfigWrapper {
+
+		/** Mock principalId */
+		final private String principalId;
+
+		/** Mock principal */
+		final private String principal;
+
+		/** Mock roles */
+		final private String roles;
+
+		/** Mock permissions */
+		final private String permissions;
+
+		/** {@link PrincipalOrganization} */
+		final private PrincipalOrganization organization;
+
+		public IamMockTestConfigWrapper(String principalId, String principal, String roles, String permissions,
+				PrincipalOrganization organization) {
+			super();
+			this.principalId = principalId;
+			this.principal = principal;
+			this.roles = roles;
+			this.permissions = permissions;
+			this.organization = organization;
+		}
+
+		public String getPrincipalId() {
+			return principalId;
+		}
+
+		public String getPrincipal() {
+			return principal;
+		}
+
+		public String getRoles() {
+			return roles;
+		}
+
+		public String getPermissions() {
+			return permissions;
+		}
+
+		public PrincipalOrganization getOrganization() {
+			return organization;
+		}
+
 	}
 
 }

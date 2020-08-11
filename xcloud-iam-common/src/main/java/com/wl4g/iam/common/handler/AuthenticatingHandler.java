@@ -74,7 +74,9 @@ public interface AuthenticatingHandler {
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model);
+	default TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Shiro authentication success callback process.
@@ -85,7 +87,9 @@ public interface AuthenticatingHandler {
 	 *            Shiro subject
 	 * @return Redirect callback information
 	 */
-	LoggedModel loggedin(String appName, Subject subject);
+	default LoggedModel loggedin(String appName, Subject subject) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Logout server session, including all external applications logged-in<br/>
@@ -104,7 +108,9 @@ public interface AuthenticatingHandler {
 	 * @param response
 	 * @return
 	 */
-	LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response);
+	default LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Validation application secondary authentication
@@ -115,7 +121,9 @@ public interface AuthenticatingHandler {
 	 *            from source application name
 	 * @return
 	 */
-	SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName);
+	default SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Sessions expired validation
@@ -123,6 +131,8 @@ public interface AuthenticatingHandler {
 	 * @param param
 	 * @return
 	 */
-	SessionValidityAssertModel sessionValidate(SessionValidityAssertModel param);
+	default SessionValidityAssertModel sessionValidate(SessionValidityAssertModel param) {
+		throw new UnsupportedOperationException();
+	}
 
 }

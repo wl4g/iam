@@ -40,25 +40,39 @@ import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 public @interface EnableIamMockTest {
 
 	/**
+	 * Mock authentication principal name.
+	 * 
+	 * @return
+	 */
+	String principal();
+
+	/**
+	 * Mock authentication principal ID.
+	 * 
+	 * @return
+	 */
+	String principalId();
+
+	/**
 	 * Mock authentication principal roles.
 	 * 
 	 * @return
 	 */
-	String roles();
+	String roles() default "";
 
 	/**
 	 * Mock authentication principal permissions.
 	 * 
 	 * @return
 	 */
-	String permissions();
+	String permissions() default "";
 
 	/**
 	 * Mock authentication principal organizations.
 	 * 
 	 * @return
 	 */
-	IamMockOrganization[] organizations();
+	IamMockOrganization[] organizations() default {};
 
 	/**
 	 * {@link IamMockOrganization}
@@ -69,14 +83,40 @@ public @interface EnableIamMockTest {
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Documented
 	public @interface IamMockOrganization {
+
+		/**
+		 * Mock authentication principal organization code.
+		 * 
+		 * @return
+		 */
 		String organizationCode();
 
+		/**
+		 * Mock authentication principal organization parent code.
+		 * 
+		 * @return
+		 */
 		String parent();
 
+		/**
+		 * Mock authentication principal organization type.
+		 * 
+		 * @return
+		 */
 		String type();
 
+		/**
+		 * Mock authentication principal organization name.
+		 * 
+		 * @return
+		 */
 		String name();
 
+		/**
+		 * Mock authentication principal areaId of organization.
+		 * 
+		 * @return
+		 */
 		String areaId();
 	}
 

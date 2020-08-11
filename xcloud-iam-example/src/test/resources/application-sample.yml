@@ -12,6 +12,8 @@
 #
 
 iam.example:
+  principalId: 100001
+  principal: admin
   roles: customer_user,guest,anon
   permissions: sys_user_list,sys_menu_list,order_list,order_edit
   organization: topOrganCode

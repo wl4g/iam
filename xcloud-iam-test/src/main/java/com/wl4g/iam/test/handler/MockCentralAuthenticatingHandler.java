@@ -22,15 +22,9 @@ import static java.lang.System.currentTimeMillis;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.iam.common.authc.model.LoggedModel;
-import com.wl4g.iam.common.authc.model.LogoutModel;
 import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.iam.common.authc.model.TicketValidateModel;
@@ -41,6 +35,7 @@ import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.iam.test.configure.MockApplicationConfigurar;
+import com.wl4g.iam.test.configure.MockApplicationConfigurar.IamMockTestConfigWrapper;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
 
 /**
@@ -74,10 +69,12 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		assertion.setValidFromDate(new Date(now));
 		assertion.setValidUntilDate(new Date(now + 7200_000));
 
+		// Mock data configuration
+		IamMockTestConfigWrapper mock = configurar.getMockConfigWrapper();
+
 		// Principal info
-		SimplePrincipalInfo pinfo = new SimplePrincipalInfo("<Mock principalId>", "<Mock principal>", "<Mock storedCredentials>",
-				"<Mock roles>", "<Mock permissions>", configurar.getMockOrganization())
-						.withStoredCredentials("<Mock Credentials>");
+		SimplePrincipalInfo pinfo = new SimplePrincipalInfo(mock.getPrincipalId(), mock.getPrincipal(),
+				"<Mock storedCredentials>", mock.getRoles(), mock.getPermissions(), mock.getOrganization());
 		assertion.setPrincipalInfo(pinfo);
 
 		// Grants roles and permissions attributes
@@ -93,18 +90,6 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		attrs.setClientHost("<Mock client host>");
 
 		return assertion;
-	}
-
-	@Override
-	public LoggedModel loggedin(String appName, Subject subject) {
-		log.debug("Mock loggedin. appName: {}", appName);
-		return null;
-	}
-
-	@Override
-	public LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
-		log.debug("Mock loggedin. appName: {}", appName);
-		return null;
 	}
 
 	@Override
