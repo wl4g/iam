@@ -32,21 +32,20 @@ import com.wl4g.iam.common.session.IamSession;
  * @since
  */
 public class SessionInfo implements Serializable {
-
 	private static final long serialVersionUID = -4118097602451640788L;
 
 	/**
 	 * Session keyname.
 	 */
 	@NotBlank
-	@JsonProperty("sk")
+	@JsonProperty(KEY_SESSION_NAME)
 	private String sessionKey;
 
 	/**
 	 * Session value.
 	 */
 	@NotBlank
-	@JsonProperty("sv")
+	@JsonProperty(KEY_SESSION_VALUE)
 	private Serializable sessionValue;
 
 	public SessionInfo() {
@@ -77,5 +76,8 @@ public class SessionInfo implements Serializable {
 		this.sessionValue = sessionValue;
 		return this;
 	}
+
+	public static final String KEY_SESSION_NAME = "sk";
+	public static final String KEY_SESSION_VALUE = "sv";
 
 }
