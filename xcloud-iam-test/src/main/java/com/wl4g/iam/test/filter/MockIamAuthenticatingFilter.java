@@ -86,7 +86,7 @@ public class MockIamAuthenticatingFilter implements Filter, ApplicationListener<
 		if (defaultExcludeUriMatcher.matchStart(MOCK_AUTO_AUTHENTICATING_URI, requestPath) || isInternalTicketRequest(request)) {
 			chain.doFilter(request, response);
 		} else {
-			log.debug("Apply mock iam authenticating requires parameters...");
+			log.debug("Attaching mock iam authenticating requires parameters...");
 			chain.doFilter(attachMockAuthenticatingRequest(request), response);
 		}
 	}
