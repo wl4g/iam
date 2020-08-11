@@ -21,8 +21,9 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.test.configure.MockApplicationConfigurar;
-import com.wl4g.iam.test.filter.MockIamAuthenticatingFilter;
+import com.wl4g.iam.test.configure.MockAuthenticatingConfigurer;
+import com.wl4g.iam.test.configure.MockContextConfigurer;
+import com.wl4g.iam.test.filter.MockAuthenticatingFilter;
 import com.wl4g.iam.test.handler.MockCentralAuthenticatingHandler;
 import com.wl4g.iam.test.web.MockCentralAuthenticatingEndpoint;
 
@@ -36,13 +37,18 @@ import com.wl4g.iam.test.web.MockCentralAuthenticatingEndpoint;
 public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	public MockIamAuthenticatingFilter mockAuthenticatingFilter() {
-		return new MockIamAuthenticatingFilter();
+	public MockAuthenticatingConfigurer mockAuthenticatingConfigurer() {
+		return new MockAuthenticatingConfigurer();
 	}
 
 	@Bean
-	public MockApplicationConfigurar mockApplicationConfigurar() {
-		return new MockApplicationConfigurar();
+	public MockAuthenticatingFilter mockAuthenticatingFilter() {
+		return new MockAuthenticatingFilter();
+	}
+
+	@Bean
+	public MockContextConfigurer mockApplicationConfigurar() {
+		return new MockContextConfigurer();
 	}
 
 	@Bean

@@ -28,12 +28,12 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
@@ -42,16 +42,16 @@ import com.wl4g.iam.test.annotation.EnableIamMockTest;
 import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
 
 /**
- * {@link MockApplicationConfigurar}
+ * {@link MockContextConfigurer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-10
  * @sine v1.0.0
  * @see
  */
-public class MockApplicationConfigurar implements InitializingBean {
+public class MockContextConfigurer implements InitializingBean {
 
-	protected final Logger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	/** {@link ApplicationContext} */
 	@Autowired

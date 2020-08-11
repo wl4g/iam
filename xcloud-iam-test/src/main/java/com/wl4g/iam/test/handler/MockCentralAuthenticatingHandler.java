@@ -34,8 +34,8 @@ import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.iam.test.configure.MockApplicationConfigurar;
-import com.wl4g.iam.test.configure.MockApplicationConfigurar.IamMockTestConfigWrapper;
+import com.wl4g.iam.test.configure.MockContextConfigurer;
+import com.wl4g.iam.test.configure.MockContextConfigurer.IamMockTestConfigWrapper;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
 
 /**
@@ -54,7 +54,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	protected AbstractIamProperties<? extends ParamProperties> config;
 
 	@Autowired
-	protected MockApplicationConfigurar configurar;
+	protected MockContextConfigurer configurar;
 
 	@Override
 	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel param) {
