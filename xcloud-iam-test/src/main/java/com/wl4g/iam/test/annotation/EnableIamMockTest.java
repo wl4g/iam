@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 
 /**
@@ -37,6 +38,7 @@ import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ MockIamAutoConfiguration.class })
+@EnableIamClient
 public @interface EnableIamMockTest {
 
 	/**

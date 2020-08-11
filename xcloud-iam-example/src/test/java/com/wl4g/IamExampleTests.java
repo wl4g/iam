@@ -19,7 +19,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.test.annotation.EnableIamMockTest;
 import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
 
@@ -33,12 +32,11 @@ import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
  */
 @EnableIamMockTest(principalId = "${iam.example.principalId}", principal = "${iam.example.principal}", roles = "administrator,${iam.example.roles}", permissions = "home,${iam.example.permissions}", organizations = {
 		@IamMockOrganization(type = "1", parent = "", name = "headquarters", areaId = "10001", organizationCode = "${iam.example.organization}") })
-@EnableIamClient
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class IamExampleTests {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamExample.class, args);
+		SpringApplication.run(IamExampleTests.class, args);
 	}
 
 }
