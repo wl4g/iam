@@ -31,8 +31,8 @@ import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
  * @sine v1.0.0
  * @see
  */
-@EnableIamMockTest(roles = "administrator,user,guest", permissions = "home,ALL", organizations = {
-		@IamMockOrganization(type = 1, parent = "", name = "headquarters", areaId = 10001, organizationCode = "topOrganCode") })
+@EnableIamMockTest(roles = "administrator,${iam.example.roles}", permissions = "home,${iam.example.permissions}", organizations = {
+		@IamMockOrganization(type = "1", parent = "", name = "headquarters", areaId = "10001", organizationCode = "${iam.example.organization}") })
 @EnableIamClient
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class IamExampleTests {

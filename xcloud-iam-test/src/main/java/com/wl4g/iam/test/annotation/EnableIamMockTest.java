@@ -73,11 +73,11 @@ public @interface EnableIamMockTest {
 
 		String parent();
 
-		int type();
+		String type();
 
 		String name();
 
-		int areaId();
+		String areaId();
 	}
 
 }

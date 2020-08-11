@@ -15,19 +15,26 @@
  */
 package com.wl4g.iam.test.configure;
 
-import static com.wl4g.components.common.collection.Collections2.safeMap;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
+import static com.wl4g.components.common.collection.Collections2.safeMap;
+import static com.wl4g.components.core.utils.AopUtils2.*;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
+import static com.wl4g.components.common.lang.TypeConverts.*;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
 
-import static com.wl4g.components.core.utils.AopUtils2.*;
-
+import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
@@ -43,6 +50,8 @@ import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
  * @see
  */
 public class MockApplicationConfigurar implements InitializingBean {
+
+	protected final Logger log = getLogger(getClass());
 
 	/** {@link ApplicationContext} */
 	@Autowired
@@ -93,21 +102,31 @@ public class MockApplicationConfigurar implements InitializingBean {
 		if (isAopProxy(bootstrapBean)) {
 			bootClass = getTargetClass(bootstrapBean);
 		}
-		EnableIamMockTest anno = AnnotationUtils.findAnnotation(bootClass, EnableIamMockTest.class);
+		EnableIamMockTest anno = findAnnotation(bootClass, EnableIamMockTest.class);
 
 		// Organizations
 		this.mockOrganization = new PrincipalOrganization();
 		if (nonNull(anno.organizations())) {
 			for (IamMockOrganization org : anno.organizations()) {
+				String type = resolveMixValueIfNecessary(org.type());
+				isTrue(isNumeric(type), "type: '%s' must be of numeric type", type);
+				String organCode = resolveMixValueIfNecessary(org.organizationCode());
+				String parent = resolveMixValueIfNecessary(org.parent());
+				String name = resolveMixValueIfNecessary(org.name());
+				String areaId = resolveMixValueIfNecessary(org.areaId());
+				isTrue(isNumeric(areaId), "areaId: '%s' must be of numeric type", areaId);
 				this.mockOrganization.getOrganizations()
-						.add(new OrganizationInfo(org.organizationCode(), org.parent(), org.type(), org.name(), org.areaId()));
+						.add(new OrganizationInfo(organCode, parent, parseIntOrNull(type), name, parseIntOrNull(areaId)));
 			}
 		}
+		log.info("Resolved mock organizations: {}", toJSONString(mockOrganization));
 
 		// Roles/permissions.
-		this.roles = anno.roles();
-		this.permissions = anno.permissions();
+		this.roles = resolveMixValueIfNecessary(anno.roles());
+		log.info("Resolved mock roles: {}", roles);
 
+		this.permissions = resolveMixValueIfNecessary(anno.permissions());
+		log.info("Resolved mock permissions: {}", permissions);
 	}
 
 	/**
@@ -117,6 +136,48 @@ public class MockApplicationConfigurar implements InitializingBean {
 		String thatPort = actx.getEnvironment().getRequiredProperty("server.port");
 		String thatCtxPath = actx.getEnvironment().getRequiredProperty("server.servlet.context-path");
 		config.setServerUri("http://localhost:".concat(thatPort).concat("/").concat(thatCtxPath));
+	}
+
+	/**
+	 * Resolve config value with mix. (if necessary) </br>
+	 * </br>
+	 * 
+	 * for example:
+	 * 
+	 * <pre>
+	 * <b>application.yml:</b>
+	 * 	iam.mock.permissions: user_list,role_list,order_list,order_edit
+	 * 
+	 * <b>Bootstrap Class:</b>
+	 * 
+	 *	&#64;{@link EnableIamMockTest}(permissions="home,ALL,${iam.mock.permissions}", ...)
+	 *	&#64;{@link EnableIamClient}
+	 *	&#64;{@link SpringBootApplication}
+	 *	public class IamExampleTests {
+	 * 		public static void main(String[] args) throws Exception {
+	 *			SpringApplication.run(Base.class, args);
+	 * 		}
+	 *	}
+	 * 
+	 * <b>Resolved permissions:</b>
+	 * 	"home,ALL,user_list,role_list,order_list,order_edit"
+	 * </pre>
+	 * 
+	 * @param text
+	 * @return
+	 */
+	private String resolveMixValueIfNecessary(String text) {
+		int sidx = text.indexOf("${");
+		if (sidx >= 0) {
+			int eidx = text.indexOf("}");
+			isTrue(eidx > 0, "Illegal placeholder key '%s'", text);
+			String prefixValue = text.substring(0, sidx);
+			String stuffixValue = text.substring(eidx + 1);
+			String placeholder = text.substring(sidx + 2, eidx);
+			String resolvedValue = actx.getEnvironment().resolvePlaceholders("${".concat(placeholder).concat("}"));
+			return prefixValue.concat(resolvedValue).concat(stuffixValue);
+		}
+		return text;
 	}
 
 }
