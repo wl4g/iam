@@ -132,8 +132,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			ftk.setPrincipal(principal); // MARK1
 			ftk.setRememberMe(attrs.getRememberMe());
 			ftk.setHost(attrs.getClientHost());
-
-			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
+			log.info("Validated principal: {}, grantTicket: {}, newGrantTicket: {}", principal, granticket, newGrantTicket);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
 			PrincipalCollection principals = createPermitPrincipalCollection(info);

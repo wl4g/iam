@@ -63,7 +63,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 
 	@Override
 	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel param) {
-		log.debug("Mock validate. param: {}", param);
+		log.debug("Mock validating. param: {}", param);
 
 		TicketValidatedAssertModel<IamPrincipalInfo> assertion = new TicketValidatedAssertModel<>();
 		String grantAppname = param.getApplication();

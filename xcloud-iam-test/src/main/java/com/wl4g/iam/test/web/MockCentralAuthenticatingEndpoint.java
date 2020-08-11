@@ -64,13 +64,13 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@ResponseBody
 	@Override
 	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
-		log.info("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+		log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
-		log.info("Mock Ticket validated. => {}", resp);
+		log.debug("Mock Ticket validated. => {}", resp);
 		return resp;
 	}
 
@@ -78,7 +78,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@ResponseBody
 	@Override
 	public RespBase<SecondAuthcAssertModel> secondaryValidate(HttpServletRequest request) {
-		log.info("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
+		log.debug("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
 
 		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
 		// Requires parameters
@@ -87,7 +87,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 		// Secondary authentication assertion.
 		resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-		log.info("Mock Secondary validated. => {}", resp);
+		log.debug("Mock Secondary validated. => {}", resp);
 		return resp;
 	}
 
@@ -95,14 +95,14 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@ResponseBody
 	@Override
 	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
-		log.info("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+		log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
 
 		// Session expires validate assertion.
 		resp.setData(authHandler.sessionValidate(param));
 
-		log.info("Mock Sessions expires validated. => {}", resp);
+		log.debug("Mock Sessions expires validated. => {}", resp);
 		return resp;
 	}
 
