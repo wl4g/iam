@@ -19,10 +19,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
-import java.util.Date;
-
 import javax.validation.constraints.NotNull;
-
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**
@@ -37,11 +34,11 @@ public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
 
 	/** The Long from which the assertion is valid(start Long). */
 	@NotNull
-	private Date validFromDate;
+	private Long validFromTime;
 
 	/** The Long the assertion is valid until(end Long). */
 	@NotNull
-	private Date validUntilDate;
+	private Long validUntilTime;
 
 	/** The principal for which this assertion is valid for. */
 	@NotNull
@@ -64,34 +61,34 @@ public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
 	 * @param attributes
 	 *            the key/value pairs for this attribute.
 	 */
-	public TicketValidatedAssertModel(final String principal, final Date validFromTime, final Date validUntilTime,
+	public TicketValidatedAssertModel(final String principal, final Long validFromTime, final Long validUntilTime,
 			final String grantTicket, final T principalInfo) {
 		hasText(principal, "Authenticate principal cannot be null.");
 		notNull(validFromTime, "Authenticate validFromTime cannot be null.");
 		notNull(validUntilTime, "Authenticate validUntilTime cannot be null.");
 		notNull(principalInfo, "Authenticate principalInfo cannot be null.");
-		setValidFromDate(validFromTime);
-		setValidUntilDate(validUntilTime);
+		setValidFromTime(validFromTime);
+		setValidUntilTime(validUntilTime);
 		setPrincipalInfo(principalInfo);
 	}
 
-	public final Date getValidFromDate() {
-		return validFromDate;
+	public final Long getValidFromTime() {
+		return validFromTime;
 	}
 
-	public final void setValidFromDate(Date validFromLong) {
-		if (this.validFromDate == null && validFromLong != null) {
-			this.validFromDate = validFromLong;
+	public final void setValidFromTime(Long validFromTime) {
+		if (this.validFromTime == null && validFromTime != null) {
+			this.validFromTime = validFromTime;
 		}
 	}
 
-	public final Date getValidUntilDate() {
-		return validUntilDate;
+	public final Long getValidUntilTime() {
+		return validUntilTime;
 	}
 
-	public final void setValidUntilDate(Date validUntilLong) {
-		if (this.validUntilDate == null && validUntilLong != null) {
-			this.validUntilDate = validUntilLong;
+	public final void setValidUntilTime(Long validUntilLong) {
+		if (this.validUntilTime == null && validUntilLong != null) {
+			this.validUntilTime = validUntilLong;
 		}
 	}
 

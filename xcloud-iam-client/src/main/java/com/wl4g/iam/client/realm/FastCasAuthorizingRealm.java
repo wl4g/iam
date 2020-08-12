@@ -49,8 +49,6 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.Date;
-
 /**
  * This realm implementation acts as a CAS client to a CAS server for
  * authentication and basic authorization.
@@ -110,10 +108,10 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			 * {@link JedisIamSessionDAO#update()} </br>
 			 * Update session expire date time.
 			 */
-			Date validUntilDate = validated.getValidUntilDate();
-			long maxIdleTimeMs = validUntilDate.getTime() - currentTimeMillis();
+			long validUntilTime = validated.getValidUntilTime();
+			long maxIdleTimeMs = validUntilTime - currentTimeMillis();
 			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
-					validUntilDate, maxIdleTimeMs));
+					validUntilTime, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
 			// Currenly authentication principal info.

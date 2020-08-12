@@ -19,7 +19,6 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 
-import java.util.Date;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +65,8 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 
 		// Grant attributes
 		long now = currentTimeMillis();
-		assertion.setValidFromDate(new Date(now));
-		assertion.setValidUntilDate(new Date(now + 7200_000));
+		assertion.setValidFromTime(now);
+		assertion.setValidUntilTime(now + 7200_000);
 
 		// Mock data configuration
 		IamMockTestConfigWrapper mock = configurar.getMockConfigWrapper();

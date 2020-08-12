@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.handler;
 
-import com.wl4g.components.core.bean.iam.ApplicationInfo;
+import com.wl4g.components.core.bean.iam.ApplicationInfo; 
 import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
@@ -50,7 +50,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -157,13 +156,13 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 
 		// Grant validated start date.
 		long now = currentTimeMillis();
-		assertion.setValidFromDate(new Date(now));
+		assertion.setValidFromTime(now);
 
 		/*
 		 * x.client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo Grant
 		 * term of validity(end date).
 		 */
-		assertion.setValidUntilDate(new Date(now + getSessionRemainingTime()));
+		assertion.setValidUntilTime(now + getSessionRemainingTime());
 
 		// Renew grant credentials
 		/**
