@@ -71,7 +71,8 @@ public class ReplayProperties implements InitializingBean {
 	private long termTimeMs = DEFAULT_REPLAY_TOKEN_TERM_TIME;
 
 	/**
-	 * Ignore replay attacks validation request mappings.
+	 * Ignore replay attacks validation request mappings.</br>
+	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
 	 */
 	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
 		private static final long serialVersionUID = 2330951352919056661L;
@@ -146,6 +147,10 @@ public class ReplayProperties implements InitializingBean {
 		return this;
 	}
 
+	/**
+	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
+	 * @return
+	 */
 	public List<String> getExcludeValidUriPatterns() {
 		return excludeValidUriPatterns;
 	}

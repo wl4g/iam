@@ -85,7 +85,8 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	private String cookiePath;
 
 	/**
-	 * Ignore xsrf validation request mappings.
+	 * Ignore xsrf validation request mappings. </br>
+	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
 	 */
 	private List<String> excludeValidUriPatterns = new ArrayList<>();
 
@@ -195,6 +196,10 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		return this;
 	}
 
+	/**
+	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
+	 * @return
+	 */
 	public List<String> getExcludeValidUriPatterns() {
 		return excludeValidUriPatterns;
 	}

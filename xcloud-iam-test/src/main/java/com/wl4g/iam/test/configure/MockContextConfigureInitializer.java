@@ -36,20 +36,22 @@ import org.springframework.context.ApplicationContext;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.client.config.IamClientProperties;
+import com.wl4g.iam.common.config.ReplayProperties;
+import com.wl4g.iam.common.config.XsrfProperties;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import com.wl4g.iam.test.annotation.EnableIamMockTest;
 import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
 
 /**
- * {@link MockContextConfigurer}
+ * {@link MockContextConfigureInitializer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-10
  * @sine v1.0.0
  * @see
  */
-public class MockContextConfigurer implements InitializingBean {
+public class MockContextConfigureInitializer implements InitializingBean {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -58,8 +60,16 @@ public class MockContextConfigurer implements InitializingBean {
 	protected ApplicationContext actx;
 
 	/** {@link IamClientProperties} */
-	@Autowired
-	protected IamClientProperties config;
+	@Autowired(required = false)
+	protected IamClientProperties coreConfig;
+
+	/** {@link ReplayProperties} */
+	@Autowired(required = false)
+	protected ReplayProperties replayConfig;
+
+	/** {@link XsrfProperties} */
+	@Autowired(required = false)
+	protected XsrfProperties xsrfConfig;
 
 	/** Mock config of {@link IamMockTestConfigWrapper} */
 	protected IamMockTestConfigWrapper wrapper;
@@ -70,7 +80,7 @@ public class MockContextConfigurer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		applyMockServiceProperties();
+		applyDefaultMockContextProperties();
 		parseMockConfiguration();
 	}
 
@@ -119,12 +129,25 @@ public class MockContextConfigurer implements InitializingBean {
 	}
 
 	/**
-	 * Apply mock service properties.
+	 * Apply sets mock context service properties.
 	 */
-	private void applyMockServiceProperties() {
-		String thatPort = actx.getEnvironment().getRequiredProperty("server.port");
-		String thatCtxPath = actx.getEnvironment().getRequiredProperty("server.servlet.context-path");
-		config.setServerUri("http://localhost:".concat(thatPort).concat("/").concat(thatCtxPath));
+	private void applyDefaultMockContextProperties() {
+		// IAM server configuration
+		if (nonNull(coreConfig)) {
+			String thatPort = actx.getEnvironment().getRequiredProperty("server.port");
+			String thatCtxPath = actx.getEnvironment().getRequiredProperty("server.servlet.context-path");
+			coreConfig.setServerUri("http://localhost:".concat(thatPort).concat("/").concat(thatCtxPath));
+		}
+
+		// IAM replay configuration
+		if (nonNull(replayConfig)) {
+			replayConfig.getExcludeValidUriPatterns().add(URI_PATTERN_ALL);
+		}
+
+		// IAM xsrf configuration
+		if (nonNull(xsrfConfig)) {
+			xsrfConfig.getExcludeValidUriPatterns().add(URI_PATTERN_ALL);
+		}
 	}
 
 	/**
@@ -222,5 +245,8 @@ public class MockContextConfigurer implements InitializingBean {
 		}
 
 	}
+
+	/** URI mapping any */
+	public static final String URI_PATTERN_ALL = "/**";
 
 }
