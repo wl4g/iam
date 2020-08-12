@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.common.security.xsrf.handler;
 
+import com.wl4g.components.common.web.rest.RESTfulException;
+import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.components.core.exception.iam.IamException;
-import com.wl4g.components.core.exception.restful.RESTfulException;
-import com.wl4g.components.core.web.RespBase.RetCode;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfToken;
 
 /**

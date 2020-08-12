@@ -29,7 +29,7 @@ import org.springframework.core.annotation.Order;
 import com.wl4g.components.core.web.error.ErrorConfiguring;
 
 import static com.wl4g.components.common.lang.Exceptions.*;
-import static com.wl4g.components.core.web.RespBase.RetCode.*;
+import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
 
 /**
  * IAM authorization error configuring.

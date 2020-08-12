@@ -15,10 +15,10 @@
  */
 package com.wl4g.iam.controller;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.ClusterConfig;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.iam.controller.model.SessionDestroyClientModel;

@@ -16,8 +16,8 @@
 package com.wl4g.iam.common.web;
 
 import com.google.common.annotations.Beta;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.common.cache.IamCache;
 import com.wl4g.iam.common.cache.IamCacheManager;

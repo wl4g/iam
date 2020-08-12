@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository;

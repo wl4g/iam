@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.controller;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.DictService;

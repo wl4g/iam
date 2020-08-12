@@ -27,9 +27,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.exception.iam.GrantTicketNullException;
 import com.wl4g.components.core.exception.iam.IamException;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
@@ -53,10 +53,10 @@ import java.util.Map;
 
 import static com.wl4g.components.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.components.common.web.WebUtils2.isTrue;
+import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_LOGOUT;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGOUT;
-import static com.wl4g.components.core.web.RespBase.RetCode.*;
 
 /**
  * Logout authentication filter

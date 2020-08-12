@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.controller;
 
-import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.service.AreaService;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -33,8 +33,8 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.authc.model.BaseAssertModel;
 

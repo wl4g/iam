@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.common.annotation.IamController;
 import com.wl4g.iam.common.authc.model.LogoutModel;
 import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;

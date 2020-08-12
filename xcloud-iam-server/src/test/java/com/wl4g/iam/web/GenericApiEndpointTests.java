@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.IamServer;
-import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.common.web.GenericApiEndpoint;
 import com.wl4g.iam.common.web.model.SessionQueryModel;
 

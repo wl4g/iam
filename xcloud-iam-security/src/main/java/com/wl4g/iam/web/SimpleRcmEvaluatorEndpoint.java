@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.components.common.codec.Base58;
-import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.annotation.SimpleRcmController;
 import com.wl4g.iam.handler.risk.SimpleRcmEvaluatorHandler;
 import com.wl4g.iam.web.model.SimpleRcmTokenResult;

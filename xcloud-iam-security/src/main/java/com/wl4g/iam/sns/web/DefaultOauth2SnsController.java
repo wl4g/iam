@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.components.core.web.RespBase;
-import com.wl4g.components.core.web.RespBase.RetCode;
+import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;

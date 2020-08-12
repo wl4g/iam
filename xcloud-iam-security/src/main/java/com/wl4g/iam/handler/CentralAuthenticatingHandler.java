@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.handler;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.iam.ApplicationInfo; 
 import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationTokenWrapper;
