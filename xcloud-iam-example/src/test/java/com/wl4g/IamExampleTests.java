@@ -19,8 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import com.wl4g.iam.test.annotation.EnableIamMockTest;
-import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
+import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration;
+import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration.MockOrganization;
 
 /**
  * {@link IamExampleTests}
@@ -30,8 +30,8 @@ import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
  * @sine v1.0.0
  * @see
  */
-@EnableIamMockTest(principalId = "${iam.example.principalId}", principal = "${iam.example.principal}", roles = "administrator,${iam.example.roles}", permissions = "home,${iam.example.permissions}", organizations = {
-		@IamMockOrganization(type = "1", parent = "", name = "headquarters", areaId = "10001", organizationCode = "${iam.example.organization}") })
+@EnableIamMockAutoConfiguration(principalId = "${iam.example.principalId}", principal = "${iam.example.principal}", roles = "administrator,${iam.example.roles}", permissions = "home,${iam.example.permissions}", organizations = {
+		@MockOrganization(type = "1", parent = "", name = "headquarters", areaId = "10001", organCode = "${iam.example.organization}") })
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class IamExampleTests {
 

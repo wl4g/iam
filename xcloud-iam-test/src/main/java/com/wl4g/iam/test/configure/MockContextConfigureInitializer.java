@@ -40,8 +40,8 @@ import com.wl4g.iam.common.config.ReplayProperties;
 import com.wl4g.iam.common.config.XsrfProperties;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
-import com.wl4g.iam.test.annotation.EnableIamMockTest;
-import com.wl4g.iam.test.annotation.EnableIamMockTest.IamMockOrganization;
+import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration;
+import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration.MockOrganization;
 
 /**
  * {@link MockContextConfigureInitializer}
@@ -71,10 +71,10 @@ public class MockContextConfigureInitializer implements InitializingBean {
 	@Autowired(required = false)
 	protected XsrfProperties xsrfConfig;
 
-	/** Mock config of {@link IamMockTestConfigWrapper} */
-	protected IamMockTestConfigWrapper wrapper;
+	/** Mock config of {@link MockUserConfigWrapper} */
+	protected MockUserConfigWrapper wrapper;
 
-	public IamMockTestConfigWrapper getMockConfigWrapper() {
+	public MockUserConfigWrapper getMockConfigWrapper() {
 		return wrapper;
 	}
 
@@ -88,9 +88,10 @@ public class MockContextConfigureInitializer implements InitializingBean {
 	 * Parse mock configuration
 	 */
 	private void parseMockConfiguration() {
-		Map<String, Object> beans = safeMap(actx.getBeansWithAnnotation(EnableIamMockTest.class));
+		Map<String, Object> beans = safeMap(actx.getBeansWithAnnotation(EnableIamMockAutoConfiguration.class));
 		if (!(nonNull(beans) && beans.size() == 1)) {
-			throw new Error(format("Shouldn't be here. please check config: @%s", EnableIamMockTest.class.getSimpleName()));
+			throw new Error(
+					format("Shouldn't be here. please check config: @%s", EnableIamMockAutoConfiguration.class.getSimpleName()));
 		}
 
 		Object bootstrapBean = beans.entrySet().iterator().next().getValue();
@@ -98,15 +99,15 @@ public class MockContextConfigureInitializer implements InitializingBean {
 		if (isAopProxy(bootstrapBean)) {
 			bootClass = getTargetClass(bootstrapBean);
 		}
-		EnableIamMockTest anno = findAnnotation(bootClass, EnableIamMockTest.class);
+		EnableIamMockAutoConfiguration anno = findAnnotation(bootClass, EnableIamMockAutoConfiguration.class);
 
 		// Organizations
 		PrincipalOrganization mockOrgan = new PrincipalOrganization();
 		if (nonNull(anno.organizations())) {
-			for (IamMockOrganization org : anno.organizations()) {
+			for (MockOrganization org : anno.organizations()) {
 				String type = resolveMixValueIfNecessary(org.type());
 				isTrue(isNumeric(type), "type: '%s' must be of numeric type", type);
-				String organCode = resolveMixValueIfNecessary(org.organizationCode());
+				String organCode = resolveMixValueIfNecessary(org.organCode());
 				String parent = resolveMixValueIfNecessary(org.parent());
 				String name = resolveMixValueIfNecessary(org.name());
 				String areaId = resolveMixValueIfNecessary(org.areaId());
@@ -123,7 +124,7 @@ public class MockContextConfigureInitializer implements InitializingBean {
 		String roles = resolveMixValueIfNecessary(anno.roles());
 		String permissions = resolveMixValueIfNecessary(anno.permissions());
 
-		this.wrapper = new IamMockTestConfigWrapper(principalId, principal, roles, permissions, mockOrgan);
+		this.wrapper = new MockUserConfigWrapper(principalId, principal, roles, permissions, mockOrgan);
 		log.info("Resolved mock configuration: {}", toJSONString(wrapper));
 
 	}
@@ -162,7 +163,7 @@ public class MockContextConfigureInitializer implements InitializingBean {
 	 * 
 	 * <b>Bootstrap Class:</b>
 	 * 
-	 *	&#64;{@link EnableIamMockTest}(permissions="home,ALL,${iam.mock.permissions}", ...)
+	 *	&#64;{@link EnableIamMockAutoConfiguration}(permissions="home,ALL,${iam.mock.permissions}", ...)
 	 *	&#64;{@link EnableIamClient}
 	 *	&#64;{@link SpringBootApplication}
 	 *	public class IamExampleTests {
@@ -193,11 +194,11 @@ public class MockContextConfigureInitializer implements InitializingBean {
 	}
 
 	/**
-	 * {@link IamMockTestConfigWrapper}
+	 * {@link MockUserConfigWrapper}
 	 *
 	 * @since
 	 */
-	public static class IamMockTestConfigWrapper {
+	public static class MockUserConfigWrapper {
 
 		/** Mock principalId */
 		final private String principalId;
@@ -214,7 +215,7 @@ public class MockContextConfigureInitializer implements InitializingBean {
 		/** {@link PrincipalOrganization} */
 		final private PrincipalOrganization organization;
 
-		public IamMockTestConfigWrapper(String principalId, String principal, String roles, String permissions,
+		public MockUserConfigWrapper(String principalId, String principal, String roles, String permissions,
 				PrincipalOrganization organization) {
 			super();
 			this.principalId = principalId;

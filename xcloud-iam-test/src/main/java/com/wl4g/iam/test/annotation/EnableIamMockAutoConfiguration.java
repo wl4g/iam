@@ -35,11 +35,11 @@ import com.wl4g.iam.test.config.MockIamAutoConfiguration;
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.TYPE })
 @Documented
 @Import({ MockIamAutoConfiguration.class })
 @EnableIamClient
-public @interface EnableIamMockTest {
+public @interface EnableIamMockAutoConfiguration {
 
 	/**
 	 * Mock authentication principal name.
@@ -74,24 +74,24 @@ public @interface EnableIamMockTest {
 	 * 
 	 * @return
 	 */
-	IamMockOrganization[] organizations() default {};
+	MockOrganization[] organizations() default {};
 
 	/**
-	 * {@link IamMockOrganization}
+	 * {@link MockOrganization}
 	 * 
 	 * @see
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Documented
-	public @interface IamMockOrganization {
+	public @interface MockOrganization {
 
 		/**
 		 * Mock authentication principal organization code.
 		 * 
 		 * @return
 		 */
-		String organizationCode();
+		String organCode();
 
 		/**
 		 * Mock authentication principal organization parent code.
