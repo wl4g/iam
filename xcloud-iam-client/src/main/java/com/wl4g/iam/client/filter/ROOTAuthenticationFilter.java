@@ -101,7 +101,7 @@ public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFil
 			if (isNotBlank(rememberUrl)) {
 				bind(KEY_REMEMBER_URL, rememberUrl);
 			} else {
-				log.warn("Cannot get rememberURL on: {}", getFullRequestURL(toHttp(request)));
+				log.warn("Cannot get rememberURL via: {}", getFullRequestURL(toHttp(request)));
 			}
 		}
 

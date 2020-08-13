@@ -38,12 +38,7 @@ public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken i
 	/*
 	 * the user identifier
 	 */
-	private String userId;
-
-	/**
-	 * Authenticating host.
-	 */
-	private String host;
+	private String principal;
 
 	/*
 	 * is the user in a remember me mode ?
@@ -61,11 +56,11 @@ public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken i
 
 	@Override
 	public Object getPrincipal() {
-		return userId;
+		return principal;
 	}
 
 	public void setPrincipal(String principal) {
-		this.userId = principal;
+		this.principal = principal;
 	}
 
 	@NotBlank
@@ -76,15 +71,6 @@ public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken i
 
 	public void setCredentials(String credentials) {
 		this.ticket = credentials;
-	}
-
-	@Override
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
 	}
 
 	@Override

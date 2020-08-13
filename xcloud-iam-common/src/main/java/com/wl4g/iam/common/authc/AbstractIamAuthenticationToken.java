@@ -34,15 +34,15 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	private static final long serialVersionUID = 5483061935073949894L;
 
 	/**
-	 * Remote client host address
-	 */
-	final private String host;
-
-	/**
 	 * Client request extra parameters. (e.g.
 	 * _csrf=xxx&lang=zh_CN&umid=xxx&ua=xxx)
 	 */
 	final private Map<String, String> extraParameters = new HashMap<>();
+
+	/**
+	 * Remote client host address
+	 */
+	private String host;
 
 	public AbstractIamAuthenticationToken(String host) {
 		this.host = host;
@@ -51,6 +51,10 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	@Override
 	public String getHost() {
 		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	@Override

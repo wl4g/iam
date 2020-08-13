@@ -34,6 +34,8 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 	 * 
 	 * @return
 	 */
-	Map<String, String> getExtraParameters();
+	default Map<String, String> getExtraParameters() {
+		throw new UnsupportedOperationException();
+	}
 
 }
