@@ -19,11 +19,14 @@ import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.collection.Collections2.safeMap;
+import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.core.utils.AopUtils2.*;
 import static com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockFilter;
-import static com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserInfo;
+import static com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockFilter.MockFilterType;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.util.List;
@@ -42,17 +45,17 @@ import com.wl4g.iam.common.config.XsrfProperties;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
-import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockFilterType;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
 
 /**
- * {@link MockConfigurationInitializer}
+ * {@link AbstractMockConfigurationInitializer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-10
  * @sine v1.0.0
  * @see
  */
-public class MockConfigurationInitializer implements InitializingBean {
+public abstract class AbstractMockConfigurationInitializer implements InitializingBean {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -157,16 +160,35 @@ public class MockConfigurationInitializer implements InitializingBean {
 			}
 
 			// Mock user
-			MockUserInfo user = new MockUserInfo(principalId, principal, roles, permissions, porgan);
+			MockAuthcInfo user = new MockAuthcInfo(principalId, principal, roles, permissions, porgan);
 
 			// Mock filter
 			MockFilterType type = mock.getEnum(MockFilterType.class, "filter.type");
 			String value = mock.getString("filter.value");
 
+			// Check filter
+			checkFilterTypeAndValue(type, value);
+
 			// Register mock configuration
 			mockFactory.register(new MockFilter(type, value), user);
 		}
+	}
 
+	/**
+	 * Check filter type and value
+	 * 
+	 * @param type
+	 * @param value
+	 */
+	private void checkFilterTypeAndValue(MockFilterType type, String value) {
+		switch (type) {
+		case Ip:
+			hasText(value, "Ip-filter value '%s' is requires", value);
+			break;
+		default:
+			isTrue((isBlank(value) && value.contains("=")), "Invalid filter value of '%s', Missing expected '='", value);
+			break;
+		}
 	}
 
 	/** URI mapping any */

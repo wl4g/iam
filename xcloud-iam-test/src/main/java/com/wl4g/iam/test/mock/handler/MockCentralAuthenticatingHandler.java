@@ -34,9 +34,9 @@ import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
+import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
-import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserInfo;
-import com.wl4g.iam.test.mock.configure.MockConfigurationInitializer;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
 
 /**
  * Default mock central authenticating handler implements
@@ -71,9 +71,9 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		assertion.setValidFromTime(now);
 		assertion.setValidUntilTime(now + 7200_000);
 
-		// TODO
-		// Gets mock configuration
-		MockUserInfo mock = mockFactory.getUsers().get(null);
+		// Gets mock configuration by expected principal
+		String expPrincipal = param.getExtraParameters().get(MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_PRINCIPAL);
+		MockAuthcInfo mock = mockFactory.getMockAuthcInfo(expPrincipal);
 
 		// Principal info
 		SimplePrincipalInfo pinfo = new SimplePrincipalInfo(mock.getPrincipalId(), mock.getPrincipal(),

@@ -23,7 +23,6 @@ import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration
 import com.wl4g.iam.common.annotation.IamController;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
-import com.wl4g.iam.test.mock.configure.MockConfigurationInitializer;
 import com.wl4g.iam.test.mock.filter.MockAuthenticatingFilter;
 import com.wl4g.iam.test.mock.handler.MockCentralAuthenticatingHandler;
 import com.wl4g.iam.test.mock.web.MockCentralAuthenticatingEndpoint;
@@ -40,11 +39,6 @@ public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfig
 	@Bean
 	public MockConfigurationFactory mockConfigurationFactory() {
 		return new MockConfigurationFactory();
-	}
-
-	@Bean
-	public MockConfigurationInitializer mockConfigurationInitializer() {
-		return new MockConfigurationInitializer();
 	}
 
 	@Bean

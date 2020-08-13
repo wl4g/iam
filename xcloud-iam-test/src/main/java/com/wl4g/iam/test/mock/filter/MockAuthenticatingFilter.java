@@ -16,8 +16,9 @@
 package com.wl4g.iam.test.mock.filter;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_URI;
+import static java.util.Objects.nonNull;
 import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
-import static com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer.MOCK_AUTO_AUTHENTICATING_URI;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -28,6 +29,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,8 @@ import org.springframework.core.annotation.Order;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserCredentials;
 
 /**
  * {@link MockAuthenticatingFilter}
@@ -53,37 +56,43 @@ public class MockAuthenticatingFilter implements Filter {
 	@Autowired
 	protected IamClientProperties config;
 
+	/** {@link MockConfigurationFactory} */
 	@Autowired
-	protected MockAuthenticatingConfigurer mockIamConfigurer;
+	protected MockConfigurationFactory mockFactory;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
-		if (defaultExcludeUriMatcher.matchStart(MOCK_AUTO_AUTHENTICATING_URI, requestPath) || isInternalTicketRequest(request)) {
+		if (defaultExcludeUriMatcher.matchStart(MOCK_AUTO_AUTHC_URI, requestPath) || isInternalTicketRequest(request)) {
 			chain.doFilter(request, response);
 		} else {
 			log.debug("Attaching mock iam authenticating requires parameters...");
-			chain.doFilter(attachMockAuthenticationInfo(request), response);
+			chain.doFilter(attachMockAuthenticationInfo((HttpServletRequest) request), response);
 		}
 	}
 
 	/**
 	 * Attach mock iam authentication info to request.
 	 * 
-	 * @param req
+	 * @param request
 	 * @return
 	 * @see {@link com.wl4g.iam.common.mgt.IamSubjectFactory#getRequestAccessToken}
 	 * @see {@link com.wl4g.iam.common.session.mgt.AbstractIamSessionManager#getSessionId}
 	 */
-	private ServletRequest attachMockAuthenticationInfo(ServletRequest req) {
-		MockHttpRequestWrapper wrap = new MockHttpRequestWrapper(toHttp(req));
+	private ServletRequest attachMockAuthenticationInfo(HttpServletRequest request) {
+		// Matching mock credentials by configuration
+		MockUserCredentials cert = mockFactory.matchMockCredentials(request);
+		if (nonNull(cert)) {
+			MockHttpRequestWrapper wrap = new MockHttpRequestWrapper(toHttp(request));
+			// Attach mock credentials
+			wrap.putParameter(config.getParam().getAccessTokenName(), cert.getAuthzInfo().getAccessToken());
+			wrap.putParameter(config.getParam().getSid(), cert.getAuthzInfo().getSessionId());
+			return wrap;
+		}
 
-		// Attach mock query parameters.
-		wrap.putParameter(config.getParam().getAccessTokenName(), new String[] { mockIamConfigurer.getAccessToken() });
-		wrap.putParameter(config.getParam().getSid(), new String[] { mockIamConfigurer.getSessionId() });
-		return wrap;
+		return request;
 	}
 
 	/**

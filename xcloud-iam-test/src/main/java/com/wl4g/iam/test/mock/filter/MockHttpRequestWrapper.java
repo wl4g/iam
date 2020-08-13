@@ -75,7 +75,7 @@ public class MockHttpRequestWrapper extends HttpServletRequestWrapper {
 		return parameterMap;
 	}
 
-	public synchronized MockHttpRequestWrapper putParameter(String key, String[] values) {
+	public synchronized MockHttpRequestWrapper putParameter(String key, String... values) {
 		if (!isNull(key)) {
 			this.parameterMap.put(key, values);
 		}

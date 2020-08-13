@@ -15,27 +15,24 @@
  */
 package com.wl4g.iam.test.mock.configure;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isInstanceOf;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_SESSIONINFO_NAME;
 import static java.lang.String.valueOf;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.core.env.Environment;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.web.model.SessionInfo;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserCredentials;
 
 /**
  * {@link MockAuthenticatingConfigurer}
@@ -45,26 +42,28 @@ import com.wl4g.iam.common.web.model.SessionInfo;
  * @sine v1.0.0
  * @see
  */
-public class MockAuthenticatingConfigurer implements ApplicationListener<ApplicationReadyEvent>, InitializingBean {
+public class MockAuthenticatingConfigurer extends AbstractMockConfigurationInitializer
+		implements ApplicationListener<ApplicationReadyEvent> {
 
 	/** {@link IamClientProperties} */
 	@Autowired
 	protected IamClientProperties config;
 
-	/** {@link Environment} */
-	@Autowired
-	protected Environment environment;
-
 	/** {@link RestTemplate} */
 	protected RestTemplate restTemplate;
 
-	/**
-	 * Mock for IAM client authentication info cache.
-	 */
-	private final Map<String, MockAuthenticationInfo> authInfoCache = new ConcurrentHashMap<>(4);
+	/** Mock auto authenticating URI */
+	protected String mockAutoAuthcUri;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+
+		// Mock auto authenticating URI
+		String baseUri = "http://localhost:".concat(actx.getEnvironment().getRequiredProperty("server.port"))
+				.concat(actx.getEnvironment().getRequiredProperty("server.servlet.context-path"));
+		this.mockAutoAuthcUri = baseUri.concat(MOCK_AUTO_AUTHC_URI);
+
 		// Mock internal authenticating request(IamClient)
 		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
 		factory.setConnectTimeout(10_000);
@@ -74,74 +73,35 @@ public class MockAuthenticatingConfigurer implements ApplicationListener<Applica
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
-		initMockAuthenticationAll(null);
-	}
-
-	/**
-	 * Gets mock authentication info by userAgent
-	 * 
-	 * @param userAgent
-	 * @return
-	 */
-	public MockAuthenticationInfo getMockAuthenticationInfo(String userAgent) {
-		return authInfoCache.get(userAgent);
+		initMockAuthenticationUserAll();
 	}
 
 	/**
 	 * Initialization mock iam client authentication info
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void initMockAuthenticationAll(Set<String> userAgents) {
-		String baseUri = "http://localhost:".concat(environment.getRequiredProperty("server.port"))
-				.concat(environment.getRequiredProperty("server.servlet.context-path"));
-		String mockAutoAuthenticatingUri = baseUri.concat(MOCK_AUTO_AUTHENTICATING_URI);
+	private void initMockAuthenticationUserAll() {
 
-		RespBase<Map> resp = restTemplate.getForObject(URI.create(mockAutoAuthenticatingUri), RespBase.class);
-		String accessToken = valueOf(resp.getData().get(config.getParam().getAccessTokenName()));
+		// Init all mock user authz info
+		for (MockUserCredentials cert : mockFactory.getMockUserCredentials()) {
+			URI uri = URI.create(mockAutoAuthcUri + "?" + MOCK_AUTO_AUTHC_PRINCIPAL + "=" + cert.getAuthcInfo().getPrincipal());
+			RespBase<Map> resp = restTemplate.getForObject(uri, RespBase.class);
+			String accessToken = valueOf(resp.getData().get(config.getParam().getAccessTokenName()));
 
-		Object session = resp.getData().get(KEY_SESSIONINFO_NAME);
-		isInstanceOf(Map.class, session, "Shouldn't be here");
-		String sessionId = valueOf(((Map) session).get(SessionInfo.KEY_SESSION_VALUE));
+			Object session = resp.getData().get(KEY_SESSIONINFO_NAME);
+			isInstanceOf(Map.class, session, "Shouldn't be here");
+			String sessionId = valueOf(((Map) session).get(SessionInfo.KEY_SESSION_VALUE));
 
-		// Saving to cache
-		this.authInfoCache.put("", new MockAuthenticationInfo(accessToken, sessionId));
+			// Storage mock user authz info
+			cert.setAuthzInfo(new MockAuthzInfo(accessToken, sessionId));
+		}
+
 	}
 
 	/** Mock auto authenticating URI */
-	public static final String MOCK_AUTO_AUTHENTICATING_URI = "/mock-auto-authenticating";
+	public static final String MOCK_AUTO_AUTHC_URI = "/mock-auto-authenticating";
 
-	/**
-	 * {@link MockAuthenticationInfo}
-	 *
-	 * @since
-	 */
-	public static class MockAuthenticationInfo {
-
-		/**
-		 * Mock iam client authentication accessToken(credentials) info.
-		 */
-		private final String accessToken;
-
-		/**
-		 * Mock iam client authentication session info.
-		 */
-		private final String sessionId;
-
-		public MockAuthenticationInfo(String accessToken, String sessionId) {
-			hasTextOf(accessToken, "mockAccessToken");
-			hasTextOf(sessionId, "mockSessionId");
-			this.accessToken = accessToken;
-			this.sessionId = sessionId;
-		}
-
-		public String getAccessToken() {
-			return accessToken;
-		}
-
-		public String getSessionId() {
-			return sessionId;
-		}
-
-	}
+	/** Mock auto authenticating principal name. */
+	public static final String MOCK_AUTO_AUTHC_PRINCIPAL = "principal";
 
 }
