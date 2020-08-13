@@ -22,6 +22,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
@@ -62,7 +63,7 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		IamAuthenticationInfo info = doAuthenticationInfo(token);
+		IamAuthenticationInfo info = doAuthenticationInfo((IamAuthenticationToken) token);
 		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(info.getPrincipalInfo()));
 		return info;
 	}
@@ -74,6 +75,6 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	 * @return
 	 * @throws AuthenticationException
 	 */
-	protected abstract IamAuthenticationInfo doAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
+	protected abstract IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException;
 
 }

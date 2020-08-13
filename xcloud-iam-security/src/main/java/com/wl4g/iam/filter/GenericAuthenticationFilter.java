@@ -17,22 +17,26 @@ package com.wl4g.iam.filter;
 
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.iam.authc.GenericAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.collection.Collections2.safeMap;
+import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;
 import static com.wl4g.components.common.web.WebUtils2.rejectRequestMethod;
 import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.*;
-import static java.util.stream.Collectors.toMap;
 
+/**
+ * {@link GenericAuthenticationFilter}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2019-08-13
+ * @sine v1.0.0
+ * @see
+ */
 @IamFilter
 public class GenericAuthenticationFilter extends AbstractServerIamAuthenticationFilter<GenericAuthenticationToken> {
 	final public static String NAME = "generic";
@@ -54,10 +58,9 @@ public class GenericAuthenticationFilter extends AbstractServerIamAuthentication
 		// Additional optional parameters.
 		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherCredentials,
 				SecureAlgKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
+
 		// Extra custom parameters.
-		Map<String, String> userProperties = safeMap(request.getParameterMap()).entrySet().stream()
-				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));
-		token.setUserProperties(userProperties);
+		token.setExtraParameters(extractParamesOfFirst(request));
 
 		return token;
 	}

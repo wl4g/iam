@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.filter.IamAuthenticationFilter;
 
 /**

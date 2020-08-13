@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
  * This class represents a token for a CAS authentication (service ticket + user
@@ -27,7 +27,7 @@ import com.wl4g.iam.common.authc.IamAuthenticationToken;
  *
  * @since 1.2
  */
-public class FastCasAuthenticationToken implements RememberMeAuthenticationToken, IamAuthenticationToken {
+public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken implements RememberMeAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/*
@@ -55,8 +55,8 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	}
 
 	public FastCasAuthenticationToken(String ticket, String host) {
+		super(host);
 		this.ticket = ticket;
-		this.host = host;
 	}
 
 	@Override

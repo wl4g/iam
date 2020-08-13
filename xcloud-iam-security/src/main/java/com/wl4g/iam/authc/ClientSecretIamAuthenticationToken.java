@@ -16,14 +16,9 @@
 package com.wl4g.iam.authc;
 
 import static com.wl4g.components.common.lang.Assert2.*;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
@@ -34,7 +29,7 @@ import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
  * @date 2018年11月19日
  * @since
  */
-public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuthenticationToken {
+public abstract class ClientSecretIamAuthenticationToken extends ServerIamAuthenticationToken {
 
 	private static final long serialVersionUID = 5483061935073949894L;
 
@@ -54,15 +49,6 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	 * UMID token.
 	 */
 	final private String umidToken;
-
-	/**
-	 * Client user other attributes properties. (e.g.
-	 * _csrf_token=xxx&lang=zh_CN&umid=xxx&ua=xxx)
-	 * 
-	 * @see {@link com.wl4g.iam.config.properties.ServerParamProperties#getRequiredRiskControlParams()}
-	 * @see {@link com.wl4g.iam.config.properties.ServerParamProperties#getOptionalRiskControlParams()}
-	 */
-	private Map<String, String> userProperties = new HashMap<>();
 
 	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken) {
 		this(kind, clientSecretKey, umidToken, null);
@@ -94,17 +80,6 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 
 	public String getUmidToken() {
 		return umidToken;
-	}
-
-	public Map<String, String> getUserProperties() {
-		return userProperties;
-	}
-
-	public ClientSecretIamAuthenticationToken setUserProperties(Map<String, String> userAttributes) {
-		if (!isEmpty(userAttributes)) {
-			this.userProperties.putAll(userAttributes);
-		}
-		return this;
 	}
 
 }

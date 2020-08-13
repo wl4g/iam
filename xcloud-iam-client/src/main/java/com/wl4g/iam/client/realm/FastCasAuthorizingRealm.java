@@ -16,7 +16,6 @@
 package com.wl4g.iam.client.realm;
 
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -29,6 +28,7 @@ import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
@@ -89,7 +89,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected IamAuthenticationInfo doAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+	protected IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException {
 		String granticket = EMPTY;
 		try {
 			notNullOf(token, "authenticationToken");
@@ -99,7 +99,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidateResult<IamPrincipalInfo> validResult = doRequestRemoteTicketValidation(granticket);
+			TicketValidateResult<IamPrincipalInfo> validResult = doRequestRemoteTicketValidation(token, granticket);
 
 			// Grant ticket assertion .
 			assertTicketValidation(validResult);
@@ -176,10 +176,12 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	/**
 	 * Contact fast-CAS remote server to validate ticket.
 	 * 
-	 * @param ticket
+	 * @param token
+	 * @param granticket
 	 * @return
 	 */
-	private TicketValidateResult<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
+	private TicketValidateResult<IamPrincipalInfo> doRequestRemoteTicketValidation(IamAuthenticationToken token,
+			String granticket) {
 		/**
 		 * The purpose of this function is to make iam-server a new child,
 		 * dataCipherKey/accesstoken.
@@ -187,7 +189,8 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)
 		 */
 		String sessionId = valueOf(getSession(true).getId());
-		return ticketValidator.validate(new TicketValidateRequest(ticket, config.getServiceName(), sessionId));
+		return ticketValidator.validate(new TicketValidateRequest(granticket, config.getServiceName(), sessionId)
+				.withExtraParameters(token.getExtraParameters()));
 	}
 
 	/**

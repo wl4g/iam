@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.common.authc;
 
+import java.util.Map;
+
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -26,5 +28,12 @@ import org.apache.shiro.authc.HostAuthenticationToken;
  * @since
  */
 public interface IamAuthenticationToken extends HostAuthenticationToken {
+
+	/**
+	 * Gets extra request parameters.
+	 * 
+	 * @return
+	 */
+	Map<String, String> getExtraParameters();
 
 }

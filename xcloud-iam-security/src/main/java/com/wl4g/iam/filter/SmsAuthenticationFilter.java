@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.iam.authc.SmsAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.google.common.annotations.Beta;
 

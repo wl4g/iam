@@ -29,7 +29,7 @@ import com.wl4g.iam.test.mock.handler.MockCentralAuthenticatingHandler;
 import com.wl4g.iam.test.mock.web.MockCentralAuthenticatingEndpoint;
 
 /**
- * Embedded test IAM server auto configuration.
+ * IAM mock auto configuration.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-20
@@ -38,12 +38,12 @@ import com.wl4g.iam.test.mock.web.MockCentralAuthenticatingEndpoint;
 public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	public MockConfigurationFactory mockConfigFactory() {
+	public MockConfigurationFactory mockConfigurationFactory() {
 		return new MockConfigurationFactory();
 	}
 
 	@Bean
-	public MockConfigurationInitializer mockContextConfigurer() {
+	public MockConfigurationInitializer mockConfigurationInitializer() {
 		return new MockConfigurationInitializer();
 	}
 

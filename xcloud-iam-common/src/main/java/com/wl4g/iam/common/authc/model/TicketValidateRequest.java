@@ -93,4 +93,9 @@ public final class TicketValidateRequest extends BaseValidateModel {
 		}
 	}
 
+	public TicketValidateRequest withExtraParameters(Map<String, String> extraParameters) {
+		setExtraParameters(extraParameters);
+		return this;
+	}
+
 }

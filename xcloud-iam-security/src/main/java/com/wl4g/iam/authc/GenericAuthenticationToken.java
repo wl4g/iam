@@ -119,11 +119,4 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 		return verifyKind;
 	}
 
-	@Override
-	public String toString() {
-		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
-				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyKind
-				+ ", userProperties=" + getUserProperties() + "]";
-	}
-
 }
