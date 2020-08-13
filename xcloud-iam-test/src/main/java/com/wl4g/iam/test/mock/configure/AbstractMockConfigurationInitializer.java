@@ -186,7 +186,7 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 			hasText(value, "Ip-filter value '%s' is requires", value);
 			break;
 		default:
-			isTrue((isBlank(value) && value.contains("=")), "Invalid filter value of '%s', Missing expected '='", value);
+			isTrue((!isBlank(value) && value.contains("=")), "Invalid filter value of '%s', Missing expected '='", value);
 			break;
 		}
 	}
