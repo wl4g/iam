@@ -30,14 +30,14 @@ import org.springframework.util.Assert;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.components.core.web.BaseController.REDIRECT_PREFIX;
-import static com.wl4g.iam.common.authc.model.SecondAuthcAssertModel.Status.IllegalAuthorizer;
-import static com.wl4g.iam.common.authc.model.SecondAuthcAssertModel.Status.InvalidAuthorizer;
+import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status.IllegalAuthorizer;
+import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
 import com.wl4g.components.common.id.SimpleIdGenerator;
 import com.wl4g.components.common.web.WebUtils2;
 import com.wl4g.iam.common.authc.SecondaryAuthenticationException;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
@@ -133,7 +133,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 		IamPrincipalInfo account = configurer.getIamAccount(parameter);
 
 		// Second authentication assertion
-		SecondAuthcAssertModel model = new SecondAuthcAssertModel(sourceApp, provider,
+		SecondaryAuthcValidateResult model = new SecondaryAuthcValidateResult(sourceApp, provider,
 				connectParams.get(config.getParam().getFuncId()));
 		try {
 			// Assertion

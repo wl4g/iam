@@ -22,12 +22,12 @@ import org.apache.shiro.subject.Subject;
 
 import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
-import com.wl4g.iam.common.authc.model.LoggedModel;
-import com.wl4g.iam.common.authc.model.LogoutModel;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.LoggedinResult;
+import com.wl4g.iam.common.authc.model.LogoutResult;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**
@@ -74,7 +74,7 @@ public interface AuthenticatingHandler {
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	default TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
+	default TicketValidateResult<IamPrincipalInfo> validate(TicketValidateRequest model) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -87,7 +87,7 @@ public interface AuthenticatingHandler {
 	 *            Shiro subject
 	 * @return Redirect callback information
 	 */
-	default LoggedModel loggedin(String appName, Subject subject) {
+	default LoggedinResult loggedin(String appName, Subject subject) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -108,7 +108,7 @@ public interface AuthenticatingHandler {
 	 * @param response
 	 * @return
 	 */
-	default LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
+	default LogoutResult logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -121,7 +121,7 @@ public interface AuthenticatingHandler {
 	 *            from source application name
 	 * @return
 	 */
-	default SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName) {
+	default SecondaryAuthcValidateResult secondaryValidate(String secondAuthCode, String appName) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -131,7 +131,7 @@ public interface AuthenticatingHandler {
 	 * @param param
 	 * @return
 	 */
-	default SessionValidityAssertModel sessionValidate(SessionValidityAssertModel param) {
+	default SessionValidateResult sessionValidate(SessionValidateResult param) {
 		throw new UnsupportedOperationException();
 	}
 

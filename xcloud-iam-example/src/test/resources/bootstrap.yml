@@ -15,7 +15,7 @@
 spring: # Base configuration.
   application.name: iam-example
   profiles:
-    include: common,util,sample
+    include: common,util
     active: dev
   cloud: # Spring cloud configuration.
     devops:

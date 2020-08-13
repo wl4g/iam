@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.configure;
+package com.wl4g.iam.test.mock.configure;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isInstanceOf;
@@ -67,7 +67,7 @@ public class MockAuthenticatingConfigurer implements ApplicationListener<Applica
 	public void afterPropertiesSet() throws Exception {
 		// Mock internal authenticating request(IamClient)
 		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-		factory.setConnectTimeout(6_000);
+		factory.setConnectTimeout(10_000);
 		factory.setReadTimeout(30_000);
 		this.restTemplate = new RestTemplate(factory);
 	}

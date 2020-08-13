@@ -15,14 +15,21 @@
  */
 package com.wl4g.iam.common.authc.model;
 
-public final class LogoutModel extends BaseAssertModel {
+/**
+ * {@link LogoutResult}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-13
+ * @since
+ */
+public final class LogoutResult extends BaseValidateModel {
 	private static final long serialVersionUID = 1383145313778896117L;
 
-	public LogoutModel() {
+	public LogoutResult() {
 		super();
 	}
 
-	public LogoutModel(String application) {
+	public LogoutResult(String application) {
 		super(application);
 	}
 

@@ -19,24 +19,22 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration;
-import com.wl4g.iam.test.annotation.EnableIamMockAutoConfiguration.MockOrganization;
+import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 
 /**
- * {@link IamExampleTests}
+ * {@link IamExampleMockTests}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-10
  * @sine v1.0.0
  * @see
  */
-@EnableIamMockAutoConfiguration(principalId = "${iam.example.principalId}", principal = "${iam.example.principal}", roles = "administrator,${iam.example.roles}", permissions = "home,${iam.example.permissions}", organizations = {
-		@MockOrganization(type = "1", parent = "", name = "headquarters", areaId = "10001", organCode = "${iam.example.organization}") })
+@EnableIamMockAutoConfiguration
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class IamExampleTests {
+public class IamExampleMockTests {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamExampleTests.class, args);
+		SpringApplication.run(IamExampleMockTests.class, args);
 	}
 
 }

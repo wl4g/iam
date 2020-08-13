@@ -16,7 +16,7 @@
 package com.wl4g.iam.common.authc;
 
 import com.wl4g.components.core.exception.iam.UnauthenticatedException;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel.Status;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status;
 
 public class SecondaryAuthenticationException extends UnauthenticatedException {
 	static final long serialVersionUID = -7034833390745766939L;

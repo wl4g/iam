@@ -35,7 +35,7 @@ import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.model.LogoutModel;
+import com.wl4g.iam.common.authc.model.LogoutResult;
 import com.wl4g.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.iam.common.filter.IamAuthenticationFilter;
 
@@ -101,7 +101,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 		coprocessor.preLogout(token, toHttp(request), toHttp(response));
 
 		// Post to remote logout
-		LogoutModel logout = null;
+		LogoutResult logout = null;
 		try {
 			logout = doRequestRemoteLogout(token.isForced());
 		} catch (Exception e) {
@@ -152,15 +152,15 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 * @param forced
 	 * @return
 	 */
-	private LogoutModel doRequestRemoteLogout(boolean forced) {
+	private LogoutResult doRequestRemoteLogout(boolean forced) {
 		// Gets grantTicket
 		String grantTicket = getBindValue(SAVE_GRANT_TICKET);
 
 		// Post server logout URL by grantTicket
 		String url = buildRemoteLogoutUrl(grantTicket, forced);
 
-		RespBase<LogoutModel> resp = this.restTemplate
-				.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
+		RespBase<LogoutResult> resp = this.restTemplate
+				.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutResult>>() {
 				}).getBody();
 
 		if (!RespBase.isSuccess(resp)) {
@@ -175,7 +175,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 * @param logout
 	 * @return
 	 */
-	private boolean checkLogoutResult(LogoutModel logout) {
+	private boolean checkLogoutResult(LogoutResult logout) {
 		return (!isNull(logout) && config.getServiceName().equals(valueOf(logout.getApplication())));
 	}
 

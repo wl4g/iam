@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.iam.common.authc.model.LogoutModel;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.LogoutResult;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**
@@ -45,7 +45,7 @@ public interface AuthenticatingEndpoint {
 	 *            BindingResult
 	 * @return TicketAssertion result.
 	 */
-	default RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull TicketValidateModel param) {
+	default RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull TicketValidateRequest param) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -56,7 +56,7 @@ public interface AuthenticatingEndpoint {
 	 * @param response
 	 * @return
 	 */
-	default RespBase<LogoutModel> logout(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+	default RespBase<LogoutResult> logout(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -66,7 +66,7 @@ public interface AuthenticatingEndpoint {
 	 * @param request
 	 * @return
 	 */
-	default RespBase<SecondAuthcAssertModel> secondaryValidate(@NotNull HttpServletRequest request) {
+	default RespBase<SecondaryAuthcValidateResult> secondaryValidate(@NotNull HttpServletRequest request) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -76,7 +76,7 @@ public interface AuthenticatingEndpoint {
 	 * @param param
 	 * @return
 	 */
-	default RespBase<SessionValidityAssertModel> sessionValidate(@NotNull SessionValidityAssertModel param) {
+	default RespBase<SessionValidateResult> sessionValidate(@NotNull SessionValidateResult param) {
 		throw new UnsupportedOperationException();
 	}
 

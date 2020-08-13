@@ -16,7 +16,7 @@
 package com.wl4g.iam.handler;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.ApplicationInfo; 
+import com.wl4g.components.core.bean.iam.ApplicationInfo;
 import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
@@ -24,12 +24,12 @@ import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationTokenWrapper;
-import com.wl4g.iam.common.authc.model.LoggedModel;
-import com.wl4g.iam.common.authc.model.LogoutModel;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.LoggedinResult;
+import com.wl4g.iam.common.authc.model.LogoutResult;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.iam.common.session.IamSession;
@@ -58,7 +58,7 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.components.common.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
+import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status.ExpiredAuthorized;
 import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static java.lang.String.format;
@@ -126,31 +126,31 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 	}
 
 	@Override
-	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
-		TicketValidatedAssertModel<IamPrincipalInfo> assertion = new TicketValidatedAssertModel<>();
-		String grantAppname = model.getApplication();
-		hasTextOf(grantAppname, "grantAppname");
+	public TicketValidateResult<IamPrincipalInfo> validate(TicketValidateRequest param) {
+		TicketValidateResult<IamPrincipalInfo> assertion = new TicketValidateResult<>();
+		String grantAppName = param.getApplication();
+		hasTextOf(grantAppName, "grantAppName");
 
 		// Get subject session of grantCredentials info.
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
 		Subject subject = getSubject();
-		log.debug("Validating subject: {} by grantTicket: {}", subject, model.getTicket());
+		log.debug("Validating subject: {} by grantTicket: {}", subject, param.getTicket());
 
 		// Assertion grantCredentials info.
-		assertGrantingTicketValidity(subject, model);
+		assertGrantingTicketValidity(subject, param);
 
 		// Check access authorized from application.
-		assertApplicationAccessAuthorized((String) subject.getPrincipal(), grantAppname);
+		assertApplicationAccessAuthorized((String) subject.getPrincipal(), grantAppName);
 
 		// Force clearance of last grant Ticket
 		/*
 		 * Synchronize with
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate#loggedin
 		 */
-		cacheManager.getCache(CACHE_TICKET_S).remove(new CacheKey(model.getTicket()));
-		log.debug("Clean older grantTicket: {}", model.getTicket());
+		cacheManager.getCache(CACHE_TICKET_S).remove(new CacheKey(param.getTicket()));
+		log.debug("Clean older grantTicket: {}", param.getTicket());
 
 		// --- Grant attributes setup. ---
 
@@ -197,7 +197,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
 			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
-			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
+			childAccessTokenSignKey = generateAccessTokenSignKey(param.getSessionId(), accessTokenSignKey);
 			attrs.setAccessTokenSign(childAccessTokenSignKey);
 		}
 
@@ -211,13 +211,13 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 		// Put grant credentials info.
 		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey)
 				.setAccessTokenSignKey(childAccessTokenSignKey);
-		putGrantCredentials(getSession(false), grantAppname, grant);
+		putGrantCredentials(getSession(false), grantAppName, grant);
 
 		return assertion;
 	}
 
 	@Override
-	public LoggedModel loggedin(String grantAppname, Subject subject) {
+	public LoggedinResult loggedin(String grantAppname, Subject subject) {
 		hasTextOf(grantAppname, "grantAppname");
 
 		// Check authentication.
@@ -240,13 +240,13 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 			// Puts grantInfo session => applications
 			putGrantCredentials(session, grantAppname, new GrantApp().setGrantTicket(grantTicket));
 
-			return new LoggedModel(grantTicket);
+			return new LoggedinResult(grantTicket);
 		}
 		throw new AuthenticationException("Unauthenticated");
 	}
 
 	@Override
-	public LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
+	public LogoutResult logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
 		log.debug("Logout from: {}, forced: {}, sessionId: {}", appName, forced, getSessionId());
 		Subject subject = getSubject();
 
@@ -290,21 +290,21 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 			}
 		}
 
-		return isNotBlank(appName) ? new LogoutModel(appName) : new LogoutModel();
+		return isNotBlank(appName) ? new LogoutResult(appName) : new LogoutResult();
 	}
 
 	@Override
-	public SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName) {
-		CacheKey ekey = new CacheKey(secondAuthCode, SecondAuthcAssertModel.class);
+	public SecondaryAuthcValidateResult secondaryValidate(String secondAuthCode, String appName) {
+		CacheKey ekey = new CacheKey(secondAuthCode, SecondaryAuthcValidateResult.class);
 		try {
 			/*
 			 * Save authorized info to cache. See:
 			 * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
 			 */
-			SecondAuthcAssertModel assertion = (SecondAuthcAssertModel) cacheManager.getIamCache(SECOND_AUTHC_CACHE).get(ekey);
+			SecondaryAuthcValidateResult assertion = (SecondaryAuthcValidateResult) cacheManager.getIamCache(SECOND_AUTHC_CACHE).get(ekey);
 			// Check assertion expired
 			if (assertion == null) {
-				assertion = new SecondAuthcAssertModel(ExpiredAuthorized);
+				assertion = new SecondaryAuthcValidateResult(ExpiredAuthorized);
 				assertion.setErrdesc("Authorization expires, please re-authorize.");
 			}
 			return assertion;
@@ -315,7 +315,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 	}
 
 	@Override
-	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel model) {
+	public SessionValidateResult sessionValidate(SessionValidateResult model) {
 		hasTextOf(model.getApplication(), "grantAppname");
 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_SIZE);
@@ -343,7 +343,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 	 * @throws InvalidGrantTicketException
 	 * @see {@link com.wl4g.iam.handler.CentralAuthenticatingHandler#loggedin}
 	 */
-	private void assertGrantingTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
+	private void assertGrantingTicketValidity(Subject subject, TicketValidateRequest model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket: {}, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
 					getSessionId(subject));
@@ -394,8 +394,8 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 
 			// Post to remote client logout
 			try {
-				RespBase<LogoutModel> resp = restTemplate
-						.exchange(url, POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
+				RespBase<LogoutResult> resp = restTemplate
+						.exchange(url, POST, null, new ParameterizedTypeReference<RespBase<LogoutResult>>() {
 						}).getBody();
 				if (RespBase.isSuccess(resp))
 					log.info("Finished logout of principal: {}, appName: {}, url:{}", subject.getPrincipal(), app.getAppName(),

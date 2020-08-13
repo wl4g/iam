@@ -22,8 +22,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfoWrapper;
@@ -49,10 +49,10 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	/**
 	 * From the fast-CAS client is used to validate a service ticket on server
 	 */
-	final protected IamValidator<TicketValidateModel, TicketValidatedAssertModel<IamPrincipalInfo>> ticketValidator;
+	final protected IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> ticketValidator;
 
 	public AbstractClientAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidateModel, TicketValidatedAssertModel<IamPrincipalInfo>> ticketValidator) {
+			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> ticketValidator) {
 		this.config = config;
 		this.ticketValidator = ticketValidator;
 	}

@@ -15,37 +15,41 @@
  */
 package com.wl4g.iam.common.authc.model;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
-
-import org.springframework.util.Assert;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
 
-public class BaseAssertModel implements Serializable {
-	private static final long serialVersionUID = 151897009229689455L;
+/**
+ * Application grant ticket wrap
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年11月22日
+ * @since ServiceTicket
+ */
+public final class LoggedinResult {
 
+	/**
+	 * Temporary authorization code(Used for fast-CAS login successfully
+	 * returned to application), only single use of work is effective.
+	 */
 	@NotBlank
-	private String application;
+	private String grantTicket;
 
-	public BaseAssertModel() {
+	public LoggedinResult() {
 		super();
 	}
 
-	public BaseAssertModel(String application) {
-		setApplication(application);
+	public LoggedinResult(String grantTicket) {
+		this.setGrantTicket(grantTicket);
 	}
 
-	public String getApplication() {
-		return application;
+	public final String getGrantTicket() {
+		return grantTicket;
 	}
 
-	public void setApplication(String application) {
-		Assert.hasText(application, "Application name must not be empty.");
-		if (!"NULL".equalsIgnoreCase(application)) {
-			this.application = application;
-		}
+	public final void setGrantTicket(String serviceTicket) {
+		this.grantTicket = serviceTicket;
 	}
 
 	@Override

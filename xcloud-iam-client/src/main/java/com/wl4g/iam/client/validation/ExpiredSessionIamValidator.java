@@ -23,7 +23,7 @@ import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
 import com.wl4g.components.core.exception.iam.SessionValidateException;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 import static java.lang.String.format;
@@ -37,15 +37,15 @@ import static java.lang.String.format;
  * @since
  */
 public class ExpiredSessionIamValidator
-		extends AbstractBasedIamValidator<SessionValidityAssertModel, SessionValidityAssertModel> {
+		extends AbstractBasedIamValidator<SessionValidateResult, SessionValidateResult> {
 
 	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
 	@Override
-	public SessionValidityAssertModel validate(SessionValidityAssertModel request) throws SessionValidateException {
-		final RespBase<SessionValidityAssertModel> resp = doIamRemoteValidate(URI_S_SESSION_VALIDATE, request);
+	public SessionValidateResult validate(SessionValidateResult request) throws SessionValidateException {
+		final RespBase<SessionValidateResult> resp = doIamRemoteValidate(URI_S_SESSION_VALIDATE, request);
 		if (!RespBase.isSuccess(resp)) {
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(format("Remote validate error, %s", resp.getMessage()));
@@ -56,8 +56,8 @@ public class ExpiredSessionIamValidator
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<SessionValidityAssertModel>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<SessionValidityAssertModel>>() {
+	protected ParameterizedTypeReference<RespBase<SessionValidateResult>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<SessionValidateResult>>() {
 		};
 	}
 

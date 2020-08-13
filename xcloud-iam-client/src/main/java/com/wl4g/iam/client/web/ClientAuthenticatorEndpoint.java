@@ -30,7 +30,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.LogoutModel;
+import com.wl4g.iam.common.authc.model.LogoutResult;
 
 /**
  * IAM client authenticator controller
@@ -50,12 +50,12 @@ public class ClientAuthenticatorEndpoint extends BaseController {
 	 */
 	@PostMapping(URI_C_LOGOUT)
 	@ResponseBody
-	public RespBase<LogoutModel> logout(HttpServletRequest request) {
+	public RespBase<LogoutResult> logout(HttpServletRequest request) {
 		if (log.isInfoEnabled()) {
 			log.info("Logout processing... sessionId[{}]", getSessionId());
 		}
 
-		RespBase<LogoutModel> resp = new RespBase<>();
+		RespBase<LogoutResult> resp = new RespBase<>();
 		/*
 		 * Local client session logout
 		 */

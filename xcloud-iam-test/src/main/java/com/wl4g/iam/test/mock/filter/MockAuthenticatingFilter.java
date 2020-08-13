@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.filter;
+package com.wl4g.iam.test.mock.filter;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
+import static com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer.MOCK_AUTO_AUTHENTICATING_URI;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -35,8 +36,7 @@ import org.springframework.core.annotation.Order;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.test.configure.MockAuthenticatingConfigurer;
-import static com.wl4g.iam.test.configure.MockAuthenticatingConfigurer.MOCK_AUTO_AUTHENTICATING_URI;
+import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 
 /**
  * {@link MockAuthenticatingFilter}

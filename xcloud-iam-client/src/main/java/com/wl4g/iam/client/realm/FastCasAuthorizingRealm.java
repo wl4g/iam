@@ -29,8 +29,8 @@ import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
 
@@ -75,7 +75,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 	public FastCasAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidateModel, TicketValidatedAssertModel<IamPrincipalInfo>> validator) {
+			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> validator) {
 		super(config, validator);
 		super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
 	}
@@ -99,23 +99,23 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidatedAssertModel<IamPrincipalInfo> validated = doRequestRemoteTicketValidation(granticket);
+			TicketValidateResult<IamPrincipalInfo> validResult = doRequestRemoteTicketValidation(granticket);
 
 			// Grant ticket assertion .
-			assertTicketValidation(validated);
+			assertTicketValidation(validResult);
 
 			/**
 			 * {@link JedisIamSessionDAO#update()} </br>
 			 * Update session expire date time.
 			 */
-			long validUntilTime = validated.getValidUntilTime();
+			long validUntilTime = validResult.getValidUntilTime();
 			long maxIdleTimeMs = validUntilTime - currentTimeMillis();
 			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
 					validUntilTime, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
 			// Currenly authentication principal info.
-			IamPrincipalInfo info = validated.getPrincipalInfo();
+			IamPrincipalInfo info = validResult.getPrincipalInfo();
 			Attributes attrs = info.attributes();
 
 			// Save common attributes
@@ -126,7 +126,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			ftk.setCredentials(newGrantTicket);
 
 			// Merge add attributes
-			String principal = validated.getPrincipalInfo().getPrincipal();
+			String principal = validResult.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
 			ftk.setRememberMe(attrs.getRememberMe());
 			ftk.setHost(attrs.getClientHost());
@@ -179,7 +179,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param ticket
 	 * @return
 	 */
-	private TicketValidatedAssertModel<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
+	private TicketValidateResult<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
 		/**
 		 * The purpose of this function is to make iam-server a new child,
 		 * dataCipherKey/accesstoken.
@@ -187,7 +187,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)
 		 */
 		String sessionId = valueOf(getSession(true).getId());
-		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName(), sessionId));
+		return ticketValidator.validate(new TicketValidateRequest(ticket, config.getServiceName(), sessionId));
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param assertion
 	 * @throws TicketValidateException
 	 */
-	private void assertTicketValidation(TicketValidatedAssertModel<IamPrincipalInfo> assertion) throws TicketValidateException {
+	private void assertTicketValidation(TicketValidateResult<IamPrincipalInfo> assertion) throws TicketValidateException {
 		if (isNull(assertion)) {
 			throw new TicketValidateException("ticket assertion must not be null");
 		}

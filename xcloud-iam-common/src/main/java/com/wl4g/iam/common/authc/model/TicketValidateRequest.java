@@ -15,11 +15,23 @@
  */
 package com.wl4g.iam.common.authc.model;
 
+import static java.util.Objects.nonNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.constraints.NotBlank;
 
 import com.wl4g.components.common.lang.StringUtils2;
 
-public final class TicketValidateModel extends BaseAssertModel {
+/**
+ * {@link TicketValidateRequest}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-13
+ * @since
+ */
+public final class TicketValidateRequest extends BaseValidateModel {
 	private static final long serialVersionUID = 1383145313778896117L;
 
 	/**
@@ -29,16 +41,21 @@ public final class TicketValidateModel extends BaseAssertModel {
 	private String ticket;
 
 	/**
-	 * Currently sessionId.
+	 * Currently validating IAM client sessionId.
 	 */
 	@NotBlank
 	private String sessionId;
 
-	public TicketValidateModel() {
+	/**
+	 * Currently validating additional extra parameters.
+	 */
+	private Map<String, String> extraParameters = new HashMap<>();
+
+	public TicketValidateRequest() {
 		super();
 	}
 
-	public TicketValidateModel(String ticket, String application, String sessionId) {
+	public TicketValidateRequest(String ticket, String application, String sessionId) {
 		super(application);
 		setTicket(ticket);
 		setSessionId(sessionId);
@@ -48,7 +65,7 @@ public final class TicketValidateModel extends BaseAssertModel {
 		return ticket;
 	}
 
-	public final TicketValidateModel setTicket(String ticket) {
+	public final TicketValidateRequest setTicket(String ticket) {
 		if (!StringUtils2.isEmpty(ticket) && !"NULL".equalsIgnoreCase(ticket)) {
 			this.ticket = ticket;
 		}
@@ -59,11 +76,21 @@ public final class TicketValidateModel extends BaseAssertModel {
 		return sessionId;
 	}
 
-	public final TicketValidateModel setSessionId(String sessionId) {
+	public final TicketValidateRequest setSessionId(String sessionId) {
 		if (!StringUtils2.isEmpty(sessionId) && !"NULL".equalsIgnoreCase(sessionId)) {
 			this.sessionId = sessionId;
 		}
 		return this;
+	}
+
+	public Map<String, String> getExtraParameters() {
+		return extraParameters;
+	}
+
+	public void setExtraParameters(Map<String, String> extraParameters) {
+		if (nonNull(extraParameters)) {
+			this.extraParameters = extraParameters;
+		}
 	}
 
 }

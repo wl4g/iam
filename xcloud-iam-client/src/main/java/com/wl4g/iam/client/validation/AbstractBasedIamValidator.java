@@ -36,7 +36,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.model.BaseAssertModel;
+import com.wl4g.iam.common.authc.model.BaseValidateModel;
 
 /**
  * Abstract validator implementation for tickets that must be validated against
@@ -47,7 +47,7 @@ import com.wl4g.iam.common.authc.model.BaseAssertModel;
  * @date 2018年11月19日
  * @since
  */
-public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> implements IamValidator<R, A> {
+public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> implements IamValidator<R, A> {
 
 	final protected SmartLogger log = getLogger(getClass());
 

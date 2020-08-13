@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.web;
+package com.wl4g.iam.test.mock.web;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
@@ -63,10 +63,10 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
+	public RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateRequest param) {
 		log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
+		RespBase<TicketValidateResult<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
@@ -77,10 +77,10 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<SecondAuthcAssertModel> secondaryValidate(HttpServletRequest request) {
+	public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
 		log.debug("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
 
-		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
+		RespBase<SecondaryAuthcValidateResult> resp = new RespBase<>();
 		// Requires parameters
 		String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
 		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
@@ -94,10 +94,10 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
+	public RespBase<SessionValidateResult> sessionValidate(@NotNull @RequestBody SessionValidateResult param) {
 		log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
+		RespBase<SessionValidateResult> resp = new RespBase<>();
 
 		// Session expires validate assertion.
 		resp.setData(authHandler.sessionValidate(param));

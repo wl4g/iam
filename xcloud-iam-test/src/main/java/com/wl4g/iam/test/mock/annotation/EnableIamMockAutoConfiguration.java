@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.annotation;
+package com.wl4g.iam.test.mock.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 import com.wl4g.iam.client.annotation.EnableIamClient;
-import com.wl4g.iam.test.config.MockIamAutoConfiguration;
+import com.wl4g.iam.test.mock.config.MockIamAutoConfiguration;
 
 /**
  * It is used for convenient mock debugging in the development phase. Note: it
@@ -42,84 +42,13 @@ import com.wl4g.iam.test.config.MockIamAutoConfiguration;
 public @interface EnableIamMockAutoConfiguration {
 
 	/**
-	 * Mock authentication principal name.
+	 * Mock sample configuration location, default: application-mock.conf
 	 * 
 	 * @return
 	 */
-	String principal();
+	String location() default DEFAULT_MOCK_CONF_LOCATION;
 
-	/**
-	 * Mock authentication principal ID.
-	 * 
-	 * @return
-	 */
-	String principalId();
-
-	/**
-	 * Mock authentication principal roles.
-	 * 
-	 * @return
-	 */
-	String roles() default "";
-
-	/**
-	 * Mock authentication principal permissions.
-	 * 
-	 * @return
-	 */
-	String permissions() default "";
-
-	/**
-	 * Mock authentication principal organizations.
-	 * 
-	 * @return
-	 */
-	MockOrganization[] organizations() default {};
-
-	/**
-	 * {@link MockOrganization}
-	 * 
-	 * @see
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ ElementType.TYPE, ElementType.METHOD })
-	@Documented
-	public @interface MockOrganization {
-
-		/**
-		 * Mock authentication principal organization code.
-		 * 
-		 * @return
-		 */
-		String organCode();
-
-		/**
-		 * Mock authentication principal organization parent code.
-		 * 
-		 * @return
-		 */
-		String parent();
-
-		/**
-		 * Mock authentication principal organization type.
-		 * 
-		 * @return
-		 */
-		String type();
-
-		/**
-		 * Mock authentication principal organization name.
-		 * 
-		 * @return
-		 */
-		String name();
-
-		/**
-		 * Mock authentication principal areaId of organization.
-		 * 
-		 * @return
-		 */
-		String areaId();
-	}
+	/** Defalt IAM mock configuration location */
+	public static final String DEFAULT_MOCK_CONF_LOCATION = "application-mock.conf";
 
 }
