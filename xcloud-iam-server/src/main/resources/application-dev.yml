@@ -58,6 +58,8 @@ spring:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/qq/callback
+        session:
+          global-session-timeout: 43200_000
   # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
