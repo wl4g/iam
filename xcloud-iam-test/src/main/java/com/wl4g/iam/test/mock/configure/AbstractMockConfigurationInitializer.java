@@ -26,6 +26,7 @@ import static com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockFilt
 import static com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockFilter.MockFilterType;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
@@ -36,13 +37,16 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import static org.springframework.http.HttpMethod.*;
 
 import com.typesafe.config.Config;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.typesafe.HoconConfigUtils;
 import com.wl4g.iam.client.config.IamClientProperties;
+import com.wl4g.iam.common.config.CorsProperties;
 import com.wl4g.iam.common.config.ReplayProperties;
 import com.wl4g.iam.common.config.XsrfProperties;
+import com.wl4g.iam.common.config.CorsProperties.CorsRule;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
@@ -72,6 +76,10 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	@Autowired(required = false)
 	protected IamClientProperties coreConfig;
 
+	/** {@link CorsProperties} */
+	@Autowired(required = false)
+	protected CorsProperties corsConfig;
+
 	/** {@link ReplayProperties} */
 	@Autowired(required = false)
 	protected ReplayProperties replayConfig;
@@ -96,19 +104,25 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		applyDefaultMockContextProperties();
+		applyDefaultMockProperties();
 		loadMockConfiguration();
 	}
 
 	/**
 	 * Apply sets mock context service properties.
 	 */
-	private void applyDefaultMockContextProperties() {
+	private void applyDefaultMockProperties() {
 		// IAM server configuration
 		if (nonNull(coreConfig)) {
 			String thatPort = actx.getEnvironment().getRequiredProperty("server.port");
 			String thatCtxPath = actx.getEnvironment().getRequiredProperty("server.servlet.context-path");
 			coreConfig.setServerUri("http://localhost:".concat(thatPort).concat("/").concat(thatCtxPath));
+		}
+
+		// IAM cors configuration
+		if (nonNull(corsConfig)) {
+			corsConfig.getRules().put(URI_PATTERN_ALL, new CorsRule().addAllowsOrigins(RESOURCE_ALL).setAllowCredentials(true)
+					.addAllowsHeaders(RESOURCE_ALL).addAllowsMethods(METHOD_ALL));
 		}
 
 		// IAM replay configuration
@@ -212,5 +226,10 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 
 	/** URI mapping any */
 	public static final String URI_PATTERN_ALL = "/**";
+	/** Resource any */
+	public static final String RESOURCE_ALL = "*";
+	/** Http method any */
+	public static final String[] METHOD_ALL = { GET.name(), POST.name(), HEAD.name(), OPTIONS.name(), PUT.name(), DELETE.name(),
+			TRACE.name() };
 
 }
