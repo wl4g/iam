@@ -121,8 +121,14 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 
 		// IAM cors configuration
 		if (nonNull(corsConfig)) {
-			corsConfig.getRules().put(URI_PATTERN_ALL, new CorsRule().addAllowsOrigins(RESOURCE_ALL).setAllowCredentials(true)
-					.addAllowsHeaders(RESOURCE_ALL).addAllowsMethods(METHOD_ALL));
+			corsConfig.getRules().getOrDefault(URI_PATTERN_ALL, new CorsRule()).addAllowsOrigins(RESOURCE_ALL)
+					.setAllowCredentials(true).addAllowsHeaders(RESOURCE_ALL).addAllowsMethods(METHOD_ALL);
+			/**
+			 * Flush cors configuration </br>
+			 * 
+			 * @see {@link CorsAutoConfiguration#corsSecurityFilter(CorsProperties,IamCorsProcessor)}
+			 **/
+			corsConfig.getRules().values().forEach(r -> r.resolveIamCorsConfiguration());
 		}
 
 		// IAM replay configuration
