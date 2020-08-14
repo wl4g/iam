@@ -18,7 +18,6 @@ package com.wl4g.iam.authc;
 import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
  * Abstract SNS Oauth2 authentication token<br/>
@@ -31,7 +30,7 @@ import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
  * @date 2018年11月19日
  * @since
  */
-public abstract class Oauth2SnsAuthenticationToken extends AbstractIamAuthenticationToken {
+public abstract class Oauth2SnsAuthenticationToken extends ServerIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/**

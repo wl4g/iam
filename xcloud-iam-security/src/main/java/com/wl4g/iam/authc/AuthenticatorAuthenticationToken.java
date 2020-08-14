@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.authc;
+package com.wl4g.iam.authc;
 
 /**
  * Authenticator authentication token
@@ -23,7 +23,7 @@ package com.wl4g.iam.common.authc;
  * @date 2018年11月19日
  * @since
  */
-public class AuthenticatorAuthenticationToken extends AbstractIamAuthenticationToken {
+public class AuthenticatorAuthenticationToken extends ServerIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/**

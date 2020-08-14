@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.LogoutModel;
-import com.wl4g.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.iam.common.authc.model.SessionValidityAssertModel;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.LogoutResult;
+import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.web.AuthenticatingEndpoint;
 
@@ -57,10 +57,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
+	public RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateRequest param) {
 		log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
+		RespBase<TicketValidateResult<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
@@ -71,10 +71,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
 	@PostMapping(URI_S_LOGOUT)
 	@ResponseBody
 	@Override
-	public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<LogoutResult> logout(HttpServletRequest request, HttpServletResponse response) {
 		log.info("Logout <= {}", getFullRequestURL(request));
 
-		RespBase<LogoutModel> resp = new RespBase<>();
+		RespBase<LogoutResult> resp = new RespBase<>();
 		// Logout source application
 		String appName = getCleanParam(request, config.getParam().getApplication());
 		// hasTextOf(fromAppName, config.getParam().getApplication());
@@ -90,10 +90,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<SecondAuthcAssertModel> secondaryValidate(HttpServletRequest request) {
+	public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
 		log.info("Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
 
-		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
+		RespBase<SecondaryAuthcValidateResult> resp = new RespBase<>();
 		// Requires parameters
 		String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
 		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
@@ -107,10 +107,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
+	public RespBase<SessionValidateResult> sessionValidate(@NotNull @RequestBody SessionValidateResult param) {
 		log.info("Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
+		RespBase<SessionValidateResult> resp = new RespBase<>();
 
 		// Session expires validate assertion.
 		resp.setData(authHandler.sessionValidate(param));

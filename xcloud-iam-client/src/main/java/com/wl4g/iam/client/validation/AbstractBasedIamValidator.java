@@ -31,12 +31,13 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
+import static java.lang.String.format;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.model.BaseAssertModel;
+import com.wl4g.iam.common.authc.model.BaseValidateModel;
 
 /**
  * Abstract validator implementation for tickets that must be validated against
@@ -47,7 +48,7 @@ import com.wl4g.iam.common.authc.model.BaseAssertModel;
  * @date 2018年11月19日
  * @since
  */
-public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> implements IamValidator<R, A> {
+public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> implements IamValidator<R, A> {
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -104,7 +105,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 
 		// Append parameters to URL
 		url.append(BeanMapConvert.toUriParmaters(params));
-		log.info("Validating to URL: {}", url);
+		log.info("Validating to : {}", url);
 
 		// Add headers
 		@SuppressWarnings("deprecation")
@@ -119,10 +120,11 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		RespBase<A> resp = null;
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
-			log.info("Validated retrieved: {}", resp);
+			log.info("Validate retrieved: {}", resp);
 		} catch (Throwable ex) {
-			throw new RestClientException(String.format("Failed to validate via URL: %s", url), ex);
+			throw new RestClientException(format("Failed to validate from : %s", url), ex);
 		}
+
 		return resp;
 	}
 

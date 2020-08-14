@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.authc.model;
+package com.wl4g;
 
-public final class LogoutModel extends BaseAssertModel {
-	private static final long serialVersionUID = 1383145313778896117L;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-	public LogoutModel() {
-		super();
-	}
+import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 
-	public LogoutModel(String application) {
-		super(application);
+@EnableIamMockAutoConfiguration
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+public class IamExampleMockTests {
+
+	public static void main(String[] args) {
+		SpringApplication.run(IamExampleMockTests.class, args);
 	}
 
 }

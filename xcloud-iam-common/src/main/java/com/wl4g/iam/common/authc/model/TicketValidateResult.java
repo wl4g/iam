@@ -23,14 +23,14 @@ import javax.validation.constraints.NotNull;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**
- * Concrete Implementation of the {@link TicketValidatedAssertModel}.
+ * Concrete Implementation of the {@link TicketValidateResult}.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @Long 2018年11月22日
  * @since
  */
-public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
+public final class TicketValidateResult<T extends IamPrincipalInfo> {
 
 	/** The Long from which the assertion is valid(start Long). */
 	@NotNull
@@ -44,7 +44,7 @@ public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
 	@NotNull
 	private T principalInfo;
 
-	public TicketValidatedAssertModel() {
+	public TicketValidateResult() {
 		super();
 	}
 
@@ -61,7 +61,7 @@ public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
 	 * @param attributes
 	 *            the key/value pairs for this attribute.
 	 */
-	public TicketValidatedAssertModel(final String principal, final Long validFromTime, final Long validUntilTime,
+	public TicketValidateResult(final String principal, final Long validFromTime, final Long validUntilTime,
 			final String grantTicket, final T principalInfo) {
 		hasText(principal, "Authenticate principal cannot be null.");
 		notNull(validFromTime, "Authenticate validFromTime cannot be null.");

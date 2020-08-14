@@ -15,43 +15,43 @@
  */
 package com.wl4g.iam.common.authc.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.Assert;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
 
 /**
- * Session validation assertion.
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @Long 2018年11月22日
+ * {@link BaseValidateModel}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-13
  * @since
  */
-public final class SessionValidityAssertModel extends BaseAssertModel {
-	private static final long serialVersionUID = 5483716885382988025L;
+public class BaseValidateModel implements Serializable {
+	private static final long serialVersionUID = 151897009229689455L;
 
-	@NotEmpty
-	private List<String> tickets = new ArrayList<>();
+	@NotBlank
+	private String application;
 
-	public SessionValidityAssertModel() {
+	public BaseValidateModel() {
+		super();
 	}
 
-	public SessionValidityAssertModel(String application) {
-		super(application);
+	public BaseValidateModel(String application) {
+		setApplication(application);
 	}
 
-	public List<String> getTickets() {
-		return tickets;
+	public String getApplication() {
+		return application;
 	}
 
-	public void setTickets(List<String> tickets) {
-		if (!CollectionUtils.isEmpty(tickets)) {
-			this.tickets.addAll(tickets);
+	public void setApplication(String application) {
+		Assert.hasText(application, "Application name must not be empty.");
+		if (!"NULL".equalsIgnoreCase(application)) {
+			this.application = application;
 		}
 	}
 

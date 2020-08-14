@@ -43,6 +43,7 @@ import static com.wl4g.components.common.web.WebUtils2.isSameWildcardOrigin;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -180,11 +181,10 @@ public class CorsProperties implements InitializingBean, Serializable {
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
 
-		//
 		// --- Temporary fields. ---
-		//
 
-		private transient IamCorsValidator cors;
+		// Convert to cors configuration.
+		private transient IamCorsValidator cors = new IamCorsValidator();
 
 		public CorsRule() {
 			super();
@@ -294,22 +294,36 @@ public class CorsProperties implements InitializingBean, Serializable {
 		 * @return
 		 */
 		public IamCorsValidator resolveIamCorsConfiguration() {
-			// Convert to spring CORS configuration.
-			if (isNull(cors)) {
-				// Merge values elements.
-				mergeWithWildcard(getAllowsOrigins());
-				mergeWithWildcard(getAllowsHeaders());
-				mergeWithWildcard(getAllowsMethods());
-				mergeWithWildcard(getExposedHeaders());
-				// Convert to cors configuration.
-				cors = new IamCorsValidator();
-				cors.setAllowCredentials(isAllowCredentials());
-				cors.setMaxAge(getMaxAge());
-				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-				getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-				getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-				getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			// Merge values elements.
+			mergeWithWildcard(getAllowsOrigins());
+			mergeWithWildcard(getAllowsHeaders());
+			mergeWithWildcard(getAllowsMethods());
+			mergeWithWildcard(getExposedHeaders());
+
+			// Reset config.
+			if (nonNull(cors.getAllowedOrigins())) {
+				cors.getAllowedOrigins().clear();
 			}
+			if (nonNull(cors.getAllowedHeaders())) {
+				cors.getAllowedHeaders().clear();
+			}
+			if (nonNull(cors.getAllowedMethods())) {
+				cors.getAllowedMethods().clear();
+			}
+			if (nonNull(cors.getExposedHeaders())) {
+				cors.getExposedHeaders().clear();
+			}
+
+			// Convert to spring CORS configuration.
+			cors.setAllowCredentials(isAllowCredentials());
+			cors.setMaxAge(getMaxAge());
+
+			// New add configuration
+			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+
 			return cors;
 		}
 

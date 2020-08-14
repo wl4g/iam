@@ -16,7 +16,7 @@
 package com.wl4g.iam.client.validation;
 
 import com.wl4g.components.core.exception.iam.ValidateException;
-import com.wl4g.iam.common.authc.model.BaseAssertModel;
+import com.wl4g.iam.common.authc.model.BaseValidateModel;
 
 /**
  * IAM validator.
@@ -27,7 +27,7 @@ import com.wl4g.iam.common.authc.model.BaseAssertModel;
  * @param <R>
  * @param <A>
  */
-public interface IamValidator<R extends BaseAssertModel, A> {
+public interface IamValidator<R extends BaseValidateModel, A> {
 
 	/**
 	 * Do execute validation

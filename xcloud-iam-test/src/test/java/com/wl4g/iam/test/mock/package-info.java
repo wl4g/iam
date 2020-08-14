@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.authc;
-
-import java.util.Map;
-
-import org.apache.shiro.authc.HostAuthenticationToken;
-
 /**
- * IAM authentication token
+ * {@link package-info} 
  *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月19日
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-08-13
  * @since
  */
-public interface IamAuthenticationToken extends HostAuthenticationToken {
-
-	/**
-	 * Gets extra request parameters.
-	 * 
-	 * @return
-	 */
-	default Map<String, String> getExtraParameters() {
-		throw new UnsupportedOperationException();
-	}
-
-}
+package com.wl4g.iam.test.mock;

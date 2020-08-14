@@ -31,10 +31,10 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.iam.authc.AuthenticatorAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 
 /**
  * IAM client authenticator authorization filter.</br>

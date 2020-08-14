@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.iam.authc.RootAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 
 /**
  * Root path authentication routing filter.<br/>

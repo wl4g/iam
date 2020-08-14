@@ -16,6 +16,7 @@
 package com.wl4g.iam.client.filter;
 
 import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;
 import static com.wl4g.components.common.web.WebUtils2.getAvaliableRequestRememberUrl;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.components.common.web.WebUtils2.isXHRRequest;
@@ -82,7 +83,9 @@ public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFil
 	protected FastCasAuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
-		return new FastCasAuthenticationToken(ticket);
+		FastCasAuthenticationToken token = new FastCasAuthenticationToken(ticket);
+		token.withExtraParameters(extractParamesOfFirst(request));
+		return token;
 	}
 
 	@Override
@@ -98,7 +101,7 @@ public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFil
 			if (isNotBlank(rememberUrl)) {
 				bind(KEY_REMEMBER_URL, rememberUrl);
 			} else {
-				log.warn("Can't get remember via requestURL: {}", getFullRequestURL(toHttp(request)));
+				log.warn("Cannot get rememberURL via: {}", getFullRequestURL(toHttp(request)));
 			}
 		}
 

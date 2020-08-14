@@ -13,64 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.authc;
+package com.wl4g.iam.authc;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+
+import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
- * IAM abstract authentication token
+ * IAM abstract server authentication token
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
  */
-public abstract class AbstractIamAuthenticationToken implements IamAuthenticationToken {
+public abstract class ServerIamAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	private static final long serialVersionUID = 5483061935073949894L;
 
 	/**
-	 * Client request extra parameters. (e.g.
-	 * _csrf=xxx&lang=zh_CN&umid=xxx&ua=xxx)
+	 * Success redirection info.
 	 */
-	final private Map<String, String> extraParameters = new HashMap<>();
+	final private RedirectInfo redirectInfo;
 
-	/**
-	 * Remote client host address
-	 */
-	private String host;
-
-	public AbstractIamAuthenticationToken(String host) {
-		this.host = host;
+	public ServerIamAuthenticationToken() {
+		this(null);
 	}
 
-	@Override
-	public String getHost() {
-		return host;
+	public ServerIamAuthenticationToken(final String remoteHost) {
+		this(remoteHost, null);
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	public ServerIamAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		super(remoteHost);
+		hasTextOf(remoteHost, "remoteHost");
+		notNullOf(redirectInfo, "redirectInfo");
+		this.redirectInfo = redirectInfo;
 	}
 
-	@Override
-	public Map<String, String> getExtraParameters() {
-		return extraParameters;
-	}
-
-	public void setExtraParameters(Map<String, String> extraParameters) {
-		if (!isEmpty(extraParameters)) {
-			this.extraParameters.putAll(extraParameters);
-		}
-	}
-
-	public AbstractIamAuthenticationToken withExtraParameters(Map<String, String> extraParameters) {
-		setExtraParameters(extraParameters);
-		return this;
+	public RedirectInfo getRedirectInfo() {
+		return redirectInfo;
 	}
 
 	/**

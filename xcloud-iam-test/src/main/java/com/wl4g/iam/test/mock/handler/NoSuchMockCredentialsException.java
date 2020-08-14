@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.authc;
+package com.wl4g.iam.test.mock.handler;
 
-import com.wl4g.components.core.exception.iam.UnauthenticatedException;
-import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status;
+import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
 
-public class SecondaryAuthenticationException extends UnauthenticatedException {
+/**
+ * {@link NoSuchMockCredentialsException}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019-08-14
+ * @since
+ */
+public class NoSuchMockCredentialsException extends InvalidGrantTicketException {
 	static final long serialVersionUID = -7034833390745766939L;
-
-	private Status status;
 
 	/**
 	 * Constructs a new runtime exception with {@code null} as its detail
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public SecondaryAuthenticationException() {
+	public NoSuchMockCredentialsException() {
 		super();
 	}
 
@@ -41,13 +45,8 @@ public class SecondaryAuthenticationException extends UnauthenticatedException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public SecondaryAuthenticationException(String message) {
+	public NoSuchMockCredentialsException(String message) {
 		super(message);
-	}
-
-	public SecondaryAuthenticationException(Status status, String message) {
-		super(message);
-		this.setStatus(status);
 	}
 
 	/**
@@ -67,7 +66,7 @@ public class SecondaryAuthenticationException extends UnauthenticatedException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public SecondaryAuthenticationException(String message, Throwable cause) {
+	public NoSuchMockCredentialsException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -85,16 +84,7 @@ public class SecondaryAuthenticationException extends UnauthenticatedException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public SecondaryAuthenticationException(Throwable cause) {
+	public NoSuchMockCredentialsException(Throwable cause) {
 		super(cause);
 	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
 }

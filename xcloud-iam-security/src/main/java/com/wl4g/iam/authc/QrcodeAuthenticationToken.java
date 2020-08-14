@@ -15,8 +15,6 @@
  */
 package com.wl4g.iam.authc;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
-
 /**
  * Qrcode authentication token
  *
@@ -25,7 +23,7 @@ import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
  * @date 2018年11月19日
  * @since
  */
-public class QrcodeAuthenticationToken extends AbstractIamAuthenticationToken {
+public class QrcodeAuthenticationToken extends ServerIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	@Override

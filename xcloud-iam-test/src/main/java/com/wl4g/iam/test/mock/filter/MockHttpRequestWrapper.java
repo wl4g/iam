@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.filter;
+package com.wl4g.iam.test.mock.filter;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static java.util.Arrays.asList;
@@ -75,7 +75,7 @@ public class MockHttpRequestWrapper extends HttpServletRequestWrapper {
 		return parameterMap;
 	}
 
-	public synchronized MockHttpRequestWrapper putParameter(String key, String[] values) {
+	public synchronized MockHttpRequestWrapper putParameter(String key, String... values) {
 		if (!isNull(key)) {
 			this.parameterMap.put(key, values);
 		}

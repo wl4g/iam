@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
  * This class represents a token for a CAS authentication (service ticket + user
@@ -27,7 +27,7 @@ import com.wl4g.iam.common.authc.IamAuthenticationToken;
  *
  * @since 1.2
  */
-public class FastCasAuthenticationToken implements RememberMeAuthenticationToken, IamAuthenticationToken {
+public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken implements RememberMeAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/*
@@ -38,12 +38,7 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	/*
 	 * the user identifier
 	 */
-	private String userId;
-
-	/**
-	 * Authenticating host.
-	 */
-	private String host;
+	private String principal;
 
 	/*
 	 * is the user in a remember me mode ?
@@ -55,17 +50,17 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	}
 
 	public FastCasAuthenticationToken(String ticket, String host) {
+		super(host);
 		this.ticket = ticket;
-		this.host = host;
 	}
 
 	@Override
 	public Object getPrincipal() {
-		return userId;
+		return principal;
 	}
 
 	public void setPrincipal(String principal) {
-		this.userId = principal;
+		this.principal = principal;
 	}
 
 	@NotBlank
@@ -76,15 +71,6 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 
 	public void setCredentials(String credentials) {
 		this.ticket = credentials;
-	}
-
-	@Override
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
 	}
 
 	@Override

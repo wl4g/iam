@@ -30,7 +30,7 @@ import com.wl4g.components.common.serialize.JacksonUtils;
  * @Long 2018年11月22日
  * @since
  */
-public final class SecondAuthcAssertModel implements Serializable {
+public final class SecondaryAuthcValidateResult implements Serializable {
 
 	private static final long serialVersionUID = 5483716885382988025L;
 
@@ -65,20 +65,20 @@ public final class SecondAuthcAssertModel implements Serializable {
 	 */
 	private String errdesc = "Second authenticated";
 
-	public SecondAuthcAssertModel() {
+	public SecondaryAuthcValidateResult() {
 		super();
 	}
 
-	public SecondAuthcAssertModel(Status status) {
+	public SecondaryAuthcValidateResult(Status status) {
 		super();
 		this.status = status;
 	}
 
-	public SecondAuthcAssertModel(String application, String provider, String functionId) {
+	public SecondaryAuthcValidateResult(String application, String provider, String functionId) {
 		this(application, provider, null, functionId, null);
 	}
 
-	public SecondAuthcAssertModel(String application, String provider, String principal, String functionId, Date validFromDate) {
+	public SecondaryAuthcValidateResult(String application, String provider, String principal, String functionId, Date validFromDate) {
 		this.application = application;
 		this.provider = provider;
 		this.principal = principal;

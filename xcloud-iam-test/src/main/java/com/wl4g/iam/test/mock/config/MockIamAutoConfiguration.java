@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.test.config;
+package com.wl4g.iam.test.mock.config;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 
@@ -21,20 +21,25 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.test.configure.MockAuthenticatingConfigurer;
-import com.wl4g.iam.test.configure.MockContextConfigureInitializer;
-import com.wl4g.iam.test.filter.MockAuthenticatingFilter;
-import com.wl4g.iam.test.handler.MockCentralAuthenticatingHandler;
-import com.wl4g.iam.test.web.MockCentralAuthenticatingEndpoint;
+import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
+import com.wl4g.iam.test.mock.filter.MockAuthenticatingFilter;
+import com.wl4g.iam.test.mock.handler.MockCentralAuthenticatingHandler;
+import com.wl4g.iam.test.mock.web.MockCentralAuthenticatingEndpoint;
 
 /**
- * Embedded test IAM server auto configuration.
+ * IAM mock auto configuration.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-20
  * @since
  */
 public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+
+	@Bean
+	public MockConfigurationFactory mockConfigurationFactory() {
+		return new MockConfigurationFactory();
+	}
 
 	@Bean
 	public MockAuthenticatingConfigurer mockAuthenticatingConfigurer() {
@@ -44,11 +49,6 @@ public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfig
 	@Bean
 	public MockAuthenticatingFilter mockAuthenticatingFilter() {
 		return new MockAuthenticatingFilter();
-	}
-
-	@Bean
-	public MockContextConfigureInitializer mockApplicationConfigurar() {
-		return new MockContextConfigureInitializer();
 	}
 
 	@Bean

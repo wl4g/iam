@@ -24,11 +24,12 @@ import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
 import com.wl4g.components.core.exception.iam.TicketValidateException;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.iam.common.authc.model.TicketValidateRequest;
+import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;
+import static java.util.Objects.nonNull;
 
 import java.util.Map;
 
@@ -41,20 +42,20 @@ import java.util.Map;
  * @since
  */
 public class FastCasTicketIamValidator
-		extends AbstractBasedIamValidator<TicketValidateModel, TicketValidatedAssertModel<SimplePrincipalInfo>> {
+		extends AbstractBasedIamValidator<TicketValidateRequest, TicketValidateResult<SimplePrincipalInfo>> {
 
 	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
 	@Override
-	protected void postQueryParameterSet(TicketValidateModel req, Map<String, Object> queryParams) {
+	protected void postQueryParameterSet(TicketValidateRequest req, Map<String, Object> queryParams) {
 		queryParams.put(config.getParam().getGrantTicket(), req.getTicket());
 	}
 
 	@Override
-	public TicketValidatedAssertModel<SimplePrincipalInfo> validate(TicketValidateModel req) throws TicketValidateException {
-		final RespBase<TicketValidatedAssertModel<SimplePrincipalInfo>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
+	public TicketValidateResult<SimplePrincipalInfo> validate(TicketValidateRequest req) throws TicketValidateException {
+		final RespBase<TicketValidateResult<SimplePrincipalInfo>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the
@@ -65,14 +66,14 @@ public class FastCasTicketIamValidator
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
 				throw new IllegalApplicationAccessException(resp.getMessage());
 			}
-			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
+			throw new TicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
 		}
 		return resp.getData();
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<TicketValidatedAssertModel<SimplePrincipalInfo>>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<TicketValidatedAssertModel<SimplePrincipalInfo>>>() {
+	protected ParameterizedTypeReference<RespBase<TicketValidateResult<SimplePrincipalInfo>>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<TicketValidateResult<SimplePrincipalInfo>>>() {
 		};
 	}
 

@@ -42,11 +42,11 @@ import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.components.core.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken;
+import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
@@ -191,7 +191,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 
 	@Override
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-		AbstractIamAuthenticationToken tk = (AbstractIamAuthenticationToken) token;
+		ServerIamAuthenticationToken tk = (ServerIamAuthenticationToken) token;
 		IamAuthenticationInfo info0 = (IamAuthenticationInfo) info;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
