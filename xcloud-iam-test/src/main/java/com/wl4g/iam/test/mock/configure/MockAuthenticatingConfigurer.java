@@ -83,8 +83,8 @@ public class MockAuthenticatingConfigurer extends AbstractMockConfigurationIniti
 	private void initMockAuthenticationUserAll() {
 
 		// Init all mock user authz info
-		for (MockUserCredentials cert : mockFactory.getMockUserCredentials()) {
-			URI uri = URI.create(mockAutoAuthcUri + "?" + MOCK_AUTO_AUTHC_PRINCIPAL + "=" + cert.getAuthcInfo().getPrincipal());
+		for (MockUserCredentials cred : mockFactory.getMockUserCredentials()) {
+			URI uri = URI.create(mockAutoAuthcUri + "?" + MOCK_AUTO_AUTHC_PRINCIPAL + "=" + cred.getAuthcInfo().getPrincipal());
 			RespBase<Map> resp = restTemplate.getForObject(uri, RespBase.class);
 			String accessToken = valueOf(resp.getData().get(config.getParam().getAccessTokenName()));
 
@@ -93,7 +93,7 @@ public class MockAuthenticatingConfigurer extends AbstractMockConfigurationIniti
 			String sessionId = valueOf(((Map) session).get(SessionInfo.KEY_SESSION_VALUE));
 
 			// Storage mock user authz info
-			cert.setAuthzInfo(new MockAuthzInfo(accessToken, sessionId));
+			cred.setAuthzInfo(new MockAuthzInfo(accessToken, sessionId));
 		}
 
 	}

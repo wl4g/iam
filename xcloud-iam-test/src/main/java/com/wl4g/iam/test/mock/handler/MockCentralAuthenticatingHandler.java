@@ -16,6 +16,7 @@
 package com.wl4g.iam.test.mock.handler;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 
@@ -66,14 +67,15 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		String grantAppname = param.getApplication();
 		hasTextOf(grantAppname, "grantAppname");
 
-		// Grant attributes
+		// Grants attributes
 		long now = currentTimeMillis();
 		assertion.setValidFromTime(now);
 		assertion.setValidUntilTime(now + 7200_000);
 
 		// Gets mock configuration by expected principal
-		String expPrincipal = param.getExtraParameters().get(MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_PRINCIPAL);
-		MockAuthcInfo mock = mockFactory.getMockAuthcInfo(expPrincipal);
+		String principal = param.getExtraParameters().get(MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_PRINCIPAL);
+		MockAuthcInfo mock = mockFactory.getMockAuthcInfo(principal);
+		notNull(mock, NoSuchMockCredentialsException.class, "No mock credentials were found for '%s'", principal);
 
 		// Principal info
 		SimplePrincipalInfo pinfo = new SimplePrincipalInfo(mock.getPrincipalId(), mock.getPrincipal(),

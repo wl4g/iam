@@ -29,6 +29,7 @@ import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;
+import static java.util.Objects.nonNull;
 
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class FastCasTicketIamValidator
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
 				throw new IllegalApplicationAccessException(resp.getMessage());
 			}
-			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
+			throw new TicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
 		}
 		return resp.getData();
 	}

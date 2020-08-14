@@ -29,6 +29,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +79,20 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	/** {@link XsrfProperties} */
 	@Autowired(required = false)
 	protected XsrfProperties xsrfConfig;
+
+	/** Mock configuration URL. */
+	protected URL configURL;
+
+	/** Mock enable debug. */
+	protected boolean enableVerbose;
+
+	public final URL getConfigURL() {
+		return configURL;
+	}
+
+	public final boolean isEnableVerbose() {
+		return enableVerbose;
+	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -139,6 +154,10 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	@SuppressWarnings("unchecked")
 	private void parseMockConfiguration(String location) {
 		Config config = HoconConfigUtils.loadConfig(location);
+		// e.g: for throw print
+		this.configURL = config.origin().url();
+		// Enable verbose logs print
+		this.enableVerbose = config.getBoolean("iam.enable-log-verbose");
 
 		List<Config> mocks = (List<Config>) config.getConfigList("iam.mocks");
 		for (Config mock : mocks) {
