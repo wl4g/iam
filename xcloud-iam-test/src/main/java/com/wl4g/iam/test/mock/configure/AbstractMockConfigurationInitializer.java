@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import static org.springframework.http.HttpMethod.*;
 
+import com.google.common.net.InetAddresses;
 import com.typesafe.config.Config;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.typesafe.HoconConfigUtils;
@@ -222,7 +223,8 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	private void checkFilterTypeAndValue(MockFilterType type, String value) {
 		switch (type) {
 		case Ip:
-			hasText(value, "Ip-filter value '%s' is requires", value);
+			hasText(value, "Ip filter value '%s' is requires", value);
+			InetAddresses.forString(value); // Check IpString
 			break;
 		default:
 			isTrue((!isBlank(value) && value.contains("=")), "Invalid filter value of '%s', Missing expected '='", value);

@@ -1,18 +1,21 @@
 package com.wl4g.iam.test.mock.configure;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf; 
 import static com.wl4g.components.common.lang.Assert2.isNullOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.split;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static com.google.common.net.InetAddresses.isInetAddress;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
@@ -28,7 +31,7 @@ public class MockConfigurationFactory {
 	/**
 	 * Mock for IAM client authentication userinfo.
 	 */
-	private final Map<MockFilter, MockUserCredentials> credentialsCache = new ConcurrentHashMap<>(4);
+	private final Map<MockFilter, MockUserCredentials> credentialsCache = new LinkedHashMap<>(4);
 
 	/**
 	 * Gets mock user info by principal
@@ -188,7 +191,19 @@ public class MockConfigurationFactory {
 		 * @since
 		 */
 		public static enum MockFilterType {
-			Ip((request, nameValue) -> StringUtils.equals(getHttpRemoteAddr(request), nameValue)),
+			Ip((request, nameValue) -> {
+				String clientAddr = getHttpRemoteAddr(request);
+				// If the proxy is obtained from the request header, it may not
+				// be the IP format string.
+				if (!isInetAddress(clientAddr)) { // not Ip?
+					try {
+						clientAddr = InetAddress.getByName(clientAddr).getHostAddress();
+					} catch (UnknownHostException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+				return StringUtils.equals(clientAddr, nameValue);
+			}),
 
 			Query((request, nameValue) -> {
 				String[] parts = split(nameValue, "=");
