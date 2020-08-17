@@ -174,7 +174,7 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	 */
 	@SuppressWarnings("unchecked")
 	private void parseMockConfiguration(String location) {
-		Config config = HoconConfigUtils.loadConfig(location);
+		Config config = HoconConfigUtils.loadConfig(location).resolve();
 		// e.g: for throw print
 		this.configURL = config.origin().url();
 		// Enable verbose logs print
