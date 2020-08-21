@@ -92,18 +92,23 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 * @return
 	 */
 	public static String getRequestOrganizationCode() {
-		String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
-		organCode = new String(Base58.decodeBase58(organCode), UTF_8);
+		try {
+			String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
+			organCode = new String(Base58.decodeBase58(organCode), UTF_8);
 
-		if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
-			List<OrganizationInfo> organs = getSessionOrganizations();
-			List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
+			if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
+				List<OrganizationInfo> organs = getSessionOrganizations();
+				List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
 
-			notEmptyOf(parentOrgans, "organizationCode");
-			return parentOrgans.get(0).getOrganizationCode();
-		} else {
-			return organCode;
+				notEmptyOf(parentOrgans, "organizationCode");
+				return parentOrgans.get(0).getOrganizationCode();
+			} else {
+				return organCode;
+			}
+		}catch (Exception e){
+
 		}
+		return null;
 	}
 
 	/**
