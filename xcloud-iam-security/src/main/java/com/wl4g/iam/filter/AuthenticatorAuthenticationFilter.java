@@ -62,11 +62,17 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
 		}
 
-		/*
+		/**
 		 * If it is an authenticated state, execute the success logic directly,
-		 * Exclude default success pages to prevent unlimited redirects.
+		 * Exclude default success pages to prevent unlimited redirects. </br>
+		 * </br>
+		 * However, it should be noted that there are conflicts, such as when
+		 * the success URI is http://xx/iam-server/view/index.html In the end,
+		 * return true allows the request to cause 404
 		 */
-		if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(), request, response)) {
+		// if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(),
+		// request, response)) {
+		if (subject.isAuthenticated()) {
 			try {
 				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
@@ -74,8 +80,8 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			}
 		}
 
-		// Pass processing
-		return super.isAccessAllowed(request, response, mappedValue);
+		// If not authenticated, it should be treated as failure.
+		return false;
 	}
 
 	@Override
