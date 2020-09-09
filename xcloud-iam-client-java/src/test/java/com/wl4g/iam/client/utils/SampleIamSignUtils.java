@@ -46,7 +46,7 @@ public class SampleIamSignUtils {
 	 * @throws NoSuchAlgorithmException
 	 * @throws Exception
 	 */
-	public static String generateSign(String appId, String appSecret, String nonce, long timestamp)
+	public static byte[] generateSign(String appId, String appSecret, String nonce, long timestamp)
 			throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		// Join token parts
 		StringBuffer signtext = new StringBuffer();
@@ -60,7 +60,7 @@ public class SampleIamSignUtils {
 		Arrays.sort(signInput);
 
 		// Signature.
-		return getSha256(new String(signInput, "UTF-8"));
+		return getSha256(signInput);
 	}
 
 	/**
@@ -84,15 +84,15 @@ public class SampleIamSignUtils {
 	/**
 	 * Digesting string with sha256
 	 * 
-	 * @param str
+	 * @param input
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static String getSha256(String str) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+	public static byte[] getSha256(byte[] input) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-		messageDigest.update(str.getBytes("UTF-8"));
-		return byte2Hex(messageDigest.digest());
+		messageDigest.update(input);
+		return messageDigest.digest();
 	}
 
 	/**
@@ -115,19 +115,21 @@ public class SampleIamSignUtils {
 		return stringBuffer.toString();
 	}
 
-	public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+	public static void main(String[] args) throws Exception {
 		String appId = "oi554a94bc416e4edd9ff963ed0e9e25e6c10545";
 		String appSecret = "5aUpyX5X7wzC8iLgFNJuxqj3xJdNQw8yS";
 		String nonce = genRandomString(16);
-		long now = currentTimeMillis();
+		long timestamp = currentTimeMillis();
 
-		String signature = generateSign(appId, appSecret, nonce, now);
+		byte[] sign = generateSign(appId, appSecret, nonce, timestamp);
+		String signature = byte2Hex(sign);
 
 		out.println("New IAM openapi sign info: ");
-		out.println(format("appId=%s", appId));
-		out.println(format("nonce=%s", nonce));
-		out.println(format("timestamp=%s", now));
+		out.println(format("appId=%s&", appId));
+		out.println(format("nonce=%s&", nonce));
+		out.println(format("timestamp=%s&", timestamp));
 		out.println(format("signature=%s", signature));
+
 	}
 
 }
