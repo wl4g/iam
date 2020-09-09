@@ -13,10 +13,12 @@
 	</parent>
 	<modules>
 		<module>xcloud-iam-client</module>
+		<!-- <module>xcloud-iam-client-java</module> -->
+		<!-- <module>xcloud-iam-client-springboot</module> -->
+		<module>xcloud-iam-client-example</module>
 		<module>xcloud-iam-captcha</module>
 		<module>xcloud-iam-common</module>
 		<module>xcloud-iam-core</module>
-		<module>xcloud-iam-example</module>
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-server</module>
 		<module>xcloud-iam-test</module>

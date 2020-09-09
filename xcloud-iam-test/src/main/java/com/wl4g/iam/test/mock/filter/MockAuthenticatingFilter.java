@@ -47,6 +47,7 @@ import org.springframework.core.annotation.Order;
 import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.SESSION_STATUS_UNAUTHC;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
+import static com.wl4g.components.common.web.rest.RespBase.RetCode.UNAUTHC;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
@@ -91,7 +92,7 @@ public class MockAuthenticatingFilter implements Filter {
 			} catch (NoSuchMockCredentialsException e) { // Resp error
 				log.error("", e);
 				RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
-				writeJson(toHttp(response), resp.setCode(4001).setThrowable(e).asJson());
+				writeJson(toHttp(response), resp.withCode(UNAUTHC).withThrowable(e).asJson());
 			}
 		}
 	}

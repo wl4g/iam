@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.common.web.rest.RespBase.RetCode;
+import static com.wl4g.components.common.web.rest.RespBase.RetCode.OK;
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
@@ -113,8 +113,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		// Response type
 		if (isJSONResp(request)) {
 			RespBase<String> resp = RespBase.create();
-			resp.setCode(RetCode.OK).setStatus(DEFAULT_AUTHC_READY_STATUS)
-					.setMessage("Obtain the SNS authorization code is ready.");
+			resp.withCode(OK).withStatus(DEFAULT_AUTHC_READY_STATUS).setMessage("Obtain the SNS authorization code is ready.");
 			writeJson(response, toJSONString(resp));
 		} else {
 			// Some handler have carried the 'redirect:' prefix
@@ -180,7 +179,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 			issueRedirect(request, response, safeDecodeURL(ret.getRefreshUrl()), null, false);
 		} else {
 			RespBase<String> resp = RespBase.create(DEFAULT_SECOND_AUTHC_STATUS);
-			resp.setCode(RetCode.OK).setMessage("Second authenticate successfully.");
+			resp.withCode(OK).withMessage("Second authenticate successfully.");
 			// resp.setData(singletonMap(config.getParam().getRefreshUrl(),
 			// redirectRefreshUrl));
 			writeJson(response, toJSONString(resp));

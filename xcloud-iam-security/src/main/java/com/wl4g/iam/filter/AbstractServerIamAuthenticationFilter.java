@@ -430,7 +430,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
-		resp.setCode(OK).setMessage("Authentication successful");
+		resp.withCode(OK).withMessage("Authentication successful");
 		resp.forMap().putAll(fullParams);
 		return resp;
 	}
@@ -454,7 +454,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
 		// Make message
 		RespBase<String> resp = RespBase.create(sessionStatus());
-		resp.setCode(UNAUTHC).setMessage(errmsg);
+		resp.withCode(UNAUTHC).withMessage(errmsg);
 		resp.forMap().putAll(params);
 		resp.forMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);

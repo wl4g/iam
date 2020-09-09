@@ -416,7 +416,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 
 		// Make successful message
 		RespBase<String> resp = RespBase.create(sessionStatus());
-		resp.setCode(OK).setMessage("Authentication successful");
+		resp.withCode(OK).withMessage("Authentication successful");
 		resp.forMap().put(config.getParam().getRedirectUrl(), redirectUri);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
@@ -457,7 +457,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 
 		// Make failed message
 		RespBase<Object> resp = RespBase.create(sessionStatus());
-		resp.setCode(UNAUTHC).setMessage(errmsg);
+		resp.withCode(UNAUTHC).withMessage(errmsg);
 		resp.forMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
