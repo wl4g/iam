@@ -44,7 +44,8 @@ import org.springframework.core.env.Environment;
 
 import static org.springframework.util.ReflectionUtils.*;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.iam.common.annotation.IamController;
@@ -60,7 +61,7 @@ import com.wl4g.iam.common.crypto.Des3IamCipherService;
 import com.wl4g.iam.common.crypto.IamCipherService;
 import com.wl4g.iam.common.crypto.IamCipherService.CipherCryptKind;
 import com.wl4g.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.common.security.domain.HstsSecurityFilter;
@@ -80,7 +81,7 @@ import com.wl4g.iam.common.web.servlet.IamCookie;
  * @version v1.0 2018年12月23日
  * @since
  */
-public abstract class AbstractIamConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSupport {
 
 	// ==============================
 	// Locale i18n configuration.
@@ -94,8 +95,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	 */
 	@Bean(BEAN_DELEGATE_MSG_SOURCE)
 	@ConditionalOnMissingBean
-	public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
-		return new SessionDelegateMessageBundle(AbstractIamConfiguration.class);
+	public SessionResourceMessageBundler sessionDelegateMessageBundle() {
+		return new SessionResourceMessageBundler(AbstractIamConfiguration.class);
 	}
 
 	// ==============================

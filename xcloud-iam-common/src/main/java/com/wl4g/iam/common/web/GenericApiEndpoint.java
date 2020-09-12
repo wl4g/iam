@@ -22,7 +22,7 @@ import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.common.cache.IamCache;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.config.AbstractIamProperties;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.iam.common.web.model.SessionAttributeModel;
@@ -73,7 +73,7 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 	 * Session delegate message source bundle.
 	 */
 	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	/**
 	 * IAM session DAO.

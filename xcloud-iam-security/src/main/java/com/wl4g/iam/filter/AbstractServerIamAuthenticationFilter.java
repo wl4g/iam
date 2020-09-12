@@ -46,7 +46,7 @@ import com.wl4g.components.core.exception.iam.AccessRejectedException;
 import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.components.core.exception.iam.IllegalRequestException;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.web.error.SmartGlobalErrorController;
+import com.wl4g.components.core.web.error.ServletSmartErrorController;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
@@ -273,7 +273,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		Throwable exroot = getRootCause(ae);
 		String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
 		String tip = format("Failed to authentication of token: %s", token);
-		if (SmartGlobalErrorController.checkStackTrace(request)) {
+		if (ServletSmartErrorController.checkStackTrace(request)) {
 			log.error(tip, ae);
 		} else {
 			log.error("{}, caused by: {}", tip, errmsg);

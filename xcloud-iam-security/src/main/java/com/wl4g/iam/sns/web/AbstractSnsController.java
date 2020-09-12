@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import org.springframework.util.Assert;
 
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.sns.handler.DelegateSnsHandler;
@@ -83,7 +83,7 @@ public abstract class AbstractSnsController extends BaseController {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	public AbstractSnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {
 		Assert.notNull(delegate, "'delegateSnsHandlerFactory' must not be null");

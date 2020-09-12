@@ -47,7 +47,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.iam.common.web.servlet.IamCookie;
@@ -84,7 +84,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	/**
 	 * XSRF token repository. (If necessary)

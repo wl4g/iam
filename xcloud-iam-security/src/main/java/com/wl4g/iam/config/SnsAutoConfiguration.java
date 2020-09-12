@@ -24,6 +24,7 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SNS_BA
 
 import java.util.List;
 
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.iam.common.config.AbstractIamConfiguration;

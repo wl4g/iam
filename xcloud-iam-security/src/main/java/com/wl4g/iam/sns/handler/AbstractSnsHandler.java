@@ -53,7 +53,7 @@ import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
@@ -107,7 +107,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer configurer) {

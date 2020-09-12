@@ -19,7 +19,8 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_API_V1
 
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.common.annotation.IamApiV1Controller;
 
 /**
@@ -29,7 +30,7 @@ import com.wl4g.iam.common.annotation.IamApiV1Controller;
  * @version v1.0 2019年1月8日
  * @since
  */
-public abstract class GenericApiAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public abstract class GenericApiAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {

@@ -20,8 +20,9 @@ import static com.wl4g.iam.config.properties.IamProperties.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.components.core.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.web.JssdkWebappsEndpoint;
 
 /**
@@ -31,7 +32,7 @@ import com.wl4g.iam.web.JssdkWebappsEndpoint;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public class JssdkWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class JssdkWebappsAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public JssdkWebappsEndpoint jssdkWebappsEndpoint() {

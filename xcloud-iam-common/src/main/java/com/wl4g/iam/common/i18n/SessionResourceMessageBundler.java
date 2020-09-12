@@ -21,7 +21,7 @@ import static com.wl4g.iam.common.utils.IamSecurityHolder.getBindValue;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.wl4g.components.core.i18n.AbstractDelegateMessageBundle;
+import com.wl4g.components.core.i18n.AbstractResourceMessageBundler;
 
 /**
  * Session delegate resource bundle message source.
@@ -30,17 +30,17 @@ import com.wl4g.components.core.i18n.AbstractDelegateMessageBundle;
  * @version v1.0 2019年3月24日
  * @since
  */
-public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle {
+public class SessionResourceMessageBundler extends AbstractResourceMessageBundler {
 
-	public SessionDelegateMessageBundle() {
+	public SessionResourceMessageBundler() {
 		super();
 	}
 
-	public SessionDelegateMessageBundle(Class<?> withClassPath) {
+	public SessionResourceMessageBundler(Class<?> withClassPath) {
 		super(withClassPath);
 	}
 
-	public SessionDelegateMessageBundle(String... basenames) {
+	public SessionResourceMessageBundler(String... basenames) {
 		super(basenames);
 	}
 

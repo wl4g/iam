@@ -46,7 +46,7 @@ import com.wl4g.components.common.codec.Base58;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.exception.iam.VerificationException;
 import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
@@ -97,7 +97,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	/**
 	 * Validation

@@ -43,7 +43,7 @@ import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.crypto.SecureCryptService;
@@ -86,7 +86,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * I18n message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	/**
 	 * Iam delegate credentials securer. (Extension: optional)

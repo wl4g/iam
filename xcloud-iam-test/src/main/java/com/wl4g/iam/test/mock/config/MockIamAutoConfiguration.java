@@ -19,7 +19,8 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.common.annotation.IamController;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
@@ -34,7 +35,7 @@ import com.wl4g.iam.test.mock.web.MockCentralAuthenticatingEndpoint;
  * @version v1.0 2020-07-20
  * @since
  */
-public class MockIamAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class MockIamAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public MockConfigurationFactory mockConfigurationFactory() {

@@ -29,7 +29,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -79,7 +79,7 @@ public abstract class AbstractAuthenticatingHandler implements AuthenticatingHan
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	/**
 	 * Distributed locks.

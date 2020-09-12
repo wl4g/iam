@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import javax.servlet.http.HttpServletRequest;
 
 import com.wl4g.components.core.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
-import com.wl4g.components.core.web.embedded.GenericEmbeddedWebappsEndpoint;
+import com.wl4g.components.core.web.embed.GenericEmbeddedWebappsEndpoint;
 
 /**
  * Jssdk embedded webapps endpoint.

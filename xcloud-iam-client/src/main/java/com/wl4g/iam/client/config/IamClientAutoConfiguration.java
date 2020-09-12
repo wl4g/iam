@@ -26,6 +26,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.core.kit.access.IPAccessControl;
 import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
 import com.wl4g.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;

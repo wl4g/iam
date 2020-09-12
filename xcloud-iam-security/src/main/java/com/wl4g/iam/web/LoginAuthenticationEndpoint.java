@@ -244,7 +244,7 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 
 	/**
 	 * Apply international locale.</br>
-	 * See:{@link com.wl4g.iam.common.i18n.SessionDelegateMessageBundle}
+	 * See:{@link com.wl4g.iam.common.i18n.SessionResourceMessageBundler}
 	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
 	 *
 	 * @param response

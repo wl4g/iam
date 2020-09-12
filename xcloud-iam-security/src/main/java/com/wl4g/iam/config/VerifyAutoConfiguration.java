@@ -15,7 +15,8 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.VerifyAuthController;
 import com.wl4g.iam.web.VerifyAuthenticationEndpoint;
 
@@ -32,7 +33,7 @@ import org.springframework.context.annotation.Bean;
  * @since
  */
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
-public class VerifyAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class VerifyAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public VerifyAuthenticationEndpoint verifyAuthenticationEndpoint() {

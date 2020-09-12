@@ -19,7 +19,7 @@ import com.wl4g.components.core.web.BaseController;
 import com.wl4g.iam.common.annotation.XsrfController;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.CorsProperties;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository;
 
@@ -57,7 +57,7 @@ public class XsrfProtectionEndpoint extends BaseController {
 	 * Session delegate message source bundle.
 	 */
 	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	@Autowired
 	protected XsrfTokenRepository xtokenRepository;

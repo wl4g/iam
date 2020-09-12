@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -66,7 +66,7 @@ public abstract class AbstractAuthenticationEndpoint extends BaseController impl
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

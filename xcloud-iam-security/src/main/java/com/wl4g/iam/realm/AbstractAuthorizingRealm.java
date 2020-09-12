@@ -48,7 +48,7 @@ import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
@@ -113,7 +113,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected SessionResourceMessageBundler bundle;
 
 	public AbstractAuthorizingRealm(IamBasedMatcher matcher) {
 		Assert.notNull(matcher, "'matcher' must not be null");

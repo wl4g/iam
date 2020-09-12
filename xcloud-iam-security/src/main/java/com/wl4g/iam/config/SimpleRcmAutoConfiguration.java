@@ -15,7 +15,8 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.web.SimpleRcmEvaluatorEndpoint;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_RCM_BASE;
@@ -31,7 +32,7 @@ import org.springframework.context.annotation.Bean;
  * @since
  */
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
-public class SimpleRcmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class SimpleRcmAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public SimpleRcmEvaluatorEndpoint simpleRcmEvaluatorController() {
