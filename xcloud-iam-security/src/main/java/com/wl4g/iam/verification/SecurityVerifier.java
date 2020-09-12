@@ -30,8 +30,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
 
-import com.wl4g.components.core.exception.iam.VerificationException;
 import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.iam.common.exception.VerificationException;
 
 /**
  * Verification handler

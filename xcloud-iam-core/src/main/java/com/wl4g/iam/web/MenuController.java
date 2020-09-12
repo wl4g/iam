@@ -13,78 +13,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.Group;
-import com.wl4g.iam.common.utils.IamOrganizationHolder;
-import com.wl4g.iam.service.GroupService;
+import com.wl4g.components.core.bean.iam.Menu;
+import com.wl4g.iam.service.MenuService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static org.apache.shiro.authz.annotation.Logical.AND;
+import java.util.Map;
 
 /**
  * @author vjay
- * @date 2019-10-29 16:19:00
+ * @date 2019-10-30 15:44:00
  */
 @RestController
-@RequestMapping("/group")
-public class GroupController {
+@RequestMapping("/menu")
+public class MenuController {
 
 	@Autowired
-	private GroupService groupService;
+	private MenuService menuService;
 
-
-	@RequestMapping(value = "/getGroupsTree")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
-	public RespBase<?> getGroupsTree() {
+	@RequestMapping(value = "/tree")
+	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
-		List<Group> groupsTree = groupService.getGroupsTree();
-		resp.forMap().put("data", groupsTree);
+		Map<String, Object> result = menuService.getMenuTree();
+		resp.setData(result);
+		return resp;
+	}
+
+	@RequestMapping(value = "/list")
+	public RespBase<?> getMenuList() {
+		RespBase<Object> resp = RespBase.create();
+		List<Menu> menus = menuService.getMenuList();
+		Assert.notEmpty(menus, "not menu role found , Please ask you manager and check the user-role-menu config");
+		resp.forMap().put("data", menus);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
-	public RespBase<?> save(@RequestBody Group group) {
+	@RequiresPermissions(value = {"iam:menu"})
+	public RespBase<?> save(@RequestBody Menu menu) {
 		RespBase<Object> resp = RespBase.create();
-		groupService.save(group);
+		menuService.save(menu);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		groupService.del(id);
+		menuService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		Group group = groupService.detail(id);
-		resp.forMap().put("data", group);
+		Menu menu = menuService.detail(id);
+		resp.forMap().put("data", menu);
 		return resp;
 	}
-
-	@RequestMapping(value = "/getOrganizations")
-	public RespBase<?> getOrganizationTree() {
-		RespBase<Object> resp = RespBase.create();
-		resp.forMap().put("tree", IamOrganizationHolder.getOrganizationTrees());
-		resp.forMap().put("list", IamOrganizationHolder.getSessionOrganizations());
-		return resp;
-	}
-
-
-
 
 }

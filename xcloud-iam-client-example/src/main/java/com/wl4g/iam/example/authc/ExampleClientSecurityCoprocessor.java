@@ -24,8 +24,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.components.core.exception.iam.AfterAuthenticatSuccessException;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
+import com.wl4g.iam.common.exception.AfterAuthenticatSuccessException;
 
 @Service
 public class ExampleClientSecurityCoprocessor implements ClientSecurityCoprocessor {

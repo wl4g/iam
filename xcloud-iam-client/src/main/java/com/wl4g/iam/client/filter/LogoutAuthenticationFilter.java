@@ -28,8 +28,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.exception.iam.GrantTicketNullException;
-import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
@@ -37,6 +35,8 @@ import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.common.annotation.IamFilter;
 import com.wl4g.iam.common.authc.model.LogoutResult;
 import com.wl4g.iam.common.cache.JedisIamCacheManager;
+import com.wl4g.iam.common.exception.GrantTicketNullException;
+import com.wl4g.iam.common.exception.IamException;
 import com.wl4g.iam.common.filter.IamAuthenticationFilter;
 
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getBindValue;

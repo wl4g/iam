@@ -13,62 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web;
+
+import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.bean.iam.ContactGroup;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.iam.service.ContactGroupService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.Contact;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
-import com.wl4g.iam.service.ContactService;
+import java.util.List;
 
 /**
  * @author vjay
  * @date 2019-08-05 11:44:00
  */
 @RestController
-@RequestMapping("/contact")
-public class ContactController extends BaseController {
+@RequestMapping("/contactGroup")
+public class ContactGroupController extends BaseController {
 
 	@Autowired
-	private ContactService contactService;
+	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(PageModel pm, String name) {
+	public RespBase<?> list(String name, PageModel pm) {
+		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = contactService.list(pm, name);
-		resp.setData(list);
+		resp.setData(contactGroupService.list(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> save(@RequestBody Contact contact) {
-		log.info("into ProjectController.save prarms::" + "contact = {} ", contact);
+	public RespBase<?> save(ContactGroup contactGroup) {
+		log.info("into ContactGroupController.save prarms::" + "contactGroup = {} ", contactGroup);
+		Assert.notNull(contactGroup, "group is null");
+		Assert.hasText(contactGroup.getName(), "groupName is null");
 		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(contact, "contact is null");
-//		Assert.hasText(contact.getName(), "name is null");
-//		Assert.hasText(contact.getEmail(), "email is null");
-//		Assert.notEmpty(contact.getGroups(), "contactGroup is null");
-
-		contactService.save(contact);
-		return resp;
-	}
-
-	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> detail(Integer id) {
-		log.info("into ContactController.detail prarms::" + "id = {} ", id);
-		RespBase<Object> resp = RespBase.create();
-		Contact contact = contactService.detail(id);
-		resp.forMap().put("contact", contact);
+		contactGroupService.save(contactGroup);
 		return resp;
 	}
 
@@ -77,7 +65,16 @@ public class ContactController extends BaseController {
 	public RespBase<?> del(Integer id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
-		contactService.del(id);
+		contactGroupService.del(id);
+		return resp;
+	}
+
+	@RequestMapping(value = "/groupList")
+	@RequiresPermissions(value = { "iam:contact" })
+	public RespBase<?> groupList() {
+		RespBase<Object> resp = RespBase.create();
+		List<ContactGroup> contactGroups = contactGroupService.contactGroups(null);
+		resp.setData(contactGroups);
 		return resp;
 	}
 

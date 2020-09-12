@@ -32,9 +32,9 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.config.AbstractIamProperties.CipherProperties.*;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.exception.iam.UnableDecryptionCipherParameterException;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.common.exception.UnableDecryptionCipherParameterException;
 
 /**
  * Abstract ciper parameters {@link HttpServletRequestWrapper} implements.

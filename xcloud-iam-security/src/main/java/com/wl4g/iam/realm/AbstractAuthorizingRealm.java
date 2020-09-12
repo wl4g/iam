@@ -40,13 +40,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
-import com.wl4g.components.core.exception.iam.AccessPermissionDeniedException;
-import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.common.exception.AccessPermissionDeniedException;
+import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;

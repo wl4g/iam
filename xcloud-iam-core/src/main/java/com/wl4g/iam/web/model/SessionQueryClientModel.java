@@ -13,35 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web.model;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.iam.service.AreaService;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.wl4g.iam.common.web.model.SessionQueryModel;
 
 /**
- * @author vjay
- * @date 2019-10-29 16:19:00
+ * Session query client parameter model.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月11日
+ * @since
  */
-@RestController
-@RequestMapping("/area")
-public class AreaController {
+public class SessionQueryClientModel extends SessionQueryModel {
+	private static final long serialVersionUID = 2579844578836104919L;
 
-	@Autowired
-	private AreaService areaService;
+	@NotNull(message = "(iamServerId) can't empty")
+	private Integer id;
 
-	@RequestMapping(value = "/getAreaTree")
-	public RespBase<?> getAreaTree() {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(areaService.getAreaTree());
-		return resp;
+	public Integer getId() {
+		return id;
 	}
 
-
-
-
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 }

@@ -16,8 +16,8 @@
 package com.wl4g.iam.verification;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.exception.iam.AccessRejectedException;
 import com.wl4g.iam.authc.SmsAuthenticationToken.Action;
+import com.wl4g.iam.common.exception.AccessRejectedException;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.SmsParameter;
 import com.wl4g.iam.common.utils.cumulate.Cumulator;

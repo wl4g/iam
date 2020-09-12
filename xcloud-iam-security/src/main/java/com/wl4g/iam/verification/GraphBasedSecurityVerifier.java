@@ -16,9 +16,9 @@
 package com.wl4g.iam.verification;
 
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.components.core.exception.iam.VerificationException;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.common.cache.IamCache;
+import com.wl4g.iam.common.exception.VerificationException;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.iam.config.properties.MatcherProperties;

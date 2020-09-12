@@ -18,7 +18,7 @@ package com.wl4g.iam.filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.wl4g.components.core.exception.iam.NoSuchSocialProviderException;
+import com.wl4g.iam.common.exception.NoSuchSocialProviderException;
 
 /**
  * Save Supported Social Network Service Providers

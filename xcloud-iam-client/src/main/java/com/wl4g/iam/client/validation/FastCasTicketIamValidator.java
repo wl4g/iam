@@ -20,12 +20,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.common.web.rest.RespBase.RetCode;
-import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
-import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
-import com.wl4g.components.core.exception.iam.TicketValidateException;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
+import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
+import com.wl4g.iam.common.exception.InvalidGrantTicketException;
+import com.wl4g.iam.common.exception.TicketValidateException;
 import com.wl4g.iam.common.subject.SimplePrincipalInfo;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;

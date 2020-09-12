@@ -22,7 +22,6 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.wl4g.components.core.exception.iam.TicketValidateException;
 import com.wl4g.iam.client.authc.FastAuthenticationInfo;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
@@ -31,6 +30,7 @@ import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
+import com.wl4g.iam.common.exception.TicketValidateException;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
 

@@ -20,10 +20,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.common.web.rest.RespBase.RetCode;
-import com.wl4g.components.core.exception.iam.InvalidGrantTicketException;
-import com.wl4g.components.core.exception.iam.SessionValidateException;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.authc.model.SessionValidateResult;
+import com.wl4g.iam.common.exception.InvalidGrantTicketException;
+import com.wl4g.iam.common.exception.SessionValidateException;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 import static java.lang.String.format;

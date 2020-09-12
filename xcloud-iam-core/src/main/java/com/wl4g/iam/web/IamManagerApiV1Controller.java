@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.ClusterConfig;
@@ -21,8 +21,8 @@ import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.iam.controller.model.SessionDestroyClientModel;
-import com.wl4g.iam.controller.model.SessionQueryClientModel;
+import com.wl4g.iam.web.model.SessionDestroyClientModel;
+import com.wl4g.iam.web.model.SessionQueryClientModel;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 
 import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
-import com.wl4g.components.core.exception.iam.SnsApiBindingException;
 
 import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
@@ -50,9 +48,11 @@ import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CODE;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
 
+import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.iam.common.exception.SnsApiBindingException;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;

@@ -44,8 +44,8 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.components.common.codec.Base58;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.exception.iam.VerificationException;
 import com.wl4g.iam.common.cache.IamCacheManager;
+import com.wl4g.iam.common.exception.VerificationException;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.config.properties.IamProperties;

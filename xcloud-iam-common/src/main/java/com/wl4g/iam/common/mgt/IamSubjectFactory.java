@@ -42,11 +42,11 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.exception.iam.InvalidAccessTokenAuthenticationException;
-import com.wl4g.components.core.exception.iam.UnauthenticatedException;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.core.IamShiroFilterFactoryBean;
+import com.wl4g.iam.common.exception.InvalidAccessTokenAuthenticationException;
+import com.wl4g.iam.common.exception.UnauthenticatedException;
 
 import static com.wl4g.iam.common.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.*;

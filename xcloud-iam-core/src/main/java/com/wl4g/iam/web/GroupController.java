@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.Role;
-import com.wl4g.devops.page.PageModel;
-import com.wl4g.iam.service.RoleService;
+import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.iam.common.utils.IamOrganizationHolder;
+import com.wl4g.iam.service.GroupService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,58 +28,63 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.apache.shiro.authz.annotation.Logical.AND;
+
 /**
  * @author vjay
- * @date 2019-10-29 16:07:00
+ * @date 2019-10-29 16:19:00
  */
 @RestController
-@RequestMapping("/role")
-public class RoleController {
+@RequestMapping("/group")
+public class GroupController {
 
 	@Autowired
-	private RoleService roleService;
+	private GroupService groupService;
 
-	@RequestMapping(value = "/getRolesByUserGroups")
-	@RequiresPermissions(value = {"iam:role"})
-	public RespBase<?> getRolesByUserGroups() {
-		RespBase<Object> resp = RespBase.create();
-		List<Role> roles = roleService.getRolesByUserGroups();
-		resp.forMap().put("data", roles);
-		return resp;
-	}
 
-	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"iam:role"})
-	public RespBase<?> list(PageModel pm, String roleCode, String displayName) {
+	@RequestMapping(value = "/getGroupsTree")
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
-		PageModel re = roleService.list(pm, roleCode, displayName);
-		resp.setData(re);
+		List<Group> groupsTree = groupService.getGroupsTree();
+		resp.forMap().put("data", groupsTree);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:role"})
-	public RespBase<?> save(@RequestBody Role role) {
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	public RespBase<?> save(@RequestBody Group group) {
 		RespBase<Object> resp = RespBase.create();
-		roleService.save(role);
+		groupService.save(group);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:role"})
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		roleService.del(id);
+		groupService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:role"})
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		Role role = roleService.detail(id);
-		resp.forMap().put("data", role);
+		Group group = groupService.detail(id);
+		resp.forMap().put("data", group);
 		return resp;
 	}
+
+	@RequestMapping(value = "/getOrganizations")
+	public RespBase<?> getOrganizationTree() {
+		RespBase<Object> resp = RespBase.create();
+		resp.forMap().put("tree", IamOrganizationHolder.getOrganizationTrees());
+		resp.forMap().put("list", IamOrganizationHolder.getSessionOrganizations());
+		return resp;
+	}
+
+
+
 
 }

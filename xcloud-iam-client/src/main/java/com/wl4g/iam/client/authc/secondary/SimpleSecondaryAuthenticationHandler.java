@@ -48,13 +48,13 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.exception.iam.IamException;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.iam.common.exception.IamException;
 
 /**
  * Secondary authentication processor.

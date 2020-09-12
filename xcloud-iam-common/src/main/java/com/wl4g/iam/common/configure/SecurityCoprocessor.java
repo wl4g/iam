@@ -16,8 +16,8 @@
 package com.wl4g.iam.common.configure;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.components.core.exception.iam.AfterAuthenticatFailException;
-import com.wl4g.components.core.exception.iam.AfterAuthenticatSuccessException;
+import com.wl4g.iam.common.exception.AfterAuthenticatFailException;
+import com.wl4g.iam.common.exception.AfterAuthenticatSuccessException;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;

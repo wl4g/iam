@@ -71,7 +71,7 @@ import com.wl4g.iam.common.security.mitm.CipherRequestWrapperFactory;
 import com.wl4g.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.iam.common.session.mgt.support.IamUidSessionIdGenerator;
-import com.wl4g.iam.common.web.IamErrorConfiguring;
+import com.wl4g.iam.common.web.IamErrorConfigurer;
 import com.wl4g.iam.common.web.servlet.IamCookie;
 
 /**
@@ -362,8 +362,8 @@ public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSup
 	// ==============================
 
 	@Bean
-	public IamErrorConfiguring iamErrorConfiguring() {
-		return new IamErrorConfiguring();
+	public IamErrorConfigurer iamErrorConfiguring() {
+		return new IamErrorConfigurer();
 	}
 
 	//

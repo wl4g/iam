@@ -16,7 +16,12 @@
 package com.wl4g.iam.configure;
 
 import com.wl4g.components.core.bean.erm.ClusterConfig;
-import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.components.core.bean.iam.ApplicationInfo;
+import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.components.core.bean.iam.Menu;
+import com.wl4g.components.core.bean.iam.Role;
+import com.wl4g.components.core.bean.iam.SocialConnectInfo;
+import com.wl4g.components.core.bean.iam.User;
 import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;

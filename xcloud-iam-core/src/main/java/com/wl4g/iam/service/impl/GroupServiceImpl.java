@@ -16,9 +16,21 @@
 package com.wl4g.iam.service.impl;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.components.core.bean.iam.Company;
+import com.wl4g.components.core.bean.iam.Department;
+import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.components.core.bean.iam.GroupMenu;
+import com.wl4g.components.core.bean.iam.GroupUser;
+import com.wl4g.components.core.bean.iam.Park;
+import com.wl4g.components.core.bean.iam.User;
 import com.wl4g.components.core.bean.iam.model.GroupExt;
-import com.wl4g.devops.dao.iam.*;
+import com.wl4g.devops.dao.iam.CompanyDao;
+import com.wl4g.devops.dao.iam.DepartmentDao;
+import com.wl4g.devops.dao.iam.GroupDao;
+import com.wl4g.devops.dao.iam.GroupMenuDao;
+import com.wl4g.devops.dao.iam.GroupRoleDao;
+import com.wl4g.devops.dao.iam.GroupUserDao;
+import com.wl4g.devops.dao.iam.ParkDao;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.service.GroupService;
 
@@ -122,7 +134,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Set<Group> getGroupsSet(User user) {
-		//IamPrincipalInfo info = getPrincipalInfo();
+		// IamPrincipalInfo info = getPrincipalInfo();
 
 		List<Group> groups = null;
 		if (DEFAULT_USER_ROOT.equals(user.getUserName())) {
@@ -178,17 +190,14 @@ public class GroupServiceImpl implements GroupService {
 			groupMenuDao.insertBatch(groupMenus);
 		}
 		// role
-		/*List<GroupRole> groupRoles = new ArrayList<>();
-		for (Integer roleId : group.getRoleIds()) {
-			GroupRole groupRole = new GroupRole();
-			groupRole.preInsert();
-			groupRole.setGroupId(group.getId());
-			groupRole.setRoleId(roleId);
-			groupRoles.add(groupRole);
-		}
-		if (!CollectionUtils.isEmpty(groupRoles)) {
-			groupRoleDao.insertBatch(groupRoles);
-		}*/
+		/*
+		 * List<GroupRole> groupRoles = new ArrayList<>(); for (Integer roleId :
+		 * group.getRoleIds()) { GroupRole groupRole = new GroupRole();
+		 * groupRole.preInsert(); groupRole.setGroupId(group.getId());
+		 * groupRole.setRoleId(roleId); groupRoles.add(groupRole); } if
+		 * (!CollectionUtils.isEmpty(groupRoles)) {
+		 * groupRoleDao.insertBatch(groupRoles); }
+		 */
 
 		insertOrUpdateGroupExt(group);
 
@@ -223,17 +232,14 @@ public class GroupServiceImpl implements GroupService {
 		}
 
 		// role
-		/*List<GroupRole> groupRoles = new ArrayList<>();
-		for (Integer roleId : group.getRoleIds()) {
-			GroupRole groupRole = new GroupRole();
-			groupRole.preInsert();
-			groupRole.setGroupId(group.getId());
-			groupRole.setRoleId(roleId);
-			groupRoles.add(groupRole);
-		}
-		if (!CollectionUtils.isEmpty(groupRoles)) {
-			groupRoleDao.insertBatch(groupRoles);
-		}*/
+		/*
+		 * List<GroupRole> groupRoles = new ArrayList<>(); for (Integer roleId :
+		 * group.getRoleIds()) { GroupRole groupRole = new GroupRole();
+		 * groupRole.preInsert(); groupRole.setGroupId(group.getId());
+		 * groupRole.setRoleId(roleId); groupRoles.add(groupRole); } if
+		 * (!CollectionUtils.isEmpty(groupRoles)) {
+		 * groupRoleDao.insertBatch(groupRoles); }
+		 */
 		insertOrUpdateGroupExt(group);
 	}
 

@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller.model;
+package com.wl4g.iam.web.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.common.web.model.SessionQueryModel;
+import com.wl4g.iam.common.web.model.SessionDestroyModel;
 
 /**
- * Session query client parameter model.
+ * Session destroy client parameter model.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月11日
  * @since
  */
-public class SessionQueryClientModel extends SessionQueryModel {
+public class SessionDestroyClientModel extends SessionDestroyModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "(iamServerId) can't empty")
+	@NotNull(message = "Iam server id must not be empty")
 	private Integer id;
 
 	public Integer getId() {

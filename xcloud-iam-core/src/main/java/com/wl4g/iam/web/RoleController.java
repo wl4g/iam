@@ -13,72 +13,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.controller;
+package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.Menu;
-import com.wl4g.iam.service.MenuService;
+import com.wl4g.components.core.bean.iam.Role;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.iam.service.RoleService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
- * @date 2019-10-30 15:44:00
+ * @date 2019-10-29 16:07:00
  */
 @RestController
-@RequestMapping("/menu")
-public class MenuController {
+@RequestMapping("/role")
+public class RoleController {
 
 	@Autowired
-	private MenuService menuService;
+	private RoleService roleService;
 
-	@RequestMapping(value = "/tree")
-	public RespBase<?> getMenuTree() {
+	@RequestMapping(value = "/getRolesByUserGroups")
+	@RequiresPermissions(value = {"iam:role"})
+	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = menuService.getMenuTree();
-		resp.setData(result);
+		List<Role> roles = roleService.getRolesByUserGroups();
+		resp.forMap().put("data", roles);
 		return resp;
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> getMenuList() {
+	@RequiresPermissions(value = {"iam:role"})
+	public RespBase<?> list(PageModel pm, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		List<Menu> menus = menuService.getMenuList();
-		Assert.notEmpty(menus, "not menu role found , Please ask you manager and check the user-role-menu config");
-		resp.forMap().put("data", menus);
+		PageModel re = roleService.list(pm, roleCode, displayName);
+		resp.setData(re);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:menu"})
-	public RespBase<?> save(@RequestBody Menu menu) {
+	@RequiresPermissions(value = {"iam:role"})
+	public RespBase<?> save(@RequestBody Role role) {
 		RespBase<Object> resp = RespBase.create();
-		menuService.save(menu);
+		roleService.save(role);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:menu"})
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		menuService.del(id);
+		roleService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:menu"})
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		Menu menu = menuService.detail(id);
-		resp.forMap().put("data", menu);
+		Role role = roleService.detail(id);
+		resp.forMap().put("data", role);
 		return resp;
 	}
 

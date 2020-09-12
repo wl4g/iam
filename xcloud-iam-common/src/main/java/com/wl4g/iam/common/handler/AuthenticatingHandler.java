@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
 
-import com.wl4g.components.core.exception.iam.IllegalApplicationAccessException;
-import com.wl4g.components.core.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.iam.common.authc.model.LoggedinResult;
 import com.wl4g.iam.common.authc.model.LogoutResult;
 import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.authc.model.SessionValidateResult;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
+import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
+import com.wl4g.iam.common.exception.IllegalCallbackDomainException;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 /**

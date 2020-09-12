@@ -24,9 +24,9 @@ import static org.apache.shiro.web.util.WebUtils.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.ResolvableType;
 
-import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
+import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.sns.handler.AbstractSnsHandler;
 

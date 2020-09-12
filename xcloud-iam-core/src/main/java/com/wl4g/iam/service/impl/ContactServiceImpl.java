@@ -16,12 +16,12 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.dao.iam.ContactDao;
-import com.wl4g.devops.dao.iam.ContactGroupRefDao;
 import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.iam.ContactChannel;
 import com.wl4g.components.core.bean.iam.ContactGroupRef;
 import com.wl4g.devops.dao.iam.ContactChannelDao;
+import com.wl4g.devops.dao.iam.ContactDao;
+import com.wl4g.devops.dao.iam.ContactGroupRefDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.ContactService;
 

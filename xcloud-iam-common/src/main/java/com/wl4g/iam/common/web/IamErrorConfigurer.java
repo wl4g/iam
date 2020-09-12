@@ -26,7 +26,7 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import com.wl4g.components.core.web.error.ErrorConfiguring;
+import com.wl4g.components.core.web.error.ErrorConfigurer;
 
 import static com.wl4g.components.common.lang.Exceptions.*;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
@@ -39,18 +39,18 @@ import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
  * @since
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
-public class IamErrorConfiguring implements ErrorConfiguring {
+public class IamErrorConfigurer implements ErrorConfigurer {
 
 	@Override
 	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		// IAM Unauthenticated?
 		if ((ex instanceof UnauthenticatedException)
-				|| (ex instanceof com.wl4g.components.core.exception.iam.UnauthenticatedException)) {
+				|| (ex instanceof com.wl4g.iam.common.exception.UnauthenticatedException)) {
 			return UNAUTHC.getErrcode();
 		}
 		// IAM Unauthorized?
 		else if ((ex instanceof UnauthorizedException)
-				|| (ex instanceof com.wl4g.components.core.exception.iam.UnauthorizedException)) {
+				|| (ex instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
 			return UNAUTHZ.getErrcode();
 		}
 		// see: IamSecurityHolder
@@ -67,8 +67,8 @@ public class IamErrorConfiguring implements ErrorConfiguring {
 			Exception ex) {
 		// IAM Unauthenticated or Unauthorized?
 		if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
-				|| (ex instanceof com.wl4g.components.core.exception.iam.UnauthenticatedException)
-				|| (ex instanceof com.wl4g.components.core.exception.iam.UnauthorizedException)) {
+				|| (ex instanceof com.wl4g.iam.common.exception.UnauthenticatedException)
+				|| (ex instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
 			// return getRootCausesString(ex);
 			return getMessage(ex);
 		}

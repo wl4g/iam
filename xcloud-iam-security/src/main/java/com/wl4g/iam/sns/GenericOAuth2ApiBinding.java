@@ -35,8 +35,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Charsets;
 import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.core.exception.iam.SnsApiBindingException;
 import com.wl4g.iam.common.cache.IamCache;
+import com.wl4g.iam.common.exception.SnsApiBindingException;
 import com.wl4g.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.iam.sns.support.OAuth2GrantType;
 import com.wl4g.iam.sns.support.OAuth2ResponseType;

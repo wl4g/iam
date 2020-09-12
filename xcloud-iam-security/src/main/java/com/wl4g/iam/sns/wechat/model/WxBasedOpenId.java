@@ -18,7 +18,7 @@ package com.wl4g.iam.sns.wechat.model;
 import static java.lang.String.format;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.components.core.exception.iam.SnsApiBindingException;
+import com.wl4g.iam.common.exception.SnsApiBindingException;
 import com.wl4g.iam.sns.support.Oauth2OpenId;
 
 public class WxBasedOpenId extends WxBasedResponse implements Oauth2OpenId {
