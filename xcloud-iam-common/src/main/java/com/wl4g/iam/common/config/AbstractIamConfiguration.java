@@ -44,6 +44,7 @@ import org.springframework.core.env.Environment;
 
 import static org.springframework.util.ReflectionUtils.*;
 
+import com.wl4g.components.core.config.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
@@ -362,8 +363,8 @@ public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSup
 	// ==============================
 
 	@Bean
-	public IamErrorConfigurer iamErrorConfiguring() {
-		return new IamErrorConfigurer();
+	public IamErrorConfigurer iamErrorConfigurer(ErrorHandlerProperties config) {
+		return new IamErrorConfigurer(config);
 	}
 
 	//

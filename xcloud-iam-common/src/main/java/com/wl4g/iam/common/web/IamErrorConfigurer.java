@@ -17,15 +17,13 @@ package com.wl4g.iam.common.web;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+import com.wl4g.components.core.config.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.components.core.web.error.ErrorConfigurer;
 
 import static com.wl4g.components.common.lang.Exceptions.*;
@@ -39,22 +37,24 @@ import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
  * @since
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
-public class IamErrorConfigurer implements ErrorConfigurer {
+public class IamErrorConfigurer extends ErrorConfigurer {
+
+	public IamErrorConfigurer(ErrorHandlerProperties config) {
+		super(config);
+	}
 
 	@Override
-	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
+	public Integer getStatus(Map<String, Object> model, Throwable th) {
 		// IAM Unauthenticated?
-		if ((ex instanceof UnauthenticatedException)
-				|| (ex instanceof com.wl4g.iam.common.exception.UnauthenticatedException)) {
+		if ((th instanceof UnauthenticatedException) || (th instanceof com.wl4g.iam.common.exception.UnauthenticatedException)) {
 			return UNAUTHC.getErrcode();
 		}
 		// IAM Unauthorized?
-		else if ((ex instanceof UnauthorizedException)
-				|| (ex instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
+		else if ((th instanceof UnauthorizedException) || (th instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
 			return UNAUTHZ.getErrcode();
 		}
 		// see: IamSecurityHolder
-		else if (ex instanceof UnknownSessionException) {
+		else if (th instanceof UnknownSessionException) {
 			return PARAM_ERR.getErrcode();
 		}
 
@@ -63,14 +63,13 @@ public class IamErrorConfigurer implements ErrorConfigurer {
 	}
 
 	@Override
-	public String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-			Exception ex) {
+	public String getRootCause(Map<String, Object> model, Throwable th) {
 		// IAM Unauthenticated or Unauthorized?
-		if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
-				|| (ex instanceof com.wl4g.iam.common.exception.UnauthenticatedException)
-				|| (ex instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
+		if ((th instanceof UnauthenticatedException) || (th instanceof UnauthorizedException)
+				|| (th instanceof com.wl4g.iam.common.exception.UnauthenticatedException)
+				|| (th instanceof com.wl4g.iam.common.exception.UnauthorizedException)) {
 			// return getRootCausesString(ex);
-			return getMessage(ex);
+			return getMessage(th);
 		}
 
 		// Using next chain configuring.
