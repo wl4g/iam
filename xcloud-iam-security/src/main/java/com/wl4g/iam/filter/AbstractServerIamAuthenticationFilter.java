@@ -40,9 +40,9 @@ import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import com.wl4g.components.common.web.WebUtils2;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.web.error.ServletSmartErrorController;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
@@ -273,7 +273,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		Throwable exroot = getRootCause(ae);
 		String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
 		String tip = format("Failed to authentication of token: %s", token);
-		if (ServletSmartErrorController.checkStackTrace(request)) {
+		if (WebUtils2.checkRequestErrorStacktrace(request)) {
 			log.error(tip, ae);
 		} else {
 			log.error("{}, caused by: {}", tip, errmsg);
