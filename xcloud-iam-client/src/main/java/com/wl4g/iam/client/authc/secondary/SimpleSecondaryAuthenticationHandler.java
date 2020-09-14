@@ -18,7 +18,7 @@ package com.wl4g.iam.client.authc.secondary;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.writeJson;
-import static com.wl4g.components.common.web.WebUtils2.ResponseType.isJSONResp;
+import static com.wl4g.components.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.PRECONDITITE_LIMITED;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
@@ -112,7 +112,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 		String redirectUrl = buildConnectAuthenticatingUrl(http, annotation);
 
 		// Response JSON message
-		if (isJSONResp(http.getRequest())) {
+		if (isRespJSON(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(PRECONDITITE_LIMITED, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
 			resp.forMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);

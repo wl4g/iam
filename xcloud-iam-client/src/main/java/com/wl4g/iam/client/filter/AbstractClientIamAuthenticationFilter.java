@@ -35,7 +35,7 @@ import static com.wl4g.components.common.web.WebUtils2.cleanURI;
 import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.components.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.components.common.web.WebUtils2.writeJson;
-import static com.wl4g.components.common.web.WebUtils2.ResponseType.isJSONResp;
+import static com.wl4g.components.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static java.lang.String.format;
@@ -176,7 +176,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResp(toHttp(request))) {
+		if (isRespJSON(toHttp(request))) {
 			try {
 				// Make logged response JSON.
 				RespBase<String> resp = makeLoggedResponse(token, request, response, subject, successUrl);
@@ -238,7 +238,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// page directly (to prevent unlimited redirection).
 		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
 		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResp(toHttp(request))) {
+			if (isRespJSON(toHttp(request))) {
 				try {
 					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, cause);
 					String failMsg = toJSONString(resp);

@@ -333,7 +333,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Using last saved parameters.
 		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, DEFAULT_RESPTYPE_NAME);
 		log.debug("Using last response type:{}", respTypeValue);
-		return isJSONResp(respTypeValue, toHttp(request)) || isJSONResp(toHttp(request));
+		return isRespJSON(respTypeValue, toHttp(request)) || isRespJSON(toHttp(request));
 	}
 
 	/**
