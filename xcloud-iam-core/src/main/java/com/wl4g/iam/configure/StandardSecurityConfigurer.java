@@ -15,14 +15,14 @@
  */
 package com.wl4g.iam.configure;
 
-import com.wl4g.components.core.bean.erm.ClusterConfig;
+import com.wl4g.components.core.bean.iam.ClusterConfig;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
 import com.wl4g.components.core.bean.iam.Group;
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.components.core.bean.iam.Role;
 import com.wl4g.components.core.bean.iam.SocialConnectInfo;
 import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.dao.erm.ClusterConfigDao;
+import com.wl4g.devops.dao.iam.ClusterConfigDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
@@ -32,7 +32,6 @@ import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsParameter;
-import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.service.GroupService;
 
 import org.apache.shiro.authc.AuthenticationToken;

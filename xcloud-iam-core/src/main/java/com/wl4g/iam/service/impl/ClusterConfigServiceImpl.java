@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.components.core.bean.erm.ClusterConfig;
-import com.wl4g.devops.dao.erm.ClusterConfigDao;
+import com.wl4g.components.core.bean.iam.ClusterConfig;
+import com.wl4g.devops.dao.iam.ClusterConfigDao;
 import com.wl4g.iam.service.ClusterConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 	@Override
 	public Map<String, Object> info() {
 		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
-		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'erm_cluster_config'");
+		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);

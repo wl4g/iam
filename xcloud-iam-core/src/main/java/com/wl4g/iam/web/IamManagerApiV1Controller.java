@@ -16,10 +16,10 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.erm.ClusterConfig;
+import com.wl4g.components.core.bean.iam.ClusterConfig;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.dao.erm.ClusterConfigDao;
+import com.wl4g.devops.dao.iam.ClusterConfigDao;
 import com.wl4g.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.iam.web.model.SessionDestroyClientModel;
 import com.wl4g.iam.web.model.SessionQueryClientModel;
@@ -61,7 +61,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	private ClusterConfigDao clusterConfigDao;
 
 	/**
-	 * Find IAM server list of erm_cluster_config.
+	 * Find IAM server list of sys_cluster_config.
 	 * 
 	 * @return
 	 * @throws Exception
