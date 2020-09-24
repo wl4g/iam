@@ -13,8 +13,6 @@
 	</parent>
 	<modules>
 		<module>xcloud-iam-client</module>
-		<!-- <module>xcloud-iam-client-java</module> -->
-		<!-- <module>xcloud-iam-client-springboot</module> -->
 		<module>xcloud-iam-client-example</module>
 		<module>xcloud-iam-captcha</module>
 		<module>xcloud-iam-common</module>
