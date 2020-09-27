@@ -32,10 +32,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.wl4g</groupId> -->
-<!-- 			<artifactId>xcloud-iam-core</artifactId> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-test</artifactId>

@@ -34,7 +34,9 @@ import com.wl4g.iam.common.config.XssAutoConfiguration;
  * -The interceptor specified by chains will be intercepted and authenticated
  * unless it is a filter of type anon.</br>
  * 
- * Note: it is mutually exclusive with {@link EnableIamClientTest}
+ * Note: it is mutually exclusive with
+ * {@link com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration} and
+ * {@link com.wl4g.iam.annotation.EnableIamServer}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-12-20
