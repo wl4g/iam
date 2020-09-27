@@ -14,6 +14,13 @@
 - 2.3，微信公众号集成，
 - 2.4，服务端所有支持的yml配置(以及默认值):
 
+```
+<dependency>
+    <groupId>com.wl4g</groupId>
+    <artifactId>xcloud-client</artifactId>
+    <version>${latest}</version>
+</dependency>
+```
 
 
 #### 二、认证机制原理
@@ -24,12 +31,10 @@
 #####	- 3.1、客户端二次开发
 #####	- 3.2、服务端二次开发
 
-###### [Reference](http://github.com/wl4g/xcloud-iam)
-
 
 
 <p align="center">
-    <img src="https://github.com/wl4g/xcloud-iam/shots/iam-logo.png" width="150">
+    <img src="https://github.com/wl4g/xcloud-iam/tree/master/shots/iam-logo.png" width="150">
     <h3 align="center">XCloud IAM</h3>
     <p align="center">
         A Distributed IAM(CAS/SSO) SpringCloud Application.
@@ -71,8 +76,11 @@ XCloud IAM 是一个分布式单点登录框架。只需要登录一次就可以
 8. Web+APP均支持：支持Web和APP接入
 9. 实时性：系统登陆、注销状态，全部有IAM Server统一控制，与Client端准同步
 10. CS结构：基于CS结构，包括Server"认证中心"与Client"受保护应用"
-11. 记住密码：未记住密码时，关闭浏览器则登录态失效；记住密码时，支持登录态自动延期，在自定义延期时间的基础上，原则上可以无限延期
-12. 路径排除：支持自定义多个排除路径，支持Ant表达式。用于排除 IAM/SSO 客户端不需要过滤的路径
+11. 路径排除：支持自定义多个排除路径，支持Ant表达式。用于排除 IAM/SSO 客户端不需要过滤的路径
+12. 支持多种模式部署运行（local模式）：传统单体应用，没有认证客户端一说，即，IAM server与BizApp在同一JVM进程，好处是部署、运维简单，适合小型管理类项目。
+13. 支持多种模式部署运行（cluster模式）：将认证中心与业务应用和认证客户端分离，即，IAM client与BizApp在同一JVM进程，IAM server在一个进程，适合微服务或跨站跨域的多应用需要统一认证的情况。
+14. 支持多种模式部署运行（gateway模式）：与cluster类似，区别是将认证客户端放到了网关，使BizApp专注于提供业务服务，实现了网关、业务应用、认证中心的完全分离，
+    即，gateway+IAM client、BizApp、IAM server，非常适合完全微服务架构的认证中心部署（量身定制）
 
 
 ## Development
