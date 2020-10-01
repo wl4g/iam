@@ -13,7 +13,7 @@
 spring:
   cloud:
     devops:
-      iam: # IAM configuration.
+      iam: # IAM server configuration.
         cors:
           rules:
             '[/**]':
@@ -60,6 +60,7 @@ spring:
             redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/qq/callback
         session:
           global-session-timeout: 43200_000
+
   # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

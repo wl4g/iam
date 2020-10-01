@@ -13,7 +13,7 @@
 spring:
   cloud:
     devops:
-      iam: # IAM configuration.
+      iam: # IAM server configuration.
         cors:
           rules:
             '[/**]':
@@ -48,6 +48,7 @@ spring:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.fat${server.servlet.contextPath}/sns/qq/callback
+
   # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

@@ -13,7 +13,7 @@
 spring:
   cloud:
     devops:
-      iam:
+      iam: # IAM server configuration.
         cors:
           rules:
             '[/**]':
@@ -47,6 +47,7 @@ spring:
             app-id: 101542056 # Public testing.
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+
   # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

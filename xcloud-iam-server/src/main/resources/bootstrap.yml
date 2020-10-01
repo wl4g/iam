@@ -22,7 +22,7 @@ spring:
         base-uri: /view
         webapp-location: classpath*:/default-webapps
     devops:
-      iam: # IAM configuration.
+      iam: # IAM server configuration.
         cors:
           enabled: true # Default: true
           # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
