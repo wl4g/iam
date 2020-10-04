@@ -58,7 +58,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:menu"})
+	@RequiresPermissions(value = { "iam:menu" })
 	public RespBase<?> save(@RequestBody Menu menu) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.save(menu);
@@ -66,16 +66,16 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:menu"})
-	public RespBase<?> del(Integer id) {
+	@RequiresPermissions(value = { "iam:menu" })
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:menu"})
-	public RespBase<?> detail(Integer id) {
+	@RequiresPermissions(value = { "iam:menu" })
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Menu menu = menuService.detail(id);
 		resp.forMap().put("data", menu);

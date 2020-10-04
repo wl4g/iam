@@ -52,7 +52,6 @@ public class ContactServiceImpl implements ContactService {
 	@Autowired
 	private ContactChannelDao contactChannelDao;
 
-
 	@Override
 	@Transactional
 	public void save(Contact contact) {
@@ -66,9 +65,9 @@ public class ContactServiceImpl implements ContactService {
 			contact.setEnable(ENABLED);
 			contactDao.insertSelective(contact);
 		}
-		Integer[] groups = contact.getGroups();
+		Long[] groups = contact.getGroups();
 		if (null != groups) {
-			for (Integer group : groups) {
+			for (Long group : groups) {
 				ContactGroupRef contactGroupRef = new ContactGroupRef();
 				contactGroupRef.preInsert();
 				contactGroupRef.setContactGroupId(group);
@@ -77,10 +76,10 @@ public class ContactServiceImpl implements ContactService {
 			}
 		}
 
-		//TODO add 0313
+		// TODO add 0313
 		contactChannelDao.deleteByContactId(contact.getId());
 		List<ContactChannel> contactChannels = contact.getContactChannels();
-		for(ContactChannel contactChannel : contactChannels){
+		for (ContactChannel contactChannel : contactChannels) {
 			contactChannel.preInsert();
 			contactChannel.setContactId(contact.getId());
 			contactChannelDao.insertSelective(contactChannel);
@@ -89,24 +88,24 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public Contact detail(Integer id) {
+	public Contact detail(Long id) {
 		Assert.notNull(id, "id can not be null");
 		Contact contact = contactDao.selectByPrimaryKey(id);
 		List<ContactGroupRef> contactGroupRefs = contactGroupRefDao.selectByContactId(id);
 		if (CollectionUtils.isNotEmpty(contactGroupRefs)) {
-			Integer[] groups = new Integer[contactGroupRefs.size()];
+			Long[] groups = new Long[contactGroupRefs.size()];
 			for (int i = 0; i < contactGroupRefs.size(); i++) {
 				groups[i] = contactGroupRefs.get(i).getContactGroupId();
 			}
 			contact.setGroups(groups);
 		} else {
-			contact.setGroups(new Integer[0]);
+			contact.setGroups(new Long[0]);
 		}
 		return contact;
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id can not be null");
 		Contact contact = new Contact();
 		contact.preUpdate();
@@ -121,7 +120,5 @@ public class ContactServiceImpl implements ContactService {
 		pm.setRecords(contactDao.list(name));
 		return pm;
 	}
-
-
 
 }

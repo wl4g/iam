@@ -41,7 +41,7 @@ public class UserController extends BaseController {
 
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"iam:user"})
+	@RequiresPermissions(value = { "iam:user" })
 	public RespBase<?> list(PageModel pm, String userName, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = userService.list(pm, userName, displayName);
@@ -50,8 +50,8 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:user"})
-	public RespBase<?> detail(Integer userId) {
+	@RequiresPermissions(value = { "iam:user" })
+	public RespBase<?> detail(Long userId) {
 		Assert.notNull(userId, "userId is null");
 		RespBase<Object> resp = RespBase.create();
 		User detail = userService.detail(userId);
@@ -60,8 +60,8 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:user"})
-	public RespBase<?> del(Integer userId) {
+	@RequiresPermissions(value = { "iam:user" })
+	public RespBase<?> del(Long userId) {
 		Assert.notNull(userId, "userId is null");
 		RespBase<Object> resp = RespBase.create();
 		userService.del(userId);
@@ -69,7 +69,7 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:user"})
+	@RequiresPermissions(value = { "iam:user" })
 	public RespBase<?> save(@RequestBody User user) {
 		Assert.notNull(user, "user is null");
 		RespBase<Object> resp = RespBase.create();

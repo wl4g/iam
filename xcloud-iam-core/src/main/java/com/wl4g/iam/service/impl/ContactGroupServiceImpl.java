@@ -55,7 +55,7 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		ContactGroup contactGroup = new ContactGroup();
 		contactGroup.preUpdate();
 		contactGroup.setId(id);

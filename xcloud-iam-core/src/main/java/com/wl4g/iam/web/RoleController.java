@@ -40,7 +40,7 @@ public class RoleController {
 	private RoleService roleService;
 
 	@RequestMapping(value = "/getRolesByUserGroups")
-	@RequiresPermissions(value = {"iam:role"})
+	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
 		List<Role> roles = roleService.getRolesByUserGroups();
@@ -49,7 +49,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"iam:role"})
+	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> list(PageModel pm, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel re = roleService.list(pm, roleCode, displayName);
@@ -58,7 +58,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:role"})
+	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> save(@RequestBody Role role) {
 		RespBase<Object> resp = RespBase.create();
 		roleService.save(role);
@@ -66,16 +66,16 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:role"})
-	public RespBase<?> del(Integer id) {
+	@RequiresPermissions(value = { "iam:role" })
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		roleService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:role"})
-	public RespBase<?> detail(Integer id) {
+	@RequiresPermissions(value = { "iam:role" })
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Role role = roleService.detail(id);
 		resp.forMap().put("data", role);

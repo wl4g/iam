@@ -32,8 +32,8 @@ public interface MenuService {
 
 	void save(Menu menu);
 
-	void del(Integer id);
+	void del(Long id);
 
-	Menu detail(Integer id);
+	Menu detail(Long id);
 
 }

@@ -28,7 +28,7 @@ public interface ContactGroupService {
 
 	void save(ContactGroup contactGroup);
 
-	void del(Integer id);
+	void del(Long id);
 
 	List<ContactGroup> contactGroups(String name);
 

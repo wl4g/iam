@@ -26,9 +26,9 @@ public interface ContactService {
 
 	void save(Contact contact);
 
-	Contact detail(Integer id);
+	Contact detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	PageModel list(PageModel pm, String name);
 

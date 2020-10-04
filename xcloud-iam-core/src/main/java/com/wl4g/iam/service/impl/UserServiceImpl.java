@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 
 			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
-			List<Integer> groupIds = new ArrayList<>();
+			List<Long> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());
 			}
@@ -142,16 +142,16 @@ public class UserServiceImpl implements UserService {
 		Assert.isTrue(user1 == null, user.getUserName() + " is exist");
 		user.preInsert();
 		userDao.insertSelective(user);
-		List<Integer> roleIds = user.getRoleIds();
-		for (Integer roleId : roleIds) {
+		List<Long> roleIds = user.getRoleIds();
+		for (Long roleId : roleIds) {
 			RoleUser roleUser = new RoleUser();
 			roleUser.preInsert();
 			roleUser.setUserId(user.getId());
 			roleUser.setRoleId(roleId);
 			roleUserDao.insertSelective(roleUser);
 		}
-		List<Integer> groupIds = user.getGroupIds();
-		for (Integer groupId : groupIds) {
+		List<Long> groupIds = user.getGroupIds();
+		for (Long groupId : groupIds) {
 			GroupUser groupUser = new GroupUser();
 			groupUser.preInsert();
 			groupUser.setGroupId(groupId);
@@ -164,8 +164,8 @@ public class UserServiceImpl implements UserService {
 		user.preUpdate();
 		userDao.updateByPrimaryKeySelective(user);
 		roleUserDao.deleteByUserId(user.getId());
-		List<Integer> roleIds = user.getRoleIds();
-		for (Integer roleId : roleIds) {
+		List<Long> roleIds = user.getRoleIds();
+		for (Long roleId : roleIds) {
 			RoleUser roleUser = new RoleUser();
 			roleUser.preInsert();
 			roleUser.setUserId(user.getId());
@@ -173,8 +173,8 @@ public class UserServiceImpl implements UserService {
 			roleUserDao.insertSelective(roleUser);
 		}
 		groupUserDao.deleteByUserId(user.getId());
-		List<Integer> groupIds = user.getGroupIds();
-		for (Integer groupId : groupIds) {
+		List<Long> groupIds = user.getGroupIds();
+		for (Long groupId : groupIds) {
 			GroupUser groupUser = new GroupUser();
 			groupUser.preInsert();
 			groupUser.setGroupId(groupId);
@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void del(Integer userId) {
+	public void del(Long userId) {
 		User user = new User();
 		user.setId(userId);
 		user.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -192,25 +192,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User detail(Integer userId) {
+	public User detail(Long userId) {
 		User user = userDao.selectByPrimaryKey(userId);
 		if (user == null) {
 			return null;
 		}
-		List<Integer> roleIds = roleUserDao.selectRoleIdByUserId(userId);
-		List<Integer> groupIds = groupUserDao.selectGroupIdByUserId(userId);
+		List<Long> roleIds = roleUserDao.selectRoleIdByUserId(userId);
+		List<Long> groupIds = groupUserDao.selectGroupIdByUserId(userId);
 		user.setRoleIds(roleIds);
 		user.setGroupIds(groupIds);
 		return user;
 	}
 
 	@Override
-	public User getUserById(Integer id) {
+	public User getUserById(Long id) {
 		return userDao.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public Set<Menu> getMenusByUserId(Integer userId) {
+	public Set<Menu> getMenusByUserId(Long userId) {
 		List<Menu> menus = menuDao.selectByUserId(userId);
 		Set<Menu> set = new HashSet<>(menus);
 		for (Menu menu : menus) {
@@ -219,7 +219,7 @@ public class UserServiceImpl implements UserService {
 		return set;
 	}
 
-	private void getMenusByParentId(Integer parentId, Set<Menu> menuSet) {
+	private void getMenusByParentId(Long parentId, Set<Menu> menuSet) {
 		// TODO chche best
 		List<Menu> menus = menuDao.selectByParentId(parentId);
 		if (!CollectionUtils.isEmpty(menus)) {
