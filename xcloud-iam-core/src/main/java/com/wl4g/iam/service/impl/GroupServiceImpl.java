@@ -43,7 +43,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
-import static com.wl4g.components.common.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
@@ -105,7 +105,7 @@ public class GroupServiceImpl implements GroupService {
 		return top;
 	}
 
-	private List<Group> getChildren(List<Group> groups, List<Group> children, Integer parentId) {
+	private List<Group> getChildren(List<Group> groups, List<Group> children, Long parentId) {
 		if (children == null) {
 			children = new ArrayList<>();
 		}
@@ -123,7 +123,7 @@ public class GroupServiceImpl implements GroupService {
 		return children;
 	}
 
-	public Group getParent(List<Group> groups, Integer parentId) {
+	public Group getParent(List<Group> groups, Long parentId) {
 		for (Group group : groups) {
 			if (parentId != null && group.getId() != null && group.getId().intValue() == parentId.intValue()) {
 				return group;
@@ -140,7 +140,7 @@ public class GroupServiceImpl implements GroupService {
 		if (DEFAULT_USER_ROOT.equals(user.getUserName())) {
 			groups = groupDao.selectByRoot();
 		} else {
-			groups = groupDao.selectByUserId(parseIntOrNull(user.getUserName()));
+			groups = groupDao.selectByUserId(parseLongOrNull(user.getUserName()));
 		}
 
 		Set<Group> set = new HashSet<>();
@@ -151,7 +151,7 @@ public class GroupServiceImpl implements GroupService {
 		return set;
 	}
 
-	private void getChildrensList(Integer parentId, Set<Group> set) {
+	private void getChildrensList(Long parentId, Set<Group> set) {
 		List<Group> childrens = groupDao.selectByParentId(parentId);
 		set.addAll(childrens);
 		for (Group group : childrens) {
@@ -162,10 +162,10 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void save(Group group) {
 		if (!isEmpty(group.getMenuIds())) { // Menus repeat
-			group.setMenuIds((List<Integer>) disDupCollection(group.getMenuIds()));
+			group.setMenuIds((List<Long>) disDupCollection(group.getMenuIds()));
 		}
 		if (!isEmpty(group.getRoleIds())) { // Roles repeat
-			group.setRoleIds((List<Integer>) disDupCollection(group.getRoleIds()));
+			group.setRoleIds((List<Long>) disDupCollection(group.getRoleIds()));
 		}
 		if (nonNull(group.getId())) {
 			update(group);
@@ -179,7 +179,7 @@ public class GroupServiceImpl implements GroupService {
 		groupDao.insertSelective(group);
 		// menu
 		List<GroupMenu> groupMenus = new ArrayList<>();
-		for (Integer menuId : group.getMenuIds()) {
+		for (Long menuId : group.getMenuIds()) {
 			GroupMenu groupMenu = new GroupMenu();
 			groupMenu.preInsert();
 			groupMenu.setMenuId(menuId);
@@ -207,7 +207,7 @@ public class GroupServiceImpl implements GroupService {
 			GroupUser groupUser = new GroupUser();
 			groupUser.preInsert();
 			groupUser.setGroupId(group.getId());
-			groupUser.setUserId(parseIntOrNull(info.getPrincipalId()));
+			groupUser.setUserId(parseLongOrNull(info.getPrincipalId()));
 			groupUserDao.insertSelective(groupUser);
 		}
 
@@ -220,7 +220,7 @@ public class GroupServiceImpl implements GroupService {
 		groupRoleDao.deleteByGroupId(group.getId());
 		// menu
 		List<GroupMenu> groupMenus = new ArrayList<>();
-		for (Integer menuId : group.getMenuIds()) {
+		for (Long menuId : group.getMenuIds()) {
 			GroupMenu groupMenu = new GroupMenu();
 			groupMenu.preInsert();
 			groupMenu.setMenuId(menuId);
@@ -248,7 +248,7 @@ public class GroupServiceImpl implements GroupService {
 		if (group == null || group.getGroupExt() == null || group.getType() == null) {
 			return;
 		}
-		Integer id = group.getGroupExt().getId();
+		Long id = group.getGroupExt().getId();
 		if (id == null) {// insert
 			if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 				Park park = new Park();
@@ -290,7 +290,7 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		Group group = new Group();
 		group.setId(id);
@@ -299,15 +299,16 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public Group detail(Integer id) {
+	public Group detail(Long id) {
 		Assert.notNull(id, "id is null");
 		Group group = groupDao.selectByPrimaryKey(id);
 		Assert.notNull(group, "group is null");
-		List<Integer> menuIds = groupMenuDao.selectMenuIdsByGroupId(id);
-		List<Integer> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
+		List<Long> menuIds = groupMenuDao.selectMenuIdsByGroupId(id);
+		List<Long> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
 		group.setMenuIds(menuIds);
 		group.setRoleIds(roleIds);
-		// group ext
+
+		// Group ext
 		GroupExt groupExt = new GroupExt();
 		if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 			Park park = parkDao.selectByGroupId(id);

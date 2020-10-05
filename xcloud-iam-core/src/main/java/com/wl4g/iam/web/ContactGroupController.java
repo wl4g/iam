@@ -62,7 +62,7 @@ public class ContactGroupController extends BaseController {
 
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		contactGroupService.del(id);

@@ -27,16 +27,16 @@ import java.util.Set;
  */
 public interface UserService {
 
-	User getUserById(Integer id);
+	User getUserById(Long id);
 
-	Set<Menu> getMenusByUserId(Integer userId);
+	Set<Menu> getMenusByUserId(Long userId);
 
 	PageModel list(PageModel pm, String userName, String displayName);
 
 	void save(User user);
 
-	void del(Integer userId);
+	void del(Long userId);
 
-	User detail(Integer userId);
+	User detail(Long userId);
 
 }

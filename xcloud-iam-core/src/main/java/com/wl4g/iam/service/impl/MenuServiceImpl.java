@@ -31,7 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.wl4g.components.common.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -64,7 +64,7 @@ public class MenuServiceImpl implements MenuService {
 		return result;
 	}
 
-	public Menu getParent(List<Menu> menus, Integer parentId) {
+	public Menu getParent(List<Menu> menus, Long parentId) {
 		for (Menu menu : menus) {
 			if (parentId != null && menu.getId() != null && menu.getId().intValue() == parentId.intValue()) {
 				return menu;
@@ -79,7 +79,7 @@ public class MenuServiceImpl implements MenuService {
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			return menuDao.selectWithRoot();// root
 		} else {
-			return menuDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
+			return menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
 		}
 	}
 
@@ -94,7 +94,7 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		Menu menu = new Menu();
 		menu.setId(id);
@@ -103,22 +103,30 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public Menu detail(Integer id) {
+	public Menu detail(Long id) {
 		return menuDao.selectByPrimaryKey(id);
 	}
 
 	private void insert(Menu menu) {
 		menu.preInsert();
-		Integer parentId = menu.getParentId();
-		if(Objects.nonNull(menu.getType()) && menu.getType().intValue()==3){// if menu type is button
+		Long parentId = menu.getParentId();
+		if (Objects.nonNull(menu.getType()) && menu.getType().intValue() == 3) {// if
+																				// menu
+																				// type
+																				// is
+																				// button
 			menu.setLevel(0);
-		}else{
-			if(Objects.nonNull(parentId) && 0 != parentId){// if has parent menu , set level = parent's level + 1
+		} else {
+			if (Objects.nonNull(parentId) && 0 != parentId) {// if has parent
+																// menu , set
+																// level =
+																// parent's
+																// level + 1
 				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
-				Assert.notNull(parentMenu,"parentMenu is null");
-				Assert.notNull(parentMenu.getLevel(),"parentMenu's level is null");
-				menu.setLevel(parentMenu.getLevel()+1);
-			}else{// if is parent menu , set level = 1
+				Assert.notNull(parentMenu, "parentMenu is null");
+				Assert.notNull(parentMenu.getLevel(), "parentMenu's level is null");
+				menu.setLevel(parentMenu.getLevel() + 1);
+			} else {// if is parent menu , set level = 1
 				menu.setLevel(1);
 			}
 		}
@@ -130,16 +138,16 @@ public class MenuServiceImpl implements MenuService {
 		menuDao.updateByPrimaryKeySelective(menu);
 	}
 
-	private void checkSort(Menu menu){
+	private void checkSort(Menu menu) {
 		List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
 		boolean hadSame = false;
-		for(Menu m : menus){
-			if(menu.getSort().equals(m.getSort()) && !m.getId().equals(menu.getId())){
+		for (Menu m : menus) {
+			if (menu.getSort().equals(m.getSort()) && !m.getId().equals(menu.getId())) {
 				hadSame = true;
 				break;
 			}
 		}
-		Assert2.isTrue(!hadSame,"menu's sort repeat");
+		Assert2.isTrue(!hadSame, "menu's sort repeat");
 	}
 
 	private Set<Menu> getMenusSet() {
@@ -149,9 +157,9 @@ public class MenuServiceImpl implements MenuService {
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			menus = menuDao.selectWithRoot();
 		} else {
-			Integer userId = null;
+			Long userId = null;
 			if (isNotBlank(info.getPrincipalId())) {
-				userId = Integer.parseInt(info.getPrincipalId());
+				userId = Long.parseLong(info.getPrincipalId());
 			}
 			menus = menuDao.selectByUserIdAccessGroup(userId);
 		}
@@ -177,7 +185,7 @@ public class MenuServiceImpl implements MenuService {
 		return top;
 	}
 
-	private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Integer parentId) {
+	private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Long parentId) {
 		if (children == null) {
 			children = new ArrayList<>();
 		}

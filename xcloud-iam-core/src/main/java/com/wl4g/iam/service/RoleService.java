@@ -32,8 +32,8 @@ public interface RoleService {
 
 	void save(Role group);
 
-	void del(Integer id);
+	void del(Long id);
 
-	Role detail(Integer id);
+	Role detail(Long id);
 
 }

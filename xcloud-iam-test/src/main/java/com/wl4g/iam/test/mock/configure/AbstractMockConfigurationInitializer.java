@@ -193,8 +193,8 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 			for (Config org : safeList(organs)) {
 				String name = org.getString("name");
 				String code = org.getString("code");
-				int type = org.getInt("type");
-				int areaId = org.getInt("area-id");
+				Integer type = org.getInt("type");
+				Long areaId = org.getLong("area-id");
 				String parent = org.getString("parent");
 				porgan.getOrganizations().add(new OrganizationInfo(code, parent, type, name, areaId));
 			}

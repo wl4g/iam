@@ -81,7 +81,7 @@ public class RoleServiceImpl implements RoleService {
 		} else {
 			// Groups of userId.
 			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
-			List<Integer> groupIds = new ArrayList<>();
+			List<Long> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());
 			}
@@ -107,7 +107,7 @@ public class RoleServiceImpl implements RoleService {
 			}
 			pm.setRecords(roles);
 		} else {
-			List<Integer> groupIds = new ArrayList<>();
+			List<Long> groupIds = new ArrayList<>();
 			for (Group group : groupSet) {
 				groupIds.add(group.getId());
 			}
@@ -164,10 +164,10 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void save(Role role) {
 		if (!isEmpty(role.getMenuIds())) { // Menus repeat
-			role.setMenuIds((List<Integer>) disDupCollection(role.getMenuIds()));
+			role.setMenuIds((List<Long>) disDupCollection(role.getMenuIds()));
 		}
 		if (!isEmpty(role.getGroupIds())) { // Groups repeat
-			role.setGroupIds((List<Integer>) disDupCollection(role.getGroupIds()));
+			role.setGroupIds((List<Long>) disDupCollection(role.getGroupIds()));
 		}
 		if (nonNull(role.getId())) {
 			update(role);
@@ -181,7 +181,7 @@ public class RoleServiceImpl implements RoleService {
 		roleDao.insertSelective(role);
 		List<RoleMenu> roleMenus = new ArrayList<>();
 		// menu
-		for (Integer menuId : role.getMenuIds()) {
+		for (Long menuId : role.getMenuIds()) {
 			RoleMenu roleMenu = new RoleMenu();
 			roleMenu.preInsert();
 			roleMenu.setMenuId(menuId);
@@ -193,7 +193,7 @@ public class RoleServiceImpl implements RoleService {
 		}
 		// group
 		List<GroupRole> groupRoles = new ArrayList<>();
-		for (Integer groupId : role.getGroupIds()) {
+		for (Long groupId : role.getGroupIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
 			groupRole.setGroupId(groupId);
@@ -210,10 +210,10 @@ public class RoleServiceImpl implements RoleService {
 		roleDao.updateByPrimaryKeySelective(role);
 		roleMenuDao.deleteByRoleId(role.getId());
 		groupRoleDao.deleteByRoleId(role.getId());
-		List<Integer> menuIds = role.getMenuIds();
+		List<Long> menuIds = role.getMenuIds();
 		// menu
 		List<RoleMenu> roleMenus = new ArrayList<>();
-		for (Integer menuId : menuIds) {
+		for (Long menuId : menuIds) {
 			RoleMenu roleMenu = new RoleMenu();
 			roleMenu.preInsert();
 			roleMenu.setMenuId(menuId);
@@ -225,7 +225,7 @@ public class RoleServiceImpl implements RoleService {
 		}
 		// group
 		List<GroupRole> groupRoles = new ArrayList<>();
-		for (Integer groupId : role.getGroupIds()) {
+		for (Long groupId : role.getGroupIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
 			groupRole.setGroupId(groupId);
@@ -238,7 +238,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		Role role = new Role();
 		role.setId(id);
@@ -247,10 +247,10 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public Role detail(Integer id) {
+	public Role detail(Long id) {
 		Role role = roleDao.selectByPrimaryKey(id);
-		List<Integer> menuIds = roleMenuDao.selectMenuIdByRoleId(id);
-		List<Integer> groupIds = groupRoleDao.selectGroupIdByRoleId(id);
+		List<Long> menuIds = roleMenuDao.selectMenuIdByRoleId(id);
+		List<Long> groupIds = groupRoleDao.selectGroupIdByRoleId(id);
 		role.setMenuIds(menuIds);
 		role.setGroupIds(groupIds);
 		return role;

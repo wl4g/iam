@@ -67,7 +67,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "findIamServers")
-	@RequiresPermissions(value = {"iam:online"})
+	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(clusterConfigDao.getIamServer());
@@ -82,7 +82,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "getSessions")
-	@RequiresPermissions(value = {"iam:online"})
+	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> getRemoteSessions(@Validated SessionQueryClientModel query) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Get remote sessions for <= {} ...", query);
@@ -115,7 +115,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@PostMapping(path = "destroySessions")
-	@RequiresPermissions(value = {"iam:online"})
+	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> destroyRemoteSessions(@Validated SessionDestroyClientModel destroy) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Destroy remote sessions by <= {}", destroy);

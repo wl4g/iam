@@ -811,18 +811,18 @@ public interface IamPrincipalInfo extends /* Principal, */Serializable {
 		 */
 		private String name;
 
-		private Integer areaId;
+		private Long areaId;
 
 		public OrganizationInfo() {
 			super();
 		}
 
-		public OrganizationInfo(String organizationCode, String parent, Integer type, String name, Integer areaId) {
-			this.organizationCode = organizationCode;
-			this.parent = parent;
-			this.type = type;
-			this.name = name;
-			this.areaId = areaId;
+		public OrganizationInfo(String organizationCode, String parent, Integer type, String name, Long areaId) {
+			setOrganizationCode(organizationCode);
+			setParent(parent);
+			setType(type);
+			setName(name);
+			setAreaId(areaId);
 		}
 
 		public String getOrganizationCode() {
@@ -896,19 +896,19 @@ public interface IamPrincipalInfo extends /* Principal, */Serializable {
 			return this;
 		}
 
-		public Integer getAreaId() {
+		public Long getAreaId() {
 			return areaId;
 		}
 
-		public Integer areaId() {
+		public Long areaId() {
 			return isNull(areaId) ? -1 : areaId;
 		}
 
-		public void setAreaId(Integer areaId) {
+		public void setAreaId(Long areaId) {
 			this.areaId = areaId;
 		}
 
-		public OrganizationInfo withAreaId(Integer areaId) {
+		public OrganizationInfo withAreaId(Long areaId) {
 			this.areaId = areaId;
 			return this;
 		}

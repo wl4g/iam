@@ -31,12 +31,12 @@ public interface GroupService {
 
 	void save(Group group);
 
-	void del(Integer id);
+	void del(Long id);
 
-	Group detail(Integer id);
+	Group detail(Long id);
 
 	Set<Group> getGroupsSet(User user);
 
-	Group getParent(List<Group> groups, Integer parentId);
+	Group getParent(List<Group> groups, Long parentId);
 
 }

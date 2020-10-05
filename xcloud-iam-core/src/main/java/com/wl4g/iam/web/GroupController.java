@@ -41,9 +41,8 @@ public class GroupController {
 	@Autowired
 	private GroupService groupService;
 
-
 	@RequestMapping(value = "/getGroupsTree")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	@RequiresPermissions(value = { "iam:group" }, logical = AND)
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
 		List<Group> groupsTree = groupService.getGroupsTree();
@@ -52,7 +51,7 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
+	@RequiresPermissions(value = { "iam:group" }, logical = AND)
 	public RespBase<?> save(@RequestBody Group group) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.save(group);
@@ -60,16 +59,16 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
-	public RespBase<?> del(Integer id) {
+	@RequiresPermissions(value = { "iam:group" }, logical = AND)
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"iam:group"},logical = AND)
-	public RespBase<?> detail(Integer id) {
+	@RequiresPermissions(value = { "iam:group" }, logical = AND)
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Group group = groupService.detail(id);
 		resp.forMap().put("data", group);
@@ -83,8 +82,5 @@ public class GroupController {
 		resp.forMap().put("list", IamOrganizationHolder.getSessionOrganizations());
 		return resp;
 	}
-
-
-
 
 }
