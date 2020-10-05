@@ -21,7 +21,7 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
@@ -76,7 +76,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 }

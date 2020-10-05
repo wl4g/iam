@@ -21,7 +21,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
@@ -94,8 +94,7 @@ public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSup
 	 *
 	 * @return
 	 */
-	@Bean(BEAN_DELEGATE_MSG_SOURCE)
-	@ConditionalOnMissingBean
+	@Bean(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	public SessionResourceMessageBundler sessionDelegateMessageBundle() {
 		return new SessionResourceMessageBundler(AbstractIamConfiguration.class);
 	}

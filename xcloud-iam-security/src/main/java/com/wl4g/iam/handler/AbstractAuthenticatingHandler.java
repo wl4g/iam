@@ -16,7 +16,7 @@
 package com.wl4g.iam.handler;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import javax.annotation.Resource;
 
@@ -78,7 +78,7 @@ public abstract class AbstractAuthenticatingHandler implements AuthenticatingHan
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	/**

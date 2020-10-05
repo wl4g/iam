@@ -25,7 +25,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.convertBean;
 import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.components.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGIN_PERMITS;
 import static com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
@@ -83,7 +83,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	/**

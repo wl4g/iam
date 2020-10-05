@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.web;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import javax.annotation.Resource;
 
@@ -82,7 +82,7 @@ public abstract class AbstractSnsController extends BaseController {
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	public AbstractSnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {

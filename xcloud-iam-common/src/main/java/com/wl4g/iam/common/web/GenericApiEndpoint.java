@@ -72,7 +72,7 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 	/**
 	 * Session delegate message source bundle.
 	 */
-	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@javax.annotation.Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	/**

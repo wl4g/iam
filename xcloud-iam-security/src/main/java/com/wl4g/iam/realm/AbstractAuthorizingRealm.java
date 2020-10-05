@@ -112,7 +112,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	public AbstractAuthorizingRealm(IamBasedMatcher matcher) {

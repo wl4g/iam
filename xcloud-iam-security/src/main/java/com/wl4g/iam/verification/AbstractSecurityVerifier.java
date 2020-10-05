@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.web.WebUtils2.getRequestParam;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.unbind;
@@ -96,7 +96,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	/**

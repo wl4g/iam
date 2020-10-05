@@ -38,7 +38,7 @@ import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.components.common.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
@@ -106,7 +106,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,

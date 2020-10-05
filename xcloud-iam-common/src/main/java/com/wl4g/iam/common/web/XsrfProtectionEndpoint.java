@@ -56,7 +56,7 @@ public class XsrfProtectionEndpoint extends BaseController {
 	/**
 	 * Session delegate message source bundle.
 	 */
-	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	@javax.annotation.Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	@Autowired
