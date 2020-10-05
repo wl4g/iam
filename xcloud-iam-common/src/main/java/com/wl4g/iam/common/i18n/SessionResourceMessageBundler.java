@@ -32,16 +32,8 @@ import com.wl4g.components.core.i18n.AbstractResourceMessageBundler;
  */
 public class SessionResourceMessageBundler extends AbstractResourceMessageBundler {
 
-	public SessionResourceMessageBundler() {
-		super();
-	}
-
 	public SessionResourceMessageBundler(Class<?> withClassPath) {
 		super(withClassPath);
-	}
-
-	public SessionResourceMessageBundler(String... basenames) {
-		super(basenames);
 	}
 
 	@Override
