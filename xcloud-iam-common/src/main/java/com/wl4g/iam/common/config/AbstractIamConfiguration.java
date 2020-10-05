@@ -95,7 +95,6 @@ public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSup
 	 * @return
 	 */
 	@Bean(BEAN_DELEGATE_MSG_SOURCE)
-	@ConditionalOnMissingBean
 	public SessionResourceMessageBundler sessionDelegateMessageBundle() {
 		return new SessionResourceMessageBundler(AbstractIamConfiguration.class);
 	}
