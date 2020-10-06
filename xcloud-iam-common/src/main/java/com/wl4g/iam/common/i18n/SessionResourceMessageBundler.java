@@ -38,7 +38,13 @@ public class SessionResourceMessageBundler extends AbstractResourceMessageBundle
 
 	@Override
 	protected Locale getSessionLocale() {
-		Locale locale = (Locale) getBindValue(KEY_LANG_NAME);
+		Object loc = getBindValue(KEY_LANG_NAME);
+		Locale locale = null;
+		if (loc instanceof Locale) {
+			locale = (Locale) loc;
+		} else if (loc instanceof String) {
+			locale = new Locale((String) loc);
+		}
 		return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
 	}
 
