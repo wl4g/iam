@@ -256,11 +256,11 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		String lang = getCleanParam(request, config.getParam().getI18nLang());
-		// Gets apply locale.
-		Locale locale = request.getLocale();
-		if (isNotBlank(lang)) {
-			lang = locale.getLanguage();
+		if (isBlank(lang)) { // Fallback
+			lang = request.getLocale().getLanguage();
 		}
+
+		// Save apply locale.
 		bind(KEY_LANG_NAME, lang);
 		resp.forMap().put(KEY_LANG_NAME, lang);
 		return resp;
