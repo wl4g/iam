@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.Assert;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
@@ -34,7 +35,6 @@ import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Statu
 import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
-import com.wl4g.components.common.id.SimpleIdGenerator;
 import com.wl4g.components.common.web.WebUtils2;
 import com.wl4g.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
@@ -204,7 +204,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 	 * @return
 	 */
 	private String generateSecondaryAuthcCode(String application) {
-		return SimpleIdGenerator.generateVariableUid("sec_", 32);
+		return "sec_".concat(RandomStringUtils.randomAlphanumeric(32));
 	}
 
 }
