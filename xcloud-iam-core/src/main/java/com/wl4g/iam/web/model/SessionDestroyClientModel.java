@@ -29,14 +29,14 @@ import com.wl4g.iam.common.web.model.SessionDestroyModel;
 public class SessionDestroyClientModel extends SessionDestroyModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "Iam server id must not be empty")
-	private Integer id;
+	@NotNull(message = "IamServerId is requires")
+	private Long id;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
