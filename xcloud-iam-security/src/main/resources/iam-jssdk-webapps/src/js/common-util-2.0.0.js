@@ -94,7 +94,7 @@
 				return "";
 			}
 			var topDomainName = domain.split('.').slice(-2).join('.');
-        	if(domain.indexOf("com.cn") > 0) {
+        	if(domain.indexOf("com.") > 0) { // e.g: com.cn/com.sg
         		topDomainName = domain.split('.').slice(-3).join('.');
         	}
         	return topDomainName;

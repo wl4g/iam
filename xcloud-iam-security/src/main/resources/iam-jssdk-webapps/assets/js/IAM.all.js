@@ -94,7 +94,7 @@
 				return "";
 			}
 			var topDomainName = domain.split('.').slice(-2).join('.');
-        	if(domain.indexOf("com.cn") > 0) {
+        	if(domain.indexOf("com.") > 0) { // e.g: com.cn/com.sg
         		topDomainName = domain.split('.').slice(-3).join('.');
         	}
         	return topDomainName;
@@ -1915,7 +1915,6 @@
 
 	// Gets default IAM baseUri
 	var _getIamBaseUri = function() {
-		// 获取地址栏默认baseUri
 		var protocol = location.protocol;
 		var hostname = location.hostname;
 		var servPort = settings.deploy.defaultServerPort;
@@ -1925,8 +1924,8 @@
 
 		// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
 	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
-	 	// a，当访问的地址是IP；
-	 	// b，当访问域名的后者是.debug/.local/.dev等。
+	 	// 1.1，当访问的地址是IP；
+	 	// 1.2，当访问域名的后者是.debug/.local/.dev等。
 		if (Common.Util.isIp(hostname)
         	|| hostname == 'localhost'
         	|| hostname == '127.0.0.1'
@@ -1947,11 +1946,11 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		_iamConsole.debug("Merged iam core settings: ", settings);
+		_iamConsole.debug("Merged IAM core settings: ", settings);
 
 		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
         settings.deploy.baseUri = _getIamBaseUri();
-        _iamConsole.info("Use overlay iam baseUri: ", settings.deploy.baseUri);
+        _iamConsole.info("Use overlay IAM baseUri: ", settings.deploy.baseUri);
 	    //}
 
 		// Storage iamBaseUri
@@ -2887,7 +2886,7 @@
 	// Export function multi modular authenticating handler.
 	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
 
-	// Export function getIamBaseURI
+	// Export function getDefaultIamBaseURI
 	IAMCore.getIamBaseUri = function() {
 		var iamBaseUri = _getIamBaseUri(); 
 		// Overlay cache
