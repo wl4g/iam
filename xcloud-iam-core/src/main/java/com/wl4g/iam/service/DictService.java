@@ -41,6 +41,6 @@ public interface DictService {
 
 	List<String> allType();
 
-	Map<String, Object> cache();
+	Map<String, Object> loadInit();
 
 }

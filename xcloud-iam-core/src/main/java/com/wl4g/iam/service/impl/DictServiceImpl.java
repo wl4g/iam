@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.components.core.constants.ERMDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
 import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
@@ -65,7 +66,8 @@ public class DictServiceImpl implements DictService {
 		} else {
 			insert(dict);
 		}
-		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);// when modify , remove cache from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);// when modify , remove
+														// cache from redis
 	}
 
 	public void insert(Dict dict) {
@@ -125,7 +127,7 @@ public class DictServiceImpl implements DictService {
 	}
 
 	@Override
-	public Map<String, Object> cache() {
+	public Map<String, Object> loadInit() {
 		String s = jedisService.get(KEY_CACHE_SYS_DICT_INIT_CACHE);
 		Map<String, Object> result;
 		if (StringUtils.isNotBlank(s)) {
@@ -134,7 +136,8 @@ public class DictServiceImpl implements DictService {
 		} else {
 			result = new HashMap<>();
 			List<Dict> dicts = dictDao.list(null, null, null, null, "1");
-			Assert.notEmpty(dicts,"get dict from db is empty,Please check your db,table=sys_dict");
+			Assert.notEmpty(dicts, "get dict from db is empty,Please check your db,table=sys_dict");
+
 			Map<String, List<Dict>> dictList = new HashMap<>();
 			Map<String, Map<String, Dict>> dictMap = new HashMap<>();
 			for (Dict dict : dicts) {
@@ -154,8 +157,9 @@ public class DictServiceImpl implements DictService {
 			}
 			result.put("dictList", dictList);
 			result.put("dictMap", dictMap);
+
 			// cache to redis
-			String s1 = JacksonUtils.toJSONString(result);
+			String s1 = toJSONString(result);
 			jedisService.set(KEY_CACHE_SYS_DICT_INIT_CACHE, s1, CONFIG_DICT_CACHE_TIME_SECOND);
 		}
 		return result;

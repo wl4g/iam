@@ -24,8 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * {@link ClusterConfigController}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-09-16 14:32:00
+ * @date 2019-09-16
+ * @sine v1.0.0
+ * @see
  */
 @RestController
 @RequestMapping("/clusterConfig")
@@ -34,10 +39,15 @@ public class ClusterConfigController extends BaseController {
 	@Autowired
 	private ClusterConfigService clusterConfigService;
 
-	@RequestMapping(value = "/info")
-	public RespBase<?> info() {
+	/**
+	 * System initialization load dict information.
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/loadInit")
+	public RespBase<?> loadInit() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(clusterConfigService.info());
+		resp.setData(clusterConfigService.loadInit());
 		return resp;
 	}
 

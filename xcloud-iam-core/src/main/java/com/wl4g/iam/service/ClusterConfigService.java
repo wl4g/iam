@@ -18,10 +18,16 @@ package com.wl4g.iam.service;
 import java.util.Map;
 
 /**
+ * {@link ClusterConfigService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-11-14 11:47:00
+ * @date 2019-11-14
+ * @sine v1.0.0
+ * @see
  */
 public interface ClusterConfigService {
 
-	Map<String, Object> info();
+	Map<String, Object> loadInit();
+
 }

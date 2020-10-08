@@ -42,7 +42,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 	private ClusterConfigDao clusterConfigDao;
 
 	@Override
-	public Map<String, Object> info() {
+	public Map<String, Object> loadInit() {
 		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
 		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
@@ -51,4 +51,5 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 		}
 		return map;
 	}
+
 }

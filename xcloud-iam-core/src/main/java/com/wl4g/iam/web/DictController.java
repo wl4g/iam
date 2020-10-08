@@ -48,6 +48,19 @@ public class DictController extends BaseController {
 	@Autowired
 	private JedisService jedisService;
 
+	/**
+	 * System initialization load dict information.
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/loadInit")
+	public RespBase<?> loadInit() {
+		RespBase<Object> resp = RespBase.create();
+		Map<String, Object> result = dictService.loadInit();
+		resp.setData(result);
+		return resp;
+	}
+
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:dict" })
 	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
@@ -103,14 +116,6 @@ public class DictController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		List<String> list = dictService.allType();
 		resp.forMap().put("list", list);
-		return resp;
-	}
-
-	@RequestMapping(value = "/getInit")
-	public RespBase<?> getInit() {
-		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = dictService.cache();
-		resp.setData(result);
 		return resp;
 	}
 
