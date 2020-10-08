@@ -1306,7 +1306,6 @@
 	// Base constants definition.
     var constant = {
 		iamVerboseStoredKey : '__IAM_VERBOSE',
-        baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
         authRedirectRecordStorageKey : '__IAM_AUTHC_REDIRECT_RECORD',
         useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
@@ -1852,7 +1851,8 @@
 		// First visit? init xsrf token
 		if (!xsrfTokenValue) {
 			_iamConsole.debug("Loading new xsrf token...");
-			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
+			// [MARK10]
+			var applyXsrfTokenUrl = new IAMCore(settings).getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
 			Common.Util.Http.request({
 				url: applyXsrfTokenUrl,
 				type: 'HEAD',
@@ -1944,6 +1944,11 @@
 
 	// Configure settings
 	var _initConfigure = function(obj) {
+		// 优化: 当obj是settings时忽略覆盖操作
+		if (obj === settings) { //@see [MARK10]
+			return;
+		}
+
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
 		_iamConsole.debug("Merged IAM core settings: ", settings);
@@ -1952,9 +1957,6 @@
         settings.deploy.baseUri = _getIamBaseUri();
         _iamConsole.info("Use overlay IAM baseUri: ", settings.deploy.baseUri);
 	    //}
-
-		// Storage iamBaseUri
-        sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
 	};
 
 	// Gets URL to request a connection to a sns provider
@@ -2874,6 +2876,11 @@
 	// Export check authentication and redirection
 	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect.doHandle;
 
+	// Export function get iam baseUri with options.
+	IAMCore.prototype.getIamBaseUri = function() {
+		return _getIamBaseUri();
+	};
+
 	// Export function Iam console
 	IAMCore.Console = _iamConsole;
 
@@ -2885,14 +2892,6 @@
 
 	// Export function multi modular authenticating handler.
 	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
-
-	// Export function getDefaultIamBaseURI
-	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = _getIamBaseUri(); 
-		// Overlay cache
-		sessionStorage.setItem(constant.baseUriStoredKey, iamBaseUri);
-		return iamBaseUri;
-	};
 
 })(window, document);
 /**
@@ -3286,7 +3285,7 @@
 	 		init: {
 	 			onPostCheck: function(res) {
 	 				// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-					var url = IAMCore.getIamBaseUri() +"/login/errread";	
+					var url = new IAMCore(iamCoreConfig).getIamBaseUri() +"/login/errread";	
 					$.ajax({
 						url: url,
 						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.

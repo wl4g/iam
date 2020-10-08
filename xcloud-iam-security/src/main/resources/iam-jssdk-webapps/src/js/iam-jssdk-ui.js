@@ -221,7 +221,7 @@
 	 		init: {
 	 			onPostCheck: function(res) {
 	 				// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-					var url = IAMCore.getIamBaseUri() +"/login/errread";	
+					var url = new IAMCore(iamCoreConfig).getIamBaseUri() +"/login/errread";	
 					$.ajax({
 						url: url,
 						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
