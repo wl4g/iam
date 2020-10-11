@@ -17,27 +17,30 @@ package com.wl4g.iam.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.DictService;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.isNull;
+import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.components.core.constants.ERMDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
 import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author vjay
@@ -62,24 +65,15 @@ public class DictServiceImpl implements DictService {
 	@Override
 	public void save(Dict dict, Boolean isEdit) {
 		if (isEdit) {
-			update(dict);
+			dict.preUpdate();
+			dictDao.updateByPrimaryKeySelective(dict);
 		} else {
-			insert(dict);
+			validateValues(dict);
+			validateRepeat(dict);
+			dict.preInsert();
+			dictDao.insertSelective(dict);
 		}
-		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);// when modify , remove
-														// cache from redis
-	}
-
-	public void insert(Dict dict) {
-		checkBeforePersistence(dict);
-		checkRepeat(dict);
-		dict.preInsert();
-		dictDao.insertSelective(dict);
-	}
-
-	public void update(Dict dict) {
-		dict.preUpdate();
-		dictDao.updateByPrimaryKeySelective(dict);
+		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE); // Cleanup cache.
 	}
 
 	@Override
@@ -87,21 +81,9 @@ public class DictServiceImpl implements DictService {
 		return dictDao.selectByPrimaryKey(key);
 	}
 
-	private void checkBeforePersistence(Dict dict) {
-		Assert.notNull(dict, "dict is null");
-		Assert.hasText(dict.getKey(), "key is null");
-		Assert.hasText(dict.getType(), "key is null");
-		Assert.hasText(dict.getLabel(), "key is null");
-	}
-
-	private void checkRepeat(Dict dict) {
-		Dict dict1 = dictDao.selectByPrimaryKey(dict.getKey());
-		Assert.isNull(dict1, "dict key is repeat");
-	}
-
 	@Override
 	public void del(String key) {
-		Assert.hasText(key, "id is null");
+		hasText(key, "id is null");
 		Dict dict = new Dict();
 		dict.setKey(key);
 		dict.preUpdate();
@@ -110,14 +92,13 @@ public class DictServiceImpl implements DictService {
 	}
 
 	@Override
-	public List<Dict> getBytype(String type) {
-		Assert.hasText(type, "type is blank");
-		return dictDao.selectByType(type);
+	public List<Dict> getByType(String type) {
+		return dictDao.selectByType(hasText(type, "dictType is requires"));
 	}
 
 	@Override
 	public Dict getByKey(String key) {
-		Assert.hasText(key, "key is blank");
+		hasText(key, "key is blank");
 		return dictDao.getByKey(key);
 	}
 
@@ -130,39 +111,46 @@ public class DictServiceImpl implements DictService {
 	public Map<String, Object> loadInit() {
 		String s = jedisService.get(KEY_CACHE_SYS_DICT_INIT_CACHE);
 		Map<String, Object> result;
-		if (StringUtils.isNotBlank(s)) {
-			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {
+		if (!isBlank(s)) {
+			result = parseJSON(s, new TypeReference<Map<String, Object>>() {
 			});
 		} else {
 			result = new HashMap<>();
 			List<Dict> dicts = dictDao.list(null, null, null, null, "1");
-			Assert.notEmpty(dicts, "get dict from db is empty,Please check your db,table=sys_dict");
+			notEmpty(dicts, "get dict from db is empty,Please check your db,table=sys_dict");
 
 			Map<String, List<Dict>> dictList = new HashMap<>();
 			Map<String, Map<String, Dict>> dictMap = new HashMap<>();
 			for (Dict dict : dicts) {
 				String type = dict.getType();
-				List<Dict> list = dictList.get(type);
-				Map<String, Dict> map = dictMap.get(type);
-				if (null == list) {
-					list = new ArrayList<>();
-				}
-				if (null == map) {
-					map = new HashMap<>();
-				}
+				// Dictionaries list
+				List<Dict> list = dictList.getOrDefault(type, new ArrayList<>());
 				list.add(dict);
-				map.put(dict.getValue(), dict);
 				dictList.put(type, list);
+
+				// Dictionaries map
+				Map<String, Dict> map = dictMap.getOrDefault(type, new HashMap<>());
+				map.put(dict.getValue(), dict);
 				dictMap.put(type, map);
 			}
 			result.put("dictList", dictList);
 			result.put("dictMap", dictMap);
 
-			// cache to redis
+			// Cache to redis
 			String s1 = toJSONString(result);
 			jedisService.set(KEY_CACHE_SYS_DICT_INIT_CACHE, s1, CONFIG_DICT_CACHE_TIME_SECOND);
 		}
 		return result;
 	}
 
+	private void validateRepeat(Dict dict) {
+		isNull(dictDao.selectByPrimaryKey(dict.getKey()), "Cannot add duplicate dictionary. %s", dict);
+	}
+
+	private void validateValues(Dict dict) {
+		notNull(dict, "dict is null");
+		hasText(dict.getKey(), "key is null");
+		hasText(dict.getType(), "key is null");
+		hasText(dict.getLabel(), "key is null");
+	}
 }

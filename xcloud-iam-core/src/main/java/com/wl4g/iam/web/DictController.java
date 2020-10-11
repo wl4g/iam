@@ -98,7 +98,7 @@ public class DictController extends BaseController {
 	@RequestMapping(value = "/getByType")
 	public RespBase<?> getByType(String type) {
 		RespBase<Object> resp = RespBase.create();
-		List<Dict> list = dictService.getBytype(type);
+		List<Dict> list = dictService.getByType(type);
 		resp.forMap().put("list", list);
 		return resp;
 	}

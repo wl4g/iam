@@ -35,7 +35,7 @@ public interface DictService {
 
 	void del(String key);
 
-	List<Dict> getBytype(String type);
+	List<Dict> getByType(String type);
 
 	Dict getByKey(String key);
 
