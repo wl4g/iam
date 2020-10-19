@@ -24,6 +24,7 @@ import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.service.GroupService;
 import com.wl4g.iam.service.MenuService;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -56,9 +57,14 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public Map<String, Object> getMenuTree() {
 		Map<String, Object> result = new HashMap<>();
+		long t1 = System.currentTimeMillis();
 		Set<Menu> menusSet = getMenusSet();
+		long t2 = System.currentTimeMillis();
 		List<Menu> menus = new ArrayList<>(menusSet);
+		//dealWithRoutePath(menus);
 		menus = set2Tree(menus);
+		long t3 = System.currentTimeMillis();
+		System.out.println("a:"+ (t2-t1)+"  b:"+(t3-t2));
 		result.put("data", menus);
 		result.put("data2", new ArrayList<>(menusSet));
 		return result;
@@ -76,12 +82,55 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public List<Menu> getMenuList() {
 		IamPrincipalInfo info = getPrincipalInfo();
+        List<Menu> result;
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
-			return menuDao.selectWithRoot();// root
+            result =  menuDao.selectWithRoot();// root
 		} else {
-			return menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
+            result =  menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
+		}
+		// deal with route path
+		dealWithRoutePath(result);
+		return result;
+	}
+
+	private void dealWithRoutePath(List<Menu> list){
+		for(Menu menu: list){
+			menu.setRoutePath(menu.getRouteNamespace());
+			if(menu.getParentId() != null && menu.getParentId() > 0 && StringUtils.isNotBlank(menu.getRouteNamespace())){
+				dealWithRoutePath(list,menu,menu.getParentId());
+			}
 		}
 	}
+
+	private void dealWithRoutePath(List<Menu> list,Menu menu,long parentId){
+	    if(parentId != 0){
+            for(Menu m: list){
+                if(m.getId().equals(parentId)){
+                    menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace())+menu.getRoutePath());
+                    if(m.getParentId() != null && m.getParentId() > 0){
+						dealWithRoutePath(list,menu,m.getParentId());
+					}
+                    break;
+                }
+            }
+        }
+    }
+
+    private String fixRouteNamespace(String routeNamespace){
+	    if(routeNamespace!=null && routeNamespace.length()>1){
+            if(!routeNamespace.startsWith("/")){
+                routeNamespace = "/" + routeNamespace;
+            }
+            while(routeNamespace.endsWith("/")){
+                routeNamespace = routeNamespace.substring(0,routeNamespace.length()-1);
+            }
+			routeNamespace = routeNamespace.trim();
+        }
+	    return routeNamespace;
+    }
+
+
+
 
 	@Override
 	public void save(Menu menu) {
