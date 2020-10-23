@@ -29,7 +29,7 @@ import com.wl4g.iam.common.web.model.SessionQueryModel;
 public class SessionQueryClientModel extends SessionQueryModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "(iamServerId) is requires")
+	@NotNull(message = "Private IAM service ID is requires")
 	private Long id;
 
 	public Long getId() {
