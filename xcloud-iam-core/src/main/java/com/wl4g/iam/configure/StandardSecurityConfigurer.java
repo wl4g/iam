@@ -48,7 +48,7 @@ import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
@@ -229,7 +229,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
 		List<Role> list;
-		if (DEFAULT_USER_ROOT.equals(principal)) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			list = roleDao.selectWithRoot(null, null);
 		} else {
 			list = roleDao.selectByUserId(user.getId());
@@ -256,7 +256,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
 		List<Menu> list;
-		if (DEFAULT_USER_ROOT.equals(principal)) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			list = menuDao.selectWithRoot();
 		} else {
 			list = menuDao.selectByUserId(user.getId());

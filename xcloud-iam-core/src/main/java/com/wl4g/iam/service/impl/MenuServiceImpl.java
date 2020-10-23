@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -80,7 +80,7 @@ public class MenuServiceImpl implements MenuService {
     public List<Menu> getMenuList() {
         IamPrincipalInfo info = getPrincipalInfo();
         List<Menu> result;
-        if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+        if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
             result = menuDao.selectWithRoot();// root
         } else {
             result = menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
@@ -218,7 +218,7 @@ public class MenuServiceImpl implements MenuService {
         IamPrincipalInfo info = getPrincipalInfo();
 
         List<Menu> menus = null;
-        if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+        if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
             menus = menuDao.selectWithRoot();
         } else {
             Long userId = null;

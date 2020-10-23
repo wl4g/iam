@@ -44,7 +44,7 @@ import java.util.*;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -137,7 +137,7 @@ public class GroupServiceImpl implements GroupService {
 		// IamPrincipalInfo info = getPrincipalInfo();
 
 		List<Group> groups = null;
-		if (DEFAULT_USER_ROOT.equals(user.getUserName())) {
+		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
 			groups = groupDao.selectByRoot();
 		} else {
 			groups = groupDao.selectByUserId(parseLongOrNull(user.getUserName()));
@@ -203,7 +203,7 @@ public class GroupServiceImpl implements GroupService {
 
 		// add user-group
 		IamPrincipalInfo info = getPrincipalInfo();
-		if (!DEFAULT_USER_ROOT.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
+		if (!DEFAULT_SUPER_USER.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
 			GroupUser groupUser = new GroupUser();
 			groupUser.preInsert();
 			groupUser.setGroupId(group.getId());

@@ -37,7 +37,7 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
-import static io.netty.util.internal.ThreadLocalRandom.current;
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.components.common.log.SmartLogger;

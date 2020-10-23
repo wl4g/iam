@@ -49,7 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 		IamPrincipalInfo info = getPrincipalInfo();
 
 		List<User> list = null;
-		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			list = userDao.list(null, userName, displayName);
 		} else {

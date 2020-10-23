@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -76,7 +76,7 @@ public class RoleServiceImpl implements RoleService {
 	public List<Role> getRolesByUserGroups() {
 		IamPrincipalInfo info = getPrincipalInfo();
 
-		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			return roleDao.selectWithRoot(null, null);
 		} else {
 			// Groups of userId.
@@ -96,7 +96,7 @@ public class RoleServiceImpl implements RoleService {
 		IamPrincipalInfo info = getPrincipalInfo();
 
 		Set<Group> groupSet = groupService.getGroupsSet(new User(info.getPrincipal()));
-		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			List<Role> roles = roleDao.selectWithRoot(roleCode, displayName);
 			for (Role role : roles) {
