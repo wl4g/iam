@@ -50,6 +50,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年11月4日
  * @since
  */
+@SuppressWarnings("deprecation")
 @RestController
 @RequestMapping("/mgr/v1")
 public class IamManagerApiV1Controller extends BaseController {
@@ -84,26 +85,20 @@ public class IamManagerApiV1Controller extends BaseController {
 	@RequestMapping(path = "getSessions")
 	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> getRemoteSessions(@Validated SessionQueryClientModel query) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Get remote sessions for <= {} ...", query);
-		}
+		log.info("Get remote sessions for <= {} ...", query);
 
 		// Get remote IAM base URI.
 		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(query.getId());
 		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
-		url += "?" + new BeanMapConvert(query).toUriParmaters();
-		if (log.isInfoEnabled()) {
-			log.info("Request get remote sessions for clusterConfigId: {}, URL: {}", query.getId(), url);
-		}
+		url += "?".concat(new BeanMapConvert(query).toUriParmaters());
+		log.info("Request get remote sessions for clusterConfigId: {}, URL: {}", query.getId(), url);
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
 
-		if (log.isInfoEnabled()) {
-			log.info("Got remote sessions response for => {}", resp);
-		}
+		log.info("Got remote sessions response for => {}", resp);
 		return resp;
 	}
 
