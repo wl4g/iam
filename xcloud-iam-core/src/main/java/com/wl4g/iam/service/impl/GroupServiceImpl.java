@@ -140,7 +140,7 @@ public class GroupServiceImpl implements GroupService {
 		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
 			groups = groupDao.selectByRoot();
 		} else {
-			groups = groupDao.selectByUserId(parseLongOrNull(user.getUserName()));
+			groups = groupDao.selectByUserId(user.getId());
 		}
 
 		Set<Group> set = new HashSet<>();
