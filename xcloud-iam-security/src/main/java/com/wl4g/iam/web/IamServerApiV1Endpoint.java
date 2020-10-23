@@ -116,7 +116,7 @@ public class IamServerApiV1Endpoint extends GenericApiEndpoint {
 		}
 
 		// Authentication client type.
-		Object token = session.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN));
+		Object token = session.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN, IamSession.class));
 		if (nonNull(token)) {
 			if (token instanceof GenericAuthenticationToken) {
 				sa.setClientRef(((GenericAuthenticationToken) token).getClientRef());
