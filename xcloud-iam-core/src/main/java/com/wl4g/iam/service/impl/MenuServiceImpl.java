@@ -103,7 +103,7 @@ public class MenuServiceImpl implements MenuService {
         if (parentId != 0) {
             for (Menu m : list) {
                 if (m.getId().equals(parentId)) {
-                    menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace()) + menu.getRoutePath());
+                    menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace()) + fixRouteNamespace(menu.getRoutePath()));
                     if (m.getParentId() != null && m.getParentId() > 0) {
                         dealWithRoutePath(list, menu, m.getParentId());
                     }
@@ -115,6 +115,9 @@ public class MenuServiceImpl implements MenuService {
 
     private String fixRouteNamespace(String routeNamespace) {
         if (routeNamespace != null && routeNamespace.length() > 1) {
+            if(StringUtils.equals("/",routeNamespace)){
+                return "";
+            }
             if (!routeNamespace.startsWith("/")) {
                 routeNamespace = "/" + routeNamespace;
             }
@@ -177,9 +180,9 @@ public class MenuServiceImpl implements MenuService {
     }
 
     /**
-     * 动态  静态  按钮
+     * 父/子 动态      静态     按钮
      * 动态  1         1       0
-     * 静态  1         1       1(无需设菜单文件夹的pagelocation和route_path为空)
+     * 静态  1         1       1(无需设菜单文件夹的pagelocation和route_namespace为空)
      * 按钮  0         0       0
      *
      * @param menu
