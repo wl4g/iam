@@ -193,11 +193,11 @@ public class MenuServiceImpl implements MenuService {
             if (parentMenu.getType() == 1) {
                 return;
             }
-            if (parentMenu.getType() == 2 && menu.getType() == 0) {
-                throw new UnsupportedOperationException("can not save because parentType=2(dynamic) and menuType=0(button)");
+            if (parentMenu.getType() == 2 && menu.getType() == 3) {
+                throw new UnsupportedOperationException("can not save because parentType=2(dynamic) and menuType=3(button)");
             }
-            if (parentMenu.getType() == 0) {
-                throw new UnsupportedOperationException("can not save because parentType=0(button)");
+            if (parentMenu.getType() == 3) {
+                throw new UnsupportedOperationException("can not save because parentType=3(button)");
             }
         }
     }
