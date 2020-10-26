@@ -63,6 +63,7 @@ import com.wl4g.iam.common.exception.IamException;
  * @version v1.0 2019年3月9日
  * @since
  */
+@SuppressWarnings("deprecation")
 public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthenticationHandler<SecondaryAuthenticate> {
 	protected SmartLogger log = getLogger(getClass());
 
