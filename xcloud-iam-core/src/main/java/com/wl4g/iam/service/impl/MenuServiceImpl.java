@@ -114,10 +114,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private String fixRouteNamespace(String routeNamespace) {
+        if(StringUtils.equals("/",routeNamespace)){
+            return "";
+        }
         if (routeNamespace != null && routeNamespace.length() > 1) {
-            if(StringUtils.equals("/",routeNamespace)){
-                return "";
-            }
             if (!routeNamespace.startsWith("/")) {
                 routeNamespace = "/" + routeNamespace;
             }
@@ -125,6 +125,9 @@ public class MenuServiceImpl implements MenuService {
                 routeNamespace = routeNamespace.substring(0, routeNamespace.length() - 1);
             }
             routeNamespace = routeNamespace.trim();
+            while (routeNamespace.contains("//")) {
+                routeNamespace = routeNamespace.replaceAll("//","/");
+            }
         }
         return routeNamespace;
     }
