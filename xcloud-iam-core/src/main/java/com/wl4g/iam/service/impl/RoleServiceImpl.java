@@ -17,28 +17,18 @@ package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.iam.Group;
-import com.wl4g.components.core.bean.iam.GroupRole;
-import com.wl4g.components.core.bean.iam.Role;
-import com.wl4g.components.core.bean.iam.RoleMenu;
-import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.dao.iam.GroupDao;
-import com.wl4g.devops.dao.iam.GroupRoleDao;
-import com.wl4g.devops.dao.iam.RoleDao;
-import com.wl4g.devops.dao.iam.RoleMenuDao;
+import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.service.GroupService;
+import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
@@ -64,101 +54,74 @@ public class RoleServiceImpl implements RoleService {
 	private RoleMenuDao roleMenuDao;
 
 	@Autowired
-	private GroupDao groupDao;
+	private MenuDao menuDao;
 
 	@Autowired
-	private GroupService groupService;
+	private OrganizationService organizationService;
 
 	@Autowired
-	private GroupRoleDao groupRoleDao;
+	private OrganizationRoleDao groupRoleDao;
 
 	@Override
 	public List<Role> getRolesByUserGroups() {
 		IamPrincipalInfo info = getPrincipalInfo();
 
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
-			return roleDao.selectWithRoot(null, null);
+			return roleDao.selectWithRoot(null,null, null);
 		} else {
 			// Groups of userId.
-			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
+			Set<Organization> groups = organizationService.getGroupsSet(new User(info.getPrincipal()));
 			List<Long> groupIds = new ArrayList<>();
-			for (Group group : groups) {
+			for (Organization group : groups) {
 				groupIds.add(group.getId());
 			}
 			// Roles of group.
-			List<Role> roles = roleDao.selectByGroupIds(groupIds, null, null);
+			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(),null, null);
 			return roles;
 		}
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String roleCode, String displayName) {
+	public PageModel list(PageModel pm, String organizationId, String roleCode, String displayName) {
 		IamPrincipalInfo info = getPrincipalInfo();
 
-		Set<Group> groupSet = groupService.getGroupsSet(new User(info.getPrincipal()));
+		List<Long> groupIds = null;
+		if(StringUtils.isNotBlank(organizationId)){
+			Set<Long> set = new HashSet<>();
+			set.add(Long.valueOf(organizationId));
+			organizationService.getChildrensIds(Long.valueOf(organizationId), set);
+			groupIds = new ArrayList<>(set);
+		}
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectWithRoot(roleCode, displayName);
-			for (Role role : roles) {
-				List<Group> groups = groupDao.selectByRoleId(role.getId());
-				groups = removeUnhad(groups, groupSet); // remove unhad
-				String s = groups2Str(groups);
-				role.setGroupDisplayName(s);
-			}
+			List<Role> roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
+			setMenuStrs(roles);
 			pm.setRecords(roles);
 		} else {
-			List<Long> groupIds = new ArrayList<>();
-			for (Group group : groupSet) {
-				groupIds.add(group.getId());
-			}
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectByGroupIds(groupIds, roleCode, displayName);
-			for (Role role : roles) {
-				List<Group> groups = groupDao.selectByRoleId(role.getId());
-				groups = removeUnhad(groups, groupSet); // remove unhad
-				String s = groups2Str(groups);
-				role.setGroupDisplayName(s);
-			}
+			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
+			setMenuStrs(roles);
 			pm.setRecords(roles);
 		}
 		return pm;
 	}
 
-	private List<Group> removeUnhad(List<Group> groups, Set<Group> groupsSet) {
-		if (isEmpty(groups)) {
-			return Collections.emptyList();
-		}
-		if (isEmpty(groupsSet)) {
-			return Collections.emptyList();
-		}
-		for (int i = groups.size() - 1; i >= 0; i--) {
-			boolean had = false;
-			for (Group group1 : groupsSet) {
-				if (groups.get(i).getId().intValue() == group1.getId().intValue()) {
-					had = true;
-					break;
+	private void setMenuStrs(List<Role> roles) {
+		for(Role role : roles){
+			List<Menu> menus = menuDao.selectByRoleId(role.getId());
+			if (isEmpty(menus)) {
+				continue;
+			}
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int i = 0; i < menus.size(); i++) {
+				if (i == menus.size() - 1) {
+					stringBuilder.append(menus.get(i).getNameZh());
+				} else {
+					stringBuilder.append(menus.get(i).getNameZh()).append(",");
 				}
 			}
-			if (!had) {
-				groups.remove(i);
-			}
+			role.setMenusStr(stringBuilder.toString());
 		}
-		return groups;
-	}
-
-	private String groups2Str(List<Group> groups) {
-		if (isEmpty(groups)) {
-			return null;
-		}
-		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < groups.size(); i++) {
-			if (i == groups.size() - 1) {
-				stringBuilder.append(groups.get(i).getDisplayName());
-			} else {
-				stringBuilder.append(groups.get(i).getDisplayName()).append(",");
-			}
-		}
-		return stringBuilder.toString();
 	}
 
 	@Override
@@ -192,11 +155,18 @@ public class RoleServiceImpl implements RoleService {
 			roleMenuDao.insertBatch(roleMenus);
 		}
 		// group
-		List<GroupRole> groupRoles = new ArrayList<>();
-		for (Long groupId : role.getGroupIds()) {
-			GroupRole groupRole = new GroupRole();
+		List<OrganizationRole> groupRoles = new ArrayList<>();
+		/*for (Long groupId : role.getGroupIds()) {
+			OrganizationRole groupRole = new OrganizationRole();
 			groupRole.preInsert();
 			groupRole.setGroupId(groupId);
+			groupRole.setRoleId(role.getId());
+			groupRoles.add(groupRole);
+		}*/
+		if(nonNull(role.getOrganizationId())){
+			OrganizationRole groupRole = new OrganizationRole();
+			groupRole.preInsert();
+			groupRole.setGroupId(role.getOrganizationId());
 			groupRole.setRoleId(role.getId());
 			groupRoles.add(groupRole);
 		}
@@ -224,9 +194,9 @@ public class RoleServiceImpl implements RoleService {
 			roleMenuDao.insertBatch(roleMenus);
 		}
 		// group
-		List<GroupRole> groupRoles = new ArrayList<>();
+		List<OrganizationRole> groupRoles = new ArrayList<>();
 		for (Long groupId : role.getGroupIds()) {
-			GroupRole groupRole = new GroupRole();
+			OrganizationRole groupRole = new OrganizationRole();
 			groupRole.preInsert();
 			groupRole.setGroupId(groupId);
 			groupRole.setRoleId(role.getId());

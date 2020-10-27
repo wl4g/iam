@@ -15,28 +15,30 @@
  */
 package com.wl4g.iam.service;
 
+import com.wl4g.components.core.bean.iam.Organization;
+import com.wl4g.components.core.bean.iam.User;
+
 import java.util.List;
 import java.util.Set;
-
-import com.wl4g.components.core.bean.iam.Group;
-import com.wl4g.components.core.bean.iam.User;
 
 /**
  * @author vjay
  * @date 2019-10-29 16:19:00
  */
-public interface GroupService {
+public interface OrganizationService {
 
-	List<Group> getGroupsTree();
+	List<Organization> getGroupsTree();
 
-	void save(Group group);
+	void save(Organization group);
 
 	void del(Long id);
 
-	Group detail(Long id);
+	Organization detail(Long id);
 
-	Set<Group> getGroupsSet(User user);
+	Set<Organization> getGroupsSet(User user);
 
-	Group getParent(List<Group> groups, Long parentId);
+	Organization getParent(List<Organization> groups, Long parentId);
+
+	void getChildrensIds(Long parentId, Set<Long> set);
 
 }

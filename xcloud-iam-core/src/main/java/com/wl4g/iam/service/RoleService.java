@@ -28,7 +28,7 @@ public interface RoleService {
 
 	List<Role> getRolesByUserGroups();
 
-	PageModel list(PageModel pm, String name, String displayName);
+	PageModel list(PageModel pm, String organizationId, String name, String displayName);
 
 	void save(Role group);
 

@@ -16,9 +16,9 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.iam.common.utils.IamOrganizationHolder;
-import com.wl4g.iam.service.GroupService;
+import com.wl4g.iam.service.OrganizationService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,31 +35,31 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
  * @date 2019-10-29 16:19:00
  */
 @RestController
-@RequestMapping("/group")
-public class GroupController {
+@RequestMapping("/organization")
+public class OrganizationController {
 
 	@Autowired
-	private GroupService groupService;
+	private OrganizationService groupService;
 
 	@RequestMapping(value = "/getGroupsTree")
-	@RequiresPermissions(value = { "iam:group" }, logical = AND)
+	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
-		List<Group> groupsTree = groupService.getGroupsTree();
+		List<Organization> groupsTree = groupService.getGroupsTree();
 		resp.forMap().put("data", groupsTree);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "iam:group" }, logical = AND)
-	public RespBase<?> save(@RequestBody Group group) {
+	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
+	public RespBase<?> save(@RequestBody Organization group) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.save(group);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "iam:group" }, logical = AND)
+	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.del(id);
@@ -67,10 +67,10 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "iam:group" }, logical = AND)
+	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		Group group = groupService.detail(id);
+		Organization group = groupService.detail(id);
 		resp.forMap().put("data", group);
 		return resp;
 	}
