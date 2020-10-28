@@ -15,15 +15,13 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.service.GroupService;
 import com.wl4g.iam.service.MenuService;
-
+import com.wl4g.iam.service.OrganizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
@@ -50,7 +49,7 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     protected MenuDao menuDao;
     @Autowired
-    protected GroupService groupService;
+    protected OrganizationService groupService;
     @Autowired
     protected GroupMenuDao groupMenuDao;
 
@@ -114,7 +113,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private String fixRouteNamespace(String routeNamespace) {
-        if(StringUtils.equals("/",routeNamespace)){
+        if (StringUtils.equals("/", routeNamespace)) {
             return "";
         }
         if (routeNamespace != null && routeNamespace.length() > 1) {
@@ -126,7 +125,7 @@ public class MenuServiceImpl implements MenuService {
             }
             routeNamespace = routeNamespace.trim();
             while (routeNamespace.contains("//")) {
-                routeNamespace = routeNamespace.replaceAll("//","/");
+                routeNamespace = routeNamespace.replaceAll("//", "/");
             }
         }
         return routeNamespace;
@@ -191,11 +190,15 @@ public class MenuServiceImpl implements MenuService {
      * @param menu
      */
     private void checkMenu(Menu menu) {
+        String routeNamespace = menu.getRouteNamespace();
+        final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/");
+        isTrue(isLegal, "illegal routeNamespace: '%s', e.g: '/edit'", routeNamespace);
+
         if (menu.getParentId() == null) {
             return;
         }
         Menu parentMenu = menuDao.selectByPrimaryKey(menu.getParentId());
-        if(null != parentMenu){
+        if (null != parentMenu) {
             if (parentMenu.getType() == 1) {
                 return;
             }
@@ -217,7 +220,7 @@ public class MenuServiceImpl implements MenuService {
                 break;
             }
         }
-        Assert2.isTrue(!hadSame, "menu's sort repeat");
+        isTrue(!hadSame, "menu's sort repeat");
     }
 
     private Set<Menu> getMenusSet() {
@@ -236,7 +239,7 @@ public class MenuServiceImpl implements MenuService {
         Set<Menu> set = new LinkedHashSet<>();
         set.addAll(menus);
         // Clean unused fields
-        for(Menu menu : set){
+        for (Menu menu : set) {
             menu.setRoutePath(null);
             menu.setLevel(null);
             menu.setClassify(null);

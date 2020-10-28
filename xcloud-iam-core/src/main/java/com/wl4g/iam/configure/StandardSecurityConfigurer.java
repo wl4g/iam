@@ -17,7 +17,7 @@ package com.wl4g.iam.configure;
 
 import com.wl4g.components.core.bean.iam.ClusterConfig;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
-import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.components.core.bean.iam.Role;
 import com.wl4g.components.core.bean.iam.SocialConnectInfo;
@@ -32,7 +32,7 @@ import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsParameter;
-import com.wl4g.iam.service.GroupService;
+import com.wl4g.iam.service.OrganizationService;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -82,7 +82,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Autowired
 	private transient MenuDao menuDao;
 	@Autowired
-	private GroupService groupService;
+	private OrganizationService groupService;
 
 	@Value("${spring.profiles.active}")
 	private String active;
@@ -190,9 +190,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			Set<Group> groupsSet = groupService.getGroupsSet(user);
+			Set<Organization> groupsSet = groupService.getGroupsSet(user);
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
-					o.getParentCode(), o.getType(), o.getDisplayName(), o.getAreaId())).collect(toList());
+					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
 			return new SimplePrincipalInfo(valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}
@@ -230,7 +230,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// TODO cache
 		List<Role> list;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
-			list = roleDao.selectWithRoot(null, null);
+			list = roleDao.selectWithRoot(null, null, null);
 		} else {
 			list = roleDao.selectByUserId(user.getId());
 		}

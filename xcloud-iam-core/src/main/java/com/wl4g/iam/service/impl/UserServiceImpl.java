@@ -17,13 +17,13 @@ package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.iam.Group;
+import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.GroupUser;
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.components.core.bean.iam.Role;
 import com.wl4g.components.core.bean.iam.RoleUser;
 import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.dao.iam.GroupDao;
+import com.wl4g.devops.dao.iam.OrganizationDao;
 import com.wl4g.devops.dao.iam.GroupUserDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
@@ -35,7 +35,7 @@ import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.iam.service.GroupService;
+import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.UserService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	private RoleDao roleDao;
 
 	@Autowired
-	private GroupDao groupDao;
+	private OrganizationDao groupDao;
 
 	@Autowired
 	private RoleUserDao roleUserDao;
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
 	protected IamSessionDAO sessionDAO;
 
 	@Autowired
-	private GroupService groupService;
+	private OrganizationService groupService;
 
 	@Override
 	public PageModel list(PageModel pm, String userName, String displayName) {
@@ -99,9 +99,9 @@ public class UserServiceImpl implements UserService {
 			list = userDao.list(null, userName, displayName);
 		} else {
 
-			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
+			Set<Organization> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
 			List<Long> groupIds = new ArrayList<>();
-			for (Group group : groups) {
+			for (Organization group : groups) {
 				groupIds.add(group.getId());
 			}
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 		for (User user : list) {
 			// groups
-			List<Group> groups = groupDao.selectByUserId(user.getId());
+			List<Organization> groups = groupDao.selectByUserId(user.getId());
 			user.setGroupNameStrs(groups2Str(groups));
 			// roles
 			List<Role> roles = roleDao.selectByUserId(user.getId());
@@ -239,7 +239,7 @@ public class UserServiceImpl implements UserService {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		for (int i = 0; i < roles.size(); i++) {
-			String displayName = roles.get(i).getDisplayName();
+			String displayName = roles.get(i).getNameZh();
 			if (i == roles.size() - 1) {
 				stringBuilder.append(displayName);
 			} else {
@@ -249,14 +249,14 @@ public class UserServiceImpl implements UserService {
 		return stringBuilder.toString();
 	}
 
-	private String groups2Str(List<Group> groups) {
+	private String groups2Str(List<Organization> groups) {
 		if (CollectionUtils.isEmpty(groups)) {
 			return "";
 		}
 		StringBuilder stringBuilder = new StringBuilder();
 
 		for (int i = 0; i < groups.size(); i++) {
-			String displayName = groups.get(i).getDisplayName();
+			String displayName = groups.get(i).getNameZh();
 			if (i == groups.size() - 1) {
 				stringBuilder.append(displayName);
 			} else {
