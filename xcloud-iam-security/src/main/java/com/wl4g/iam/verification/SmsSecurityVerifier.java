@@ -173,7 +173,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 			return;
 		}
 		// Getting account information
-		IamPrincipal acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+		IamPrincipal acc = configurer.getIamUserDetail(new SmsParameter(String.valueOf(mobile)));
 
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {

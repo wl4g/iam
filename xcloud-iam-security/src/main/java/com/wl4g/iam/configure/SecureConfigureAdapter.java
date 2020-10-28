@@ -16,7 +16,7 @@
 package com.wl4g.iam.configure;
 
 /**
- * Securer configure adapter
+ * Securer configure adapter.
  *
  * @author wangl.sir
  * @version v1.0 2019年3月19日

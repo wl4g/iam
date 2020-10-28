@@ -109,6 +109,9 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	@Override
 	public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
+		notNullOf(token, "credentialsToken");
+		notNullOf(publicSalt, "publicSalt");
+
 		// Delegate signature
 		if (!isNull(delegate) && !token.isSolved()) {
 			// Resolving request credentials token.
@@ -128,11 +131,12 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
+		notNullOf(token, "credentialsToken");
 		/*
 		 * Password is a string that may be set to empty.
 		 * See:xx.realm.GeneralAuthorizingRealm#doIamAuthenticationInfo
 		 */
-		notNullOf(info, "storedCredentials");
+		notNullOf(info, "storedAuthzInfo");
 		notNullOf(info.getCredentials(), "storedCredentials");
 
 		// Delegate validate.

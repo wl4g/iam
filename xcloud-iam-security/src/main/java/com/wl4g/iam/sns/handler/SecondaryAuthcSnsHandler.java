@@ -130,7 +130,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 
 		// Account by openId
 		Parameter parameter = new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId());
-		IamPrincipal account = configurer.getIamAccount(parameter);
+		IamPrincipal account = configurer.getIamUserDetail(parameter);
 
 		// Second authentication assertion
 		SecondaryAuthcValidateResult model = new SecondaryAuthcValidateResult(sourceApp, provider,

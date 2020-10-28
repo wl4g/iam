@@ -72,7 +72,7 @@ public class GenericAuthorizingRealm extends AbstractAuthorizingRealm<GenericAut
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
 		// Gets account by loginId
-		IamPrincipal pinfo = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		IamPrincipal pinfo = configurer.getIamUserDetail(new SimpleParameter((String) token.getPrincipal()));
 		log.debug("Gots Iam principalInfo: {} by token:{}", pinfo, token);
 
 		// To authenticationInfo

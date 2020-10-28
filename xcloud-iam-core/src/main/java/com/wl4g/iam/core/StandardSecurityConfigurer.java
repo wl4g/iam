@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.configure;
+package com.wl4g.iam.core;
 
 import com.wl4g.components.core.bean.iam.ClusterConfig;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
@@ -32,6 +32,7 @@ import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
+import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.service.GroupService;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -175,7 +176,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public IamPrincipal getIamAccount(Parameter parameter) {
+	public IamPrincipal getIamUserDetail(Parameter parameter) {
 		User user = null;
 
 		// By SNS authorizing

@@ -84,7 +84,7 @@ public class BasedConfigAutoConfiguration {
 		}
 
 		@Override
-		public IamPrincipal getIamAccount(Parameter parameter) {
+		public IamPrincipal getIamUserDetail(Parameter parameter) {
 			throw new UnsupportedOperationException();
 		}
 

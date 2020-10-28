@@ -74,7 +74,7 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
 		// Get account by mobile phone
-		IamPrincipal info = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		IamPrincipal info = configurer.getIamUserDetail(new SmsParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", info, token);
 		}

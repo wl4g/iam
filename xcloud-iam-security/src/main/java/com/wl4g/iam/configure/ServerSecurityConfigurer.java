@@ -59,13 +59,13 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	List<ApplicationInfo> findApplicationInfo(String... appNames);
 
 	/**
-	 * Obtain account information based on loginId
+	 * Gets authenticating user account details information based on loginId
 	 *
 	 * @param parameter
 	 *            query parameter
 	 * @return account information
 	 */
-	IamPrincipal getIamAccount(Parameter parameter);
+	IamPrincipal getIamUserDetail(Parameter parameter);
 
 	/**
 	 * When the authentication succeeds, but there is no access to the Iam
