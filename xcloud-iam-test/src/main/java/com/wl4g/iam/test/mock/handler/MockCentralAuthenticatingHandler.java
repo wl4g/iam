@@ -79,7 +79,8 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 
 		// Principal info
 		SimpleIamPrincipal iamPrincipal = new SimpleIamPrincipal(mock.getPrincipalId(), mock.getPrincipal(),
-				"<Mock storedCredentials>", mock.getRoles(), mock.getPermissions(), mock.getOrganization());
+				"<Mock storedCredentials>", "<Mock storedPublicSalt>", mock.getRoles(), mock.getPermissions(),
+				mock.getOrganization());
 		assertion.setIamPrincipal(iamPrincipal);
 
 		// Grants roles and permissions attributes
