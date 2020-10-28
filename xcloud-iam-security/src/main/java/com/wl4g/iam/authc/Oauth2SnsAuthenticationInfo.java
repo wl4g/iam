@@ -19,16 +19,16 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 public class Oauth2SnsAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public Oauth2SnsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+	public Oauth2SnsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, String realmName) {
 		this(accountInfo, principals, null, realmName);
 	}
 
-	public Oauth2SnsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public Oauth2SnsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
 		super(accountInfo, principals, credentialsSalt, realmName);
 	}

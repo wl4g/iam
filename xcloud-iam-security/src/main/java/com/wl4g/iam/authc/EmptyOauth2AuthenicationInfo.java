@@ -19,7 +19,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalMap;
 
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * {@link EmptyOauth2AuthenicationInfo}
@@ -52,7 +52,7 @@ public class EmptyOauth2AuthenicationInfo implements IamAuthenticationInfo {
 	}
 
 	@Override
-	public IamPrincipalInfo getPrincipalInfo() {
+	public IamPrincipal getIamPrincipal() {
 		return null;
 	}
 

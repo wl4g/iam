@@ -26,12 +26,12 @@ import com.wl4g.devops.dao.iam.ClusterConfigDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SimpleParameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
 import com.wl4g.iam.service.GroupService;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -49,7 +49,7 @@ import java.util.Set;
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
+import static com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
@@ -175,7 +175,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public IamPrincipalInfo getIamAccount(Parameter parameter) {
+	public IamPrincipal getIamAccount(Parameter parameter) {
 		User user = null;
 
 		// By SNS authorizing
@@ -193,7 +193,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			Set<Group> groupsSet = groupService.getGroupsSet(user);
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getDisplayName(), o.getAreaId())).collect(toList());
-			return new SimplePrincipalInfo(valueOf(user.getId()), user.getUserName(), user.getPassword(),
+			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}
 		return null;

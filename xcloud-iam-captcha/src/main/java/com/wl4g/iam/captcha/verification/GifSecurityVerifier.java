@@ -20,7 +20,7 @@ import com.wl4g.iam.captcha.gif.Captcha;
 import com.wl4g.iam.captcha.gif.GifCaptcha;
 import com.wl4g.iam.captcha.gif.model.GifApplyImgModel;
 import com.wl4g.iam.captcha.gif.model.GifVerifyImgModel;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.GraphBasedSecurityVerifier;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+	protected Object postApplyGraphProperties(@NotNull CryptKind kind, String applyToken, VerifyCodeWrapper codeWrap,
 			KeyPairSpec keySpec) throws IOException {
 		// Generate image & to base64 string.
 		Captcha captcha = new GifCaptcha(codeWrap.getCode());

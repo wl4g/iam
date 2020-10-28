@@ -17,7 +17,7 @@ package com.wl4g.iam.authc;
 
 import static com.wl4g.components.common.lang.Assert2.*;
 
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * SMS authentication token
@@ -45,7 +45,7 @@ public class SmsAuthenticationToken extends ClientSecretIamAuthenticationToken {
 	 */
 	final private String smsCode;
 
-	public SmsAuthenticationToken(final SecureAlgKind secureAlgKind, final String clientSecretKey, final String remoteHost,
+	public SmsAuthenticationToken(final CryptKind secureAlgKind, final String clientSecretKey, final String remoteHost,
 			final String action, final String principal, final String smsCode) {
 		super(secureAlgKind, clientSecretKey, remoteHost);
 		hasTextOf(action, "action");

@@ -21,8 +21,8 @@ import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.configure.SecurityConfigurer;
 import com.wl4g.iam.common.exception.BindingConstraintsException;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 *            query parameter
 	 * @return account information
 	 */
-	IamPrincipalInfo getIamAccount(Parameter parameter);
+	IamPrincipal getIamAccount(Parameter parameter);
 
 	/**
 	 * When the authentication succeeds, but there is no access to the Iam

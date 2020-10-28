@@ -16,7 +16,7 @@
 package com.wl4g.iam.verification;
 
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.model.GenericApplyResult;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
 
@@ -49,7 +49,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+	protected Object postApplyGraphProperties(@NotNull CryptKind kind, String applyToken, VerifyCodeWrapper codeWrap,
 			KeyPairSpec keySpec) throws IOException {
 		// Generate image & to base64 string.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

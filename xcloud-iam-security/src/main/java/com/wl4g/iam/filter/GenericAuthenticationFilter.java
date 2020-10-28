@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;
 import static com.wl4g.components.common.web.WebUtils2.rejectRequestMethod;
@@ -57,7 +57,7 @@ public class GenericAuthenticationFilter extends AbstractServerIamAuthentication
 
 		// Additional optional parameters.
 		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherCredentials,
-				SecureAlgKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
+				CryptKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
 
 		// Extra custom parameters.
 		token.setExtraParameters(extractParamesOfFirst(request));

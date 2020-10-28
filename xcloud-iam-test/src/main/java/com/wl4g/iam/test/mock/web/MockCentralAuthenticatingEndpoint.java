@@ -41,7 +41,7 @@ import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.web.AuthenticatingEndpoint;
 
 /**
@@ -63,10 +63,10 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateRequest param) {
+	public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
 		log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidateResult<IamPrincipalInfo>> resp = new RespBase<>();
+		RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 

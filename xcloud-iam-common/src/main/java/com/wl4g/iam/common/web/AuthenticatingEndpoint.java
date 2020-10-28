@@ -25,7 +25,7 @@ import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.authc.model.SessionValidateResult;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * IAM server validating authenticating endpoint
@@ -45,7 +45,7 @@ public interface AuthenticatingEndpoint {
 	 *            BindingResult
 	 * @return TicketAssertion result.
 	 */
-	default RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull TicketValidateRequest param) {
+	default RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull TicketValidateRequest param) {
 		throw new UnsupportedOperationException();
 	}
 

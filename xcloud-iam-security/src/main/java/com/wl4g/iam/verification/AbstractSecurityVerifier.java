@@ -50,7 +50,7 @@ import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
 
 /**
@@ -166,7 +166,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 				return null; // not enabled
 			}
 			// Gets choosed secure algorithm.
-			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
+			CryptKind kind = CryptKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
 			// Decoding
 			params = new String(Base58.decodeBase58(params), UTF_8);
@@ -243,7 +243,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @param submitCode
 	 * @return
 	 */
-	protected boolean doMatch(@NotNull SecureAlgKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
+	protected boolean doMatch(@NotNull CryptKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}

@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -54,31 +55,36 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamPrincipalInfo extends /* Principal, */Serializable {
+public interface IamPrincipal extends Principal, Serializable {
+
+	@Override
+	default String getName() {
+		return getPrincipal();
+	}
 
 	/**
-	 * Get account principal Id.
+	 * Gets account principal Id.
 	 * 
 	 * @return
 	 */
 	String getPrincipalId();
 
 	/**
-	 * Get account principal Id.
+	 * Gets account principal Id.
 	 * 
 	 * @return If null, the NOOP default value is returned
 	 */
 	String principalId();
 
 	/**
-	 * Get account principal name.
+	 * Gets account principal name.
 	 * 
 	 * @return
 	 */
 	String getPrincipal();
 
 	/**
-	 * Get account principal name.
+	 * Gets account principal name.
 	 * 
 	 * @return If null, the NOOP default value is returned
 	 */
@@ -176,12 +182,12 @@ public interface IamPrincipalInfo extends /* Principal, */Serializable {
 	 * 
 	 * @throws IllegalArgumentException
 	 */
-	IamPrincipalInfo validate() throws IllegalArgumentException;
+	IamPrincipal validate() throws IllegalArgumentException;
 
 	// --- Authenticating parameter's. ---
 
 	/**
-	 * {@link IamPrincipalInfo} attributes wrapper.
+	 * {@link IamPrincipal} attributes wrapper.
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version 2020年7月7日 v1.0.0

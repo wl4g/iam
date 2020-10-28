@@ -21,7 +21,7 @@ import com.wl4g.components.core.framework.operator.Operator;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import static com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import java.security.spec.KeySpec;
 
@@ -32,7 +32,7 @@ import java.security.spec.KeySpec;
  * @version v1.0 2019-08-30
  * @since
  */
-public interface SecureCryptService extends Operator<SecureAlgKind> {
+public interface SecureCryptService extends Operator<CryptKind> {
 
 	/**
 	 * Encryption with hex plain.
@@ -115,7 +115,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @version 2020年3月29日 v1.0.0
 	 * @see
 	 */
-	public static enum SecureAlgKind {
+	public static enum CryptKind {
 
 		RSA("RSA/ECB/PKCS1Padding"),
 
@@ -125,7 +125,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 
 		final private String algorithm;
 
-		private SecureAlgKind(String algorithm) {
+		private CryptKind(String algorithm) {
 			hasTextOf(algorithm, "algorithm");
 			this.algorithm = algorithm;
 		}
@@ -134,21 +134,21 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 			return algorithm;
 		}
 
-		public static SecureAlgKind of(String encodedAlgKind) {
+		public static CryptKind of(String encodedAlgKind) {
 			return of(true, encodedAlgKind);
 		}
 
-		public static SecureAlgKind of(boolean decode, String algKindStr) {
+		public static CryptKind of(boolean decode, String algKindStr) {
 			if (decode) {
 				algKindStr = new String(Base58.decodeBase58(algKindStr));
 			}
-			SecureAlgKind kind = safeOf(algKindStr);
+			CryptKind kind = safeOf(algKindStr);
 			notNull(kind, "Illegal secure algorithm kind: %s", algKindStr);
 			return kind;
 		}
 
-		private static SecureAlgKind safeOf(String cryptKind) {
-			for (SecureAlgKind k : values()) {
+		private static CryptKind safeOf(String cryptKind) {
+			for (CryptKind k : values()) {
 				if (String.valueOf(cryptKind).equalsIgnoreCase(k.name())
 						|| String.valueOf(cryptKind).equalsIgnoreCase(k.getAlgorithm())) {
 					return k;

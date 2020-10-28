@@ -33,8 +33,8 @@ public final class RSASecureCryptService extends AbstractAymmetricSecureCryptSer
 	}
 
 	@Override
-	public SecureAlgKind kind() {
-		return SecureAlgKind.RSA;
+	public CryptKind kind() {
+		return CryptKind.RSA;
 	}
 
 }

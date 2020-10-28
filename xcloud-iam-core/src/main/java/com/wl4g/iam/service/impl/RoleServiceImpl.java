@@ -27,7 +27,7 @@ import com.wl4g.devops.dao.iam.GroupRoleDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.RoleMenuDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.GroupService;
 import com.wl4g.iam.service.RoleService;
 
@@ -74,7 +74,7 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> getRolesByUserGroups() {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			return roleDao.selectWithRoot(null, null);
@@ -93,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public PageModel list(PageModel pm, String roleCode, String displayName) {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 
 		Set<Group> groupSet = groupService.getGroupsSet(new User(info.getPrincipal()));
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {

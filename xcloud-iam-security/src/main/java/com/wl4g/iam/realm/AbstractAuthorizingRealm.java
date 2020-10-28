@@ -51,8 +51,8 @@ import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfoWrapper;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -162,11 +162,11 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			IamPrincipalInfo pinfo = info.getPrincipalInfo().validate();
+			IamPrincipal pinfo = info.getIamPrincipal().validate();
 			// Sets social attributes.(if necessary)
 			pinfo.attributes().setSocialAuthorizeInfo(getBindValue(KEY_SNS_AUTHORIZED_INFO, true));
 
-			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(pinfo));
+			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalWrapper(pinfo));
 
 			return info;
 		} catch (Throwable e) {
@@ -207,7 +207,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 		}
 
 		// Assert when that no permissions are configured, forbid login.
-		if (isBlank(info0.getPrincipalInfo().getPermissions())) {
+		if (isBlank(info0.getIamPrincipal().getPermissions())) {
 			throw new AccessPermissionDeniedException(bundle.getMessage("AbstractIamAuthorizingRealm.permission.denied"));
 		}
 

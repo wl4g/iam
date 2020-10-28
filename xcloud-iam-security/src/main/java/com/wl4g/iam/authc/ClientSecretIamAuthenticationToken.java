@@ -19,7 +19,7 @@ import static com.wl4g.components.common.lang.Assert2.*;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * Client secret IAM authentication token
@@ -37,7 +37,7 @@ public abstract class ClientSecretIamAuthenticationToken extends ServerIamAuthen
 	 * Iam asymmetric secure crypt algorithm kind definitions..
 	 */
 	@NotNull
-	final private SecureAlgKind secureAlgKind;
+	final private CryptKind cryptKind;
 
 	/**
 	 * The secret key that the client requests for authentication is used to
@@ -50,28 +50,28 @@ public abstract class ClientSecretIamAuthenticationToken extends ServerIamAuthen
 	 */
 	final private String umidToken;
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken) {
+	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken) {
 		this(kind, clientSecretKey, umidToken, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken,
+	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
 			final String remoteHost) {
 		this(kind, clientSecretKey, umidToken, remoteHost, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken,
+	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
 			final String remoteHost, final RedirectInfo redirectInfo) {
 		super(remoteHost, redirectInfo);
 		notNullOf(kind, "kind");
 		hasTextOf(clientSecretKey, "clientSecretKey");
 		hasTextOf(umidToken, "umidToken");
-		this.secureAlgKind = kind;
+		this.cryptKind = kind;
 		this.clientSecretKey = clientSecretKey;
 		this.umidToken = umidToken;
 	}
 
-	public SecureAlgKind getSecureAlgKind() {
-		return secureAlgKind;
+	public CryptKind getCryptKind() {
+		return cryptKind;
 	}
 
 	public String getClientSecretKey() {

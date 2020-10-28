@@ -23,7 +23,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.shiro.util.Assert.notNull;
@@ -47,25 +47,25 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttribute";
 
 	/**
-	 * New create and merge {@link IamPrincipalInfo} to
+	 * New create and merge {@link IamPrincipal} to
 	 * {@link PrincipalCollection}
 	 * 
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection createPermitPrincipalCollection(IamPrincipalInfo info) {
+	protected PrincipalCollection createPermitPrincipalCollection(IamPrincipal info) {
 		return createPermitPrincipalCollection(info.getPrincipal(), info);
 	}
 
 	/**
-	 * New create and merge {@link IamPrincipalInfo} to
+	 * New create and merge {@link IamPrincipal} to
 	 * {@link PrincipalCollection}
 	 * 
 	 * @param principal
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
+	protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipal info) {
 		notNull(principal, "Principal can't null");
 		notNull(info, "IamPrincipalInfo can't null");
 

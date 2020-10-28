@@ -23,7 +23,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.crypto.hash.Hash;
@@ -39,15 +38,17 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * Abstract credentials securer adapter
@@ -74,13 +75,13 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * The 'private' part of the hash salt.
 	 */
-	final protected ByteSource privateSalt;
+	final protected CodecSource privateSalt;
 
 	/**
 	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+	protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * I18n message source.
@@ -101,46 +102,46 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		notNullOf(config.getCryptosExpireMs() > 0, "cryptExpireMs");
 		notNullOf(config.getApplyPubkeyExpireMs() > 0, "applyPubKeyExpireMs");
 		notNullOf(cacheManager, "cacheManager");
-		this.privateSalt = Util.bytes(config.getPrivateSalt());
+		this.privateSalt = new CodecSource(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
 	}
 
 	@Override
-	public String signature(@NotNull CredentialsToken token) {
+	public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
 		// Delegate signature
 		if (!isNull(delegate) && !token.isSolved()) {
 			// Resolving request credentials token.
-			return delegate.signature(resolves(token));
+			return delegate.signature(resolveToken(token), publicSalt);
 		}
 
 		// When the delegate is null, it is unresolved.
 		if (!token.isSolved()) {
-			token = resolves(token); // It is necessary to resolving
+			token = resolveToken(token); // It is necessary to resolving
 		}
 
 		// Hashing signature
-		return doCredentialsHash(token,
+		return doCredentialsHash(token, publicSalt,
 				(algorithm, source, salt, hashIters) -> new SimpleHash(algorithm, source, salt, hashIters));
 	}
 
 	@Override
-	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+	public boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
 		/*
 		 * Password is a string that may be set to empty.
-		 * See:xx.realm.GeneralAuthorizingRealm#doAuthenticationInfo
+		 * See:xx.realm.GeneralAuthorizingRealm#doIamAuthenticationInfo
 		 */
 		notNullOf(info, "storedCredentials");
 		notNullOf(info.getCredentials(), "storedCredentials");
 
 		// Delegate validate.
 		if (!isNull(delegate) && !token.isSolved()) {
-			return delegate.validate(resolves(token), info);
+			return delegate.validate(resolveToken(token), info);
 		}
 
-		// # Assertion compare request credentials & storage credentials.
-		return isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
+		// Assertion compare request credentials & storage credentials.
+		return isEqual(toBytes(signature(token, info.getPublicSalt())), toBytes(info.getCredentials()));
 	}
 
 	/**
@@ -151,7 +152,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @see {@link com.wl4g.iam.web.LoginAuthenticationEndpoint#handhake()}
 	 */
 	@Override
-	public String applySecret(@NotNull SecureAlgKind kind, @NotNull String principal) {
+	public String applySecret(@NotNull CryptKind kind, @NotNull String principal) {
 		// Check required sessionKey.
 		checkSession();
 
@@ -173,41 +174,17 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	/**
-	 * Combines the specified 'private' salt bytes with the specified additional
-	 * extra bytes to use as the total salt during hash computation.
-	 * {@code privateSaltBytes} will be {@code null} }if no private salt has
-	 * been configured.
-	 *
-	 * @param privateSalt
-	 *            the (possibly {@code null}) 'private' salt to combine with the
-	 *            specified extra bytes
-	 * @param publicSalt
-	 *            the extra bytes to use in addition to the given private salt.
-	 * @return a combination of the specified private salt bytes and extra bytes
-	 *         that will be used as the total salt during hash computation.
-	 * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
-	 */
-	protected abstract ByteSource merge(ByteSource privateSalt, ByteSource publicSalt);
-
-	/**
-	 * Get public salt
-	 *
-	 * @param principal
-	 * @return
-	 */
-	protected abstract ByteSource getPublicSalt(@NotBlank String principal);
-
-	/**
 	 * Execute hashing
 	 *
 	 * @param token
 	 *            Resolved parameter token
+	 * @param info
 	 * @param hasher
 	 * @return
 	 */
-	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
+	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt, @NotNull Hasher hasher) {
 		// Merge salt
-		ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
+		CodecSource salt = merge(privateSalt, determinePublicSalt(token, publicSalt));
 		log.debug("Merge salt of principal: {}, salt: {}", token.getPrincipal(), salt);
 
 		// Determine which hashing algorithm to use
@@ -222,14 +199,42 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	/**
-	 * Corresponding to the front end, RSA1/RSA2/DSA/ECC/... encryption is used
-	 * by default.
+	 * Combines the specified 'private' salt bytes with the specified additional
+	 * extra bytes to use as the total salt during hash computation.
+	 * {@code privateSaltBytes} will be {@code null} }if no private salt has
+	 * been configured.
+	 *
+	 * @param privateSalt
+	 *            the (possibly {@code null}) 'private' salt to combine with the
+	 *            specified extra bytes
+	 * @param publicSalt
+	 *            the extra bytes to use in addition to the given private salt.
+	 * @return a combination of the specified private salt bytes and extra bytes
+	 *         that will be used as the total salt during hash computation.
+	 * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
+	 */
+	protected abstract CodecSource merge(CodecSource privateSalt, CodecSource publicSalt);
+
+	/**
+	 * Determing and gets principal public salt.
+	 *
+	 * @param token
+	 *            Request principal and credentials token information.
+	 * @param publicSalt
+	 *            Database stored credentials information.
+	 * @return
+	 */
+	protected abstract CodecSource determinePublicSalt(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt);
+
+	/**
+	 * Resolving credentials token. (corresponding to the frontend,
+	 * RSA1/RSA2/DSA/ECC/... encryption is used by default)
 	 *
 	 * @param cryptKind
 	 * @param token
 	 * @return
 	 */
-	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
+	protected CredentialsToken resolveToken(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
 		KeyPairSpec keyPairSpec = determineSecretKeySpecPair(token.getKind(), token.getPrincipal());
 
@@ -257,7 +262,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param principal
 	 * @return
 	 */
-	private KeyPairSpec determineSecretKeySpecPair(@NotNull SecureAlgKind kind, @NotBlank String principal) {
+	private KeyPairSpec determineSecretKeySpecPair(@NotNull CryptKind kind, @NotBlank String principal) {
 		// Gets the best one from the candidate keyPair.
 		Integer index = getBindValue(new RelationAttrKey(KEY_SECRET_INFO, Integer.class), true);
 		if (!isNull(index)) {
@@ -269,14 +274,14 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	/**
-	 * Hasher
+	 * Hasher function.
 	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月21日
 	 * @since
 	 */
 	private interface Hasher {
-		Hash hashing(String algorithm, ByteSource source, ByteSource salt, int hashIterations);
+		Hash hashing(String algorithm, ByteSource source, CodecSource salt, int hashIterations);
 	}
 
 }

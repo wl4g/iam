@@ -26,8 +26,8 @@ import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfoWrapper;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.iam.common.session.IamSession.RelationAttrKey;
@@ -50,10 +50,10 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	/**
 	 * From the fast-CAS client is used to validate a service ticket on server
 	 */
-	final protected IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> ticketValidator;
+	final protected IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipal>> ticketValidator;
 
 	public AbstractClientAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> ticketValidator) {
+			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipal>> ticketValidator) {
 		this.config = config;
 		this.ticketValidator = ticketValidator;
 	}
@@ -64,7 +64,7 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		IamAuthenticationInfo info = doAuthenticationInfo((IamAuthenticationToken) token);
-		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(info.getPrincipalInfo()));
+		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalWrapper(info.getIamPrincipal()));
 		return info;
 	}
 

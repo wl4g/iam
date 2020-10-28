@@ -20,7 +20,7 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
 import com.wl4g.iam.common.authc.ClientRef;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 
 /**
@@ -67,14 +67,14 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	final private VerifyKind verifyKind;
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final SecureAlgKind kind, final String clientSecretKey, final String umidToken,
+			final String credentials, final CryptKind kind, final String clientSecretKey, final String umidToken,
 			final String clientRef, final String verifiedToken, final VerifyKind verifyType) {
 		this(remoteHost, redirectInfo, principal, credentials, kind, clientSecretKey, umidToken, clientRef, verifiedToken,
 				verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final SecureAlgKind secureAlgKind, final String clientSecretKey, String umidToken,
+			final String credentials, final CryptKind secureAlgKind, final String clientSecretKey, String umidToken,
 			final String clientRef, final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
 		super(secureAlgKind, clientSecretKey, umidToken, remoteHost, redirectInfo);
 		hasTextOf(principal, "principal");

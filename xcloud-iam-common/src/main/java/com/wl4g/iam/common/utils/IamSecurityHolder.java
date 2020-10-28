@@ -37,8 +37,8 @@ import org.apache.shiro.subject.Subject;
 import com.wl4g.components.core.utils.bean.BeanCopierUtils;
 import com.wl4g.iam.common.session.NoOpSession;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfoWrapper;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 
 /**
  * Session bind holder utility.
@@ -77,25 +77,25 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Gets current authenticate principal {@link IamPrincipalInfo}
+	 * Gets current authenticate principal {@link IamPrincipal}
 	 * 
 	 * @return
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
-	public static IamPrincipalInfo getPrincipalInfo() {
+	public static IamPrincipal getPrincipalInfo() {
 		return getPrincipalInfo(true);
 	}
 
 	/**
-	 * Gets current authenticate principal {@link IamPrincipalInfo}
+	 * Gets current authenticate principal {@link IamPrincipal}
 	 * 
 	 * @param assertion
 	 * @return
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
-	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
-		IamPrincipalInfoWrapper wrap = (IamPrincipalInfoWrapper) getSession()
-				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, IamPrincipalInfoWrapper.class));
+	public static IamPrincipal getPrincipalInfo(boolean assertion) {
+		IamPrincipalWrapper wrap = (IamPrincipalWrapper) getSession()
+				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, IamPrincipalWrapper.class));
 		if (assertion) {
 			isTrue((!isNull(wrap) && !isNull(wrap.getInfo())), UnauthenticatedException.class,
 					"Iam subject is required! unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");

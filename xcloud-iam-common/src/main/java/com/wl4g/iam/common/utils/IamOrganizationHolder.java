@@ -28,7 +28,7 @@ import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.core.utils.web.WebUtils3.*;
-import static com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
+import static com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

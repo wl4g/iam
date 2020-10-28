@@ -48,8 +48,8 @@ import com.wl4g.iam.common.config.CorsProperties;
 import com.wl4g.iam.common.config.ReplayProperties;
 import com.wl4g.iam.common.config.XsrfProperties;
 import com.wl4g.iam.common.config.CorsProperties.CorsRule;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
+import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
+import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
 

@@ -24,14 +24,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Simple IAM principal account information.
+ * Simple IAM principal information.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public class SimplePrincipalInfo implements IamPrincipalInfo {
-
+public class SimpleIamPrincipal implements IamPrincipal {
 	private static final long serialVersionUID = -2148910955172545592L;
 
 	/** Authenticate principal ID. */
@@ -57,21 +56,21 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	/** Authenticate principal attributes. */
 	private Attributes attributes;
 
-	public SimplePrincipalInfo() {
+	public SimpleIamPrincipal() {
 		super();
 	}
 
-	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
+	public SimpleIamPrincipal(@NotBlank IamPrincipal info) {
 		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
 				info.getOrganization(), info.attributes());
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+	public SimpleIamPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
 			String permissions, PrincipalOrganization organization) {
 		this(principalId, principal, storedCredentials, roles, permissions, organization, null);
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+	public SimpleIamPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
 			String permissions, PrincipalOrganization organization, Attributes attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
@@ -97,7 +96,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.principalId = principalId;
 	}
 
-	public final SimplePrincipalInfo withPrincipalId(String principalId) {
+	public final SimpleIamPrincipal withPrincipalId(String principalId) {
 		setPrincipalId(principalId);
 		return this;
 	}
@@ -117,7 +116,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.principal = principal;
 	}
 
-	public final SimplePrincipalInfo withPrincipal(String principal) {
+	public final SimpleIamPrincipal withPrincipal(String principal) {
 		setPrincipal(principal);
 		return this;
 	}
@@ -138,7 +137,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.storedCredentials = storedCredentials;
 	}
 
-	public final SimplePrincipalInfo withStoredCredentials(String storedCredentials) {
+	public final SimpleIamPrincipal withStoredCredentials(String storedCredentials) {
 		setStoredCredentials(storedCredentials);
 		return this;
 	}
@@ -158,7 +157,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.roles = roles;
 	}
 
-	public final SimplePrincipalInfo withRoles(String roles) {
+	public final SimpleIamPrincipal withRoles(String roles) {
 		setRoles(roles);
 		return this;
 	}
@@ -178,7 +177,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.organization = organization;
 	}
 
-	public SimplePrincipalInfo withOrganization(PrincipalOrganization organization) {
+	public SimpleIamPrincipal withOrganization(PrincipalOrganization organization) {
 		setOrganization(organization);
 		return this;
 	}
@@ -198,7 +197,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.permissions = permissions;
 	}
 
-	public final SimplePrincipalInfo withPermissions(String permissions) {
+	public final SimpleIamPrincipal withPermissions(String permissions) {
 		setPermissions(permissions);
 		return this;
 	}
@@ -230,7 +229,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @param attributes
 	 * @return
 	 */
-	public final SimplePrincipalInfo withAttributes(Attributes attributes) {
+	public final SimpleIamPrincipal withAttributes(Attributes attributes) {
 		setAttributes(attributes);
 		return this;
 	}
@@ -245,7 +244,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * Validation.
 	 */
 	@Override
-	public final IamPrincipalInfo validate() throws IllegalArgumentException {
+	public final IamPrincipal validate() throws IllegalArgumentException {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
 		hasText(getPrincipal(), "Authenticate principal name can't empty");
 		// hasText(getRoles(), "Authenticate roles can't empty");

@@ -18,8 +18,8 @@ package com.wl4g.iam.verification;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.iam.common.exception.AccessRejectedException;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SmsParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
 import com.wl4g.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
 
@@ -173,7 +173,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 			return;
 		}
 		// Getting account information
-		IamPrincipalInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+		IamPrincipal acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {

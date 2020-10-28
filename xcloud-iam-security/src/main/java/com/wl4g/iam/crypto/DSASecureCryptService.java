@@ -33,8 +33,8 @@ public final class DSASecureCryptService extends AbstractAymmetricSecureCryptSer
 	}
 
 	@Override
-	public SecureAlgKind kind() {
-		return SecureAlgKind.DSA;
+	public CryptKind kind() {
+		return CryptKind.DSA;
 	}
 
 }

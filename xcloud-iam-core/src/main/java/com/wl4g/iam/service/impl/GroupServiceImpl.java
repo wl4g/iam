@@ -31,7 +31,7 @@ import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.GroupRoleDao;
 import com.wl4g.devops.dao.iam.GroupUserDao;
 import com.wl4g.devops.dao.iam.ParkDao;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.GroupService;
 
 import org.springframework.beans.BeanUtils;
@@ -82,7 +82,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> getGroupsTree() {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		Set<Group> groupsSet = getGroupsSet(new User(info.getPrincipal()));
 		ArrayList<Group> groups = new ArrayList<>(groupsSet);
 		return set2Tree(groups);
@@ -202,7 +202,7 @@ public class GroupServiceImpl implements GroupService {
 		insertOrUpdateGroupExt(group);
 
 		// add user-group
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		if (!DEFAULT_SUPER_USER.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
 			GroupUser groupUser = new GroupUser();
 			groupUser.preInsert();

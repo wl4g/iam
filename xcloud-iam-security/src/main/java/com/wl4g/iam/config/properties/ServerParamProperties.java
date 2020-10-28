@@ -16,7 +16,7 @@
 package com.wl4g.iam.config.properties;
 
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * IAM server parameters configuration properties
@@ -47,7 +47,7 @@ public class ServerParamProperties extends ParamProperties {
 	/**
 	 * Secure asymmetric cryptic algorithm name.
 	 * 
-	 * @see {@link SecureAlgKind }
+	 * @see {@link CryptKind }
 	 */
 	private String secretAlgKindName = "alg";
 

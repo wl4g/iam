@@ -23,7 +23,7 @@ import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.iam.config.properties.MatcherProperties;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+	protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * Matching attempts accumulator
@@ -96,7 +96,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		state(nonNull(wrap), "Failed to apply captcha.");
 
 		// Gets choosed secure algorithm.
-		SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
+		CryptKind kind = CryptKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
 		// Gets crypt algorithm(RSA/DSA/ECC..) secretKey.(Used to encrypt
 		// sliding X position)
@@ -152,7 +152,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+	protected abstract Object postApplyGraphProperties(@NotNull CryptKind kind, String applyToken, VerifyCodeWrapper codeWrap,
 			KeyPairSpec keyspec) throws IOException;
 
 	@Override

@@ -19,16 +19,16 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 public class SmsAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public SmsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+	public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, String realmName) {
 		this(accountInfo, principals, null, realmName);
 	}
 
-	public SmsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
 		super(accountInfo, principals, credentialsSalt, realmName);
 	}

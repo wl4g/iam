@@ -20,7 +20,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.GroupService;
 import com.wl4g.iam.service.MenuService;
 
@@ -78,7 +78,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Menu> getMenuList() {
-        IamPrincipalInfo info = getPrincipalInfo();
+        IamPrincipal info = getPrincipalInfo();
         List<Menu> result;
         if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
             result = menuDao.selectWithRoot();// root
@@ -215,7 +215,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private Set<Menu> getMenusSet() {
-        IamPrincipalInfo info = getPrincipalInfo();
+        IamPrincipal info = getPrincipalInfo();
 
         List<Menu> menus = null;
         if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {

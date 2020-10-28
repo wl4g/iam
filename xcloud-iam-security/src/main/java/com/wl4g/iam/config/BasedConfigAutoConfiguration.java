@@ -19,8 +19,8 @@ import com.wl4g.components.core.bean.iam.ApplicationInfo;
 import com.wl4g.components.core.bean.iam.SocialConnectInfo;
 import com.wl4g.iam.common.exception.BindingConstraintsException;
 import com.wl4g.iam.common.exception.IamException;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -84,7 +84,7 @@ public class BasedConfigAutoConfiguration {
 		}
 
 		@Override
-		public IamPrincipalInfo getIamAccount(Parameter parameter) {
+		public IamPrincipal getIamAccount(Parameter parameter) {
 			throw new UnsupportedOperationException();
 		}
 

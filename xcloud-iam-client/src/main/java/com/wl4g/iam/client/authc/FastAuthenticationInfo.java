@@ -19,16 +19,16 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = -2294251445038637917L;
 
-	public FastAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, String realmName) {
+	public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, String realmName) {
 		this(principalInfo, principals, null, realmName);
 	}
 
-	public FastAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
 		super(principalInfo, principals, credentialsSalt, realmName);
 	}

@@ -40,9 +40,9 @@ import com.wl4g.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsAuthorizingParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
@@ -130,7 +130,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 
 		// Account by openId
 		Parameter parameter = new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId());
-		IamPrincipalInfo account = configurer.getIamAccount(parameter);
+		IamPrincipal account = configurer.getIamAccount(parameter);
 
 		// Second authentication assertion
 		SecondaryAuthcValidateResult model = new SecondaryAuthcValidateResult(sourceApp, provider,
@@ -181,7 +181,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 		return Which.SECOND_AUTH;
 	}
 
-	private void assertionSecondAuthentication(String provider, Oauth2OpenId openId, IamPrincipalInfo account, String authorizers,
+	private void assertionSecondAuthentication(String provider, Oauth2OpenId openId, IamPrincipal account, String authorizers,
 			Map<String, String> connectParams) {
 		// Check authorizer effectiveness
 		if (isNull(account) || isBlank(account.getPrincipal())) {

@@ -16,11 +16,12 @@
 package com.wl4g.iam.authc.credential.secure;
 
 import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * Final credentials token
@@ -47,7 +48,7 @@ public final class CredentialsToken {
 	 * Iam asymmetric secure crypt algorithm kind definitions..
 	 */
 	@NotNull
-	final private SecureAlgKind kind;
+	final private CryptKind kind;
 
 	/**
 	 * Whether the tag has resolved the encrypted password passed from the front
@@ -59,11 +60,11 @@ public final class CredentialsToken {
 		this(token.getPrincipal(), token.getCredentials(), token.getKind());
 	}
 
-	public CredentialsToken(String principal, String credentials, SecureAlgKind kind) {
+	public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind) {
 		this(principal, credentials, kind, false);
 	}
 
-	public CredentialsToken(String principal, String credentials, SecureAlgKind kind, boolean isSolved) {
+	public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind, boolean isSolved) {
 		hasTextOf(principal, "principal");
 		hasTextOf(credentials, "credentials");
 		notNullOf(kind, "kind");
@@ -81,7 +82,7 @@ public final class CredentialsToken {
 		return credentials;
 	}
 
-	public SecureAlgKind getKind() {
+	public CryptKind getKind() {
 		return kind;
 	}
 
@@ -91,8 +92,7 @@ public final class CredentialsToken {
 
 	@Override
 	public String toString() {
-		return "CredentialsToken [principal=" + getPrincipal() + ", credentials=" + getCredentials() + ", resolved=" + isSolved
-				+ "]";
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 }

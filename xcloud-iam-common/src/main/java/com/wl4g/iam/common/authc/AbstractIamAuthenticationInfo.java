@@ -24,7 +24,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * Abstract IAM authentication information.
@@ -39,13 +39,13 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	/**
 	 * IAM account information.
 	 */
-	final private IamPrincipalInfo principalInfo;
+	final private IamPrincipal principalInfo;
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, String realmName) {
+	public AbstractIamAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, String realmName) {
 		this(principalInfo, principals, null, realmName);
 	}
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals,
+	public AbstractIamAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals,
 			ByteSource credentialsSalt, String realmName) {
 		/*
 		 * Password is a string that may be set to empty.
@@ -58,7 +58,7 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	}
 
 	@Override
-	public IamPrincipalInfo getPrincipalInfo() {
+	public IamPrincipal getIamPrincipal() {
 		return principalInfo;
 	}
 
