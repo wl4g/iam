@@ -48,6 +48,7 @@ import com.wl4g.iam.common.authc.model.BaseValidateModel;
  * @date 2018年11月19日
  * @since
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> implements IamValidator<R, A> {
 
 	final protected SmartLogger log = getLogger(getClass());
@@ -105,14 +106,13 @@ public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> 
 
 		// Append parameters to URL
 		url.append(BeanMapConvert.toUriParmaters(params));
-		log.info("Validating to : {}", url);
+		log.debug("Validating to : {}", url);
 
 		// Add headers
-		@SuppressWarnings("deprecation")
 		HttpEntity<R> entity = new HttpEntity<>(req, new LinkedMultiValueMap<String, String>(1) {
 			private static final long serialVersionUID = -630070874678386724L;
 			{
-				add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+				add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 			}
 		});
 
@@ -120,7 +120,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> 
 		RespBase<A> resp = null;
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
-			log.info("Validate retrieved: {}", resp);
+			log.debug("Validate retrieved: {}", resp);
 		} catch (Throwable ex) {
 			throw new RestClientException(format("Failed to validate from : %s", url), ex);
 		}
