@@ -18,10 +18,12 @@ package com.wl4g.iam.authc.credential.secure;
 import static com.wl4g.components.common.codec.CheckSums.crc32;
 import static com.wl4g.components.common.lang.Assert2.*;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
 
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.configure.SecureConfig;
 
@@ -39,13 +41,16 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 	}
 
 	@Override
-	protected ByteSource merge(ByteSource privateSalt, ByteSource publicSalt) {
-		return ByteSource.Util.bytes(crossCombined(privateSalt.getBytes(), publicSalt.getBytes()));
+	protected CodecSource merge(CodecSource privateSalt, CodecSource publicSalt) {
+		return new CodecSource(crossCombined(privateSalt.getBytes(), publicSalt.getBytes()));
 	}
 
 	@Override
-	protected ByteSource getPublicSalt(String principal) {
-		return ByteSource.Util.bytes(principal);
+	protected CodecSource determinePublicSalt(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
+		// return new CodecSource(token.getPrincipal()); // for simple
+		// from DB
+		return notNull(publicSalt,
+				"Salt is required for current credentials verification, Please check whether the salt field of the stored account credentials info is complete");
 	}
 
 	/**
@@ -80,12 +85,13 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 	}
 
 	public static void main(String[] args) {
-		// String privateSalt = "IAM";
-		// String privateSalt = "safecloud";
-		// String privateSalt = "IamWithCipherPrivateSalt";
-		String privateSalt = "iam-serverdev";
-		ByteSource publicSalt = Util.bytes("admin");
-		ByteSource salt = Util.bytes(crossCombined(Util.bytes(privateSalt).getBytes(), publicSalt.getBytes()));
+		// CodecSource privateSalt = new CodecSource("IAM");
+		// CodecSource privateSalt = new CodecSource("safecloud");
+		// CodecSource privateSalt = new
+		// CodecSource("IamWithCipherPrivateSalt");
+		CodecSource privateSalt = new CodecSource("iam-serverdev");
+		CodecSource publicSalt = new CodecSource("admin");
+		CodecSource salt = new CodecSource(crossCombined(privateSalt.getBytes(), publicSalt.getBytes()));
 
 		String[] hashAlgorithms = new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" };
 		int size = hashAlgorithms.length;

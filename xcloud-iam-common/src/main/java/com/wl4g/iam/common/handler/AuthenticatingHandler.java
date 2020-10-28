@@ -28,7 +28,7 @@ import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.common.exception.IllegalCallbackDomainException;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * Iam central authenticating handler.
@@ -74,7 +74,7 @@ public interface AuthenticatingHandler {
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	default TicketValidateResult<IamPrincipalInfo> validate(TicketValidateRequest model) {
+	default TicketValidateResult<IamPrincipal> validate(TicketValidateRequest model) {
 		throw new UnsupportedOperationException();
 	}
 

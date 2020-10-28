@@ -29,8 +29,8 @@ import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.GenericAuthorizationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SimpleParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -72,17 +72,17 @@ public class GenericAuthorizingRealm extends AbstractAuthorizingRealm<GenericAut
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
 		// Gets account by loginId
-		IamPrincipalInfo pinfo = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
-		log.debug("Gots Iam principalInfo: {} by token:{}", pinfo, token);
+		IamPrincipal iamPrincipal = configurer.getIamUserDetail(new SimpleParameter((String) token.getPrincipal()));
+		log.debug("Gots Iam principalInfo: {} by token:{}", iamPrincipal, token);
 
-		// To authenticationInfo
-		if (isNull(pinfo) || isBlank(pinfo.getPrincipal())) {
+		// Wrapper authentication info
+		if (isNull(iamPrincipal) || isBlank(iamPrincipal.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
-		return new GenericAuthenticationInfo(pinfo, principals, getName());
+		PrincipalCollection principals = createPermitPrincipalCollection(iamPrincipal);
+		return new GenericAuthenticationInfo(iamPrincipal, principals, getName());
 	}
 
 	/**

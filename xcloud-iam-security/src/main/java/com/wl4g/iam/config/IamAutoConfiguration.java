@@ -61,7 +61,7 @@ import com.wl4g.iam.crypto.DSASecureCryptService;
 import com.wl4g.iam.crypto.ECCSecureCryptService;
 import com.wl4g.iam.crypto.RSASecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.iam.filter.FacebookAuthenticationFilter;
@@ -149,9 +149,9 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public GenericOperatorAdapter<SecureAlgKind, SecureCryptService> compositeCryptServiceAdapter(
+	public GenericOperatorAdapter<CryptKind, SecureCryptService> compositeCryptServiceAdapter(
 			List<SecureCryptService> cryptServices) {
-		return new GenericOperatorAdapter<SecureAlgKind, SecureCryptService>(cryptServices) {
+		return new GenericOperatorAdapter<CryptKind, SecureCryptService>(cryptServices) {
 		};
 	}
 

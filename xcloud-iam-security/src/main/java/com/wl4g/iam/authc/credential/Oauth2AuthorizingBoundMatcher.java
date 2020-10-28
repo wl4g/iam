@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.authc.credential;
 
+import static java.util.Objects.isNull;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
@@ -37,7 +39,7 @@ public class Oauth2AuthorizingBoundMatcher extends IamBasedMatcher {
 	@Override
 	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 		Oauth2SnsAuthenticationToken tk = (Oauth2SnsAuthenticationToken) token;
-		if (info != null && !info.getPrincipals().isEmpty()) {
+		if (!isNull(info) && !info.getPrincipals().isEmpty()) {
 			return true;
 		}
 		if (log.isWarnEnabled()) {

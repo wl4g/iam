@@ -20,10 +20,9 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.*;
 import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -34,6 +33,7 @@ import static com.wl4g.components.common.collection.Collections2.disDupCollectio
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -64,10 +64,10 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> getRolesByUserGroups() {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
-			return roleDao.selectWithRoot(null,null, null);
+			return roleDao.selectWithRoot(null, null, null);
 		} else {
 			// Groups of userId.
 			Set<Organization> groups = organizationService.getGroupsSet(new User(info.getPrincipal()));
@@ -76,17 +76,17 @@ public class RoleServiceImpl implements RoleService {
 				groupIds.add(group.getId());
 			}
 			// Roles of group.
-			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(),null, null);
+			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), null, null);
 			return roles;
 		}
 	}
 
 	@Override
 	public PageModel list(PageModel pm, String organizationId, String roleCode, String displayName) {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 
 		List<Long> groupIds = null;
-		if(StringUtils.isNotBlank(organizationId)){
+		if (isNotBlank(organizationId)) {
 			Set<Long> set = new HashSet<>();
 			set.add(Long.valueOf(organizationId));
 			organizationService.getChildrensIds(Long.valueOf(organizationId), set);
@@ -107,7 +107,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	private void setMenuStrs(List<Role> roles) {
-		for(Role role : roles){
+		for (Role role : roles) {
 			List<Menu> menus = menuDao.selectByRoleId(role.getId());
 			if (isEmpty(menus)) {
 				continue;
@@ -156,14 +156,13 @@ public class RoleServiceImpl implements RoleService {
 		}
 		// group
 		List<OrganizationRole> groupRoles = new ArrayList<>();
-		/*for (Long groupId : role.getGroupIds()) {
-			OrganizationRole groupRole = new OrganizationRole();
-			groupRole.preInsert();
-			groupRole.setGroupId(groupId);
-			groupRole.setRoleId(role.getId());
-			groupRoles.add(groupRole);
-		}*/
-		if(nonNull(role.getOrganizationId())){
+		/*
+		 * for (Long groupId : role.getGroupIds()) { OrganizationRole groupRole
+		 * = new OrganizationRole(); groupRole.preInsert();
+		 * groupRole.setGroupId(groupId); groupRole.setRoleId(role.getId());
+		 * groupRoles.add(groupRole); }
+		 */
+		if (nonNull(role.getOrganizationId())) {
 			OrganizationRole groupRole = new OrganizationRole();
 			groupRole.preInsert();
 			groupRole.setGroupId(role.getOrganizationId());

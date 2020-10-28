@@ -20,9 +20,9 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.handler.risk.RiskEvaluatorHandler;
 import com.wl4g.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyCodeWrapper;
@@ -97,7 +97,7 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 	 * Secure cryption service.
 	 */
 	@Autowired
-	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+	protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * XSRF token repository. (If necessary)
@@ -159,7 +159,7 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 		GenericCheckResult generic = new GenericCheckResult();
 		if (!isBlank(principal)) {
 			// Apply credentials encryption secret(pubKey)
-			generic.setSecretKey(securer.applySecret(SecureAlgKind.of(alg), principal));
+			generic.setSecretKey(securer.applySecret(CryptKind.of(alg), principal));
 		}
 		// Assign a session ID to the current request. If not, create a new one.
 		resp.forMap().put(KEY_GENERIC_CHECK, generic);
@@ -234,7 +234,7 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		// Gets current session authentication permits info.
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		IamPrincipalPermitsResult result = new IamPrincipalPermitsResult();
 		result.setRoles(info.getRoles()); // Roles
 		result.setPermissions(info.getPermissions()); // Permissions

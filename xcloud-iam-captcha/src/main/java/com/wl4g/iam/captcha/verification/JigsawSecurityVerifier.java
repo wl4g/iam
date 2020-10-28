@@ -25,7 +25,7 @@ import com.wl4g.iam.captcha.jigsaw.model.JigsawApplyImgResult;
 import com.wl4g.iam.captcha.jigsaw.model.JigsawVerifyImgResult;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.GraphBasedSecurityVerifier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * Secure asymmetric cryptographic service.
 	 */
 	@Autowired
-	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+	protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * CAPTCHA configuration.
@@ -80,7 +80,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String graphToken, VerifyCodeWrapper codeWrap,
+	protected Object postApplyGraphProperties(@NotNull CryptKind kind, String graphToken, VerifyCodeWrapper codeWrap,
 			KeyPairSpec keySpec) {
 		TailoredImage code = codeWrap.getCode();
 		// Build model
@@ -113,7 +113,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	final protected boolean doMatch(@NotNull SecureAlgKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
+	final protected boolean doMatch(@NotNull CryptKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
 		TailoredImage code = (TailoredImage) storedCode.getCode();
 		JigsawVerifyImgResult model = (JigsawVerifyImgResult) submitCode;
 
@@ -131,7 +131,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	final private boolean doAnalyzingJigsawGraph(@NotNull SecureAlgKind kind, TailoredImage code, JigsawVerifyImgResult model) {
+	final private boolean doAnalyzingJigsawGraph(@NotNull CryptKind kind, TailoredImage code, JigsawVerifyImgResult model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;

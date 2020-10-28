@@ -20,7 +20,7 @@ import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
 import javax.validation.constraints.NotNull;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * Concrete Implementation of the {@link TicketValidateResult}.
@@ -30,7 +30,7 @@ import com.wl4g.iam.common.subject.IamPrincipalInfo;
  * @Long 2018年11月22日
  * @since
  */
-public final class TicketValidateResult<T extends IamPrincipalInfo> {
+public final class TicketValidateResult<T extends IamPrincipal> {
 
 	/** The Long from which the assertion is valid(start Long). */
 	@NotNull
@@ -42,7 +42,7 @@ public final class TicketValidateResult<T extends IamPrincipalInfo> {
 
 	/** The principal for which this assertion is valid for. */
 	@NotNull
-	private T principalInfo;
+	private T iamPrincipal;
 
 	public TicketValidateResult() {
 		super();
@@ -62,14 +62,14 @@ public final class TicketValidateResult<T extends IamPrincipalInfo> {
 	 *            the key/value pairs for this attribute.
 	 */
 	public TicketValidateResult(final String principal, final Long validFromTime, final Long validUntilTime,
-			final String grantTicket, final T principalInfo) {
+			final String grantTicket, final T iamPrincipal) {
 		hasText(principal, "Authenticate principal cannot be null.");
 		notNull(validFromTime, "Authenticate validFromTime cannot be null.");
 		notNull(validUntilTime, "Authenticate validUntilTime cannot be null.");
-		notNull(principalInfo, "Authenticate principalInfo cannot be null.");
+		notNull(iamPrincipal, "Authenticate iamPrincipal cannot be null.");
 		setValidFromTime(validFromTime);
 		setValidUntilTime(validUntilTime);
-		setPrincipalInfo(principalInfo);
+		setIamPrincipal(iamPrincipal);
 	}
 
 	public final Long getValidFromTime() {
@@ -86,20 +86,20 @@ public final class TicketValidateResult<T extends IamPrincipalInfo> {
 		return validUntilTime;
 	}
 
-	public final void setValidUntilTime(Long validUntilLong) {
-		if (this.validUntilTime == null && validUntilLong != null) {
-			this.validUntilTime = validUntilLong;
+	public final void setValidUntilTime(Long validUntilTime) {
+		if (this.validUntilTime == null && validUntilTime != null) {
+			this.validUntilTime = validUntilTime;
 		}
 	}
 
 	@NotNull
-	public final T getPrincipalInfo() {
-		return principalInfo;
+	public final T getIamPrincipal() {
+		return iamPrincipal;
 	}
 
-	public final void setPrincipalInfo(T principalInfo) {
-		if (this.principalInfo == null && principalInfo != null) {
-			this.principalInfo = principalInfo;
+	public final void setIamPrincipal(T iamPrincipal) {
+		if (this.iamPrincipal == null && iamPrincipal != null) {
+			this.iamPrincipal = iamPrincipal;
 		}
 	}
 

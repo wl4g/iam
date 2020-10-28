@@ -17,10 +17,10 @@ package com.wl4g.iam.authc.credential;
 
 import java.util.List;
 
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.iam.authc.SmsAuthenticationToken;
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 
@@ -35,7 +35,7 @@ import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
-	public boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+	public boolean doMatching(IamAuthenticationToken token, IamAuthenticationInfo info, List<String> factors) {
 		SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
 		verifier.forOperator(VerifyKind.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
 		return true;

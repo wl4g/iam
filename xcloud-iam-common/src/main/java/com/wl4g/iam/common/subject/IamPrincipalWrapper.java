@@ -16,33 +16,33 @@
 package com.wl4g.iam.common.subject;
 
 /**
- * {@link IamPrincipalInfoWrapper}
+ * {@link IamPrincipalWrapper}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年7月7日 v1.0.0
  * @see
  */
-public class IamPrincipalInfoWrapper {
+public class IamPrincipalWrapper {
 
 	/**
-	 * {@link IamPrincipalInfo}
+	 * {@link IamPrincipal}
 	 */
-	private IamPrincipalInfo info;
+	private IamPrincipal info;
 
-	public IamPrincipalInfoWrapper() {
+	public IamPrincipalWrapper() {
 		super();
 	}
 
-	public IamPrincipalInfoWrapper(IamPrincipalInfo info) {
+	public IamPrincipalWrapper(IamPrincipal info) {
 		super();
 		this.info = info;
 	}
 
-	public IamPrincipalInfo getInfo() {
+	public IamPrincipal getInfo() {
 		return info;
 	}
 
-	public void setInfo(IamPrincipalInfo info) {
+	public void setInfo(IamPrincipal info) {
 		this.info = info;
 	}
 

@@ -32,9 +32,9 @@ import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
@@ -60,10 +60,10 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	protected MockConfigurationFactory mockFactory;
 
 	@Override
-	public TicketValidateResult<IamPrincipalInfo> validate(TicketValidateRequest param) {
+	public TicketValidateResult<IamPrincipal> validate(TicketValidateRequest param) {
 		log.debug("Mock validating. param: {}", param);
 
-		TicketValidateResult<IamPrincipalInfo> assertion = new TicketValidateResult<>();
+		TicketValidateResult<IamPrincipal> assertion = new TicketValidateResult<>();
 		String grantAppname = param.getApplication();
 		hasTextOf(grantAppname, "grantAppname");
 
@@ -78,12 +78,12 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		notNull(mock, NoSuchMockCredentialsException.class, "No mock credentials were found for '%s'", principal);
 
 		// Principal info
-		SimplePrincipalInfo pinfo = new SimplePrincipalInfo(mock.getPrincipalId(), mock.getPrincipal(),
+		SimpleIamPrincipal iamPrincipal = new SimpleIamPrincipal(mock.getPrincipalId(), mock.getPrincipal(),
 				"<Mock storedCredentials>", mock.getRoles(), mock.getPermissions(), mock.getOrganization());
-		assertion.setPrincipalInfo(pinfo);
+		assertion.setIamPrincipal(iamPrincipal);
 
 		// Grants roles and permissions attributes
-		Attributes attrs = assertion.getPrincipalInfo().attributes();
+		Attributes attrs = assertion.getIamPrincipal().attributes();
 		attrs.setSessionLang(Locale.getDefault().getLanguage());
 		attrs.setParentSessionId("<Mock parent sessionId>");
 		if (config.getCipher().isEnableDataCipher()) {

@@ -24,7 +24,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * Abstract IAM authentication information.
@@ -37,29 +37,29 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	private static final long serialVersionUID = -2294251445038637917L;
 
 	/**
-	 * IAM account information.
+	 * IAM principal information.
 	 */
-	final private IamPrincipalInfo principalInfo;
+	final private IamPrincipal iamPrincipal;
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, String realmName) {
-		this(principalInfo, principals, null, realmName);
+	public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
+		this(iamPrincipal, principals, null, realmName);
 	}
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals,
-			ByteSource credentialsSalt, String realmName) {
+	public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
+			String realmName) {
 		/*
 		 * Password is a string that may be set to empty.
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
 		 */
-		super(principals, (nonNull(principalInfo) ? principalInfo.getStoredCredentials() : EMPTY));
-		notNull(principalInfo, "Authenticate principalInfo can't null.");
-		this.principalInfo = principalInfo;
+		super(principals, (nonNull(iamPrincipal) ? iamPrincipal.getStoredCredentials() : EMPTY));
+		notNull(iamPrincipal, "Authenticate iamPrincipal can't null.");
+		this.iamPrincipal = iamPrincipal;
 		setCredentialsSalt(credentialsSalt);
 	}
 
 	@Override
-	public IamPrincipalInfo getPrincipalInfo() {
-		return principalInfo;
+	public IamPrincipal getIamPrincipal() {
+		return iamPrincipal;
 	}
 
 }

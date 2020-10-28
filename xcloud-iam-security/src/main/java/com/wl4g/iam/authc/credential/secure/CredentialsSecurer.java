@@ -15,13 +15,14 @@
  */
 package com.wl4g.iam.authc.credential.secure;
 
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 
+import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import javax.validation.constraints.NotNull;
 
 /**
- * IAM credentials securer
+ * IAM credentials securer.
  *
  * @author wangl.sir
  * @version v1.0 2019年1月16日
@@ -34,12 +35,12 @@ public interface CredentialsSecurer {
 	 * Encryption credentials
 	 *
 	 * @param token
-	 *            External input principal and credentials
-	 * @param credentials
-	 *            External input credentials
+	 *            Request principal and credentials token information.
+	 * @param publicSalt
+	 *            Current authentication credentials public salt.
 	 * @return
 	 */
-	default String signature(@NotNull CredentialsToken token) {
+	default String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -47,12 +48,12 @@ public interface CredentialsSecurer {
 	 * Validation credentials
 	 *
 	 * @param token
-	 *            External input principal and credentials
+	 *            Request principal and credentials token information.
 	 * @param info
-	 *            Database storage credentials information.
+	 *            Database stored credentials information.
 	 * @return
 	 */
-	default boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+	default boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
 		throw new UnsupportedOperationException();
 	}

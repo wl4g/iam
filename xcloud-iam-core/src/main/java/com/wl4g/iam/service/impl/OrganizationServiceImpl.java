@@ -19,7 +19,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.User;
 import com.wl4g.devops.dao.iam.*;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,26 +49,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationDao organizationDao;
 
 	@Autowired
-	private GroupMenuDao groupMenuDao;
-
-	@Autowired
 	private OrganizationRoleDao groupRoleDao;
-
-	@Autowired
-	private ParkDao parkDao;
-
-	@Autowired
-	private CompanyDao companyDao;
-
-	@Autowired
-	private DepartmentDao departmentDao;
-
-	@Autowired
-	private GroupUserDao groupUserDao;
 
 	@Override
 	public List<Organization> getGroupsTree() {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		Set<Organization> groupsSet = getGroupsSet(new User(info.getPrincipal()));
 		ArrayList<Organization> groups = new ArrayList<>(groupsSet);
 		return set2Tree(groups);
@@ -120,8 +105,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Override
 	public Set<Organization> getGroupsSet(User user) {
-		// IamPrincipalInfo info = getPrincipalInfo();
-
 		List<Organization> groups = null;
 		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
 			groups = organizationDao.selectByRoot();
@@ -147,14 +130,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	public void getChildrensIds(Long parentId, Set<Long> set) {
 		List<Organization> childrens = organizationDao.selectByParentId(parentId);
-		for(Organization organization: childrens){
+		for (Organization organization : childrens) {
 			set.add(organization.getId());
 		}
 		for (Organization group : childrens) {
 			getChildrensIds(group.getId(), set);
 		}
 	}
-
 
 	@Override
 	public void save(Organization group) {
@@ -189,9 +171,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 		Assert.notNull(id, "id is null");
 		Organization group = organizationDao.selectByPrimaryKey(id);
 		Assert.notNull(group, "group is null");
-		//List<Long> menuIds = groupMenuDao.selectMenuIdsByGroupId(id);
+		// List<Long> menuIds = groupMenuDao.selectMenuIdsByGroupId(id);
 		List<Long> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
-		//group.setMenuIds(menuIds);
+		// group.setMenuIds(menuIds);
 		group.setRoleIds(roleIds);
 		return group;
 	}

@@ -18,12 +18,12 @@ package com.wl4g.iam.authc.credential;
 import java.util.List;
 
 import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.VerifyAuthenticationToken;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 
 /**
@@ -37,7 +37,7 @@ import com.wl4g.iam.common.authc.IamAuthenticationToken;
 public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
-	public boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+	public boolean doMatching(IamAuthenticationToken token, IamAuthenticationInfo info, List<String> factors) {
 		GenericAuthenticationToken tk = (GenericAuthenticationToken) token;
 		// Before preCheck.
 		if (!coprocessor.preAuthenticatingAllowed(tk, info)) {
@@ -45,9 +45,9 @@ public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 		}
 
 		// Matching credentials.
-		CredentialsToken credentialsToken = new CredentialsToken((String) tk.getPrincipal(), (String) tk.getCredentials(),
-				tk.getSecureAlgKind());
-		return securer.validate(credentialsToken, info);
+		CredentialsToken crToken = new CredentialsToken((String) tk.getPrincipal(), (String) tk.getCredentials(),
+				tk.getCryptKind());
+		return securer.validate(crToken, info);
 	}
 
 	@Override

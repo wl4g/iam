@@ -26,7 +26,7 @@ import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.common.exception.InvalidGrantTicketException;
 import com.wl4g.iam.common.exception.TicketValidateException;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 import static java.util.Objects.nonNull;
@@ -42,7 +42,7 @@ import java.util.Map;
  * @since
  */
 public class FastCasTicketIamValidator
-		extends AbstractBasedIamValidator<TicketValidateRequest, TicketValidateResult<SimplePrincipalInfo>> {
+		extends AbstractBasedIamValidator<TicketValidateRequest, TicketValidateResult<SimpleIamPrincipal>> {
 
 	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
@@ -54,8 +54,8 @@ public class FastCasTicketIamValidator
 	}
 
 	@Override
-	public TicketValidateResult<SimplePrincipalInfo> validate(TicketValidateRequest req) throws TicketValidateException {
-		final RespBase<TicketValidateResult<SimplePrincipalInfo>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
+	public TicketValidateResult<SimpleIamPrincipal> validate(TicketValidateRequest req) throws TicketValidateException {
+		final RespBase<TicketValidateResult<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the
@@ -72,8 +72,8 @@ public class FastCasTicketIamValidator
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<TicketValidateResult<SimplePrincipalInfo>>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<TicketValidateResult<SimplePrincipalInfo>>>() {
+	protected ParameterizedTypeReference<RespBase<TicketValidateResult<SimpleIamPrincipal>>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<TicketValidateResult<SimpleIamPrincipal>>>() {
 		};
 	}
 

@@ -61,7 +61,7 @@ import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.iam.crypto.SecureCryptService;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import java.io.IOException;
 import java.net.URI;
@@ -122,7 +122,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+	protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * Enhanced cache manager.
@@ -602,7 +602,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			// Sets dataCipherKey(Required)
 			if (config.getCipher().isEnableDataCipher()) {
 				// Gets SecureCryptService.
-				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
+				CryptKind kind = ((ClientSecretIamAuthenticationToken) token).getCryptKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
 
 				// Use clientSecretKey(hexPublicKey) to encrypt the newly

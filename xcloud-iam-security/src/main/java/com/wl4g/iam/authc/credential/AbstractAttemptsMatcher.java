@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.authc.credential;
 
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.cache.IamCache;
@@ -118,7 +119,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Credentials verification
-		final boolean matched = doMatching((IamAuthenticationToken) token, info, factors);
+		final boolean matched = doMatching((IamAuthenticationToken) token, (IamAuthenticationInfo) info, factors);
 		if (matched) { // Matched successful processing
 			postSuccessProcess(principal, factors);
 		} else {
@@ -139,7 +140,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @param factors
 	 * @return
 	 */
-	protected abstract boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors);
+	protected abstract boolean doMatching(IamAuthenticationToken token, IamAuthenticationInfo info, List<String> factors);
 
 	/**
 	 * After matched failure processing

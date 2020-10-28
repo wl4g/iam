@@ -15,9 +15,14 @@
  */
 package com.wl4g.iam.common.authc;
 
+import java.security.Principal;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * IAM authentication information.
@@ -29,10 +34,27 @@ import com.wl4g.iam.common.subject.IamPrincipalInfo;
 public interface IamAuthenticationInfo extends AuthenticationInfo {
 
 	/**
-	 * Get current authenticating information.
+	 * Gets current authentication {@link Principal} information.
 	 * 
 	 * @return
 	 */
-	IamPrincipalInfo getPrincipalInfo();
+	@NotNull
+	IamPrincipal getIamPrincipal();
+
+	/**
+	 * Gets current authentication credentials public salt. </br>
+	 * </br>
+	 * for example: Salt is needed when you login with an account and a static
+	 * password.
+	 * 
+	 * @return Salt required for certification verification.
+	 * @throws UnsupportedOperationException
+	 *             When the current authentication mechanism does not support or
+	 *             does not need salt, an exception will be thrown.
+	 */
+	@NotNull
+	default CodecSource getPublicSalt() {
+		throw new UnsupportedOperationException();
+	}
 
 }

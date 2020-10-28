@@ -16,6 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.GroupUser;
@@ -33,8 +34,8 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.UserService;
 
@@ -43,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import static java.util.Objects.isNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
 	private GroupUserDao groupUserDao;
 
 	@Autowired
-	private CredentialsSecurer credentialsSecurer;
+	private CredentialsSecurer securer;
 
 	@Autowired
 	protected IamSessionDAO sessionDAO;
@@ -91,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public PageModel list(PageModel pm, String userName, String displayName) {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
@@ -123,14 +126,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void save(User user) {
 		if (StringUtils.isNotBlank(user.getPassword())) {
-			// TODO Dynamic choose algorithm!!!
-			// Default use RSA
-			String signature = credentialsSecurer
-					.signature(new CredentialsToken(user.getUserName(), user.getPassword(), SecureAlgKind.RSA));
+			// TODO Dynamic choose algorithm!!! Default use RSA
+			CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
+			// TODO Public salt will be stored in the DB
+			String signature = securer.signature(crToken, new CodecSource(user.getUserName()));
+			// The stored password is the ciphertext after encrypted signature.
 			user.setPassword(signature);
 			sessionDAO.removeAccessSession(user.getUserName());
 		}
-		if (user.getId() != null) {
+		if (!isNull(user.getId())) {
 			update(user);
 		} else {
 			insert(user);

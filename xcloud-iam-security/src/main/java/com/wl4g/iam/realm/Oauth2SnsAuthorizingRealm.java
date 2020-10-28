@@ -30,9 +30,9 @@ import com.wl4g.iam.authc.Oauth2SnsAuthenticationInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsAuthorizingParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.filter.ProviderSupport;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 
@@ -74,7 +74,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		 */
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
-		IamPrincipalInfo pinfo = configurer.getIamAccount(parameter);
+		IamPrincipal pinfo = configurer.getIamUserDetail(parameter);
 		log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(pinfo), toJSONString(parameter));
 
 		if (nonNull(pinfo) && !isBlank(pinfo.getPrincipal())) {

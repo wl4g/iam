@@ -20,8 +20,8 @@ import com.wl4g.iam.authc.SmsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.SmsAuthorizationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SmsParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -74,7 +74,7 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
 		// Get account by mobile phone
-		IamPrincipalInfo info = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		IamPrincipal info = configurer.getIamUserDetail(new SmsParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", info, token);
 		}
@@ -117,7 +117,7 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 	 * @param acc
 	 * @param token
 	 */
-	private void assertAccountInfo(IamPrincipalInfo acc, SmsAuthenticationToken token) {
+	private void assertAccountInfo(IamPrincipal acc, SmsAuthenticationToken token) {
 		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}

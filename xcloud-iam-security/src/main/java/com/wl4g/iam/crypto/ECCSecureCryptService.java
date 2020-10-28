@@ -33,8 +33,8 @@ public final class ECCSecureCryptService extends AbstractAymmetricSecureCryptSer
 	}
 
 	@Override
-	public SecureAlgKind kind() {
-		return SecureAlgKind.ECC;
+	public CryptKind kind() {
+		return CryptKind.ECC;
 	}
 
 }

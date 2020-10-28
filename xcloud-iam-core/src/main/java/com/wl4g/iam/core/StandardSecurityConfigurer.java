@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.configure;
+package com.wl4g.iam.core;
 
 import com.wl4g.components.core.bean.iam.ClusterConfig;
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
 import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.Menu;
@@ -26,12 +27,13 @@ import com.wl4g.devops.dao.iam.ClusterConfigDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Parameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SimpleParameter;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.SnsParameter;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
+import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.service.OrganizationService;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -49,7 +51,7 @@ import java.util.Set;
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
+import static com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
@@ -175,7 +177,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public IamPrincipalInfo getIamAccount(Parameter parameter) {
+	public IamPrincipal getIamUserDetail(Parameter parameter) {
 		User user = null;
 
 		// By SNS authorizing
@@ -191,10 +193,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		if (nonNull(user)) {
 			// Sets user organizations.
 			Set<Organization> groupsSet = groupService.getGroupsSet(user);
+			// TODO nameZh?? nameEn??
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
-			return new SimplePrincipalInfo(valueOf(user.getId()), user.getUserName(), user.getPassword(),
-					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
+			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
+					// TODO user.getPubSalt()
+					new CodecSource(user.getUserName()).toHex(), getRoles(user.getUserName()), getPermissions(user.getUserName()),
+					new PrincipalOrganization(oInfo));
 		}
 		return null;
 	}
@@ -230,6 +235,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// TODO cache
 		List<Role> list;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
+			// TODO nameZh?? nameEn??
 			list = roleDao.selectWithRoot(null, null, null);
 		} else {
 			list = roleDao.selectByUserId(user.getId());

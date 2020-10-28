@@ -17,9 +17,11 @@ package com.wl4g.iam.authc.credential.secure;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.iam.common.authc.IamAuthenticationInfo;
 
 /**
  * Credentials securer adapter
@@ -34,12 +36,12 @@ public abstract class CredentialsSecurerAdapter implements CredentialsSecurer {
 	private IamCredentialsSecurer securer;
 
 	@Override
-	public String signature(@NotNull CredentialsToken token) {
-		return securer.signature(token);
+	public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
+		return securer.signature(token, publicSalt);
 	}
 
 	@Override
-	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+	public boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
 		return securer.validate(token, info);
 	}

@@ -31,8 +31,8 @@ import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
 import com.wl4g.iam.common.exception.TicketValidateException;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 
 import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getSession;
@@ -75,7 +75,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 	public FastCasAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipalInfo>> validator) {
+			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipal>> validator) {
 		super(config, validator);
 		super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
 	}
@@ -99,7 +99,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidateResult<IamPrincipalInfo> validResult = doRequestRemoteTicketValidation(token, granticket);
+			TicketValidateResult<IamPrincipal> validResult = doRequestRemoteTicketValidation(token, granticket);
 
 			// Grant ticket assertion .
 			assertTicketValidation(validResult);
@@ -115,7 +115,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			getSession().setTimeout(maxIdleTimeMs);
 
 			// Currenly authentication principal info.
-			IamPrincipalInfo info = validResult.getPrincipalInfo();
+			IamPrincipal info = validResult.getIamPrincipal();
 			Attributes attrs = info.attributes();
 
 			// Save common attributes
@@ -126,7 +126,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			ftk.setCredentials(newGrantTicket);
 
 			// Merge add attributes
-			String principal = validResult.getPrincipalInfo().getPrincipal();
+			String principal = validResult.getIamPrincipal().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
 			ftk.setRememberMe(attrs.getRememberMe());
 			ftk.setHost(attrs.getClientHost());
@@ -180,7 +180,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param granticket
 	 * @return
 	 */
-	private TicketValidateResult<IamPrincipalInfo> doRequestRemoteTicketValidation(IamAuthenticationToken token,
+	private TicketValidateResult<IamPrincipal> doRequestRemoteTicketValidation(IamAuthenticationToken token,
 			String granticket) {
 		/**
 		 * The purpose of this function is to make iam-server a new child,
@@ -199,11 +199,11 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param assertion
 	 * @throws TicketValidateException
 	 */
-	private void assertTicketValidation(TicketValidateResult<IamPrincipalInfo> assertion) throws TicketValidateException {
+	private void assertTicketValidation(TicketValidateResult<IamPrincipal> assertion) throws TicketValidateException {
 		if (isNull(assertion)) {
 			throw new TicketValidateException("ticket assertion must not be null");
 		}
-		IamPrincipalInfo info = assertion.getPrincipalInfo();
+		IamPrincipal info = assertion.getIamPrincipal();
 		if (isNull(info)) {
 			throw new TicketValidateException("Principal info must not be null");
 		}

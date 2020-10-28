@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.wl4g.iam.authc.SmsAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.google.common.annotations.Beta;
 
 /**
@@ -46,7 +46,7 @@ public class SmsAuthenticationFilter extends AbstractServerIamAuthenticationFilt
 		final String smsCode = getCleanParam(request, config.getParam().getCredentialsName());
 		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
 		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
-		return new SmsAuthenticationToken(SecureAlgKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);
+		return new SmsAuthenticationToken(CryptKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);
 	}
 
 	@Override

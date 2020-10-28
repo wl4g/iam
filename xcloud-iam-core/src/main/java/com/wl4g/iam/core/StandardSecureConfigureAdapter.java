@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.configure;
+package com.wl4g.iam.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.configure.SecureConfigureAdapter;
@@ -39,11 +38,9 @@ public class StandardSecureConfigureAdapter implements SecureConfigureAdapter {
 
 	@Override
 	public SecureConfig configure() {
-		String active = environment.getProperty("spring.profiles.active");
-		Assert.hasText(active, "Please check configure, spring profiles active not be empty.");
-		String appName = environment.getProperty("spring.application.name");
-		Assert.hasText(appName, "Please check configure, spring application name not be empty.");
-		String privateSalt = appName + active;
+		String appName = environment.getRequiredProperty("spring.application.name");
+		String active = environment.getRequiredProperty("spring.profiles.active");
+		String privateSalt = appName.concat(active);
 		return new SecureConfig(new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" }, privateSalt, 5, 2 * 60 * 60 * 1000L,
 				3 * 60 * 1000L);
 	}

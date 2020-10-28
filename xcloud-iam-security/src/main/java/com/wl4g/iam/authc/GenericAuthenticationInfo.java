@@ -18,19 +18,26 @@ package com.wl4g.iam.authc;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public GenericAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
-		this(accountInfo, principals, null, realmName);
+	public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
+		this(iamPrincipal, principals, null, realmName);
 	}
 
-	public GenericAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
-		super(accountInfo, principals, credentialsSalt, realmName);
+		super(iamPrincipal, principals, credentialsSalt, realmName);
+	}
+
+	@Override
+	public CodecSource getPublicSalt() {
+		// from hex
+		return CodecSource.fromHex(getIamPrincipal().getPublicSalt());
 	}
 
 }

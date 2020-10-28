@@ -31,7 +31,7 @@ import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.common.authc.model.SessionValidateResult;
 import com.wl4g.iam.common.authc.model.TicketValidateRequest;
 import com.wl4g.iam.common.authc.model.TicketValidateResult;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.web.AuthenticatingEndpoint;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
@@ -57,10 +57,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<TicketValidateResult<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateRequest param) {
+	public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
 		log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidateResult<IamPrincipalInfo>> resp = new RespBase<>();
+		RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 

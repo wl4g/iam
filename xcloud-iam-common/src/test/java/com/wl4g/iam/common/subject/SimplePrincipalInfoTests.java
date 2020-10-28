@@ -19,7 +19,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
 
 import com.wl4g.components.core.utils.bean.BeanCopierUtils;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
 /**
  * {@link SimplePrincipalInfoTests}
@@ -38,13 +38,13 @@ public class SimplePrincipalInfoTests {
 		//
 		// 注：bean的setter方法必须是标准的，如：setter方法有返回值也会导致无法复制
 		//
-		SimplePrincipalInfo p1 = new SimplePrincipalInfo();
+		SimpleIamPrincipal p1 = new SimpleIamPrincipal();
 		p1.setPrincipalId("001");
 		p1.setPrincipal("zs");
 		p1.attributes().put("aa", "11");
 		out.println("source p1 object: " + toJSONString(p1) + ", hashCode: " + p1.hashCode());
 
-		SimplePrincipalInfo p2 = BeanCopierUtils.clone(p1);
+		SimpleIamPrincipal p2 = BeanCopierUtils.clone(p1);
 		out.println("clone p2 object: " + toJSONString(p2) + ", hashCode: " + p2.hashCode());
 	}
 

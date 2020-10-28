@@ -36,9 +36,9 @@ import com.wl4g.iam.common.session.IamSession;
 import com.wl4g.iam.common.session.GrantCredentialsInfo.GrantApp;
 import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.iam.common.subject.IamPrincipalInfo.Attributes;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;
@@ -126,8 +126,8 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 	}
 
 	@Override
-	public TicketValidateResult<IamPrincipalInfo> validate(TicketValidateRequest param) {
-		TicketValidateResult<IamPrincipalInfo> assertion = new TicketValidateResult<>();
+	public TicketValidateResult<IamPrincipal> validate(TicketValidateRequest param) {
+		TicketValidateResult<IamPrincipal> assertion = new TicketValidateResult<>();
 		String grantAppName = param.getApplication();
 		hasTextOf(grantAppName, "grantAppName");
 
@@ -176,14 +176,14 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 		/**
 		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
 		 */
-		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).withStoredCredentials(newGrantTicket));
+		assertion.setIamPrincipal(new SimpleIamPrincipal(getPrincipalInfo()).withStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
 		// Principal info attributes.
 		/**
 		 * Grants roles and permissions attributes.
 		 */
-		Attributes attrs = assertion.getPrincipalInfo().attributes();
+		Attributes attrs = assertion.getIamPrincipal().attributes();
 		attrs.setSessionLang(getBindValue(KEY_LANG_NAME));
 		attrs.setParentSessionId(valueOf(getSessionId()));
 
@@ -301,7 +301,8 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 			 * Save authorized info to cache. See:
 			 * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
 			 */
-			SecondaryAuthcValidateResult assertion = (SecondaryAuthcValidateResult) cacheManager.getIamCache(SECOND_AUTHC_CACHE).get(ekey);
+			SecondaryAuthcValidateResult assertion = (SecondaryAuthcValidateResult) cacheManager.getIamCache(SECOND_AUTHC_CACHE)
+					.get(ekey);
 			// Check assertion expired
 			if (assertion == null) {
 				assertion = new SecondaryAuthcValidateResult(ExpiredAuthorized);

@@ -24,14 +24,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Simple IAM principal account information.
+ * Simple IAM principal information.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public class SimplePrincipalInfo implements IamPrincipalInfo {
-
+public class SimpleIamPrincipal implements IamPrincipal {
 	private static final long serialVersionUID = -2148910955172545592L;
 
 	/** Authenticate principal ID. */
@@ -45,37 +44,41 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	/** Authenticate principal DB stored credenticals. */
 	private String storedCredentials;
 
+	/** Authenticate principal DB stored public salt(hex). */
+	private String publicSalt;
+
 	/** Authenticate principal role codes. */
 	private String roles;
-
-	/** Authenticate principal organization. */
-	private PrincipalOrganization organization;
 
 	/** Authenticate principal permission. */
 	private String permissions;
 
+	/** Authenticate principal organization. */
+	private PrincipalOrganization organization;
+
 	/** Authenticate principal attributes. */
 	private Attributes attributes;
 
-	public SimplePrincipalInfo() {
+	public SimpleIamPrincipal() {
 		super();
 	}
 
-	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
-		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
-				info.getOrganization(), info.attributes());
+	public SimpleIamPrincipal(@NotBlank IamPrincipal info) {
+		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getPublicSalt(), info.getRoles(),
+				info.getPermissions(), info.getOrganization(), info.attributes());
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions, PrincipalOrganization organization) {
-		this(principalId, principal, storedCredentials, roles, permissions, organization, null);
+	public SimpleIamPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String publicSalt,
+			String roles, String permissions, PrincipalOrganization organization) {
+		this(principalId, principal, storedCredentials, publicSalt, roles, permissions, organization, null);
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions, PrincipalOrganization organization, Attributes attributes) {
+	public SimpleIamPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String publicSalt,
+			String roles, String permissions, PrincipalOrganization organization, Attributes attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
 		setStoredCredentials(storedCredentials);
+		setPublicSalt(publicSalt);
 		setRoles(roles);
 		setPermissions(permissions);
 		setOrganization(organization);
@@ -93,11 +96,10 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final void setPrincipalId(String principalId) {
-		hasTextOf(principalId, "principalId");
-		this.principalId = principalId;
+		this.principalId = hasTextOf(principalId, "principalId");
 	}
 
-	public final SimplePrincipalInfo withPrincipalId(String principalId) {
+	public final SimpleIamPrincipal withPrincipalId(String principalId) {
 		setPrincipalId(principalId);
 		return this;
 	}
@@ -113,11 +115,10 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final void setPrincipal(String principal) {
-		hasTextOf(principal, "principalName");
-		this.principal = principal;
+		this.principal = hasTextOf(principal, "principalName");
 	}
 
-	public final SimplePrincipalInfo withPrincipal(String principal) {
+	public final SimpleIamPrincipal withPrincipal(String principal) {
 		setPrincipal(principal);
 		return this;
 	}
@@ -138,8 +139,27 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.storedCredentials = storedCredentials;
 	}
 
-	public final SimplePrincipalInfo withStoredCredentials(String storedCredentials) {
+	public final SimpleIamPrincipal withStoredCredentials(String storedCredentials) {
 		setStoredCredentials(storedCredentials);
+		return this;
+	}
+
+	@Override
+	public final String getPublicSalt() {
+		return publicSalt;
+	}
+
+	@Override
+	public String publicSalt() {
+		return isBlank(publicSalt) ? EMPTY : publicSalt;
+	}
+
+	public final void setPublicSalt(String publicSalt) {
+		this.publicSalt = hasTextOf(publicSalt, "publicSalt");
+	}
+
+	public final SimpleIamPrincipal withPublicSalt(String publicSalt) {
+		setPublicSalt(publicSalt);
 		return this;
 	}
 
@@ -158,28 +178,8 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.roles = roles;
 	}
 
-	public final SimplePrincipalInfo withRoles(String roles) {
+	public final SimpleIamPrincipal withRoles(String roles) {
 		setRoles(roles);
-		return this;
-	}
-
-	@Override
-	public final PrincipalOrganization getOrganization() {
-		return organization;
-	}
-
-	@Override
-	public PrincipalOrganization organization() {
-		return isNull(organization) ? (organization = new PrincipalOrganization()) : organization;
-	}
-
-	public void setOrganization(PrincipalOrganization organization) {
-		// notNullOf(organization, "organization");
-		this.organization = organization;
-	}
-
-	public SimplePrincipalInfo withOrganization(PrincipalOrganization organization) {
-		setOrganization(organization);
 		return this;
 	}
 
@@ -198,8 +198,28 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		this.permissions = permissions;
 	}
 
-	public final SimplePrincipalInfo withPermissions(String permissions) {
+	public final SimpleIamPrincipal withPermissions(String permissions) {
 		setPermissions(permissions);
+		return this;
+	}
+
+	@Override
+	public final PrincipalOrganization getOrganization() {
+		return organization;
+	}
+
+	@Override
+	public PrincipalOrganization organization() {
+		return isNull(organization) ? (organization = new PrincipalOrganization()) : organization;
+	}
+
+	public void setOrganization(PrincipalOrganization organization) {
+		// notNullOf(organization, "organization");
+		this.organization = organization;
+	}
+
+	public SimpleIamPrincipal withOrganization(PrincipalOrganization organization) {
+		setOrganization(organization);
 		return this;
 	}
 
@@ -230,7 +250,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @param attributes
 	 * @return
 	 */
-	public final SimplePrincipalInfo withAttributes(Attributes attributes) {
+	public final SimpleIamPrincipal withAttributes(Attributes attributes) {
 		setAttributes(attributes);
 		return this;
 	}
@@ -245,7 +265,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * Validation.
 	 */
 	@Override
-	public final IamPrincipalInfo validate() throws IllegalArgumentException {
+	public final IamPrincipal validate() throws IllegalArgumentException {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
 		hasText(getPrincipal(), "Authenticate principal name can't empty");
 		// hasText(getRoles(), "Authenticate roles can't empty");
