@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,20 +79,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public PageModel list(PageModel pm, String userName, String displayName) {
 		IamPrincipal info = getPrincipalInfo();
-
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			list = userDao.list(null, userName, displayName);
 		} else {
-
-			Set<Organization> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
-			List<Long> groupIds = new ArrayList<>();
-			for (Organization group : groups) {
-				groupIds.add(group.getId());
-			}
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			list = userDao.list(groupIds, userName, displayName);
+			list = userDao.list(Long.valueOf(info.getPrincipalId()), userName, displayName);
 		}
 
 		for (User user : list) {

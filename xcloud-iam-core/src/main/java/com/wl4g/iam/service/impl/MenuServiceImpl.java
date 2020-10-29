@@ -229,7 +229,7 @@ public class MenuServiceImpl implements MenuService {
 			if (isNotBlank(info.getPrincipalId())) {
 				userId = Long.parseLong(info.getPrincipalId());
 			}
-			menus = menuDao.selectByUserIdAccessGroup(userId);
+			menus = menuDao.selectByUserId(userId);
 		}
 		Set<Menu> set = new LinkedHashSet<>();
 		set.addAll(menus);
