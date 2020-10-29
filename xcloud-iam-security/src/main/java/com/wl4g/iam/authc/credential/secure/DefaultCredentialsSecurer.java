@@ -90,7 +90,7 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 		// CodecSource privateSalt = new
 		// CodecSource("IamWithCipherPrivateSalt");
 		CodecSource privateSalt = new CodecSource("iam-serverdev");
-		CodecSource publicSalt = new CodecSource("admin");
+		CodecSource publicSalt = CodecSource.fromHex("a3e0b320c73020aa81ebf87bd8611bf1");
 		CodecSource salt = new CodecSource(crossCombined(privateSalt.getBytes(), publicSalt.getBytes()));
 
 		String[] hashAlgorithms = new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" };
@@ -99,7 +99,7 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 		String algorithm = hashAlgorithms[(int) index];
 		int hashIterations = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 		System.out.println(">>>>>>>>>>");
-		System.out.print(new SimpleHash(algorithm, Util.bytes("123456"), salt, hashIterations).toHex());
+		System.out.print(new SimpleHash(algorithm, Util.bytes("123456"), salt.getBytes(), hashIterations).toHex());
 		System.out.print("\n<<<<<<<<<<");
 	}
 

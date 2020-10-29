@@ -16,7 +16,6 @@
 package com.wl4g.iam.core;
 
 import com.wl4g.components.core.bean.iam.ClusterConfig;
-import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.iam.ApplicationInfo;
 import com.wl4g.components.core.bean.iam.Organization;
 import com.wl4g.components.core.bean.iam.Menu;
@@ -196,10 +195,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			// TODO nameZh?? nameEn??
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
-			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
-					// TODO user.getPubSalt()
-					new CodecSource(user.getUserName()).toHex(), getRoles(user.getUserName()), getPermissions(user.getUserName()),
-					new PrincipalOrganization(oInfo));
+			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(), user.getPubSalt(),
+					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}
 		return null;
 	}

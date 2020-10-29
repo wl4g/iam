@@ -26,9 +26,9 @@ import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.UserService;
-import org.apache.commons.lang3.StringUtils;
+
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -38,9 +38,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * User service implements.
@@ -73,9 +75,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	protected IamSessionDAO sessionDAO;
 
-	@Autowired
-	private OrganizationService groupService;
-
 	@Override
 	public PageModel list(PageModel pm, String userName, String displayName) {
 		IamPrincipal info = getPrincipalInfo();
@@ -102,13 +101,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void save(User user) {
-		if (StringUtils.isNotBlank(user.getPassword())) {
+		if (isNotBlank(user.getPassword())) {
 			// TODO Dynamic choose algorithm!!! Default use RSA
 			CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
-			// TODO Public salt will be stored in the DB
-			String signature = securer.signature(crToken, new CodecSource(user.getUserName()));
-			// The stored password is the ciphertext after encrypted signature.
-			user.setPassword(signature);
+
+			CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
+			String sign = securer.signature(crToken, publicSalt);
+			user.setPassword(sign); // ciphertext
+			user.setPubSalt(publicSalt.toHex());
+
+			// Update the password, need to logout the user
 			sessionDAO.removeAccessSession(user.getUserName());
 		}
 		if (!isNull(user.getId())) {
@@ -137,8 +139,7 @@ public class UserServiceImpl implements UserService {
 		user.preUpdate();
 		userDao.updateByPrimaryKeySelective(user);
 		roleUserDao.deleteByUserId(user.getId());
-		List<Long> roleIds = user.getRoleIds();
-		for (Long roleId : roleIds) {
+		for (Long roleId : safeList(user.getRoleIds())) {
 			RoleUser roleUser = new RoleUser();
 			roleUser.preInsert();
 			roleUser.setUserId(user.getId());
