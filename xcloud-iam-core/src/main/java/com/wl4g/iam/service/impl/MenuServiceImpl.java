@@ -17,7 +17,6 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.Menu;
-import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.MenuService;
@@ -50,8 +49,6 @@ public class MenuServiceImpl implements MenuService {
 	protected MenuDao menuDao;
 	@Autowired
 	protected OrganizationService groupService;
-	@Autowired
-	protected GroupMenuDao groupMenuDao;
 
 	@Override
 	public Map<String, Object> getMenuTree() {

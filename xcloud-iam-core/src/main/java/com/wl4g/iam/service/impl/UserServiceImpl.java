@@ -18,18 +18,8 @@ package com.wl4g.iam.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.iam.Organization;
-import com.wl4g.components.core.bean.iam.GroupUser;
-import com.wl4g.components.core.bean.iam.Menu;
-import com.wl4g.components.core.bean.iam.Role;
-import com.wl4g.components.core.bean.iam.RoleUser;
-import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.dao.iam.OrganizationDao;
-import com.wl4g.devops.dao.iam.GroupUserDao;
-import com.wl4g.devops.dao.iam.MenuDao;
-import com.wl4g.devops.dao.iam.RoleDao;
-import com.wl4g.devops.dao.iam.RoleUserDao;
-import com.wl4g.devops.dao.iam.UserDao;
+import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
@@ -38,14 +28,11 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.UserService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import static java.util.Objects.isNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,6 +41,7 @@ import java.util.Set;
 
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static java.util.Objects.isNull;
 
 /**
  * User service implements.
@@ -79,9 +67,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleUserDao roleUserDao;
-
-	@Autowired
-	private GroupUserDao groupUserDao;
 
 	@Autowired
 	private CredentialsSecurer securer;
@@ -154,14 +139,6 @@ public class UserServiceImpl implements UserService {
 			roleUser.setRoleId(roleId);
 			roleUserDao.insertSelective(roleUser);
 		}
-		List<Long> groupIds = user.getGroupIds();
-		for (Long groupId : groupIds) {
-			GroupUser groupUser = new GroupUser();
-			groupUser.preInsert();
-			groupUser.setGroupId(groupId);
-			groupUser.setUserId(user.getId());
-			groupUserDao.insertSelective(groupUser);
-		}
 	}
 
 	private void update(User user) {
@@ -175,15 +152,6 @@ public class UserServiceImpl implements UserService {
 			roleUser.setUserId(user.getId());
 			roleUser.setRoleId(roleId);
 			roleUserDao.insertSelective(roleUser);
-		}
-		groupUserDao.deleteByUserId(user.getId());
-		List<Long> groupIds = user.getGroupIds();
-		for (Long groupId : groupIds) {
-			GroupUser groupUser = new GroupUser();
-			groupUser.preInsert();
-			groupUser.setGroupId(groupId);
-			groupUser.setUserId(user.getId());
-			groupUserDao.insertSelective(groupUser);
 		}
 	}
 
@@ -202,9 +170,7 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		List<Long> roleIds = roleUserDao.selectRoleIdByUserId(userId);
-		List<Long> groupIds = groupUserDao.selectGroupIdByUserId(userId);
 		user.setRoleIds(roleIds);
-		user.setGroupIds(groupIds);
 		return user;
 	}
 
