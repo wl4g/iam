@@ -15,12 +15,15 @@
  */
 package com.wl4g.iam.authc;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.components.common.codec.CodecSource;
+import static com.wl4g.components.common.codec.CodecSource.fromHex;
 
 public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
@@ -37,7 +40,8 @@ public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	@Override
 	public CodecSource getPublicSalt() {
 		// from hex
-		return CodecSource.fromHex(getIamPrincipal().getPublicSalt());
+		final String pubSalt = getIamPrincipal().getPublicSalt();
+		return !isBlank(pubSalt) ? fromHex(getIamPrincipal().getPublicSalt()) : null;
 	}
 
 }
