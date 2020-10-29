@@ -41,7 +41,7 @@ public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	public CodecSource getPublicSalt() {
 		// from hex
 		final String pubSalt = getIamPrincipal().getPublicSalt();
-		return !isBlank(pubSalt) ? fromHex(getIamPrincipal().getPublicSalt()) : null;
+		return !isBlank(pubSalt) ? fromHex(pubSalt) : null;
 	}
 
 }

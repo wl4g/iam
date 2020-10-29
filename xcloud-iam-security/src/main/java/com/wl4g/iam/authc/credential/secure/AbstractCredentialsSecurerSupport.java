@@ -108,7 +108,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
 		notNullOf(token, "credentialsToken");
-		notNullOf(publicSalt, "publicSalt");
 
 		// Delegate signature
 		if (!isNull(delegate) && !token.isSolved()) {
@@ -185,6 +184,8 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @return
 	 */
 	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt, @NotNull Hasher hasher) {
+		notNullOf(publicSalt, "publicSalt");
+
 		// Merge salt
 		CodecSource salt = merge(privateSalt, determinePublicSalt(token, publicSalt));
 		log.debug("Merge salt of principal: {}, salt: {}", token.getPrincipal(), salt);
