@@ -72,10 +72,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	/**
 	 * ProtoStuff can't serialize XXXDao created by MyBatis, it will throw a
 	 * serialization exception. This field must be ignored. </br>
-	 * The problem is method: {@link StandardSecurityConfigurer#getIamAccount()}
+	 * The problem is method:
+	 * {@link StandardSecurityConfigurer#getIamUserDetail()}
 	 */
-	@Autowired
-	private transient ClusterConfigDao configDao;
 	@Autowired
 	private transient UserDao userDao;
 	@Autowired
@@ -83,10 +82,12 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Autowired
 	private transient MenuDao menuDao;
 	@Autowired
-	private OrganizationService groupService;
+	private transient OrganizationService organService;
+	@Autowired
+	private transient ClusterConfigDao clusterConfigDao;
 
 	@Value("${spring.profiles.active}")
-	private String active;
+	private transient String active;
 
 	@Override
 	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
@@ -119,7 +120,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfos.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> ccs = configDao.getByAppNames(appNames, active, null);
+			List<ClusterConfig> ccs = clusterConfigDao.getByAppNames(appNames, active, null);
 			for (ClusterConfig cc : ccs) {
 				ApplicationInfo app = new ApplicationInfo();
 				app.setAppName(cc.getName());
@@ -191,9 +192,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			Set<Organization> groupsSet = groupService.getGroupsSet(user);
+			Set<Organization> organSet = organService.getGroupsSet(user);
 			// TODO nameZh?? nameEn??
-			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
+			List<OrganizationInfo> oInfo = organSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
 			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(), user.getPubSalt(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
