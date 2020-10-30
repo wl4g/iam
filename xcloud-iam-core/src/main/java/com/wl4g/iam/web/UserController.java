@@ -42,9 +42,9 @@ public class UserController extends BaseController {
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> list(PageModel pm, String userName, String displayName) {
+	public RespBase<?> list(PageModel pm, String userName, String displayName, Long roleId) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = userService.list(pm, userName, displayName);
+		PageModel list = userService.list(pm, userName, displayName, roleId);
 		resp.setData(list);
 		return resp;
 	}

@@ -33,6 +33,7 @@ import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -56,7 +57,7 @@ public class MenuServiceImpl implements MenuService {
 		Set<Menu> menusSet = getMenusSet();
 		List<Menu> menuList = new ArrayList<>(getMenusSet());
 		List<Menu> menus = new ArrayList<>(menusSet);
-		// dealWithRoutePath(menus);
+		dealWithRoutePath(menus);
 		menus = set2Tree(menus);
 		result.put("data", menus);
 		result.put("data2", new ArrayList<>(menuList));
@@ -130,7 +131,7 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public void save(Menu menu) {
-		checkSort(menu);
+		checkRepeat(menu);
 		checkMenu(menu);
 		if (menu.getId() != null) {
 			update(menu);
@@ -186,7 +187,7 @@ public class MenuServiceImpl implements MenuService {
 	 */
 	private void checkMenu(Menu menu) {
 		String routeNamespace = menu.getRouteNamespace();
-		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/");
+		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/") && routeNamespace.length() > 1;
 		isTrue(isLegal, "illegal routeNamespace: '%s', e.g: '/edit'", routeNamespace);
 
 		if (menu.getParentId() == null) {
@@ -206,16 +207,16 @@ public class MenuServiceImpl implements MenuService {
 		}
 	}
 
-	private void checkSort(Menu menu) {
+	private void checkRepeat(Menu menu) {
 		List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
-		boolean hadSame = false;
 		for (Menu m : menus) {
-			if (menu.getSort().equals(m.getSort()) && !m.getId().equals(menu.getId())) {
-				hadSame = true;
-				break;
+			if(!m.getId().equals(menu.getId())){
+				isTrue(!equalsIgnoreCase(m.getRouteNamespace(), menu.getRouteNamespace()),
+						"menu's route path is repeat");
+				isTrue(!menu.getSort().equals(m.getSort()),
+						"menu's sort repeat");
 			}
 		}
-		isTrue(!hadSame, "menu's sort repeat");
 	}
 
 	private Set<Menu> getMenusSet() {
@@ -262,7 +263,7 @@ public class MenuServiceImpl implements MenuService {
 			}
 		}
 		for (Menu menu : top) {
-			List<Menu> children = getChildren(menus, null, menu.getId());
+			List<Menu> children = getChildren(menus, null, menu);
 			if (!CollectionUtils.isEmpty(children)) {
 				menu.setChildren(children);
 			}
@@ -270,17 +271,18 @@ public class MenuServiceImpl implements MenuService {
 		return top;
 	}
 
-	private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Long parentId) {
+	private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Menu parent) {
 		if (children == null) {
 			children = new ArrayList<>();
 		}
 		for (Menu menu : menus) {
-			if (menu.getParentId() != null && parentId != null && menu.getParentId().intValue() == parentId.intValue()) {
+			if (menu.getParentId() != null && parent.getId() != null && menu.getParentId().longValue() == parent.getId().longValue()) {
+				menu.setParentRoutePath(parent.getRoutePath());
 				children.add(menu);
 			}
 		}
 		for (Menu menu : children) {
-			List<Menu> children1 = getChildren(menus, null, menu.getId());
+			List<Menu> children1 = getChildren(menus, null, menu);
 			if (!CollectionUtils.isEmpty(children1)) {
 				menu.setChildren(children1);
 			}

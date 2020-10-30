@@ -76,17 +76,16 @@ public class UserServiceImpl implements UserService {
 	protected IamSessionDAO sessionDAO;
 
 	@Override
-	public PageModel list(PageModel pm, String userName, String displayName) {
+	public PageModel list(PageModel pm, String userName, String displayName, Long roleId) {
 		IamPrincipal info = getPrincipalInfo();
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			list = userDao.list(null, userName, displayName);
+			list = userDao.list(null, userName, displayName, roleId);
 		} else {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			list = userDao.list(Long.valueOf(info.getPrincipalId()), userName, displayName);
+			list = userDao.list(Long.valueOf(info.getPrincipalId()), userName, displayName, roleId);
 		}
-
 		for (User user : list) {
 			// groups
 			List<Organization> groups = groupDao.selectByUserId(user.getId());

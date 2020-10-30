@@ -65,19 +65,10 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public List<Role> getRolesByUserGroups() {
 		IamPrincipal info = getPrincipalInfo();
-
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {
-			// Groups of userId.
-			Set<Organization> groups = organizationService.getGroupsSet(new User(info.getPrincipal()));
-			List<Long> groupIds = new ArrayList<>();
-			for (Organization group : groups) {
-				groupIds.add(group.getId());
-			}
-			// Roles of group.
-			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), null, null);
-			return roles;
+			return roleDao.selectByUserId(Long.valueOf(info.getPrincipalId()));
 		}
 	}
 
@@ -92,17 +83,22 @@ public class RoleServiceImpl implements RoleService {
 			organizationService.getChildrensIds(Long.valueOf(organizationId), set);
 			groupIds = new ArrayList<>(set);
 		}
+		List<Role> roles = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
+			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
 			setMenuStrs(roles);
-			pm.setRecords(roles);
 		} else {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
+			roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
 			setMenuStrs(roles);
-			pm.setRecords(roles);
 		}
+		for(Role role : roles){
+			int userCount = roleDao.countRoleUsers(role.getId());
+			role.setUserCount(userCount);
+		}
+
+		pm.setRecords(roles);
 		return pm;
 	}
 

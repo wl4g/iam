@@ -31,7 +31,7 @@ public interface UserService {
 
 	Set<Menu> getMenusByUserId(Long userId);
 
-	PageModel list(PageModel pm, String userName, String displayName);
+	PageModel list(PageModel pm, String userName, String displayName, Long roleId);
 
 	void save(User user);
 
