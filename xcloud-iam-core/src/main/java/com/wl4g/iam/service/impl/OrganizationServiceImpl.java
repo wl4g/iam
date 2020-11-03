@@ -81,7 +81,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			children = new ArrayList<>();
 		}
 		for (Organization group : groups) {
-			if (group.getParentId() != null && parentId != null && group.getParentId().intValue() == parentId.intValue()) {
+			if (group.getParentId() != null && parentId != null && group.getParentId().longValue() == parentId.longValue()) {
 				children.add(group);
 			}
 		}
@@ -96,7 +96,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	public Organization getParent(List<Organization> groups, Long parentId) {
 		for (Organization group : groups) {
-			if (parentId != null && group.getId() != null && group.getId().intValue() == parentId.intValue()) {
+			if (parentId != null && group.getId() != null && group.getId().longValue() == parentId.longValue()) {
 				return group;
 			}
 		}

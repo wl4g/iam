@@ -66,7 +66,7 @@ public class MenuServiceImpl implements MenuService {
 
 	private Menu getParent(List<Menu> menus, Long parentId) {
 		for (Menu menu : menus) {
-			if (parentId != null && menu.getId() != null && menu.getId().intValue() == parentId.intValue()) {
+			if (parentId != null && menu.getId() != null && menu.getId().longValue() == parentId.longValue()) {
 				return menu;
 			}
 		}
