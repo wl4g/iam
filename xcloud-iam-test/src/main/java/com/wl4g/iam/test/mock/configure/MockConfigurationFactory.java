@@ -20,6 +20,8 @@ import static com.google.common.net.InetAddresses.isInetAddress;
 import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static com.wl4g.components.common.web.CookieUtils.getCookie;
 
 /**
@@ -192,6 +194,9 @@ public class MockConfigurationFactory {
 		 * @since
 		 */
 		public static enum MockFilterType {
+
+			All((request, nameValue) -> true),
+
 			Ip((request, nameValue) -> {
 				String clientAddr = getHttpRemoteAddr(request);
 				// If the proxy is obtained from the request header, it may not
@@ -260,6 +265,21 @@ public class MockConfigurationFactory {
 					}
 				}
 				return null;
+			}
+
+			/**
+			 * Parse mock filter real value by type
+			 * 
+			 * @param request
+			 * @param type
+			 * @return
+			 */
+			public static MockFilterType of(String filterType) {
+				MockFilterType type = safeOf(filterType);
+				if (isNull(type)) {
+					throw new UnsupportedOperationException(format("Not supported mock filterType: %s", filterType));
+				}
+				return type;
 			}
 
 			/**

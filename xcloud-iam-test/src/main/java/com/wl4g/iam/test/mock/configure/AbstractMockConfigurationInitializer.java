@@ -203,7 +203,7 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 			MockAuthzInfo user = new MockAuthzInfo(principalId, principal, roles, permissions, porgan);
 
 			// Mock filter
-			MockFilterType type = mock.getEnum(MockFilterType.class, "filter.type");
+			MockFilterType type = MockFilterType.of(mock.getString("filter.type"));
 			String value = mock.getString("filter.value");
 
 			// Check filter
@@ -222,6 +222,8 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 	 */
 	private void checkFilterTypeAndValue(MockFilterType type, String value) {
 		switch (type) {
+		case All:
+			break;
 		case Ip:
 			hasText(value, "Ip filter value '%s' is requires", value);
 			InetAddresses.forString(value); // Check IpString
