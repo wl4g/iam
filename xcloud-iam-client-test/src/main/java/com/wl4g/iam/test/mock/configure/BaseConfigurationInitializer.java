@@ -223,7 +223,7 @@ abstract class BaseConfigurationInitializer implements InitializingBean {
 	 */
 	private void checkFilterTypeAndValue(MockFilterType type, String value) {
 		switch (type) {
-		case All:
+		case All: // Any allows
 			break;
 		case Ip:
 			hasText(value, "Ip filter value '%s' is requires", value);

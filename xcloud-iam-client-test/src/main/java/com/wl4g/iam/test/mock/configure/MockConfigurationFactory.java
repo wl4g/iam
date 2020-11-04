@@ -175,7 +175,7 @@ public class MockConfigurationFactory {
 
 		public MockFilter(MockFilterType type, String value) {
 			notNullOf(type, "mockFilterType");
-			hasTextOf(value, "mockFilterValue");
+			// hasTextOf(value, "mockFilterValue"); // type=All value is null
 			this.type = type;
 			this.value = value;
 		}

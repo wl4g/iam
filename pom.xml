@@ -11,12 +11,12 @@
 	<modules>
 		<module>xcloud-iam-client</module>
 		<module>xcloud-iam-client-example</module>
+		<module>xcloud-iam-client-test</module>
 		<module>xcloud-iam-captcha</module>
 		<module>xcloud-iam-common</module>
 		<module>xcloud-iam-core</module>
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-server</module>
-		<module>xcloud-iam-test</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
