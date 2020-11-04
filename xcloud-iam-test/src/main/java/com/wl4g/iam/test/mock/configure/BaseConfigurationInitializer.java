@@ -37,6 +37,7 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
 import static org.springframework.http.HttpMethod.*;
 
 import com.google.common.net.InetAddresses;
@@ -54,14 +55,14 @@ import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
 
 /**
- * {@link AbstractMockConfigurationInitializer}
+ * {@link BaseConfigurationInitializer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-10
  * @sine v1.0.0
  * @see
  */
-public abstract class AbstractMockConfigurationInitializer implements InitializingBean {
+abstract class BaseConfigurationInitializer implements InitializingBean {
 
 	protected final SmartLogger log = getLogger(getClass());
 

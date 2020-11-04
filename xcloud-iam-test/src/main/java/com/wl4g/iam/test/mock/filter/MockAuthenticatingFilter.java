@@ -21,7 +21,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.components.common.web.WebUtils2.writeJson;
-import static com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_URI;
+import static com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer.MOCK_AUTO_AUTHC_URI;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
@@ -49,7 +49,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.UNAUTHC;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
+import com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserCredentials;
 import com.wl4g.iam.test.mock.handler.NoSuchMockCredentialsException;
@@ -73,9 +73,9 @@ public class MockAuthenticatingFilter implements Filter {
 	@Autowired
 	protected MockConfigurationFactory mockFactory;
 
-	/** {@link MockAuthenticatingConfigurer} */
+	/** {@link MockAuthenticatingInitializer} */
 	@Autowired
-	protected MockAuthenticatingConfigurer configurer;
+	protected MockAuthenticatingInitializer configurer;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

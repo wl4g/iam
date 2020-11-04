@@ -35,7 +35,7 @@ import com.wl4g.iam.common.handler.AuthenticatingHandler;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
-import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
+import com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
 
@@ -73,7 +73,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 		assertion.setValidUntilTime(now + 7200_000);
 
 		// Gets mock configuration by expected principal
-		String principal = param.getExtraParameters().get(MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_PRINCIPAL);
+		String principal = param.getExtraParameters().get(MockAuthenticatingInitializer.MOCK_AUTO_AUTHC_PRINCIPAL);
 		MockAuthzInfo mock = mockFactory.getMockAuthcInfo(principal);
 		notNull(mock, NoSuchMockCredentialsException.class, "No mock credentials were found for '%s'", principal);
 
