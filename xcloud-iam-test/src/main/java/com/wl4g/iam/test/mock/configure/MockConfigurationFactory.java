@@ -1,8 +1,9 @@
 package com.wl4g.iam.test.mock.configure;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf; 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isNullOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import java.net.InetAddress;
@@ -39,7 +40,7 @@ public class MockConfigurationFactory {
 	 * @param principal
 	 * @return
 	 */
-	public MockAuthcInfo getMockAuthcInfo(String principal) {
+	public MockAuthzInfo getMockAuthcInfo(String principal) {
 		return credentialsCache.entrySet().stream()
 				.filter(e -> StringUtils.equals(principal, e.getValue().getAuthcInfo().getPrincipal()))
 				.map(e -> e.getValue().getAuthcInfo()).findFirst().orElse(null);
@@ -67,17 +68,17 @@ public class MockConfigurationFactory {
 		}).map(e -> e.getValue()).findFirst().orElse(null);
 	}
 
-	void register(MockFilter filter, MockAuthcInfo info) {
+	void register(MockFilter filter, MockAuthzInfo info) {
 		isNullOf(credentialsCache.putIfAbsent(filter, new MockUserCredentials(info)),
 				"Cannot register mock filter, becasue already exist");
 	}
 
 	/**
-	 * {@link MockAuthzInfo}
+	 * {@link MockAuthcInfo}
 	 *
 	 * @since
 	 */
-	public static class MockAuthzInfo {
+	public static class MockAuthcInfo {
 
 		/**
 		 * Mock iam client authentication accessToken(credentials) info.
@@ -89,7 +90,7 @@ public class MockConfigurationFactory {
 		 */
 		private final String sessionId;
 
-		public MockAuthzInfo(String accessToken, String sessionId) {
+		public MockAuthcInfo(String accessToken, String sessionId) {
 			hasTextOf(accessToken, "mockAccessToken");
 			hasTextOf(sessionId, "mockSessionId");
 			this.accessToken = accessToken;
@@ -107,11 +108,11 @@ public class MockConfigurationFactory {
 	}
 
 	/**
-	 * {@link MockAuthcInfo}
+	 * {@link MockAuthzInfo}
 	 *
 	 * @since
 	 */
-	public static class MockAuthcInfo {
+	public static class MockAuthzInfo {
 
 		/** Mock principalId */
 		final private String principalId;
@@ -128,7 +129,7 @@ public class MockConfigurationFactory {
 		/** {@link PrincipalOrganization} */
 		final private PrincipalOrganization organization;
 
-		public MockAuthcInfo(String principalId, String principal, String roles, String permissions,
+		public MockAuthzInfo(String principalId, String principal, String roles, String permissions,
 				PrincipalOrganization organization) {
 			super();
 			this.principalId = principalId;
@@ -205,6 +206,12 @@ public class MockConfigurationFactory {
 				return StringUtils.equals(clientAddr, nameValue);
 			}),
 
+			Host((request, nameValue) -> {
+				String clientHost = ((HttpServletRequest) request).getHeader("Host");
+				clientHost = isBlank(clientHost) ? request.getServerName() : clientHost;
+				return StringUtils.equals(clientHost, nameValue);
+			}),
+
 			Query((request, nameValue) -> {
 				String[] parts = split(nameValue, "=");
 				return StringUtils.equals(request.getParameter(parts[0]), parts[1]);
@@ -276,23 +283,23 @@ public class MockConfigurationFactory {
 	 */
 	public static class MockUserCredentials {
 
-		final private MockAuthcInfo authcInfo;
-		private MockAuthzInfo authzInfo;
+		private final MockAuthzInfo authcInfo;
+		private MockAuthcInfo authzInfo;
 
-		public MockUserCredentials(MockAuthcInfo authcInfo) {
+		public MockUserCredentials(MockAuthzInfo authcInfo) {
 			notNullOf(authcInfo, "authcInfo");
 			this.authcInfo = authcInfo;
 		}
 
-		public MockAuthcInfo getAuthcInfo() {
+		public MockAuthzInfo getAuthcInfo() {
 			return authcInfo;
 		}
 
-		public MockAuthzInfo getAuthzInfo() {
+		public MockAuthcInfo getAuthzInfo() {
 			return authzInfo;
 		}
 
-		public void setAuthzInfo(MockAuthzInfo authzInfo) {
+		public void setAuthzInfo(MockAuthcInfo authzInfo) {
 			this.authzInfo = authzInfo;
 		}
 

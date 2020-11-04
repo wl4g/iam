@@ -37,7 +37,7 @@ import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingConfigurer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
-import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
 
 /**
  * Default mock central authenticating handler implements
@@ -74,7 +74,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 
 		// Gets mock configuration by expected principal
 		String principal = param.getExtraParameters().get(MockAuthenticatingConfigurer.MOCK_AUTO_AUTHC_PRINCIPAL);
-		MockAuthcInfo mock = mockFactory.getMockAuthcInfo(principal);
+		MockAuthzInfo mock = mockFactory.getMockAuthcInfo(principal);
 		notNull(mock, NoSuchMockCredentialsException.class, "No mock credentials were found for '%s'", principal);
 
 		// Principal info

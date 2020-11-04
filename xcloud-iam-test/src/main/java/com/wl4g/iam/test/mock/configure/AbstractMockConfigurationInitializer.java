@@ -51,7 +51,7 @@ import com.wl4g.iam.common.config.CorsProperties.CorsRule;
 import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
-import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
+import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
 
 /**
  * {@link AbstractMockConfigurationInitializer}
@@ -200,7 +200,7 @@ public abstract class AbstractMockConfigurationInitializer implements Initializi
 			}
 
 			// Mock user
-			MockAuthcInfo user = new MockAuthcInfo(principalId, principal, roles, permissions, porgan);
+			MockAuthzInfo user = new MockAuthzInfo(principalId, principal, roles, permissions, porgan);
 
 			// Mock filter
 			MockFilterType type = mock.getEnum(MockFilterType.class, "filter.type");
