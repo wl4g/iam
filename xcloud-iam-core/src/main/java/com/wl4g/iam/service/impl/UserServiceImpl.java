@@ -19,8 +19,8 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.iam.*;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.session.mgt.IamSessionDAO;
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 	protected IamSessionDAO sessionDAO;
 
 	@Override
-	public PageModel list(PageModel pm, String userName, String displayName, Long roleId) {
+	public PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
 		IamPrincipal info = getPrincipalInfo();
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {

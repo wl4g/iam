@@ -18,8 +18,8 @@ package com.wl4g.iam.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.iam.*;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.iam.*;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
@@ -73,7 +73,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String organizationId, String roleCode, String displayName) {
+	public PageModel<Role> list(PageModel<Role> pm, String organizationId, String roleCode, String displayName) {
 		IamPrincipal info = getPrincipalInfo();
 
 		List<Long> groupIds = null;
@@ -93,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
 			roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
 			setMenuStrs(roles);
 		}
-		for(Role role : roles){
+		for (Role role : roles) {
 			int userCount = roleDao.countRoleUsers(role.getId());
 			role.setUserCount(userCount);
 		}

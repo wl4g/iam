@@ -115,9 +115,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 		Set<Organization> set = new HashSet<>();
 		set.addAll(groups);
 		for (Organization group : groups) {
-			Set s = new HashSet();
+			Set<Long> s = new HashSet<>();
 			s.add(group.getId());
-			getChildrensIds(group.getId() ,s);
+			getChildrensIds(group.getId(), s);
 			group.setRoleCount(organizationDao.countRoleByOrganizationId(s));
 			getChildrensList(group.getId(), set);
 		}

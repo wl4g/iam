@@ -17,8 +17,8 @@ package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.iam.ContactGroup;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.iam.ContactGroupDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.ContactGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +69,10 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<ContactGroup> list(PageModel<ContactGroup> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(contactGroupDao.list(name));
 		return pm;
 	}
+
 }

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wl4g.components.core.bean.iam.Dict;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -27,7 +27,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface DictService {
 
-	PageModel list(PageModel pm, String key, String label, String type, String description);
+	PageModel<Dict> list(PageModel<Dict> pm, String key, String label, String type, String description);
 
 	void save(Dict dict, Boolean isEdit);
 

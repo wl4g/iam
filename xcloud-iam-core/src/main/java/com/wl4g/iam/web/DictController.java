@@ -18,8 +18,8 @@ package com.wl4g.iam.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.redis.jedis.JedisService;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.DictService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -63,7 +63,7 @@ public class DictController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:dict" })
-	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
+	public RespBase<?> list(PageModel<Dict> pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dictService.list(pm, key, label, type, description));
 		return resp;

@@ -17,7 +17,7 @@ package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.iam.Role;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.iam.service.RoleService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -50,10 +50,9 @@ public class RoleController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> list(PageModel pm, String organizationId, String roleCode, String displayName) {
+	public RespBase<?> list(PageModel<Role> pm, String organizationId, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel re = roleService.list(pm, organizationId, roleCode, displayName);
-		resp.setData(re);
+		resp.setData(roleService.list(pm, organizationId, roleCode, displayName));
 		return resp;
 	}
 

@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.components.core.bean.iam.Contact;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -30,8 +30,6 @@ public interface ContactService {
 
 	void del(Long id);
 
-	PageModel list(PageModel pm, String name);
-
-
+	PageModel<Contact> list(PageModel<Contact> pm, String name);
 
 }

@@ -19,10 +19,10 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.iam.ContactChannel;
 import com.wl4g.components.core.bean.iam.ContactGroupRef;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.iam.ContactChannelDao;
 import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.dao.iam.ContactGroupRefDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.service.ContactService;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -115,7 +115,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<Contact> list(PageModel<Contact> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(contactDao.list(name));
 		return pm;

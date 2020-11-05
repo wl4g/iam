@@ -17,7 +17,7 @@ package com.wl4g.iam.service;
 
 import com.wl4g.components.core.bean.iam.Menu;
 import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public interface UserService {
 
 	Set<Menu> getMenusByUserId(Long userId);
 
-	PageModel list(PageModel pm, String userName, String displayName, Long roleId);
+	PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId);
 
 	void save(User user);
 

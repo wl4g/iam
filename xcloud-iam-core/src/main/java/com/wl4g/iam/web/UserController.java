@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.iam.User;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.iam.service.UserService;
 
 /**
@@ -42,10 +42,9 @@ public class UserController extends BaseController {
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> list(PageModel pm, String userName, String displayName, Long roleId) {
+	public RespBase<?> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = userService.list(pm, userName, displayName, roleId);
-		resp.setData(list);
+		resp.setData(userService.list(pm, userName, displayName, roleId));
 		return resp;
 	}
 

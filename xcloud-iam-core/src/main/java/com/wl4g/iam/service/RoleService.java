@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.components.core.bean.iam.Role;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public interface RoleService {
 
 	List<Role> getRolesByUserGroups();
 
-	PageModel list(PageModel pm, String organizationId, String name, String displayName);
+	PageModel<Role> list(PageModel<Role> pm, String organizationId, String name, String displayName);
 
 	void save(Role group);
 

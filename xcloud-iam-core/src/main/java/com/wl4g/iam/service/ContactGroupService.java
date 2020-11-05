@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.components.core.bean.iam.ContactGroup;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -32,5 +32,5 @@ public interface ContactGroupService {
 
 	List<ContactGroup> contactGroups(String name);
 
-	PageModel list(PageModel pm, String name);
+	PageModel<ContactGroup> list(PageModel<ContactGroup> pm, String name);
 }
