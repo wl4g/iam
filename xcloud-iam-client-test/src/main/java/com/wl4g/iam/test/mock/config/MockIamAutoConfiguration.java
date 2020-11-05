@@ -58,7 +58,7 @@ public class MockIamAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	// ==============================
-	// Mock iam endpoint's
+	// Mock IAM endpoint's
 	// ==============================
 
 	@Bean

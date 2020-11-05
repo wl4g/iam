@@ -108,6 +108,7 @@ public class MockAuthenticatingFilter implements Filter {
 	 */
 	@SuppressWarnings("unchecked")
 	private ServletRequest attachMockAuthenticationInfo(HttpServletRequest request) throws NoSuchMockCredentialsException {
+
 		// Matching mock credentials by configuration
 		MockUserCredentials cred = mockFactory.matchMockCredentials(request);
 		notNull(cred, NoSuchMockCredentialsException.class, () -> {

@@ -73,19 +73,21 @@ public class MockAuthenticatingInitializer extends BaseConfigurationInitializer
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
-		initMockAuthenticationUserAll();
+		initMockAuthenticationInfo();
 	}
 
 	/**
 	 * Initialization mock iam client authentication info
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void initMockAuthenticationUserAll() {
+	private void initMockAuthenticationInfo() {
 
 		// Init all mock user authz info
 		for (MockUserCredentials cred : mockFactory.getMockUserCredentials()) {
-			URI uri = URI.create(mockAutoAuthcUri + "?" + MOCK_AUTO_AUTHC_PRINCIPAL + "=" + cred.getAuthcInfo().getPrincipal());
-			RespBase<Map> resp = restTemplate.getForObject(uri, RespBase.class);
+			URI validatingUri = URI.create(mockAutoAuthcUri.concat("?").concat(MOCK_AUTO_AUTHC_PRINCIPAL).concat("=")
+					.concat(cred.getAuthcInfo().getPrincipal()));
+
+			RespBase<Map> resp = restTemplate.getForObject(validatingUri, RespBase.class);
 			String accessToken = valueOf(resp.getData().get(config.getParam().getAccessTokenName()));
 
 			Object session = resp.getData().get(KEY_SESSIONINFO_NAME);

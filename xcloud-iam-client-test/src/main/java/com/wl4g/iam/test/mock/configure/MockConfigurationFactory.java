@@ -9,8 +9,8 @@ import static org.apache.commons.lang3.StringUtils.split;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,12 +29,12 @@ import static com.wl4g.components.common.web.CookieUtils.getCookie;
  *
  * @since
  */
-public class MockConfigurationFactory {
+public final class MockConfigurationFactory {
 
 	/**
 	 * Mock for IAM client authentication userinfo.
 	 */
-	private final Map<MockFilter, MockUserCredentials> credentialsCache = new LinkedHashMap<>(4);
+	private final Map<MockFilter, MockUserCredentials> mockRegistry = new ConcurrentHashMap<>(4);
 
 	/**
 	 * Gets mock user info by principal
@@ -43,7 +43,7 @@ public class MockConfigurationFactory {
 	 * @return
 	 */
 	public MockAuthzInfo getMockAuthcInfo(String principal) {
-		return credentialsCache.entrySet().stream()
+		return mockRegistry.entrySet().stream()
 				.filter(e -> StringUtils.equals(principal, e.getValue().getAuthcInfo().getPrincipal()))
 				.map(e -> e.getValue().getAuthcInfo()).findFirst().orElse(null);
 	}
@@ -54,7 +54,7 @@ public class MockConfigurationFactory {
 	 * @return
 	 */
 	public Collection<MockUserCredentials> getMockUserCredentials() {
-		return credentialsCache.values();
+		return mockRegistry.values();
 	}
 
 	/**
@@ -64,14 +64,20 @@ public class MockConfigurationFactory {
 	 * @return
 	 */
 	public MockUserCredentials matchMockCredentials(HttpServletRequest request) {
-		return credentialsCache.entrySet().stream().filter(e -> {
+		return mockRegistry.entrySet().stream().filter(e -> {
 			MockFilter filter = e.getKey();
 			return filter.getType().getParser().matchValue(request, filter.getValue());
 		}).map(e -> e.getValue()).findFirst().orElse(null);
 	}
 
+	/**
+	 * Registering mock configureation and authz credentials information.
+	 * 
+	 * @param filter
+	 * @param info
+	 */
 	void register(MockFilter filter, MockAuthzInfo info) {
-		isNullOf(credentialsCache.putIfAbsent(filter, new MockUserCredentials(info)),
+		isNullOf(mockRegistry.putIfAbsent(filter, new MockUserCredentials(info)),
 				"Cannot register mock filter, becasue already exist");
 	}
 
