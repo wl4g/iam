@@ -213,13 +213,36 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * Apply default config property.
 	 */
 	protected void applyDefaultPropertiesSet() {
-		// Sets Service name defaults.
+		// Sets IAM client defaults serviceName.
 		if (isBlank(getServiceName())) {
 			setServiceName(getSpringApplicationName());
 		}
 
-		// Apply requires default filter-chains.
+		// Sets IAM client defaults filter-chains.
 		applyRequiresFilterChains(getFilterChain());
+
+		// Sets IAM client defaults cache configuraton.
+		if (isBlank(getCache().getPrefix())) {
+			// The cache key distinguishes different environments of the same
+			// application, so as to ensure that, for example, redis is shared
+			// in the development and test environment, resulting in data
+			// pollution.
+			String appName = environment.getRequiredProperty("spring.application.name");
+			String appEnv = environment.getRequiredProperty("spring.profiles.active");
+			getCache().setPrefix(appName.concat(":").concat(appEnv));
+		}
+
+	}
+
+	/**
+	 * Apply build-in defaults filter-chain.
+	 * 
+	 * @param pattern
+	 *            url pattern.
+	 */
+	protected void applyRequiresFilterChains(Map<String, String> chains) {
+		// Adds requires xsrf request rules.
+		getFilterChain().putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
 	}
 
 	/**
@@ -249,17 +272,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	}
 
 	/**
-	 * Apply build-in defaults filter-chain.
-	 * 
-	 * @param pattern
-	 *            url pattern.
-	 */
-	protected void applyRequiresFilterChains(Map<String, String> chains) {
-		// Adds requires xsrf request rules.
-		getFilterChain().putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
-	}
-
-	/**
 	 * Session cache configuration properties
 	 *
 	 * @author Wangl.sir <983708408@qq.com>
@@ -271,16 +283,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private static final long serialVersionUID = 5246530494860631770L;
 
 		/**
-		 * IAM cache prefix.
+		 * IAM cache prefix.</br>
+		 * Note: The cache key distinguishes different environments of the same
+		 * application, so as to ensure that, for example, redis is shared in
+		 * the development and test environment, resulting in data pollution.
 		 */
 		private String prefix;
 
 		public String getPrefix() {
-			if (isBlank(prefix)) {
-				// By default
-				setPrefix(environment.getProperty("spring.application.name"));
-			}
-			hasTextOf(prefix, "cachePrefix");
+			hasTextOf(prefix, "iamCachePrefix");
 			return prefix;
 		}
 

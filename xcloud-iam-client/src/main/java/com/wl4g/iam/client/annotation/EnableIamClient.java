@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.wl4g.iam.client.config.ConsoleAutoConfiguration;
 import com.wl4g.iam.client.config.IamClientAutoConfiguration;
 import com.wl4g.iam.common.config.CorsAutoConfiguration;
 import com.wl4g.iam.common.config.ReplayAutoConfiguration;
@@ -46,7 +47,7 @@ import com.wl4g.iam.common.config.XssAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ IamClientAutoConfiguration.class, CorsAutoConfiguration.class, XsrfAutoConfiguration.class, XssAutoConfiguration.class,
-		ReplayAutoConfiguration.class })
+		ReplayAutoConfiguration.class, ConsoleAutoConfiguration.class })
 public @interface EnableIamClient {
 
 }
