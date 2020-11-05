@@ -291,7 +291,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String prefix;
 
 		public String getPrefix() {
-			hasTextOf(prefix, "iamCachePrefix");
 			return prefix;
 		}
 
