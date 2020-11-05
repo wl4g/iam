@@ -105,7 +105,7 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 			} else {
 				return organCode;
 			}
-		}catch (Exception e){
+		} catch (Exception e) {
 
 		}
 		return null;
@@ -156,7 +156,7 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String organCode) {
 		Optional<OrganizationInfo> opt = safeList(organs).stream()
 				.filter(o -> StringUtils.equals(o.getOrganizationCode(), organCode)).findFirst();
-		return opt.get();
+		return opt.orElse(null);
 	}
 
 	/**
