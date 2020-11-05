@@ -23,7 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-test</artifactId>
+			<artifactId>xcloud-iam-client-test</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
