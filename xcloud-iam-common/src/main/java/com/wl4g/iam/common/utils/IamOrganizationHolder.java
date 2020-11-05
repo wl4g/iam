@@ -76,13 +76,13 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 * @return
 	 */
 	public static List<String> getRequestOrganizationCodes() {
-		String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
-		organCode = new String(Base58.decodeBase58(organCode), UTF_8);
-		if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
+		String orgCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
+		orgCode = new String(Base58.decodeBase58(orgCode), UTF_8);
+		if (isBlank(orgCode) || "ALL".equalsIgnoreCase(orgCode)) {
 			List<OrganizationInfo> organs = getSessionOrganizations();
 			return organs.stream().map(a -> a.getOrganizationCode()).collect(toList());
 		} else {
-			return getChildOrganizationCodes(organCode);
+			return getChildOrganizationCodes(orgCode);
 		}
 	}
 
@@ -93,17 +93,17 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 */
 	public static String getRequestOrganizationCode() {
 		try {
-			String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
-			organCode = new String(Base58.decodeBase58(organCode), UTF_8);
+			String orgCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
+			orgCode = new String(Base58.decodeBase58(orgCode), UTF_8);
 
-			if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
+			if (isBlank(orgCode) || "ALL".equalsIgnoreCase(orgCode)) {
 				List<OrganizationInfo> organs = getSessionOrganizations();
 				List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
 
 				notEmptyOf(parentOrgans, "organizationCode");
 				return parentOrgans.get(0).getOrganizationCode();
 			} else {
-				return organCode;
+				return orgCode;
 			}
 		} catch (Exception e) {
 
@@ -114,15 +114,15 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	/**
 	 * Gets child organization codes by organ code
 	 *
-	 * @param organCode
+	 * @param orgCode
 	 * @return
 	 */
-	private static List<String> getChildOrganizationCodes(String organCode) {
+	private static List<String> getChildOrganizationCodes(String orgCode) {
 		List<OrganizationInfo> organs;
-		if (isBlank(organCode)) {
+		if (isBlank(orgCode)) {
 			organs = getSessionOrganizations();
 		} else {
-			organs = getChildOrganizations(organCode);
+			organs = getChildOrganizations(orgCode);
 		}
 		return safeList(organs).stream().map(o -> o.getOrganizationCode()).collect(toList());
 	}
@@ -130,17 +130,17 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	/**
 	 * Gets child organizations by code
 	 *
-	 * @param organCode
+	 * @param orgCode
 	 * @return
 	 */
-	private static List<OrganizationInfo> getChildOrganizations(String organCode) {
+	private static List<OrganizationInfo> getChildOrganizations(String orgCode) {
 		List<OrganizationInfo> organs = getSessionOrganizations();
 
 		List<OrganizationInfo> childrens = new ArrayList<>();
-		addChildrenOrganizations(organs, organCode, childrens);
+		addChildrenOrganizations(organs, orgCode, childrens);
 
-		OrganizationInfo organ = extOrganization(organs, organCode);
-		notNull(organ, "Not found organization code: %s", organCode);
+		OrganizationInfo organ = extOrganization(organs, orgCode);
+		notNull(organ, "No found organization info with legal permissions by orgCode: %", orgCode);
 
 		childrens.add(organ);
 		return childrens;
@@ -150,12 +150,12 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 * Extract organization info by orgainzation code.
 	 * 
 	 * @param organs
-	 * @param organCode
+	 * @param orgCode
 	 * @return
 	 */
-	private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String organCode) {
+	private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String orgCode) {
 		Optional<OrganizationInfo> opt = safeList(organs).stream()
-				.filter(o -> StringUtils.equals(o.getOrganizationCode(), organCode)).findFirst();
+				.filter(o -> StringUtils.equals(o.getOrganizationCode(), orgCode)).findFirst();
 		return opt.orElse(null);
 	}
 
@@ -163,17 +163,17 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 * Adds children organizations.
 	 * 
 	 * @param organs
-	 * @param organCode
+	 * @param orgCode
 	 * @param childrens
 	 */
-	private static void addChildrenOrganizations(List<OrganizationInfo> organs, String organCode,
+	private static void addChildrenOrganizations(List<OrganizationInfo> organs, String orgCode,
 			List<OrganizationInfo> childrens) {
 		for (OrganizationInfo organ : organs) {
-			String _organCode = organ.getOrganizationCode();
+			String _orgCode = organ.getOrganizationCode();
 			String parent = organ.getParent();
-			if (StringUtils.equals(parent, organCode)) {
+			if (StringUtils.equals(parent, orgCode)) {
 				childrens.add(organ);
-				addChildrenOrganizations(organs, _organCode, childrens);
+				addChildrenOrganizations(organs, _orgCode, childrens);
 			}
 		}
 	}
