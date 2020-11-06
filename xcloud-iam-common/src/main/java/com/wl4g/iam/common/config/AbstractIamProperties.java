@@ -455,22 +455,22 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String principalName = "principal";
 
 		/**
-		 * Authentication parameter application name
+		 * Authentication parameter for logout force
 		 */
 		private String logoutForced = "forced";
 
 		/**
-		 * Authentication parameter application name
+		 * Authentication parameter for application name
 		 */
 		private String application = "application";
 
 		/**
-		 * Authentication parameter grant ticket name
+		 * Authentication parameter for grant ticket name
 		 */
 		private String grantTicket = "gt";
 
 		/**
-		 * Redirected URL parameter name for request authentication callback
+		 * Authentication URL parameter for callback redirectURL name
 		 */
 		private String redirectUrl = "redirect_url";
 
