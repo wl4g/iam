@@ -16,7 +16,7 @@
 package com.wl4g.iam.test.mock.filter;
 
 import static com.wl4g.components.common.collection.Collections2.safeToList;
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
@@ -24,6 +24,7 @@ import static com.wl4g.components.common.web.WebUtils2.writeJson;
 import static com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer.MOCK_AUTO_AUTHC_URI;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
 import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -111,7 +112,7 @@ public class MockAuthenticatingFilter implements Filter {
 
 		// Matching mock credentials by configuration
 		MockUserCredentials cred = mockFactory.matchMockCredentials(request);
-		notNull(cred, NoSuchMockCredentialsException.class, () -> {
+		isTrue(!isNull(cred) && !isNull(cred.getAuthcInfo()), NoSuchMockCredentialsException.class, () -> {
 			String url = getFullRequestURL(request); // URL
 
 			StringBuffer requestStr = new StringBuffer();
@@ -129,8 +130,8 @@ public class MockAuthenticatingFilter implements Filter {
 
 		MockHttpRequestWrapper wrap = new MockHttpRequestWrapper(toHttp(request));
 		// Attach mock credentials
-		wrap.putParameter(config.getParam().getAccessTokenName(), cred.getAuthzInfo().getAccessToken());
-		wrap.putParameter(config.getParam().getSid(), cred.getAuthzInfo().getSessionId());
+		wrap.putParameter(config.getParam().getAccessTokenName(), cred.getAuthcInfo().getAccessToken());
+		wrap.putParameter(config.getParam().getSid(), cred.getAuthcInfo().getSessionId());
 		return wrap;
 	}
 

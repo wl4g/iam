@@ -44,8 +44,8 @@ public final class MockConfigurationFactory {
 	 */
 	public MockAuthzInfo getMockAuthcInfo(String principal) {
 		return mockRegistry.entrySet().stream()
-				.filter(e -> StringUtils.equals(principal, e.getValue().getAuthcInfo().getPrincipal()))
-				.map(e -> e.getValue().getAuthcInfo()).findFirst().orElse(null);
+				.filter(e -> StringUtils.equals(principal, e.getValue().getAuthzInfo().getPrincipal()))
+				.map(e -> e.getValue().getAuthzInfo()).findFirst().orElse(null);
 	}
 
 	/**
@@ -309,24 +309,24 @@ public final class MockConfigurationFactory {
 	 */
 	public static class MockUserCredentials {
 
-		private final MockAuthzInfo authcInfo;
-		private MockAuthcInfo authzInfo;
+		private final MockAuthzInfo authzInfo;
+		private MockAuthcInfo authcInfo;
 
-		public MockUserCredentials(MockAuthzInfo authcInfo) {
-			notNullOf(authcInfo, "authcInfo");
-			this.authcInfo = authcInfo;
+		public MockUserCredentials(MockAuthzInfo authzInfo) {
+			notNullOf(authzInfo, "authcInfo");
+			this.authzInfo = authzInfo;
 		}
 
-		public MockAuthzInfo getAuthcInfo() {
-			return authcInfo;
-		}
-
-		public MockAuthcInfo getAuthzInfo() {
+		public MockAuthzInfo getAuthzInfo() {
 			return authzInfo;
 		}
 
-		public void setAuthzInfo(MockAuthcInfo authzInfo) {
-			this.authzInfo = authzInfo;
+		public MockAuthcInfo getAuthcInfo() {
+			return authcInfo;
+		}
+
+		public void setAuthcInfo(MockAuthcInfo authcInfo) {
+			this.authcInfo = authcInfo;
 		}
 
 	}

@@ -85,7 +85,7 @@ public class MockAuthenticatingInitializer extends BaseConfigurationInitializer
 		// Init all mock user authz info
 		for (MockUserCredentials cred : mockFactory.getMockUserCredentials()) {
 			URI validatingUri = URI.create(mockAutoAuthcUri.concat("?").concat(MOCK_AUTO_AUTHC_PRINCIPAL).concat("=")
-					.concat(cred.getAuthcInfo().getPrincipal()));
+					.concat(cred.getAuthzInfo().getPrincipal()));
 
 			RespBase<Map> resp = restTemplate.getForObject(validatingUri, RespBase.class);
 			String accessToken = valueOf(resp.getData().get(config.getParam().getAccessTokenName()));
@@ -95,7 +95,7 @@ public class MockAuthenticatingInitializer extends BaseConfigurationInitializer
 			String sessionId = valueOf(((Map) session).get(SessionInfo.KEY_SESSION_VALUE));
 
 			// Storage mock user authz info
-			cred.setAuthzInfo(new MockAuthcInfo(accessToken, sessionId));
+			cred.setAuthcInfo(new MockAuthcInfo(accessToken, sessionId));
 		}
 
 	}
