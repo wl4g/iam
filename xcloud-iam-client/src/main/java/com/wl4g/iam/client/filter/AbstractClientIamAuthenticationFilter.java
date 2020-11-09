@@ -265,7 +265,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 				String errmsg = format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getRootCausesString(cause));
 				/** See:{@link com.wl4g.components.core.web.error.com.wl4g.components.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()} */
-				/** See:{@link com.wl4g.components.core.web.error.ServletSmartErrorController#doAnyHandleError()} */
+				/** See:{@link com.wl4g.components.core.web.error.ServletSmartErrorHandler#doAnyHandleError()} */
 				toHttp(response).sendError(errorConfigurer.getStatus(cause), errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
