@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 
+import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
-import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.common.annotation.IamFilter;
@@ -62,9 +62,9 @@ import com.wl4g.iam.common.cache.JedisIamCacheManager;
 public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFilter<FastCasAuthenticationToken> {
 	final public static String NAME = NAME_ROOT_FILTER;
 
-	public ROOTAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer configurer,
+	public ROOTAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer configurer,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		super(config, configurer, coprocessor, cacheManager);
+		super(errorConfigurer, configurer, coprocessor, cacheManager);
 	}
 
 	/**

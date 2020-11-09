@@ -27,6 +27,7 @@ import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionRemainingTime;
 import static com.wl4g.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
@@ -54,6 +55,7 @@ import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
@@ -80,7 +82,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static javax.servlet.http.HttpServletResponse.*;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It
@@ -104,35 +105,35 @@ import static javax.servlet.http.HttpServletResponse.*;
 public abstract class AbstractClientIamAuthenticationFilter<T extends AuthenticationToken>
 		extends AbstractIamAuthenticationFilter<IamClientProperties> {
 
+	protected final ErrorConfigurer errorConfigurer;
+
 	/**
 	 * Client security context handler.
 	 */
-	final protected ClientSecurityConfigurer configurer;
+	protected final ClientSecurityConfigurer configurer;
 
 	/**
 	 * Client security processor.
 	 */
-	final protected ClientSecurityCoprocessor coprocessor;
+	protected final ClientSecurityCoprocessor coprocessor;
 
 	/**
 	 * Client ticket distributed cache
 	 */
-	final protected IamCache clientTicketCache;
+	protected final IamCache clientTicketCache;
 
 	/**
 	 * Accumulator used to restrict redirection authentication.
 	 */
-	final protected Cumulator failedCumulator;
+	protected final Cumulator failedCumulator;
 
-	public AbstractClientIamAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer configurer,
+	public AbstractClientIamAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer configurer,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		notNull(config, "'config' must not be null");
-		notNull(configurer, "'configurer' must not be null");
-		notNull(coprocessor, "'interceptor' must not be null");
+		this.errorConfigurer = notNullOf(errorConfigurer, "errorConfigurer");
+		this.configurer = notNullOf(configurer, "clientSecurityConfigurer");
+		this.coprocessor = notNullOf(coprocessor, "clientSecurityCoprocessor");
+
 		notNull(cacheManager, "'cacheManager' must not be null");
-		this.config = config;
-		this.configurer = configurer;
-		this.coprocessor = coprocessor;
 		this.clientTicketCache = cacheManager.getIamCache(CACHE_TICKET_C);
 		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
@@ -217,9 +218,9 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		Throwable cause = getRootCause(ae);
 		if (!isNull(cause)) {
 			if (cause instanceof IamException)
-				log.error("Failed to caused by: {}", getMessage(cause));
+				log.warn("Authentication failed, cause by: {}", getMessage(cause));
 			else
-				log.error("Failed to authenticate.", cause);
+				log.warn("Authentication failed.", cause);
 		}
 
 		// Failure redirect URL
@@ -237,12 +238,13 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// IAM server login page, otherwise the client will display the error
 		// page directly (to prevent unlimited redirection).
 		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
-		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
+		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) { // InvalidGrantTicketException
 			if (isRespJSON(toHttp(request))) {
 				try {
 					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, cause);
 					String failMsg = toJSONString(resp);
-					log.info("Failed to invalid grantTicket response: {}", failMsg);
+					log.debug("Failure authentication response: {}", failMsg);
+
 					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
 					log.error("Response json error", e);
@@ -262,8 +264,9 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			try {
 				String errmsg = format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getRootCausesString(cause));
-				/** See:{@link SmartGlobalErrorController#doAnyHandleError()} */
-				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
+				/** See:{@link com.wl4g.components.core.web.error.com.wl4g.components.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()} */
+				/** See:{@link com.wl4g.components.core.web.error.ServletSmartErrorController#doAnyHandleError()} */
+				toHttp(response).sendError(errorConfigurer.getStatus(cause), errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}

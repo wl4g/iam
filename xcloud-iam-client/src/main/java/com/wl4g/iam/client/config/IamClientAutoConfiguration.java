@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.core.kit.access.IPAccessControl;
+import com.wl4g.components.core.web.error.CompositeErrorConfigurer;
 import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
 import com.wl4g.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;
 import com.wl4g.iam.client.configure.AnynothingClientSecurityConfigurer;
@@ -112,15 +113,15 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean(BEAN_AUTH_FILTER)
-	public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter(IamClientProperties config,
+	public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter(CompositeErrorConfigurer errorConfigurer,
 			ClientSecurityConfigurer context, ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		return new AuthenticatorAuthenticationFilter(config, context, coprocessor, cacheManager);
+		return new AuthenticatorAuthenticationFilter(errorConfigurer, context, coprocessor, cacheManager);
 	}
 
 	@Bean(BEAN_ROOT_FILTER)
-	public ROOTAuthenticationFilter rootAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		return new ROOTAuthenticationFilter(config, context, coprocessor, cacheManager);
+	public ROOTAuthenticationFilter rootAuthenticationFilter(CompositeErrorConfigurer errorConfigurer,
+			ClientSecurityConfigurer context, ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
+		return new ROOTAuthenticationFilter(errorConfigurer, context, coprocessor, cacheManager);
 	}
 
 	@Bean
@@ -131,9 +132,10 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public LogoutAuthenticationFilter logoutAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager, RestTemplate restTemplate) {
-		return new LogoutAuthenticationFilter(config, context, coprocessor, cacheManager, restTemplate);
+	public LogoutAuthenticationFilter logoutAuthenticationFilter(CompositeErrorConfigurer errorConfigurer,
+			ClientSecurityConfigurer context, ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager,
+			RestTemplate restTemplate) {
+		return new LogoutAuthenticationFilter(errorConfigurer, context, coprocessor, cacheManager, restTemplate);
 	}
 
 	// ==============================

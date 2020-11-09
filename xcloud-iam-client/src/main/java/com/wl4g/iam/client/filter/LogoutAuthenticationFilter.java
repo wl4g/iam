@@ -22,14 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.SessionException;
-import org.apache.shiro.util.Assert;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
-import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.common.annotation.IamFilter;
@@ -51,6 +50,7 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.components.common.web.WebUtils2.isTrue;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
@@ -73,11 +73,10 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 
 	final protected RestTemplate restTemplate;
 
-	public LogoutAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
+	public LogoutAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager, RestTemplate restTemplate) {
-		super(config, context, coprocessor, cacheManager);
-		Assert.notNull(restTemplate, "'restTemplate' must not be null");
-		this.restTemplate = restTemplate;
+		super(errorConfigurer, context, coprocessor, cacheManager);
+		this.restTemplate = notNullOf(restTemplate, "restTemplate");
 	}
 
 	@Override

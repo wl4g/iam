@@ -22,7 +22,7 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.wl4g.iam.client.config.IamClientProperties;
+import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.common.annotation.IamFilter;
@@ -39,9 +39,9 @@ import com.wl4g.iam.common.cache.JedisIamCacheManager;
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
 	final public static String NAME = "authenticatorFilter";
 
-	public AuthenticatorAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
+	public AuthenticatorAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		super(config, context, coprocessor, cacheManager);
+		super(errorConfigurer, context, coprocessor, cacheManager);
 	}
 
 	/**
