@@ -14,48 +14,11 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<jedis.version>2.9.0</jedis.version>
-		<antlr.version>3.0.1</antlr.version>
-		<shiro-spring.version>1.5.3</shiro-spring.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<!-- <version>${jedis.version}</version> -->
-		</dependency>
-		<!-- Runtime's -->
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<version>${antlr.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-			<version>${antlr.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro-spring.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
+			<artifactId>xcloud-components-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -99,49 +62,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- ProGuard confusion plug-in -->
-			<plugin>
-				<groupId>com.github.wvengen</groupId>
-				<artifactId>proguard-maven-plugin</artifactId>
-				<executions>
-					<!-- <execution> -->
-					<!-- <phase>package</phase> -->
-					<!-- <goals> -->
-					<!-- <goal>proguard</goal> -->
-					<!-- </goals> -->
-					<!-- </execution> -->
-				</executions>
-				<configuration>
-					<attach>true</attach>
-					<obfuscate>true</obfuscate>
-					<attachArtifactClassifier>pg</attachArtifactClassifier>
-					<proguardInclude>${basedir}/proguard.cfg</proguardInclude>
-					<options>
-						<option>-target 10</option>
-						<option>-dontshrink</option>
-						<option>-dontoptimize</option>
-						<option>-dontskipnonpubliclibraryclasses</option>
-						<option>-dontskipnonpubliclibraryclassmembers</option>
-						<option>-allowaccessmodification</option>
-						<option>-useuniqueclassmembernames</option>
-						<option>-keeppackagenames</option>
-						<option>-keepdirectories</option>
-						<option>-keepattributes
-							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
-						<option>-keepclassmembers public class * {void set*(***);***
-							get*();}</option>
-					</options>
-					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
-					<libs>
-						<lib>${java.home}/lib/rt.jar</lib>
-						<!-- <lib>${java.home}/lib/jsse.jar</lib> -->
-						<!-- <lib>${java.home}/lib/jce.jar</lib> -->
-					</libs>
-					<addMavenDescriptor>true</addMavenDescriptor>
-					<injar>classes</injar>
-					<outputDirectory>${project.build.directory}</outputDirectory>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

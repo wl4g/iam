@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.configure;
 
-import com.wl4g.components.core.bean.iam.ApplicationInfo;
-import com.wl4g.components.core.bean.iam.SocialConnectInfo;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
+import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.configure.SecurityConfigurer;
 import com.wl4g.iam.common.exception.BindingConstraintsException;

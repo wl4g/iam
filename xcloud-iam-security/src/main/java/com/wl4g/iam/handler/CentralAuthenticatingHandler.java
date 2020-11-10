@@ -18,7 +18,7 @@ package com.wl4g.iam.handler;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
-import com.wl4g.components.core.bean.iam.ApplicationInfo;
+import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.iam.common.authc.model.LoggedinResult;
 import com.wl4g.iam.common.authc.model.LogoutResult;

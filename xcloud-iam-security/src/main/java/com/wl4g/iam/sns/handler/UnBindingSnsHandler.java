@@ -19,7 +19,7 @@ import static com.wl4g.components.common.lang.Exceptions.getRootCauses;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
 
-import com.wl4g.components.core.bean.iam.SocialConnectInfo;
+import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.iam.MenuDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.Menu">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name_en" property="nameEn" jdbcType="VARCHAR" />
+		<result column="name_zh" property="nameZh" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="level" property="level" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="BIGINT" />
+		<result column="permission" property="permission" jdbcType="VARCHAR" />
+		<result column="page_location" property="pageLocation" jdbcType="VARCHAR" />
+		<result column="route_namespace" property="routeNamespace" jdbcType="VARCHAR" />
+		<result column="render_target" property="renderTarget" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="classify" property="classify" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name_en, name_zh, type, level, status, parent_id, permission,
+		page_location,
+		route_namespace,render_target, icon, classify, sort,create_by, create_date, update_by, update_date, del_flag
+	</sql>
+	<sql id="Base_Column_List_m">
+		m.id, m.name_en, m.name_zh, m.type, m.level, m.status, m.parent_id, m.permission,
+		m.page_location,m.route_namespace,m.render_target, m.icon, m.classify, m.sort,m.create_by, m.create_date, m.update_by,
+		m.update_date,
+		m.del_flag
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_menu
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_menu
+		where del_flag!=1 and parent_id = #{parentId,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectWithRoot" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_m" />
+		from sys_menu m
+		where m.del_flag!=1
+		order by m.sort
+	</select>
+
+	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List_m" />
+		from sys_menu m
+		left join sys_role_menu rm on rm.menu_id=m.id
+		left join sys_role_user ru on rm.role_id=ru.role_id
+		where
+		m.del_flag!=1
+		<if test="userId != null">
+			and ru.user_id = #{userId,jdbcType=BIGINT}
+		</if>
+	</select>
+
+	<select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List_m" />
+		from sys_role_menu rm
+		inner join sys_menu m on rm.menu_id = m.id
+		where rm.role_id = #{roleId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_menu
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.Menu">
+		insert into sys_menu (id, name_en, name_zh,
+		type, level, status,
+		parent_id,
+		permission,
+		page_location, route_namespace,render_target, icon, classify, sort, create_by,
+		create_date, update_by, update_date,
+		del_flag)
+		values (#{id,jdbcType=BIGINT}, #{nameEn,jdbcType=VARCHAR}, #{nameZh,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER},
+		#{level,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
+		#{parentId,jdbcType=BIGINT},
+		#{permission,jdbcType=VARCHAR},
+		#{pageLocation,jdbcType=VARCHAR}, #{routeNamespace,jdbcType=VARCHAR},#{renderTarget,jdbcType=VARCHAR},
+		#{icon,jdbcType=VARCHAR}, #{classify,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP},
+		#{delFlag,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.Menu" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into sys_menu
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="nameEn != null">
+				name_en,
+			</if>
+			<if test="nameZh != null">
+				name_zh,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="permission != null">
+				permission,
+			</if>
+			<if test="pageLocation != null">
+				page_location,
+			</if>
+			<if test="routeNamespace != null">
+				route_namespace,
+			</if>
+			<if test="renderTarget != null">
+				render_target,
+			</if>
+			<if test="icon != null">
+				icon,
+			</if>
+			<if test="classify != null">
+				classify,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="nameEn != null">
+				#{nameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="nameZh != null">
+				#{nameZh,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="permission != null">
+				#{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="pageLocation != null">
+				#{pageLocation,jdbcType=VARCHAR},
+			</if>
+			<if test="routeNamespace != null">
+				#{routeNamespace,jdbcType=VARCHAR},
+			</if>
+			<if test="renderTarget != null">
+				#{renderTarget,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="classify != null">
+				#{classify,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.Menu">
+		update sys_menu
+		<set>
+			<if test="nameEn != null">
+				name_en = #{nameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="nameZh != null">
+				name_zh = #{nameZh,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="permission != null">
+				permission = #{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="pageLocation != null">
+				page_location = #{pageLocation,jdbcType=VARCHAR},
+			</if>
+			<if test="routeNamespace != null">
+				route_namespace = #{routeNamespace,jdbcType=VARCHAR},
+			</if>
+			<if test="renderTarget != null">
+				render_target = #{renderTarget,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="classify != null">
+				classify = #{classify,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.Menu">
+		update sys_menu
+		set name_en = #{nameEn,jdbcType=VARCHAR},
+		name_zh =
+		#{nameZh,jdbcType=VARCHAR},
+		type = #{type,jdbcType=INTEGER},
+		level = #{level,jdbcType=INTEGER},
+		status =
+		#{status,jdbcType=INTEGER},
+		parent_id = #{parentId,jdbcType=BIGINT},
+		permission =
+		#{permission,jdbcType=VARCHAR},
+		page_location = #{pageLocation,jdbcType=VARCHAR},
+		route_namespace = #{routeNamespace,jdbcType=VARCHAR},
+		render_target = #{renderTarget,jdbcType=VARCHAR},
+		icon = #{icon,jdbcType=VARCHAR},
+		classify = #{classify,jdbcType=VARCHAR},
+		sort =
+		#{sort,jdbcType=INTEGER},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_by =
+		#{updateBy,jdbcType=BIGINT},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		del_flag = #{delFlag,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+</mapper>

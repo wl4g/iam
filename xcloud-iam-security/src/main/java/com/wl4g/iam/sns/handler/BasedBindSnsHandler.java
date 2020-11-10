@@ -27,7 +27,7 @@ import org.springframework.cglib.beans.BeanMap;
 import org.springframework.util.Assert;
 
 import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.core.bean.iam.SocialConnectInfo;
+import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;

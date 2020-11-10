@@ -17,7 +17,7 @@ package com.wl4g.iam.authc;
 
 import static org.springframework.util.Assert.notNull;
 
-import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
+import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
 
 /**
  * Abstract SNS Oauth2 authentication token<br/>

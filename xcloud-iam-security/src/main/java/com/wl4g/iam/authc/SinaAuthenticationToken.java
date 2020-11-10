@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.authc;
 
-import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
+import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
 
 /**
  * Sina authentication token

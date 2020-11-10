@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.components.core.bean.iam.ApplicationInfo;
-import com.wl4g.components.core.bean.iam.SocialConnectInfo;
+import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.exception.BindingConstraintsException;
 import com.wl4g.iam.common.exception.IamException;
 import com.wl4g.iam.common.subject.IamPrincipal;

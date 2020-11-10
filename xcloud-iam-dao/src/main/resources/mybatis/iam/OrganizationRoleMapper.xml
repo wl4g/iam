@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.iam.OrganizationRoleDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.OrganizationRole">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="organization_id" property="groupId" jdbcType="BIGINT" />
+		<result column="role_id" property="roleId" jdbcType="BIGINT" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, organization_id, role_id, create_by, create_date
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_organization_role
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectGroupIdByRoleId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select
+		gr.organization_id
+		from sys_organization_role gr
+		left join sys_organization g on g.id = gr.organization_id
+		where gr.role_id = #{roleId,jdbcType=BIGINT} and g.del_flag != 1
+	</select>
+
+	<select id="selectRoleIdsByGroupId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select
+		role_id
+		from sys_organization_role
+		where
+		organization_id = #{groupId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_organization_role
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteByRoleId" parameterType="java.lang.Long">
+		delete from sys_organization_role
+		where role_id = #{roleId,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteByGroupId" parameterType="java.lang.Long">
+		delete from sys_organization_role
+		where organization_id = #{groupId,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+		insert into sys_organization_role (id, organization_id, role_id,
+		create_by, create_date)
+		values
+		(#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT},
+		#{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP})
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.Map">
+		insert into sys_organization_role (id, organization_id, role_id,create_by, create_date)
+		VALUES
+		<foreach collection="groupRoles" item="groupRole" separator=",">
+			(#{groupRole.id,jdbcType=BIGINT},
+			#{groupRole.groupId,jdbcType=BIGINT}, #{groupRole.roleId,jdbcType=BIGINT},
+			#{groupRole.createBy,jdbcType=BIGINT},
+			#{groupRole.createDate,jdbcType=TIMESTAMP})
+		</foreach>
+	</insert>
+
+
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole" useGeneratedKeys="true"
+			keyProperty="id">
+		insert into sys_organization_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="groupId != null">
+				organization_id,
+			</if>
+			<if test="roleId != null">
+				role_id,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="groupId != null">
+				#{groupId,jdbcType=BIGINT},
+			</if>
+			<if test="roleId != null">
+				#{roleId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+		update sys_organization_role
+		<set>
+			<if test="groupId != null">
+				organization_id = #{groupId,jdbcType=BIGINT},
+			</if>
+			<if test="roleId != null">
+				role_id = #{roleId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+		update sys_organization_role
+		set organization_id = #{groupId,jdbcType=BIGINT},
+		role_id =
+		#{roleId,jdbcType=BIGINT},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date = #{createDate,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+</mapper>

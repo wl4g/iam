@@ -48,7 +48,7 @@ import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CODE;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
 
-import com.wl4g.components.core.bean.iam.SocialAuthorizeInfo;
+import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
 import com.wl4g.iam.common.cache.CacheKey;
 import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.common.config.AbstractIamProperties.Which;

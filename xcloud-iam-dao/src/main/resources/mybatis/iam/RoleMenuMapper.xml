@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.iam.RoleMenuDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.RoleMenu">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="role_id" property="roleId" jdbcType="BIGINT" />
+		<result column="menu_id" property="menuId" jdbcType="BIGINT" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, role_id, menu_id, create_by, create_date
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_role_menu
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectMenuIdByRoleId" resultType="java.lang.Long" parameterType="java.lang.Long">
+		select
+		menu_id
+		from sys_role_menu
+		where
+		role_id = #{roleId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_role_menu
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByRoleId" parameterType="java.lang.Long">
+		delete from sys_role_menu
+		where role_id = #{roleId,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+		insert into sys_role_menu (id, role_id, menu_id,
+		create_by, create_date)
+		values
+		(#{id,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{menuId,jdbcType=BIGINT},
+		#{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.RoleMenu" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into sys_role_menu
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="roleId != null">
+				role_id,
+			</if>
+			<if test="menuId != null">
+				menu_id,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="roleId != null">
+				#{roleId,jdbcType=BIGINT},
+			</if>
+			<if test="menuId != null">
+				#{menuId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.Map">
+		INSERT INTO sys_role_menu (id, role_id, menu_id,create_by, create_date)
+		VALUES
+		<foreach collection="roleMenus" item="roleMenu" separator=",">
+			(#{roleMenu.id},#{roleMenu.roleId},#{roleMenu.menuId},#{roleMenu.createBy},#{roleMenu.createDate})
+		</foreach>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+		update sys_role_menu
+		<set>
+			<if test="roleId != null">
+				role_id = #{roleId,jdbcType=BIGINT},
+			</if>
+			<if test="menuId != null">
+				menu_id = #{menuId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+		update sys_role_menu
+		set role_id = #{roleId,jdbcType=BIGINT},
+		menu_id =
+		#{menuId,jdbcType=BIGINT},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date = #{createDate,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+</mapper>

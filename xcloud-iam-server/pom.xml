@@ -17,9 +17,15 @@
 		<final.name>iam-server</final.name>
 	</properties>
 	<dependencies>
+		<!-- TODO: using by dubbo -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-core</artifactId>
+			<artifactId>xcloud-iam-service-impl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-service-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

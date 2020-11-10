@@ -45,7 +45,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.components.core.bean.iam.ApplicationInfo;
+import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.iam.common.cache.IamCacheManager;

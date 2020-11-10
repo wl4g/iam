@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.iam.OrganizationDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.Organization">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name_en" property="nameEn" jdbcType="VARCHAR" />
+		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="parent_code" property="parentCode" jdbcType="VARCHAR" />
+		<result column="name_zh" property="nameZh" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="BIGINT" />
+		<result column="area_id" property="areaId" jdbcType="BIGINT" />
+		<result column="enable" property="enable" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name_en, name_zh, organization_code, type, parent_id, enable, status, area_id, create_by,
+		create_date,
+		update_by, update_date, del_flag
+	</sql>
+	<sql id="Base_Column_List_g">
+		g.id, g.name_en, g.organization_code, g.name_zh, g.type, g.parent_id, g.enable, g.status, g.area_id,
+		g.create_by,
+		g.create_date, g.update_by, g.update_date, g.del_flag
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_organization
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByRoot" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_g" />
+		,p.organization_code parent_code
+		from sys_organization g
+		left join sys_organization p on g.parent_id=p.id
+		where g.del_flag!=1
+	</select>
+
+	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		o.*,p.organization_code parent_code
+		from sys_organization o
+		inner join sys_organization_role oro on oro.organization_id=o.id
+		inner join sys_role_user ru on ru.role_id=oro.role_id
+		inner join sys_role r on r.id=oro.role_id
+		left join sys_organization p on o.parent_id=p.id
+		where o.del_flag!=1 and r.del_flag!=1
+		and ru.user_id = #{userId,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List_g" />
+		from sys_organization g
+		inner join sys_organization_role gr on g.id = gr.organization_id
+		where g.del_flag!=1 and gr.role_id =
+		#{roleId,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_organization
+		where del_flag!=1 and parent_id = #{parentId,jdbcType=BIGINT}
+	</select>
+
+	<select id="countRoleByOrganizationId" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) from sys_organization_role where organization_id in
+		<foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_organization
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.Organization">
+		insert into sys_organization (id, name_en,organization_code, name_zh,
+		type,
+		parent_id,
+		enable,
+		status, area_id, create_by,
+		create_date, update_by, update_date,
+		del_flag)
+		values
+		(#{id,jdbcType=BIGINT}, #{nameEn,jdbcType=VARCHAR},
+		#{organizationCode,jdbcType=VARCHAR},
+		#{nameZh,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT},
+		#{enable,jdbcType=INTEGER},
+		#{status,jdbcType=INTEGER}, #{areaId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP},
+		#{delFlag,jdbcType=INTEGER})
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.Organization" useGeneratedKeys="true"
+			keyProperty="id">
+		insert into sys_organization
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="nameEn != null">
+				name_en,
+			</if>
+			<if test="organizationCode != null">
+				organization_code,
+			</if>
+			<if test="nameZh != null">
+				name_zh,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="enable != null">
+				enable,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="areaId != null">
+				area_id,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="nameEn != null">
+				#{nameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				#{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="nameZh != null">
+				#{nameZh,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="enable != null">
+				#{enable,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				#{areaId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.Organization">
+		update sys_organization
+		<set>
+			<if test="nameEn != null">
+				name_en = #{nameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="nameZh != null">
+				name_zh = #{nameZh,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=BIGINT},
+			</if>
+			<if test="enable != null">
+				enable = #{enable,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="areaId != null">
+				area_id = #{areaId,jdbcType=BIGINT},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.Organization">
+		update sys_organization
+		set name_en = #{nameEn,jdbcType=VARCHAR},
+		organization_code =
+		#{organizationCode,jdbcType=VARCHAR},
+		name_zh = #{nameZh,jdbcType=VARCHAR},
+		type =
+		#{type,jdbcType=INTEGER},
+		parent_id =
+		#{parentId,jdbcType=BIGINT},
+		enable = #{enable,jdbcType=INTEGER},
+		status =
+		#{status,jdbcType=INTEGER},
+		area_id =
+		#{areaId,jdbcType=BIGINT},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date =
+		#{createDate,jdbcType=TIMESTAMP},
+		update_by =
+		#{updateBy,jdbcType=BIGINT},
+		update_date =
+		#{updateDate,jdbcType=TIMESTAMP},
+		del_flag = #{delFlag,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+</mapper>
