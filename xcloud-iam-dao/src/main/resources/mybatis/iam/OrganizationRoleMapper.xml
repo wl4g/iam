@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.OrganizationRoleDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.OrganizationRole">
+<mapper namespace="com.wl4g.iam.dao.OrganizationRoleDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.OrganizationRole">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="organization_id" property="groupId" jdbcType="BIGINT" />
 		<result column="role_id" property="roleId" jdbcType="BIGINT" />
@@ -49,7 +49,7 @@
 		where organization_id = #{groupId,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
 		insert into sys_organization_role (id, organization_id, role_id,
 		create_by, create_date)
 		values
@@ -70,7 +70,7 @@
 	</insert>
 
 
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.OrganizationRole" useGeneratedKeys="true"
 			keyProperty="id">
 		insert into sys_organization_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -108,7 +108,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
 		update sys_organization_role
 		<set>
 			<if test="groupId != null">
@@ -126,7 +126,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.OrganizationRole">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
 		update sys_organization_role
 		set organization_id = #{groupId,jdbcType=BIGINT},
 		role_id =

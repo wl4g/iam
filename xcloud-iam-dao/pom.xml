@@ -18,16 +18,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-iam-common</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-data</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-common</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

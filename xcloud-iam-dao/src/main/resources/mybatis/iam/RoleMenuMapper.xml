@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.RoleMenuDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.RoleMenu">
+<mapper namespace="com.wl4g.iam.dao.RoleMenuDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.RoleMenu">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="role_id" property="roleId" jdbcType="BIGINT" />
 		<result column="menu_id" property="menuId" jdbcType="BIGINT" />
@@ -34,7 +34,7 @@
 		delete from sys_role_menu
 		where role_id = #{roleId,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.RoleMenu">
 		insert into sys_role_menu (id, role_id, menu_id,
 		create_by, create_date)
 		values
@@ -42,7 +42,7 @@
 		#{createBy,jdbcType=BIGINT},
 		#{createDate,jdbcType=TIMESTAMP})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.RoleMenu" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.RoleMenu" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into sys_role_menu
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -90,7 +90,7 @@
 	</insert>
 
 
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.RoleMenu">
 		update sys_role_menu
 		<set>
 			<if test="roleId != null">
@@ -108,7 +108,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.RoleMenu">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.RoleMenu">
 		update sys_role_menu
 		set role_id = #{roleId,jdbcType=BIGINT},
 		menu_id =

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.iam.ContactChannelDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.ContactChannel">
+<mapper namespace="com.wl4g.iam.dao.ContactChannelDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.ContactChannel">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="kind" jdbcType="VARCHAR" property="kind" />
 		<result column="contact_id" jdbcType="BIGINT" property="contactId" />
@@ -29,7 +29,7 @@
 		where contact_id = #{id,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.ContactChannel">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.ContactChannel">
 		insert into sys_contact_channel (id, kind, contact_id,
 		primary_address, time_of_freq,
 		num_of_freq,
@@ -38,7 +38,7 @@
 		#{primaryAddress,jdbcType=VARCHAR}, #{timeOfFreq,jdbcType=INTEGER}, #{numOfFreq,jdbcType=INTEGER},
 		#{enable,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.ContactChannel">
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.ContactChannel">
 		insert into sys_contact_channel
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -87,7 +87,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.ContactChannel">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.ContactChannel">
 		update sys_contact_channel
 		<set>
 			<if test="kind != null">
@@ -111,7 +111,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.ContactChannel">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.ContactChannel">
 		update sys_contact_channel
 		set kind = #{kind,jdbcType=VARCHAR},
 		contact_id =

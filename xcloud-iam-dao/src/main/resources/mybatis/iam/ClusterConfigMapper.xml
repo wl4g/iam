@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.ClusterConfigDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.ClusterConfig">
+<mapper namespace="com.wl4g.iam.dao.ClusterConfigDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.ClusterConfig">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="cluster_id" property="clusterId" jdbcType="BIGINT" />
 		<result column="display_name" property="displayName" jdbcType="VARCHAR" />
@@ -40,7 +40,7 @@
 		delete from sys_cluster_config
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.ClusterConfig">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
 		insert into sys_cluster_config (id, cluster_id, display_name,
 		type, env_type,
 		view_extranet_base_uri,
@@ -56,7 +56,7 @@
 		#{updateBy,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.ClusterConfig" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.ClusterConfig" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into sys_cluster_config
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -148,7 +148,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.ClusterConfig">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
 		update sys_cluster_config
 		<set>
 			<if test="clusterId != null">
@@ -193,7 +193,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.ClusterConfig">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
 		update sys_cluster_config
 		set cluster_id = #{clusterId,jdbcType=BIGINT},
 		display_name = #{displayName,jdbcType=VARCHAR},
@@ -241,7 +241,6 @@
 		where a.type = 1
 	</select>
 
-
 	<!-- 批量获取应用信息 -->
 	<select id="getByAppNames" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
@@ -257,17 +256,13 @@
 					#{appName}
 				</foreach>
 			</if>
-
 			<if test="envType != null and envType != ''">
 				and a.env_type = #{envType,jdbcType=VARCHAR}
 			</if>
-
 			<if test="type != null and type != ''">
 				and a.type = #{type,jdbcType=INTEGER}
 			</if>
-
 		</where>
 	</select>
-
 
 </mapper>

@@ -33,4 +33,5 @@ public interface ContactGroupService {
 	List<ContactGroup> contactGroups(String name);
 
 	PageModel<ContactGroup> list(PageModel<ContactGroup> pm, String name);
+
 }

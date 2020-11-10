@@ -16,6 +16,7 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 	</properties>
 	<dependencies>
+		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-dao</artifactId>

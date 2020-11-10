@@ -187,7 +187,8 @@ public class MenuServiceImpl implements MenuService {
 	 */
 	private void checkMenu(Menu menu) {
 		String routeNamespace = menu.getRouteNamespace();
-		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/") && routeNamespace.length() > 1;
+		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/")
+				&& routeNamespace.length() > 1;
 		isTrue(isLegal, "illegal routeNamespace: '%s', e.g: '/edit'", routeNamespace);
 
 		if (menu.getParentId() == null) {
@@ -210,11 +211,9 @@ public class MenuServiceImpl implements MenuService {
 	private void checkRepeat(Menu menu) {
 		List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
 		for (Menu m : menus) {
-			if(!m.getId().equals(menu.getId())){
-				isTrue(!equalsIgnoreCase(m.getRouteNamespace(), menu.getRouteNamespace()),
-						"menu's route path is repeat");
-				isTrue(!menu.getSort().equals(m.getSort()),
-						"menu's sort repeat");
+			if (!m.getId().equals(menu.getId())) {
+				isTrue(!equalsIgnoreCase(m.getRouteNamespace(), menu.getRouteNamespace()), "menu's route path is repeat");
+				isTrue(!menu.getSort().equals(m.getSort()), "menu's sort repeat");
 			}
 		}
 	}
@@ -276,7 +275,8 @@ public class MenuServiceImpl implements MenuService {
 			children = new ArrayList<>();
 		}
 		for (Menu menu : menus) {
-			if (menu.getParentId() != null && parent.getId() != null && menu.getParentId().longValue() == parent.getId().longValue()) {
+			if (menu.getParentId() != null && parent.getId() != null
+					&& menu.getParentId().longValue() == parent.getId().longValue()) {
 				menu.setParentRoutePath(parent.getRoutePath());
 				children.add(menu);
 			}

@@ -21,16 +21,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
 		<!-- Runtime's -->
 		<dependency>

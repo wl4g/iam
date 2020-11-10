@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.MenuDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.Menu">
+<mapper namespace="com.wl4g.iam.dao.MenuDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.Menu">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name_en" property="nameEn" jdbcType="VARCHAR" />
 		<result column="name_zh" property="nameZh" jdbcType="VARCHAR" />
@@ -80,7 +80,7 @@
 		delete from sys_menu
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.Menu">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.Menu">
 		insert into sys_menu (id, name_en, name_zh,
 		type, level, status,
 		parent_id,
@@ -98,7 +98,7 @@
 		#{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP},
 		#{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.Menu" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.Menu" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into sys_menu
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -220,7 +220,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.Menu">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.Menu">
 		update sys_menu
 		<set>
 			<if test="nameEn != null">
@@ -280,7 +280,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.Menu">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.Menu">
 		update sys_menu
 		set name_en = #{nameEn,jdbcType=VARCHAR},
 		name_zh =

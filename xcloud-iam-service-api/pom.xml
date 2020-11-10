@@ -29,17 +29,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-security</artifactId>
+			<artifactId>xcloud-iam-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- TODO 独立PageModel? -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dao</artifactId>
-			<scope>compile</scope>
+			<artifactId>xcloud-components-data</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

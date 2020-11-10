@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.ParkDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.Park">
+<mapper namespace="com.wl4g.iam.dao.ParkDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.Park">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="group_id" property="groupId" jdbcType="BIGINT" />
 		<result column="display_name" property="displayName" jdbcType="VARCHAR" />
@@ -30,7 +30,7 @@
 		delete from sys_park
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.iam.Park">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.Park">
 		insert into sys_park (id, group_id, display_name,
 		contact, contact_phone, address
 		)
@@ -40,7 +40,7 @@
 		#{contactPhone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.Park">
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.Park">
 		insert into sys_park
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -83,7 +83,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.Park">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.Park">
 		update sys_park
 		<set>
 			<if test="groupId != null">
@@ -104,7 +104,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.Park">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.Park">
 		update sys_park
 		set group_id = #{groupId,jdbcType=BIGINT},
 		display_name =
