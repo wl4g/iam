@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.configure;
 
-import com.wl4g.iam.common.configure.SecurityConfigurer;
+import com.wl4g.iam.core.configure.SecurityConfigurer;
 
 /**
  * IAM client security handler context.

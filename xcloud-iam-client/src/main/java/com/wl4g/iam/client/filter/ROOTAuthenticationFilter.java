@@ -20,7 +20,7 @@ import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;
 import static com.wl4g.components.common.web.WebUtils2.getAvaliableRequestRememberUrl;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.components.common.web.WebUtils2.isXHRRequest;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -36,8 +36,8 @@ import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.cache.JedisIamCacheManager;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.cache.JedisIamCacheManager;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It

@@ -26,8 +26,8 @@ import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleUser;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.session.mgt.IamSessionDAO;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.dao.MenuDao;
 import com.wl4g.iam.dao.OrganizationDao;
@@ -48,7 +48,7 @@ import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

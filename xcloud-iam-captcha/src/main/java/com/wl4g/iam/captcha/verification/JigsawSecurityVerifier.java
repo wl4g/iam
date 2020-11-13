@@ -23,7 +23,7 @@ import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.iam.captcha.jigsaw.model.JigsawApplyImgResult;
 import com.wl4g.iam.captcha.jigsaw.model.JigsawVerifyImgResult;
-import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
+import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.GraphBasedSecurityVerifier;
@@ -45,7 +45,7 @@ import java.util.Objects;
 
 import static com.wl4g.components.common.codec.Encodes.encodeBase64;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 /**
  * JIGSAW slider CAPTCHA verification handler.

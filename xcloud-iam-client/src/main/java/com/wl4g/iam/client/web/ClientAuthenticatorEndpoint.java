@@ -16,7 +16,7 @@
 package com.wl4g.iam.client.web;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_LOGOUT;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,8 +29,8 @@ import com.wl4g.components.common.lang.Exceptions;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.LogoutResult;
+import com.wl4g.iam.core.annotation.IamController;
+import com.wl4g.iam.core.authc.model.LogoutResult;
 
 /**
  * IAM client authenticator controller

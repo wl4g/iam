@@ -29,10 +29,10 @@ import com.wl4g.iam.authc.EmptyOauth2AuthenicationInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
-import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.core.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.filter.ProviderSupport;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 

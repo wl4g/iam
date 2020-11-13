@@ -30,7 +30,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.web.model.SessionInfo;
+import com.wl4g.iam.core.web.model.SessionInfo;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockUserCredentials;
 

@@ -17,7 +17,7 @@ package com.wl4g.iam.authc;
 
 import org.apache.shiro.authc.HostAuthenticationToken;
 
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
 
 /**
  * Logout authentication token

@@ -38,10 +38,10 @@ import com.wl4g.components.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.iam.common.cache.CacheKey;
-import com.wl4g.iam.common.cache.IamCache;
-import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.config.properties.CryptoProperties;
+import com.wl4g.iam.core.cache.CacheKey;
+import com.wl4g.iam.core.cache.IamCache;
+import com.wl4g.iam.core.cache.IamCacheManager;
 
 /**
  * Abstract secretKey asymmetric secure crypt service.

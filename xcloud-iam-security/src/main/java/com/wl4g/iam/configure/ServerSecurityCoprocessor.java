@@ -22,8 +22,8 @@ import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationInfo;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.configure.SecurityCoprocessor;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.configure.SecurityCoprocessor;
 
 /**
  * IAM server security coprocessor

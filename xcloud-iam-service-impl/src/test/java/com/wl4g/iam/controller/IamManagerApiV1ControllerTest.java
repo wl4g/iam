@@ -21,9 +21,9 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.common.web.rest.RespBase.RetCode;
-import com.wl4g.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.iam.common.web.model.SessionAttributeModel.CursorIndex;
-import com.wl4g.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
+import com.wl4g.iam.core.web.model.SessionAttributeModel;
+import com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
+import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 
 public class IamManagerApiV1ControllerTest {
 

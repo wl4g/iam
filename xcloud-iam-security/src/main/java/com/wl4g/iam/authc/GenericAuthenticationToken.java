@@ -19,7 +19,7 @@ import static com.wl4g.components.common.lang.Assert2.*;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
-import com.wl4g.iam.common.authc.ClientRef;
+import com.wl4g.iam.core.authc.ClientRef;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 

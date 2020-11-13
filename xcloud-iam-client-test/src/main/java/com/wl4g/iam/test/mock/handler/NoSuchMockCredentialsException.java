@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.test.mock.handler;
 
-import com.wl4g.iam.common.exception.InvalidGrantTicketException;
+import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 
 /**
  * {@link NoSuchMockCredentialsException}

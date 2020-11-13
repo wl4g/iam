@@ -17,10 +17,10 @@ package com.wl4g.iam.verification;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.authc.SmsAuthenticationToken.Action;
-import com.wl4g.iam.common.exception.AccessRejectedException;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
-import com.wl4g.iam.common.utils.cumulate.Cumulator;
+import com.wl4g.iam.core.exception.AccessRejectedException;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.SmsParameter;
+import com.wl4g.iam.core.utils.cumulate.Cumulator;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +43,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.BIND;
-import static com.wl4g.iam.common.utils.cumulate.CumulateHolder.*;
+import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 

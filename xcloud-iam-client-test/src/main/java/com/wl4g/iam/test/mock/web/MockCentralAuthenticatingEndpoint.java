@@ -20,7 +20,7 @@ import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -33,16 +33,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.common.authc.model.SessionValidateResult;
-import com.wl4g.iam.common.authc.model.TicketValidateRequest;
-import com.wl4g.iam.common.authc.model.TicketValidateResult;
-import com.wl4g.iam.common.config.AbstractIamProperties;
-import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.web.AuthenticatingEndpoint;
+import com.wl4g.iam.core.annotation.IamController;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.TicketValidateRequest;
+import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.config.AbstractIamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.core.handler.AuthenticatingHandler;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.web.AuthenticatingEndpoint;
 
 /**
  * Mock iam central authenticating endpoint

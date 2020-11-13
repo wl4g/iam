@@ -26,12 +26,12 @@ import java.util.List;
 
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.SnsController;
-import com.wl4g.iam.common.cache.JedisIamCacheManager;
-import com.wl4g.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.iam.core.cache.JedisIamCacheManager;
+import com.wl4g.iam.core.config.AbstractIamConfiguration;
 import com.wl4g.iam.sns.DefaultOAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;

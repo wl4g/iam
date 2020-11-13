@@ -21,17 +21,17 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.authc.model.TicketValidateRequest;
-import com.wl4g.iam.common.authc.model.TicketValidateResult;
-import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipalWrapper;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.authc.model.TicketValidateRequest;
+import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.realm.AbstractPermittingAuthorizingRealm;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipalWrapper;
 
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
-import static com.wl4g.iam.common.session.IamSession.RelationAttrKey;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.iam.core.session.IamSession.RelationAttrKey;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 
 /**
  * Abstract authorizing realm.

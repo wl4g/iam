@@ -22,9 +22,9 @@ import java.io.Serializable;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.session.mgt.AbstractIamSessionManager;
 import com.wl4g.iam.config.properties.IamProperties;
+import com.wl4g.iam.core.cache.IamCacheManager;
+import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
 
 /**
  * Custom WEB session manager

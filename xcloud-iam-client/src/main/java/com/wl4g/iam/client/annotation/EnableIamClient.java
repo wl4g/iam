@@ -25,10 +25,10 @@ import org.springframework.context.annotation.Import;
 
 import com.wl4g.iam.client.config.ConsoleAutoConfiguration;
 import com.wl4g.iam.client.config.IamClientAutoConfiguration;
-import com.wl4g.iam.common.config.CorsAutoConfiguration;
-import com.wl4g.iam.common.config.ReplayAutoConfiguration;
-import com.wl4g.iam.common.config.XsrfAutoConfiguration;
-import com.wl4g.iam.common.config.XssAutoConfiguration;
+import com.wl4g.iam.core.config.CorsAutoConfiguration;
+import com.wl4g.iam.core.config.ReplayAutoConfiguration;
+import com.wl4g.iam.core.config.XsrfAutoConfiguration;
+import com.wl4g.iam.core.config.XssAutoConfiguration;
 
 /**
  * When enabled, all requests go through spring.cloud.devops . iam.client.filter

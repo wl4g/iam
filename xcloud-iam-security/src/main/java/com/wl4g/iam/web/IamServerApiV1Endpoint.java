@@ -18,14 +18,14 @@ package com.wl4g.iam.web;
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.WechatMpAuthenticationToken;
-import com.wl4g.iam.common.annotation.IamApiV1Controller;
-import com.wl4g.iam.common.authc.ClientRef;
-import com.wl4g.iam.common.session.GrantCredentialsInfo;
-import com.wl4g.iam.common.session.IamSession;
-import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.common.web.GenericApiEndpoint;
-import com.wl4g.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
+import com.wl4g.iam.core.annotation.IamApiV1Controller;
+import com.wl4g.iam.core.authc.ClientRef;
+import com.wl4g.iam.core.session.GrantCredentialsInfo;
+import com.wl4g.iam.core.session.IamSession;
+import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
+import com.wl4g.iam.core.web.GenericApiEndpoint;
+import com.wl4g.iam.core.web.model.SessionAttributeModel;
+import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 
 import org.springframework.web.bind.annotation.ResponseBody;
 

@@ -37,7 +37,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.model.BaseValidateModel;
+import com.wl4g.iam.core.authc.model.BaseValidateModel;
 
 /**
  * Abstract validator implementation for tickets that must be validated against

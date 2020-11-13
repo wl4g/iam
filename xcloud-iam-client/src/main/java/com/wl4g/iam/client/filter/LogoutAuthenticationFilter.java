@@ -31,16 +31,13 @@ import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.model.LogoutResult;
-import com.wl4g.iam.common.cache.JedisIamCacheManager;
-import com.wl4g.iam.common.exception.GrantTicketNullException;
-import com.wl4g.iam.common.exception.IamException;
-import com.wl4g.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.authc.model.LogoutResult;
+import com.wl4g.iam.core.cache.JedisIamCacheManager;
+import com.wl4g.iam.core.exception.GrantTicketNullException;
+import com.wl4g.iam.core.exception.IamException;
+import com.wl4g.iam.core.filter.IamAuthenticationFilter;
 
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getBindValue;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipal;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionId;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -57,6 +54,9 @@ import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_LOGOUT;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGOUT;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 /**
  * Logout authentication filter

@@ -22,7 +22,7 @@ import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleMenu;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.dao.MenuDao;
 import com.wl4g.iam.dao.OrganizationRoleDao;
 import com.wl4g.iam.dao.RoleDao;
@@ -37,7 +37,7 @@ import java.util.*;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;

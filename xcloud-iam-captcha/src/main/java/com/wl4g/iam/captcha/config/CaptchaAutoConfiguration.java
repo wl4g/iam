@@ -22,7 +22,7 @@ import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.verification.GifSecurityVerifier;
 import com.wl4g.iam.captcha.verification.JigsawSecurityVerifier;
-import com.wl4g.iam.common.cache.IamCacheManager;
+import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.verification.SimpleJPEGSecurityVerifier;
 
 @Configuration

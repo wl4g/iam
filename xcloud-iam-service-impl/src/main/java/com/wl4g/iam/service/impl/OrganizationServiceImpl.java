@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.dao.OrganizationDao;
 import com.wl4g.iam.dao.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 
 /**

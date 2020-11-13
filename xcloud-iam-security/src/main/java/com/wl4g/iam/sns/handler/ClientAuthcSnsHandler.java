@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.shiro.web.util.WebUtils.*;
 
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 
 /**

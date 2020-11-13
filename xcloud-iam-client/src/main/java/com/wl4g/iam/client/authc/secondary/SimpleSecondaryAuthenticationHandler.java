@@ -25,7 +25,7 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SECOND
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
-import static com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult.Status.Authenticated;
+import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.Authenticated;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -51,10 +51,10 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.authc.SecondaryAuthenticationException;
-import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.iam.common.exception.IamException;
+import com.wl4g.iam.core.authc.SecondaryAuthenticationException;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
+import com.wl4g.iam.core.exception.IamException;
 
 /**
  * Secondary authentication processor.

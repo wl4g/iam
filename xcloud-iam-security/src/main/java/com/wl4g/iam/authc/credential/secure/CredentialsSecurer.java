@@ -18,7 +18,8 @@ package com.wl4g.iam.authc.credential.secure;
 import org.apache.shiro.authc.CredentialsException;
 
 import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+
 import javax.validation.constraints.NotNull;
 
 /**

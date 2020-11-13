@@ -18,7 +18,7 @@ package com.wl4g.iam.config;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.common.config.GenericApiAutoConfiguration;
+import com.wl4g.iam.core.config.GenericApiAutoConfiguration;
 import com.wl4g.iam.web.IamServerApiV1Endpoint;
 
 /**

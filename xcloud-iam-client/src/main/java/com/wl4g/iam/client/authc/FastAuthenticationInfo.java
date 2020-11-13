@@ -18,8 +18,8 @@ package com.wl4g.iam.client.authc;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
 
 public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = -2294251445038637917L;

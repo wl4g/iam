@@ -25,8 +25,8 @@ import javax.servlet.ServletResponse;
 import com.wl4g.components.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.cache.JedisIamCacheManager;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.cache.JedisIamCacheManager;
 
 /**
  * IAM client authenticator authentication filter

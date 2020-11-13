@@ -32,7 +32,7 @@ import com.wl4g.IamServer;
 import com.wl4g.components.common.serialize.ProtostuffUtils;
 import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
-import com.wl4g.iam.common.session.IamSession;
+import com.wl4g.iam.core.session.IamSession;
 
 import redis.clients.jedis.ScanParams;
 

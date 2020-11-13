@@ -28,10 +28,10 @@ import org.springframework.util.Assert;
 
 import com.wl4g.components.common.web.WebUtils2;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.annotation.IamFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;

@@ -17,7 +17,7 @@ package com.wl4g.iam.filter;
 
 import static com.wl4g.components.common.web.WebUtils2.isTrue;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.util.Map;
@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.filter.IamAuthenticationFilter;
 
 /**
  * Logout authentication filter

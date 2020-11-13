@@ -25,16 +25,16 @@ import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipal;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.iam.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.exception.IllegalCallbackDomainException;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.exception.IllegalCallbackDomainException;
 
 /**
  * IAM client authenticator authorization filter.</br>

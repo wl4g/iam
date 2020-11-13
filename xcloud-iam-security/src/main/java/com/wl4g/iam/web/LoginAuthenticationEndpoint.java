@@ -19,8 +19,8 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.handler.risk.RiskEvaluatorHandler;
@@ -50,11 +50,11 @@ import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.components.common.web.WebUtils2.getRequestParam;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.config.AbstractIamProperties.IamVersion.*;
-import static com.wl4g.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.checkSession;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
-import static com.wl4g.iam.common.utils.RiskControlSecurityUtils.*;
+import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.*;
+import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.checkSession;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
 import static com.wl4g.iam.web.model.GenericCheckResult.KEY_GENERIC_CHECK;
 import static com.wl4g.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
@@ -244,7 +244,7 @@ public class LoginAuthenticationEndpoint extends AbstractAuthenticationEndpoint 
 
 	/**
 	 * Apply international locale.</br>
-	 * See:{@link com.wl4g.iam.common.i18n.SessionResourceMessageBundler}
+	 * See:{@link com.wl4g.iam.core.i18n.SessionResourceMessageBundler}
 	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
 	 *
 	 * @param response

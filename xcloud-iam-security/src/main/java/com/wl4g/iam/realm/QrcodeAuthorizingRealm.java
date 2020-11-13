@@ -23,7 +23,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import com.wl4g.iam.authc.QrcodeAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.QrcodeAuthorizationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for

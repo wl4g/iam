@@ -17,7 +17,7 @@ package com.wl4g.iam.web.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.common.web.model.SessionQueryModel;
+import com.wl4g.iam.core.web.model.SessionQueryModel;
 
 /**
  * Session query client parameter model.

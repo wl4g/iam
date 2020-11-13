@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.iam.common.web.model.SessionInfo;
+import com.wl4g.iam.core.web.model.SessionInfo;
 
 /**
  * Pre-processing handshake result model. {@link HandshakeResult}

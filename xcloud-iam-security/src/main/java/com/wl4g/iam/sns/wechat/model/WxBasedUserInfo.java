@@ -19,7 +19,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static java.lang.String.format;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.iam.common.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.SnsApiBindingException;
 import com.wl4g.iam.sns.support.Oauth2UserProfile;
 
 public class WxBasedUserInfo extends WxBasedResponse implements Oauth2UserProfile {

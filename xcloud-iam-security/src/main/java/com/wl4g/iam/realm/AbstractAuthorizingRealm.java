@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -43,19 +43,19 @@ import static org.springframework.util.Assert.notNull;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.exception.AccessPermissionDeniedException;
-import com.wl4g.iam.common.exception.IllegalApplicationAccessException;
-import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
-import com.wl4g.iam.common.realm.AbstractPermittingAuthorizingRealm;
-import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.exception.AccessPermissionDeniedException;
+import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
+import com.wl4g.iam.core.handler.AuthenticatingHandler;
+import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
+import com.wl4g.iam.core.realm.AbstractPermittingAuthorizingRealm;
+import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipalWrapper;
 
 /**
  * Multiple realm routing processing.

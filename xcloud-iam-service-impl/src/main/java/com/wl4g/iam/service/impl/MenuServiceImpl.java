@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.dao.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
@@ -32,7 +32,7 @@ import java.util.*;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

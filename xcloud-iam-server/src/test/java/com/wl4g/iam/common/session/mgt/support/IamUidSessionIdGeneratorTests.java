@@ -23,8 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.IamServer;
-import com.wl4g.iam.common.session.NoOpSession;
-import com.wl4g.iam.common.session.mgt.support.IamUidSessionIdGenerator;
+import com.wl4g.iam.core.session.NoOpSession;
+import com.wl4g.iam.core.session.mgt.support.IamUidSessionIdGenerator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IamServer.class)

@@ -15,15 +15,15 @@
  */
 package com.wl4g.iam.authc.credential;
 
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.cache.CacheKey;
-import com.wl4g.iam.common.cache.IamCache;
-import com.wl4g.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.iam.config.properties.MatcherProperties;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.cache.CacheKey;
+import com.wl4g.iam.core.cache.IamCache;
+import com.wl4g.iam.core.utils.cumulate.Cumulator;
 
-import static com.wl4g.iam.common.utils.RiskControlSecurityUtils.*;
-import static com.wl4g.iam.common.utils.cumulate.CumulateHolder.*;
+import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;
+import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

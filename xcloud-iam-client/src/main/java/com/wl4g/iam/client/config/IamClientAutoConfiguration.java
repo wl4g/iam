@@ -45,16 +45,16 @@ import com.wl4g.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.client.web.ClientAuthenticatorEndpoint;
-import com.wl4g.iam.common.authz.EnhancedModularRealmAuthorizer;
-import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.cache.JedisIamCacheManager;
-import com.wl4g.iam.common.config.AbstractIamConfiguration;
-import com.wl4g.iam.common.config.AbstractIamProperties;
-import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.common.mgt.IamSubjectFactory;
-import com.wl4g.iam.common.session.mgt.IamSessionFactory;
-import com.wl4g.iam.common.session.mgt.JedisIamSessionDAO;
-import com.wl4g.iam.common.web.servlet.IamCookie;
+import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
+import com.wl4g.iam.core.cache.IamCacheManager;
+import com.wl4g.iam.core.cache.JedisIamCacheManager;
+import com.wl4g.iam.core.config.AbstractIamConfiguration;
+import com.wl4g.iam.core.config.AbstractIamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.core.mgt.IamSubjectFactory;
+import com.wl4g.iam.core.session.mgt.IamSessionFactory;
+import com.wl4g.iam.core.session.mgt.JedisIamSessionDAO;
+import com.wl4g.iam.core.web.servlet.IamCookie;
 
 /**
  * IAM client auto configuration.

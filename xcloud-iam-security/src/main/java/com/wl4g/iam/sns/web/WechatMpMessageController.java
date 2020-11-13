@@ -24,7 +24,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.iam.common.exception.IllegalRequestException;
+import com.wl4g.iam.core.exception.IllegalRequestException;
 
 import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;

@@ -21,7 +21,7 @@ import org.apache.shiro.authc.CredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 
 /**
  * Credentials securer adapter

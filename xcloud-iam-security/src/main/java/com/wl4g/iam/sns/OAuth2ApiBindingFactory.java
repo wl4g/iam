@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns;
 
-import com.wl4g.iam.common.exception.NoSuchSocialProviderException;
+import com.wl4g.iam.core.exception.NoSuchSocialProviderException;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.iam.sns.support.Oauth2OpenId;
 import com.wl4g.iam.sns.support.Oauth2UserProfile;

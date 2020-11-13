@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.iam.core.authc.AbstractIamAuthenticationToken;
 
 /**
  * This class represents a token for a CAS authentication (service ticket + user

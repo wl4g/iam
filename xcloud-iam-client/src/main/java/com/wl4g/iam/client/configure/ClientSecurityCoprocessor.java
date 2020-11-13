@@ -16,7 +16,7 @@
 package com.wl4g.iam.client.configure;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.iam.common.configure.SecurityCoprocessor;
+import com.wl4g.iam.core.configure.SecurityCoprocessor;
 
 /**
  * IAM client security coprocessor.

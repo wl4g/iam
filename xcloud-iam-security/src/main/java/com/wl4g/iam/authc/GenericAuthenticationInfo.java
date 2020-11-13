@@ -20,8 +20,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.components.common.codec.CodecSource;
 import static com.wl4g.components.common.codec.CodecSource.fromHex;
 

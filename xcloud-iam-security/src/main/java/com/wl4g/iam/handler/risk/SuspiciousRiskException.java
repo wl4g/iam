@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.handler.risk;
 
-import com.wl4g.iam.common.exception.IamException;
+import com.wl4g.iam.core.exception.IamException;
 
 /**
  * {@link SuspiciousRiskException}

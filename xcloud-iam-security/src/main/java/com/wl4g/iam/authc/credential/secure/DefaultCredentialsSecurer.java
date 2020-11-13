@@ -24,8 +24,8 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource.Util;
 
 import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.iam.common.cache.IamCacheManager;
 import com.wl4g.iam.configure.SecureConfig;
+import com.wl4g.iam.core.cache.IamCacheManager;
 
 /**
  * Default credentials securer

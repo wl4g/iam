@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.iam.authc.QrcodeAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.annotation.IamFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
 
 @IamFilter
 public class QrcodeAuthenticationFilter extends AbstractServerIamAuthenticationFilter<QrcodeAuthenticationToken> {

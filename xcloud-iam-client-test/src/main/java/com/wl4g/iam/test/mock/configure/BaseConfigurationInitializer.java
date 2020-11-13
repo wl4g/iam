@@ -45,12 +45,12 @@ import com.typesafe.config.Config;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.typesafe.HoconConfigUtils;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.common.config.CorsProperties;
-import com.wl4g.iam.common.config.ReplayProperties;
-import com.wl4g.iam.common.config.XsrfProperties;
-import com.wl4g.iam.common.config.CorsProperties.CorsRule;
-import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
+import com.wl4g.iam.core.config.CorsProperties;
+import com.wl4g.iam.core.config.ReplayProperties;
+import com.wl4g.iam.core.config.XsrfProperties;
+import com.wl4g.iam.core.config.CorsProperties.CorsRule;
+import com.wl4g.iam.core.subject.IamPrincipal.OrganizationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal.PrincipalOrganization;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthzInfo;
 

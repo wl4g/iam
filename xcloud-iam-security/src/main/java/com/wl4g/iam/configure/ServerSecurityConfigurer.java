@@ -18,11 +18,11 @@ package com.wl4g.iam.configure;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.iam.common.configure.SecurityConfigurer;
-import com.wl4g.iam.common.exception.BindingConstraintsException;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.configure.SecurityConfigurer;
+import com.wl4g.iam.core.exception.BindingConstraintsException;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
 
 import java.util.List;
 

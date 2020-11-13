@@ -16,7 +16,7 @@
 package com.wl4g.iam.filter;
 
 import com.wl4g.iam.authc.FacebookAuthenticationToken;
-import com.wl4g.iam.common.annotation.IamFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
 
 @IamFilter
 public class FacebookAuthenticationFilter extends Oauth2SnsAuthenticationFilter<FacebookAuthenticationToken> {

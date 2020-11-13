@@ -20,7 +20,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 import java.io.Serializable;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.iam.core.authc.AbstractIamAuthenticationToken;
 
 /**
  * IAM abstract server authentication token

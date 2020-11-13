@@ -20,8 +20,8 @@ import java.util.List;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.iam.authc.SmsAuthenticationToken;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 
 /**

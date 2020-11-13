@@ -17,13 +17,13 @@ package com.wl4g.iam.sns.handler;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCauses;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 
 import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 
 /**

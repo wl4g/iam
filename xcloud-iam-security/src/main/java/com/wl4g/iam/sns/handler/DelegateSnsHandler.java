@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.CallbackResult;
 
 /**

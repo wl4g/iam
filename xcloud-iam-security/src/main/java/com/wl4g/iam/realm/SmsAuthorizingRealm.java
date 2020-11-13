@@ -19,9 +19,9 @@ import com.wl4g.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.iam.authc.SmsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.SmsAuthorizationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.SmsParameter;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -32,7 +32,7 @@ import org.apache.shiro.util.StringUtils;
 
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.BIND;
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.LOGIN;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipal;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for

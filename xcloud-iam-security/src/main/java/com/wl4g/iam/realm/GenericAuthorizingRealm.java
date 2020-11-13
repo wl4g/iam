@@ -28,9 +28,9 @@ import com.wl4g.iam.authc.GenericAuthenticationInfo;
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.GenericAuthorizationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.SimpleParameter;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for

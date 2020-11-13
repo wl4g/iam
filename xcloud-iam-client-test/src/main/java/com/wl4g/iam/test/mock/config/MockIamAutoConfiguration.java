@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
-import com.wl4g.iam.common.annotation.IamController;
+import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.test.mock.filter.MockAuthenticatingFilter;

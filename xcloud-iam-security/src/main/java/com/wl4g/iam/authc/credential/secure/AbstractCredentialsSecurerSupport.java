@@ -33,18 +33,18 @@ import static com.wl4g.components.common.codec.CheckSums.*;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
-import com.wl4g.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.configure.SecureConfig;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.cache.IamCacheManager;
+import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
+import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 

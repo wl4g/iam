@@ -17,11 +17,11 @@ package com.wl4g.iam.config;
 
 import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.exception.BindingConstraintsException;
-import com.wl4g.iam.common.exception.IamException;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.exception.BindingConstraintsException;
+import com.wl4g.iam.core.exception.IamException;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;

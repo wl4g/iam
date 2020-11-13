@@ -25,14 +25,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.iam.common.annotation.IamController;
-import com.wl4g.iam.common.authc.model.LogoutResult;
-import com.wl4g.iam.common.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.common.authc.model.SessionValidateResult;
-import com.wl4g.iam.common.authc.model.TicketValidateRequest;
-import com.wl4g.iam.common.authc.model.TicketValidateResult;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.web.AuthenticatingEndpoint;
+import com.wl4g.iam.core.annotation.IamController;
+import com.wl4g.iam.core.authc.model.LogoutResult;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.TicketValidateRequest;
+import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.web.AuthenticatingEndpoint;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
@@ -41,7 +41,7 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGOUT
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_VALIDATE;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**

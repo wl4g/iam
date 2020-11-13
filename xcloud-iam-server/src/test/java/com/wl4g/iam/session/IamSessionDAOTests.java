@@ -31,8 +31,8 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_SESSIO
 import com.wl4g.IamServer;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
-import com.wl4g.iam.common.session.IamSession;
-import com.wl4g.iam.common.session.mgt.IamSessionDAO;
+import com.wl4g.iam.core.session.IamSession;
+import com.wl4g.iam.core.session.mgt.IamSessionDAO;
 
 import redis.clients.jedis.ScanParams;
 

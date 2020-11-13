@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.CallbackResult;
 
 /**

@@ -23,8 +23,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.VerifyAuthenticationToken;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
-import com.wl4g.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
 
 /**
  * General account credential matcher

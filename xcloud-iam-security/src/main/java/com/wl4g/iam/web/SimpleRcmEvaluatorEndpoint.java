@@ -19,7 +19,7 @@ import static com.wl4g.components.common.collection.Collections2.safeMap;
 import static com.wl4g.components.common.lang.TypeConverts.*;
 import static com.wl4g.components.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.sessionStatus;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 

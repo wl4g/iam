@@ -37,10 +37,10 @@ import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
-import com.wl4g.iam.common.authc.model.SessionValidateResult;
-import com.wl4g.iam.common.cache.IamCacheManager;
-import com.wl4g.iam.common.session.IamSession;
-import com.wl4g.iam.common.session.mgt.AbstractIamSessionManager;
+import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.cache.IamCacheManager;
+import com.wl4g.iam.core.session.IamSession;
+import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
 
 /**
  * IAM client session manager

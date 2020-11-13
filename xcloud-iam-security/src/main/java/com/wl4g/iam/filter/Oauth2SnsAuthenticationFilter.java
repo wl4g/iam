@@ -27,7 +27,7 @@ import org.springframework.core.ResolvableType;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
-import com.wl4g.iam.common.cache.CacheKey;
+import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;

@@ -18,8 +18,8 @@ package com.wl4g.iam.authc;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
+import com.wl4g.iam.core.subject.IamPrincipal;
 
 public class Oauth2SnsAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;

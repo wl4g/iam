@@ -17,7 +17,7 @@ package com.wl4g.iam.web.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.common.web.model.SessionDestroyModel;
+import com.wl4g.iam.core.web.model.SessionDestroyModel;
 
 /**
  * Session destroy client parameter model.

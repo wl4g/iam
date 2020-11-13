@@ -16,12 +16,12 @@
 package com.wl4g.iam.filter;
 
 import com.wl4g.iam.authc.WechatMpAuthenticationToken;
-import com.wl4g.iam.common.annotation.IamFilter;
-import com.wl4g.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.iam.core.annotation.IamFilter;
+import com.wl4g.iam.core.authc.IamAuthenticationToken;
 
 import static com.wl4g.components.common.lang.Assert2.isInstanceOf;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

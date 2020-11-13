@@ -16,7 +16,7 @@
 package com.wl4g.iam.filter;
 
 import com.wl4g.iam.authc.GithubAuthenticationToken;
-import com.wl4g.iam.common.annotation.IamFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
 
 @IamFilter
 public class GithubAuthenticationFilter extends Oauth2SnsAuthenticationFilter<GithubAuthenticationToken> {

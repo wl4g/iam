@@ -16,7 +16,7 @@
 package com.wl4g.iam.actuate;
 
 import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.iam.common.actuate.AbstractIamActuateEndpoint;
+import com.wl4g.iam.core.actuate.AbstractIamActuateEndpoint;
 
 /**
  * {@link IamActuateEndpoint}

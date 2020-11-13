@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.wl4g.components.common.web.rest.RespBase;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.OK;
 import com.wl4g.iam.annotation.SnsController;
-import com.wl4g.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.CallbackResult;
 import com.wl4g.iam.sns.handler.DelegateSnsHandler;
 

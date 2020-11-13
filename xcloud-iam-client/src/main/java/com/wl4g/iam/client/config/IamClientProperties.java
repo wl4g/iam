@@ -21,12 +21,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.iam.client.config.IamClientProperties.ClientParamProperties;
-import com.wl4g.iam.common.config.AbstractIamProperties;
-import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.*;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {

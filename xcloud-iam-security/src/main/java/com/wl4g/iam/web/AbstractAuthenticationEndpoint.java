@@ -23,11 +23,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.iam.common.handler.AuthenticatingHandler;
-import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.iam.core.handler.AuthenticatingHandler;
+import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 
 /**
  * IAM abstract basic authenticator internal controller

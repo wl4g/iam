@@ -17,7 +17,7 @@ package com.wl4g.iam.config.properties;
 
 import static com.wl4g.components.common.web.WebUtils2.cleanURI;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
-import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.wl4g.iam.common.config.AbstractIamProperties;
 import com.wl4g.iam.config.properties.ServerParamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.filter.ServerInternalAuthenticationFilter;
 import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
 

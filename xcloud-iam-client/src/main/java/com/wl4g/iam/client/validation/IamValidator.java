@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.client.validation;
 
-import com.wl4g.iam.common.authc.model.BaseValidateModel;
-import com.wl4g.iam.common.exception.ValidateException;
+import com.wl4g.iam.core.authc.model.BaseValidateModel;
+import com.wl4g.iam.core.exception.ValidateException;
 
 /**
  * IAM validator.

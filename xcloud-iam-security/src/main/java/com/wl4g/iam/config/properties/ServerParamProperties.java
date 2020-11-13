@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config.properties;
 
-import com.wl4g.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**

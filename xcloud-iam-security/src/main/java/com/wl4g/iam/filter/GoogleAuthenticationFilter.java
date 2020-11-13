@@ -16,7 +16,7 @@
 package com.wl4g.iam.filter;
 
 import com.wl4g.iam.authc.GoogleAuthenticationToken;
-import com.wl4g.iam.common.annotation.IamFilter;
+import com.wl4g.iam.core.annotation.IamFilter;
 
 @IamFilter
 public class GoogleAuthenticationFilter extends Oauth2SnsAuthenticationFilter<GoogleAuthenticationToken> {

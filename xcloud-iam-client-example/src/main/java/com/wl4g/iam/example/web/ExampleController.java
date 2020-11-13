@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.iam.client.session.mgt.IamClientSessionManager;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.utils.IamSecurityHolder;
+import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.core.utils.IamSecurityHolder;
 import com.wl4g.iam.example.authc.ExampleClientSecurityCoprocessor;
 import com.wl4g.iam.example.service.ExampleService;
 

@@ -25,7 +25,8 @@ import static com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer.MOC
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
-import static com.wl4g.iam.common.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
+import static com.wl4g.iam.core.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.SESSION_STATUS_UNAUTHC;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -45,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import static com.wl4g.iam.common.utils.IamAuthenticatingUtils.SESSION_STATUS_UNAUTHC;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.UNAUTHC;
@@ -103,8 +103,8 @@ public class MockAuthenticatingFilter implements Filter {
 	 * 
 	 * @param request
 	 * @return
-	 * @see {@link com.wl4g.iam.common.mgt.IamSubjectFactory#getRequestAccessToken}
-	 * @see {@link com.wl4g.iam.common.session.mgt.AbstractIamSessionManager#getSessionId}
+	 * @see {@link com.wl4g.iam.core.mgt.IamSubjectFactory#getRequestAccessToken}
+	 * @see {@link com.wl4g.iam.core.session.mgt.AbstractIamSessionManager#getSessionId}
 	 * @throws NoSuchMockCredentialsException
 	 */
 	@SuppressWarnings("unchecked")
