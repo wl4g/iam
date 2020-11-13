@@ -16,7 +16,11 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.support.notification.GenericNotifyMessage;
+import com.wl4g.components.support.notification.MessageNotifier;
+import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.ContactChannel;
 import com.wl4g.iam.common.bean.ContactGroupRef;
@@ -31,14 +35,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.components.core.bean.BaseBean.ENABLED;
+import static java.util.Objects.isNull;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
 
 /**
+ * Notification to contacts service implements.
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-05 16:02:00
+ * @version v1.0 2019-08-05
+ * @sine v1.0
+ * @see
  */
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -51,6 +66,9 @@ public class ContactServiceImpl implements ContactService {
 
 	@Autowired
 	private ContactChannelDao contactChannelDao;
+
+	@Autowired
+	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
 
 	@Override
 	@Transactional
@@ -119,6 +137,27 @@ public class ContactServiceImpl implements ContactService {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(contactDao.list(name));
 		return pm;
+	}
+
+	@Override
+	public void notificationWithTemplate(@NotBlank String templateKey, Map<String, Object> parameters,
+			List<Long> contactGroupIds) {
+		notNullOf(templateKey, "templateKey");
+		if (isNull(contactGroupIds)) {
+			return;
+		}
+
+		List<Contact> contacts = contactDao.getContactByGroupIds(safeList(contactGroupIds));
+		for (Contact contact : contacts) {
+			for (ContactChannel ch : safeList(contact.getContactChannels())) {
+				if (ch.getEnable() == ENABLED) {
+					GenericNotifyMessage msg = new GenericNotifyMessage(ch.getPrimaryAddress(), templateKey);
+					msg.addParameters(parameters);
+					notifier.forOperator(ch.getKind()).send(msg);
+				}
+			}
+		}
+
 	}
 
 }

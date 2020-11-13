@@ -15,12 +15,23 @@
  */
 package com.wl4g.iam.service;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
+
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.iam.common.bean.Contact;
 
 /**
+ * {@link ContactService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-05 16:01:00
+ * @version v1.0 2019-08-05
+ * @sine v1.0
+ * @see
  */
 public interface ContactService {
 
@@ -31,5 +42,15 @@ public interface ContactService {
 	void del(Long id);
 
 	PageModel<Contact> list(PageModel<Contact> pm, String name);
+
+	/**
+	 * Sending with template message notification.
+	 * 
+	 * @param singleToTarget
+	 * @param templateKey
+	 * @param contactGroupIds
+	 */
+	void notificationWithTemplate(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
+			@Nullable List<Long> contactGroupIds);
 
 }
