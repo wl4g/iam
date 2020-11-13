@@ -18,28 +18,28 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev:${server.port}}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.local}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.local:${server.port}}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+                - http://${XCLOUD_IAM_ZONE:wl4g.dev}
+                - http://${XCLOUD_IAM_ZONE:wl4g.dev:${server.port}}
+                - http://${XCLOUD_IAM_ZONE:wl4g.local}
+                - http://${XCLOUD_IAM_ZONE:wl4g.local:${server.port}}
+                - http://${XCLOUD_IAM_ZONE:wl4g.debug}
+                - http://${XCLOUD_IAM_ZONE:wl4g.debug:${server.port}}
+                - http://*.${XCLOUD_IAM_ZONE:wl4g.debug}
+                - http://*.${XCLOUD_IAM_ZONE:wl4g.debug:${server.port}}
                 - http://localhost
                 - http://localhost:14040
                 - http://127.0.0.1
                 - http://127.0.0.1:14040
                 - '*'
-        login-uri: http://${DEVOPS_SERVICE_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/login.html
+        login-uri: http://${XCLOUD_IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/login.html
         #login-uri: http://wl4g.debug/#/login # See: https://github.com/wl4g/xcloud-devops-view
-        unauthorized-uri: http://${DEVOPS_SERVICE_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/403.html
-        success-endpoint: ${spring.application.name}@http://${DEVOPS_SERVICE_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/index.html
-        #success-endpoint: ci@http://ci.${DEVOPS_SERVICE_ZONE:wl4g.debug}/ci-server
+        unauthorized-uri: http://${XCLOUD_IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/403.html
+        success-endpoint: ${spring.application.name}@http://${XCLOUD_IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/index.html
+        #success-endpoint: ci@http://ci.${XCLOUD_IAM_ZONE:wl4g.debug}/ci-server
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+          allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${XCLOUD_IAM_ACL_DENY}
         captcha:
           #jigsaw:
             #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
@@ -48,12 +48,12 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${XCLOUD_IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
             redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/wechat/callback
-            href: https://${DEVOPS_SERVICE_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            href: https://${XCLOUD_IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
@@ -66,9 +66,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      url: jdbc:mysql://${XCLOUD_IAM_DB_URL:owner-node1:3306}/${XCLOUD_IAM_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+      username: ${XCLOUD_IAM_DB_USER:gzsm}
+      password: ${XCLOUD_IAM_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -86,8 +86,8 @@ spring:
 
 # Redis configuration.
 redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
+  passwd: ${XCLOUD_IAM_REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+  nodes: ${XCLOUD_IAM_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
