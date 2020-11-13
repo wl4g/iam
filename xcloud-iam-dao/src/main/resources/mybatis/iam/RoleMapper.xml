@@ -13,10 +13,8 @@
 		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
-
-		<!--other -->
-
 	</resultMap>
+
 	<sql id="Base_Column_List">
 		id, role_code, name_zh, type, enable, status, create_by, create_date, update_by,
 		update_date, del_flag
