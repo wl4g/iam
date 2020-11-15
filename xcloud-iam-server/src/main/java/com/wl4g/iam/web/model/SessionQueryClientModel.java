@@ -19,6 +19,9 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.iam.core.web.model.SessionQueryModel;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Session query client parameter model.
  * 
@@ -26,18 +29,12 @@ import com.wl4g.iam.core.web.model.SessionQueryModel;
  * @version v1.0 2019年11月11日
  * @since
  */
+@Getter
+@Setter
 public class SessionQueryClientModel extends SessionQueryModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
 	@NotNull(message = "Private IAM service ID is requires")
 	private Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 }

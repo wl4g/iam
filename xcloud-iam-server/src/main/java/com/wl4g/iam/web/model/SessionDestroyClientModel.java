@@ -19,6 +19,9 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.iam.core.web.model.SessionDestroyModel;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Session destroy client parameter model.
  * 
@@ -26,18 +29,12 @@ import com.wl4g.iam.core.web.model.SessionDestroyModel;
  * @version v1.0 2019年11月11日
  * @since
  */
+@Getter
+@Setter
 public class SessionDestroyClientModel extends SessionDestroyModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
 	@NotNull(message = "IamServerId is requires")
 	private Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 }

@@ -18,18 +18,18 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - https://${XCLOUD_IAM_ZONE:wl4g.uat}
-                - http://${XCLOUD_IAM_ZONE:wl4g.uat}
-                - https://*.${XCLOUD_IAM_ZONE:wl4g.uat}
-                - http://*.${XCLOUD_IAM_ZONE:wl4g.uat}
+                - https://${IAM_ZONE:wl4g.uat}
+                - http://${IAM_ZONE:wl4g.uat}
+                - https://*.${IAM_ZONE:wl4g.uat}
+                - http://*.${IAM_ZONE:wl4g.uat}
         #login-uri: /view/login.html
-        login-uri: http://devops.${XCLOUD_IAM_ZONE:wl4g.uat}/#/login
+        login-uri: http://devops.${IAM_ZONE:wl4g.uat}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://umc.${XCLOUD_IAM_ZONE:wl4g.uat}/umc-manager
+        success-endpoint: umc-manager@http://umc.${IAM_ZONE:wl4g.uat}/umc-manager
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${XCLOUD_IAM_ACL_DENY}
+          allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${IAM_ACL_DENY}
         captcha:
           #jigsaw:
             #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
@@ -38,12 +38,12 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${XCLOUD_IAM_ZONE:wl4g.uat}${server.servlet.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${IAM_ZONE:wl4g.uat}${server.servlet.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
             redirect-url: http://passport.wl4g.uat${server.servlet.contextPath}/sns/wechat/callback
-            href: https://${XCLOUD_IAM_ZONE:wl4g.uat}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            href: https://${IAM_ZONE:wl4g.uat}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
@@ -54,9 +54,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${XCLOUD_IAM_DB_URL:owner-node5:3306}/${XCLOUD_IAM_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${XCLOUD_IAM_DB_USER:gzsm}
-      password: ${XCLOUD_IAM_DB_PASSWD:gzsm@%#jh?}
+      url: jdbc:mysql://${IAM_DB_URL:owner-node5:3306}/${IAM_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: ${IAM_DB_USER:gzsm}
+      password: ${IAM_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -74,8 +74,8 @@ spring:
 
 # Redis configuration.
 redis:
-  passwd: ${XCLOUD_IAM_REDIS_PASSWD:zzx!@#$%}
+  passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${XCLOUD_IAM_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+  nodes: ${IAM_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}

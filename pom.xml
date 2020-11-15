@@ -16,7 +16,7 @@
 		<module>xcloud-iam-core</module>
 		<module>xcloud-iam-common</module>
 		<module>xcloud-iam-dao</module>
-		<module>xcloud-iam-service-api</module>
+		<module>xcloud-iam-service-interface</module>
 		<module>xcloud-iam-service-impl</module>
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-server</module>
