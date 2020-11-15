@@ -22,8 +22,13 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.iam.common.bean.Dict;
 
 /**
+ * {@link DictService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-13 09:51:00
+ * @date 2019-08-13
+ * @sine v1.0
+ * @see
  */
 public interface DictService {
 

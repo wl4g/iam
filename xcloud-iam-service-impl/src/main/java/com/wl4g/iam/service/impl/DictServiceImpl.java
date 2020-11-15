@@ -43,8 +43,13 @@ import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_CACHE_SY
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
+ * {@link DictService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-13 09:51:00
+ * @date 2019-08-13
+ * @sine v1.0
+ * @see
  */
 @Service
 public class DictServiceImpl implements DictService {
