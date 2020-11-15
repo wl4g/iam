@@ -31,6 +31,9 @@ import org.springframework.context.annotation.Bean;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
+import static java.lang.String.format;
+
 import java.util.List;
 
 /**
@@ -110,8 +113,9 @@ public class BasedConfigAutoConfiguration {
 
 		@Override
 		public void afterPropertiesSet() throws Exception {
-			throw new IamException("\n\n=>\tWhen you rely on Iam security as a plug-in, you must implement the '"
-					+ ServerSecurityConfigurer.class.getName() + "' interface yourself !\n");
+			throw new IamException(format(
+					"\n\n=>\tWhen relying on IAM security module as a service, it is necessary to implements the '%s' interface!\n",
+					ServerSecurityConfigurer.class.getName()));
 		}
 
 	}
