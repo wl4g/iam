@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-service-web</artifactId>
+	<artifactId>xcloud-iam-service-all</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Service Web</name>
+	<name>XCloud IAM Service All</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -14,22 +14,17 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>iam-web</final.name>
+		<final.name>iam-server</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-service-interface</artifactId>
+			<artifactId>xcloud-iam-service-impl</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-security</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-captcha</artifactId>
+			<artifactId>xcloud-iam-service-web</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

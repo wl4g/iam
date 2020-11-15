@@ -13,4 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam;
+package com.wl4g;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.iam.annotation.EnableIamServer;
+
+@EnableIamServer
+@MapperScan("com.wl4g.iam.dao")
+@AutoConfigureComponentsDataSource
+@SpringBootApplication
+public class IamWeb {
+
+	public static void main(String[] args) {
+		SpringApplication.run(IamWeb.class, args);
+	}
+
+}

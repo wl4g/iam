@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: iam-web
+  application.name: iam-server
   profiles:
     include: common,util
     active: dev
