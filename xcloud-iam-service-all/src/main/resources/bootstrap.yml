@@ -14,6 +14,7 @@ spring:
   application.name: iam-server
   # Note: When the springboot version is different, here bootstrap.yml Execute parsing
   # in '${spring.profiles.active}' The mechanism result of expression is different ???
+  # for example: 'dao-${spring.profiles.active}' => 'dao-dev,dao-${spring.profiles.active}' ???
   profiles:
     #include: common,util
     #active: dev,dao-dev,service-dev,web-dev
