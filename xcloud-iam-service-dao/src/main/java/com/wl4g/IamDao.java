@@ -15,29 +15,31 @@
  */
 package com.wl4g;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.iam.annotation.EnableIamServer;
+import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 
 /**
- * {@link IamWeb}
+ * {@link IamDao}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-14
  * @sine v1.0
  * @see
  */
-@EnableIamServer
+@MapperScan("com.wl4g.iam.dao")
+@AutoConfigureComponentsDataSource
 @SpringBootApplication
 @Reserved
 @Beta
-public class IamWeb {
+public class IamDao {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamWeb.class, args);
+		SpringApplication.run(IamDao.class, args);
 	}
 
 }

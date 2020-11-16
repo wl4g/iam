@@ -20,24 +20,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.iam.annotation.EnableIamServer;
 
 /**
- * {@link IamWeb}
+ * {@link IamService}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-14
  * @sine v1.0
  * @see
  */
-@EnableIamServer
 @SpringBootApplication
 @Reserved
 @Beta
-public class IamWeb {
+public class IamService {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamWeb.class, args);
+		SpringApplication.run(IamService.class, args);
 	}
 
 }
