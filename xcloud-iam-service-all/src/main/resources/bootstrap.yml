@@ -15,3 +15,5 @@ spring:
   profiles:
     include: common,util,dao-${spring.profiles.active},service-${spring.profiles.active},web-${spring.profiles.active}
     active: dev
+    #include: common,util
+    #active: dev,dao-dev,service-dev,web-dev
