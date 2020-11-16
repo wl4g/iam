@@ -14,21 +14,4 @@ spring:
   application.name: iam-dao
   profiles:
     include: common,util
-    active: dev
-
-# ### Server configuration. ###
-server:
-  port: 34040
-  #address: 0.0.0.0
-  sessionTimeout: 30
-  servlet:
-    contextPath: /${spring.application.name}
-  tomcat:
-    uri-encoding: UTF-8
-    protocolHeader: x-forwarded-proto
-    remoteIpHeader: x-forwarded-for
-    basedir: /tmp/${spring.application.name}
-    access-log-enabled: false
-    accesslog.directory: logs/
-    backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).
+    active: dao-dev

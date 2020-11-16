@@ -13,8 +13,8 @@
 spring:
   application.name: iam-web
   profiles:
-    include: common,util,merge # [merge] for load [xcloud-iam-service-all]
-    active: dev
+    include: common,util
+    active: web-dev
   cloud: # Spring cloud configuration.
     xcloud:
       embedded-webapps:
@@ -95,20 +95,3 @@ spring:
           #gif:
           jigsaw:
             pool-size: 64
-
-# ### Server configuration. ###
-server:
-  port: 14040
-  #address: 0.0.0.0
-  sessionTimeout: 30
-  servlet:
-    contextPath: /${spring.application.name}
-  tomcat:
-    uri-encoding: UTF-8
-    protocolHeader: x-forwarded-proto
-    remoteIpHeader: x-forwarded-for
-    basedir: /tmp/${spring.application.name}
-    access-log-enabled: false
-    accesslog.directory: logs/
-    backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).
