@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
 

@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.validation.constraints.NotBlank;
 
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Contact;
 
 /**

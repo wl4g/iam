@@ -18,7 +18,7 @@ package com.wl4g.iam.service;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Dict;
 
 /**
