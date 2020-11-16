@@ -45,7 +45,7 @@ public final class MockConfigurationFactory {
 	public MockAuthzInfo getMockAuthcInfo(String principal) {
 		return mockRegistry.entrySet().stream()
 				.filter(e -> StringUtils.equals(principal, e.getValue().getAuthzInfo().getPrincipal()))
-				.map(e -> e.getValue().getAuthzInfo()).findFirst().orElse(null);
+				.map(e -> e.getValue().getAuthzInfo()).findFirst().filter(e -> !isNull(e)).orElse(null);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public final class MockConfigurationFactory {
 		return mockRegistry.entrySet().stream().filter(e -> {
 			MockFilter filter = e.getKey();
 			return filter.getType().getParser().matchValue(request, filter.getValue());
-		}).map(e -> e.getValue()).findFirst().orElse(null);
+		}).map(e -> e.getValue()).findFirst().filter(e -> !isNull(e)).orElse(null);
 	}
 
 	/**

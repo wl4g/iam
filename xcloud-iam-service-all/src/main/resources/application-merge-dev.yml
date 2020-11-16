@@ -61,6 +61,29 @@ spring:
         session:
           global-session-timeout: 43200_000
 
+  # Spring datasource configuration.
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: jdbc:mysql://${IAM_DB_URL:owner-node1:3306}/${IAM_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+      username: ${IAM_DB_USER:gzsm}
+      password: ${IAM_DB_PASSWD:gzsm@%#jh?}
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true
+
 # Redis configuration.
 redis:
   passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}

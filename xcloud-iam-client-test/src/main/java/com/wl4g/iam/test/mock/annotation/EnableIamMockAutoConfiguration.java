@@ -48,7 +48,7 @@ public @interface EnableIamMockAutoConfiguration {
 	 */
 	String location() default DEFAULT_MOCK_CONF_LOCATION;
 
-	/** Defalt IAM mock configuration location */
+	/** Default IAM mock configuration location. */
 	public static final String DEFAULT_MOCK_CONF_LOCATION = "application-mock.conf";
 
 }

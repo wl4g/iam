@@ -10,6 +10,16 @@
 
 # #### Environment base configuration. ####
 #
+spring:
+  application.name: iam-web
+  profiles:
+    include: ${spring.profiles.include:},merge-${spring.profiles.active}
+
+# Mybatis configuration.
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.iam.common.bean.*
 
 # Logging configuration.
 logging:
@@ -28,4 +38,4 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.iam.web: INFO
+      wl4g.iam.dao: DEBUG

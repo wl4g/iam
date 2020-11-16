@@ -29,6 +29,7 @@ import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.core.utils.web.WebUtils3.*;
 import static com.wl4g.iam.core.subject.IamPrincipal.OrganizationInfo;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -156,7 +157,7 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 */
 	private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String orgCode) {
 		Optional<OrganizationInfo> opt = safeList(organs).stream()
-				.filter(o -> StringUtils.equals(o.getOrganizationCode(), orgCode)).findFirst();
+				.filter(o -> StringUtils.equals(o.getOrganizationCode(), orgCode)).filter(o -> !isNull(o)).findFirst();
 		return opt.orElse(null);
 	}
 

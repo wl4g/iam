@@ -13,7 +13,7 @@
 spring:
   application.name: iam-web
   profiles:
-    include: common,util
+    include: common,util,merge # [merge] for load [xcloud-iam-service-all]
     active: dev
   cloud: # Spring cloud configuration.
     xcloud:
