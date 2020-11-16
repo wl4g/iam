@@ -12,8 +12,10 @@
 #
 spring:
   application.name: iam-server
+  # Note: When the springboot version is different, here bootstrap.yml Execute parsing
+  # in '${spring.profiles.active}' The mechanism result of expression is different ???
   profiles:
-    include: common,util,dao-${spring.profiles.active},service-${spring.profiles.active},web-${spring.profiles.active}
-    active: dev
     #include: common,util
     #active: dev,dao-dev,service-dev,web-dev
+    include: common,util,dao-${spring.profiles.active},service-${spring.profiles.active},web-${spring.profiles.active}
+    active: dev
