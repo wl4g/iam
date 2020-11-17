@@ -29,6 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.components.common.log.SmartLogger;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
@@ -180,5 +181,5 @@ public class XssProperties implements InitializingBean, Serializable {
 
 	}
 
-	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
+	final public static String KEY_XSS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xss";
 }

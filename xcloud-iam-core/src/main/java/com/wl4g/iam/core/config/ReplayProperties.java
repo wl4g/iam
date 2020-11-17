@@ -31,6 +31,7 @@ import com.wl4g.components.common.crypto.digest.DigestUtils2;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
@@ -72,6 +73,7 @@ public class ReplayProperties implements InitializingBean {
 
 	/**
 	 * Ignore replay attacks validation request mappings.</br>
+	 * 
 	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
 	 */
 	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
@@ -199,6 +201,6 @@ public class ReplayProperties implements InitializingBean {
 	final public static long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
 	final public static String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
 	final public static String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
-	final public static String KEY_REPLAY_PREFIX = "spring.cloud.devops.iam.replay";
+	final public static String KEY_REPLAY_PREFIX = KEY_IAM_CONFIG_PREFIX + ".replay";
 
 }

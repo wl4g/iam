@@ -22,6 +22,7 @@ import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_XSRF_BASE;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static java.util.Collections.singletonList;
 import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -86,6 +87,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	/**
 	 * Ignore xsrf validation request mappings. </br>
+	 * 
 	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
 	 */
 	private List<String> excludeValidUriPatterns = new ArrayList<>();
@@ -233,7 +235,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	}
 
-	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
+	final public static String KEY_XSRF_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xsrf";
 
 	/**
 	 * Use to: IAM-{serviceName}-XSRF-TOKEN

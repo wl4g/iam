@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.config.properties;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.StringUtils2.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -28,7 +29,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version v1.0 2019年1月8日
  * @since
  */
-@ConfigurationProperties(prefix = "spring.cloud.devops.iam.sns")
+@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".sns")
 public class SnsProperties {
 
 	/**

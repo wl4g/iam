@@ -12,7 +12,7 @@
 #
 spring:
   cloud:
-    devops:
+    xcloud:
       iam: # IAM configuration.
         cors:
           rules:

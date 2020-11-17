@@ -26,9 +26,10 @@ import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 
-@ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
+@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {
 	private static final long serialVersionUID = -8848998112902613969L;
 
@@ -44,7 +45,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	/**
 	 * This configuration item is used to specify a custom login page, default
-	 * to {spring.cloud.devops.iam.client.server-uri}, that is, the login page
+	 * to {spring.cloud.xcloud.iam.client.server-uri}, that is, the login page
 	 * controlled by iam-server.
 	 */
 	private String loginUri;

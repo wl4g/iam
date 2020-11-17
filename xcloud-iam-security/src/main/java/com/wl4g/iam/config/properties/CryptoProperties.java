@@ -16,6 +16,7 @@
 package com.wl4g.iam.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 
 /**
  * Social networking services configuration
@@ -24,7 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version v1.0 2019年1月8日
  * @since
  */
-@ConfigurationProperties(prefix = "spring.cloud.devops.iam.crypto")
+@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".crypto")
 public class CryptoProperties {
 
 	private int keyPairPools = 64;

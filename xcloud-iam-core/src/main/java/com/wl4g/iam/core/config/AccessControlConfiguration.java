@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import com.wl4g.components.core.kit.access.IPAccessControl;
 import com.wl4g.components.core.kit.access.IPAccessControl.IPAccessProperties;
 
@@ -32,7 +33,6 @@ import com.wl4g.components.core.kit.access.IPAccessControl.IPAccessProperties;
  */
 @Configuration
 public class AccessControlConfiguration {
-	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.acl";
 
 	@Bean
 	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
@@ -44,5 +44,7 @@ public class AccessControlConfiguration {
 	public IPAccessProperties ipAccessProperties() {
 		return new IPAccessProperties();
 	}
+
+	final static String IP_ACCESS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".acl";
 
 }

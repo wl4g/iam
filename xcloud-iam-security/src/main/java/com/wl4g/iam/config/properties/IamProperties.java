@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.config.properties;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.components.common.web.WebUtils2.cleanURI;
 import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
@@ -39,7 +40,7 @@ import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
  * @date 2019年1月4日
  * @since
  */
-@ConfigurationProperties(prefix = "spring.cloud.devops.iam")
+@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX)
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
 
 	private static final long serialVersionUID = -5858422822181237865L;

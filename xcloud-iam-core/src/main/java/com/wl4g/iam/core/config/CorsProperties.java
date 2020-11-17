@@ -40,6 +40,8 @@ import static com.wl4g.components.common.serialize.JacksonUtils.*;
 import static com.wl4g.components.common.web.WebUtils2.isSameWildcardOrigin;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.*;
 import static com.wl4g.iam.core.config.CorsProperties.IamCorsValidator.*;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
+
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -540,7 +542,7 @@ public class CorsProperties implements InitializingBean, Serializable {
 	/**
 	 * Cors key properties.
 	 */
-	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
+	final public static String KEY_CORS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".cors";
 
 	/**
 	 * Default requires allowes headers.
