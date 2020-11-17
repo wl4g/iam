@@ -16,7 +16,7 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<jedis.version>2.9.0</jedis.version>
 		<antlr.version>3.0.1</antlr.version>
-		<shiro-spring.version>1.5.3</shiro-spring.version>
+		<shiro-spring.version>1.7.0</shiro-spring.version>
 	</properties>
 	<dependencies>
 		<dependency>
