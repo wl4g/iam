@@ -20,17 +20,24 @@ import com.wl4g.iam.data.AreaDao;
 import com.wl4g.iam.service.AreaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
+ * {@link AreaServiceImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-05-25 18:06:00
+ * @date 2020-05-25
+ * @sine v1.0
+ * @see
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "areaService")
+@RestController
 public class AreaServiceImpl implements AreaService {
 
 	@Autowired

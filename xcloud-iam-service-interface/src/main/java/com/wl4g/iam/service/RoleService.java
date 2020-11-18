@@ -20,20 +20,34 @@ import com.wl4g.iam.common.bean.Role;
 
 import java.util.List;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 /**
+ * {@link RoleService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-10-29 16:01:00
+ * @date 2019-10-29
+ * @sine v1.0
+ * @see
  */
+@FeignClient("roleService")
 public interface RoleService {
 
-	List<Role> getRolesByUserGroups();
+	@GetMapping("/getLoginRoles")
+	List<Role> getLoginRoles();
 
+	@GetMapping("/list")
 	PageModel<Role> list(PageModel<Role> pm, String organizationId, String name, String displayName);
 
-	void save(Role group);
+	@GetMapping("/save")
+	void save(Role role);
 
+	@GetMapping("/del")
 	void del(Long id);
 
+	@GetMapping("/detail")
 	Role detail(Long id);
 
 }

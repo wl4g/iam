@@ -45,7 +45,7 @@ public class OrganizationController {
 	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
-		List<Organization> groupsTree = groupService.getGroupsTree();
+		List<Organization> groupsTree = groupService.getLoginOrganizationTree();
 		resp.forMap().put("data", groupsTree);
 		return resp;
 	}

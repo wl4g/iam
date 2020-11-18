@@ -18,6 +18,9 @@ package com.wl4g.iam.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.wl4g.iam.common.bean.ClusterConfig;
 
 /**
@@ -29,12 +32,16 @@ import com.wl4g.iam.common.bean.ClusterConfig;
  * @sine v1.0.0
  * @see
  */
+@FeignClient("clusterConfigService")
 public interface ClusterConfigService {
 
+	@GetMapping("/loadInit")
 	Map<String, Object> loadInit();
 
+	@GetMapping("/getClusterConfig")
 	ClusterConfig getClusterConfig(Long clusterConfigId);
 
+	@GetMapping("/findOfIamServers")
 	List<ClusterConfig> findOfIamServers();
 
 }

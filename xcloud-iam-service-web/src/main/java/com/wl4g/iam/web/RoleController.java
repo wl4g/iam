@@ -43,7 +43,7 @@ public class RoleController {
 	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
-		List<Role> roles = roleService.getRolesByUserGroups();
+		List<Role> roles = roleService.getLoginRoles();
 		resp.forMap().put("data", roles);
 		return resp;
 	}

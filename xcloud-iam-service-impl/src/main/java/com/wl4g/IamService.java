@@ -18,9 +18,6 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.google.common.annotations.Beta;
-import com.wl4g.components.common.annotation.Reserved;
-
 /**
  * {@link IamService}
  * 
@@ -30,8 +27,6 @@ import com.wl4g.components.common.annotation.Reserved;
  * @see
  */
 @SpringBootApplication
-@Reserved
-@Beta
 public class IamService {
 
 	public static void main(String[] args) {

@@ -31,9 +31,9 @@ import com.wl4g.iam.service.ContactService;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
@@ -55,7 +55,9 @@ import javax.validation.constraints.NotBlank;
  * @sine v1.0
  * @see
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "contactService")
+@RestController
 public class ContactServiceImpl implements ContactService {
 
 	@Autowired
@@ -140,8 +142,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public void notificationWithTemplate(@NotBlank String templateKey, Map<String, Object> parameters,
-			List<Long> contactGroupIds) {
+	public void notification(@NotBlank String templateKey, Map<String, Object> parameters, List<Long> contactGroupIds) {
 		notNullOf(templateKey, "templateKey");
 		if (isNull(contactGroupIds)) {
 			return;

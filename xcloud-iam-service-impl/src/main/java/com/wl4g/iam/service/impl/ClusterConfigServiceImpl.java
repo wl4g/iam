@@ -21,8 +21,8 @@ import com.wl4g.iam.service.ClusterConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,9 @@ import java.util.Map;
  * @sine v1.0.0
  * @see
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "clusterConfigService")
+@RestController
 public class ClusterConfigServiceImpl implements ClusterConfigService {
 
 	@Value("${spring.profiles.active}")

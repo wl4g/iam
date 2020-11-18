@@ -38,9 +38,9 @@ import com.wl4g.iam.service.UserService;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +59,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @author vjay
  * @date 2019-10-28 16:38:00
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "userService")
+@RestController
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -175,12 +177,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserById(Long id) {
+	public User findSimpleUser(Long id) {
 		return userDao.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public Set<Menu> getMenusByUserId(Long userId) {
+	public Set<Menu> getMenusByUser(Long userId) {
 		List<Menu> menus = menuDao.selectByUserId(userId);
 		Set<Menu> set = new HashSet<>(menus);
 		for (Menu menu : menus) {

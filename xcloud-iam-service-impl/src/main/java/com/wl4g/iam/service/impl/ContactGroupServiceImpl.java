@@ -22,8 +22,8 @@ import com.wl4g.iam.data.ContactGroupDao;
 import com.wl4g.iam.service.ContactGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.components.core.bean.BaseBean.ENABLED;
@@ -31,10 +31,17 @@ import static com.wl4g.components.core.bean.BaseBean.ENABLED;
 import java.util.List;
 
 /**
+ * {@link ContactGroupServiceImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-05 18:16:00
+ * @date 2019-08-05
+ * @sine v1.0
+ * @see
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "contactGroupService")
+@RestController
 public class ContactGroupServiceImpl implements ContactGroupService {
 
 	@Autowired
@@ -64,7 +71,7 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 	}
 
 	@Override
-	public List<ContactGroup> contactGroups(String name) {
+	public List<ContactGroup> findContactGroups(String name) {
 		return contactGroupDao.list(name);
 	}
 

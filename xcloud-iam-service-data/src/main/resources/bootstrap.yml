@@ -15,3 +15,12 @@ spring:
   profiles:
     include: common,util
     active: dao-dev
+
+dubbo:
+  application:
+    #name: ${spring.application.name}
+    name: iam-data
+  scan:
+    basePackages: com.wl4g.iam.dao
+  registry:
+    address: eureka://127.0.0.1:8761

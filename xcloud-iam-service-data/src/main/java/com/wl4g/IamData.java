@@ -19,9 +19,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.google.common.annotations.Beta;
-import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.components.data.annotation.EnableComponentsData;
 
 /**
  * {@link IamData}
@@ -32,10 +30,8 @@ import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
  * @see
  */
 @MapperScan("com.wl4g.iam.data")
-@AutoConfigureComponentsDataSource
+@EnableComponentsData
 @SpringBootApplication
-@Reserved
-@Beta
 public class IamData {
 
 	public static void main(String[] args) {

@@ -19,12 +19,12 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.components.data.annotation.EnableComponentsData;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 @EnableIamServer
 @MapperScan("com.wl4g.iam.data")
-@AutoConfigureComponentsDataSource
+@EnableComponentsData
 @SpringBootApplication
 public class IamServer {
 

@@ -21,22 +21,37 @@ import com.wl4g.iam.common.bean.User;
 
 import java.util.Set;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 /**
+ * {@link UserService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-10-28 16:38:00
+ * @date 2019-10-28
+ * @sine v1.0
+ * @see
  */
+@FeignClient("userService")
 public interface UserService {
 
-	User getUserById(Long id);
+	@GetMapping("/findSimpleUser")
+	User findSimpleUser(Long id);
 
-	Set<Menu> getMenusByUserId(Long userId);
+	@GetMapping("/getMenusByUser")
+	Set<Menu> getMenusByUser(Long userId);
 
+	@GetMapping("/list")
 	PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId);
 
+	@GetMapping("/save")
 	void save(User user);
 
+	@GetMapping("/del")
 	void del(Long userId);
 
+	@GetMapping("/detail")
 	User detail(Long userId);
 
 }

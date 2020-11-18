@@ -20,18 +20,31 @@ import com.wl4g.iam.common.bean.ContactGroup;
 
 import java.util.List;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 /**
+ * {@link ContactGroupService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-05 16:01:00
+ * @date 2019-08-05
+ * @sine v1.0
+ * @see
  */
+@FeignClient("contactGroupService")
 public interface ContactGroupService {
 
+	@GetMapping("/save")
 	void save(ContactGroup contactGroup);
 
+	@GetMapping("/del")
 	void del(Long id);
 
-	List<ContactGroup> contactGroups(String name);
+	@GetMapping("/findContactGroups")
+	List<ContactGroup> findContactGroups(String name);
 
+	@GetMapping("/list")
 	PageModel<ContactGroup> list(PageModel<ContactGroup> pm, String name);
 
 }

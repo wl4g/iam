@@ -30,8 +30,8 @@ import com.wl4g.iam.data.RoleMenuDao;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -50,7 +50,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年11月6日
  * @since
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "roleService")
+@RestController
 public class RoleServiceImpl implements RoleService {
 
 	@Autowired
@@ -69,7 +71,7 @@ public class RoleServiceImpl implements RoleService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Role> getRolesByUserGroups() {
+	public List<Role> getLoginRoles() {
 		IamPrincipal info = getPrincipalInfo();
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			return roleDao.selectWithRoot(null, null, null);
@@ -86,7 +88,7 @@ public class RoleServiceImpl implements RoleService {
 		if (isNotBlank(organizationId)) {
 			Set<Long> set = new HashSet<>();
 			set.add(Long.valueOf(organizationId));
-			organizationService.getChildrensIds(Long.valueOf(organizationId), set);
+			organizationService.fillChildrenIds(Long.valueOf(organizationId), set);
 			groupIds = new ArrayList<>(set);
 		}
 		List<Role> roles = null;

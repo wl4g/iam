@@ -20,6 +20,9 @@ import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Contact;
@@ -33,24 +36,30 @@ import com.wl4g.iam.common.bean.Contact;
  * @sine v1.0
  * @see
  */
+@FeignClient("contactService")
 public interface ContactService {
 
+	@GetMapping("/save")
 	void save(Contact contact);
 
+	@GetMapping("/detail")
 	Contact detail(Long id);
 
+	@GetMapping("/del")
 	void del(Long id);
 
+	@GetMapping("/list")
 	PageModel<Contact> list(PageModel<Contact> pm, String name);
 
 	/**
-	 * Sending with template message notification.
+	 * Notification sending with template message .
 	 * 
-	 * @param singleToTarget
 	 * @param templateKey
+	 * @param parameters
 	 * @param contactGroupIds
 	 */
-	void notificationWithTemplate(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
+	@GetMapping("/notification")
+	void notification(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
 			@Nullable List<Long> contactGroupIds);
 
 }

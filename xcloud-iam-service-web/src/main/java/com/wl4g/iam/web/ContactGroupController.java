@@ -73,7 +73,7 @@ public class ContactGroupController extends BaseController {
 	@RequiresPermissions(value = { "iam:contact" })
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
-		List<ContactGroup> contactGroups = contactGroupService.contactGroups(null);
+		List<ContactGroup> contactGroups = contactGroupService.findContactGroups(null);
 		resp.setData(contactGroups);
 		return resp;
 	}

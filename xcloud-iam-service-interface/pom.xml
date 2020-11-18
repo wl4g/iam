@@ -32,6 +32,11 @@
 			<artifactId>xcloud-iam-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>cn.springcloud.dubbo</groupId>
+			<artifactId>spring-cloud-dubbo-starter</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

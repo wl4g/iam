@@ -23,27 +23,30 @@ import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 
 /**
- * Group service implements.
+ * Organization service implements.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @date 2019-10-29 16:19:00
  */
-@Service
+// @org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "organizationService")
+@RestController
 public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired
@@ -53,14 +56,82 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Organization> getGroupsTree() {
+	public List<Organization> getLoginOrganizationTree() {
 		IamPrincipal info = getPrincipalInfo();
-		Set<Organization> groupsSet = getGroupsSet(new User(info.getPrincipal()));
-		ArrayList<Organization> groups = new ArrayList<>(groupsSet);
-		return set2Tree(groups);
+		Set<Organization> orgs = getUserOrganizations(new User(info.getPrincipal()));
+		return transfromOrganTree(new ArrayList<>(orgs));
 	}
 
-	private List<Organization> set2Tree(List<Organization> groups) {
+	@Override
+	public Set<Organization> getUserOrganizations(User user) {
+		List<Organization> orgs = null;
+		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
+			orgs = organizationDao.selectByRoot();
+		} else {
+			orgs = organizationDao.selectByUserId(user.getId());
+		}
+
+		Set<Organization> orgSet = new HashSet<>(orgs);
+		for (Organization org : orgs) {
+			Set<Long> orgIds = new HashSet<>();
+			orgIds.add(org.getId());
+			fillChildrenIds(org.getId(), orgIds);
+
+			org.setRoleCount(organizationDao.countRoleByOrganizationId(orgIds));
+			getChildrensList(org.getId(), orgSet);
+		}
+		return orgSet;
+	}
+
+	@Override
+	public void fillChildrenIds(Long parentId, Set<Long> orgSet) {
+		List<Organization> childrens = organizationDao.selectByParentId(parentId);
+		for (Organization org : childrens) {
+			orgSet.add(org.getId());
+		}
+		for (Organization org : childrens) {
+			fillChildrenIds(org.getId(), orgSet);
+		}
+	}
+
+	@Override
+	public void save(Organization org) {
+		if (nonNull(org.getId())) {
+			org.preUpdate();
+			organizationDao.updateByPrimaryKeySelective(org);
+		} else {
+			org.preInsert();
+			organizationDao.insertSelective(org);
+		}
+	}
+
+	@Override
+	public void del(Long id) {
+		Assert.notNull(id, "id is null");
+		Organization group = new Organization();
+		group.setId(id);
+		group.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		organizationDao.updateByPrimaryKeySelective(group);
+	}
+
+	@Override
+	public Organization detail(Long id) {
+		notNullOf(id, "orgId");
+		Organization org = notNullOf(organizationDao.selectByPrimaryKey(id), "organization");
+		List<Long> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
+		org.setRoleIds(roleIds);
+		return org;
+	}
+
+	private void getChildrensList(Long parentId, Set<Organization> set) {
+		List<Organization> childrens = organizationDao.selectByParentId(parentId);
+		set.addAll(childrens);
+		for (Organization org : childrens) {
+			getChildrensList(org.getId(), set);
+		}
+	}
+
+	private List<Organization> transfromOrganTree(List<Organization> groups) {
 		List<Organization> top = new ArrayList<>();
 		for (Organization group : groups) {
 			Organization parent = getParent(groups, group.getParentId());
@@ -75,6 +146,15 @@ public class OrganizationServiceImpl implements OrganizationService {
 			}
 		}
 		return top;
+	}
+
+	private Organization getParent(List<Organization> orgs, Long parentId) {
+		for (Organization group : orgs) {
+			if (parentId != null && group.getId() != null && group.getId().longValue() == parentId.longValue()) {
+				return group;
+			}
+		}
+		return null;
 	}
 
 	private List<Organization> getChildren(List<Organization> groups, List<Organization> children, Long parentId) {
@@ -93,94 +173,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 			}
 		}
 		return children;
-	}
-
-	public Organization getParent(List<Organization> groups, Long parentId) {
-		for (Organization group : groups) {
-			if (parentId != null && group.getId() != null && group.getId().longValue() == parentId.longValue()) {
-				return group;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public Set<Organization> getGroupsSet(User user) {
-		List<Organization> groups = null;
-		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
-			groups = organizationDao.selectByRoot();
-		} else {
-			groups = organizationDao.selectByUserId(user.getId());
-		}
-
-		Set<Organization> set = new HashSet<>();
-		set.addAll(groups);
-		for (Organization group : groups) {
-			Set<Long> s = new HashSet<>();
-			s.add(group.getId());
-			getChildrensIds(group.getId(), s);
-			group.setRoleCount(organizationDao.countRoleByOrganizationId(s));
-			getChildrensList(group.getId(), set);
-		}
-		return set;
-	}
-
-	private void getChildrensList(Long parentId, Set<Organization> set) {
-		List<Organization> childrens = organizationDao.selectByParentId(parentId);
-		set.addAll(childrens);
-		for (Organization group : childrens) {
-			getChildrensList(group.getId(), set);
-		}
-	}
-
-	public void getChildrensIds(Long parentId, Set<Long> set) {
-		List<Organization> childrens = organizationDao.selectByParentId(parentId);
-		for (Organization organization : childrens) {
-			set.add(organization.getId());
-		}
-		for (Organization group : childrens) {
-			getChildrensIds(group.getId(), set);
-		}
-	}
-
-	@Override
-	public void save(Organization group) {
-		if (nonNull(group.getId())) {
-			update(group);
-		} else {
-			insert(group);
-		}
-	}
-
-	private void insert(Organization group) {
-		group.preInsert();
-		organizationDao.insertSelective(group);
-	}
-
-	private void update(Organization group) {
-		group.preUpdate();
-		organizationDao.updateByPrimaryKeySelective(group);
-	}
-
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id is null");
-		Organization group = new Organization();
-		group.setId(id);
-		group.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		organizationDao.updateByPrimaryKeySelective(group);
-	}
-
-	@Override
-	public Organization detail(Long id) {
-		Assert.notNull(id, "id is null");
-		Organization group = organizationDao.selectByPrimaryKey(id);
-		Assert.notNull(group, "group is null");
-		// List<Long> menuIds = groupMenuDao.selectMenuIdsByGroupId(id);
-		List<Long> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
-		// group.setMenuIds(menuIds);
-		group.setRoleIds(roleIds);
-		return group;
 	}
 
 }

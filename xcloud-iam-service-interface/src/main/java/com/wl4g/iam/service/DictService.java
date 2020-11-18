@@ -18,6 +18,9 @@ package com.wl4g.iam.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Dict;
 
@@ -30,22 +33,31 @@ import com.wl4g.iam.common.bean.Dict;
  * @sine v1.0
  * @see
  */
+@FeignClient("dictService")
 public interface DictService {
 
+	@GetMapping("/list")
 	PageModel<Dict> list(PageModel<Dict> pm, String key, String label, String type, String description);
 
+	@GetMapping("/save")
 	void save(Dict dict, Boolean isEdit);
 
+	@GetMapping("/detail")
 	Dict detail(String key);
 
+	@GetMapping("/del")
 	void del(String key);
 
+	@GetMapping("/getByType")
 	List<Dict> getByType(String type);
 
+	@GetMapping("/getByKey")
 	Dict getByKey(String key);
 
+	@GetMapping("/allType")
 	List<String> allType();
 
+	@GetMapping("/loadInit")
 	Map<String, Object> loadInit();
 
 }

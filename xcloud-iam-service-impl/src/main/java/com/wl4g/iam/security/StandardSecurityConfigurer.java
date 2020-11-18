@@ -192,7 +192,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			Set<Organization> organSet = organService.getGroupsSet(user);
+			Set<Organization> organSet = organService.getUserOrganizations(user);
 			// TODO nameZh?? nameEn??
 			List<OrganizationInfo> oInfo = organSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
