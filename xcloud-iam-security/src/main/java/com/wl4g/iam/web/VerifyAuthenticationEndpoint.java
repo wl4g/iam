@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
 import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.TEXT_SMS;

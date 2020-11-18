@@ -43,7 +43,7 @@ import java.util.List;
 
 import static com.wl4g.components.common.lang.DateUtils2.formatDate;
 import static com.wl4g.components.support.redis.jedis.ScanCursor.CursorWrapper.*;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 import static java.util.Objects.nonNull;

@@ -20,7 +20,7 @@ import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.VerifyAuthController;
 import com.wl4g.iam.web.VerifyAuthenticationEndpoint;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_VERIFY_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VERIFY_BASE;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;

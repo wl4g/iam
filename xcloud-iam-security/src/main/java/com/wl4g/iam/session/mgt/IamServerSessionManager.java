@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.session.mgt;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_TICKET_S;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_S;
 
 import java.io.Serializable;
 

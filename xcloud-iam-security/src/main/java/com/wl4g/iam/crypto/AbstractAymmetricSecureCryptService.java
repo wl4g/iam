@@ -19,7 +19,7 @@ import static com.wl4g.components.common.codec.CodecSource.*;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_CRYPTO;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_CRYPTO;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
 import static org.springframework.util.Assert.notNull;

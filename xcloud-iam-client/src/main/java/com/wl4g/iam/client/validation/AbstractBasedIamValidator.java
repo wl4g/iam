@@ -30,7 +30,7 @@ import java.util.Map;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import static java.lang.String.format;
 
 import com.wl4g.components.common.log.SmartLogger;

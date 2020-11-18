@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.OK;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SNS_CALLBACK;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_CALLBACK;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_CONNECT;
 
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.config.properties.IamProperties;

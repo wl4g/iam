@@ -38,8 +38,8 @@ import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.components.core.constants.ERMDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
-import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.CACHE_DICT_INIT_EXPIRE_SEC;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.CACHE_DICT_INIT_NAME;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -78,7 +78,7 @@ public class DictServiceImpl implements DictService {
 			dict.preInsert();
 			dictDao.insertSelective(dict);
 		}
-		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE); // Cleanup cache.
+		jedisService.del(CACHE_DICT_INIT_NAME); // Cleanup cache.
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class DictServiceImpl implements DictService {
 
 	@Override
 	public Map<String, Object> loadInit() {
-		String s = jedisService.get(KEY_CACHE_SYS_DICT_INIT_CACHE);
+		String s = jedisService.get(CACHE_DICT_INIT_NAME);
 		Map<String, Object> result;
 		if (!isBlank(s)) {
 			result = parseJSON(s, new TypeReference<Map<String, Object>>() {
@@ -143,7 +143,7 @@ public class DictServiceImpl implements DictService {
 
 			// Cache to redis
 			String s1 = toJSONString(result);
-			jedisService.set(KEY_CACHE_SYS_DICT_INIT_CACHE, s1, CONFIG_DICT_CACHE_TIME_SECOND);
+			jedisService.set(CACHE_DICT_INIT_NAME, s1, CACHE_DICT_INIT_EXPIRE_SEC);
 		}
 		return result;
 	}
@@ -158,4 +158,5 @@ public class DictServiceImpl implements DictService {
 		hasText(dict.getType(), "key is null");
 		hasText(dict.getLabel(), "key is null");
 	}
+
 }

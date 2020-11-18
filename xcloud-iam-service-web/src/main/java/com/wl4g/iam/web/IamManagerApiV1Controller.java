@@ -37,8 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_API_V2_BASE;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_API_V2_SESSION;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 

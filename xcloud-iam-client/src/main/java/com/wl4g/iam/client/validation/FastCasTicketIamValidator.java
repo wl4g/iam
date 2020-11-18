@@ -28,7 +28,7 @@ import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.TicketValidateException;
 import com.wl4g.iam.core.subject.SimpleIamPrincipal;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
 import static java.util.Objects.nonNull;
 
 import java.util.Map;

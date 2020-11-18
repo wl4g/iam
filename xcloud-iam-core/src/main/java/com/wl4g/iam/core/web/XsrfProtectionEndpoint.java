@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static java.lang.String.format;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;

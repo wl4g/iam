@@ -21,7 +21,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;

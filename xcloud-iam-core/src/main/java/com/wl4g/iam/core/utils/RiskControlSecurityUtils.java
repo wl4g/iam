@@ -16,8 +16,8 @@
 package com.wl4g.iam.core.utils;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_FAIL_LIMIT_RIP_PREFIX;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_FAIL_LIMIT_UID_PREFIX;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_FAIL_LIMIT_RIP_PREFIX;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_FAIL_LIMIT_UID_PREFIX;
 import static org.apache.commons.codec.binary.Hex.encodeHexString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

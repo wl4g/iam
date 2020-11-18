@@ -16,15 +16,25 @@
 package com.wl4g.iam.common.constant;
 
 /**
- * {@link ConfigIAMConstants}
+ * Configuration IAM constnats.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-17
  * @sine v1.0
  * @see
  */
-public abstract class ConfigIAMConstants extends GenericIAMConstants {
+public abstract class ConfigIAMConstants {
 
 	public static final String KEY_IAM_CONFIG_PREFIX = "spring.cloud.xcloud.iam";
+
+	/**
+	 * System dictionaries cache key.
+	 */
+	public static final String CACHE_DICT_INIT_NAME = "dict_init_cache";
+
+	/**
+	 * System dictionaries cache time(sec)
+	 */
+	public static final int CACHE_DICT_INIT_EXPIRE_SEC = 60;
 
 }

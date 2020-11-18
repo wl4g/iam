@@ -16,7 +16,7 @@
 package com.wl4g.iam.session;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 
 import java.io.IOException;
 

@@ -42,7 +42,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.BIND;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_FAILFAST_SMS_COUNTER;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;

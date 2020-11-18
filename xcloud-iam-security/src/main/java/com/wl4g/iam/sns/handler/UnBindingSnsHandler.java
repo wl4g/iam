@@ -16,7 +16,7 @@
 package com.wl4g.iam.sns.handler;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCauses;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 
 import com.wl4g.iam.common.bean.SocialConnectInfo;

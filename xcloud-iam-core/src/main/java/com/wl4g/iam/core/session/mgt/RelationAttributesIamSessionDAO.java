@@ -26,7 +26,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.lang.TypeConverts.safeLongToInt;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.core.cache.IamCache;

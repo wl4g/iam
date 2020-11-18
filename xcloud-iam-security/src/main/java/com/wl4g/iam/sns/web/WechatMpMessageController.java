@@ -29,7 +29,7 @@ import com.wl4g.iam.core.exception.IllegalRequestException;
 import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURI;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_WECHAT_MP_RECEIVE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_WECHAT_MP_RECEIVE;
 import static java.lang.String.format;
 
 import java.io.IOException;

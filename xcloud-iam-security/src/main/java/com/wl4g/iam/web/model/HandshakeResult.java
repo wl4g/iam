@@ -16,7 +16,7 @@
 package com.wl4g.iam.web.model;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;

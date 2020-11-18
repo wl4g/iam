@@ -53,7 +53,7 @@ import static org.apache.commons.codec.binary.Hex.*;
 import static com.wl4g.components.common.codec.CheckSums.crc16String;
 import static com.wl4g.components.common.crypto.digest.DigestUtils2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_REPLAY_SIGN;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_REPLAY_SIGN;
 
 /**
  * Replay attacks request protection security filter.

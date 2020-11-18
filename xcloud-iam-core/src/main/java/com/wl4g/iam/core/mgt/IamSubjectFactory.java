@@ -47,7 +47,7 @@ import com.wl4g.iam.core.exception.InvalidAccessTokenAuthenticationException;
 import com.wl4g.iam.core.exception.UnauthenticatedException;
 import com.wl4g.iam.core.filter.chain.IamShiroFilterFactoryBean;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.core.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.iam.core.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;

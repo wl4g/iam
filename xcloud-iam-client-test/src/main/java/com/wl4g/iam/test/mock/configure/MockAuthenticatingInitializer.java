@@ -16,7 +16,7 @@
 package com.wl4g.iam.test.mock.configure;
 
 import static com.wl4g.components.common.lang.Assert2.isInstanceOf;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_SESSIONINFO_NAME;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SESSIONINFO_NAME;
 import static java.lang.String.valueOf;
 
 import java.net.URI;

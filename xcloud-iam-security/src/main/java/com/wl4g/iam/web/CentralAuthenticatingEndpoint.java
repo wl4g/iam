@@ -37,10 +37,10 @@ import com.wl4g.iam.core.web.AuthenticatingEndpoint;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.components.common.web.WebUtils2.isTrue;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_LOGOUT;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SECOND_VALIDATE;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SESSION_VALIDATE;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGOUT;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 

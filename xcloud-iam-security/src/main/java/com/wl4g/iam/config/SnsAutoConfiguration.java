@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SNS_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
 
 import java.util.List;
 

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.CACHE_DICT_INIT_NAME;
 
 import java.util.List;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class DictController extends BaseController {
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
-		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);
+		jedisService.del(CACHE_DICT_INIT_NAME);
 		return resp;
 	}
 

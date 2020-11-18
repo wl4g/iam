@@ -49,7 +49,7 @@ import static com.wl4g.components.common.lang.TypeConverts.*;
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.components.common.web.WebUtils2.getRequestParam;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.*;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.checkSession;

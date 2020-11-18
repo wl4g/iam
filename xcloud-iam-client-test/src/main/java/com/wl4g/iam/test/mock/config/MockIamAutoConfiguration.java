@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.test.mock.config;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 
 import org.springframework.context.annotation.Bean;
 

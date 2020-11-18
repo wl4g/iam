@@ -15,17 +15,15 @@
  */
 package com.wl4g.iam.common.constant;
 
-import com.wl4g.components.core.constants.DevOpsConstants;
-
 /**
- * DevOps IAM Constants.
+ * Services api's IAM Constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月13日
  * @since
  */
-public abstract class GenericIAMConstants extends DevOpsConstants {
+public abstract class ServiceIAMConstants extends ConfigIAMConstants {
 
 	//
 	// Common and based.

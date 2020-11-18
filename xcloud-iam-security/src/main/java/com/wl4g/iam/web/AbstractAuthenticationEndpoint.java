@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import javax.annotation.Resource;
 

@@ -40,7 +40,7 @@ import static com.wl4g.components.common.codec.Encodes.toBytes;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.Assert2.state;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_VERIFY_JIGSAW_IMG;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_VERIFY_JIGSAW_IMG;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;

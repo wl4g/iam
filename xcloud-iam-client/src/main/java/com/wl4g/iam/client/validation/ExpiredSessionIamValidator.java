@@ -25,7 +25,7 @@ import com.wl4g.iam.core.authc.model.SessionValidateResult;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.SessionValidateException;
 
-import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
 import static java.lang.String.format;
 
 /**
