@@ -15,9 +15,10 @@
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-service-data</module>
 		<module>xcloud-iam-service-interface</module>
-		<module>xcloud-iam-service-impl</module>
-		<module>xcloud-iam-service-web</module>
-		<module>xcloud-iam-service-all</module>
+		<module>xcloud-iam-service-starter-all</module>
+		<module>xcloud-iam-service-starter-data</module>
+		<module>xcloud-iam-service-starter-biz</module>
+		<module>xcloud-iam-service-starter-web</module>
 		<module>xcloud-iam-client</module>
 		<module>xcloud-iam-client-example</module>
 		<module>xcloud-iam-client-test</module>

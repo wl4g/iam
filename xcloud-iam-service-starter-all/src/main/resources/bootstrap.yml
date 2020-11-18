@@ -1,0 +1,22 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# #### Spring cloud config server configuration. ####
+#
+spring:
+  application.name: iam-server
+  # Note: When the springboot version is different, here bootstrap.yml Execute parsing
+  # in '${spring.profiles.active}' The mechanism result of expression is different ???
+  # for example: 'dao-${spring.profiles.active}' => 'dao-dev,dao-${spring.profiles.active}' ???
+  profiles:
+    #include: common,util
+    #active: dev,web-base,web-dev,service-dev,dao-dev
+    include: common,util,web-base,web-${spring.profiles.active},service-${spring.profiles.active},dao-${spring.profiles.active}
+    active: dev
