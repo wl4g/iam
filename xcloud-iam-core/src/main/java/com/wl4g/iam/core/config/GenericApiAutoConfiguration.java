@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_API_V2_BASE;
 
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
-import com.wl4g.iam.core.annotation.IamApiV1Controller;
+import com.wl4g.iam.core.annotation.IamApiV2Controller;
 
 /**
  * Generic API auto configuration.
@@ -34,7 +34,7 @@ public abstract class GenericApiAutoConfiguration extends AbstractHandlerMapping
 
 	@Bean
 	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_API_V1_BASE, IamApiV1Controller.class);
+		return super.newPrefixHandlerMapping(URI_S_API_V2_BASE, IamApiV2Controller.class);
 	}
 
 }

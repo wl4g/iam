@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static com.wl4g.components.common.codec.CheckSums.*;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static java.util.concurrent.ThreadLocalRandom.current;
 

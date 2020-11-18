@@ -20,10 +20,10 @@ import static com.wl4g.iam.config.properties.IamProperties.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
+import com.wl4g.components.core.config.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
 import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
-import com.wl4g.iam.web.JssdkWebappsEndpoint;
+import com.wl4g.iam.web.JssdkWebappEndpoint;
 
 /**
  * Iam web jssdk auto configuration.
@@ -32,17 +32,17 @@ import com.wl4g.iam.web.JssdkWebappsEndpoint;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public class JssdkWebappsAutoConfiguration extends AbstractHandlerMappingSupport {
+public class JssdkWebappAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
-	public JssdkWebappsEndpoint jssdkWebappsEndpoint() {
-		return new JssdkWebappsEndpoint(new GenericEmbeddedWebappsProperties(DEFAULT_JSSDK_BASE_URI, DEFAULT_JSSDK_LOCATION) {
+	public JssdkWebappEndpoint jssdkWebappsEndpoint() {
+		return new JssdkWebappEndpoint(new GenericEmbeddedWebappProperties(DEFAULT_JSSDK_BASE_URI, DEFAULT_JSSDK_LOCATION) {
 		});
 	}
 
 	@Bean
-	@ConditionalOnBean(JssdkWebappsEndpoint.class)
-	public PrefixHandlerMapping jssdkWebappsEndpointPrefixHandlerMapping(JssdkWebappsEndpoint jssdk) {
+	@ConditionalOnBean(JssdkWebappEndpoint.class)
+	public PrefixHandlerMapping jssdkWebappsEndpointPrefixHandlerMapping(JssdkWebappEndpoint jssdk) {
 		return super.newPrefixHandlerMapping(DEFAULT_JSSDK_BASE_URI, jssdk);
 	}
 

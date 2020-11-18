@@ -32,9 +32,9 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_C_BASE;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_BASE;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_BASE;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static java.util.Collections.singletonList;

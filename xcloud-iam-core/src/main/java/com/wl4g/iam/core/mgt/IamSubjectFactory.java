@@ -20,7 +20,6 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.web.CookieUtils.getCookie;
 import static com.wl4g.components.common.web.WebUtils2.isMediaRequest;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -48,6 +47,7 @@ import com.wl4g.iam.core.exception.InvalidAccessTokenAuthenticationException;
 import com.wl4g.iam.core.exception.UnauthenticatedException;
 import com.wl4g.iam.core.filter.chain.IamShiroFilterFactoryBean;
 
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.core.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.iam.core.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;

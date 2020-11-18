@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.i18n;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_LANG_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_LANG_NAME;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 import java.util.Locale;

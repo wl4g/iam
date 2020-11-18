@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.utils;
 
 import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.iam.core.session.NoOpSession.*;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;

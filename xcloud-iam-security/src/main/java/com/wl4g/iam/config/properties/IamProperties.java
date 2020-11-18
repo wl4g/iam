@@ -16,8 +16,8 @@
 package com.wl4g.iam.config.properties;
 
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.components.common.web.WebUtils2.cleanURI;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -206,7 +206,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		// RCM(Simple risk control) controller rules.
 		chains.put(URI_S_RCM_BASE + "/**", "anon");
 		// API(v1) controller rules.
-		chains.put(URI_S_API_V1_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
+		chains.put(URI_S_API_V2_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
 	}
 
 	/**

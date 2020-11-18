@@ -17,7 +17,7 @@ package com.wl4g.iam.core.security.mitm;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 import javax.servlet.http.HttpServletRequest;

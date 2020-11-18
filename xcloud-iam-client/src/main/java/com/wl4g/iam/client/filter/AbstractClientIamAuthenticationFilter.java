@@ -20,6 +20,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
 
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
@@ -38,7 +39,6 @@ import static com.wl4g.components.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.components.common.web.WebUtils2.writeJson;
 import static com.wl4g.components.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;

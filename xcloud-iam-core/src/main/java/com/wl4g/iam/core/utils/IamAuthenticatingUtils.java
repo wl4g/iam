@@ -33,7 +33,7 @@ import static com.wl4g.components.common.codec.Base58.encodeBase58;
 import static com.wl4g.components.common.codec.Encodes.toBytes;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static java.lang.String.valueOf;
 
 /**

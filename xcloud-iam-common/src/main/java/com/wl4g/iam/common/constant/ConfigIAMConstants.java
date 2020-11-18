@@ -23,7 +23,7 @@ package com.wl4g.iam.common.constant;
  * @sine v1.0
  * @see
  */
-public abstract class ConfigIAMConstants {
+public abstract class ConfigIAMConstants extends GenericIAMConstants {
 
 	public static final String KEY_IAM_CONFIG_PREFIX = "spring.cloud.xcloud.iam";
 

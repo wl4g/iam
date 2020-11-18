@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.web;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_C_LOGOUT;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;

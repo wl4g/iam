@@ -29,6 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Documented
-public @interface IamApiV1Controller {
+public @interface IamApiV2Controller {
 
 }

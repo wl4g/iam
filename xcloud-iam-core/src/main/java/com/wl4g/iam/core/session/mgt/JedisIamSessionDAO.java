@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 

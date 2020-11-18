@@ -37,8 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_API_V2_BASE;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_API_V2_SESSION;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
@@ -140,7 +140,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 */
 	private String getRemoteApiV1SessionUri(String remoteBaseUri) {
 		hasText(remoteBaseUri, "Iam mangement for to remoteApiBase URI must not be empty");
-		return remoteBaseUri + URI_S_API_V1_BASE + URI_S_API_V1_SESSION;
+		return remoteBaseUri + URI_S_API_V2_BASE + URI_S_API_V2_SESSION;
 	}
 
 }

@@ -32,7 +32,7 @@ import com.wl4g.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.state;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_SNSAUTH;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 
 /**

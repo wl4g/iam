@@ -18,7 +18,7 @@ package com.wl4g.iam.web;
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.WechatMpAuthenticationToken;
-import com.wl4g.iam.core.annotation.IamApiV1Controller;
+import com.wl4g.iam.core.annotation.IamApiV2Controller;
 import com.wl4g.iam.core.authc.ClientRef;
 import com.wl4g.iam.core.session.GrantCredentialsInfo;
 import com.wl4g.iam.core.session.IamSession;
@@ -29,7 +29,7 @@ import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.iam.handler.CentralAuthenticatingHandler.*;
 import static java.util.Objects.nonNull;
 
@@ -40,9 +40,9 @@ import static java.util.Objects.nonNull;
  * @version v1.0 2019年10月31日
  * @since
  */
-@IamApiV1Controller
+@IamApiV2Controller
 @ResponseBody
-public class IamServerApiV1Endpoint extends GenericApiEndpoint {
+public class IamServerApiV2Endpoint extends GenericApiEndpoint {
 
 	/**
 	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>

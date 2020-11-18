@@ -29,7 +29,7 @@ import com.wl4g.iam.core.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.core.subject.IamPrincipalWrapper;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 

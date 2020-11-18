@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.web.WebUtils2.getRequestParam;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.unbind;

@@ -42,8 +42,8 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.DateUtils2.formatDate;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 import static com.wl4g.components.support.redis.jedis.ScanCursor.CursorWrapper.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 import static java.util.Objects.nonNull;
@@ -151,7 +151,7 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 	 *  }
 	 * </pre>
 	 */
-	@GetMapping(path = URI_S_API_V1_SESSION)
+	@GetMapping(path = URI_S_API_V2_SESSION)
 	public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		log.info("Get sessions by <= {}", query);
@@ -181,7 +181,7 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 	 * @return
 	 * @throws Exception
 	 */
-	@PostMapping(path = URI_S_API_V1_SESSION)
+	@PostMapping(path = URI_S_API_V2_SESSION)
 	public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy) throws Exception {
 		RespBase<String> resp = RespBase.create();
 		log.info("Destroy sessions by <= {}", destroy);

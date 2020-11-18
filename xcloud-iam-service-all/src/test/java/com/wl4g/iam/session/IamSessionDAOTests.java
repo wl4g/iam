@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.google.common.base.Charsets.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_SESSION;
 
 import com.wl4g.IamServer;
 import com.wl4g.components.support.redis.jedis.JedisService;

@@ -29,9 +29,9 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.LOCK_SESSION_VALIDATING;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.CACHE_TICKET_C;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.LOCK_SESSION_VALIDATING;
 
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.ScanCursor;

@@ -20,7 +20,7 @@ import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.web.LoginAuthenticationEndpoint;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_LOGIN_BASE;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;

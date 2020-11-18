@@ -35,11 +35,11 @@ import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.core.subject.IamPrincipal.Attributes;
 
 import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_LANG_NAME;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_AUTHC_HOST_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_LANG_NAME;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.KEY_PARENT_SESSIONID_NAME;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSession;
 import static java.lang.String.format;

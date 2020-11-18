@@ -31,7 +31,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.*;
 import static java.lang.String.format;

@@ -17,7 +17,7 @@ package com.wl4g.iam.config;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.URI_S_BASE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;

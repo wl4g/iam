@@ -21,7 +21,7 @@ import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.components.common.web.WebUtils2.*;
 import static com.wl4g.components.common.web.WebUtils2.ResponseType.*;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bindKVParameters;

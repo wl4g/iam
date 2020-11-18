@@ -57,7 +57,7 @@ import java.util.Set;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.components.common.web.WebUtils2.isEqualWithDomain;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.ExpiredAuthorized;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;

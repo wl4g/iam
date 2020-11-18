@@ -22,6 +22,7 @@ import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.utils.cumulate.Cumulator;
 
+import static com.wl4g.iam.common.constant.GenericIAMConstants.*;
 import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static java.lang.String.format;
@@ -30,7 +31,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.core.constants.IAMDevOpsConstants.*;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
