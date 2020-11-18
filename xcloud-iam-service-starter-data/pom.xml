@@ -22,6 +22,10 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-data</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>cn.springcloud.dubbo</groupId>
 			<artifactId>spring-cloud-dubbo-starter</artifactId>
 			<version>1.0.0</version>
