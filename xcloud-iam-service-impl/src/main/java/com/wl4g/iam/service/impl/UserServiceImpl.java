@@ -29,11 +29,11 @@ import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.core.session.mgt.IamSessionDAO;
 import com.wl4g.iam.core.subject.IamPrincipal;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-import com.wl4g.iam.dao.MenuDao;
-import com.wl4g.iam.dao.OrganizationDao;
-import com.wl4g.iam.dao.RoleDao;
-import com.wl4g.iam.dao.RoleUserDao;
-import com.wl4g.iam.dao.UserDao;
+import com.wl4g.iam.data.MenuDao;
+import com.wl4g.iam.data.OrganizationDao;
+import com.wl4g.iam.data.RoleDao;
+import com.wl4g.iam.data.RoleUserDao;
+import com.wl4g.iam.data.UserDao;
 import com.wl4g.iam.service.UserService;
 
 import org.apache.commons.lang3.RandomUtils;

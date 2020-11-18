@@ -23,7 +23,7 @@ import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 @EnableIamServer
-@MapperScan("com.wl4g.iam.dao")
+@MapperScan("com.wl4g.iam.data")
 @AutoConfigureComponentsDataSource
 @SpringBootApplication
 public class IamServer {

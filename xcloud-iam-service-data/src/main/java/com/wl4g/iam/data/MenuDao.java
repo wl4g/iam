@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.wl4g.iam.common.bean.Menu;
 
 import java.util.List;
 
-import com.wl4g.iam.common.bean.ContactGroupRef;
-
-public interface ContactGroupRefDao {
+public interface MenuDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(ContactGroupRef record);
+	int insert(Menu record);
 
-	int insertSelective(ContactGroupRef record);
+	int insertSelective(Menu record);
 
-	ContactGroupRef selectByPrimaryKey(Long id);
+	Menu selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(ContactGroupRef record);
+	int updateByPrimaryKeySelective(Menu record);
 
-	int updateByPrimaryKey(ContactGroupRef record);
+	int updateByPrimaryKey(Menu record);
 
-	int deleteByContactId(Long id);
+	List<Menu> selectByParentId(Long parentId);
 
-	List<ContactGroupRef> selectByContactId(Long id);
+	List<Menu> selectByUserId(@Param("userId") Long userId);
+
+	List<Menu> selectByRoleId(Long ruleId);
+
+	List<Menu> selectWithRoot();
 
 }

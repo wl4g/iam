@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import java.util.List;
+import com.wl4g.iam.common.bean.ContactChannel;
 
-import com.wl4g.iam.common.bean.RoleUser;
-
-public interface RoleUserDao {
+public interface ContactChannelDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(RoleUser record);
+	int deleteByContactId(Long id);
 
-	int insertSelective(RoleUser record);
+	int insert(ContactChannel record);
 
-	RoleUser selectByPrimaryKey(Long id);
+	int insertSelective(ContactChannel record);
 
-	int updateByPrimaryKeySelective(RoleUser record);
+	ContactChannel selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKey(RoleUser record);
+	int updateByPrimaryKeySelective(ContactChannel record);
 
-	int deleteByUserId(Long userId);
+	int updateByPrimaryKey(ContactChannel record);
 
-	List<Long> selectRoleIdByUserId(Long userID);
 }

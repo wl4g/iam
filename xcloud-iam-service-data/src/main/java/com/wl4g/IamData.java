@@ -24,22 +24,22 @@ import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 
 /**
- * {@link IamDao}
+ * {@link IamData}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-14
  * @sine v1.0
  * @see
  */
-@MapperScan("com.wl4g.iam.dao")
+@MapperScan("com.wl4g.iam.data")
 @AutoConfigureComponentsDataSource
 @SpringBootApplication
 @Reserved
 @Beta
-public class IamDao {
+public class IamData {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamDao.class, args);
+		SpringApplication.run(IamData.class, args);
 	}
 
 }

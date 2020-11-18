@@ -13,34 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
+import com.wl4g.iam.common.bean.Park;
 
-import com.wl4g.iam.common.bean.OrganizationRole;
-
-import java.util.List;
-
-public interface OrganizationRoleDao {
+public interface ParkDao {
 	int deleteByPrimaryKey(Long id);
 
-	int deleteByRoleId(Long roleId);
+	int insert(Park record);
 
-	int deleteByGroupId(Long groupId);
+	int insertSelective(Park record);
 
-	int insert(OrganizationRole record);
+	Park selectByPrimaryKey(Long id);
 
-	int insertSelective(OrganizationRole record);
+	Park selectByGroupId(Long groupId);
 
-	int insertBatch(@Param("groupRoles") List<OrganizationRole> groupRoles);
+	int updateByPrimaryKeySelective(Park record);
 
-	OrganizationRole selectByPrimaryKey(Long id);
-
-	List<Long> selectGroupIdByRoleId(Long roleId);
-
-	List<Long> selectRoleIdsByGroupId(Long groupId);
-
-	int updateByPrimaryKeySelective(OrganizationRole record);
-
-	int updateByPrimaryKey(OrganizationRole record);
+	int updateByPrimaryKey(Park record);
 }

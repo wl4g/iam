@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.dao.MenuDao;
+import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
 import org.apache.commons.lang3.StringUtils;

@@ -13,23 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import com.wl4g.iam.common.bean.ContactChannel;
+import org.apache.ibatis.annotations.Param;
 
-public interface ContactChannelDao {
+import com.wl4g.iam.common.bean.Organization;
+
+import java.util.List;
+import java.util.Set;
+
+public interface OrganizationDao {
 	int deleteByPrimaryKey(Long id);
 
-	int deleteByContactId(Long id);
+	int insert(Organization record);
 
-	int insert(ContactChannel record);
+	int insertSelective(Organization record);
 
-	int insertSelective(ContactChannel record);
+	Organization selectByPrimaryKey(Long id);
 
-	ContactChannel selectByPrimaryKey(Long id);
+	int updateByPrimaryKeySelective(Organization record);
 
-	int updateByPrimaryKeySelective(ContactChannel record);
+	int updateByPrimaryKey(Organization record);
 
-	int updateByPrimaryKey(ContactChannel record);
+	List<Organization> selectByUserId(Long userId);
+
+	List<Organization> selectByRoot();
+
+	List<Organization> selectByRoleId(Long roleId);
+
+	List<Organization> selectByParentId(Long parentId);
+
+	int countRoleByOrganizationId(@Param("ids") Set<Long> ids);
 
 }

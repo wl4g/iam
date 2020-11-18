@@ -29,10 +29,10 @@ import com.wl4g.iam.core.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.core.subject.IamPrincipal.SimpleParameter;
 import com.wl4g.iam.core.subject.IamPrincipal.SnsParameter;
-import com.wl4g.iam.dao.ClusterConfigDao;
-import com.wl4g.iam.dao.MenuDao;
-import com.wl4g.iam.dao.RoleDao;
-import com.wl4g.iam.dao.UserDao;
+import com.wl4g.iam.data.ClusterConfigDao;
+import com.wl4g.iam.data.MenuDao;
+import com.wl4g.iam.data.RoleDao;
+import com.wl4g.iam.data.UserDao;
 import com.wl4g.iam.service.OrganizationService;
 
 import org.apache.shiro.authc.AuthenticationToken;

@@ -13,36 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
+import com.wl4g.iam.common.bean.Department;
 
-import com.wl4g.iam.common.bean.Organization;
-
-import java.util.List;
-import java.util.Set;
-
-public interface OrganizationDao {
+public interface DepartmentDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(Organization record);
+	int insert(Department record);
 
-	int insertSelective(Organization record);
+	int insertSelective(Department record);
 
-	Organization selectByPrimaryKey(Long id);
+	Department selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(Organization record);
+	Department selectByGroupId(Long groupId);
 
-	int updateByPrimaryKey(Organization record);
+	int updateByPrimaryKeySelective(Department record);
 
-	List<Organization> selectByUserId(Long userId);
-
-	List<Organization> selectByRoot();
-
-	List<Organization> selectByRoleId(Long roleId);
-
-	List<Organization> selectByParentId(Long parentId);
-
-	int countRoleByOrganizationId(@Param("ids") Set<Long> ids);
-
+	int updateByPrimaryKey(Department record);
 }

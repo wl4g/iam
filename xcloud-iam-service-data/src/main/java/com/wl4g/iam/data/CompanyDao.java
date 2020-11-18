@@ -13,32 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
+import com.wl4g.iam.common.bean.Company;
 
-import com.wl4g.iam.common.bean.ClusterConfig;
+public interface CompanyDao {
 
-import java.util.List;
-
-public interface ClusterConfigDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(ClusterConfig record);
+	int insert(Company record);
 
-	int insertSelective(ClusterConfig record);
+	int insertSelective(Company record);
 
-	ClusterConfig selectByPrimaryKey(Long id);
+	Company selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(ClusterConfig record);
+	Company selectByGroupId(Long groupId);
 
-	int updateByPrimaryKey(ClusterConfig record);
+	int updateByPrimaryKeySelective(Company record);
 
-	List<ClusterConfig> getByAppNames(@Param("appNames") String[] appNames, @Param("envType") String envType,
-			@Param("type") String type);
-
-	ClusterConfig getByAppName(@Param("appName") String appName, @Param("envType") String envType, @Param("type") String type);
-
-	List<ClusterConfig> getIamServer();
+	int updateByPrimaryKey(Company record);
 
 }

@@ -16,7 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.wl4g.iam.common.bean.Area;
-import com.wl4g.iam.dao.AreaDao;
+import com.wl4g.iam.data.AreaDao;
 import com.wl4g.iam.service.AreaService;
 
 import org.springframework.beans.factory.annotation.Autowired;

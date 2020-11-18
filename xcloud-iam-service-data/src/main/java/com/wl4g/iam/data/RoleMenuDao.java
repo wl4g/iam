@@ -13,22 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import com.wl4g.iam.common.bean.Department;
+import org.apache.ibatis.annotations.Param;
 
-public interface DepartmentDao {
+import com.wl4g.iam.common.bean.RoleMenu;
+
+import java.util.List;
+
+public interface RoleMenuDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(Department record);
+	int deleteByRoleId(Long roleId);
 
-	int insertSelective(Department record);
+	int insert(RoleMenu record);
 
-	Department selectByPrimaryKey(Long id);
+	int insertSelective(RoleMenu record);
 
-	Department selectByGroupId(Long groupId);
+	RoleMenu selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(Department record);
+	List<Long> selectMenuIdByRoleId(Long id);
 
-	int updateByPrimaryKey(Department record);
+	int updateByPrimaryKeySelective(RoleMenu record);
+
+	int updateByPrimaryKey(RoleMenu record);
+
+	int insertBatch(@Param("roleMenus") List<RoleMenu> roleMenus);
+
 }

@@ -24,9 +24,9 @@ import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.ContactChannel;
 import com.wl4g.iam.common.bean.ContactGroupRef;
-import com.wl4g.iam.dao.ContactChannelDao;
-import com.wl4g.iam.dao.ContactDao;
-import com.wl4g.iam.dao.ContactGroupRefDao;
+import com.wl4g.iam.data.ContactChannelDao;
+import com.wl4g.iam.data.ContactDao;
+import com.wl4g.iam.data.ContactGroupRefDao;
 import com.wl4g.iam.service.ContactService;
 
 import org.apache.commons.collections.CollectionUtils;

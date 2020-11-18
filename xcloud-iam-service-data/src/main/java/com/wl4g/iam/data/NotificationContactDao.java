@@ -13,29 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
-
-import org.apache.ibatis.annotations.Param;
-
-import com.wl4g.iam.common.bean.Contact;
+package com.wl4g.iam.data;
 
 import java.util.List;
 
-public interface ContactDao {
+import com.wl4g.iam.common.bean.NotificationContact;
+
+public interface NotificationContactDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(Contact record);
+	int insert(NotificationContact record);
 
-	int insertSelective(Contact record);
+	int insertSelective(NotificationContact record);
 
-	Contact selectByPrimaryKey(Long id);
+	NotificationContact selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(Contact record);
+	int updateByPrimaryKeySelective(NotificationContact record);
 
-	int updateByPrimaryKey(Contact record);
+	int updateByPrimaryKey(NotificationContact record);
 
-	List<Contact> list(@Param("name") String name);
-
-	List<Contact> getContactByGroupIds(@Param("groupIds") List<Long> groupIds);
+	List<NotificationContact> getByRecordId(Long id);
 
 }

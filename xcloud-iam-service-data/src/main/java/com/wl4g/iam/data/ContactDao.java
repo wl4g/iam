@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.wl4g.iam.common.bean.Dict;
+import com.wl4g.iam.common.bean.Contact;
 
 import java.util.List;
 
-public interface DictDao {
-	int deleteByPrimaryKey(String key);
+public interface ContactDao {
+	int deleteByPrimaryKey(Long id);
 
-	int insert(Dict record);
+	int insert(Contact record);
 
-	int insertSelective(Dict record);
+	int insertSelective(Contact record);
 
-	Dict selectByPrimaryKey(String key);
+	Contact selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(Dict record);
+	int updateByPrimaryKeySelective(Contact record);
 
-	int updateByPrimaryKey(Dict record);
+	int updateByPrimaryKey(Contact record);
 
-	List<Dict> selectByType(String type);
+	List<Contact> list(@Param("name") String name);
 
-	List<String> allType();
+	List<Contact> getContactByGroupIds(@Param("groupIds") List<Long> groupIds);
 
-	Dict getByKey(String key);
-
-	List<Dict> list(@Param("key") String key, @Param("label") String label, @Param("type") String type,
-			@Param("description") String description, @Param("orderBySort") String orderBySort);
 }

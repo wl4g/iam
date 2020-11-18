@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.ContactGroup;
-import com.wl4g.iam.dao.ContactGroupDao;
+import com.wl4g.iam.data.ContactGroupDao;
 import com.wl4g.iam.service.ContactGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;

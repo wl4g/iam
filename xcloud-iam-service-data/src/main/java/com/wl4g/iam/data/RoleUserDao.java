@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.dao;
+package com.wl4g.iam.data;
 
-import com.wl4g.iam.common.bean.Park;
+import java.util.List;
 
-public interface ParkDao {
+import com.wl4g.iam.common.bean.RoleUser;
+
+public interface RoleUserDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(Park record);
+	int insert(RoleUser record);
 
-	int insertSelective(Park record);
+	int insertSelective(RoleUser record);
 
-	Park selectByPrimaryKey(Long id);
+	RoleUser selectByPrimaryKey(Long id);
 
-	Park selectByGroupId(Long groupId);
+	int updateByPrimaryKeySelective(RoleUser record);
 
-	int updateByPrimaryKeySelective(Park record);
+	int updateByPrimaryKey(RoleUser record);
 
-	int updateByPrimaryKey(Park record);
+	int deleteByUserId(Long userId);
+
+	List<Long> selectRoleIdByUserId(Long userID);
 }
