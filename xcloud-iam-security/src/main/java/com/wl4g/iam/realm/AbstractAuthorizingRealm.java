@@ -28,7 +28,6 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
@@ -78,12 +77,6 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	 */
 	@Autowired
 	protected Validator validator;
-
-	/**
-	 * Rest template
-	 */
-	@Autowired
-	protected RestTemplate restTemplate;
 
 	/**
 	 * IAM server configuration properties

@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.common.log.SmartLogger;
@@ -42,6 +43,7 @@ import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
  * @date 2018年11月29日
  * @since
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractAuthenticatingHandler implements AuthenticatingHandler, InitializingBean {
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -70,12 +72,6 @@ public abstract class AbstractAuthenticatingHandler implements AuthenticatingHan
 	protected SessionIdGenerator idGenerator;
 
 	/**
-	 * Rest template
-	 */
-	@Autowired
-	protected RestTemplate restTemplate;
-
-	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
@@ -93,8 +89,20 @@ public abstract class AbstractAuthenticatingHandler implements AuthenticatingHan
 	@Autowired
 	protected IamCacheManager cacheManager;
 
+	/**
+	 * Rest template
+	 */
+	@Autowired
+	protected RestTemplate restTemplate;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setReadTimeout(10000);
+		factory.setConnectTimeout(6000);
+		factory.setMaxResponseSize(65535);
+		// factory.setSslContext(sslContext);
+		this.restTemplate = new RestTemplate(factory);
 	}
 
 }

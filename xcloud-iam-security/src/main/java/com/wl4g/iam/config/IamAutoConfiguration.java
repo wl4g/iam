@@ -533,12 +533,12 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticatingHandler centralAuthenticationHandler() {
+	public CentralAuthenticatingHandler centralAuthenticatingHandler() {
 		return new CentralAuthenticatingHandler();
 	}
 
 	@Bean
-	public SimpleRcmEvaluatorHandler simpleRiskRecognizerHandler() {
+	public SimpleRcmEvaluatorHandler simpleRcmEvaluatorHandler() {
 		return new SimpleRcmEvaluatorHandler();
 	}
 
