@@ -17,6 +17,6 @@ spring:
   # for example: 'dao-${spring.profiles.active}' => 'dao-dev,dao-${spring.profiles.active}' ???
   profiles:
     #include: common,util
-    #active: dev,dao-dev,service-dev,web-dev
-    include: common,util,dao-${spring.profiles.active},service-${spring.profiles.active},web-${spring.profiles.active}
+    #active: dev,web-base,web-dev,service-dev,dao-dev
+    include: common,util,web-base,web-${spring.profiles.active},service-${spring.profiles.active},dao-${spring.profiles.active}
     active: dev

@@ -19,7 +19,7 @@
 		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-service-dao</artifactId>
+			<artifactId>xcloud-iam-service-data</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

@@ -13,7 +13,7 @@
 		<module>xcloud-iam-core</module>
 		<module>xcloud-iam-captcha</module>
 		<module>xcloud-iam-security</module>
-		<module>xcloud-iam-service-dao</module>
+		<module>xcloud-iam-service-data</module>
 		<module>xcloud-iam-service-interface</module>
 		<module>xcloud-iam-service-impl</module>
 		<module>xcloud-iam-service-web</module>
