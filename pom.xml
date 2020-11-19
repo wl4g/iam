@@ -9,19 +9,19 @@
 	<url>https://iam.xcloud.wl4g.com</url>
 	<description>A based CAS/SSO unified authentication implementation, supporting wechat/qq/facebook/... and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 	<modules>
+		<module>xcloud-iam-client</module>
+		<module>xcloud-iam-client-example</module>
+		<module>xcloud-iam-client-test</module>
 		<module>xcloud-iam-common</module>
 		<module>xcloud-iam-core</module>
 		<module>xcloud-iam-captcha</module>
 		<module>xcloud-iam-security</module>
 		<module>xcloud-iam-service-data</module>
-		<module>xcloud-iam-service-interface</module>
+		<module>xcloud-iam-service-facade</module>
 		<module>xcloud-iam-service-starter-all</module>
 		<module>xcloud-iam-service-starter-data</module>
-		<module>xcloud-iam-service-starter-biz</module>
+		<module>xcloud-iam-service-starter-facade</module>
 		<module>xcloud-iam-service-starter-web</module>
-		<module>xcloud-iam-client</module>
-		<module>xcloud-iam-client-example</module>
-		<module>xcloud-iam-client-test</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
