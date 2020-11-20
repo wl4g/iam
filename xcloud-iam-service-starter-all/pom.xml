@@ -21,16 +21,46 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-data</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-web</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -26,9 +26,12 @@
 			<artifactId>xcloud-components-data</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>cn.springcloud.dubbo</groupId>
-			<artifactId>spring-cloud-dubbo-starter</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -32,6 +32,14 @@
 			<artifactId>xcloud-iam-security</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
