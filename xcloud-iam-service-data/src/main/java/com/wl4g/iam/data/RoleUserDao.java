@@ -17,9 +17,21 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.RoleUser;
 
+/**
+ * {@link RoleUserDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("roleUserDao")
 public interface RoleUserDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(RoleUser record);
@@ -35,4 +47,5 @@ public interface RoleUserDao {
 	int deleteByUserId(Long userId);
 
 	List<Long> selectRoleIdByUserId(Long userID);
+
 }

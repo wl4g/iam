@@ -15,8 +15,19 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.Company;
 
+/**
+ * {@link CompanyDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("companyDao")
 public interface CompanyDao {
 
 	int deleteByPrimaryKey(Long id);

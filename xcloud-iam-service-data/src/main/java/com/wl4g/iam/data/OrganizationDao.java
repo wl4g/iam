@@ -16,12 +16,22 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Organization;
 
 import java.util.List;
 import java.util.Set;
 
+/**
+ * {@link OrganizationDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("organizationDao")
 public interface OrganizationDao {
 	int deleteByPrimaryKey(Long id);
 

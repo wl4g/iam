@@ -17,9 +17,13 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.NotificationContact;
 
+@FeignClient("notificationContactDao")
 public interface NotificationContactDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(NotificationContact record);

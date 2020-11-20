@@ -16,11 +16,21 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.User;
 
 import java.util.List;
 
+/**
+ * {@link UserDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("userDao")
 public interface UserDao {
 	int deleteByPrimaryKey(Long id);
 

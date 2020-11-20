@@ -17,8 +17,19 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.Area;
 
+/**
+ * {@link AreaDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("areaDao")
 public interface AreaDao {
 
 	int deleteByPrimaryKey(Long id);
@@ -34,4 +45,5 @@ public interface AreaDao {
 	int updateByPrimaryKeySelective(Area record);
 
 	int updateByPrimaryKey(Area record);
+
 }

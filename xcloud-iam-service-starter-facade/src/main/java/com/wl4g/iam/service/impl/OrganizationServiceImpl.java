@@ -52,7 +52,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationDao organizationDao;
 
 	@Autowired
-	private OrganizationRoleDao groupRoleDao;
+	private OrganizationRoleDao organizationRoleDao;
 
 	@Override
 	public List<Organization> getLoginOrganizationTree() {
@@ -117,7 +117,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public Organization detail(Long id) {
 		notNullOf(id, "orgId");
 		Organization org = notNullOf(organizationDao.selectByPrimaryKey(id), "organization");
-		List<Long> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
+		List<Long> roleIds = organizationRoleDao.selectRoleIdsByGroupId(id);
 		org.setRoleIds(roleIds);
 		return org;
 	}

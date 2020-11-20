@@ -15,9 +15,21 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.Park;
 
+/**
+ * {@link ParkDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("parkDao")
 public interface ParkDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(Park record);
@@ -31,4 +43,5 @@ public interface ParkDao {
 	int updateByPrimaryKeySelective(Park record);
 
 	int updateByPrimaryKey(Park record);
+
 }

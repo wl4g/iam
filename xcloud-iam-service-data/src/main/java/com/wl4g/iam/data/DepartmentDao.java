@@ -15,9 +15,21 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import com.wl4g.iam.common.bean.Department;
 
+/**
+ * {@link DepartmentDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("departmentDao")
 public interface DepartmentDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(Department record);
@@ -31,4 +43,5 @@ public interface DepartmentDao {
 	int updateByPrimaryKeySelective(Department record);
 
 	int updateByPrimaryKey(Department record);
+
 }

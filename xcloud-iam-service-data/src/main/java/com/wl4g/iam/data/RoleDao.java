@@ -16,12 +16,23 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Role;
 
 import java.util.List;
 
+/**
+ * {@link RoleDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("roleDao")
 public interface RoleDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(Role record);
@@ -47,4 +58,5 @@ public interface RoleDao {
 	List<Role> list(@Param("groupIds") List<Long> groupIds, @Param("roleCode") String roleCode, @Param("nameZh") String nameZh);
 
 	int countRoleUsers(Long roleId);
+
 }

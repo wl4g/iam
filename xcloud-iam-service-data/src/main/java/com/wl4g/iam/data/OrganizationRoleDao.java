@@ -16,12 +16,23 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.OrganizationRole;
 
 import java.util.List;
 
+/**
+ * {@link OrganizationRoleDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("organizationRoleDao")
 public interface OrganizationRoleDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int deleteByRoleId(Long roleId);
@@ -43,4 +54,5 @@ public interface OrganizationRoleDao {
 	int updateByPrimaryKeySelective(OrganizationRole record);
 
 	int updateByPrimaryKey(OrganizationRole record);
+
 }

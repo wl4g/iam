@@ -16,12 +16,23 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.ContactGroup;
 
 import java.util.List;
 
+/**
+ * {@link ContactGroupDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("contactGroupDao")
 public interface ContactGroupDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(ContactGroup record);
@@ -35,4 +46,5 @@ public interface ContactGroupDao {
 	int updateByPrimaryKey(ContactGroup record);
 
 	List<ContactGroup> list(@Param("name") String name);
+
 }

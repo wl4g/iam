@@ -16,11 +16,21 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Dict;
 
 import java.util.List;
 
+/**
+ * {@link DictDao}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-0520
+ * @sine v1.0
+ * @see
+ */
+@FeignClient("dictDao")
 public interface DictDao {
 	int deleteByPrimaryKey(String key);
 
@@ -42,4 +52,5 @@ public interface DictDao {
 
 	List<Dict> list(@Param("key") String key, @Param("label") String label, @Param("type") String type,
 			@Param("description") String description, @Param("orderBySort") String orderBySort);
+
 }
