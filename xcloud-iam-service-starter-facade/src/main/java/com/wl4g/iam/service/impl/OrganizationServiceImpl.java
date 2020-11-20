@@ -25,7 +25,6 @@ import com.wl4g.iam.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,9 +43,9 @@ import static java.util.Objects.nonNull;
  * @author vjay
  * @date 2019-10-29 16:19:00
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "organizationService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class OrganizationServiceImpl implements OrganizationService {
 
 	@Autowired

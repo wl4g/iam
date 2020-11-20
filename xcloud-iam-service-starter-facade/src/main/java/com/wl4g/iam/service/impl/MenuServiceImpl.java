@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -43,9 +42,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @author vjay
  * @date 2019-10-30 15:48:00
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "menuService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class MenuServiceImpl implements MenuService {
 
 	@Autowired

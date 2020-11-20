@@ -40,7 +40,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
@@ -59,9 +58,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @author vjay
  * @date 2019-10-28 16:38:00
  */
-// @org.springframework.stereotype.Service
-// @com.alibaba.dubbo.config.annotation.Service(group = "userService")
-@RestController
+@org.springframework.stereotype.Service
+// @com.alibaba.dubbo.config.annotation.Service(group = "areaService")
+// @org.springframework.web.bind.annotation.RestController
 public class UserServiceImpl implements UserService {
 
 	@Autowired

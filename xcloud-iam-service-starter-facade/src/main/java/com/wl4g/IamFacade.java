@@ -18,6 +18,8 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.components.rpc.springcloud.feign.EnableFeignProxies;
+
 /**
  * {@link IamFacade}
  * 
@@ -26,6 +28,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @sine v1.0
  * @see
  */
+@EnableFeignProxies
 @SpringBootApplication
 public class IamFacade {
 

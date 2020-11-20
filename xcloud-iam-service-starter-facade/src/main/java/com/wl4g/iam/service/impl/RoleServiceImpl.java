@@ -31,7 +31,6 @@ import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -50,9 +49,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年11月6日
  * @since
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "roleService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class RoleServiceImpl implements RoleService {
 
 	@Autowired

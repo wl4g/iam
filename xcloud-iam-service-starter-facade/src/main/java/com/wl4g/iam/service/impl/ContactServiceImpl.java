@@ -33,7 +33,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
@@ -55,9 +54,9 @@ import javax.validation.constraints.NotBlank;
  * @sine v1.0
  * @see
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "contactService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class ContactServiceImpl implements ContactService {
 
 	@Autowired

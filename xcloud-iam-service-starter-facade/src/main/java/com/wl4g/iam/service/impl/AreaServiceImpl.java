@@ -20,7 +20,6 @@ import com.wl4g.iam.data.AreaDao;
 import com.wl4g.iam.service.AreaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,9 @@ import java.util.Objects;
  * @sine v1.0
  * @see
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "areaService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class AreaServiceImpl implements AreaService {
 
 	@Autowired

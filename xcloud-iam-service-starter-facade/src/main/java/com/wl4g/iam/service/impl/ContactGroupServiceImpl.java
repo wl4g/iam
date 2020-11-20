@@ -23,7 +23,6 @@ import com.wl4g.iam.service.ContactGroupService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.components.core.bean.BaseBean.ENABLED;
@@ -39,9 +38,9 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "contactGroupService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class ContactGroupServiceImpl implements ContactGroupService {
 
 	@Autowired

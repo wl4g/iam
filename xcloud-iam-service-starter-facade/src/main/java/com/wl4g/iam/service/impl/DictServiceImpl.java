@@ -24,7 +24,6 @@ import com.wl4g.iam.data.DictDao;
 import com.wl4g.iam.service.DictService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,9 +50,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @sine v1.0
  * @see
  */
-// @org.springframework.stereotype.Service
+@org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "dictService")
-@RestController
+// @org.springframework.web.bind.annotation.RestController
 public class DictServiceImpl implements DictService {
 
 	@Autowired
