@@ -18,8 +18,6 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.google.common.annotations.Beta;
-import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 /**
@@ -32,8 +30,6 @@ import com.wl4g.iam.annotation.EnableIamServer;
  */
 @EnableIamServer
 @SpringBootApplication
-@Reserved
-@Beta
 public class IamWeb {
 
 	public static void main(String[] args) {

@@ -14,7 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>iam-web</final.name>
+		<bootstrap-classname>com.wl4g.IamWeb</bootstrap-classname>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -47,7 +47,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${final.name}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -89,24 +88,38 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
-					<!-- not append assembly id in release file name -->
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptors>
-						<descriptor>src/main/assemble/package.xml</descriptor>
-					</descriptors>
+					<mainClass>${bootstrap-classname}</mainClass>
+					<!-- <layout>ZIP</layout> -->
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>repackage</goal>
 						</goals>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>/../checkstyle/google_checks.xml</configLocation>
+				</configuration>
+				<executions>
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/xcloud-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- <execution> -->
+					<!-- <id>checkstyle</id> -->
+					<!-- <phase>validate</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>check</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <failOnViolation>true</failOnViolation> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
 				</executions>
 			</plugin>
 		</plugins>

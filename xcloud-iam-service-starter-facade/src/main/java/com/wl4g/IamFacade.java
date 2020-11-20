@@ -19,7 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * {@link IamService}
+ * {@link IamFacade}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-14
@@ -27,10 +27,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @see
  */
 @SpringBootApplication
-public class IamService {
+public class IamFacade {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IamService.class, args);
+		SpringApplication.run(IamFacade.class, args);
 	}
 
 }
