@@ -14,7 +14,7 @@ spring:
   application.name: iam-facade
   profiles:
     include: common,util
-    active: service-dev
+    active: facade-dev
 
 dubbo:
   application:

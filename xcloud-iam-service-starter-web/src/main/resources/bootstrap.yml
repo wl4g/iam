@@ -15,3 +15,6 @@ spring:
   profiles:
     include: common,util,web-base
     active: web-dev
+
+dubbo:
+  enabled: false # The web module not need registered as a dubbo provider.

@@ -20,6 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.components.data.annotation.EnableComponentsData;
+import com.wl4g.components.rpc.springcloud.feign.EnableFeignProviderProxies;
 
 /**
  * {@link IamData}
@@ -31,6 +32,7 @@ import com.wl4g.components.data.annotation.EnableComponentsData;
  */
 @MapperScan("com.wl4g.iam.data")
 @EnableComponentsData
+//@EnableFeignProviderProxies
 @SpringBootApplication
 public class IamData {
 
