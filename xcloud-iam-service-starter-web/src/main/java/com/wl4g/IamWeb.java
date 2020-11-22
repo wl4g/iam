@@ -18,7 +18,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.components.rpc.springcloud.feign.EnableFeignClientsProxies;
+import com.wl4g.components.rpc.springcloud.feign.EnableFeignProviderProxies;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 /**
@@ -30,7 +30,7 @@ import com.wl4g.iam.annotation.EnableIamServer;
  * @see
  */
 @EnableIamServer
-@EnableFeignClientsProxies
+@EnableFeignProviderProxies
 @SpringBootApplication
 public class IamWeb {
 

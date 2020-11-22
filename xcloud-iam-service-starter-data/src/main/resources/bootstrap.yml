@@ -21,6 +21,6 @@ dubbo:
     #name: ${spring.application.name}
     name: iam-data
   scan:
-    basePackages: com.wl4g.iam.dao
+    basePackages: com.wl4g.iam.data
   registry:
     address: eureka://127.0.0.1:8761

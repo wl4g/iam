@@ -15,3 +15,12 @@ spring:
   profiles:
     include: common,util
     active: service-dev
+
+dubbo:
+  application:
+    #name: ${spring.application.name}
+    name: iam-facade
+  scan:
+    basePackages: com.wl4g.iam.service
+  registry:
+    address: eureka://127.0.0.1:8761
