@@ -22,7 +22,9 @@ import com.wl4g.iam.common.bean.User;
 import java.util.Set;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * {@link UserService}
@@ -45,10 +47,10 @@ public interface UserService {
 	@GetMapping("/list")
 	PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId);
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(User user);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(Long userId);
 
 	@GetMapping("/detail")

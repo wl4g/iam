@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Dict;
@@ -39,13 +41,13 @@ public interface DictService {
 	@GetMapping("/list")
 	PageModel<Dict> list(PageModel<Dict> pm, String key, String label, String type, String description);
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(Dict dict, Boolean isEdit);
 
 	@GetMapping("/detail")
 	Dict detail(String key);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(String key);
 
 	@GetMapping("/getByType")

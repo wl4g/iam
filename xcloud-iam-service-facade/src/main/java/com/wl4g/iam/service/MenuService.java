@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.wl4g.iam.common.bean.Menu;
 
@@ -41,10 +43,10 @@ public interface MenuService {
 	@GetMapping("/getMenuList")
 	List<Menu> getMenuList();
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(Menu menu);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(Long id);
 
 	@GetMapping("/detail")

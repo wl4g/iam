@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
@@ -36,10 +38,10 @@ import com.wl4g.iam.common.bean.User;
 @FeignClient("organizationService")
 public interface OrganizationService {
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(Organization org);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(Long id);
 
 	@GetMapping("/detail")

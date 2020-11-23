@@ -31,8 +31,8 @@ import com.wl4g.components.rpc.springcloud.feign.annotation.EnableFeignProviderP
  * @see
  */
 @MapperScan("com.wl4g.iam.data")
+@EnableFeignProviderProxies("com.wl4g.iam.data")
 @EnableComponentsData
-@EnableFeignProviderProxies
 @SpringBootApplication
 public class IamData {
 

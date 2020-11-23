@@ -29,7 +29,7 @@ import com.wl4g.iam.annotation.EnableIamServer;
  * @sine v1.0
  * @see
  */
-@EnableFeignClients(basePackages = { "com.wl4g.iam.service" })
+@EnableFeignClients("com.wl4g.iam.service")
 @EnableIamServer
 @SpringBootApplication
 public class IamWeb {

@@ -21,7 +21,9 @@ import com.wl4g.iam.common.bean.Role;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * {@link RoleService}
@@ -41,10 +43,10 @@ public interface RoleService {
 	@GetMapping("/list")
 	PageModel<Role> list(PageModel<Role> pm, String organizationId, String name, String displayName);
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(Role role);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(Long id);
 
 	@GetMapping("/detail")

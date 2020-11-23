@@ -29,8 +29,8 @@ import com.wl4g.components.rpc.springcloud.feign.annotation.EnableFeignProviderP
  * @sine v1.0
  * @see
  */
-@EnableFeignClients(basePackages = { "com.wl4g.iam.data" })
-@EnableFeignProviderProxies
+@EnableFeignClients("com.wl4g.iam.data")
+@EnableFeignProviderProxies("com.wl4g.iam.service")
 @SpringBootApplication
 public class IamFacade {
 

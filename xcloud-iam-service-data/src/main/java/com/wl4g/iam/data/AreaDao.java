@@ -18,6 +18,10 @@ package com.wl4g.iam.data;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.iam.common.bean.Area;
 
@@ -32,18 +36,25 @@ import com.wl4g.iam.common.bean.Area;
 @FeignClient("areaDao")
 public interface AreaDao {
 
+	@DeleteMapping("/deleteByPrimaryKey")
 	int deleteByPrimaryKey(Long id);
 
+	@PostMapping("/insert")
 	int insert(Area record);
 
+	@PostMapping("/insertSelective")
 	int insertSelective(Area record);
 
-	Area selectByPrimaryKey(Long id);
+	@GetMapping("/selectByPrimaryKey")
+	Area selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@GetMapping("/getTotal")
 	List<Area> getTotal();
 
+	@PostMapping("/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(Area record);
 
+	@PostMapping("/updateByPrimaryKey")
 	int updateByPrimaryKey(Area record);
 
 }

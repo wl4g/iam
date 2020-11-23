@@ -18,12 +18,14 @@ package com.wl4g.iam.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.iam.common.bean.Contact;
 
@@ -39,13 +41,13 @@ import com.wl4g.iam.common.bean.Contact;
 @FeignClient("contactService")
 public interface ContactService {
 
-	@GetMapping("/save")
+	@PostMapping("/save")
 	void save(Contact contact);
 
 	@GetMapping("/detail")
 	Contact detail(Long id);
 
-	@GetMapping("/del")
+	@DeleteMapping("/del")
 	void del(Long id);
 
 	@GetMapping("/list")
