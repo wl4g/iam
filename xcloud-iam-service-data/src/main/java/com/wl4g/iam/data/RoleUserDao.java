@@ -17,6 +17,8 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.RoleUser;
@@ -32,20 +34,20 @@ import com.wl4g.iam.common.bean.RoleUser;
 @FeignClient("roleUserDao")
 public interface RoleUserDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(RoleUser record);
+	int insert(@RequestBody RoleUser record);
 
-	int insertSelective(RoleUser record);
+	int insertSelective(@RequestBody RoleUser record);
 
-	RoleUser selectByPrimaryKey(Long id);
+	RoleUser selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(RoleUser record);
+	int updateByPrimaryKeySelective(@RequestBody RoleUser record);
 
-	int updateByPrimaryKey(RoleUser record);
+	int updateByPrimaryKey(@RequestBody RoleUser record);
 
-	int deleteByUserId(Long userId);
+	int deleteByUserId(@RequestParam("userId") Long userId);
 
-	List<Long> selectRoleIdByUserId(Long userID);
+	List<Long> selectRoleIdByUserId(@RequestParam("userID") Long userID);
 
 }

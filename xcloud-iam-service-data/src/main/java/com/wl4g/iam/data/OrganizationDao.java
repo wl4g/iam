@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Organization;
@@ -33,26 +35,26 @@ import java.util.Set;
  */
 @FeignClient("organizationDao")
 public interface OrganizationDao {
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(Organization record);
+	int insert(@RequestBody Organization record);
 
-	int insertSelective(Organization record);
+	int insertSelective(@RequestBody Organization record);
 
-	Organization selectByPrimaryKey(Long id);
+	Organization selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(Organization record);
+	int updateByPrimaryKeySelective(@RequestBody Organization record);
 
-	int updateByPrimaryKey(Organization record);
+	int updateByPrimaryKey(@RequestBody Organization record);
 
-	List<Organization> selectByUserId(Long userId);
+	List<Organization> selectByUserId(@RequestParam("userId") Long userId);
 
 	List<Organization> selectByRoot();
 
-	List<Organization> selectByRoleId(Long roleId);
+	List<Organization> selectByRoleId(@RequestParam("roleId") Long roleId);
 
-	List<Organization> selectByParentId(Long parentId);
+	List<Organization> selectByParentId(@RequestParam("parentId") Long parentId);
 
-	int countRoleByOrganizationId(@Param("ids") Set<Long> ids);
+	int countRoleByOrganizationId(@RequestParam("ids") @Param("ids") Set<Long> ids);
 
 }

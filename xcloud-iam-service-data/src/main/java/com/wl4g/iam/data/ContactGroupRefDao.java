@@ -17,6 +17,7 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.ContactGroupRef;
@@ -32,20 +33,20 @@ import com.wl4g.iam.common.bean.ContactGroupRef;
 @FeignClient("contactGroupRefDao")
 public interface ContactGroupRefDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
 	int insert(ContactGroupRef record);
 
 	int insertSelective(ContactGroupRef record);
 
-	ContactGroupRef selectByPrimaryKey(Long id);
+	ContactGroupRef selectByPrimaryKey(@RequestParam("id") Long id);
 
 	int updateByPrimaryKeySelective(ContactGroupRef record);
 
 	int updateByPrimaryKey(ContactGroupRef record);
 
-	int deleteByContactId(Long id);
+	int deleteByContactId(@RequestParam("id") Long id);
 
-	List<ContactGroupRef> selectByContactId(Long id);
+	List<ContactGroupRef> selectByContactId(@RequestParam("id") Long id);
 
 }

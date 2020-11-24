@@ -17,6 +17,8 @@ package com.wl4g.iam.data;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.NotificationContact;
@@ -24,18 +26,18 @@ import com.wl4g.iam.common.bean.NotificationContact;
 @FeignClient("notificationContactDao")
 public interface NotificationContactDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(NotificationContact record);
+	int insert(@RequestBody NotificationContact record);
 
-	int insertSelective(NotificationContact record);
+	int insertSelective(@RequestBody NotificationContact record);
 
-	NotificationContact selectByPrimaryKey(Long id);
+	NotificationContact selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(NotificationContact record);
+	int updateByPrimaryKeySelective(@RequestBody NotificationContact record);
 
-	int updateByPrimaryKey(NotificationContact record);
+	int updateByPrimaryKey(@RequestBody NotificationContact record);
 
-	List<NotificationContact> getByRecordId(Long id);
+	List<NotificationContact> getByRecordId(@RequestParam("id") Long id);
 
 }

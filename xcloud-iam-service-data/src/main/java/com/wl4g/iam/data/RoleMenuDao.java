@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.RoleMenu;
@@ -33,22 +35,22 @@ import java.util.List;
 @FeignClient("roleMenuDao")
 public interface RoleMenuDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int deleteByRoleId(Long roleId);
+	int deleteByRoleId(@RequestParam("roleId") Long roleId);
 
-	int insert(RoleMenu record);
+	int insert(@RequestBody RoleMenu record);
 
-	int insertSelective(RoleMenu record);
+	int insertSelective(@RequestBody RoleMenu record);
 
-	RoleMenu selectByPrimaryKey(Long id);
+	RoleMenu selectByPrimaryKey(@RequestParam("id") Long id);
 
-	List<Long> selectMenuIdByRoleId(Long id);
+	List<Long> selectMenuIdByRoleId(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(RoleMenu record);
+	int updateByPrimaryKeySelective(@RequestBody RoleMenu record);
 
-	int updateByPrimaryKey(RoleMenu record);
+	int updateByPrimaryKey(@RequestBody RoleMenu record);
 
-	int insertBatch(@Param("roleMenus") List<RoleMenu> roleMenus);
+	int insertBatch(@RequestParam("roleMenus") @Param("roleMenus") List<RoleMenu> roleMenus);
 
 }

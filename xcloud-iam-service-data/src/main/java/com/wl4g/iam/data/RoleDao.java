@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Role;
@@ -33,30 +35,32 @@ import java.util.List;
 @FeignClient("roleDao")
 public interface RoleDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(Role record);
+	int insert(@RequestBody Role record);
 
-	int insertSelective(Role record);
+	int insertSelective(@RequestBody Role record);
 
-	Role selectByPrimaryKey(Long id);
+	Role selectByPrimaryKey(@RequestParam("id") Long id);
 
-	List<Role> selectWithRoot(@Param("groupIds") List<Long> groupIds, @Param("roleCode") String roleCode,
-			@Param("nameZh") String nameZh);
+	List<Role> selectWithRoot(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
+			@RequestParam("roleCode") @Param("roleCode") String roleCode, @RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	int updateByPrimaryKeySelective(Role record);
+	int updateByPrimaryKeySelective(@RequestBody Role record);
 
-	int updateByPrimaryKey(Role record);
+	int updateByPrimaryKey(@RequestBody Role record);
 
-	List<Role> selectByUserId(Long userId);
+	List<Role> selectByUserId(@RequestParam("userId") Long userId);
 
-	List<Role> selectByGroupId(Long groupId);
+	List<Role> selectByGroupId(@RequestParam("groupId") Long groupId);
 
-	List<Role> selectByGroupIdsAndUserId(@Param("groupIds") List<Long> groupIds, @Param("userId") String userId,
-			@Param("roleCode") String roleCode, @Param("nameZh") String nameZh);
+	List<Role> selectByGroupIdsAndUserId(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
+			@RequestParam("userId") @Param("userId") String userId, @RequestParam("roleCode") @Param("roleCode") String roleCode,
+			@RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	List<Role> list(@Param("groupIds") List<Long> groupIds, @Param("roleCode") String roleCode, @Param("nameZh") String nameZh);
+	List<Role> list(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
+			@RequestParam("roleCode") @Param("roleCode") String roleCode, @RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	int countRoleUsers(Long roleId);
+	int countRoleUsers(@RequestParam("roleId") Long roleId);
 
 }

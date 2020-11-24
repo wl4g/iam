@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.ClusterConfig;
@@ -33,22 +35,23 @@ import java.util.List;
 @FeignClient("clusterConfigDao")
 public interface ClusterConfigDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(ClusterConfig record);
+	int insert(@RequestBody ClusterConfig record);
 
-	int insertSelective(ClusterConfig record);
+	int insertSelective(@RequestBody ClusterConfig record);
 
-	ClusterConfig selectByPrimaryKey(Long id);
+	ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(ClusterConfig record);
+	int updateByPrimaryKeySelective(@RequestBody ClusterConfig record);
 
-	int updateByPrimaryKey(ClusterConfig record);
+	int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
-	List<ClusterConfig> getByAppNames(@Param("appNames") String[] appNames, @Param("envType") String envType,
-			@Param("type") String type);
+	List<ClusterConfig> getByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
+			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
-	ClusterConfig getByAppName(@Param("appName") String appName, @Param("envType") String envType, @Param("type") String type);
+	ClusterConfig getByAppName(@RequestParam("appName") @Param("appName") String appName,
+			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
 	List<ClusterConfig> getIamServer();
 

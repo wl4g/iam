@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Menu;
@@ -33,23 +35,23 @@ import java.util.List;
 @FeignClient("menuDao")
 public interface MenuDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(Menu record);
+	int insert(@RequestBody Menu record);
 
-	int insertSelective(Menu record);
+	int insertSelective(@RequestBody Menu record);
 
-	Menu selectByPrimaryKey(Long id);
+	Menu selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(Menu record);
+	int updateByPrimaryKeySelective(@RequestBody Menu record);
 
-	int updateByPrimaryKey(Menu record);
+	int updateByPrimaryKey(@RequestBody Menu record);
 
-	List<Menu> selectByParentId(Long parentId);
+	List<Menu> selectByParentId(@RequestParam("parentId") Long parentId);
 
-	List<Menu> selectByUserId(@Param("userId") Long userId);
+	List<Menu> selectByUserId(@RequestParam("userId") @Param("userId") Long userId);
 
-	List<Menu> selectByRoleId(Long ruleId);
+	List<Menu> selectByRoleId(@RequestParam("ruleId") Long ruleId);
 
 	List<Menu> selectWithRoot();
 

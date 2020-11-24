@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.ContactChannel;
@@ -29,18 +31,18 @@ import com.wl4g.iam.common.bean.ContactChannel;
  */
 @FeignClient("contactChannelDao")
 public interface ContactChannelDao {
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int deleteByContactId(Long id);
+	int deleteByContactId(@RequestParam("id") Long id);
 
-	int insert(ContactChannel record);
+	int insert(@RequestBody ContactChannel record);
 
-	int insertSelective(ContactChannel record);
+	int insertSelective(@RequestBody ContactChannel record);
 
-	ContactChannel selectByPrimaryKey(Long id);
+	ContactChannel selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(ContactChannel record);
+	int updateByPrimaryKeySelective(@RequestBody ContactChannel record);
 
-	int updateByPrimaryKey(ContactChannel record);
+	int updateByPrimaryKey(@RequestBody ContactChannel record);
 
 }

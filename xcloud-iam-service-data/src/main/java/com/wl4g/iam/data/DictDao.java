@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Dict;
@@ -32,25 +34,27 @@ import java.util.List;
  */
 @FeignClient("dictDao")
 public interface DictDao {
-	int deleteByPrimaryKey(String key);
+	int deleteByPrimaryKey(@RequestParam("key") String key);
 
-	int insert(Dict record);
+	int insert(@RequestBody Dict record);
 
-	int insertSelective(Dict record);
+	int insertSelective(@RequestBody Dict record);
 
-	Dict selectByPrimaryKey(String key);
+	Dict selectByPrimaryKey(@RequestParam("key") String key);
 
-	int updateByPrimaryKeySelective(Dict record);
+	int updateByPrimaryKeySelective(@RequestBody Dict record);
 
-	int updateByPrimaryKey(Dict record);
+	int updateByPrimaryKey(@RequestBody Dict record);
 
-	List<Dict> selectByType(String type);
+	List<Dict> selectByType(@RequestParam("type") String type);
 
 	List<String> allType();
 
-	Dict getByKey(String key);
+	Dict getByKey(@RequestParam("key") String key);
 
-	List<Dict> list(@Param("key") String key, @Param("label") String label, @Param("type") String type,
-			@Param("description") String description, @Param("orderBySort") String orderBySort);
+	List<Dict> list(@RequestParam("key") @Param("key") String key, @RequestParam("label") @Param("label") String label,
+			@RequestParam("type") @Param("type") String type,
+			@RequestParam("description") @Param("description") String description,
+			@RequestParam("orderBySort") @Param("orderBySort") String orderBySort);
 
 }

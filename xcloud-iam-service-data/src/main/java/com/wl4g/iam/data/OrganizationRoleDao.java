@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.OrganizationRole;
@@ -33,26 +35,26 @@ import java.util.List;
 @FeignClient("organizationRoleDao")
 public interface OrganizationRoleDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int deleteByRoleId(Long roleId);
+	int deleteByRoleId(@RequestParam("roleId") Long roleId);
 
-	int deleteByGroupId(Long groupId);
+	int deleteByGroupId(@RequestParam("groupId") Long groupId);
 
-	int insert(OrganizationRole record);
+	int insert(@RequestBody OrganizationRole record);
 
-	int insertSelective(OrganizationRole record);
+	int insertSelective(@RequestBody OrganizationRole record);
 
 	int insertBatch(@Param("groupRoles") List<OrganizationRole> groupRoles);
 
-	OrganizationRole selectByPrimaryKey(Long id);
+	OrganizationRole selectByPrimaryKey(@RequestParam("id") Long id);
 
-	List<Long> selectGroupIdByRoleId(Long roleId);
+	List<Long> selectGroupIdByRoleId(@RequestParam("roleId") Long roleId);
 
-	List<Long> selectRoleIdsByGroupId(Long groupId);
+	List<Long> selectRoleIdsByGroupId(@RequestParam("groupId") Long groupId);
 
-	int updateByPrimaryKeySelective(OrganizationRole record);
+	int updateByPrimaryKeySelective(@RequestBody OrganizationRole record);
 
-	int updateByPrimaryKey(OrganizationRole record);
+	int updateByPrimaryKey(@RequestBody OrganizationRole record);
 
 }

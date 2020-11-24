@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Park;
@@ -30,18 +32,18 @@ import com.wl4g.iam.common.bean.Park;
 @FeignClient("parkDao")
 public interface ParkDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(Park record);
+	int insert(@RequestBody Park record);
 
-	int insertSelective(Park record);
+	int insertSelective(@RequestBody Park record);
 
-	Park selectByPrimaryKey(Long id);
+	Park selectByPrimaryKey(@RequestParam("id") Long id);
 
-	Park selectByGroupId(Long groupId);
+	Park selectByGroupId(@RequestParam("groupId") Long groupId);
 
-	int updateByPrimaryKeySelective(Park record);
+	int updateByPrimaryKeySelective(@RequestBody Park record);
 
-	int updateByPrimaryKey(Park record);
+	int updateByPrimaryKey(@RequestBody Park record);
 
 }

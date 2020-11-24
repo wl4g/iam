@@ -16,6 +16,8 @@
 package com.wl4g.iam.data;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.User;
@@ -32,23 +34,25 @@ import java.util.List;
  */
 @FeignClient("userDao")
 public interface UserDao {
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(User record);
+	int insert(@RequestBody User record);
 
-	int insertSelective(User record);
+	int insertSelective(@RequestBody User record);
 
-	User selectByPrimaryKey(Long id);
+	User selectByPrimaryKey(@RequestParam("id") Long id);
 
-	int updateByPrimaryKeySelective(User record);
+	int updateByPrimaryKeySelective(@RequestBody User record);
 
-	int updateByPrimaryKey(User record);
+	int updateByPrimaryKey(@RequestBody User record);
 
-	List<User> list(@Param("userId") Long userId, @Param("userName") String userName, @Param("nameZh") String nameZh,
-			@Param("roleId") Long roleId);
+	List<User> list(@RequestParam("userId") @Param("userId") Long userId,
+			@RequestParam("userName") @Param("userName") String userName, @RequestParam("nameZh") @Param("nameZh") String nameZh,
+			@RequestParam("roleId") @Param("roleId") Long roleId);
 
-	User selectByUserName(String userName);
+	User selectByUserName(@RequestParam("userName") String userName);
 
-	User selectByUnionIdOrOpenId(@Param("unionId") String unionId, @Param("openId") String openId);
+	User selectByUnionIdOrOpenId(@RequestParam("unionId") @Param("unionId") String unionId,
+			@RequestParam("openId") @Param("openId") String openId);
 
 }

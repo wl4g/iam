@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.data;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Company;
@@ -30,18 +32,18 @@ import com.wl4g.iam.common.bean.Company;
 @FeignClient("companyDao")
 public interface CompanyDao {
 
-	int deleteByPrimaryKey(Long id);
+	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	int insert(Company record);
+	int insert(@RequestBody Company record);
 
-	int insertSelective(Company record);
+	int insertSelective(@RequestBody Company record);
 
-	Company selectByPrimaryKey(Long id);
+	Company selectByPrimaryKey(@RequestParam("id") Long id);
 
-	Company selectByGroupId(Long groupId);
+	Company selectByGroupId(@RequestParam("groupId") Long groupId);
 
-	int updateByPrimaryKeySelective(Company record);
+	int updateByPrimaryKeySelective(@RequestBody Company record);
 
-	int updateByPrimaryKey(Company record);
+	int updateByPrimaryKey(@RequestBody Company record);
 
 }
