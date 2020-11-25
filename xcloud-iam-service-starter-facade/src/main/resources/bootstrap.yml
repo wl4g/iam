@@ -16,11 +16,26 @@ spring:
     include: common,util
     active: facade-dev
 
+# http://dubbo.apache.org/docs/v2.7/user/configuration/properties/
 dubbo:
   application:
     #name: ${spring.application.name}
     name: iam-facade
+    owner: wanglsir-dubbo
+    qos:
+      enable: true # Default(true)
+      port: 22223 # Default(22222)
+      accept.foreign.ip: false # Default(false))
   scan:
     basePackages: com.wl4g.iam.service
+  protocol:
+    #rmi.port: 9090
+    name: dubbo
+    port: 34050 # Default(28080)
   registry:
     address: eureka://127.0.0.1:8761
+    timeout: 10_000
+  monitor:
+    protocol: registry
+
+
