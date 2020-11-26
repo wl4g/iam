@@ -20,7 +20,6 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
@@ -67,7 +66,7 @@ public class MockIamAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	@Bean
-	public PrefixHandlerMapping mockCentralValidationEndpointPrefixHandlerMapping() {
+	public Object mockCentralValidationEndpointPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_BASE, IamController.class);
 	}
 

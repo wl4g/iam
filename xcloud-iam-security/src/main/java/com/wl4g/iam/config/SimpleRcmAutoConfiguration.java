@@ -16,7 +16,6 @@
 package com.wl4g.iam.config;
 
 import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.web.SimpleRcmEvaluatorEndpoint;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_RCM_BASE;
@@ -40,7 +39,7 @@ public class SimpleRcmAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	@Bean
-	public PrefixHandlerMapping simpleRcmEvaluatorControllerPrefixHandlerMapping() {
+	public Object simpleRcmEvaluatorControllerPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.iam.annotation.SimpleRcmController.class);
 	}
 

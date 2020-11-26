@@ -47,7 +47,6 @@ import static org.springframework.util.ReflectionUtils.*;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.annotation.IamFilter;
@@ -271,7 +270,7 @@ public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSup
 	 * @param mappingPrefix
 	 * @return
 	 */
-	protected PrefixHandlerMapping newIamControllerPrefixHandlerMapping(@NotBlank String mappingPrefix) {
+	protected Object newIamControllerPrefixHandlerMapping(@NotBlank String mappingPrefix) {
 		return super.newPrefixHandlerMapping(mappingPrefix, IamController.class);
 	}
 

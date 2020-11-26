@@ -28,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.components.core.kit.access.IPAccessControl;
 import com.wl4g.components.core.web.error.CompositeErrorConfigurer;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
 import com.wl4g.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;
 import com.wl4g.iam.client.configure.AnynothingClientSecurityConfigurer;
@@ -259,7 +258,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public PrefixHandlerMapping iamClientAuthenticatorControllerPrefixHandlerMapping() {
+	public Object iamClientAuthenticatorControllerPrefixHandlerMapping() {
 		return super.newIamControllerPrefixHandlerMapping(URI_C_BASE);
 	}
 

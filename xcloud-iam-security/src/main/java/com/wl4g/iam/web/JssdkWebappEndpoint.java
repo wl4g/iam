@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.components.common.jvm.JvmRuntimeKit.*;
+import static com.wl4g.components.common.jvm.JvmRuntimeKit.*; 
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.components.core.web.embed.GenericEmbeddedWebappEndpoint;
-import com.wl4g.components.core.web.embed.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
+import com.wl4g.components.core.web.embed.SimpleEmbedWebappEndpoint;
+import com.wl4g.components.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
 
 /**
  * Jssdk embedded webapps endpoint.
@@ -30,9 +30,9 @@ import com.wl4g.components.core.web.embed.DefaultEmbeddedWebappAutoConfiguration
  * @version v1.0 2020年4月10日
  * @since
  */
-public class JssdkWebappEndpoint extends GenericEmbeddedWebappEndpoint {
+public class JssdkWebappEndpoint extends SimpleEmbedWebappEndpoint {
 
-	public JssdkWebappEndpoint(GenericEmbeddedWebappProperties config) {
+	public JssdkWebappEndpoint(SimpleEmbedWebappProperties config) {
 		super(config);
 	}
 

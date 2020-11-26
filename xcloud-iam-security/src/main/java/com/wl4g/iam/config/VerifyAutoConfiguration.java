@@ -16,7 +16,6 @@
 package com.wl4g.iam.config;
 
 import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.annotation.VerifyAuthController;
 import com.wl4g.iam.web.VerifyAuthenticationEndpoint;
 
@@ -41,7 +40,7 @@ public class VerifyAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	@Bean
-	public PrefixHandlerMapping verifyAuthenticationEndpointPrefixHandlerMapping() {
+	public Object verifyAuthenticationEndpointPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_VERIFY_BASE, VerifyAuthController.class);
 	}
 

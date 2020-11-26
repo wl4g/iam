@@ -27,7 +27,6 @@ import static com.wl4g.iam.core.config.AbstractIamConfiguration.ORDER_XSRF_PRECE
 import static com.wl4g.iam.core.config.XsrfProperties.KEY_XSRF_PREFIX;
 
 import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.core.annotation.XsrfController;
 import com.wl4g.iam.core.security.xsrf.RequiresXsrfMatcher;
 import com.wl4g.iam.core.security.xsrf.XsrfProtectionSecurityFilter;
@@ -102,7 +101,7 @@ public class XsrfAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	@ConditionalOnBean(XsrfProperties.class)
-	public PrefixHandlerMapping xsrfProtectionEndpointPrefixHandlerMapping() {
+	public Object xsrfProtectionEndpointPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_XSRF_BASE, XsrfController.class);
 	}
 
