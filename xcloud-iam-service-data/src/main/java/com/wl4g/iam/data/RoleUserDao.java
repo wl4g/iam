@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.RoleUser;
@@ -32,6 +33,7 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @see
  */
 @FeignClient("roleUserDao")
+@RequestMapping("/roleUser")
 public interface RoleUserDao {
 
 	int deleteByPrimaryKey(@RequestParam("id") Long id);

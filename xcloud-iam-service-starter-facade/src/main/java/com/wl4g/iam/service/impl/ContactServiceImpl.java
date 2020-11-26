@@ -16,8 +16,8 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.components.support.notification.GenericNotifyMessage;
 import com.wl4g.components.support.notification.MessageNotifier;
 import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;

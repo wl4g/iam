@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.Menu;
@@ -78,10 +78,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleUserDao roleUserDao;
 
-	@Autowired
+	// @Autowired
 	private CredentialsSecurer securer;
 
-	@Autowired
+	// @Autowired
 	protected IamSessionDAO sessionDAO;
 
 	@Override

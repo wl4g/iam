@@ -23,8 +23,8 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import com.wl4g.components.core.config.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.components.core.web.error.ErrorConfigurer;
+import com.wl4g.components.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 
 import static com.wl4g.components.common.lang.Exceptions.*;
 import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;

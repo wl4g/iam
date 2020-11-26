@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
 
@@ -25,6 +25,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * {@link UserService}
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @see
  */
 @FeignClient("userService")
+@RequestMapping("/user")
 public interface UserService {
 
 	@GetMapping("/findSimpleUser")

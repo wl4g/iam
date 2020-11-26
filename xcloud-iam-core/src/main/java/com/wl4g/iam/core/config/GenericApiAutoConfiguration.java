@@ -19,8 +19,8 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_BASE
 
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
+import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.core.annotation.IamApiV2Controller;
 
 /**

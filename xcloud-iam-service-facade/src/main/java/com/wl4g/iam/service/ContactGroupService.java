@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.ContactGroup;
 
 import java.util.List;
@@ -24,6 +24,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * {@link ContactGroupService}
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @see
  */
 @FeignClient("contactGroupService")
+@RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
 	@PostMapping("/save")

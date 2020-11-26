@@ -20,8 +20,8 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.components.core.config.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
 import com.wl4g.components.core.web.embed.GenericEmbeddedWebappEndpoint;
+import com.wl4g.components.core.web.embed.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
 
 /**
  * Jssdk embedded webapps endpoint.

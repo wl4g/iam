@@ -17,6 +17,7 @@ package com.wl4g.iam.data;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.Park;
@@ -30,6 +31,7 @@ import com.wl4g.iam.common.bean.Park;
  * @see
  */
 @FeignClient("parkDao")
+@RequestMapping("/park")
 public interface ParkDao {
 
 	int deleteByPrimaryKey(@RequestParam("id") Long id);

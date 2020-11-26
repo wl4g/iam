@@ -20,9 +20,9 @@ import static com.wl4g.iam.config.properties.IamProperties.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
-import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
+import com.wl4g.components.core.web.embed.DefaultEmbeddedWebappAutoConfiguration.GenericEmbeddedWebappProperties;
+import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.iam.web.JssdkWebappEndpoint;
 
 /**

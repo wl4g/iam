@@ -18,6 +18,7 @@ package com.wl4g.iam.data;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import com.wl4g.iam.common.bean.OrganizationRole;
@@ -33,6 +34,7 @@ import java.util.List;
  * @see
  */
 @FeignClient("organizationRoleDao")
+@RequestMapping("/organizationRole")
 public interface OrganizationRoleDao {
 
 	int deleteByPrimaryKey(@RequestParam("id") Long id);

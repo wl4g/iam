@@ -16,7 +16,7 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.service.RoleService;
 

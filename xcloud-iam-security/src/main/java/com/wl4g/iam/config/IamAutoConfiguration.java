@@ -31,9 +31,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.kit.access.IPAccessControl;
+import com.wl4g.components.core.web.mapping.PrefixHandlerMapping;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.iam.authc.credential.Oauth2AuthorizingBoundMatcher;

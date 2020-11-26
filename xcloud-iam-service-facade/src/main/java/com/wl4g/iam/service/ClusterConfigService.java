@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wl4g.iam.common.bean.ClusterConfig;
 
@@ -33,6 +34,7 @@ import com.wl4g.iam.common.bean.ClusterConfig;
  * @see
  */
 @FeignClient("clusterConfigService")
+@RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 
 	@GetMapping("/loadInit")
