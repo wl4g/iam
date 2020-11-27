@@ -26,7 +26,7 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_XSRF_BASE;
 import static com.wl4g.iam.core.config.AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE;
 import static com.wl4g.iam.core.config.XsrfProperties.KEY_XSRF_PREFIX;
 
-import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.AbstractHandlerMappingSupport;
 import com.wl4g.iam.core.annotation.XsrfController;
 import com.wl4g.iam.core.security.xsrf.RequiresXsrfMatcher;
 import com.wl4g.iam.core.security.xsrf.XsrfProtectionSecurityFilter;

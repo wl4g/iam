@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.components.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
-import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.AbstractHandlerMappingSupport;
 import com.wl4g.iam.web.JssdkWebappEndpoint;
 
 /**

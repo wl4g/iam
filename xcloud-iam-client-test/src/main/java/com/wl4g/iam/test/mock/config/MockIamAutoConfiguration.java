@@ -19,7 +19,7 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.web.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.AbstractHandlerMappingSupport;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.test.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory;
