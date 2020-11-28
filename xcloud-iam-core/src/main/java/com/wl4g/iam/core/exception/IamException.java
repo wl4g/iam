@@ -15,9 +15,7 @@
  */
 package com.wl4g.iam.core.exception;
 
-import com.wl4g.components.core.exception.DevOpsException;
-
-public class IamException extends DevOpsException {
+public class IamException extends RuntimeException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
