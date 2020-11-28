@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.components.core.web.method.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.web.LoginAuthenticationEndpoint;
 
@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class LoginAutoConfiguration extends AbstractHandlerMappingSupport {
+public class LoginAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	@Bean
 	public LoginAuthenticationEndpoint loginAuthenticationEndpoint() {

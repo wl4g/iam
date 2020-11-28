@@ -46,7 +46,7 @@ import static org.springframework.util.ReflectionUtils.*;
 
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
-import com.wl4g.components.core.web.method.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.annotation.IamFilter;
@@ -81,7 +81,7 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
  * @version v1.0 2018年12月23日
  * @since
  */
-public abstract class AbstractIamConfiguration extends AbstractHandlerMappingSupport {
+public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSupport {
 
 	// ==============================
 	// Locale i18n configuration.
