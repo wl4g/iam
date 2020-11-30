@@ -37,3 +37,4 @@ dubbo:
     timeout: 10_000
   monitor:
     protocol: registry
+

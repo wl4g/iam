@@ -31,11 +31,10 @@ dubbo:
   protocol:
     #rmi.port: 9090
     name: dubbo
-    port: 34050 # Default(28080)
+    port: 28081 # Default(28080)
   registry:
     address: eureka://127.0.0.1:8761
     timeout: 10_000
   monitor:
     protocol: registry
-
 

@@ -16,5 +16,25 @@ spring:
     include: common,util,web-base
     active: web-dev
 
+# http://dubbo.apache.org/docs/v2.7/user/configuration/properties/
 dubbo:
-  enabled: false # The web module not need registered as a dubbo provider.
+  application:
+    #name: ${spring.application.name}
+    name: iam-web
+    owner: wanglsir-dubbo
+    qos:
+      enable: true # Default(true)
+      port: 22224 # Default(22222)
+      accept.foreign.ip: false # Default(false))
+  scan:
+    basePackages: com.wl4g.iam.web
+  protocol:
+    #rmi.port: 9090
+    name: dubbo
+    port: 28082 # Default(28080)
+  registry:
+    address: eureka://127.0.0.1:8761
+    timeout: 10_000
+  monitor:
+    protocol: registry
+
