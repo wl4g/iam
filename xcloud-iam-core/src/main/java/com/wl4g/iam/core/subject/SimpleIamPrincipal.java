@@ -154,8 +154,13 @@ public class SimpleIamPrincipal implements IamPrincipal {
 		return isBlank(publicSalt) ? EMPTY : publicSalt;
 	}
 
-	public final void setPublicSalt(String publicSalt) {
-		this.publicSalt = hasTextOf(publicSalt, "publicSalt");
+	/**
+	 * Sets user account public salt hex string.
+	 * 
+	 * @param publicSaltHex
+	 */
+	public final void setPublicSalt(@NotBlank String publicSaltHex) {
+		this.publicSalt = hasTextOf(publicSaltHex, "publicSaltHex");
 	}
 
 	public final SimpleIamPrincipal withPublicSalt(String publicSalt) {

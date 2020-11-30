@@ -19,9 +19,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.components.core.web.versions.annotation.EnableApiVersionMapping;
 import com.wl4g.components.data.annotation.EnableComponentsData;
 import com.wl4g.iam.annotation.EnableIamServer;
 
+@EnableApiVersionMapping
 @EnableIamServer
 @MapperScan("com.wl4g.iam.data")
 @EnableComponentsData

@@ -31,7 +31,6 @@ import com.wl4g.iam.service.ContactService;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -72,7 +71,6 @@ public class ContactServiceImpl implements ContactService {
 	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
 
 	@Override
-	@Transactional
 	public void save(Contact contact) {
 		if (null != contact.getId() && contact.getId() > 0) {
 			contact.preUpdate();
