@@ -32,6 +32,12 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
@@ -342,8 +348,7 @@ public interface IamPrincipal extends Principal, Serializable {
 		 * @return
 		 */
 		public SocialAuthorizeInfo getSocialAuthorizeInfo() {
-			String snsAuthzInfoJson = get(KEY_SNS_AUTHORIZED_INFO);
-			return parseJSON(snsAuthzInfoJson, SocialAuthorizeInfo.class);
+			return get(KEY_SNS_AUTHORIZED_INFO, SocialAuthorizeInfo.class);
 		}
 
 		/**
@@ -352,10 +357,35 @@ public interface IamPrincipal extends Principal, Serializable {
 		 * @return
 		 */
 		public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
-			if (!isNull(info)) {
-				put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+			return save(KEY_SNS_AUTHORIZED_INFO, info);
+		}
+
+		/**
+		 * Save attribute to IAM principal. {@link #get(String, Class)}
+		 * 
+		 * @param key
+		 * @param value
+		 * @return
+		 */
+		public Attributes save(@NotBlank String key, @Nullable Object value) {
+			hasTextOf(key, "attributeKey");
+			if (!isNull(value)) {
+				put(key, toJSONString(value));
 			}
 			return this;
+		}
+
+		/**
+		 * Load gets attribute from IAM principal. {@link #save(String, Object)}
+		 * 
+		 * @param key
+		 * @param valueType
+		 * @return
+		 */
+		public <T> T get(@NotBlank String key, @NotNull Class<T> valueType) {
+			hasTextOf(key, "attributeKey");
+			notNullOf(valueType, "valueType");
+			return parseJSON(get(key), valueType);
 		}
 
 		/**

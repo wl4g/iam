@@ -196,8 +196,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			// TODO nameZh?? nameEn??
 			List<OrganizationInfo> oInfo = organSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getNameZh(), o.getAreaId())).collect(toList());
-			return new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(), user.getPubSalt(),
-					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
+
+			IamPrincipal iamPrincipal = new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
+					user.getPubSalt(), getRoles(user.getUserName()), getPermissions(user.getUserName()),
+					new PrincipalOrganization(oInfo));
+			iamPrincipal.attributes().save(DEFAULT_SUPER_USER, user);
+
+			return iamPrincipal;
 		}
 		return null;
 	}
@@ -276,5 +281,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		return sb.toString();
 	}
+
+	public static final String LOGIN_USERINFO = "loginUserInfo";
 
 }
