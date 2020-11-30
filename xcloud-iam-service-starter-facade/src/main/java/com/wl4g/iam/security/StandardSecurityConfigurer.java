@@ -200,7 +200,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			IamPrincipal iamPrincipal = new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					user.getPubSalt(), getRoles(user.getUserName()), getPermissions(user.getUserName()),
 					new PrincipalOrganization(oInfo));
-			iamPrincipal.attributes().save(DEFAULT_SUPER_USER, user);
+			iamPrincipal.attributes().save(LOGIN_USERINFO, user);
 
 			return iamPrincipal;
 		}
