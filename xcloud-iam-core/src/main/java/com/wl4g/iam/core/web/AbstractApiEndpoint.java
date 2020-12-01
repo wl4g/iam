@@ -60,7 +60,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTH
  */
 @Beta
 @ResponseBody
-public abstract class GenericApiEndpoint extends BaseController implements InitializingBean {
+public abstract class AbstractApiEndpoint extends BaseController implements InitializingBean {
 	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**

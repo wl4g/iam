@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.IamServer;
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.iam.core.web.GenericApiEndpoint;
+import com.wl4g.iam.core.web.AbstractApiEndpoint;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
 
 @RunWith(SpringRunner.class)
@@ -36,7 +36,7 @@ import com.wl4g.iam.core.web.model.SessionQueryModel;
 public class GenericApiEndpointTests {
 
 	@Autowired
-	private GenericApiEndpoint endpoint;
+	private AbstractApiEndpoint endpoint;
 
 	@Test
 	public void scanSessionsTest1() throws Exception {

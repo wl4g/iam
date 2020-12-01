@@ -56,7 +56,6 @@ public class UserController extends BaseController {
 	@Autowired
 	private CredentialsSecurer securer;
 
-	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:user" })
 	public RespBase<?> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
@@ -64,7 +63,7 @@ public class UserController extends BaseController {
 
 		// Obtain login principal info.
 		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
-		resp.setData(userService.list(pm, info, userName, displayName, roleId));
+		resp.setData(userService.list(pm, info.getPrincipal(), info.getPrincipal(), userName, displayName, roleId));
 
 		return resp;
 	}

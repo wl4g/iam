@@ -52,8 +52,8 @@ import static org.springframework.util.Assert.notNull;
  */
 @SuppressWarnings("deprecation")
 @RestController
-@RequestMapping("/mgr/v1")
-public class IamManagerApiV1Controller extends BaseController {
+@RequestMapping("/mgr/v2")
+public class ManagmentV2ApiController extends BaseController {
 
 	@Autowired
 	protected RestTemplate restTemplate;

@@ -18,7 +18,6 @@ package com.wl4g.iam.service;
 import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.subject.IamPrincipal;
 
 import java.util.Set;
 
@@ -50,7 +49,8 @@ public interface UserService {
 
 	// TODO @RequestBody (feign)??
 	@GetMapping("/list")
-	PageModel<User> list(PageModel<User> pm, IamPrincipal info, String userName, String displayName, Long roleId);
+	PageModel<User> list(PageModel<User> pm, @RequestParam("principalId") String principalId,
+			@RequestParam("principal") String principal, String userName, String displayName, Long roleId);
 
 	@PostMapping("/save")
 	void save(User user);

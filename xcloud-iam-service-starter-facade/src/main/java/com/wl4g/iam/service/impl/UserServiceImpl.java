@@ -23,7 +23,6 @@ import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleUser;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.RoleDao;
@@ -71,14 +70,15 @@ public class UserServiceImpl implements UserService {
 	private RoleUserDao roleUserDao;
 
 	@Override
-	public PageModel<User> list(PageModel<User> pm, IamPrincipal info, String userName, String displayName, Long roleId) {
+	public PageModel<User> list(PageModel<User> pm, String principalId, String principal, String userName, String displayName,
+			Long roleId) {
 		List<User> list = null;
-		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			list = userDao.list(null, userName, displayName, roleId);
 		} else {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			list = userDao.list(Long.valueOf(info.getPrincipalId()), userName, displayName, roleId);
+			list = userDao.list(Long.valueOf(principalId), userName, displayName, roleId);
 		}
 		for (User user : list) {
 			// Gets organizations

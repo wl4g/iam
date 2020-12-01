@@ -23,7 +23,7 @@ import com.wl4g.iam.core.authc.ClientRef;
 import com.wl4g.iam.core.session.GrantCredentialsInfo;
 import com.wl4g.iam.core.session.IamSession;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.core.web.GenericApiEndpoint;
+import com.wl4g.iam.core.web.AbstractApiEndpoint;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 
@@ -34,7 +34,7 @@ import static com.wl4g.iam.handler.CentralAuthenticatingHandler.*;
 import static java.util.Objects.nonNull;
 
 /**
- * IAM server API V1 controller.
+ * IAM server API controller.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月31日
@@ -42,7 +42,7 @@ import static java.util.Objects.nonNull;
  */
 @IamApiV2Controller
 @ResponseBody
-public class IamServerApiV2Endpoint extends GenericApiEndpoint {
+public class ServiceApiV2Endpoint extends AbstractApiEndpoint {
 
 	/**
 	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
