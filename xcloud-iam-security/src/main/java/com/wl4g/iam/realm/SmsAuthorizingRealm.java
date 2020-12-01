@@ -19,9 +19,9 @@ import com.wl4g.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.iam.authc.SmsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.iam.authz.SmsAuthorizationInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipal.SmsParameter;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;

@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/clusterConfig")
 public class ClusterConfigController extends BaseController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private ClusterConfigService clusterConfigService;
 

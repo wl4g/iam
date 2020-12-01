@@ -37,6 +37,7 @@ import java.util.List;
 @RequestMapping("/contactGroup")
 public class ContactGroupController extends BaseController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private ContactGroupService contactGroupService;
 

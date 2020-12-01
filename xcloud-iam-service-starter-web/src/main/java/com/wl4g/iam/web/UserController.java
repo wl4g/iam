@@ -15,6 +15,9 @@
  */
 package com.wl4g.iam.web;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -22,10 +25,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
+import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.session.mgt.IamSessionDAO;
+import com.wl4g.iam.core.utils.IamSecurityHolder;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.service.UserService;
 
 /**
@@ -36,15 +46,26 @@ import com.wl4g.iam.service.UserService;
 @RequestMapping("/user")
 public class UserController extends BaseController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private IamSessionDAO sessionDAO;
+
+	@Autowired
+	private CredentialsSecurer securer;
 
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:user" })
 	public RespBase<?> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(userService.list(pm, userName, displayName, roleId));
+
+		// Obtain login principal info.
+		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
+		resp.setData(userService.list(pm, info, userName, displayName, roleId));
+
 		return resp;
 	}
 
@@ -72,7 +93,22 @@ public class UserController extends BaseController {
 	public RespBase<?> save(@RequestBody User user) {
 		Assert.notNull(user, "user is null");
 		RespBase<Object> resp = RespBase.create();
+
+		if (isNotBlank(user.getPassword())) { // update-passwd
+			// TODO Dynamic choose algorithm!!! Default use RSA
+			CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
+			CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
+			String sign = securer.signature(crToken, publicSalt);
+			user.setPassword(sign); // ciphertext
+			user.setPubSalt(publicSalt.toHex());
+		}
+
+		// Save IAM session.
 		userService.save(user);
+
+		// Update the password, need to logout the user
+		sessionDAO.removeAccessSession(user.getUserName());
+
 		return resp;
 	}
 

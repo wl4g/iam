@@ -18,6 +18,8 @@ package com.wl4g.iam.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Role;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.utils.IamSecurityHolder;
 import com.wl4g.iam.service.RoleService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +38,7 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private RoleService roleService;
 
@@ -43,7 +46,11 @@ public class RoleController {
 	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
-		List<Role> roles = roleService.getLoginRoles();
+
+		// Obtain login principal info.
+		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
+		List<Role> roles = roleService.getLoginRoles(info);
+
 		resp.forMap().put("data", roles);
 		return resp;
 	}
@@ -52,7 +59,11 @@ public class RoleController {
 	@RequiresPermissions(value = { "iam:role" })
 	public RespBase<?> list(PageModel<Role> pm, String organizationId, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(roleService.list(pm, organizationId, roleCode, displayName));
+
+		// Obtain login principal info.
+		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
+		resp.setData(roleService.list(pm, info, organizationId, roleCode, displayName));
+
 		return resp;
 	}
 

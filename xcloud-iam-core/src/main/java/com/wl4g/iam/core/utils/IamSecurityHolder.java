@@ -35,10 +35,10 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
 import com.wl4g.components.core.utils.bean.BeanCopierUtils;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.core.session.NoOpSession;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipalWrapper;
 
 /**
  * Session bind holder utility.

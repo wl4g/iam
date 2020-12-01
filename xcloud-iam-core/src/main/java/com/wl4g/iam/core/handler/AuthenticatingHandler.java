@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
 
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.model.LoggedinResult;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
@@ -28,7 +29,6 @@ import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.core.exception.IllegalCallbackDomainException;
-import com.wl4g.iam.core.subject.IamPrincipal;
 
 /**
  * Iam central authenticating handler.

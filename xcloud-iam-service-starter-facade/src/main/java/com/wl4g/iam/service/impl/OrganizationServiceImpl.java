@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
@@ -33,7 +33,6 @@ import java.util.Set;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 
 /**
@@ -55,8 +54,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationRoleDao organizationRoleDao;
 
 	@Override
-	public List<Organization> getLoginOrganizationTree() {
-		IamPrincipal info = getPrincipalInfo();
+	public List<Organization> getLoginOrganizationTree(IamPrincipal info) {
 		Set<Organization> orgs = getUserOrganizations(new User(info.getPrincipal()));
 		return transfromOrganTree(new ArrayList<>(orgs));
 	}

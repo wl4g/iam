@@ -22,7 +22,7 @@ import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleMenu;
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.data.RoleDao;
@@ -36,7 +36,6 @@ import java.util.*;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -70,8 +69,7 @@ public class RoleServiceImpl implements RoleService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Role> getLoginRoles() {
-		IamPrincipal info = getPrincipalInfo();
+	public List<Role> getLoginRoles(IamPrincipal info) {
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {
@@ -80,9 +78,8 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public PageModel<Role> list(PageModel<Role> pm, String organizationId, String roleCode, String displayName) {
-		IamPrincipal info = getPrincipalInfo();
-
+	public PageModel<Role> list(PageModel<Role> pm, IamPrincipal info, String organizationId, String roleCode,
+			String displayName) {
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {
 			Set<Long> set = new HashSet<>();
@@ -226,7 +223,16 @@ public class RoleServiceImpl implements RoleService {
 		role.setMenuIds(menuIds);
 		role.setGroupIds(groupIds);
 		return role;
+	}
 
+	@Override
+	public List<Role> findByUserId(Long userId) {
+		return roleDao.selectByUserId(userId);
+	}
+
+	@Override
+	public List<Role> findRoot(List<Long> groupIds, String roleCode, String nameZh) {
+		return roleDao.selectWithRoot(groupIds, roleCode, nameZh);
 	}
 
 }

@@ -37,7 +37,7 @@ import java.util.List;
 @RequestMapping("/role")
 public interface RoleDao {
 
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+	int deleteByPrimaryKey(@RequestParam("id") @Param("id") Long id);
 
 	int insert(@RequestBody Role record);
 
@@ -52,9 +52,9 @@ public interface RoleDao {
 
 	int updateByPrimaryKey(@RequestBody Role record);
 
-	List<Role> selectByUserId(@RequestParam("userId") Long userId);
+	List<Role> selectByUserId(@RequestParam("userId") @Param("userId") Long userId);
 
-	List<Role> selectByGroupId(@RequestParam("groupId") Long groupId);
+	List<Role> selectByGroupId(@RequestParam("groupId") @Param("groupId") Long groupId);
 
 	List<Role> selectByGroupIdsAndUserId(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
 			@RequestParam("userId") @Param("userId") String userId, @RequestParam("roleCode") @Param("roleCode") String roleCode,

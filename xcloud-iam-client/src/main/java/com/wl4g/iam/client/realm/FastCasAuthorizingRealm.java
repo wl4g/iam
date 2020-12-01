@@ -26,13 +26,13 @@ import com.wl4g.iam.client.authc.FastAuthenticationInfo;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 import com.wl4g.iam.core.authc.IamAuthenticationToken;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.exception.TicketValidateException;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipal.Attributes;
 
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;

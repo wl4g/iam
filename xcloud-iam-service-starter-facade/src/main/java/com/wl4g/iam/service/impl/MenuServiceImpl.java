@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
@@ -26,14 +26,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
+import static com.wl4g.components.common.serialize.JacksonUtils.deepClone;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Menu service implements.
@@ -53,15 +59,17 @@ public class MenuServiceImpl implements MenuService {
 	protected OrganizationService groupService;
 
 	@Override
-	public Map<String, Object> getMenuTree() {
+	public Map<String, Object> findMenuTree(IamPrincipal info) {
 		Map<String, Object> result = new HashMap<>();
-		Set<Menu> menusSet = getMenusSet();
-		List<Menu> menuList = new ArrayList<>(getMenusSet());
-		List<Menu> menus = new ArrayList<>(menusSet);
-		dealWithRoutePath(menus);
-		menus = set2Tree(menus);
-		result.put("data", menus);
-		result.put("data2", new ArrayList<>(menuList));
+		Set<Menu> menusSet = obtainMenuSet(info);
+
+		// List<Menu> menuTree = new ArrayList<>(obtainMenuSet(info));
+		List<Menu> menuTree = new ArrayList<>(deepClone(menusSet));
+		processMenuRoutePath(menuTree);
+		menuTree = transformMenuTree(menuTree);
+
+		result.put("data", menuTree);
+		result.put("data2", new ArrayList<>(menusSet));
 		return result;
 	}
 
@@ -75,8 +83,7 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public List<Menu> getMenuList() {
-		IamPrincipal info = getPrincipalInfo();
+	public List<Menu> findMenuList(IamPrincipal info) {
 		List<Menu> result;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			result = menuDao.selectWithRoot();// root
@@ -84,26 +91,86 @@ public class MenuServiceImpl implements MenuService {
 			result = menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
 		}
 		// deal with route path
-		dealWithRoutePath(result);
+		processMenuRoutePath(result);
 		return result;
 	}
 
-	private void dealWithRoutePath(List<Menu> list) {
+	@Override
+	public void save(Menu menu) {
+		checkRepeat(menu);
+		checkMenuProperties(menu);
+		if (menu.getId() != null) {
+			update(menu);
+		} else {
+			insert(menu);
+		}
+	}
+
+	@Override
+	public void del(Long id) {
+		Assert.notNull(id, "id is null");
+		Menu menu = new Menu();
+		menu.setId(id);
+		menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		menuDao.updateByPrimaryKeySelective(menu);
+	}
+
+	@Override
+	public Menu detail(Long id) {
+		return menuDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<Menu> findRoot() {
+		return menuDao.selectWithRoot();
+	}
+
+	@Override
+	public List<Menu> findByUserId(Long userId) {
+		return menuDao.selectByUserId(userId);
+	}
+
+	private void insert(Menu menu) {
+		menu.preInsert();
+		Long parentId = menu.getParentId();
+		// if menu type is button
+		if (nonNull(menu.getType()) && menu.getType().intValue() == 3) {
+			menu.setLevel(0);
+		} else {
+			// if has parent menu , set level = parent's level + 1
+			if (nonNull(parentId) && 0 != parentId) {
+				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
+				Assert.notNull(parentMenu, "parentMenu is null");
+				Assert.notNull(parentMenu.getLevel(), "parentMenu's level is null");
+				menu.setLevel(parentMenu.getLevel() + 1);
+			} else {// if is parent menu , set level = 1
+				menu.setLevel(1);
+			}
+		}
+		menuDao.insertSelective(menu);
+	}
+
+	private void update(Menu menu) {
+		menu.preUpdate();
+		menuDao.updateByPrimaryKeySelective(menu);
+	}
+
+	private void processMenuRoutePath(List<Menu> list) {
 		for (Menu menu : list) {
 			menu.setRoutePath(menu.getRouteNamespace());
 			if (menu.getParentId() != null && menu.getParentId() > 0 && StringUtils.isNotBlank(menu.getRouteNamespace())) {
-				dealWithRoutePath(list, menu, menu.getParentId());
+				updateMenuRoutePath(list, menu, menu.getParentId());
 			}
 		}
 	}
 
-	private void dealWithRoutePath(List<Menu> list, Menu menu, long parentId) {
+	private void updateMenuRoutePath(List<Menu> list, Menu menu, long parentId) {
 		if (parentId != 0) {
 			for (Menu m : list) {
 				if (m.getId().equals(parentId)) {
 					menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace()) + fixRouteNamespace(menu.getRoutePath()));
 					if (m.getParentId() != null && m.getParentId() > 0) {
-						dealWithRoutePath(list, menu, m.getParentId());
+						updateMenuRoutePath(list, menu, m.getParentId());
 					}
 					break;
 				}
@@ -130,63 +197,17 @@ public class MenuServiceImpl implements MenuService {
 		return routeNamespace;
 	}
 
-	@Override
-	public void save(Menu menu) {
-		checkRepeat(menu);
-		checkMenu(menu);
-		if (menu.getId() != null) {
-			update(menu);
-		} else {
-			insert(menu);
-		}
-	}
-
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id is null");
-		Menu menu = new Menu();
-		menu.setId(id);
-		menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
-
-	@Override
-	public Menu detail(Long id) {
-		return menuDao.selectByPrimaryKey(id);
-	}
-
-	private void insert(Menu menu) {
-		menu.preInsert();
-		Long parentId = menu.getParentId();
-		// if menu type is button
-		if (Objects.nonNull(menu.getType()) && menu.getType().intValue() == 3) {
-			menu.setLevel(0);
-		} else {
-			// if has parent menu , set level = parent's level + 1
-			if (Objects.nonNull(parentId) && 0 != parentId) {
-				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
-				Assert.notNull(parentMenu, "parentMenu is null");
-				Assert.notNull(parentMenu.getLevel(), "parentMenu's level is null");
-				menu.setLevel(parentMenu.getLevel() + 1);
-			} else {// if is parent menu , set level = 1
-				menu.setLevel(1);
-			}
-		}
-		menuDao.insertSelective(menu);
-	}
-
-	private void update(Menu menu) {
-		menu.preUpdate();
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
-
 	/**
-	 * 父/子 动态 静态 按钮 动态 1 1 0 静态 1 1 1(无需设菜单文件夹的pagelocation和route_namespace为空)
-	 * 按钮 0 0 0
+	 * <pre>
+	 * 父/子 动态      静态     按钮
+	 * 动态  1         1       0
+	 * 静态  1         1       1(无需设菜单文件夹的pagelocation和route_namespace为空)
+	 * 按钮  0         0       0
+	 * </pre>
 	 *
 	 * @param menu
 	 */
-	private void checkMenu(Menu menu) {
+	private void checkMenuProperties(Menu menu) {
 		String routeNamespace = menu.getRouteNamespace();
 		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/")
 				&& routeNamespace.length() > 1;
@@ -219,9 +240,7 @@ public class MenuServiceImpl implements MenuService {
 		}
 	}
 
-	private Set<Menu> getMenusSet() {
-		IamPrincipal info = getPrincipalInfo();
-
+	private Set<Menu> obtainMenuSet(IamPrincipal info) {
 		List<Menu> menus = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			menus = menuDao.selectWithRoot();
@@ -254,7 +273,7 @@ public class MenuServiceImpl implements MenuService {
 		return set;
 	}
 
-	private List<Menu> set2Tree(List<Menu> menus) {
+	private List<Menu> transformMenuTree(List<Menu> menus) {
 		List<Menu> top = new ArrayList<>();
 		for (Menu menu : menus) {
 			Menu parent = getParent(menus, menu.getParentId());

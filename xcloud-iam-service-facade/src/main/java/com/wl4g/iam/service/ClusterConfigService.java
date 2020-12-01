@@ -21,6 +21,7 @@ import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.iam.common.bean.ClusterConfig;
 
@@ -42,6 +43,10 @@ public interface ClusterConfigService {
 
 	@GetMapping("/getClusterConfig")
 	ClusterConfig getClusterConfig(Long clusterConfigId);
+
+	@GetMapping("/getByAppNames")
+	List<ClusterConfig> findByAppNames(@RequestParam("appNames") String[] appNames, @RequestParam("envType") String envType,
+			@RequestParam("type") String type);
 
 	@GetMapping("/findOfIamServers")
 	List<ClusterConfig> findOfIamServers();

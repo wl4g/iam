@@ -17,7 +17,6 @@
 		<bootstrap-classname>com.wl4g.IamFacade</bootstrap-classname>
 	</properties>
 	<dependencies>
-		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-data</artifactId>
@@ -30,8 +29,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-security</artifactId>
+			<artifactId>xcloud-iam-common</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

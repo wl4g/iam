@@ -18,6 +18,7 @@ package com.wl4g.iam.service;
 import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * {@link UserService}
@@ -46,8 +48,9 @@ public interface UserService {
 	@GetMapping("/getMenusByUser")
 	Set<Menu> getMenusByUser(Long userId);
 
+	// TODO @RequestBody (feign)??
 	@GetMapping("/list")
-	PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId);
+	PageModel<User> list(PageModel<User> pm, IamPrincipal info, String userName, String displayName, Long roleId);
 
 	@PostMapping("/save")
 	void save(User user);
@@ -57,5 +60,11 @@ public interface UserService {
 
 	@GetMapping("/detail")
 	User detail(Long userId);
+
+	@GetMapping("/findByUserName")
+	User findByUserName(@RequestParam("userName") String userName);
+
+	@GetMapping("/findByUnionIdOrOpenId")
+	User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
 
 }

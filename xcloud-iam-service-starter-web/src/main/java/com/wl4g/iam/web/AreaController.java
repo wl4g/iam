@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/area")
 public class AreaController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private AreaService areaService;
 

@@ -21,7 +21,7 @@ import static org.springframework.util.Assert.notNull;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * Concrete Implementation of the {@link TicketValidateResult}.

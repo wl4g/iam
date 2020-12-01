@@ -13,18 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.handler;
+package com.wl4g.iam.common.subject;
 
-import java.util.Map;
+/**
+ * {@link IamPrincipalWrapper}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年7月7日 v1.0.0
+ * @see
+ */
+public class IamPrincipalWrapper {
 
-import com.wl4g.iam.verification.SmsSecurityVerifier.SmsHandleSender;
+	/**
+	 * {@link IamPrincipal}
+	 */
+	private IamPrincipal info;
 
-//@Service
-public class AliyunSmsHandleSender implements SmsHandleSender {
+	public IamPrincipalWrapper() {
+		super();
+	}
+
+	public IamPrincipalWrapper(IamPrincipal info) {
+		super();
+		this.info = info;
+	}
+
+	public IamPrincipal getInfo() {
+		return info;
+	}
+
+	public void setInfo(IamPrincipal info) {
+		this.info = info;
+	}
 
 	@Override
-	public void doSend(Map<String, Object> parameters) {
-		System.out.println("Do send sms message for :" + parameters);
+	public String toString() {
+		return "IamPrincipalInfoWrapper [info=" + info + "]";
 	}
 
 }

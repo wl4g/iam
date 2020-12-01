@@ -19,7 +19,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
 
 import com.wl4g.components.core.utils.bean.BeanCopierUtils;
-import com.wl4g.iam.core.subject.SimpleIamPrincipal;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
 /**
  * {@link SimplePrincipalInfoTests}

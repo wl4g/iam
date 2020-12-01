@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.security;
+package com.wl4g.iam.web.security;
 
 import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.bean.ClusterConfig;
@@ -23,17 +23,17 @@ import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.SimpleIamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipal.OrganizationInfo;
-import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
-import com.wl4g.iam.core.subject.IamPrincipal.SimpleParameter;
-import com.wl4g.iam.core.subject.IamPrincipal.SnsParameter;
-import com.wl4g.iam.data.ClusterConfigDao;
-import com.wl4g.iam.data.MenuDao;
-import com.wl4g.iam.data.RoleDao;
-import com.wl4g.iam.data.UserDao;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.SimpleIamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
+import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
+import com.wl4g.iam.service.RoleService;
+import com.wl4g.iam.service.UserService;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -50,7 +50,7 @@ import java.util.Set;
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.core.subject.IamPrincipal.PrincipalOrganization;
+import static com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
@@ -70,21 +70,19 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	/**
-	 * ProtoStuff can't serialize XXXDao created by MyBatis, it will throw a
-	 * serialization exception. This field must be ignored. </br>
-	 * The problem is method:
+	 * To solve the problem that protobuff cannot be serialization, refer see:
 	 * {@link StandardSecurityConfigurer#getIamUserDetail()}
 	 */
 	@Autowired
-	private transient UserDao userDao;
+	private transient UserService userService;
 	@Autowired
-	private transient RoleDao roleDao;
+	private transient RoleService roleService;
 	@Autowired
-	private transient MenuDao menuDao;
+	private transient MenuService menuService;
 	@Autowired
 	private transient OrganizationService organService;
 	@Autowired
-	private transient ClusterConfigDao clusterConfigDao;
+	private transient ClusterConfigService clusterConfigService;
 
 	@Value("${spring.profiles.active}")
 	private transient String active;
@@ -120,7 +118,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfos.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> ccs = clusterConfigDao.getByAppNames(appNames, active, null);
+			List<ClusterConfig> ccs = clusterConfigService.findByAppNames(appNames, active, null);
 			for (ClusterConfig cc : ccs) {
 				ApplicationInfo app = new ApplicationInfo();
 				app.setAppName(cc.getName());
@@ -132,7 +130,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			}
 		}
 
-		//// --- For testing. ---
+		//// --- For example. ---
 		//
 		// if (equalsAny("scm-server", appNames)) {
 		// ApplicationInfo appInfo = new ApplicationInfo("scm-server",
@@ -153,15 +151,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// appInfoList.add(appInfo);
 		// }
 		// if (equalsAny("share-admin", appNames)) {
-		// ApplicationInfo appInfo = new ApplicationInfo("share-admin",
+		// ApplicationInfo appInfo = new ApplicationInfo("erm-admin",
 		// "http://localhost:14051");
-		// appInfo.setIntranetBaseUri("http://localhost:14051/share-admin");
-		// appInfoList.add(appInfo);
-		// }
-		// if (equalsAny("srm-admin", appNames)) {
-		// ApplicationInfo appInfo = new ApplicationInfo("srm-admin",
-		// "http://localhost:15050");
-		// appInfo.setIntranetBaseUri("http://localhost:15050/srm-admin");
+		// appInfo.setIntranetBaseUri("http://localhost:14051/erm-admin");
 		// appInfoList.add(appInfo);
 		// }
 		//
@@ -169,8 +161,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// http://localhost:14043 # scm-server
 		// http://localhost:14046 # ci-server
 		// http://localhost:14048 # umc-manager
-		// http://localhost:14050 # srm-manager
-		// http://localhost:14051 # share-manager
+		// http://localhost:14050 # erm-manager
 		//
 
 		return appInfos;
@@ -183,12 +174,12 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// By SNS authorizing
 		if (parameter instanceof SnsParameter) {
 			SnsParameter snsParameter = (SnsParameter) parameter;
-			user = userDao.selectByUnionIdOrOpenId(snsParameter.getUnionId(), snsParameter.getOpenId());
+			user = userService.findByUnionIdOrOpenId(snsParameter.getUnionId(), snsParameter.getOpenId());
 		}
 		// By general account
 		else if (parameter instanceof SimpleParameter) {
 			SimpleParameter simpleParameter = (SimpleParameter) parameter;
-			user = userDao.selectByUserName(simpleParameter.getPrincipal());
+			user = userService.findByUserName(simpleParameter.getPrincipal());
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
@@ -234,14 +225,14 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	 * @return
 	 */
 	private String getRoles(String principal) {
-		User user = userDao.selectByUserName(principal);
+		User user = userService.findByUserName(principal);
 		// TODO cache
 		List<Role> list;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			// TODO nameZh?? nameEn??
-			list = roleDao.selectWithRoot(null, null, null);
+			list = roleService.findRoot(null, null, null);
 		} else {
-			list = roleDao.selectByUserId(user.getId());
+			list = roleService.findByUserId(user.getId());
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
@@ -262,13 +253,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	 * @return
 	 */
 	private String getPermissions(String principal) {
-		User user = userDao.selectByUserName(principal);
+		User user = userService.findByUserName(principal);
 		// TODO cache
 		List<Menu> list;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
-			list = menuDao.selectWithRoot();
+			list = menuService.findRoot();
 		} else {
-			list = menuDao.selectByUserId(user.getId());
+			list = menuService.findByUserId(user.getId());
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {

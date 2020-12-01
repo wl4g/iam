@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.iam.core.subject.IamPrincipal.PrincipalOrganization;
+import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 
 import static com.google.common.net.InetAddresses.isInetAddress;
 import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;

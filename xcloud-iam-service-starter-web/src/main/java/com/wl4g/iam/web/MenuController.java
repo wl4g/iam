@@ -17,11 +17,14 @@ package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.MenuService;
+
+import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,13 +40,18 @@ import java.util.Map;
 @RequestMapping("/menu")
 public class MenuController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private MenuService menuService;
 
 	@RequestMapping(value = "/tree")
 	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = menuService.getMenuTree();
+
+		// Obtain login principal info.
+		IamPrincipal info = getPrincipalInfo();
+		Map<String, Object> result = menuService.findMenuTree(info);
+
 		resp.setData(result);
 		return resp;
 	}
@@ -51,8 +59,13 @@ public class MenuController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
-		List<Menu> menus = menuService.getMenuList();
-		Assert.notEmpty(menus, "not menu role found , Please ask you manager and check the user-role-menu config");
+
+		// Obtain login principal info.
+		IamPrincipal info = getPrincipalInfo();
+
+		List<Menu> menus = menuService.findMenuList(info);
+		notEmpty(menus, "Not found menu role, Please ask you manager and check the user-role-menu config");
+
 		resp.forMap().put("data", menus);
 		return resp;
 	}

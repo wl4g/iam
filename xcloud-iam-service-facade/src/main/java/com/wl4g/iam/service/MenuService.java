@@ -22,9 +22,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * {@link MenuService}
@@ -39,11 +42,11 @@ import com.wl4g.iam.common.bean.Menu;
 @RequestMapping("/menu")
 public interface MenuService {
 
-	@GetMapping("/getMenuTree")
-	Map<String, Object> getMenuTree();
+	@GetMapping("/findMenuTree")
+	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
-	@GetMapping("/getMenuList")
-	List<Menu> getMenuList();
+	@GetMapping("/findMenuList")
+	List<Menu> findMenuList(@RequestBody IamPrincipal info);
 
 	@PostMapping("/save")
 	void save(Menu menu);
@@ -53,5 +56,11 @@ public interface MenuService {
 
 	@GetMapping("/detail")
 	Menu detail(Long id);
+
+	@GetMapping("/findRoot")
+	List<Menu> findRoot();
+
+	@GetMapping("/findByUserId")
+	List<Menu> findByUserId(@RequestParam("userId") Long userId);
 
 }

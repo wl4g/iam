@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.shiro.authc.AuthenticationInfo;
 
 import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**
  * IAM authentication information.

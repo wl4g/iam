@@ -42,6 +42,8 @@ import static org.springframework.util.Assert.notNull;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -53,8 +55,6 @@ import com.wl4g.iam.core.handler.AuthenticatingHandler;
 import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipalWrapper;
 
 /**
  * Multiple realm routing processing.

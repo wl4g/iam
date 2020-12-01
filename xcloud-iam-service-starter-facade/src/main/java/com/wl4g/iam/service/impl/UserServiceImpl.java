@@ -16,19 +16,14 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
-import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleUser;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.core.session.mgt.IamSessionDAO;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.RoleDao;
@@ -36,7 +31,6 @@ import com.wl4g.iam.data.RoleUserDao;
 import com.wl4g.iam.data.UserDao;
 import com.wl4g.iam.service.UserService;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -47,9 +41,7 @@ import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * User service implements.
@@ -78,15 +70,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleUserDao roleUserDao;
 
-	// @Autowired
-	private CredentialsSecurer securer;
-
-	// @Autowired
-	protected IamSessionDAO sessionDAO;
-
 	@Override
-	public PageModel<User> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
-		IamPrincipal info = getPrincipalInfo();
+	public PageModel<User> list(PageModel<User> pm, IamPrincipal info, String userName, String displayName, Long roleId) {
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
@@ -96,10 +81,10 @@ public class UserServiceImpl implements UserService {
 			list = userDao.list(Long.valueOf(info.getPrincipalId()), userName, displayName, roleId);
 		}
 		for (User user : list) {
-			// groups
+			// Gets organizations
 			List<Organization> groups = groupDao.selectByUserId(user.getId());
 			user.setGroupNameStrs(groups2Str(groups));
-			// roles
+			// Gets roles
 			List<Role> roles = roleDao.selectByUserId(user.getId());
 			user.setRoleStrs(roles2Str(roles));
 		}
@@ -109,18 +94,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void save(User user) {
-		if (isNotBlank(user.getPassword())) {
-			// TODO Dynamic choose algorithm!!! Default use RSA
-			CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
-
-			CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
-			String sign = securer.signature(crToken, publicSalt);
-			user.setPassword(sign); // ciphertext
-			user.setPubSalt(publicSalt.toHex());
-
-			// Update the password, need to logout the user
-			sessionDAO.removeAccessSession(user.getUserName());
-		}
 		if (!isNull(user.getId())) {
 			update(user);
 		} else {
@@ -190,8 +163,18 @@ public class UserServiceImpl implements UserService {
 		return set;
 	}
 
+	@Override
+	public User findByUserName(String userName) {
+		return userDao.selectByUserName(userName);
+	}
+
+	@Override
+	public User findByUnionIdOrOpenId(String unionId, String openId) {
+		return userDao.selectByUnionIdOrOpenId(unionId, openId);
+	}
+
 	private void getMenusByParentId(Long parentId, Set<Menu> menuSet) {
-		// TODO chche best
+		// TODO use cache
 		List<Menu> menus = menuDao.selectByParentId(parentId);
 		if (!CollectionUtils.isEmpty(menus)) {
 			if (menuSet != null) {

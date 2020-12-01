@@ -36,6 +36,9 @@ import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.
 
 import com.google.common.base.Splitter;
 import com.wl4g.components.common.web.WebUtils2;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
@@ -43,9 +46,6 @@ import com.wl4g.iam.core.authc.SecondaryAuthenticationException;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.config.AbstractIamProperties.Which;
-import com.wl4g.iam.core.subject.IamPrincipal;
-import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
-import com.wl4g.iam.core.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;

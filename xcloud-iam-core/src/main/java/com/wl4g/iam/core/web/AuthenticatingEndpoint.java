@@ -20,12 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
 import com.wl4g.iam.core.authc.model.SessionValidateResult;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
-import com.wl4g.iam.core.subject.IamPrincipal;
 
 /**
  * IAM server validating authenticating endpoint

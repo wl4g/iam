@@ -42,6 +42,7 @@ import java.util.Map;
 @RequestMapping("/dict")
 public class DictController extends BaseController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private DictService dictService;
 

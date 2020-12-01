@@ -17,6 +17,7 @@ package com.wl4g.iam.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Organization;
+import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamOrganizationHolder;
 import com.wl4g.iam.service.OrganizationService;
 
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
@@ -38,6 +40,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/organization")
 public class OrganizationController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private OrganizationService groupService;
 
@@ -45,7 +48,11 @@ public class OrganizationController {
 	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
-		List<Organization> groupsTree = groupService.getLoginOrganizationTree();
+
+		// Obtain login principal info.
+		IamPrincipal info = getPrincipalInfo();
+		List<Organization> groupsTree = groupService.getLoginOrganizationTree(info);
+
 		resp.forMap().put("data", groupsTree);
 		return resp;
 	}

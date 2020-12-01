@@ -64,6 +64,11 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 	}
 
 	@Override
+	public List<ClusterConfig> findByAppNames(String[] appNames, String envType, String type) {
+		return clusterConfigDao.getByAppNames(appNames, envType, type);
+	}
+
+	@Override
 	public List<ClusterConfig> findOfIamServers() {
 		return clusterConfigDao.getIamServer();
 	}

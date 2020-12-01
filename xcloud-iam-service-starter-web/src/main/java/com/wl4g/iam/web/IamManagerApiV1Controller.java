@@ -58,6 +58,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	@Autowired
 	protected RestTemplate restTemplate;
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private ClusterConfigService clusterConfigService;
 

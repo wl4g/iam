@@ -36,6 +36,7 @@ import com.wl4g.iam.service.ContactService;
 @RequestMapping("/contact")
 public class ContactController extends BaseController {
 
+	// @com.alibaba.dubbo.config.annotation.Reference
 	@Autowired
 	private ContactService contactService;
 
