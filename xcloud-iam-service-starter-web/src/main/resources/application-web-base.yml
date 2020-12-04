@@ -75,8 +75,8 @@ spring:
           enable-data-cipher: true # Default by true
         session:
           enable-access-token-validity: true # Default by true
-          global-session-timeout: 1800_000
-          session-validation-interval: 360_000
+          global-session-timeout: 7200_000 # Default: 1800_000ms
+          session-validation-interval: 360_000 # Default: 360_000ms
         cookie:
           name: _TGC
         #domain:
