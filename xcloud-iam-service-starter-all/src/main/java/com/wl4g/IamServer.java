@@ -19,10 +19,12 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.component.core.web.method.mapping.annotation.EnableSmartHandlerMapping;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.component.data.annotation.EnableComponentsData;
 import com.wl4g.iam.annotation.EnableIamServer;
 
+@EnableSmartHandlerMapping("com.wl4g.iam.web")
 @EnableApiVersionManagement
 @EnableIamServer
 @MapperScan("com.wl4g.iam.data")
