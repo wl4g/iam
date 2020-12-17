@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @see
  */
 @FeignClient("roleService")
-@RequestMapping("/role")
+//@RequestMapping("/role")
 public interface RoleService {
 
 	@GetMapping("/getLoginRoles")

@@ -37,7 +37,7 @@ import com.wl4g.iam.common.bean.Dict;
  * @see
  */
 @FeignClient("dictService")
-@RequestMapping("/dict")
+//@RequestMapping("/dict")
 public interface DictService {
 
 	@GetMapping("/list")

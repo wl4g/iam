@@ -39,7 +39,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
  * @see
  */
 @FeignClient("menuService")
-@RequestMapping("/menu")
+//@RequestMapping("/menu")
 public interface MenuService {
 
 	@GetMapping("/findMenuTree")

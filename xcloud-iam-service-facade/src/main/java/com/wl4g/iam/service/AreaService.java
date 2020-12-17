@@ -15,13 +15,11 @@
  */
 package com.wl4g.iam.service;
 
-import java.util.List;
-
+import com.wl4g.iam.common.bean.Area;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.iam.common.bean.Area;
+import java.util.List;
 
 /**
  * {@link AreaService}
@@ -33,7 +31,7 @@ import com.wl4g.iam.common.bean.Area;
  * @see
  */
 @FeignClient("areaService")
-@RequestMapping("/area")
+//@RequestMapping("/area")
 public interface AreaService {
 
 	@GetMapping("/getAreaTree")
