@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-opencv</artifactId>
+			<artifactId>xcloud-component-opencv</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

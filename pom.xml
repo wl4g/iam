@@ -50,7 +50,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-components-bom</artifactId>
+				<artifactId>xcloud-component-bom</artifactId>
 				<version>master</version>
 				<type>pom</type>
 				<scope>import</scope>

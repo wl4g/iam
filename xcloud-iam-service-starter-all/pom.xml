@@ -24,11 +24,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-dubbo</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+					<artifactId>xcloud-component-rpc-eureka</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -39,11 +39,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-dubbo</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+					<artifactId>xcloud-component-rpc-eureka</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -54,11 +54,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-dubbo</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-components-rpc-springcloud-eureka</artifactId>
+					<artifactId>xcloud-component-rpc-eureka</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

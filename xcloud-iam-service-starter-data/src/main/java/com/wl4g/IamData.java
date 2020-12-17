@@ -20,8 +20,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.components.data.annotation.EnableComponentsData;
-import com.wl4g.components.rpc.springcloud.dubbo.EnableFeignDubboProvider;
-import com.wl4g.components.rpc.springcloud.feign.annotation.EnableFeignProviderProxies;
+import com.wl4g.components.rpc.dubbo.EnableFeignDubboProvider;
+import com.wl4g.components.rpc.core.springcloudfeign.annotation.EnableFeignProviderProxies;
 
 /**
  * {@link IamData}
