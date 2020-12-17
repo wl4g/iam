@@ -35,7 +35,7 @@ import com.wl4g.iam.common.bean.ClusterConfig;
  * @see
  */
 @FeignClient("clusterConfigService")
-@RequestMapping("/clusterConfig")
+//@RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 
 	@GetMapping("/loadInit")

@@ -39,7 +39,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
  * @see
  */
 @FeignClient("organizationService")
-@RequestMapping("/organization")
+//@RequestMapping("/organization")
 public interface OrganizationService {
 
 	@PostMapping("/save")

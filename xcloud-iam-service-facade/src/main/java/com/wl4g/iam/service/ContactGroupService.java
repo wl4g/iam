@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @see
  */
 @FeignClient("contactGroupService")
-@RequestMapping("/contactGroup")
+//@RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
 	@PostMapping("/save")

@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @see
  */
 @FeignClient("userService")
-@RequestMapping("/user")
+//@RequestMapping("/user")
 public interface UserService {
 
 	@GetMapping("/findSimpleUser")
