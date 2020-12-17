@@ -24,15 +24,15 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.components.support.redis.jedis.JedisOperator;
-import com.wl4g.components.support.redis.jedis.ScanCursor;
-import com.wl4g.components.support.redis.jedis.ScanCursor.CursorWrapper;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.jedis.JedisOperator;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;

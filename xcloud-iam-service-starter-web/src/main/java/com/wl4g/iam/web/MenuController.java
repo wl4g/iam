@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.MenuService;
 
-import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.component.common.lang.Assert2.notEmpty;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;

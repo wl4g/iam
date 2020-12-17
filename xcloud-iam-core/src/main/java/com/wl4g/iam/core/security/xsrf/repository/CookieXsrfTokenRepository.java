@@ -30,16 +30,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.XsrfProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.web.WebUtils2.extDomainString;
-import static com.wl4g.components.common.web.WebUtils2.extTopDomainString;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.web.WebUtils2.extDomainString;
+import static com.wl4g.component.common.web.WebUtils2.extTopDomainString;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 import static org.springframework.web.util.WebUtils.getCookie;
 

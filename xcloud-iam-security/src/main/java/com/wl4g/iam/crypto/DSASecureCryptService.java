@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.crypto;
 
-import com.wl4g.components.common.crypto.asymmetric.DSACryptor;
-import com.wl4g.components.common.crypto.asymmetric.spec.DSAKeyPairSpec;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.common.crypto.asymmetric.DSACryptor;
+import com.wl4g.component.common.crypto.asymmetric.spec.DSAKeyPairSpec;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
 
 /**
  * DSA cryptographic service.

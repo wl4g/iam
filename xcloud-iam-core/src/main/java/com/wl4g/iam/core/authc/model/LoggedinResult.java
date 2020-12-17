@@ -17,7 +17,7 @@ package com.wl4g.iam.core.authc.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.component.common.serialize.JacksonUtils;
 
 /**
  * Application grant ticket wrap

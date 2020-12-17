@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
@@ -26,10 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.TypeConverts.parseLongOrNull;
-import static com.wl4g.components.common.serialize.JacksonUtils.deepClone;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
+import static com.wl4g.component.common.serialize.JacksonUtils.deepClone;
+import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

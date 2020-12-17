@@ -21,8 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.WebUtils2;
+import com.wl4g.component.common.web.rest.RespBase;
 
 /**
  * {@link DefaultReplayRejectHandler}

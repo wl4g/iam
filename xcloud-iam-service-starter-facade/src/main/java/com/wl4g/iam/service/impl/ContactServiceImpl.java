@@ -16,11 +16,11 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.notification.GenericNotifyMessage;
-import com.wl4g.components.support.notification.MessageNotifier;
-import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.notification.GenericNotifyMessage;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.ContactChannel;
 import com.wl4g.iam.common.bean.ContactGroupRef;
@@ -33,10 +33,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.components.core.bean.BaseBean.ENABLED;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
 import static java.util.Objects.isNull;
 
 import java.util.List;

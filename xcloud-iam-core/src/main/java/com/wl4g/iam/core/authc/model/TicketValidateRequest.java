@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.components.common.lang.StringUtils2;
+import com.wl4g.component.common.lang.StringUtils2;
 
 /**
  * {@link TicketValidateRequest}

@@ -17,17 +17,17 @@ package com.wl4g.iam.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.components.common.codec.Base58;
+import com.wl4g.component.common.codec.Base58;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.core.utils.web.WebUtils3.*;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.core.utils.web.WebUtils3.*;
 import static com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;

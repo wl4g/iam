@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.crypto;
 
-import com.wl4g.components.common.codec.Base58;
-import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.component.common.codec.Base58;
+import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.component.core.framework.operator.Operator;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 import java.security.spec.KeySpec;

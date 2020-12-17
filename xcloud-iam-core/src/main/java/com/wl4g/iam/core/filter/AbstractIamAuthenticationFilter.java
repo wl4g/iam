@@ -20,11 +20,11 @@ import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.serialize.JacksonUtils.convertBean;
-import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.components.common.web.WebUtils2.toQueryParams;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.serialize.JacksonUtils.convertBean;
+import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.component.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.component.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGIN_PERMITS;
@@ -43,7 +43,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.filter.IamAuthenticationFilter;

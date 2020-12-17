@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;

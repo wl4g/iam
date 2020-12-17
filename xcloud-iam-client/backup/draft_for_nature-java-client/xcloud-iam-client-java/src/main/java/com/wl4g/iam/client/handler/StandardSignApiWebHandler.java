@@ -16,12 +16,12 @@
 package com.wl4g.iam.client.handler;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.common.web.WebUtils2.getMultiMapFirstValue;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.UNAUTHC;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.WebUtils2.getMultiMapFirstValue;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.iam.client.handler.StandardSignApiWebHandler.SignUtil.generateSign;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.validation.constraints.NotBlank;
 
 import com.google.common.hash.Hashing;
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.client.annotation.IamHandlerMapping;
 import com.wl4g.iam.client.configure.IamConfigurer;
 import com.wl4g.iam.client.core.HttpIamRequest;

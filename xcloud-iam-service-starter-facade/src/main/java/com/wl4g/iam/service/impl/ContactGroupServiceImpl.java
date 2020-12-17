@@ -16,7 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.ContactGroup;
 import com.wl4g.iam.data.ContactGroupDao;
 import com.wl4g.iam.service.ContactGroupService;
@@ -24,8 +24,8 @@ import com.wl4g.iam.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.components.core.bean.BaseBean.ENABLED;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
 
 import java.util.List;
 

@@ -18,7 +18,7 @@ package com.wl4g.iam.sns.wechat.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.component.common.serialize.JacksonUtils;
 
 /**
  * WeChat based response message model

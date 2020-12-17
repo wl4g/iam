@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.core.mgt;
 
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.web.CookieUtils.getCookie;
-import static com.wl4g.components.common.web.WebUtils2.isMediaRequest;
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.web.CookieUtils.getCookie;
+import static com.wl4g.component.common.web.WebUtils2.isMediaRequest;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -40,7 +40,7 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.exception.InvalidAccessTokenAuthenticationException;

@@ -15,14 +15,14 @@
  */
 package com.wl4g.iam.client.filter;
 
-import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_AUTHENTICATOR;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.wl4g.components.core.web.error.ErrorConfigurer;
+import com.wl4g.component.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.core.annotation.IamFilter;

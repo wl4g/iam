@@ -27,8 +27,8 @@ package com.github.pagehelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wl4g.components.core.bean.model.PageModel.ISelect;
-import com.wl4g.components.core.bean.model.PageModel.PageInfo;
+import com.wl4g.component.core.bean.model.PageModel.ISelect;
+import com.wl4g.component.core.bean.model.PageModel.PageInfo;
 
 /**
  * Mybatis - 分页对象

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat.api.model;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.security.crypto;
 
-import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.component.common.codec.CodecSource;
 
 /**
  * {@link DynamicCipherService}

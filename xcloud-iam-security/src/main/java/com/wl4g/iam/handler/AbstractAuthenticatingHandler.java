@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.handler;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import javax.annotation.Resource;
@@ -26,8 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;

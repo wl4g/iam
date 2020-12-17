@@ -16,9 +16,9 @@
 package com.wl4g.iam.core.web;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.support.redis.jedis.ScanCursor;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.config.AbstractIamProperties;
@@ -41,8 +41,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import static com.wl4g.components.common.lang.DateUtils2.formatDate;
-import static com.wl4g.components.support.redis.jedis.ScanCursor.CursorWrapper.*;
+import static com.wl4g.component.common.lang.DateUtils2.formatDate;
+import static com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;

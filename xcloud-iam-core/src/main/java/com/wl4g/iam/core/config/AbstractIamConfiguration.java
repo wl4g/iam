@@ -44,10 +44,10 @@ import org.springframework.core.env.Environment;
 
 import static org.springframework.util.ReflectionUtils.*;
 
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
-import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.support.redis.jedis.JedisOperatorFactory;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;

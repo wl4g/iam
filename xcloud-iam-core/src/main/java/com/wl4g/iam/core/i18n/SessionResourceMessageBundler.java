@@ -21,7 +21,7 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.wl4g.components.core.i18n.AbstractResourceMessageBundler;
+import com.wl4g.component.core.i18n.AbstractResourceMessageBundler;
 
 /**
  * Session delegate resource bundle message source.

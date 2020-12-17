@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.handler;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.support.redis.jedis.ScanCursor;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal;
@@ -54,9 +54,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.components.common.web.WebUtils2.isEqualWithDomain;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.component.common.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.ExpiredAuthorized;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;

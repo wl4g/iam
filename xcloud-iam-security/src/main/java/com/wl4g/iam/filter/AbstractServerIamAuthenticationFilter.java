@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.filter;
 
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.components.common.web.WebUtils2.*;
-import static com.wl4g.components.common.web.WebUtils2.ResponseType.*;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.component.common.web.WebUtils2.*;
+import static com.wl4g.component.common.web.WebUtils2.ResponseType.*;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
@@ -40,9 +40,9 @@ import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.common.web.WebUtils2;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.bean.ApplicationInfo;

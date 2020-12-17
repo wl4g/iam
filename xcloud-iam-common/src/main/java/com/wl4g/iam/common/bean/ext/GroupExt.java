@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.bean.ext;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 import lombok.Getter;
 import lombok.Setter;

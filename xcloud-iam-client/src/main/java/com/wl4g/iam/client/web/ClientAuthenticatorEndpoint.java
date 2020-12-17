@@ -25,10 +25,10 @@ import org.apache.shiro.session.SessionException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.components.common.lang.Exceptions;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.common.web.rest.RespBase.RetCode;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.lang.Exceptions;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase.RetCode;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 

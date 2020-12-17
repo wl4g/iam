@@ -34,7 +34,7 @@ import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.exception.TicketValidateException;
 
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_HOST_NAME;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_DATA_CIPHER_NAME;

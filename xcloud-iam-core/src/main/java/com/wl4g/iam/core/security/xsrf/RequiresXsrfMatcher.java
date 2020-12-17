@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.security.xsrf;
 
-import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.components.common.web.WebUtils2.isMediaRequest;
+import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.component.common.web.WebUtils2.isMediaRequest;
 import static java.util.Arrays.asList;
 
 import java.util.HashSet;

@@ -29,9 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.IamServer;
-import com.wl4g.components.common.serialize.ProtostuffUtils;
-import com.wl4g.components.support.redis.jedis.JedisOperatorFactory;
-import com.wl4g.components.support.redis.jedis.ScanCursor;
+import com.wl4g.component.common.serialize.ProtostuffUtils;
+import com.wl4g.component.support.redis.jedis.JedisOperatorFactory;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.core.session.IamSession;
 
 import redis.clients.jedis.ScanParams;

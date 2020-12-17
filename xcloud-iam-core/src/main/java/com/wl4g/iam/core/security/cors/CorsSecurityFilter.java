@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.core.security.cors;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,7 +37,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.filter.CorsFilter;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 
 /**
  * CORS(CSRF attack) resolve filter

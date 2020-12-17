@@ -29,17 +29,17 @@ import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.components.common.codec.CheckSums.*;
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.codec.CheckSums.*;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 import com.wl4g.iam.core.cache.IamCacheManager;

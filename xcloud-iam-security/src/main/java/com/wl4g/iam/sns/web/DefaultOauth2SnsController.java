@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.OK;
+import com.wl4g.component.common.web.rest.RespBase;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.OK;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_CALLBACK;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_CONNECT;
@@ -39,11 +39,11 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static java.lang.String.format;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.common.web.WebUtils2.getFullRequestURI;
-import static com.wl4g.components.common.web.WebUtils2.safeDecodeURL;
-import static com.wl4g.components.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.components.common.web.WebUtils2.ResponseType.isRespJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURI;
+import static com.wl4g.component.common.web.WebUtils2.safeDecodeURL;
+import static com.wl4g.component.common.web.WebUtils2.toQueryParams;
+import static com.wl4g.component.common.web.WebUtils2.ResponseType.isRespJSON;
 
 import java.io.IOException;
 import java.util.Map;

@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.common.web.rest.RespBase.RetCode;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
 import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;

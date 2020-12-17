@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**

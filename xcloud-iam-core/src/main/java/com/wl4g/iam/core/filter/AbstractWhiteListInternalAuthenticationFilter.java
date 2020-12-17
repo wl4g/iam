@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.filter;
 
-import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -25,8 +25,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.util.WebUtils;
 
-import com.wl4g.components.common.web.WebUtils2;
-import com.wl4g.components.core.kit.access.IPAccessControl;
+import com.wl4g.component.common.web.WebUtils2;
+import com.wl4g.component.core.kit.access.IPAccessControl;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 

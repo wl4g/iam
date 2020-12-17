@@ -38,7 +38,7 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.config.ReplayProperties;
@@ -50,9 +50,9 @@ import com.wl4g.iam.core.security.replay.handler.ReplayException;
 import com.wl4g.iam.core.security.replay.handler.ReplayRejectHandler;
 
 import static org.apache.commons.codec.binary.Hex.*;
-import static com.wl4g.components.common.codec.CheckSums.crc16String;
-import static com.wl4g.components.common.crypto.digest.DigestUtils2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.codec.CheckSums.crc16String;
+import static com.wl4g.component.common.crypto.digest.DigestUtils2.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_REPLAY_SIGN;
 
 /**

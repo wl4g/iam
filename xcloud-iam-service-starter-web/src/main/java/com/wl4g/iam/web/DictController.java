@@ -15,10 +15,10 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.service.DictService;
 

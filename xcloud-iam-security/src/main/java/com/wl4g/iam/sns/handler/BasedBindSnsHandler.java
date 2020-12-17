@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.handler;
 
-import static com.wl4g.components.core.web.BaseController.REDIRECT_PREFIX;
+import static com.wl4g.component.core.web.BaseController.REDIRECT_PREFIX;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.util.Assert;
 
-import com.wl4g.components.common.web.WebUtils2;
+import com.wl4g.component.common.web.WebUtils2;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;

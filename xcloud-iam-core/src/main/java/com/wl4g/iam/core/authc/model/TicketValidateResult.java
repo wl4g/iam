@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.authc.model;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 

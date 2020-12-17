@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.client.core;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -39,8 +39,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.components.common.remoting.standard.HttpStatus;
-import com.wl4g.components.common.web.WebUtils2;
+import com.wl4g.component.common.remoting.standard.HttpStatus;
+import com.wl4g.component.common.web.WebUtils2;
 import com.wl4g.iam.client.configure.IamConfigurer;
 import com.wl4g.iam.client.core.HttpIamRequest.HttpCookie;
 import com.wl4g.iam.client.handler.WebIamHandler;

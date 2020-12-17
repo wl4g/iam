@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.utils;
 
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.iam.core.session.NoOpSession.*;
 import static java.lang.System.currentTimeMillis;
@@ -34,7 +34,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
-import com.wl4g.components.core.utils.bean.BeanCopierUtils;
+import com.wl4g.component.core.utils.bean.BeanCopierUtils;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.core.session.NoOpSession;

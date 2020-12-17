@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.sns.wechat.model;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 
 import org.springframework.beans.BeanUtils;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.test.mock.web;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;

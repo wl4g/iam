@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.service.ContactService;
 

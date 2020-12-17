@@ -16,15 +16,15 @@
 package com.wl4g.iam.core.security.mitm;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 

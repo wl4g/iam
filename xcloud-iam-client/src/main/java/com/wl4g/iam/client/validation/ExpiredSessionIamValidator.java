@@ -18,8 +18,8 @@ package com.wl4g.iam.client.validation;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.common.web.rest.RespBase.RetCode;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.core.authc.model.SessionValidateResult;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;

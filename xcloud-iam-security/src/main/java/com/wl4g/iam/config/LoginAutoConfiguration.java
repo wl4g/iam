@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.web.LoginAuthenticationEndpoint;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.web;
 
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.core.annotation.XsrfController;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.CorsProperties;
@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static java.lang.String.format;

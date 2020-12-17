@@ -16,12 +16,12 @@
 package com.wl4g.iam.notification;
 
 import com.wl4g.IamServer;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.notification.GenericNotifyMessage;
-import com.wl4g.components.support.notification.MessageNotifier;
-import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.notification.GenericNotifyMessage;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 
-import static com.wl4g.components.support.config.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
+import static com.wl4g.component.support.config.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

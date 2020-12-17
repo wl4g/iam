@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.authc.pam;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.Collection;
 
@@ -26,7 +26,7 @@ import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.realm.Realm;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 
 /**
  * Enhanced modular authentication processor that throws out exception handling

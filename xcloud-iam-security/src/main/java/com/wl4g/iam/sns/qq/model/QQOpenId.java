@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.qq.model;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 
 import org.apache.shiro.util.Assert;
 

@@ -19,8 +19,8 @@ import static com.google.common.base.Charsets.UTF_8;
 
 import java.security.spec.KeySpec;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.asymmetric.RSACryptor;
 
 public class AbstractCredentialsSecurerSupportTests {
 

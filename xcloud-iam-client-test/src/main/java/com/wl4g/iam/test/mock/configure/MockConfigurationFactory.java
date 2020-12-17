@@ -1,8 +1,8 @@
 package com.wl4g.iam.test.mock.configure;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isNullOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.split;
 
@@ -19,10 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.wl4g.iam.common.subject.IamPrincipal.PrincipalOrganization;
 
 import static com.google.common.net.InetAddresses.isInetAddress;
-import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static com.wl4g.components.common.web.CookieUtils.getCookie;
+import static com.wl4g.component.common.web.CookieUtils.getCookie;
 
 /**
  * {@link MockConfigurationFactory}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.test.mock.configure;
 
-import static com.wl4g.components.common.lang.Assert2.isInstanceOf;
+import static com.wl4g.component.common.lang.Assert2.isInstanceOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SESSIONINFO_NAME;
 import static java.lang.String.valueOf;
 
@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.core.web.model.SessionInfo;
 import com.wl4g.iam.test.mock.configure.MockConfigurationFactory.MockAuthcInfo;

@@ -27,15 +27,15 @@ import static org.springframework.http.HttpMethod.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import static java.lang.String.format;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.utils.bean.BeanMapConvert;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.core.authc.model.BaseValidateModel;
 

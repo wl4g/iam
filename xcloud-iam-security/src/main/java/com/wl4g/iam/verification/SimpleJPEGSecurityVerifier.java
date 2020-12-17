@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.verification;
 
-import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.model.GenericApplyResult;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

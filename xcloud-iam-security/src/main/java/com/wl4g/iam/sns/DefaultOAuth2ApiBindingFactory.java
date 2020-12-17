@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns;
 
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static java.util.Objects.nonNull;
 
 import java.util.List;

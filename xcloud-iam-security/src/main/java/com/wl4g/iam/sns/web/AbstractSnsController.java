@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;

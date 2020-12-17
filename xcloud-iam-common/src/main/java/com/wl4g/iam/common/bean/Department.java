@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.bean;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class Department extends BaseBean {
 	private static final long serialVersionUID = -2227319200968900422L;

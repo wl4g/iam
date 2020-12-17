@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.sns;
 
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -34,7 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Charsets;
-import com.wl4g.components.common.web.WebUtils2;
+import com.wl4g.component.common.web.WebUtils2;
 import com.wl4g.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.exception.SnsApiBindingException;

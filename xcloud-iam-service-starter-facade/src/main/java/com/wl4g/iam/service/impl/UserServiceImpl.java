@@ -16,8 +16,8 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
@@ -38,8 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.isNull;
 
 /**

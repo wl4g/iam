@@ -26,8 +26,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.error.ErrorConfigurer;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
@@ -47,10 +47,10 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.web.WebUtils2.applyQueryURL;
-import static com.wl4g.components.common.web.WebUtils2.isTrue;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.component.common.web.WebUtils2.isTrue;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_LOGOUT;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGOUT;

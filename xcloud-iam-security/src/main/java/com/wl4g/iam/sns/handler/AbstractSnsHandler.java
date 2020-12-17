@@ -29,15 +29,15 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 
-import com.wl4g.components.common.web.WebUtils2;
+import com.wl4g.component.common.web.WebUtils2;
 
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.components.common.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.component.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SNSAUTH;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_AFTER_CALLBACK_AGENT;

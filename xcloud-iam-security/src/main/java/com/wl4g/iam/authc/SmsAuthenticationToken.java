@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.authc;
 
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.Assert2.*;
 
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 

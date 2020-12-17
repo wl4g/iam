@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.framework.operator.NoSuchOperatorException;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.framework.operator.NoSuchOperatorException;
 import com.wl4g.iam.annotation.VerifyAuthController;
 import com.wl4g.iam.core.exception.AccessRejectedException;
 import com.wl4g.iam.verification.CompositeSecurityVerifierAdapter;
@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.components.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
 import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;

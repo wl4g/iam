@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.verification;
 
-import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.config.properties.MatcherProperties;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.exception.VerificationException;
@@ -35,11 +35,11 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.components.common.codec.Encodes.encodeBase64;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.state;
-import static com.wl4g.components.common.web.WebUtils2.getRequestParam;
+import static com.wl4g.component.common.codec.Encodes.encodeBase64;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.state;
+import static com.wl4g.component.common.web.WebUtils2.getRequestParam;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_FAILFAST_MATCH_COUNTER;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;

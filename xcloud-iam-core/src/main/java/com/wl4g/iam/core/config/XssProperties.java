@@ -27,11 +27,11 @@ import static org.apache.commons.lang3.StringEscapeUtils.*;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * XSS configuration properties

@@ -15,10 +15,10 @@
  */
 package com.wl4g.iam.core.crypto;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.iam.core.crypto.IamCipherService.CipherCryptKind;
 
-import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.component.core.framework.operator.Operator;
 
 /**
  * Data and parameter symmetric crypt service </br>

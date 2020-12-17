@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.security.xsrf.repository;
 
-import static com.wl4g.components.common.lang.Assert2.hasLength;
+import static com.wl4g.component.common.lang.Assert2.hasLength;
 
 /**
  * A default XSRF token that is used to protect against CSRF attacks.

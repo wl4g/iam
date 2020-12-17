@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.utils.bean.BeanMapConvert;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.utils.bean.BeanMapConvert;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.common.bean.ClusterConfig;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.service.ClusterConfigService;

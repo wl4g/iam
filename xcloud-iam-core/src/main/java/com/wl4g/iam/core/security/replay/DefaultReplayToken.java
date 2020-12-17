@@ -16,12 +16,12 @@
 package com.wl4g.iam.core.security.replay;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.codec.Base58.*;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrueOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.codec.Base58.*;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isTrueOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

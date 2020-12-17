@@ -21,8 +21,8 @@ import static com.wl4g.iam.config.properties.IamProperties.DEFAULT_JSSDK_LOCATIO
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.components.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.iam.web.JssdkWebappEndpoint;
 
 /**

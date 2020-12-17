@@ -27,18 +27,18 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionRemainingTime;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.components.common.web.WebUtils2.applyQueryURL;
-import static com.wl4g.components.common.web.WebUtils2.cleanURI;
-import static com.wl4g.components.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.components.common.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.components.common.web.WebUtils2.writeJson;
-import static com.wl4g.components.common.web.WebUtils2.ResponseType.isRespJSON;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.*;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.component.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.component.common.web.WebUtils2.cleanURI;
+import static com.wl4g.component.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.component.common.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.component.common.web.WebUtils2.writeJson;
+import static com.wl4g.component.common.web.WebUtils2.ResponseType.isRespJSON;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;
@@ -54,8 +54,8 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.error.ErrorConfigurer;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
@@ -264,8 +264,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			try {
 				String errmsg = format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getRootCausesString(cause));
-				/** See:{@link com.wl4g.components.core.web.error.com.wl4g.components.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()} */
-				/** See:{@link com.wl4g.components.core.web.error.ServletSmartErrorHandler#doAnyHandleError()} */
+				/** See:{@link com.wl4g.component.core.web.error.com.wl4g.component.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()} */
+				/** See:{@link com.wl4g.component.core.web.error.ServletSmartErrorHandler#doAnyHandleError()} */
 				toHttp(response).sendError(errorConfigurer.getStatus(cause), errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);

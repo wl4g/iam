@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.shiro.authc.CredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.component.common.codec.CodecSource;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 
 /**

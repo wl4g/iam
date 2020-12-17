@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.component.common.serialize.JacksonUtils;
 
 /**
  * {@link BaseValidateModel}

@@ -25,8 +25,8 @@ import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
-import static com.wl4g.components.common.web.WebUtils2.extractParamesOfFirst;
-import static com.wl4g.components.common.web.WebUtils2.rejectRequestMethod;
+import static com.wl4g.component.common.web.WebUtils2.extractParamesOfFirst;
+import static com.wl4g.component.common.web.WebUtils2.rejectRequestMethod;
 import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.*;
 
 /**

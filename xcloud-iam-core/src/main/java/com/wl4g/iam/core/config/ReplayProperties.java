@@ -26,15 +26,15 @@ import org.apache.shiro.config.ConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.components.common.collection.Collections2;
-import com.wl4g.components.common.crypto.digest.DigestUtils2;
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.collection.Collections2;
+import com.wl4g.component.common.crypto.digest.DigestUtils2;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static java.util.Collections.singletonList;

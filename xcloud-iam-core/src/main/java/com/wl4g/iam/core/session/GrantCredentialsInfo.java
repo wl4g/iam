@@ -15,10 +15,10 @@
  */
 package com.wl4g.iam.core.session;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;

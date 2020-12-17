@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.security.xsrf;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -33,7 +33,7 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.XsrfProperties;
 import com.wl4g.iam.core.security.xsrf.handler.InvalidXsrfTokenException;
 import com.wl4g.iam.core.security.xsrf.handler.MissingXsrfTokenException;

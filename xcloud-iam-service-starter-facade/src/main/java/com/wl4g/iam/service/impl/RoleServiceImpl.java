@@ -16,8 +16,8 @@
 package com.wl4g.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -34,8 +34,8 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
-import static com.wl4g.components.common.collection.Collections2.disDupCollection;
-import static com.wl4g.components.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.component.common.collection.Collections2.disDupCollection;
+import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;

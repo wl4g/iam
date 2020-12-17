@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.captcha.verification;
 
-import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.iam.captcha.gif.Captcha;
 import com.wl4g.iam.captcha.gif.GifCaptcha;
 import com.wl4g.iam.captcha.gif.model.GifApplyImgModel;
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
