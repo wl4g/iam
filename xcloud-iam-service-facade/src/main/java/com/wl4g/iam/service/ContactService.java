@@ -40,7 +40,7 @@ import com.wl4g.iam.common.bean.Contact;
  * @see
  */
 @FeignClient("contactService")
-//@RequestMapping("/contact")
+@RequestMapping("/contact")
 public interface ContactService {
 
 	@PostMapping("/save")

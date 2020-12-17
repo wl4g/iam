@@ -15,15 +15,14 @@
  */
 package com.wl4g.iam.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.wl4g.iam.common.bean.ClusterConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.iam.common.bean.ClusterConfig;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link ClusterConfigService}
@@ -35,7 +34,7 @@ import com.wl4g.iam.common.bean.ClusterConfig;
  * @see
  */
 @FeignClient("clusterConfigService")
-//@RequestMapping("/clusterConfig")
+@RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 
 	@GetMapping("/loadInit")
