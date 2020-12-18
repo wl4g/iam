@@ -35,7 +35,7 @@ import com.wl4g.iam.common.bean.Area;
  * @sine v1.0
  * @see
  */
-@FeignClient("areaDao")
+@FeignClient(name = "areaDao"/* , path = "/area" */)
 @RequestMapping("/area")
 public interface AreaDao {
 

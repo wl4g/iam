@@ -18,7 +18,7 @@ package com.wl4g.iam.core.security.xss;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.annotation.UnsafeXss;
 import com.wl4g.iam.core.config.XssProperties;
-import com.wl4g.iam.core.security.xss.resolve.XssSecurityResolver;
+import com.wl4g.iam.core.security.xss.resolver.XssSecurityResolver;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -50,20 +50,20 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
  * @version v1.0 2019年2月28日
  * @since
  */
-public class XssResolveAdviceInterceptor implements MethodInterceptor {
-	final protected SmartLogger log = getLogger(getClass());
+public class XssSecurityResolverInterceptor implements MethodInterceptor {
+	protected final SmartLogger log = getLogger(getClass());
 
 	/**
 	 * XSS properties configuration
 	 */
-	final protected XssProperties config;
+	protected final XssProperties config;
 
 	/**
 	 * XSS resolve processor
 	 */
-	final protected XssSecurityResolver resolver;
+	protected final XssSecurityResolver resolver;
 
-	public XssResolveAdviceInterceptor(XssProperties config, XssSecurityResolver resolver) {
+	public XssSecurityResolverInterceptor(XssProperties config, XssSecurityResolver resolver) {
 		Assert.notNull(config, "config is null, please check configure");
 		Assert.notNull(resolver, "resolver is null, please check configure");
 		this.config = config;
@@ -115,7 +115,7 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 		}
 
 		// Sets XSS protection headers.
-		setXssProtectionHeadersIfNecessary(controller, md);
+		saveXssHeadersIfNecessary(controller, md);
 
 		return invc.proceed();
 	}
@@ -187,12 +187,12 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 	}
 
 	/**
-	 * Sets XSS protection headers.
+	 * Save XSS protection to headers.
 	 * 
 	 * @param controller
 	 * @param md
 	 */
-	private void setXssProtectionHeadersIfNecessary(Object controller, Method md) {
+	private void saveXssHeadersIfNecessary(Object controller, Method md) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 		if (isNull(request) || isNull(response))

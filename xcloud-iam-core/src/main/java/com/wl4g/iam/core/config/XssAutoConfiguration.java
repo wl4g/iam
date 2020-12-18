@@ -23,9 +23,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.core.security.xss.XssResolveAdviceInterceptor;
-import com.wl4g.iam.core.security.xss.resolve.DefaultXssSecurityResolver;
-import com.wl4g.iam.core.security.xss.resolve.XssSecurityResolver;
+import com.wl4g.iam.core.security.xss.XssSecurityResolverInterceptor;
+import com.wl4g.iam.core.security.xss.resolver.DefaultXssSecurityResolver;
+import com.wl4g.iam.core.security.xss.resolver.XssSecurityResolver;
 
 /**
  * XSS protection auto configuration.
@@ -55,14 +55,14 @@ public class XssAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssResolveAdviceInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssResolveAdviceInterceptor(config, resolver);
+	public XssSecurityResolverInterceptor xssSecurityResolverInterceptor(XssProperties config, XssSecurityResolver resolver) {
+		return new XssSecurityResolverInterceptor(config, resolver);
 	}
 
 	@Bean
-	@ConditionalOnBean(XssResolveAdviceInterceptor.class)
+	@ConditionalOnBean(XssSecurityResolverInterceptor.class)
 	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssResolveAdviceInterceptor advice) {
+			XssSecurityResolverInterceptor advice) {
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
 		advisor.setExpression(config.getExpression());
 		advisor.setAdvice(advice);

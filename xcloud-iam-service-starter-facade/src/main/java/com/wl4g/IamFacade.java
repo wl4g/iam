@@ -19,8 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.wl4g.component.rpc.dubbo.EnableFeignDubboProvider;
-import com.wl4g.component.rpc.feign.annotation.EnableFeignProviderProxies;
+import com.wl4g.component.rpc.feign.proxy.annotation.EnableFeignProviderProxies;
 
 /**
  * {@link IamFacade}
@@ -32,7 +31,6 @@ import com.wl4g.component.rpc.feign.annotation.EnableFeignProviderProxies;
  */
 @EnableFeignClients("com.wl4g.iam.data")
 @EnableFeignProviderProxies("com.wl4g.iam.service")
-@EnableFeignDubboProvider
 @SpringBootApplication
 public class IamFacade {
 

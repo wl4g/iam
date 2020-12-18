@@ -16,7 +16,7 @@
 package com.wl4g.iam.client.filter;
 
 import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.component.common.web.WebUtils2.extractParamesOfFirst;
+import static com.wl4g.component.common.web.WebUtils2.getFirstParameters;
 import static com.wl4g.component.common.web.WebUtils2.getAvaliableRequestRememberUrl;
 import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.component.common.web.WebUtils2.isXHRRequest;
@@ -84,7 +84,7 @@ public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFil
 			throws Exception {
 		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
 		FastCasAuthenticationToken token = new FastCasAuthenticationToken(ticket);
-		token.withExtraParameters(extractParamesOfFirst(request));
+		token.withExtraParameters(getFirstParameters(request));
 		return token;
 	}
 

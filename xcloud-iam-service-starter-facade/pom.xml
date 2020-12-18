@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-dubbo</artifactId>
+			<artifactId>xcloud-component-rpc-feign-dubbo</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

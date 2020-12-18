@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.core.security.xss.resolve;
+package com.wl4g.iam.core.security.xss.resolver;
 
 import java.lang.reflect.Method;
 

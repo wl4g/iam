@@ -25,7 +25,7 @@ import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
-import static com.wl4g.component.common.web.WebUtils2.extractParamesOfFirst;
+import static com.wl4g.component.common.web.WebUtils2.getFirstParameters;
 import static com.wl4g.component.common.web.WebUtils2.rejectRequestMethod;
 import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.*;
 
@@ -60,7 +60,7 @@ public class GenericAuthenticationFilter extends AbstractServerIamAuthentication
 				CryptKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
 
 		// Extra custom parameters.
-		token.setExtraParameters(extractParamesOfFirst(request));
+		token.setExtraParameters(getFirstParameters(request));
 
 		return token;
 	}
