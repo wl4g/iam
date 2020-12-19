@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;

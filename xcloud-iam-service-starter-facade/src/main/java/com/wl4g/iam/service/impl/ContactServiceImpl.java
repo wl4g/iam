@@ -33,7 +33,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.component.core.bean.BaseBean.ENABLED;

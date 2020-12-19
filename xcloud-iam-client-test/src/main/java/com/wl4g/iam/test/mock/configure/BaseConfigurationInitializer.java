@@ -17,8 +17,8 @@ package com.wl4g.iam.test.mock.configure;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
-import static com.wl4g.component.common.collection.Collections2.safeList;
-import static com.wl4g.component.common.collection.Collections2.safeMap;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.lang.Assert2.hasText;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.core.utils.AopUtils2.*;

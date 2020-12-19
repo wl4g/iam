@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
-import static com.wl4g.component.common.collection.Collections2.disDupCollection;
+import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

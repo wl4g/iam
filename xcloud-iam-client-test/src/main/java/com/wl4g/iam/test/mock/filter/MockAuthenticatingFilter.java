@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.test.mock.filter;
 
-import static com.wl4g.component.common.collection.Collections2.safeToList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeToList;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;

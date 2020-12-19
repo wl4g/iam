@@ -16,8 +16,8 @@
 package com.wl4g.iam.client.springboot.core;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.Collections2.safeList;
-import static com.wl4g.component.common.collection.Collections2.safeMap;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;

@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.core.config;
 
+import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
@@ -37,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.collection.Collections2;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
@@ -115,7 +115,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 		if (!isEmpty(excludeValidUriPatterns)) {
 			// Remove duplicate.
-			Collections2.disDupCollection(excludeValidUriPatterns);
+			disDupCollection(excludeValidUriPatterns);
 		}
 
 		// @Deprecated, Please use external cors custom configuration.

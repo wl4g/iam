@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.component.common.collection.Collections2.safeMap;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.lang.TypeConverts.*;
 import static com.wl4g.component.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;

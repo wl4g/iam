@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.*;
 
-import static com.wl4g.component.common.collection.Collections2.safeMap;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;

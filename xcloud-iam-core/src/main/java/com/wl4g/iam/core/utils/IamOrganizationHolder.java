@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.core.utils.web.WebUtils3.*;

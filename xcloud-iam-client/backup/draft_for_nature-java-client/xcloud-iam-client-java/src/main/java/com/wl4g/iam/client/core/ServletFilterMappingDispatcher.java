@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.core;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
