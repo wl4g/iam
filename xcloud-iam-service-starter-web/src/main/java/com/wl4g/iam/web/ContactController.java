@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.service.ContactService;
 
@@ -42,7 +42,7 @@ public class ContactController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(PageModel<Contact> pm, String name) {
+	public RespBase<?> list(PageWrapper<Contact> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(contactService.list(pm, name));
 		return resp;

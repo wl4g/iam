@@ -17,7 +17,7 @@ package com.wl4g.iam.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.ContactGroup;
 import com.wl4g.iam.service.ContactGroupService;
 
@@ -43,7 +43,7 @@ public class ContactGroupController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(String name, PageModel<ContactGroup> pm) {
+	public RespBase<?> list(String name, PageWrapper<ContactGroup> pm) {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(contactGroupService.list(pm, name));

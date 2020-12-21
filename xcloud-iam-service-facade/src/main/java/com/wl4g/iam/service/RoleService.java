@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -41,7 +41,7 @@ public interface RoleService {
 
 	// TODO @RequestBody (feign)??
 	@GetMapping("/list")
-	PageModel<Role> list(PageModel<Role> pm, IamPrincipal info, String organizationId, String name, String displayName);
+	PageWrapper<Role> list(PageWrapper<Role> pm, IamPrincipal info, String organizationId, String name, String displayName);
 
 	@PostMapping("/save")
 	void save(Role role);

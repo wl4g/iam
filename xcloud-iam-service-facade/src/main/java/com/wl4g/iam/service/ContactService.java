@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.Contact;
 
 /**
@@ -53,7 +53,7 @@ public interface ContactService {
 	void del(Long id);
 
 	@GetMapping("/list")
-	PageModel<Contact> list(PageModel<Contact> pm, String name);
+	PageWrapper<Contact> list(PageWrapper<Contact> pm, String name);
 
 	/**
 	 * Notification sending with template message .

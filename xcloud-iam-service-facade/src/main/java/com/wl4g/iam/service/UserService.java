@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -44,8 +44,9 @@ public interface UserService {
 
 	// TODO @RequestBody (feign)??
 	@GetMapping("/list")
-	PageModel<User> list(PageModel<User> pm, @RequestParam("principalId") String principalId,
-			@RequestParam("principal") String principal, String userName, String displayName, Long roleId);
+	PageWrapper<User> list(PageWrapper<User> pm, @RequestParam("principalId") String principalId,
+			@RequestParam("principal") String principal, @RequestParam("userName") String userName,
+			@RequestParam("displayName") String displayName, @RequestParam("roleId") Long roleId);
 
 	@PostMapping("/save")
 	void save(User user);

@@ -16,7 +16,7 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
@@ -57,7 +57,7 @@ public class RoleController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> list(PageModel<Role> pm, String organizationId, String roleCode, String displayName) {
+	public RespBase<?> list(PageWrapper<Role> pm, String organizationId, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 
 		// Obtain login principal info.

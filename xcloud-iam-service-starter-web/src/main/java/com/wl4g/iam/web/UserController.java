@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.component.common.codec.CodecSource;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageWrapper;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.User;
@@ -58,7 +58,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> list(PageModel<User> pm, String userName, String displayName, Long roleId) {
+	public RespBase<?> list(PageWrapper<User> pm, String userName, String displayName, Long roleId) {
 		RespBase<Object> resp = RespBase.create();
 
 		// Obtain login principal info.
