@@ -16,7 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -77,7 +77,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public PageWrapper<Role> list(PageWrapper<Role> pm, IamPrincipal info, String organizationId, String roleCode,
+	public PageHolder<Role> list(PageHolder<Role> pm, IamPrincipal info, String organizationId, String roleCode,
 			String displayName) {
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {
@@ -86,13 +86,13 @@ public class RoleServiceImpl implements RoleService {
 			organizationService.fillChildrenIds(Long.valueOf(organizationId), set);
 			groupIds = new ArrayList<>(set);
 		}
+
+		pm.setCurrentPage();
 		List<Role> roles = null;
 		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
-			pm.setCurrentContextPage();
 			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
 			setMenuStrs(roles);
 		} else {
-			pm.setCurrentContextPage();
 			roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
 			setMenuStrs(roles);
 		}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
@@ -131,8 +131,8 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public PageWrapper<Contact> list(PageWrapper<Contact> pm, String name) {
-		pm.setCurrentContextPage();
+	public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(contactDao.list(name));
 		return pm;
 	}

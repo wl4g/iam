@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.ContactGroup;
 
 import java.util.List;
@@ -49,6 +49,6 @@ public interface ContactGroupService {
 	List<ContactGroup> findContactGroups(String name);
 
 	@GetMapping("/list")
-	PageWrapper<ContactGroup> list(PageWrapper<ContactGroup> pm, String name);
+	PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name);
 
 }

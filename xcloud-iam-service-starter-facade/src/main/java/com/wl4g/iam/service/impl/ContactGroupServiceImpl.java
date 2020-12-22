@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.ContactGroup;
 import com.wl4g.iam.data.ContactGroupDao;
 import com.wl4g.iam.service.ContactGroupService;
@@ -74,8 +74,8 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 	}
 
 	@Override
-	public PageWrapper<ContactGroup> list(PageWrapper<ContactGroup> pm, String name) {
-		pm.setCurrentContextPage();
+	public PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(contactGroupDao.list(name));
 		return pm;
 	}

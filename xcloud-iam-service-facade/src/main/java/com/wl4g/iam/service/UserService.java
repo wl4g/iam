@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -43,8 +43,9 @@ public interface UserService {
 	Set<Menu> getMenusByUser(Long userId);
 
 	// TODO @RequestBody (feign)??
-	@GetMapping("/list")
-	PageWrapper<User> list(PageWrapper<User> pm, @RequestParam("principalId") String principalId,
+	// @GetMapping("/list")
+	@RequestMapping(path = "/list", method = RequestMethod.GET)
+	PageHolder<User> list(PageHolder<User> pm, @RequestParam("principalId") String principalId,
 			@RequestParam("principal") String principal, @RequestParam("userName") String userName,
 			@RequestParam("displayName") String displayName, @RequestParam("roleId") Long roleId);
 

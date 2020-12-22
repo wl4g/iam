@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.iam.web.SimpleRcmEvaluatorEndpoint;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_RCM_BASE;

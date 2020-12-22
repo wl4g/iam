@@ -17,7 +17,7 @@ package com.wl4g.iam.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageWrapper;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.service.DictService;
@@ -64,7 +64,7 @@ public class DictController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:dict" })
-	public RespBase<?> list(PageWrapper<Dict> pm, String key, String label, String type, String description) {
+	public RespBase<?> list(PageHolder<Dict> pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dictService.list(pm, key, label, type, description));
 		return resp;

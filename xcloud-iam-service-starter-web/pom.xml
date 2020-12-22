@@ -34,11 +34,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-feign-dubbo</artifactId>
+			<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-eureka</artifactId>
+			<artifactId>xcloud-component-rpc-springcloud-eureka</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
