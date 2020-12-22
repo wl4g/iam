@@ -19,7 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.wl4g.component.rpc.feign.proxy.annotation.EnableFeignProviderProxies;
+import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
 
 /**
  * {@link IamFacade}

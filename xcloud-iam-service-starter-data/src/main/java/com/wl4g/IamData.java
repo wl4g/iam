@@ -20,7 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.component.data.annotation.EnableComponentsData;
-import com.wl4g.component.rpc.feign.proxy.annotation.EnableFeignProviderProxies;
+import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
 
 /**
  * {@link IamData}
