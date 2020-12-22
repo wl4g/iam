@@ -28,7 +28,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.iam.dao: DEBUG
+      wl4g.iam.data: DEBUG
 
 # ### Server configuration. ###
 server:

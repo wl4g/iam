@@ -30,10 +30,6 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-springcloud-eureka</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>
