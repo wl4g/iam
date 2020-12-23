@@ -79,6 +79,9 @@ public class UserServiceImpl implements UserService {
 		} else {
 			list = userDao.list(Long.valueOf(principalId), userName, displayName, roleId);
 		}
+		PageHolder<?> res = PageHolder.getCurrentPage();
+		System.out.println(res);
+
 		for (User user : list) {
 			// Gets organizations
 			List<Organization> groups = groupDao.selectByUserId(user.getId());
@@ -87,7 +90,6 @@ public class UserServiceImpl implements UserService {
 			List<Role> roles = roleDao.selectByUserId(user.getId());
 			user.setRoleStrs(roles2Str(roles));
 		}
-		PageHolder.getCurrentPage();
 		pm.setRecords(list);
 		return pm;
 	}

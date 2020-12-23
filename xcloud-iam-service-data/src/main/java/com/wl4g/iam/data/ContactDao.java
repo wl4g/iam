@@ -19,7 +19,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.Contact;
 
@@ -33,23 +34,31 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("contactDao")
+@IstioFeignClient("contactDao")
 @RequestMapping("/contact")
 public interface ContactDao {
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Contact record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Contact record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	Contact selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Contact record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Contact record);
 
+	@RequestMapping(method = { GET }, value = "/list")
 	List<Contact> list(@RequestParam("name") @Param("name") String name);
 
+	@RequestMapping(method = { GET }, value = "/getContactByGroupIds")
 	List<Contact> getContactByGroupIds(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds);
 
 }

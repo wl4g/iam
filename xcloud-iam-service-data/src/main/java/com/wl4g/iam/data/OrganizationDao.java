@@ -19,7 +19,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.Organization;
 
@@ -34,29 +35,40 @@ import java.util.Set;
  * @sine v1.0
  * @see
  */
-@FeignClient("organizationDao")
+@IstioFeignClient("organizationDao")
 @RequestMapping("/organization")
 public interface OrganizationDao {
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Organization record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Organization record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	Organization selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Organization record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Organization record);
 
+	@RequestMapping(method = { GET }, value = "/selectByUserId")
 	List<Organization> selectByUserId(@RequestParam("userId") Long userId);
 
+	@RequestMapping(method = { GET }, value = "/selectByRoot")
 	List<Organization> selectByRoot();
 
+	@RequestMapping(method = { GET }, value = "/selectByRoleId")
 	List<Organization> selectByRoleId(@RequestParam("roleId") Long roleId);
 
+	@RequestMapping(method = { GET }, value = "/selectByParentId")
 	List<Organization> selectByParentId(@RequestParam("parentId") Long parentId);
 
+	@RequestMapping(method = { GET }, value = "/countRoleByOrganizationId")
 	int countRoleByOrganizationId(@RequestParam("ids") @Param("ids") Set<Long> ids);
 
 }

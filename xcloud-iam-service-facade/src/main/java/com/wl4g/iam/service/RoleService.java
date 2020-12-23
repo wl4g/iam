@@ -18,8 +18,11 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.subject.IamPrincipal;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 
 import java.util.List;
 
@@ -32,30 +35,30 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("roleService")
+@IstioFeignClient("roleService")
 @RequestMapping("/role")
 public interface RoleService {
 
-	@GetMapping("/getLoginRoles")
+	@RequestMapping(value = "/getLoginRoles", method = { GET })
 	List<Role> getLoginRoles(@RequestBody IamPrincipal info);
 
 	// TODO @RequestBody (feign)??
-	@GetMapping("/list")
+	@RequestMapping(value = "/list", method = { GET })
 	PageHolder<Role> list(PageHolder<Role> pm, IamPrincipal info, String organizationId, String name, String displayName);
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(Role role);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { DELETE, POST })
 	void del(Long id);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	Role detail(Long id);
 
-	@GetMapping("/findByUserId")
+	@RequestMapping(value = "/findByUserId", method = { GET })
 	List<Role> findByUserId(@RequestParam("userId") Long userId);
 
-	@GetMapping("/findRoot")
+	@RequestMapping(value = "/findRoot", method = { GET })
 	List<Role> findRoot(@RequestParam("groupIds") List<Long> groupIds, @RequestParam("roleCode") String roleCode,
 			@RequestParam("nameZh") String nameZh);
 

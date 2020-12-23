@@ -11,6 +11,14 @@
 # #### Environment base configuration. ####
 #
 
+# #### Spring boot configuration. ####
+#
+spring:
+  application.name: iam-web
+  profiles:
+    include: common,util,web-base
+    active: web-dev
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

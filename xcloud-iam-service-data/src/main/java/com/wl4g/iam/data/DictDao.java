@@ -19,7 +19,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.Dict;
 
@@ -33,27 +34,37 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("dictDao")
+@IstioFeignClient("dictDao")
 @RequestMapping("/dict")
 public interface DictDao {
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("key") String key);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Dict record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Dict record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	Dict selectByPrimaryKey(@RequestParam("key") String key);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Dict record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Dict record);
 
+	@RequestMapping(method = { GET }, value = "/selectByType")
 	List<Dict> selectByType(@RequestParam("type") String type);
 
+	@RequestMapping(method = { GET }, value = "/allType")
 	List<String> allType();
 
+	@RequestMapping(method = { GET }, value = "/getByKey")
 	Dict getByKey(@RequestParam("key") String key);
 
+	@RequestMapping(method = { GET }, value = "/list")
 	List<Dict> list(@RequestParam("key") @Param("key") String key, @RequestParam("label") @Param("label") String label,
 			@RequestParam("type") @Param("type") String type,
 			@RequestParam("description") @Param("description") String description,

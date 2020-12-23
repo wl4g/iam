@@ -11,6 +11,14 @@
 # #### Environment base configuration. ####
 #
 
+# #### Spring boot configuration. ####
+#
+spring:
+  application.name: iam-facade
+  profiles:
+    include: common,util
+    active: facade-dev
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

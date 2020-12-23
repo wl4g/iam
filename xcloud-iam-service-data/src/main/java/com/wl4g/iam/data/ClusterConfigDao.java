@@ -19,7 +19,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.ClusterConfig;
 
@@ -33,28 +34,37 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("clusterConfigDao")
+@IstioFeignClient("clusterConfigDao")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(value = "/insert", method = { POST })
 	int insert(@RequestBody ClusterConfig record);
 
+	@RequestMapping(value = "/insertSelective", method = { POST })
 	int insertSelective(@RequestBody ClusterConfig record);
 
+	@RequestMapping(value = "/selectByPrimaryKey", method = { GET })
 	ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
 	int updateByPrimaryKeySelective(@RequestBody ClusterConfig record);
 
+	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
 	int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
+	@RequestMapping(value = "/getByAppNames", method = { GET })
 	List<ClusterConfig> getByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
 			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
+	@RequestMapping(value = "/getByAppName", method = { GET })
 	ClusterConfig getByAppName(@RequestParam("appName") @Param("appName") String appName,
 			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
+	@RequestMapping(value = "/getIamServer", method = { GET })
 	List<ClusterConfig> getIamServer();
 
 }

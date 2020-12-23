@@ -38,8 +38,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
+			<artifactId>xcloud-component-rpc-istio-feign</artifactId>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-component-rpc-springcloud-feign</artifactId> -->
+		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<resources>

@@ -18,8 +18,10 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.Set;
 
@@ -32,36 +34,34 @@ import java.util.Set;
  * @sine v1.0
  * @see
  */
-@FeignClient("userService")
+@IstioFeignClient("userService")
 @RequestMapping("/user")
 public interface UserService {
 
-	@GetMapping("/findSimpleUser")
+	@RequestMapping(value = "/findSimpleUser", method = { GET })
 	User findSimpleUser(Long id);
 
-	@GetMapping("/getMenusByUser")
+	@RequestMapping(value = "/getMenusByUser", method = { GET })
 	Set<Menu> getMenusByUser(Long userId);
 
-	// TODO @RequestBody (feign)??
-	// @GetMapping("/list")
 	@RequestMapping(path = "/list", method = RequestMethod.GET)
 	PageHolder<User> list(PageHolder<User> pm, @RequestParam("principalId") String principalId,
 			@RequestParam("principal") String principal, @RequestParam("userName") String userName,
 			@RequestParam("displayName") String displayName, @RequestParam("roleId") Long roleId);
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(User user);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { POST })
 	void del(Long userId);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	User detail(Long userId);
 
-	@GetMapping("/findByUserName")
+	@RequestMapping(value = "/findByUserName", method = { GET })
 	User findByUserName(@RequestParam("userName") String userName);
 
-	@GetMapping("/findByUnionIdOrOpenId")
+	@RequestMapping(value = "/findByUnionIdOrOpenId", method = { GET })
 	User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
 
 }

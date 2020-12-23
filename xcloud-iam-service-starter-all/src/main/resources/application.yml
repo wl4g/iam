@@ -11,6 +11,17 @@
 # #### Environment base configuration. ####
 #
 
+# #### Spring boot configuration. ####
+#
+
+spring:
+  application.name: iam-server
+  profiles:
+    # Notes: The placeholder '${spring.profiles.active}' springboot can't recognize it, but springcloud can!!! 
+    #include: common,util,web-base,web-${spring.profiles.active},facade-${spring.profiles.active},dao-${spring.profiles.active}
+    include: common,util,web-base,web-dev,facade-dev,dao-dev
+    active: dev
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

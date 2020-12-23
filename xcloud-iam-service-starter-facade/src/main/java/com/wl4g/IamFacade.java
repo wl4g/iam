@@ -17,9 +17,11 @@ package com.wl4g;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+//import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
+//import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
+import com.wl4g.component.rpc.istio.feign.annotation.EnableIstioFeignClients;
 
 /**
  * {@link IamFacade}
@@ -29,8 +31,10 @@ import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProv
  * @sine v1.0
  * @see
  */
-@EnableFeignClients("com.wl4g.iam.data")
-@EnableFeignProviderProxies("com.wl4g.iam.service")
+// @EnableFeignClients("com.wl4g.iam.data")
+// @EnableFeignProviderProxies("com.wl4g.iam.service")
+// @EnableDiscoveryClient
+@EnableIstioFeignClients("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamFacade {
 

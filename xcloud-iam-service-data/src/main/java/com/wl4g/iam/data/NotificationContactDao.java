@@ -20,26 +20,34 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.NotificationContact;
 
-@FeignClient("notificationContactDao")
+@IstioFeignClient("notificationContactDao")
 @RequestMapping("/notificationContact")
 public interface NotificationContactDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody NotificationContact record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody NotificationContact record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	NotificationContact selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody NotificationContact record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody NotificationContact record);
 
+	@RequestMapping(method = { GET }, value = "/getByRecordId")
 	List<NotificationContact> getByRecordId(@RequestParam("id") Long id);
 
 }

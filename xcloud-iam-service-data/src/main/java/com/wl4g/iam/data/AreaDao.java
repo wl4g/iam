@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.data;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,29 +35,29 @@ import com.wl4g.iam.common.bean.Area;
  * @sine v1.0
  * @see
  */
-@FeignClient(name = "areaDao"/* , path = "/area" */)
+@IstioFeignClient(name = "areaDao"/* , path = "/area" */)
 @RequestMapping("/area")
 public interface AreaDao {
 
-	@DeleteMapping("/deleteByPrimaryKey")
+	@RequestMapping(method = { POST }, value = "/deleteByPrimaryKey")
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@PostMapping("/insert")
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Area record);
 
-	@PostMapping("/insertSelective")
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Area record);
 
-	@GetMapping("/selectByPrimaryKey")
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	Area selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@GetMapping("/getTotal")
+	@RequestMapping(method = { GET }, value = "/getTotal")
 	List<Area> getTotal();
 
-	@PostMapping("/updateByPrimaryKeySelective")
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(Area record);
 
-	@PostMapping("/updateByPrimaryKey")
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(Area record);
 
 }

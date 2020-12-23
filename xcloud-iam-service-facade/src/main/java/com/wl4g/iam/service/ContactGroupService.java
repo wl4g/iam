@@ -18,12 +18,12 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.ContactGroup;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
 import java.util.List;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -35,20 +35,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @sine v1.0
  * @see
  */
-@FeignClient("contactGroupService")
+@IstioFeignClient("contactGroupService")
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(ContactGroup contactGroup);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { DELETE })
 	void del(Long id);
 
-	@GetMapping("/findContactGroups")
+	@RequestMapping(value = "/findContactGroups", method = { GET })
 	List<ContactGroup> findContactGroups(String name);
 
-	@GetMapping("/list")
+	@RequestMapping(value = "/list", method = { GET })
 	PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name);
 
 }

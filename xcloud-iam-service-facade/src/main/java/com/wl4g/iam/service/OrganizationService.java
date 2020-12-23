@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,26 +38,26 @@ import com.wl4g.iam.common.subject.IamPrincipal;
  * @sine v1.0
  * @see
  */
-@FeignClient("organizationService")
+@IstioFeignClient("organizationService")
 @RequestMapping("/organization")
 public interface OrganizationService {
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(Organization org);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { DELETE, POST })
 	void del(Long id);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	Organization detail(Long id);
 
-	@GetMapping("/getLoginOrganizationTree")
+	@RequestMapping(value = "/getLoginOrganizationTree", method = { GET })
 	List<Organization> getLoginOrganizationTree(@RequestBody IamPrincipal info);
 
-	@GetMapping("/getGroupsSet")
+	@RequestMapping(value = "/getGroupsSet", method = { GET })
 	Set<Organization> getUserOrganizations(User user);
 
-	@GetMapping("/fillChildrenIds")
+	@RequestMapping(value = "/fillChildrenIds", method = { GET })
 	void fillChildrenIds(Long parentId, Set<Long> set);
 
 }

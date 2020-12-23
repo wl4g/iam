@@ -18,7 +18,8 @@ package com.wl4g.iam.data;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.Company;
 
@@ -30,22 +31,29 @@ import com.wl4g.iam.common.bean.Company;
  * @sine v1.0
  * @see
  */
-@FeignClient("companyDao")
+@IstioFeignClient("companyDao")
 @RequestMapping("/company")
 public interface CompanyDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Company record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Company record);
 
+	@RequestMapping(value = "/selectByPrimaryKey", method = { GET })
 	Company selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(value = "/selectByGroupId", method = { GET })
 	Company selectByGroupId(@RequestParam("groupId") Long groupId);
 
+	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
 	int updateByPrimaryKeySelective(@RequestBody Company record);
 
+	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
 	int updateByPrimaryKey(@RequestBody Company record);
 
 }

@@ -11,6 +11,14 @@
 # #### Environment base configuration. ####
 #
 
+# #### Spring boot configuration. ####
+#
+spring:
+  application.name: iam-data
+  profiles:
+    include: common,util
+    active: dao-dev
+
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml

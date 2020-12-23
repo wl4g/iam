@@ -15,16 +15,16 @@
  */
 package com.wl4g.iam.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wl4g.component.core.bean.model.PageHolder;
@@ -39,20 +39,20 @@ import com.wl4g.iam.common.bean.Contact;
  * @sine v1.0
  * @see
  */
-@FeignClient("contactService")
+@IstioFeignClient("contactService")
 @RequestMapping("/contact")
 public interface ContactService {
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(Contact contact);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	Contact detail(Long id);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { POST })
 	void del(Long id);
 
-	@GetMapping("/list")
+	@RequestMapping(value = "/list", method = { GET })
 	PageHolder<Contact> list(PageHolder<Contact> pm, String name);
 
 	/**
@@ -62,7 +62,7 @@ public interface ContactService {
 	 * @param parameters
 	 * @param contactGroupIds
 	 */
-	@GetMapping("/notification")
+	@RequestMapping(value = "/notification", method = { POST })
 	void notification(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
 			@Nullable List<Long> contactGroupIds);
 

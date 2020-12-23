@@ -19,7 +19,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.ContactGroupRef;
 
@@ -31,24 +32,32 @@ import com.wl4g.iam.common.bean.ContactGroupRef;
  * @sine v1.0
  * @see
  */
-@FeignClient("contactGroupRefDao")
+@IstioFeignClient("contactGroupRefDao")
 @RequestMapping("/contactGroupRef")
 public interface ContactGroupRefDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(ContactGroupRef record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(ContactGroupRef record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	ContactGroupRef selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(ContactGroupRef record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(ContactGroupRef record);
 
+	@RequestMapping(method = { POST }, value = "/deleteByContactId")
 	int deleteByContactId(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { GET }, value = "/selectByContactId")
 	List<ContactGroupRef> selectByContactId(@RequestParam("id") Long id);
 
 }

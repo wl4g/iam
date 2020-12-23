@@ -19,7 +19,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.OrganizationRole;
 
@@ -33,30 +34,41 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("organizationRoleDao")
+@IstioFeignClient("organizationRoleDao")
 @RequestMapping("/organizationRole")
 public interface OrganizationRoleDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/deleteByRoleId")
 	int deleteByRoleId(@RequestParam("roleId") Long roleId);
 
+	@RequestMapping(method = { POST }, value = "/deleteByGroupId")
 	int deleteByGroupId(@RequestParam("groupId") Long groupId);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody OrganizationRole record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody OrganizationRole record);
 
+	@RequestMapping(method = { POST }, value = "/insertBatch")
 	int insertBatch(@Param("groupRoles") List<OrganizationRole> groupRoles);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	OrganizationRole selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { GET }, value = "/selectGroupIdByRoleId")
 	List<Long> selectGroupIdByRoleId(@RequestParam("roleId") Long roleId);
 
+	@RequestMapping(method = { GET }, value = "/selectRoleIdsByGroupId")
 	List<Long> selectRoleIdsByGroupId(@RequestParam("groupId") Long groupId);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody OrganizationRole record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody OrganizationRole record);
 
 }

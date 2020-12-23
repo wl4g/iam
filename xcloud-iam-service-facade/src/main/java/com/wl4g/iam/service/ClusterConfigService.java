@@ -16,10 +16,10 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.iam.common.bean.ClusterConfig;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 import java.util.Map;
@@ -33,21 +33,21 @@ import java.util.Map;
  * @sine v1.0.0
  * @see
  */
-@FeignClient("clusterConfigService")
+@IstioFeignClient("clusterConfigService")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 
-	@GetMapping("/loadInit")
+	@RequestMapping(value = "/loadInit", method = { GET })
 	Map<String, Object> loadInit();
 
-	@GetMapping("/getClusterConfig")
+	@RequestMapping(value = "/getClusterConfig", method = { GET })
 	ClusterConfig getClusterConfig(Long clusterConfigId);
 
-	@GetMapping("/getByAppNames")
+	@RequestMapping(value = "/getByAppNames", method = { GET })
 	List<ClusterConfig> findByAppNames(@RequestParam("appNames") String[] appNames, @RequestParam("envType") String envType,
 			@RequestParam("type") String type);
 
-	@GetMapping("/findOfIamServers")
+	@RequestMapping(value = "/findOfIamServers", method = { GET })
 	List<ClusterConfig> findOfIamServers();
 
 }

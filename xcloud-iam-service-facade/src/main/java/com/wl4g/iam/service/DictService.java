@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wl4g.component.core.bean.model.PageHolder;
@@ -36,32 +36,32 @@ import com.wl4g.iam.common.bean.Dict;
  * @sine v1.0
  * @see
  */
-@FeignClient("dictService")
+@IstioFeignClient("dictService")
 @RequestMapping("/dict")
 public interface DictService {
 
-	@GetMapping("/list")
+	@RequestMapping(value = "/list", method = { GET })
 	PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description);
 
-	@PostMapping("/save")
+	@RequestMapping(value = "/save", method = { POST })
 	void save(Dict dict, Boolean isEdit);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	Dict detail(String key);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { POST })
 	void del(String key);
 
-	@GetMapping("/getByType")
+	@RequestMapping(value = "/getByType", method = { GET })
 	List<Dict> getByType(String type);
 
-	@GetMapping("/getByKey")
+	@RequestMapping(value = "/getByKey", method = { GET })
 	Dict getByKey(String key);
 
-	@GetMapping("/allType")
+	@RequestMapping(value = "/allType", method = { GET })
 	List<String> allType();
 
-	@GetMapping("/loadInit")
+	@RequestMapping(value = "/loadInit", method = { GET })
 	Map<String, Object> loadInit();
 
 }

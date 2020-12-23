@@ -24,7 +24,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
@@ -39,7 +39,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
@@ -54,7 +54,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId>
+					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>

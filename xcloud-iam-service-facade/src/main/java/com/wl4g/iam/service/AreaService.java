@@ -16,9 +16,11 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.iam.common.bean.Area;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 
@@ -31,11 +33,11 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignClient("areaService")
+@IstioFeignClient("areaService")
 @RequestMapping("/area")
 public interface AreaService {
 
-	@GetMapping("/getAreaTree")
+	@RequestMapping(value = "/getAreaTree", method = { GET })
 	List<Area> getAreaTree();
 
 }

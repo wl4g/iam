@@ -11,27 +11,30 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: iam-data
+  application.name: iam-facade
   profiles:
     include: common,util
-    active: dao-dev
+    active: facade-dev
 
 # http://dubbo.apache.org/docs/v2.7/user/configuration/properties/
 dubbo:
   application:
     #name: ${spring.application.name}
-    name: iam-data
+    name: iam-facade
     owner: wanglsir-dubbo
     qos:
       enable: true # Default(true)
-      port: 22222 # Default(22222)
+      port: 22223 # Default(22222)
       accept.foreign.ip: false # Default(false))
   scan:
-    basePackages: com.wl4g.iam.data
+    basePackages: com.wl4g.iam.service
   protocol:
     #rmi.port: 9090
     name: dubbo
-    port: 28080 # Default(28080)
+    port: 28081 # Default(28080)
+    # Default: hessian2, options: fastjson|fst|hessian2|java|compactedjava|nativejava|kryo
+    # Refer: dubbo-xx.jar/META-INF/dubbo/internal/com.alibaba.dubbo.common.serialize.Serialization
+    #serialization: nativejava
   registry:
     address: eureka://127.0.0.1:8761
     timeout: 10_000

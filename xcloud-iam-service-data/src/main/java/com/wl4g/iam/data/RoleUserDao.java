@@ -20,7 +20,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.RoleUser;
 
@@ -32,24 +33,32 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @sine v1.0
  * @see
  */
-@FeignClient("roleUserDao")
+@IstioFeignClient("roleUserDao")
 @RequestMapping("/roleUser")
 public interface RoleUserDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody RoleUser record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody RoleUser record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	RoleUser selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody RoleUser record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody RoleUser record);
 
+	@RequestMapping(method = { POST }, value = "/deleteByUserId")
 	int deleteByUserId(@RequestParam("userId") Long userId);
 
+	@RequestMapping(method = { GET }, value = "/selectRoleIdByUserId")
 	List<Long> selectRoleIdByUserId(@RequestParam("userID") Long userID);
 
 }

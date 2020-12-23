@@ -17,8 +17,11 @@ package com.wl4g.iam.service;
 
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.subject.IamPrincipal;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 
 import java.util.List;
 import java.util.Map;
@@ -32,29 +35,29 @@ import java.util.Map;
  * @sine v1.0
  * @see
  */
-@FeignClient("menuService")
+@IstioFeignClient("menuService")
 @RequestMapping("/menu")
 public interface MenuService {
 
-	@GetMapping("/findMenuTree")
+	@RequestMapping(value = "/findMenuTree", method = { GET })
 	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
-	@GetMapping("/findMenuList")
+	@RequestMapping(value = "/findMenuList", method = { GET })
 	List<Menu> findMenuList(@RequestBody IamPrincipal info);
 
 	@PostMapping("/save")
 	void save(Menu menu);
 
-	@DeleteMapping("/del")
+	@RequestMapping(value = "/del", method = { POST })
 	void del(Long id);
 
-	@GetMapping("/detail")
+	@RequestMapping(value = "/detail", method = { GET })
 	Menu detail(Long id);
 
-	@GetMapping("/findRoot")
+	@RequestMapping(value = "/findRoot", method = { GET })
 	List<Menu> findRoot();
 
-	@GetMapping("/findByUserId")
+	@RequestMapping(value = "/findByUserId", method = { GET })
 	List<Menu> findByUserId(@RequestParam("userId") Long userId);
 
 }

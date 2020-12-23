@@ -18,7 +18,8 @@ package com.wl4g.iam.data;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.cloud.openfeign.FeignClient;
+import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.iam.common.bean.Park;
 
@@ -30,22 +31,29 @@ import com.wl4g.iam.common.bean.Park;
  * @sine v1.0
  * @see
  */
-@FeignClient("parkDao")
+@IstioFeignClient("parkDao")
 @RequestMapping("/park")
 public interface ParkDao {
 
+	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { POST }, value = "/insert")
 	int insert(@RequestBody Park record);
 
+	@RequestMapping(method = { POST }, value = "/insertSelective")
 	int insertSelective(@RequestBody Park record);
 
+	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
 	Park selectByPrimaryKey(@RequestParam("id") Long id);
 
+	@RequestMapping(method = { GET }, value = "/selectByGroupId")
 	Park selectByGroupId(@RequestParam("groupId") Long groupId);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Park record);
 
+	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Park record);
 
 }

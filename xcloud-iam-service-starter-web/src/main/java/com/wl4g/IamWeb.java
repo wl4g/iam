@@ -17,8 +17,9 @@ package com.wl4g;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+//import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import com.wl4g.component.rpc.istio.feign.annotation.EnableIstioFeignClients;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 /**
@@ -29,7 +30,8 @@ import com.wl4g.iam.annotation.EnableIamServer;
  * @sine v1.0
  * @see
  */
-@EnableFeignClients("com.wl4g.iam.service")
+// @EnableFeignClients("com.wl4g.iam.service")
+@EnableIstioFeignClients("com.wl4g.iam.service")
 @EnableIamServer
 @SpringBootApplication
 public class IamWeb {
