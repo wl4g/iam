@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  cloud: # Spring cloud configuration.
+  boot: # Spring cloud configuration.
     xcloud:
       embedded-webapps:
         enable: true # Default false

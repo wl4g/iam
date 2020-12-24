@@ -25,7 +25,7 @@ package com.wl4g.iam.common.constant;
  */
 public abstract class ConfigIAMConstants {
 
-	public static final String KEY_IAM_CONFIG_PREFIX = "spring.cloud.xcloud.iam";
+	public static final String KEY_IAM_CONFIG_PREFIX = "spring.boot.xcloud.iam";
 
 	/**
 	 * System dictionaries cache key.

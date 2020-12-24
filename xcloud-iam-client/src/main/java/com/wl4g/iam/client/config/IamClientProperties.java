@@ -45,7 +45,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	/**
 	 * This configuration item is used to specify a custom login page, default
-	 * to {spring.cloud.xcloud.iam.client.server-uri}, that is, the login page
+	 * to {spring.boot.xcloud.iam.client.server-uri}, that is, the login page
 	 * controlled by iam-server.
 	 */
 	private String loginUri;
