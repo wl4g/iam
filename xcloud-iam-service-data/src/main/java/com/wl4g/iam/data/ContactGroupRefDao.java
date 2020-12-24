@@ -40,25 +40,25 @@ public interface ContactGroupRefDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(ContactGroupRef record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(ContactGroupRef record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	ContactGroupRef selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(ContactGroupRef record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(ContactGroupRef record);
 
-	@RequestMapping(method = { POST }, value = "/deleteByContactId")
+	@RequestMapping(method = POST, value = "/deleteByContactId")
 	int deleteByContactId(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { GET }, value = "/selectByContactId")
+	@RequestMapping(method = GET, value = "/selectByContactId")
 	List<ContactGroupRef> selectByContactId(@RequestParam("id") Long id);
 
 }

@@ -39,10 +39,10 @@ import java.util.Set;
 @RequestMapping("/user")
 public interface UserService {
 
-	@RequestMapping(value = "/findSimpleUser", method = { GET })
+	@RequestMapping(value = "/findSimpleUser", method = GET)
 	User findSimpleUser(Long id);
 
-	@RequestMapping(value = "/getMenusByUser", method = { GET })
+	@RequestMapping(value = "/getMenusByUser", method = GET)
 	Set<Menu> getMenusByUser(Long userId);
 
 	@RequestMapping(path = "/list", method = RequestMethod.GET)
@@ -50,19 +50,19 @@ public interface UserService {
 			@RequestParam("principal") String principal, @RequestParam("userName") String userName,
 			@RequestParam("displayName") String displayName, @RequestParam("roleId") Long roleId);
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(User user);
 
-	@RequestMapping(value = "/del", method = { POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long userId);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	User detail(Long userId);
 
-	@RequestMapping(value = "/findByUserName", method = { GET })
+	@RequestMapping(value = "/findByUserName", method = GET)
 	User findByUserName(@RequestParam("userName") String userName);
 
-	@RequestMapping(value = "/findByUnionIdOrOpenId", method = { GET })
+	@RequestMapping(value = "/findByUnionIdOrOpenId", method = GET)
 	User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
 
 }

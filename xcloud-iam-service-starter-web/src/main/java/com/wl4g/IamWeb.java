@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.springboot.feign.annotation.mvc.SpringMvcContract;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 /**
@@ -31,7 +32,7 @@ import com.wl4g.iam.annotation.EnableIamServer;
  * @see
  */
 // @EnableFeignClients("com.wl4g.iam.service")
-@EnableSpringBootFeignClients("com.wl4g.iam.service")
+@EnableSpringBootFeignClients(value = "com.wl4g.iam.service", defaultConfiguration = { SpringMvcContract.class })
 @EnableIamServer
 @SpringBootApplication
 public class IamWeb {

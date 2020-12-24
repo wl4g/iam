@@ -40,28 +40,28 @@ import com.wl4g.iam.common.bean.Dict;
 @RequestMapping("/dict")
 public interface DictService {
 
-	@RequestMapping(value = "/list", method = { GET })
+	@RequestMapping(value = "/list", method = GET)
 	PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description);
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(Dict dict, Boolean isEdit);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	Dict detail(String key);
 
-	@RequestMapping(value = "/del", method = { POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(String key);
 
-	@RequestMapping(value = "/getByType", method = { GET })
+	@RequestMapping(value = "/getByType", method = GET)
 	List<Dict> getByType(String type);
 
-	@RequestMapping(value = "/getByKey", method = { GET })
+	@RequestMapping(value = "/getByKey", method = GET)
 	Dict getByKey(String key);
 
-	@RequestMapping(value = "/allType", method = { GET })
+	@RequestMapping(value = "/allType", method = GET)
 	List<String> allType();
 
-	@RequestMapping(value = "/loadInit", method = { GET })
+	@RequestMapping(value = "/loadInit", method = GET)
 	Map<String, Object> loadInit();
 
 }

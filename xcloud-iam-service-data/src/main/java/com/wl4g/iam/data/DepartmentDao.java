@@ -39,22 +39,22 @@ public interface DepartmentDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Department record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Department record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Department selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { GET }, value = "/selectByGroupId")
+	@RequestMapping(method = GET, value = "/selectByGroupId")
 	Department selectByGroupId(Long groupId);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Department record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Department record);
 
 }

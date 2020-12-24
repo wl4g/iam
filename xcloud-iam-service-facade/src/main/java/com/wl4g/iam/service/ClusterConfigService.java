@@ -38,17 +38,17 @@ import java.util.Map;
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 
-	@RequestMapping(value = "/loadInit", method = { GET })
+	@RequestMapping(value = "/loadInit", method = GET)
 	Map<String, Object> loadInit();
 
-	@RequestMapping(value = "/getClusterConfig", method = { GET })
+	@RequestMapping(value = "/getClusterConfig", method = GET)
 	ClusterConfig getClusterConfig(Long clusterConfigId);
 
-	@RequestMapping(value = "/getByAppNames", method = { GET })
+	@RequestMapping(value = "/getByAppNames", method = GET)
 	List<ClusterConfig> findByAppNames(@RequestParam("appNames") String[] appNames, @RequestParam("envType") String envType,
 			@RequestParam("type") String type);
 
-	@RequestMapping(value = "/findOfIamServers", method = { GET })
+	@RequestMapping(value = "/findOfIamServers", method = GET)
 	List<ClusterConfig> findOfIamServers();
 
 }

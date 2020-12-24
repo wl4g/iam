@@ -42,34 +42,34 @@ public interface OrganizationDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Organization record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Organization record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Organization selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Organization record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Organization record);
 
-	@RequestMapping(method = { GET }, value = "/selectByUserId")
+	@RequestMapping(method = GET, value = "/selectByUserId")
 	List<Organization> selectByUserId(@RequestParam("userId") Long userId);
 
-	@RequestMapping(method = { GET }, value = "/selectByRoot")
+	@RequestMapping(method = GET, value = "/selectByRoot")
 	List<Organization> selectByRoot();
 
-	@RequestMapping(method = { GET }, value = "/selectByRoleId")
+	@RequestMapping(method = GET, value = "/selectByRoleId")
 	List<Organization> selectByRoleId(@RequestParam("roleId") Long roleId);
 
-	@RequestMapping(method = { GET }, value = "/selectByParentId")
+	@RequestMapping(method = GET, value = "/selectByParentId")
 	List<Organization> selectByParentId(@RequestParam("parentId") Long parentId);
 
-	@RequestMapping(method = { GET }, value = "/countRoleByOrganizationId")
+	@RequestMapping(method = GET, value = "/countRoleByOrganizationId")
 	int countRoleByOrganizationId(@RequestParam("ids") @Param("ids") Set<Long> ids);
 
 }

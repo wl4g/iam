@@ -15,22 +15,18 @@
  */
 package com.wl4g;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.core.web.mapping.annotation.EnableSmartHandlerMapping;
-import com.wl4g.component.core.web.method.annotation.EnableHandlerMethodCustomizer;
+import com.wl4g.component.core.web.method.annotation.EnableHandlerMappingCustomizer;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
-import com.wl4g.component.data.annotation.EnableComponentsData;
+import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.annotation.EnableIamServer;
 
-@EnableHandlerMethodCustomizer("com.wl4g.iam.web")
-@EnableSmartHandlerMapping("com.wl4g.iam.web")
-@EnableApiVersionManagement
+@EnableHandlerMappingCustomizer("com.wl4g.iam.web")
+@EnableApiVersionManagement("com.wl4g.iam.web")
+@EnableComponentDBConfiguration("com.wl4g.iam.data")
 @EnableIamServer
-@MapperScan("com.wl4g.iam.data")
-@EnableComponentsData
 @SpringBootApplication
 public class IamServer {
 

@@ -41,31 +41,31 @@ public interface DictDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Dict record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Dict record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Dict selectByPrimaryKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Dict record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Dict record);
 
-	@RequestMapping(method = { GET }, value = "/selectByType")
+	@RequestMapping(method = GET, value = "/selectByType")
 	List<Dict> selectByType(@RequestParam("type") String type);
 
-	@RequestMapping(method = { GET }, value = "/allType")
+	@RequestMapping(method = GET, value = "/allType")
 	List<String> allType();
 
-	@RequestMapping(method = { GET }, value = "/getByKey")
+	@RequestMapping(method = GET, value = "/getByKey")
 	Dict getByKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = { GET }, value = "/list")
+	@RequestMapping(method = GET, value = "/list")
 	List<Dict> list(@RequestParam("key") @Param("key") String key, @RequestParam("label") @Param("label") String label,
 			@RequestParam("type") @Param("type") String type,
 			@RequestParam("description") @Param("description") String description,

@@ -42,22 +42,22 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 @RequestMapping("/organization")
 public interface OrganizationService {
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(Organization org);
 
-	@RequestMapping(value = "/del", method = { DELETE, POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	Organization detail(Long id);
 
-	@RequestMapping(value = "/getLoginOrganizationTree", method = { GET })
+	@RequestMapping(value = "/getLoginOrganizationTree", method = GET)
 	List<Organization> getLoginOrganizationTree(@RequestBody IamPrincipal info);
 
-	@RequestMapping(value = "/getGroupsSet", method = { GET })
+	@RequestMapping(value = "/getGroupsSet", method = GET)
 	Set<Organization> getUserOrganizations(User user);
 
-	@RequestMapping(value = "/fillChildrenIds", method = { GET })
+	@RequestMapping(value = "/fillChildrenIds", method = GET)
 	void fillChildrenIds(Long parentId, Set<Long> set);
 
 }

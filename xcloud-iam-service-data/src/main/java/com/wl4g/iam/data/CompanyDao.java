@@ -39,16 +39,16 @@ public interface CompanyDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Company record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Company record);
 
-	@RequestMapping(value = "/selectByPrimaryKey", method = { GET })
+	@RequestMapping(value = "/selectByPrimaryKey", method = GET)
 	Company selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/selectByGroupId", method = { GET })
+	@RequestMapping(value = "/selectByGroupId", method = GET)
 	Company selectByGroupId(@RequestParam("groupId") Long groupId);
 
 	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })

@@ -38,22 +38,22 @@ public interface ContactChannelDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/deleteByContactId")
+	@RequestMapping(method = POST, value = "/deleteByContactId")
 	int deleteByContactId(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	ContactChannel selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody ContactChannel record);
 
 }

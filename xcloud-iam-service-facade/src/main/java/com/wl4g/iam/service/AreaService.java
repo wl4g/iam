@@ -37,7 +37,7 @@ import java.util.List;
 @RequestMapping("/area")
 public interface AreaService {
 
-	@RequestMapping(value = "/getAreaTree", method = { GET })
+	@RequestMapping(value = "/getAreaTree", method = GET)
 	List<Area> getAreaTree();
 
 }

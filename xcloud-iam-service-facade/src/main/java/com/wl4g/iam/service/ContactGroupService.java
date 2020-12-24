@@ -39,16 +39,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(ContactGroup contactGroup);
 
 	@RequestMapping(value = "/del", method = { DELETE })
 	void del(Long id);
 
-	@RequestMapping(value = "/findContactGroups", method = { GET })
+	@RequestMapping(value = "/findContactGroups", method = GET)
 	List<ContactGroup> findContactGroups(String name);
 
-	@RequestMapping(value = "/list", method = { GET })
+	@RequestMapping(value = "/list", method = GET)
 	PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name);
 
 }

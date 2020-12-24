@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-
 import java.util.List;
 
 /**
@@ -40,26 +39,26 @@ import java.util.List;
 @RequestMapping("/role")
 public interface RoleService {
 
-	@RequestMapping(value = "/getLoginRoles", method = { GET })
+	@RequestMapping(value = "/getLoginRoles", method = GET)
 	List<Role> getLoginRoles(@RequestBody IamPrincipal info);
 
-	// TODO @RequestBody (feign)??
-	@RequestMapping(value = "/list", method = { GET })
+	// has too many Body parameters:
+	@RequestMapping(value = "/list", method = GET)
 	PageHolder<Role> list(PageHolder<Role> pm, IamPrincipal info, String organizationId, String name, String displayName);
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(Role role);
 
-	@RequestMapping(value = "/del", method = { DELETE, POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	Role detail(Long id);
 
-	@RequestMapping(value = "/findByUserId", method = { GET })
+	@RequestMapping(value = "/findByUserId", method = GET)
 	List<Role> findByUserId(@RequestParam("userId") Long userId);
 
-	@RequestMapping(value = "/findRoot", method = { GET })
+	@RequestMapping(value = "/findRoot", method = GET)
 	List<Role> findRoot(@RequestParam("groupIds") List<Long> groupIds, @RequestParam("roleCode") String roleCode,
 			@RequestParam("nameZh") String nameZh);
 

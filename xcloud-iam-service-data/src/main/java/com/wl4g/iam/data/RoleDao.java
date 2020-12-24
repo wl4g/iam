@@ -42,41 +42,41 @@ public interface RoleDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") @Param("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Role record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Role record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Role selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { GET }, value = "/selectWithRoot")
+	@RequestMapping(method = GET, value = "/selectWithRoot")
 	List<Role> selectWithRoot(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
 			@RequestParam("roleCode") @Param("roleCode") String roleCode, @RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Role record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Role record);
 
-	@RequestMapping(method = { GET }, value = "/selectByUserId")
+	@RequestMapping(method = GET, value = "/selectByUserId")
 	List<Role> selectByUserId(@RequestParam("userId") @Param("userId") Long userId);
 
-	@RequestMapping(method = { GET }, value = "/selectByGroupId")
+	@RequestMapping(method = GET, value = "/selectByGroupId")
 	List<Role> selectByGroupId(@RequestParam("groupId") @Param("groupId") Long groupId);
 
-	@RequestMapping(method = { GET }, value = "/selectByGroupIdsAndUserId")
+	@RequestMapping(method = GET, value = "/selectByGroupIdsAndUserId")
 	List<Role> selectByGroupIdsAndUserId(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
 			@RequestParam("userId") @Param("userId") String userId, @RequestParam("roleCode") @Param("roleCode") String roleCode,
 			@RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	@RequestMapping(method = { GET }, value = "/list")
+	@RequestMapping(method = GET, value = "/list")
 	List<Role> list(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
 			@RequestParam("roleCode") @Param("roleCode") String roleCode, @RequestParam("nameZh") @Param("nameZh") String nameZh);
 
-	@RequestMapping(method = { GET }, value = "/countRoleUsers")
+	@RequestMapping(method = GET, value = "/countRoleUsers")
 	int countRoleUsers(@RequestParam("roleId") Long roleId);
 
 }

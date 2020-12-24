@@ -41,25 +41,25 @@ public interface ContactDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Contact record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Contact record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Contact selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Contact record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody Contact record);
 
-	@RequestMapping(method = { GET }, value = "/list")
+	@RequestMapping(method = GET, value = "/list")
 	List<Contact> list(@RequestParam("name") @Param("name") String name);
 
-	@RequestMapping(method = { GET }, value = "/getContactByGroupIds")
+	@RequestMapping(method = GET, value = "/getContactByGroupIds")
 	List<Contact> getContactByGroupIds(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds);
 
 }

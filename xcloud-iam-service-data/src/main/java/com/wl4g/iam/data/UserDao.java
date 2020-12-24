@@ -41,30 +41,30 @@ public interface UserDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody User record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody User record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	User selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody User record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(@RequestBody User record);
 
-	@RequestMapping(method = { GET }, value = "/list")
+	@RequestMapping(method = GET, value = "/list")
 	List<User> list(@RequestParam("userId") @Param("userId") Long userId,
 			@RequestParam("userName") @Param("userName") String userName, @RequestParam("nameZh") @Param("nameZh") String nameZh,
 			@RequestParam("roleId") @Param("roleId") Long roleId);
 
-	@RequestMapping(method = { GET }, value = "/selectByUserName")
+	@RequestMapping(method = GET, value = "/selectByUserName")
 	User selectByUserName(@RequestParam("userName") String userName);
 
-	@RequestMapping(method = { GET }, value = "/selectByUnionIdOrOpenId")
+	@RequestMapping(method = GET, value = "/selectByUnionIdOrOpenId")
 	User selectByUnionIdOrOpenId(@RequestParam("unionId") @Param("unionId") String unionId,
 			@RequestParam("openId") @Param("openId") String openId);
 

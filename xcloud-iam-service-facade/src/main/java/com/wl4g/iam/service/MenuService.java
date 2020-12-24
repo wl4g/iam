@@ -40,25 +40,25 @@ import java.util.Map;
 @RequestMapping("/menu")
 public interface MenuService {
 
-	@RequestMapping(value = "/findMenuTree", method = { GET })
+	@RequestMapping(value = "/findMenuTree", method = GET)
 	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
-	@RequestMapping(value = "/findMenuList", method = { GET })
+	@RequestMapping(value = "/findMenuList", method = GET)
 	List<Menu> findMenuList(@RequestBody IamPrincipal info);
 
 	@PostMapping("/save")
 	void save(Menu menu);
 
-	@RequestMapping(value = "/del", method = { POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	Menu detail(Long id);
 
-	@RequestMapping(value = "/findRoot", method = { GET })
+	@RequestMapping(value = "/findRoot", method = GET)
 	List<Menu> findRoot();
 
-	@RequestMapping(value = "/findByUserId", method = { GET })
+	@RequestMapping(value = "/findByUserId", method = GET)
 	List<Menu> findByUserId(@RequestParam("userId") Long userId);
 
 }

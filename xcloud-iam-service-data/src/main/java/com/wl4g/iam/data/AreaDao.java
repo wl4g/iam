@@ -38,25 +38,25 @@ import com.wl4g.iam.common.bean.Area;
 @RequestMapping("/area")
 public interface AreaDao {
 
-	@RequestMapping(method = { POST }, value = "/deleteByPrimaryKey")
+	@RequestMapping(method = POST, value = "/deleteByPrimaryKey")
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { POST }, value = "/insert")
+	@RequestMapping(method = POST, value = "/insert")
 	int insert(@RequestBody Area record);
 
-	@RequestMapping(method = { POST }, value = "/insertSelective")
+	@RequestMapping(method = POST, value = "/insertSelective")
 	int insertSelective(@RequestBody Area record);
 
-	@RequestMapping(method = { GET }, value = "/selectByPrimaryKey")
+	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	Area selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = { GET }, value = "/getTotal")
+	@RequestMapping(method = GET, value = "/getTotal")
 	List<Area> getTotal();
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKeySelective")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(Area record);
 
-	@RequestMapping(method = { POST }, value = "/updateByPrimaryKey")
+	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
 	int updateByPrimaryKey(Area record);
 
 }

@@ -15,12 +15,11 @@
  */
 package com.wl4g;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import com.wl4g.component.data.annotation.EnableComponentsData;
+import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 //import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
 
 /**
@@ -31,10 +30,9 @@ import com.wl4g.component.data.annotation.EnableComponentsData;
  * @sine v1.0
  * @see
  */
-@MapperScan("com.wl4g.iam.data")
 // @EnableFeignProviderProxies("com.wl4g.iam.data")
 // @EnableDiscoveryClient
-@EnableComponentsData
+@EnableComponentDBConfiguration("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamData {
 

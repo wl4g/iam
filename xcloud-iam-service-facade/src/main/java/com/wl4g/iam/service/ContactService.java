@@ -43,16 +43,16 @@ import com.wl4g.iam.common.bean.Contact;
 @RequestMapping("/contact")
 public interface ContactService {
 
-	@RequestMapping(value = "/save", method = { POST })
+	@RequestMapping(value = "/save", method = POST)
 	void save(Contact contact);
 
-	@RequestMapping(value = "/detail", method = { GET })
+	@RequestMapping(value = "/detail", method = GET)
 	Contact detail(Long id);
 
-	@RequestMapping(value = "/del", method = { POST })
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	@RequestMapping(value = "/list", method = { GET })
+	@RequestMapping(value = "/list", method = GET)
 	PageHolder<Contact> list(PageHolder<Contact> pm, String name);
 
 	/**
@@ -62,7 +62,7 @@ public interface ContactService {
 	 * @param parameters
 	 * @param contactGroupIds
 	 */
-	@RequestMapping(value = "/notification", method = { POST })
+	@RequestMapping(value = "/notification", method = POST)
 	void notification(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
 			@Nullable List<Long> contactGroupIds);
 

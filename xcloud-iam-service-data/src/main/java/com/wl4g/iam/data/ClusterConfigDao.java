@@ -48,7 +48,7 @@ public interface ClusterConfigDao {
 	@RequestMapping(value = "/insertSelective", method = { POST })
 	int insertSelective(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/selectByPrimaryKey", method = { GET })
+	@RequestMapping(value = "/selectByPrimaryKey", method = GET)
 	ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
@@ -57,15 +57,15 @@ public interface ClusterConfigDao {
 	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
 	int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/getByAppNames", method = { GET })
+	@RequestMapping(value = "/getByAppNames", method = GET)
 	List<ClusterConfig> getByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
 			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
-	@RequestMapping(value = "/getByAppName", method = { GET })
+	@RequestMapping(value = "/getByAppName", method = GET)
 	ClusterConfig getByAppName(@RequestParam("appName") @Param("appName") String appName,
 			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
-	@RequestMapping(value = "/getIamServer", method = { GET })
+	@RequestMapping(value = "/getIamServer", method = GET)
 	List<ClusterConfig> getIamServer();
 
 }
