@@ -33,8 +33,8 @@ import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.S
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
 
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.core.authc.model.SessionValidateResult;

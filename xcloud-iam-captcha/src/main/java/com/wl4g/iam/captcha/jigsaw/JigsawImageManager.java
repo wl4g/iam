@@ -16,7 +16,7 @@
 package com.wl4g.iam.captcha.jigsaw;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.iam.captcha.config.CaptchaProperties;
 import com.wl4g.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.iam.core.cache.CacheKey;

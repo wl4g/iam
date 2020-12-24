@@ -30,6 +30,7 @@ import com.wl4g.iam.service.ContactService;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.Assert;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
@@ -66,6 +67,7 @@ public class ContactServiceImpl implements ContactService {
 	@Autowired
 	private ContactChannelDao contactChannelDao;
 
+	@Lazy
 	@Autowired
 	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
 

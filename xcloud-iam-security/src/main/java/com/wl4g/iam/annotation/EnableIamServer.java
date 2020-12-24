@@ -23,18 +23,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.iam.config.BasedConfigAutoConfiguration;
-import com.wl4g.iam.config.IamAutoConfiguration;
-import com.wl4g.iam.config.IamServerApiV2AutoConfiguration;
-import com.wl4g.iam.config.JssdkWebappAutoConfiguration;
-import com.wl4g.iam.config.LoginAutoConfiguration;
-import com.wl4g.iam.config.SimpleRcmAutoConfiguration;
-import com.wl4g.iam.config.SnsAutoConfiguration;
-import com.wl4g.iam.config.VerifyAutoConfiguration;
-import com.wl4g.iam.core.config.CorsAutoConfiguration;
-import com.wl4g.iam.core.config.ReplayAutoConfiguration;
-import com.wl4g.iam.core.config.XsrfAutoConfiguration;
-import com.wl4g.iam.core.config.XssAutoConfiguration;
+import com.wl4g.iam.config.IamServerMarkerConfiguration;
 
 /**
  * Controls whether IAM servers are enabled
@@ -47,10 +36,6 @@ import com.wl4g.iam.core.config.XssAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
-		VerifyAutoConfiguration.class, SimpleRcmAutoConfiguration.class, SnsAutoConfiguration.class,
-		IamServerApiV2AutoConfiguration.class, JssdkWebappAutoConfiguration.class, CorsAutoConfiguration.class,
-		XsrfAutoConfiguration.class, XssAutoConfiguration.class, ReplayAutoConfiguration.class })
+@Import(IamServerMarkerConfiguration.class)
 public @interface EnableIamServer {
-
 }

@@ -20,6 +20,7 @@ import static com.wl4g.iam.config.properties.IamProperties.DEFAULT_JSSDK_LOCATIO
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
 import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
@@ -32,6 +33,8 @@ import com.wl4g.iam.web.JssdkWebappEndpoint;
  * @version v1.0.0 2019-10-20
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 public class JssdkWebappAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	@Bean

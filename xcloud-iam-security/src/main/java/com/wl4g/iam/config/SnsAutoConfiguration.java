@@ -17,7 +17,9 @@ package com.wl4g.iam.config;
 
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
@@ -54,6 +56,8 @@ import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
  * @version v1.0 2019年1月8日
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class SnsAutoConfiguration extends AbstractIamConfiguration {
 

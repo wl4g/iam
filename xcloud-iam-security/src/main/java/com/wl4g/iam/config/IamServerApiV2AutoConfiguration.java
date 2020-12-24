@@ -16,7 +16,9 @@
 package com.wl4g.iam.config;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.iam.core.config.GenericApiAutoConfiguration;
 import com.wl4g.iam.web.ServiceApiV2Endpoint;
@@ -28,6 +30,8 @@ import com.wl4g.iam.web.ServiceApiV2Endpoint;
  * @version v1.0 2019年1月8日
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class IamServerApiV2AutoConfiguration extends GenericApiAutoConfiguration {
 

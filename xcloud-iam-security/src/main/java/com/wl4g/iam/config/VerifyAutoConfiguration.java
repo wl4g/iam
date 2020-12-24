@@ -22,7 +22,9 @@ import com.wl4g.iam.web.VerifyAuthenticationEndpoint;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VERIFY_BASE;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * IAM authentication(verify) configuration
@@ -31,6 +33,8 @@ import org.springframework.context.annotation.Bean;
  * @version v1.0 2019年1月8日
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
 public class VerifyAutoConfiguration extends PrefixHandlerMappingSupport {
 

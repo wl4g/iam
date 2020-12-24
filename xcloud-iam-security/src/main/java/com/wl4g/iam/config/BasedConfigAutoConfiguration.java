@@ -26,8 +26,10 @@ import com.wl4g.iam.core.exception.IamException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -43,11 +45,11 @@ import java.util.List;
  * @version v1.0 2019年3月24日
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 public class BasedConfigAutoConfiguration {
 
-	//
-	// Configurer's configuration
-	//
+	// Security components configuration
 
 	@Bean
 	@ConditionalOnMissingBean

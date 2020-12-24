@@ -27,13 +27,15 @@ import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.kit.access.IPAccessControl;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
 import com.wl4g.iam.authc.credential.SmsCredentialsHashedMatcher;
@@ -108,10 +110,9 @@ import com.wl4g.iam.web.CentralAuthenticatingEndpoint;
  * @version v1.0 2019年03月19日
  * @since
  */
+@Configuration
+@ConditionalOnBean(IamServerMarkerConfiguration.class)
 public class IamAutoConfiguration extends AbstractIamConfiguration {
-	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
-	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
-	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
 
 	// ==============================
 	// Configuration properties.
@@ -597,5 +598,9 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	public ServerSecurityCoprocessor serverSecurityCoprocessor() {
 		return new AnynothingSecurityCoprocessor();
 	}
+
+	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
+	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
+	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
 
 }
