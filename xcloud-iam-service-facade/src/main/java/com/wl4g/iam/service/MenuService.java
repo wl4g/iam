@@ -15,9 +15,10 @@
  */
 package com.wl4g.iam.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -35,7 +36,7 @@ import java.util.Map;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("menuService")
+@SpringBootFeignClient("menuService")
 @RequestMapping("/menu")
 public interface MenuService {
 

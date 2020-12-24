@@ -19,9 +19,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.ContactGroup;
 
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("contactGroupDao")
+@SpringBootFeignClient("contactGroupDao")
 @RequestMapping("/contactGroup")
 public interface ContactGroupDao {
 

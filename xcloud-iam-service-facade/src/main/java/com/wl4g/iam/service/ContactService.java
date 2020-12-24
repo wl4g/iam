@@ -24,10 +24,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Contact;
 
 /**
@@ -39,7 +39,7 @@ import com.wl4g.iam.common.bean.Contact;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("contactService")
+@SpringBootFeignClient("contactService")
 @RequestMapping("/contact")
 public interface ContactService {
 

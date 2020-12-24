@@ -16,6 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.ContactGroup;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -23,7 +24,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.List;
 
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("contactGroupService")
+@SpringBootFeignClient("contactGroupService")
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 

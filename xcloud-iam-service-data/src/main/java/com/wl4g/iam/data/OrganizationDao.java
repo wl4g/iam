@@ -19,9 +19,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Organization;
 
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.Set;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("organizationDao")
+@SpringBootFeignClient("organizationDao")
 @RequestMapping("/organization")
 public interface OrganizationDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

@@ -15,8 +15,9 @@
  */
 package com.wl4g.iam.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.ClusterConfig;
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @sine v1.0.0
  * @see
  */
-@IstioFeignClient("clusterConfigService")
+@SpringBootFeignClient("clusterConfigService")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 

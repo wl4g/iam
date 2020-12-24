@@ -21,10 +21,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Dict;
 
 /**
@@ -36,7 +36,7 @@ import com.wl4g.iam.common.bean.Dict;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("dictService")
+@SpringBootFeignClient("dictService")
 @RequestMapping("/dict")
 public interface DictService {
 

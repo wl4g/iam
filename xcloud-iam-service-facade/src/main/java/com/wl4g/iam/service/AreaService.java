@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Area;
 
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -33,7 +33,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("areaService")
+@SpringBootFeignClient("areaService")
 @RequestMapping("/area")
 public interface AreaService {
 

@@ -20,9 +20,10 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.wl4g.component.rpc.istio.feign.annotation.IstioFeignClient;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.RoleUser;
 
 /**
@@ -33,7 +34,7 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @sine v1.0
  * @see
  */
-@IstioFeignClient("roleUserDao")
+@SpringBootFeignClient("roleUserDao")
 @RequestMapping("/roleUser")
 public interface RoleUserDao {
 
