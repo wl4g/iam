@@ -57,8 +57,8 @@ public interface ClusterConfigDao {
 	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
 	int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/getByAppNames", method = GET)
-	List<ClusterConfig> getByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
+	@RequestMapping(value = "/selectByAppNames", method = GET)
+	List<ClusterConfig> selectByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
 			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
 
 	@RequestMapping(value = "/getByAppName", method = GET)

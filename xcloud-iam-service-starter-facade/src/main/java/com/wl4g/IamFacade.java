@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
-import com.wl4g.component.rpc.springboot.feign.annotation.mvc.SpringMvcContract;
 
 /**
  * {@link IamFacade}
@@ -34,7 +33,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.mvc.SpringMvcContract;
 // @EnableFeignClients("com.wl4g.iam.data")
 // @EnableFeignProviderProxies("com.wl4g.iam.service")
 // @EnableDiscoveryClient
-@EnableSpringBootFeignClients(value = "com.wl4g.iam.data", defaultConfiguration = { SpringMvcContract.class })
+@EnableSpringBootFeignClients("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamFacade {
 

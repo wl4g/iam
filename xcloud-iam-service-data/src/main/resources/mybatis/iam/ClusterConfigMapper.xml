@@ -242,7 +242,7 @@
 	</select>
 
 	<!-- 批量获取应用信息 -->
-	<select id="getByAppNames" parameterType="java.util.Map" resultMap="BaseResultMap">
+	<select id="selectByAppNames" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List_a" />
 		,c.name

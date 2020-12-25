@@ -49,7 +49,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 
 	@Override
 	public Map<String, Object> loadInit() {
-		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
+		List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, profile, null);
 		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
@@ -65,7 +65,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 
 	@Override
 	public List<ClusterConfig> findByAppNames(String[] appNames, String envType, String type) {
-		return clusterConfigDao.getByAppNames(appNames, envType, type);
+		return clusterConfigDao.selectByAppNames(appNames, envType, type);
 	}
 
 	@Override
