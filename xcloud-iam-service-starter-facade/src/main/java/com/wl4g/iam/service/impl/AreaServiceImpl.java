@@ -45,18 +45,18 @@ public class AreaServiceImpl implements AreaService {
 	@Override
 	public List<Area> getAreaTree() {
 		List<Area> total = getTotal();
-		List<Area> tops = getTops(total);
+		List<Area> tops = transformAreaWithRoot(total);
 		for (Area top : tops) {
-			getChildren(total, top);
+			loadAreaChildren(total, top);
 		}
 		return tops;
 	}
 
-	public void getChildren(List<Area> total, Area top) {
+	public void loadAreaChildren(List<Area> total, Area top) {
 		for (Area area : total) {
 			if (top.getId().equals(area.getParentId())) {
-				getChildrenOrCreate(top).add(area);
-				getChildren(total, area);
+				getOrCreateChildren(top).add(area);
+				loadAreaChildren(total, area);
 			}
 		}
 	}
@@ -65,7 +65,7 @@ public class AreaServiceImpl implements AreaService {
 		return areaDao.getTotal();
 	}
 
-	private List<Area> getTops(List<Area> areas) {
+	private List<Area> transformAreaWithRoot(List<Area> areas) {
 		List<Area> list = new ArrayList<>();
 		for (Area area : areas) {
 			if (Objects.nonNull(area.getLevel()) && area.getLevel() == 0) {
@@ -75,7 +75,7 @@ public class AreaServiceImpl implements AreaService {
 		return list;
 	}
 
-	private List<Area> getChildrenOrCreate(Area area) {
+	private List<Area> getOrCreateChildren(Area area) {
 		if (Objects.isNull(area.getChildren())) {
 			List<Area> children = new ArrayList<>();
 			area.setChildren(children);

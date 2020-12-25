@@ -17,7 +17,7 @@ spring:
   application.name: iam-web
   profiles:
     include: common,util,web-base
-    active: web-dev
+    active: web-dev,web-dev-sbf
 
 # Logging configuration.
 logging:
@@ -36,6 +36,7 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+    feign: DEBUG
     com:
       wl4g.iam.web: INFO
 

@@ -17,7 +17,7 @@ spring:
   application.name: iam-facade
   profiles:
     include: common,util
-    active: facade-dev,facade-dev-feign
+    active: facade-dev,facade-dev-sbf
 
 # Logging configuration.
 logging:
@@ -36,6 +36,7 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+    feign: DEBUG
     com:
       wl4g.iam.web: INFO
 
