@@ -34,15 +34,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.util.Assert;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.component.core.bean.BaseBean.ENABLED;
-import static java.util.Objects.isNull;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * Notification to contacts service implements.
@@ -140,18 +135,13 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public void notification(@NotBlank String templateKey, Map<String, Object> parameters, List<Long> contactGroupIds) {
-		notNullOf(templateKey, "templateKey");
-		if (isNull(contactGroupIds)) {
-			return;
-		}
-
-		List<Contact> contacts = contactDao.getContactByGroupIds(safeList(contactGroupIds));
+	public void notification(NotificationParameter parameter) {
+		List<Contact> contacts = contactDao.getContactByGroupIds(safeList(parameter.getContactGroupIds()));
 		for (Contact contact : contacts) {
 			for (ContactChannel ch : safeList(contact.getContactChannels())) {
 				if (ch.getEnable() == ENABLED) {
-					GenericNotifyMessage msg = new GenericNotifyMessage(ch.getPrimaryAddress(), templateKey);
-					msg.addParameters(parameters);
+					GenericNotifyMessage msg = new GenericNotifyMessage(ch.getPrimaryAddress(), parameter.getTemplateKey());
+					msg.addParameters(parameter.getParameters());
 					notifier.forOperator(ch.getKind()).send(msg);
 				}
 			}

@@ -42,7 +42,7 @@ public interface ClusterConfigService {
 	Map<String, Object> loadInit();
 
 	@RequestMapping(value = "/getClusterConfig", method = GET)
-	ClusterConfig getClusterConfig(Long clusterConfigId);
+	ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
 
 	@RequestMapping(value = "/getByAppNames", method = GET)
 	List<ClusterConfig> findByAppNames(@RequestParam("appNames") String[] appNames, @RequestParam("envType") String envType,

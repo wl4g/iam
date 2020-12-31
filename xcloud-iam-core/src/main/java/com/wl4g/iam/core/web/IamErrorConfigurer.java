@@ -55,7 +55,7 @@ public class IamErrorConfigurer extends ErrorConfigurer {
 		}
 		// see: IamSecurityHolder
 		else if (th instanceof UnknownSessionException) {
-			return PARAM_ERR.getErrcode();
+			return BAD_PARAMS.getErrcode();
 		}
 
 		// Using next chain configuring.

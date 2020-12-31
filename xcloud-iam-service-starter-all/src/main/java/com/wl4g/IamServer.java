@@ -18,12 +18,10 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.core.web.method.annotation.EnableHandlerMappingCustomizer;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.annotation.EnableIamServer;
 
-@EnableHandlerMappingCustomizer("com.wl4g.iam.web")
 @EnableApiVersionManagement("com.wl4g.iam.web")
 @EnableComponentDBConfiguration("com.wl4g.iam.data")
 @EnableIamServer

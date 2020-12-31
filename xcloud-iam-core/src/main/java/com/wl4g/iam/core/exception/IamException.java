@@ -79,4 +79,15 @@ public class IamException extends RuntimeException {
 		super(cause);
 	}
 
+	/**
+	 * Has been message to specify whether to log exceptions.
+	 * 
+	 * @param message
+	 * @param cause
+	 * @param dumpStackTrace
+	 */
+	public IamException(String message, Throwable cause, boolean dumpStackTrace) {
+		super(message, cause, false, dumpStackTrace);
+	}
+
 }

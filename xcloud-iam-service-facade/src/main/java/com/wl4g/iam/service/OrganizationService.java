@@ -17,7 +17,6 @@ package com.wl4g.iam.service;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-
 import java.util.List;
 import java.util.Set;
 
@@ -54,10 +53,7 @@ public interface OrganizationService {
 	@RequestMapping(value = "/getLoginOrganizationTree", method = GET)
 	List<Organization> getLoginOrganizationTree(@RequestBody IamPrincipal info);
 
-	@RequestMapping(value = "/getGroupsSet", method = GET)
-	Set<Organization> getUserOrganizations(User user);
-
-	@RequestMapping(value = "/fillChildrenIds", method = GET)
-	void fillChildrenIds(Long parentId, Set<Long> set);
+	@RequestMapping(value = "/getGroupsSet", method = POST)
+	Set<Organization> getUserOrganizations(@RequestBody User user);
 
 }

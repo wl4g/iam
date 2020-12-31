@@ -17,11 +17,12 @@ package com.wl4g.iam.service;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
@@ -41,22 +42,23 @@ import com.wl4g.iam.common.bean.Dict;
 public interface DictService {
 
 	@RequestMapping(value = "/list", method = GET)
-	PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description);
+	PageHolder<Dict> list(@RequestBody PageHolder<Dict> pm, @RequestParam("key") String key, @RequestParam("label") String label,
+			@RequestParam("type") String type, @RequestParam("description") String description);
 
 	@RequestMapping(value = "/save", method = POST)
-	void save(Dict dict, Boolean isEdit);
+	void save(@RequestBody Dict dict, @RequestParam("isEdit") Boolean isEdit);
 
 	@RequestMapping(value = "/detail", method = GET)
-	Dict detail(String key);
+	Dict detail(@RequestParam("key") String key);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(String key);
+	void del(@RequestParam("key") String key);
 
 	@RequestMapping(value = "/getByType", method = GET)
-	List<Dict> getByType(String type);
+	List<Dict> getByType(@RequestParam("type") String type);
 
 	@RequestMapping(value = "/getByKey", method = GET)
-	Dict getByKey(String key);
+	Dict getByKey(@RequestParam("key") String key);
 
 	@RequestMapping(value = "/allType", method = GET)
 	List<String> allType();

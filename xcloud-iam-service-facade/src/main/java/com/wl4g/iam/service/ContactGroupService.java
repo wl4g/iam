@@ -21,10 +21,11 @@ import com.wl4g.iam.common.bean.ContactGroup;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * {@link ContactGroupService}
@@ -39,16 +40,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
+	@RequestMapping(value = "/list", method = GET)
+	PageHolder<ContactGroup> list(@RequestBody PageHolder<ContactGroup> pm, @RequestParam("name") String name);
+
 	@RequestMapping(value = "/save", method = POST)
-	void save(ContactGroup contactGroup);
+	void save(@RequestBody ContactGroup contactGroup);
 
 	@RequestMapping(value = "/del", method = { DELETE })
 	void del(Long id);
 
 	@RequestMapping(value = "/findContactGroups", method = GET)
 	List<ContactGroup> findContactGroups(String name);
-
-	@RequestMapping(value = "/list", method = GET)
-	PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name);
 
 }

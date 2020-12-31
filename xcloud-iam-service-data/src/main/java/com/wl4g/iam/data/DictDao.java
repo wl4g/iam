@@ -66,9 +66,10 @@ public interface DictDao {
 	Dict getByKey(@RequestParam("key") String key);
 
 	@RequestMapping(method = GET, value = "/list")
-	List<Dict> list(@RequestParam("key") @Param("key") String key, @RequestParam("label") @Param("label") String label,
-			@RequestParam("type") @Param("type") String type,
-			@RequestParam("description") @Param("description") String description,
-			@RequestParam("orderBySort") @Param("orderBySort") String orderBySort);
+	List<Dict> list(@RequestParam(value = "key", required = false) @Param("key") String key,
+			@RequestParam(value = "label", required = false) @Param("label") String label,
+			@RequestParam(value = "type", required = false) @Param("type") String type,
+			@Deprecated @RequestParam(value = "description", required = false) @Param("description") String description,
+			@RequestParam(value = "orderBySort", required = false) @Param("orderBySort") String orderBySort);
 
 }

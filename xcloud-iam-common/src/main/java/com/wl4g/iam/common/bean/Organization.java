@@ -30,8 +30,6 @@ import java.util.Objects;
 public class Organization extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private String organizationCode;
-
 	private String nameEn;
 
 	private String nameZh;

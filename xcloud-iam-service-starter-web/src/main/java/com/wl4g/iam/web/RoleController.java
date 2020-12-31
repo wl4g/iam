@@ -60,9 +60,7 @@ public class RoleController {
 	public RespBase<?> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 
-		// Obtain login principal info.
-		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
-		resp.setData(roleService.list(pm, info, organizationId, roleCode, displayName));
+		resp.setData(roleService.list(pm, organizationId, roleCode, displayName));
 
 		return resp;
 	}

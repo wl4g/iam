@@ -19,11 +19,10 @@
  */
 package com.wl4g.iam.web.interceptor;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
@@ -34,13 +33,18 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
+import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.ReferenceKey;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
 /**
- * {@link IamContextAttributesInterceptor}
+ * {@link IamContextAttributeServletInterceptor}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-25
@@ -48,26 +52,32 @@ import com.wl4g.iam.core.utils.IamSecurityHolder;
  * @see
  */
 @Configuration
+@ConditionalOnClass(RpcContextHolder.class)
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class IamContextServletConfigurer implements WebMvcConfigurer {
 	protected final SmartLogger log = getLogger(getClass());
 
 	@Bean
-	public IamContextAttributesInterceptor iamContextAttributesInterceptor() {
-		return new IamContextAttributesInterceptor();
+	public IamContextAttributeServletInterceptor iamContextAttributeServletInterceptor() {
+		return new IamContextAttributeServletInterceptor();
 	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(iamContextAttributesInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(iamContextAttributeServletInterceptor()).addPathPatterns("/**");
 	}
 
 	@Order(Ordered.HIGHEST_PRECEDENCE + 10)
-	class IamContextAttributesInterceptor implements HandlerInterceptor {
+	class IamContextAttributeServletInterceptor implements HandlerInterceptor {
 		@Override
 		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-			IamPrincipal iamPrincipal = IamSecurityHolder.getPrincipalInfo();
-			RpcContextHolder.get().set("IAM_PRINCIPAL", iamPrincipal);
+			// Bind iam current attributes to rpc context.
+			IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+
+			// Set to reference type for performance optimization.
+			RpcContextHolder.get().set(new ReferenceKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
 			return true;
 		}
 	}

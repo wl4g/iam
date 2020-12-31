@@ -17,6 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -35,6 +36,8 @@ import java.util.*;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -77,23 +80,25 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public PageHolder<Role> list(PageHolder<Role> pm, IamPrincipal info, String organizationId, String roleCode,
-			String displayName) {
+	public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
+		String principalId = RpcContextHolder.get().getAttachment(CURRENT_IAM_PRINCIPAL_ID);
+		String principalName = RpcContextHolder.get().getAttachment(CURRENT_IAM_PRINCIPAL_USER);
+
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {
 			Set<Long> set = new HashSet<>();
 			set.add(Long.valueOf(organizationId));
-			organizationService.fillChildrenIds(Long.valueOf(organizationId), set);
+			((OrganizationServiceImpl) organizationService).fillChildrenIds(Long.valueOf(organizationId), set);
 			groupIds = new ArrayList<>(set);
 		}
 
 		pm.setCurrentPage();
 		List<Role> roles = null;
-		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(principalName)) {
 			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
 			setMenuStrs(roles);
 		} else {
-			roles = roleDao.selectByGroupIdsAndUserId(groupIds, info.getPrincipalId(), roleCode, displayName);
+			roles = roleDao.selectByGroupIdsAndUserId(groupIds, principalId, roleCode, displayName);
 			setMenuStrs(roles);
 		}
 		for (Role role : roles) {

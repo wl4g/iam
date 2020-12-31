@@ -15,20 +15,26 @@
  */
 package com.wl4g.iam.service;
 
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Contact;
+
+import lombok.Getter;
 
 /**
  * {@link ContactService}
@@ -53,7 +59,7 @@ public interface ContactService {
 	void del(Long id);
 
 	@RequestMapping(value = "/list", method = GET)
-	PageHolder<Contact> list(PageHolder<Contact> pm, String name);
+	PageHolder<Contact> list(@RequestBody PageHolder<Contact> pm, @RequestParam("name") String name);
 
 	/**
 	 * Notification sending with template message .
@@ -63,7 +69,29 @@ public interface ContactService {
 	 * @param contactGroupIds
 	 */
 	@RequestMapping(value = "/notification", method = POST)
-	void notification(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
-			@Nullable List<Long> contactGroupIds);
+	void notification(@NotBlank @RequestBody NotificationParameter parameter);
+
+	@Getter
+	public static class NotificationParameter {
+		@NotBlank
+		private final String templateKey;
+		@Nullable
+		private final Map<String, Object> parameters;
+		@NotEmpty
+		private final List<Long> contactGroupIds;
+
+		public NotificationParameter(@NotBlank String templateKey, @NotEmpty List<Long> contactGroupIds) {
+			this(templateKey, null, contactGroupIds);
+		}
+
+		public NotificationParameter(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
+				@NotEmpty List<Long> contactGroupIds) {
+			super();
+			this.templateKey = notNullOf(templateKey, "templateKey");
+			this.parameters = parameters;
+			this.contactGroupIds = notEmptyOf(contactGroupIds, "contactGroupIds");
+		}
+
+	}
 
 }

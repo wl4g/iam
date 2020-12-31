@@ -80,8 +80,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 		return orgSet;
 	}
 
-	@Override
-	public void fillChildrenIds(Long parentId, Set<Long> orgSet) {
+	void fillChildrenIds(Long parentId, Set<Long> orgSet) {
 		List<Organization> childrens = organizationDao.selectByParentId(parentId);
 		for (Organization org : childrens) {
 			orgSet.add(org.getId());

@@ -1,5 +1,7 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright (C) 2017 ~ 2025 the original author or authors.
+ * <Wanglsir@gmail.com, 983708408@qq.com> Technology CO.LTD.
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,29 +14,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
+ * Reference to website: http://wl4g.com
  */
 package com.wl4g.iam.common.constant;
 
 /**
- * Configuration IAM constnats.
+ * {@link ContextIAMConstants}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-11-17
+ * @version v1.0 2020-12-28
  * @sine v1.0
  * @see
  */
-public interface ConfigIAMConstants {
+public interface ContextIAMConstants extends ServiceIAMConstants {
 
-	public static final String KEY_IAM_CONFIG_PREFIX = "spring.boot.xcloud.iam";
-
-	/**
-	 * System dictionaries cache key.
-	 */
-	public static final String CACHE_DICT_INIT_NAME = "dict_init_cache";
-
-	/**
-	 * System dictionaries cache time(sec)
-	 */
-	public static final int CACHE_DICT_INIT_EXPIRE_SEC = 60;
+	public static final String CURRENT_IAM_PRINCIPAL_ID = "currentIamPrincipalId";
+	public static final String CURRENT_IAM_PRINCIPAL_USER = "currentIamPrincipalUser";
+	public static final String CURRENT_IAM_PRINCIPAL = "currentIamPrincipal";
 
 }

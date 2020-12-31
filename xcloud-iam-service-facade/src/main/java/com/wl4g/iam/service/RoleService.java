@@ -44,16 +44,17 @@ public interface RoleService {
 
 	// has too many Body parameters:
 	@RequestMapping(value = "/list", method = GET)
-	PageHolder<Role> list(PageHolder<Role> pm, IamPrincipal info, String organizationId, String name, String displayName);
+	PageHolder<Role> list(PageHolder<Role> pm, @RequestParam("organizationId") String organizationId,
+			@RequestParam("name") String name, @RequestParam("displayName") String displayName);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(Role role);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/detail", method = GET)
-	Role detail(Long id);
+	Role detail(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/findByUserId", method = GET)
 	List<Role> findByUserId(@RequestParam("userId") Long userId);
