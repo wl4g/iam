@@ -19,29 +19,26 @@
  */
 package com.wl4g.iam.web.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL;
+
+import java.lang.reflect.Method;
+
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
-import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.ReferenceKey;
+import com.wl4g.component.rpc.springboot.feign.context.interceptor.FeignContextAutoConfiguration.FeignContextProxyProcessor;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
+import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL;
+import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey;
 
 /**
  * {@link IamContextAttributeServletInterceptor}
@@ -53,33 +50,44 @@ import com.wl4g.iam.core.utils.IamSecurityHolder;
  */
 @Configuration
 @ConditionalOnClass(RpcContextHolder.class)
-@ConditionalOnWebApplication(type = Type.SERVLET)
-public class IamContextServletConfigurer implements WebMvcConfigurer {
+public class IamContextAutoConfiguration {
 	protected final SmartLogger log = getLogger(getClass());
 
 	@Bean
-	public IamContextAttributeServletInterceptor iamContextAttributeServletInterceptor() {
-		return new IamContextAttributeServletInterceptor();
+	public IamContextAttributeProxyProcessor iamContextAttributeProxyProcessor() {
+		return new IamContextAttributeProxyProcessor();
 	}
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(iamContextAttributeServletInterceptor()).addPathPatterns("/**");
-	}
+	class IamContextAttributeProxyProcessor implements SmartProxyProcessor {
 
-	@Order(Ordered.HIGHEST_PRECEDENCE + 10)
-	class IamContextAttributeServletInterceptor implements HandlerInterceptor {
 		@Override
-		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		public int getOrder() {
+			return FeignContextProxyProcessor.ORDER + 1;
+		}
+
+		@Override
+		public boolean supportTypeProxy(Object target, Class<?> actualOriginalTargetClass) {
+			return FeignContextProxyProcessor.checkSupportTypeProxy(target, actualOriginalTargetClass);
+		}
+
+		@Override
+		public boolean supportMethodProxy(Object target, Method method, Class<?> actualOriginalTargetClass, Object... args) {
+			return FeignContextProxyProcessor.checkSupportMethodProxy(target, method, actualOriginalTargetClass, args);
+		}
+
+		@Override
+		public Object[] preHandle(@NotNull Object target, @NotNull Method method, Object[] parameters) {
 			// Bind iam current attributes to rpc context.
 			IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
 			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
 			// Set to reference type for performance optimization.
-			RpcContextHolder.get().set(new ReferenceKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
-			return true;
+			RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
+
+			return parameters;
 		}
+
 	}
 
 }

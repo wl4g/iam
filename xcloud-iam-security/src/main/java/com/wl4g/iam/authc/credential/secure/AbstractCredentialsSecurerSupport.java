@@ -239,14 +239,12 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		// Determine keyPairSpec
 		KeyPairSpec keyPairSpec = determineSecretKeySpecPair(token.getKind(), token.getPrincipal());
 
-		if (log.isInfoEnabled()) {
+		if (log.isDebugEnabled()) {
 			String publicBase64String = keyPairSpec.getPubHexString();
 			String pattern = "Determined keypair is principal: {}, publicKey: {}, privateKey: {}";
 			String privateBase64String = "******";
-			if (log.isDebugEnabled()) {
-				privateBase64String = keyPairSpec.getBase64String();
-				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
-			}
+			// privateBase64String = keyPairSpec.getBase64String();
+			log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 		}
 
 		// Mysterious decryption them.

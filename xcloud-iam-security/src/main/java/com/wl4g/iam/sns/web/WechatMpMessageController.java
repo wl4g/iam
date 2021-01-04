@@ -131,6 +131,7 @@ public abstract class WechatMpMessageController extends BaseController {
 	 * @param timestamp
 	 * @param nonce
 	 */
+	@SuppressWarnings("deprecation")
 	private void assertionSignature(String signature, String timestamp, String nonce) {
 		hasTextOf(signature, "signature");
 		hasTextOf(timestamp, "timestamp");

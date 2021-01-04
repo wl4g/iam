@@ -60,7 +60,8 @@ public interface RoleService {
 	List<Role> findByUserId(@RequestParam("userId") Long userId);
 
 	@RequestMapping(value = "/findRoot", method = GET)
-	List<Role> findRoot(@RequestParam("groupIds") List<Long> groupIds, @RequestParam("roleCode") String roleCode,
-			@RequestParam("nameZh") String nameZh);
+	List<Role> findRoot(@RequestParam(value = "groupIds", required = false) List<Long> groupIds,
+			@RequestParam(value = "roleCode", required = false) String roleCode,
+			@RequestParam(value = "nameZh", required = false) String nameZh);
 
 }

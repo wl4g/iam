@@ -52,8 +52,9 @@ public interface RoleDao {
 	Role selectByPrimaryKey(@RequestParam("id") Long id);
 
 	@RequestMapping(method = GET, value = "/selectWithRoot")
-	List<Role> selectWithRoot(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
-			@RequestParam("roleCode") @Param("roleCode") String roleCode, @RequestParam("nameZh") @Param("nameZh") String nameZh);
+	List<Role> selectWithRoot(@RequestParam(value = "groupIds", required = false) @Param("groupIds") List<Long> groupIds,
+			@RequestParam(value = "roleCode", required = false) @Param("roleCode") String roleCode,
+			@RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh);
 
 	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(@RequestBody Role record);
