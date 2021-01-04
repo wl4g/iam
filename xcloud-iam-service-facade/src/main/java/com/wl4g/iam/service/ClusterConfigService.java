@@ -45,8 +45,9 @@ public interface ClusterConfigService {
 	ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
 
 	@RequestMapping(value = "/getByAppNames", method = GET)
-	List<ClusterConfig> findByAppNames(@RequestParam("appNames") String[] appNames, @RequestParam("envType") String envType,
-			@RequestParam("type") String type);
+	List<ClusterConfig> findByAppNames(@RequestParam(value = "appNames", required = false) String[] appNames,
+			@RequestParam(value = "envType", required = false) String envType,
+			@RequestParam(value = "type", required = false) String type);
 
 	@RequestMapping(value = "/findOfIamServers", method = GET)
 	List<ClusterConfig> findOfIamServers();

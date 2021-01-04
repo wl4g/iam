@@ -38,28 +38,28 @@ public final class SecureConfig implements Serializable {
 	 * systems should not be easily modified, otherwise users created previously
 	 * will not be able to login properly.
 	 */
-	final private String[] hashAlgorithms;
+	private final String[] hashAlgorithms;
 
 	/**
 	 * Hash private salt
 	 */
-	final private String privateSalt;
+	private final String privateSalt;
 
 	/**
 	 * Cryptic candidate algorithm
 	 */
-	final private Integer preCryptPoolSize;
+	private final Integer preCryptPoolSize;
 
 	/**
 	 * Cryptic candidate algorithm keyPairs expire-ms
 	 */
-	final private Long cryptosExpireMs;
+	private final Long cryptosExpireMs;
 
 	/**
 	 * The validity period of the publicKey applied by the user who is ready to
 	 * login
 	 */
-	final private Long applyPubkeyExpireMs;
+	private final Long applyPubkeyExpireMs;
 
 	public SecureConfig(String[] hashAlgorithms, String privateSalt, Integer preCryptPoolSize, Long cryptosExpireMs,
 			Long applyPubkeyExpireMs) {

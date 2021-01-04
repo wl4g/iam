@@ -18,6 +18,7 @@ package com.wl4g.iam.authc.credential.secure;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -57,23 +58,22 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
-
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Secure configuration.
 	 */
-	final protected SecureConfig config;
+	protected final SecureConfig config;
 
 	/**
 	 * Credential cache manager.
 	 */
-	final protected IamCacheManager cacheManager;
+	protected final IamCacheManager cacheManager;
 
 	/**
 	 * The 'private' part of the hash salt.
 	 */
-	final protected CodecSource privateSalt;
+	protected final CodecSource privateSalt;
 
 	/**
 	 * Secure asymmetric cryptic service.
@@ -90,6 +90,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Iam delegate credentials securer. (Extension: optional)
 	 */
+	@Nullable
 	@Autowired(required = false)
 	protected CredentialsSecurerAdapter delegate;
 

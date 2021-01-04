@@ -58,12 +58,14 @@ public interface ClusterConfigDao {
 	int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
 	@RequestMapping(value = "/selectByAppNames", method = GET)
-	List<ClusterConfig> selectByAppNames(@RequestParam("appNames") @Param("appNames") String[] appNames,
-			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
+	List<ClusterConfig> selectByAppNames(@RequestParam(name = "appNames", required = false) @Param("appNames") String[] appNames,
+			@RequestParam(name = "envType", required = false) @Param("envType") String envType,
+			@RequestParam(name = "type", required = false) @Param("type") String type);
 
 	@RequestMapping(value = "/getByAppName", method = GET)
-	ClusterConfig getByAppName(@RequestParam("appName") @Param("appName") String appName,
-			@RequestParam("envType") @Param("envType") String envType, @RequestParam("type") @Param("type") String type);
+	ClusterConfig getByAppName(@RequestParam(name = "appName", required = false) @Param("appName") String appName,
+			@RequestParam(name = "envType", required = false) @Param("envType") String envType,
+			@RequestParam(name = "type", required = false) @Param("type") String type);
 
 	@RequestMapping(value = "/getIamServer", method = GET)
 	List<ClusterConfig> getIamServer();
