@@ -15,13 +15,6 @@
  */
 package com.wl4g.iam.web.security;
 
-import static java.lang.String.format;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -42,15 +35,18 @@ import com.wl4g.iam.configure.SecureConfigureAdapter;
 public class StandardSecureConfigureAdapter implements SecureConfigureAdapter, InitializingBean {
 
 	@Autowired
-	protected ConfigurableEnvironment environment;
+	private ConfigurableEnvironment environment;
+
+	@Autowired
+	private IamHelper iamHelper;
 
 	private SecureConfig secureConfig;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		String appName = environment.getRequiredProperty("spring.application.name");
-		String envFlag = getApplicationActiveEnvironmentFlag();
-		String privateSalt = appName.concat(envFlag);
+		String envType = iamHelper.getApplicationActiveEnvironmentType();
+		String privateSalt = appName.concat(envType);
 		this.secureConfig = new SecureConfig(new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" }, privateSalt, 5,
 				2 * 60 * 60 * 1000L, 3 * 60 * 1000L);
 	}
@@ -58,21 +54,6 @@ public class StandardSecureConfigureAdapter implements SecureConfigureAdapter, I
 	@Override
 	public SecureConfig configure() {
 		return secureConfig;
-	}
-
-	private String getApplicationActiveEnvironmentFlag() {
-		String active = environment.getRequiredProperty("spring.profiles.active");
-
-		Set<String> envFlags = new HashSet<>();
-		Matcher matcher = Pattern.compile("dev|fat|uat|pro").matcher(active);
-		while (matcher.find()) {
-			envFlags.add(matcher.group());
-		}
-		if (envFlags.size() != 1) {
-			throw new IllegalStateException(
-					format("Unable initialization secure configuration. Ambiguous environments flag. - %s", active));
-		}
-		return envFlags.iterator().next();
 	}
 
 }

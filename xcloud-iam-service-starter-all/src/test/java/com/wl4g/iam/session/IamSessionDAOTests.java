@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static com.google.common.base.Charsets.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 
-import com.wl4g.IamServer;
+import com.wl4g.LocalIamWeb;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.core.session.IamSession;
@@ -37,7 +37,7 @@ import com.wl4g.iam.core.session.mgt.IamSessionDAO;
 import redis.clients.jedis.ScanParams;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IamServer.class)
+@SpringBootTest(classes = LocalIamWeb.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class IamSessionDAOTests {
 

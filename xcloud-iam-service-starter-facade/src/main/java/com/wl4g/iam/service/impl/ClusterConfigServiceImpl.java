@@ -20,7 +20,6 @@ import com.wl4g.iam.data.ClusterConfigDao;
 import com.wl4g.iam.service.ClusterConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
@@ -41,15 +40,12 @@ import java.util.Map;
 // @org.springframework.web.bind.annotation.RestController
 public class ClusterConfigServiceImpl implements ClusterConfigService {
 
-	@Value("${spring.profiles.active}")
-	private String profile;
-
 	@Autowired
 	private ClusterConfigDao clusterConfigDao;
 
 	@Override
-	public Map<String, Object> loadInit() {
-		List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, profile, null);
+	public Map<String, Object> loadInit(String envType) {
+		List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, envType, null);
 		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {

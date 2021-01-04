@@ -39,7 +39,7 @@ import java.util.Map;
 public interface ClusterConfigService {
 
 	@RequestMapping(value = "/loadInit", method = GET)
-	Map<String, Object> loadInit();
+	Map<String, Object> loadInit(@RequestParam(value = "envType", required = false) String envType);
 
 	@RequestMapping(value = "/getClusterConfig", method = GET)
 	ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);

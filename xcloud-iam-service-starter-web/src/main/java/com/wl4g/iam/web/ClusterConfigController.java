@@ -18,6 +18,7 @@ package com.wl4g.iam.web;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.web.security.IamHelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,9 @@ public class ClusterConfigController extends BaseController {
 	@Autowired
 	private ClusterConfigService clusterConfigService;
 
+	@Autowired
+	private IamHelper iamHelper;
+
 	/**
 	 * System initialization load dict information.
 	 * 
@@ -48,7 +52,7 @@ public class ClusterConfigController extends BaseController {
 	@RequestMapping(value = "/loadInit")
 	public RespBase<?> loadInit() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(clusterConfigService.loadInit());
+		resp.setData(clusterConfigService.loadInit(iamHelper.getApplicationActiveEnvironmentType()));
 		return resp;
 	}
 

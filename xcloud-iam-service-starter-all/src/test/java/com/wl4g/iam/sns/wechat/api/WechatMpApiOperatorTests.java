@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wl4g.IamServer;
+import com.wl4g.LocalIamWeb;
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpButton;
@@ -40,7 +40,7 @@ import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
  * @since
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IamServer.class, properties = { KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-id=${APP_ID}",
+@SpringBootTest(classes = LocalIamWeb.class, properties = { KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-id=${APP_ID}",
 		KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-secret=${APP_SECRET}" })
 @FixMethodOrder(MethodSorters.JVM)
 public class WechatMpApiOperatorTests {

@@ -38,7 +38,6 @@ import com.wl4g.iam.service.UserService;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
@@ -84,8 +83,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Autowired
 	private transient ClusterConfigService clusterConfigService;
 
-	@Value("${spring.profiles.active}")
-	private transient String active;
+	@Autowired
+	private IamHelper iamHelper;
 
 	@Override
 	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
@@ -118,7 +117,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfos.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> ccs = clusterConfigService.findByAppNames(appNames, active, null);
+			List<ClusterConfig> ccs = clusterConfigService.findByAppNames(appNames,
+					iamHelper.getApplicationActiveEnvironmentType(), null);
 			for (ClusterConfig cc : ccs) {
 				ApplicationInfo app = new ApplicationInfo();
 				app.setAppName(cc.getName());
