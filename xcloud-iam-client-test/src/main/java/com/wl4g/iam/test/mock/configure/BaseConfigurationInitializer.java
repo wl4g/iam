@@ -130,7 +130,7 @@ abstract class BaseConfigurationInitializer implements InitializingBean {
 			 * 
 			 * @see {@link CorsAutoConfiguration#corsSecurityFilter(CorsProperties,IamCorsProcessor)}
 			 **/
-			corsConfig.getRules().values().forEach(r -> r.resolveIamCorsConfiguration());
+			corsConfig.getRules().values().forEach(r -> r.resolve());
 		}
 
 		// IAM replay configuration

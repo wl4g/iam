@@ -45,7 +45,6 @@ import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PRE
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -119,7 +118,7 @@ public class CorsProperties implements InitializingBean, Serializable {
 	 */
 	public void assertCorsHeaders(List<String> requestHeaders) {
 		for (CorsRule rule : getRules().values()) {
-			List<String> allowedHeaders = rule.resolveIamCorsConfiguration().getAllowedHeaders();
+			List<String> allowedHeaders = rule.resolve().getAllowedHeaders();
 			List<String> legalHeaders = checkCorsHeaders(requestHeaders, allowedHeaders);
 			if (isEmpty(legalHeaders)) {
 				throw new IllegalArgumentException(
@@ -135,7 +134,7 @@ public class CorsProperties implements InitializingBean, Serializable {
 	 */
 	public void assertCorsMethods(HttpMethod requestMethod) {
 		for (CorsRule rule : getRules().values()) {
-			List<String> allowedMethods = rule.resolveIamCorsConfiguration().getAllowedMethods();
+			List<String> allowedMethods = rule.resolve().getAllowedMethods();
 			List<HttpMethod> _allowedMethods = allowedMethods.stream().map(m -> resolve(m)).collect(toList());
 			List<HttpMethod> legalMethods = checkCorsMethod(requestMethod, _allowedMethods);
 			if (isEmpty(legalMethods)) {
@@ -152,7 +151,7 @@ public class CorsProperties implements InitializingBean, Serializable {
 	 */
 	public void assertCorsOrigin(String requestOrigin) {
 		for (CorsRule rule : getRules().values()) {
-			List<String> allowedOrigins = rule.resolveIamCorsConfiguration().getAllowedOrigins();
+			List<String> allowedOrigins = rule.resolve().getAllowedOrigins();
 			String legalOrigin = checkCorsOrigin(requestOrigin, allowedOrigins, rule.isAllowCredentials());
 			if (isBlank(legalOrigin)) {
 				throw new IllegalArgumentException(
@@ -183,10 +182,8 @@ public class CorsProperties implements InitializingBean, Serializable {
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
 
-		// --- Temporary fields. ---
-
-		// Convert to cors configuration.
-		private transient IamCorsValidator cors = new IamCorsValidator();
+		// [Temporary] Convert to cors configuration.
+		private transient volatile IamCorsValidator cors;
 
 		public CorsRule() {
 			super();
@@ -291,41 +288,27 @@ public class CorsProperties implements InitializingBean, Serializable {
 		}
 
 		/**
-		 * Resolve & gets spring CORS configuration
+		 * Resolve to IAM CORS configuration.
 		 *
 		 * @return
 		 */
-		public IamCorsValidator resolveIamCorsConfiguration() {
-			// Merge values elements.
-			mergeWithWildcard(getAllowsOrigins());
-			mergeWithWildcard(getAllowsHeaders());
-			mergeWithWildcard(getAllowsMethods());
-			mergeWithWildcard(getExposedHeaders());
+		public synchronized IamCorsValidator resolve() {
+			if (isNull(cors)) {
+				cors = new IamCorsValidator();
+				// Merge & process wildcard
+				processWildcard(getAllowsOrigins());
+				processWildcard(getAllowsHeaders());
+				processWildcard(getAllowsMethods());
+				processWildcard(getExposedHeaders());
 
-			// Reset config.
-			if (nonNull(cors.getAllowedOrigins())) {
-				cors.getAllowedOrigins().clear();
+				// Copy cors items.
+				cors.setAllowCredentials(isAllowCredentials());
+				cors.setMaxAge(getMaxAge());
+				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+				getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+				getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+				getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
 			}
-			if (nonNull(cors.getAllowedHeaders())) {
-				cors.getAllowedHeaders().clear();
-			}
-			if (nonNull(cors.getAllowedMethods())) {
-				cors.getAllowedMethods().clear();
-			}
-			if (nonNull(cors.getExposedHeaders())) {
-				cors.getExposedHeaders().clear();
-			}
-
-			// Convert to spring CORS configuration.
-			cors.setAllowCredentials(isAllowCredentials());
-			cors.setMaxAge(getMaxAge());
-
-			// New add configuration
-			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
-
 			return cors;
 		}
 
@@ -335,7 +318,7 @@ public class CorsProperties implements InitializingBean, Serializable {
 		 * @param sources
 		 * @return
 		 */
-		private void mergeWithWildcard(Collection<String> sources) {
+		private void processWildcard(Collection<String> sources) {
 			if (isEmpty(sources)) {
 				return;
 			}
