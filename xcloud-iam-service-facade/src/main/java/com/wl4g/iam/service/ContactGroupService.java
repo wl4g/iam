@@ -49,6 +49,6 @@ public interface ContactGroupService {
 	void del(Long id);
 
 	@RequestMapping(value = "/findContactGroups", method = GET)
-	List<ContactGroup> findContactGroups(String name);
+	List<ContactGroup> findContactGroups(@RequestParam(value = "name",required = false) String name);
 
 }

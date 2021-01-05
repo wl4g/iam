@@ -15,17 +15,17 @@
  */
 package com.wl4g.iam.data;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.iam.common.bean.ContactGroup;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
-import com.wl4g.iam.common.bean.ContactGroup;
-
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link ContactGroupDao}
@@ -58,6 +58,6 @@ public interface ContactGroupDao {
 	int updateByPrimaryKey(@RequestBody ContactGroup record);
 
 	@RequestMapping(method = GET, value = "/list")
-	List<ContactGroup> list(@RequestParam("name") @Param("name") String name);
+	List<ContactGroup> list(@RequestParam(value = "name",required = false) @Param("name") String name);
 
 }
