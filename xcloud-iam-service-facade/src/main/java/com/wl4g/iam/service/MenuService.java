@@ -18,14 +18,16 @@ package com.wl4g.iam.service;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.subject.IamPrincipal;
-
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link MenuService}
@@ -43,7 +45,7 @@ public interface MenuService {
 	@RequestMapping(value = "/findMenuTree", method = GET)
 	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
-	@RequestMapping(value = "/findMenuList", method = GET)
+	@RequestMapping(value = "/findMenuList", method = POST)
 	List<Menu> findMenuList(@RequestBody IamPrincipal info);
 
 	@PostMapping("/save")
