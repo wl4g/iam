@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.util.*;
+
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.component.common.serialize.JacksonUtils.deepClone;
@@ -33,13 +35,6 @@ import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Menu service implements.
@@ -83,12 +78,12 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public List<Menu> findMenuList(IamPrincipal info) {
+	public List<Menu> findMenuList(String principal,String principalId) {
 		List<Menu> result;
-		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			result = menuDao.selectWithRoot();// root
 		} else {
-			result = menuDao.selectByUserId(parseLongOrNull(info.getPrincipalId()));
+			result = menuDao.selectByUserId(parseLongOrNull(principalId));
 		}
 		// deal with route path
 		processMenuRoutePath(result);
