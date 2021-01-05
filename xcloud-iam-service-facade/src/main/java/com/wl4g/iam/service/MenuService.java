@@ -46,7 +46,7 @@ public interface MenuService {
 	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
 	@RequestMapping(value = "/findMenuList", method = POST)
-	List<Menu> findMenuList(@RequestBody IamPrincipal info);
+	List<Menu> findMenuList(@RequestParam("principal")String principal,@RequestParam("principalId")String principalId);
 
 	@PostMapping("/save")
 	void save(Menu menu);
