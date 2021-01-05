@@ -94,7 +94,7 @@ public class RoleServiceImpl implements RoleService {
 			groupIds = new ArrayList<>(set);
 		}
 
-		pm.setCurrentPage();
+		pm.startPage();
 		List<Role> roles = null;
 		if (DEFAULT_SUPER_USER.equals(principalName)) {
 			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);

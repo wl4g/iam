@@ -19,6 +19,8 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,9 +50,9 @@ public interface UserService {
 	Set<Menu> getMenusByUser(Long userId);
 
 	@RequestMapping(path = "/list", method = RequestMethod.POST)
-	PageHolder<User> list(PageHolder<User> pm, @RequestParam("principalId") String principalId,
-			@RequestParam("principal") String principal, @RequestParam(value = "userName",required = false) String userName,
-			@RequestParam(value = "displayName",required = false) String displayName, @RequestParam(value = "roleId",required = false) Long roleId);
+	PageHolder<User> list(@RequestBody PageHolder<User> pm, @RequestParam(value = "userName", required = false) String userName,
+			@RequestParam(value = "displayName", required = false) String displayName,
+			@RequestParam(value = "roleId", required = false) Long roleId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(User user);

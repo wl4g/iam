@@ -28,6 +28,7 @@ import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleUserDao;
 import com.wl4g.iam.data.UserDao;
 import com.wl4g.iam.service.UserService;
+import com.wl4g.iam.service.utils.RpcIamSecurityHolder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -69,24 +70,22 @@ public class UserServiceImpl implements UserService {
 	private RoleUserDao roleUserDao;
 
 	@Override
-	public PageHolder<User> list(PageHolder<User> pm, String principalId, String principal, String userName, String displayName,
-			Long roleId) {
-		pm.setCurrentPage();
+	public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
+		pm.startPage();
+
+		// Current login principal.
+		String principalId = RpcIamSecurityHolder.currentIamPrincipalId();
+		String principalName = RpcIamSecurityHolder.currentIamPrincipalName();
 
 		List<User> list = null;
-		if (DEFAULT_SUPER_USER.equals(principal)) {
+		if (DEFAULT_SUPER_USER.equals(principalName)) {
 			list = userDao.list(null, userName, displayName, roleId);
 		} else {
 			list = userDao.list(Long.valueOf(principalId), userName, displayName, roleId);
 		}
-		PageHolder<?> res = PageHolder.getCurrentPage();
-		System.out.println(res);
-
 		for (User user : list) {
-			// Gets organizations
 			List<Organization> groups = groupDao.selectByUserId(user.getId());
 			user.setGroupNameStrs(groups2Str(groups));
-			// Gets roles
 			List<Role> roles = roleDao.selectByUserId(user.getId());
 			user.setRoleStrs(roles2Str(roles));
 		}

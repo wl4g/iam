@@ -32,9 +32,7 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.session.mgt.IamSessionDAO;
-import com.wl4g.iam.core.utils.IamSecurityHolder;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.service.UserService;
 
@@ -60,11 +58,7 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "iam:user" })
 	public RespBase<?> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
 		RespBase<Object> resp = RespBase.create();
-
-		// Obtain login principal info.
-		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
-		resp.setData(userService.list(pm, info.getPrincipal(), info.getPrincipal(), userName, displayName, roleId));
-
+		resp.setData(userService.list(pm, userName, displayName, roleId));
 		return resp;
 	}
 
