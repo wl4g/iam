@@ -8,13 +8,8 @@
 # limitations under the License.
 #
 
-# #### Spring cloud config server configuration. ####
+# #### Environment(SpringCloud Dubbo for Dev) configuration. ####
 #
-spring:
-  application.name: iam-facade
-  profiles:
-    include: common,util
-    active: facade-dev
 
 # http://dubbo.apache.org/docs/v2.7/user/configuration/properties/
 dubbo:
@@ -40,4 +35,3 @@ dubbo:
     timeout: 10_000
   monitor:
     protocol: registry
-

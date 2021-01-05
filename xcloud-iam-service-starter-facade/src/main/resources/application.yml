@@ -17,7 +17,7 @@ spring:
   application.name: iam-facade
   profiles:
     include: common,util
-    active: facade-dev,facade-dev-sbf
+    active: facade-dev,facade-sbf-dev
 
 # Logging configuration.
 logging:
