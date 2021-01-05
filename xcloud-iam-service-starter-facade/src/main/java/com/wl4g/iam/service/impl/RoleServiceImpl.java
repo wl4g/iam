@@ -17,7 +17,6 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -28,6 +27,8 @@ import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleMenuDao;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
+import com.wl4g.iam.service.utils.RpcIamSecurityHolder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -38,8 +39,6 @@ import java.util.Set;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -73,7 +72,7 @@ public class RoleServiceImpl implements RoleService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Role> getLoginRoles(String principal,String principalId) {
+	public List<Role> getLoginRoles(String principal, String principalId) {
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {
@@ -83,8 +82,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
-		String principalId = RpcContextHolder.get().getAttachment(CURRENT_IAM_PRINCIPAL_ID);
-		String principalName = RpcContextHolder.get().getAttachment(CURRENT_IAM_PRINCIPAL_USER);
+		// Current login principal.
+		String principalId = RpcIamSecurityHolder.currentIamPrincipalId();
+		String principalName = RpcIamSecurityHolder.currentIamPrincipalName();
 
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {
