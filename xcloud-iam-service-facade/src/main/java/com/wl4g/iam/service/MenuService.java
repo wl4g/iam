@@ -42,7 +42,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/menu")
 public interface MenuService {
 
-	@RequestMapping(value = "/findMenuTree", method = GET)
+	@RequestMapping(value = "/findMenuTree", method = POST)
 	Map<String, Object> findMenuTree(@RequestBody IamPrincipal info);
 
 	@RequestMapping(value = "/findMenuList", method = POST)

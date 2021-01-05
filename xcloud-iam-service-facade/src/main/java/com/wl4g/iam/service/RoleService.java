@@ -18,13 +18,13 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Role;
-import com.wl4g.iam.common.subject.IamPrincipal;
-
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link RoleService}
@@ -39,13 +39,13 @@ import java.util.List;
 @RequestMapping("/role")
 public interface RoleService {
 
-	@RequestMapping(value = "/getLoginRoles", method = GET)
-	List<Role> getLoginRoles(@RequestBody IamPrincipal info);
+	@RequestMapping(value = "/getLoginRoles", method = POST)
+	List<Role> getLoginRoles(@RequestParam("principal")String principal, @RequestParam("principalId")String principalId);
 
 	// has too many Body parameters:
-	@RequestMapping(value = "/list", method = GET)
-	PageHolder<Role> list(PageHolder<Role> pm, @RequestParam("organizationId") String organizationId,
-			@RequestParam("name") String name, @RequestParam("displayName") String displayName);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Role> list(PageHolder<Role> pm, @RequestParam(value = "organizationId",required = false) String organizationId,
+			@RequestParam(value = "name",required = false) String name, @RequestParam(value = "displayName",required = false) String displayName);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(Role role);
@@ -59,7 +59,7 @@ public interface RoleService {
 	@RequestMapping(value = "/findByUserId", method = GET)
 	List<Role> findByUserId(@RequestParam("userId") Long userId);
 
-	@RequestMapping(value = "/findRoot", method = GET)
+	@RequestMapping(value = "/findRoot", method = POST)
 	List<Role> findRoot(@RequestParam(value = "groupIds", required = false) List<Long> groupIds,
 			@RequestParam(value = "roleCode", required = false) String roleCode,
 			@RequestParam(value = "nameZh", required = false) String nameZh);

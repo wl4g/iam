@@ -51,7 +51,7 @@ public class OrganizationController {
 
 		// Obtain login principal info.
 		IamPrincipal info = getPrincipalInfo();
-		List<Organization> groupsTree = groupService.getLoginOrganizationTree(info);
+		List<Organization> groupsTree = groupService.getLoginOrganizationTree(info.getPrincipal(),info.getPrincipalId());
 
 		resp.forMap().put("data", groupsTree);
 		return resp;

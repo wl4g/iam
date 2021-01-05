@@ -17,13 +17,14 @@ package com.wl4g.iam.service;
 
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.ClusterConfig;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link ClusterConfigService}
@@ -44,7 +45,7 @@ public interface ClusterConfigService {
 	@RequestMapping(value = "/getClusterConfig", method = GET)
 	ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
 
-	@RequestMapping(value = "/getByAppNames", method = GET)
+	@RequestMapping(value = "/getByAppNames", method = POST)
 	List<ClusterConfig> findByAppNames(@RequestParam(value = "appNames", required = false) String[] appNames,
 			@RequestParam(value = "envType", required = false) String envType,
 			@RequestParam(value = "type", required = false) String type);

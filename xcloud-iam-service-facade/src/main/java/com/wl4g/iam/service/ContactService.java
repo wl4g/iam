@@ -15,26 +15,24 @@
  */
 package com.wl4g.iam.service;
 
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.iam.common.bean.Contact;
+import lombok.Getter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
-import com.wl4g.iam.common.bean.Contact;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.Map;
 
-import lombok.Getter;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link ContactService}
@@ -58,7 +56,7 @@ public interface ContactService {
 	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	@RequestMapping(value = "/list", method = GET)
+	@RequestMapping(value = "/list", method = POST)
 	PageHolder<Contact> list(@RequestBody PageHolder<Contact> pm, @RequestParam("name") String name);
 
 	/**

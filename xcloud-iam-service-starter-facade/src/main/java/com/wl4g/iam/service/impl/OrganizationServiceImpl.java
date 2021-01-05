@@ -18,7 +18,6 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
@@ -54,8 +53,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationRoleDao organizationRoleDao;
 
 	@Override
-	public List<Organization> getLoginOrganizationTree(IamPrincipal info) {
-		Set<Organization> orgs = getUserOrganizations(new User(info.getPrincipal()));
+	public List<Organization> getLoginOrganizationTree(String principal, String principalId) {
+		Set<Organization> orgs = getUserOrganizations(new User(principal));
 		return transfromOrganTree(new ArrayList<>(orgs));
 	}
 

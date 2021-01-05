@@ -15,17 +15,17 @@
  */
 package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.User;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link UserDao}
@@ -57,9 +57,10 @@ public interface UserDao {
 	int updateByPrimaryKey(@RequestBody User record);
 
 	@RequestMapping(method = GET, value = "/list")
-	List<User> list(@RequestParam("userId") @Param("userId") Long userId,
-			@RequestParam("userName") @Param("userName") String userName, @RequestParam("nameZh") @Param("nameZh") String nameZh,
-			@RequestParam("roleId") @Param("roleId") Long roleId);
+	List<User> list(@RequestParam(value = "userId",required = false) @Param("userId") Long userId,
+					@RequestParam(value = "userName",required = false) @Param("userName") String userName,
+					@RequestParam(value = "nameZh",required = false) @Param("nameZh") String nameZh,
+					@RequestParam(value = "roleId",required = false) @Param("roleId") Long roleId);
 
 	@RequestMapping(method = GET, value = "/selectByUserName")
 	User selectByUserName(@RequestParam("userName") String userName);

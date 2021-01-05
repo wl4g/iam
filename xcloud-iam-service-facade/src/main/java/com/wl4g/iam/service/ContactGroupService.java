@@ -18,14 +18,13 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.ContactGroup;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-import java.util.List;
-
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * {@link ContactGroupService}
@@ -40,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 
-	@RequestMapping(value = "/list", method = GET)
+	@RequestMapping(value = "/list", method = POST)
 	PageHolder<ContactGroup> list(@RequestBody PageHolder<ContactGroup> pm, @RequestParam("name") String name);
 
 	@RequestMapping(value = "/save", method = POST)

@@ -49,7 +49,7 @@ public class RoleController {
 
 		// Obtain login principal info.
 		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
-		List<Role> roles = roleService.getLoginRoles(info);
+		List<Role> roles = roleService.getLoginRoles(info.getPrincipal(),info.getPrincipalId());
 
 		resp.forMap().put("data", roles);
 		return resp;

@@ -22,7 +22,6 @@ import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleMenu;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.data.RoleDao;
@@ -32,7 +31,10 @@ import com.wl4g.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
@@ -71,11 +73,11 @@ public class RoleServiceImpl implements RoleService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Role> getLoginRoles(IamPrincipal info) {
-		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
+	public List<Role> getLoginRoles(String principal,String principalId) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {
-			return roleDao.selectByUserId(Long.valueOf(info.getPrincipalId()));
+			return roleDao.selectByUserId(Long.valueOf(principalId));
 		}
 	}
 

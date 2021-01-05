@@ -15,18 +15,18 @@
  */
 package com.wl4g.iam.service;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-import java.util.List;
-import java.util.Map;
-
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.iam.common.bean.Dict;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
-import com.wl4g.iam.common.bean.Dict;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link DictService}
@@ -41,9 +41,9 @@ import com.wl4g.iam.common.bean.Dict;
 @RequestMapping("/dict")
 public interface DictService {
 
-	@RequestMapping(value = "/list", method = GET)
+	@RequestMapping(value = "/list", method = POST)
 	PageHolder<Dict> list(@RequestBody PageHolder<Dict> pm, @RequestParam("key") String key, @RequestParam("label") String label,
-			@RequestParam("type") String type, @RequestParam("description") String description);
+			@RequestParam("type") String type, @RequestParam(name="description",required=false) String description);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody Dict dict, @RequestParam("isEdit") Boolean isEdit);

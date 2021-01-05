@@ -19,26 +19,18 @@
  */
 package com.wl4g.iam.web.interceptor;
 
-import javax.validation.constraints.NotNull;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
-
-import java.lang.reflect.Method;
-
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
 import com.wl4g.component.rpc.springboot.feign.context.interceptor.FeignContextAutoConfiguration.FeignContextProxyProcessor;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.core.utils.IamSecurityHolder;
-import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL;
-import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
+
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * {@link IamContextAttributeServletInterceptor}
@@ -78,12 +70,12 @@ public class IamContextAutoConfiguration {
 		@Override
 		public Object[] preHandle(@NotNull Object target, @NotNull Method method, Object[] parameters) {
 			// Bind iam current attributes to rpc context.
-			IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
-			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
-
-			// Set to reference type for performance optimization.
-			RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
+//			IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+//			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+//			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+//
+//			// Set to reference type for performance optimization.
+//			RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
 
 			return parameters;
 		}

@@ -15,17 +15,17 @@
  */
 package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Role;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link RoleDao}
@@ -69,9 +69,9 @@ public interface RoleDao {
 	List<Role> selectByGroupId(@RequestParam("groupId") @Param("groupId") Long groupId);
 
 	@RequestMapping(method = GET, value = "/selectByGroupIdsAndUserId")
-	List<Role> selectByGroupIdsAndUserId(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,
-			@RequestParam("userId") @Param("userId") String userId, @RequestParam("roleCode") @Param("roleCode") String roleCode,
-			@RequestParam("nameZh") @Param("nameZh") String nameZh);
+	List<Role> selectByGroupIdsAndUserId(@RequestParam(value = "groupIds",required = false) @Param("groupIds") List<Long> groupIds,
+			@RequestParam(value = "userId",required = false) @Param("userId") String userId, @RequestParam("roleCode") @Param("roleCode") String roleCode,
+			@RequestParam(value = "nameZh",required = false) @Param("nameZh") String nameZh);
 
 	@RequestMapping(method = GET, value = "/list")
 	List<Role> list(@RequestParam("groupIds") @Param("groupIds") List<Long> groupIds,

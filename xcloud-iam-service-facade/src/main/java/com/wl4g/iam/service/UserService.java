@@ -19,12 +19,14 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.User;
-
-import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Set;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link UserService}
@@ -45,10 +47,10 @@ public interface UserService {
 	@RequestMapping(value = "/getMenusByUser", method = GET)
 	Set<Menu> getMenusByUser(Long userId);
 
-	@RequestMapping(path = "/list", method = RequestMethod.GET)
+	@RequestMapping(path = "/list", method = RequestMethod.POST)
 	PageHolder<User> list(PageHolder<User> pm, @RequestParam("principalId") String principalId,
-			@RequestParam("principal") String principal, @RequestParam("userName") String userName,
-			@RequestParam("displayName") String displayName, @RequestParam("roleId") Long roleId);
+			@RequestParam("principal") String principal, @RequestParam(value = "userName",required = false) String userName,
+			@RequestParam(value = "displayName",required = false) String displayName, @RequestParam(value = "roleId",required = false) Long roleId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(User user);
@@ -62,7 +64,7 @@ public interface UserService {
 	@RequestMapping(value = "/findByUserName", method = GET)
 	User findByUserName(@RequestParam("userName") String userName);
 
-	@RequestMapping(value = "/findByUnionIdOrOpenId", method = GET)
+	@RequestMapping(value = "/findByUnionIdOrOpenId", method = POST)
 	User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
 
 }
