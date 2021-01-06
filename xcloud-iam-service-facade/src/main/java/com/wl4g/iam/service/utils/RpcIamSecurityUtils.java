@@ -19,9 +19,15 @@
  */
 package com.wl4g.iam.service.utils;
 
+import static com.wl4g.component.common.lang.ClassUtils2.isPresent;
+import static com.wl4g.component.common.lang.ClassUtils2.resolveClassNameNullable;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.findMethod;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
+
+import java.lang.reflect.Method;
 
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey;
@@ -29,28 +35,45 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
 /**
- * {@link RpcIamSecurityHolder}
+ * {@link RpcIamSecurityUtils}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-05
  * @sine v1.0
  * @see {@link com.wl4g.iam.web.interceptor.IamContextAutoConfiguration}
  */
-public final class RpcIamSecurityHolder {
+public final class RpcIamSecurityUtils {
 
-	private RpcIamSecurityHolder() {
+	private RpcIamSecurityUtils() {
 	}
 
 	public static IamPrincipal currentIamPrincipal() {
-		return RpcContextHolder.get().get(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), SimpleIamPrincipal.class);
+		if (hasRpcContextHolderClass) { // Distributed?
+			return RpcContextHolder.get().get(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), SimpleIamPrincipal.class);
+		}
+		// Local mode
+		return (IamPrincipal) invokeMethod(IAMSECURITYHOLDER_GETPRINCIPALINFO_METHOD, null);
 	}
 
 	public static String currentIamPrincipalId() {
-		return RpcContextHolder.get().get(CURRENT_IAM_PRINCIPAL_ID, String.class);
+		if (hasRpcContextHolderClass) { // Distributed?
+			return RpcContextHolder.get().get(CURRENT_IAM_PRINCIPAL_ID, String.class);
+		}
+		// Local mode
+		return currentIamPrincipal().getPrincipalId();
 	}
 
 	public static String currentIamPrincipalName() {
-		return RpcContextHolder.get().get(CURRENT_IAM_PRINCIPAL_USER, String.class);
+		if (hasRpcContextHolderClass) { // Distributed?
+			return RpcContextHolder.get().get(CURRENT_IAM_PRINCIPAL_USER, String.class);
+		}
+		// Local mode
+		return currentIamPrincipal().getPrincipal();
 	}
+
+	public static final boolean hasRpcContextHolderClass = isPresent(
+			"com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder", null);
+	public static final Method IAMSECURITYHOLDER_GETPRINCIPALINFO_METHOD = findMethod(
+			resolveClassNameNullable("com.wl4g.iam.core.utils.IamSecurityHolder"), "getPrincipalInfo");
 
 }

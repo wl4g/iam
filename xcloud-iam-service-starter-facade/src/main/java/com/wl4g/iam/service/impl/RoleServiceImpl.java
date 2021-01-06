@@ -27,7 +27,7 @@ import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleMenuDao;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
-import com.wl4g.iam.service.utils.RpcIamSecurityHolder;
+import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -83,8 +83,8 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
 		// Current login principal.
-		String principalId = RpcIamSecurityHolder.currentIamPrincipalId();
-		String principalName = RpcIamSecurityHolder.currentIamPrincipalName();
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
+		String principalName = RpcIamSecurityUtils.currentIamPrincipalName();
 
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {

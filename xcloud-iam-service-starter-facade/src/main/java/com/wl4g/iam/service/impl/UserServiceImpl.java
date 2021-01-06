@@ -28,7 +28,7 @@ import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleUserDao;
 import com.wl4g.iam.data.UserDao;
 import com.wl4g.iam.service.UserService;
-import com.wl4g.iam.service.utils.RpcIamSecurityHolder;
+import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -74,8 +74,8 @@ public class UserServiceImpl implements UserService {
 		pm.startPage();
 
 		// Current login principal.
-		String principalId = RpcIamSecurityHolder.currentIamPrincipalId();
-		String principalName = RpcIamSecurityHolder.currentIamPrincipalName();
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
+		String principalName = RpcIamSecurityUtils.currentIamPrincipalName();
 
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(principalName)) {
