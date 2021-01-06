@@ -181,10 +181,8 @@ public class CorsProperties implements InitializingBean, Serializable {
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
 
-		// --- Temporary fields. ---
-
-		// Convert to cors configuration.
-		private transient IamCorsValidator cors = new IamCorsValidator();
+		 // [Temporary] Convert to cors configuration.
+        private transient volatile IamCorsValidator cors;
 
 		public CorsRule() {
 			super();
@@ -289,79 +287,65 @@ public class CorsProperties implements InitializingBean, Serializable {
 		}
 
 		/**
-		 * Resolve & gets spring CORS configuration
-		 *
-		 * @return
-		 */
-		public IamCorsValidator resolveIamCorsConfiguration() {
-			// Merge values elements.
-			mergeWithWildcard(getAllowsOrigins());
-			mergeWithWildcard(getAllowsHeaders());
-			mergeWithWildcard(getAllowsMethods());
-			mergeWithWildcard(getExposedHeaders());
+         * Resolve to IAM CORS configuration.
+         *
+         * @return
+         */
+        public synchronized IamCorsValidator resolveIamCorsConfiguration() {
+            if (isNull(cors)) {
+                cors = new IamCorsValidator();
+                // Merge & process wildcard
+                processWildcard(getAllowsOrigins());
+                processWildcard(getAllowsHeaders());
+                processWildcard(getAllowsMethods());
+                processWildcard(getExposedHeaders());
 
-			// Reset config.
-			if (nonNull(cors.getAllowedOrigins())) {
-				cors.getAllowedOrigins().clear();
-			}
-			if (nonNull(cors.getAllowedHeaders())) {
-				cors.getAllowedHeaders().clear();
-			}
-			if (nonNull(cors.getAllowedMethods())) {
-				cors.getAllowedMethods().clear();
-			}
-			if (nonNull(cors.getExposedHeaders())) {
-				cors.getExposedHeaders().clear();
-			}
+                // Copy cors items.
+                cors.setAllowCredentials(isAllowCredentials());
+                cors.setMaxAge(getMaxAge());
+                getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+                getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+                getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+                getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+            }
+            return cors;
+        }
 
-			// Convert to spring CORS configuration.
-			cors.setAllowCredentials(isAllowCredentials());
-			cors.setMaxAge(getMaxAge());
+        /**
+         * Wild-card merge source collection and remove duplicate.
+         *
+         * @param sources
+         * @return
+         */
+        private void processWildcard(Collection<String> sources) {
+            if (isEmpty(sources)) {
+                return;
+            }
 
-			// New add configuration
-			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+            // Clear other specific item configurations if '*' is present
+            Iterator<String> it1 = sources.iterator();
+            while (it1.hasNext()) {
+                String value = it1.next();
+                if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
+                    sources.clear();
+                    sources.add(ALL);
+                    break;
+                }
+            }
 
-			return cors;
-		}
-
-		/**
-		 * Wild-card merge source collection and remove duplicate.
-		 *
-		 * @param sources
-		 * @return
-		 */
-		private void mergeWithWildcard(Collection<String> sources) {
-			if (isEmpty(sources)) {
-				return;
-			}
-
-			// Clear other specific item configurations if '*' is present
-			Iterator<String> it1 = sources.iterator();
-			while (it1.hasNext()) {
-				String value = it1.next();
-				if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
-					sources.clear();
-					sources.add(ALL);
-					break;
-				}
-			}
-
-			/*
-			 * Clean up invalid values that did not resolve successfully through
-			 * environment variables. e.g. http://${DEVOPS_SERVICE_ZONE}
-			 * https://${DEVOPS_SERVICE_ZONE}
-			 */
-			Iterator<String> it2 = sources.iterator();
-			while (it2.hasNext()) {
-				String value = it2.next();
-				if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
-					it2.remove();
-				}
-			}
-		}
+            /*
+             * Clean up invalid values that did not resolve successfully through
+             * environment variables. e.g. http://${DEVOPS_SERVICE_ZONE}
+             * https://${DEVOPS_SERVICE_ZONE}
+             */
+            Iterator<String> it2 = sources.iterator();
+            while (it2.hasNext()) {
+                String value = it2.next();
+                if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
+                    it2.remove();
+                }
+            }
+        }
 
 		@Override
 		public String toString() {
