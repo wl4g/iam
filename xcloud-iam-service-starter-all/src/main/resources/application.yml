@@ -20,7 +20,7 @@ spring:
   profiles:
     # Notes: The placeholder '${spring.profiles.active}' springboot can't recognize it, but springcloud can!!! 
     #include: common,util,web-base,web-${spring.profiles.active},facade-${spring.profiles.active},dao-${spring.profiles.active}
-    include: common,util,web-base,web-dev,facade-dev,dao-dev
+    include: common,util,web-security,web-dev,facade-dev,data-dev
     active: dev
 
 # Logging configuration.

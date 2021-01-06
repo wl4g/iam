@@ -17,7 +17,7 @@ spring:
   application.name: iam-data
   profiles:
     include: common,util
-    active: dao-dev
+    active: data-dev
 
 # Mybatis configuration.
 mybatis:
