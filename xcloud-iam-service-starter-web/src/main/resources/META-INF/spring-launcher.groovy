@@ -29,12 +29,12 @@ import com.wl4g.component.core.boot.listener.ISpringLauncherConfigurer
 class IamWebSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 
 	@Override
-	public int getOrder() {
+	def int getOrder() {
 		return -100
 	}
 
 	@Override
-	public Properties defaultProperties() {
+	def Properties defaultProperties() {
 		def defaultProperties = new Properties();
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
