@@ -11,3 +11,13 @@
 # #### Environment(SpringCloud Feign for Pro) configuration. ####
 #
 
+eureka:
+  #password: password
+  client:
+    serviceUrl:
+      #defaultZone: http://user:${eureka.password}@localhost:8761/eureka/
+      defaultZone: http://n1.devops.wl4gsafecloudcs.com:8761/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    metadataMap:
+      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
