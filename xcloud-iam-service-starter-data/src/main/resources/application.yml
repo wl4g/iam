@@ -17,7 +17,7 @@ spring:
   application.name: iam-data
   profiles:
     include: common,util
-    active: data-dev
+    active: dev
 
 # Mybatis configuration.
 mybatis:
@@ -61,3 +61,4 @@ server:
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
     max-thread: 50 # Max worker threads(default:200).
+
