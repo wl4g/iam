@@ -16,6 +16,7 @@
 package com.wl4g.iam.client.config;
 
 import com.wl4g.iam.client.config.IamClientProperties.ClientParamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
