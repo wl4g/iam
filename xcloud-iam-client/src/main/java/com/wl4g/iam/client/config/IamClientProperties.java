@@ -15,19 +15,16 @@
  */
 package com.wl4g.iam.client.config;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import com.wl4g.iam.client.config.IamClientProperties.ClientParamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties;
-import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.*;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {
@@ -41,7 +38,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * IAM server base URI (public network)
 	 */
-	private String serverUri = "http://localhost:14040/iam-server";
+	private String serverUri = "http://localhost:14040/iam-web";
 
 	/**
 	 * This configuration item is used to specify a custom login page, default
@@ -58,7 +55,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * IAM server unauthorized(403) page URI
 	 */
-	private String unauthorizedUri = "http://localhost:14040/iam-server" + DEFAULT_VIEW_403_URI;
+	private String unauthorizedUri = "http://localhost:14040/iam-web" + DEFAULT_VIEW_403_URI;
 
 	/**
 	 * Re-login callback URL, whether to use the previously remembered URL.

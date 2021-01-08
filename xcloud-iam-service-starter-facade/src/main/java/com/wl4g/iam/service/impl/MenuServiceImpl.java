@@ -17,10 +17,10 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
+import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -54,10 +54,9 @@ public class MenuServiceImpl implements MenuService {
 	protected OrganizationService groupService;
 
 	@Override
-	public Map<String, Object> findMenuTree(IamPrincipal info) {
+	public Map<String, Object> findMenuTree() {
 		Map<String, Object> result = new HashMap<>();
-		Set<Menu> menusSet = obtainMenuSet(info);
-
+		Set<Menu> menusSet = obtainMenuSet();
 		// List<Menu> menuTree = new ArrayList<>(obtainMenuSet(info));
 		List<Menu> menuTree = new ArrayList<>(deepClone(menusSet));
 		processMenuRoutePath(menuTree);
@@ -78,7 +77,10 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
-	public List<Menu> findMenuList(String principal,String principalId) {
+	public List<Menu> findMenuList() {
+
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
+		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
 		List<Menu> result;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			result = menuDao.selectWithRoot();// root
@@ -235,14 +237,18 @@ public class MenuServiceImpl implements MenuService {
 		}
 	}
 
-	private Set<Menu> obtainMenuSet(IamPrincipal info) {
+	private Set<Menu> obtainMenuSet() {
+
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
+		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
+
 		List<Menu> menus = null;
-		if (DEFAULT_SUPER_USER.equals(info.getPrincipal())) {
+		if (DEFAULT_SUPER_USER.equals(principal)) {
 			menus = menuDao.selectWithRoot();
 		} else {
 			Long userId = null;
-			if (isNotBlank(info.getPrincipalId())) {
-				userId = Long.parseLong(info.getPrincipalId());
+			if (isNotBlank(principalId)) {
+				userId = Long.parseLong(principalId);
 			}
 			menus = menuDao.selectByUserId(userId);
 		}

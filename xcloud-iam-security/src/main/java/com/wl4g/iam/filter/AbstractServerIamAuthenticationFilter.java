@@ -664,15 +664,15 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * E.G.:</br>
 	 * </br>
 	 *
-	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * <b>Req1：</b>http://localhost:14040/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * <b>Resp1：</b>login.html</br>
 	 * </br>
 	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
+	 * rootFilter)</b>http://localhost:14040/iam-web/favicon.ico</br>
 	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * 302->http://localhost:14040/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * </br>
-	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
+	 * <b>Req3：</b>http://localhost:14040/iam-web/view/login.html</br>
 	 * </br>
 	 * <p>
 	 * No parameters for the second request for login.html ??? This is the

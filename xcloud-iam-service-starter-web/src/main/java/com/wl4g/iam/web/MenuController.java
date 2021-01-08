@@ -17,7 +17,6 @@ package com.wl4g.iam.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.service.MenuService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.component.common.lang.Assert2.notEmpty;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
  * @author vjay
@@ -47,9 +45,7 @@ public class MenuController {
 	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
 
-		// Obtain login principal info.
-		IamPrincipal info = getPrincipalInfo();
-		Map<String, Object> result = menuService.findMenuTree(info);
+		Map<String, Object> result = menuService.findMenuTree();
 
 		resp.setData(result);
 		return resp;
@@ -59,10 +55,7 @@ public class MenuController {
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 
-		// Obtain login principal info.
-		IamPrincipal info = getPrincipalInfo();
-
-		List<Menu> menus = menuService.findMenuList(info.getPrincipal(),info.getPrincipalId());
+		List<Menu> menus = menuService.findMenuList();
 		notEmpty(menus, "Not found menu role, Please ask you manager and check the user-role-menu config");
 
 		resp.forMap().put("data", menus);

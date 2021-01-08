@@ -1923,7 +1923,7 @@
 		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
 
 		// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
-	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
+	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-web, 10.0.0.12:14046/ci-server)都部署于同一台机。
 	 	// 1.1，当访问的地址是IP；
 	 	// 1.2，当访问域名的后者是.debug/.local/.dev等。
 		if (Common.Util.isIp(hostname)
@@ -2684,7 +2684,7 @@
      *      // 使用document.write动态引入js文件，不能将此段代码放到如loader.js文件里执行，
      *      // 这样不能保证它执行的顺序（因为leader.js加载完成但还没有执行，但是document后面的js代码会马上执行）
      *      var sdkBaseUri=location.protocol+"//sso-services."+location.hostname.split('.').slice(-2).join('.')+"/sso/iam-jssdk/assets/";
-     *      //var sdkBaseUri="http://wl4g.debug:14040/iam-server/iam-jssdk/assets/"; // for debug
+     *      //var sdkBaseUri="http://wl4g.debug:14040/iam-web/iam-jssdk/assets/"; // for debug
      *      document.write('<link rel="stylesheet" href="'+ sdkBaseUri +'/css/IAM.all.min.css" />');
      *      document.write('<scr'+'ipt src="'+ sdkBaseUri +'/js/IAM.all.min.js"></scr'+'ipt>');
      *
@@ -3276,7 +3276,7 @@
 		// Default settings.
 		var defaultSettings = {
 			deploy: {
-	    		//baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+	    		//baseUri: "http://localhost:14040/iam-web", // Using auto extra configure
 				defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 	   			defaultServerPort: 14040, // IAM server的port
 	   			defaultContextPath: "/iam-server" // IAM server的contextPath

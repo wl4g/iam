@@ -212,7 +212,7 @@
 		// Default settings.
 		var defaultSettings = {
 			deploy: {
-	    		//baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+	    		//baseUri: "http://localhost:14040/iam-web", // Using auto extra configure
 				defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 	   			defaultServerPort: 14040, // IAM server的port
 	   			defaultContextPath: "/iam-server" // IAM server的contextPath
