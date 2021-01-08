@@ -72,7 +72,9 @@ public class RoleServiceImpl implements RoleService {
 	private OrganizationRoleDao groupRoleDao;
 
 	@Override
-	public List<Role> getLoginRoles(String principal, String principalId) {
+	public List<Role> getLoginRoles() {
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
+		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {

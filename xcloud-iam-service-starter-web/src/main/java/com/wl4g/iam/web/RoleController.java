@@ -18,10 +18,7 @@ package com.wl4g.iam.web;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Role;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.core.utils.IamSecurityHolder;
 import com.wl4g.iam.service.RoleService;
-
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,9 +44,7 @@ public class RoleController {
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
 
-		// Obtain login principal info.
-		IamPrincipal info = IamSecurityHolder.getPrincipalInfo();
-		List<Role> roles = roleService.getLoginRoles(info.getPrincipal(),info.getPrincipalId());
+		List<Role> roles = roleService.getLoginRoles();
 
 		resp.forMap().put("data", roles);
 		return resp;

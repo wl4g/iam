@@ -20,7 +20,6 @@ import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Set;
@@ -51,7 +50,7 @@ public interface OrganizationService {
 	Organization detail(Long id);
 
 	@RequestMapping(value = "/getLoginOrganizationTree", method = POST)
-	List<Organization> getLoginOrganizationTree(@RequestParam("principal")String principal, @RequestParam("principalId")String principalId);
+	List<Organization> getLoginOrganizationTree();
 
 	@RequestMapping(value = "/getGroupsSet", method = POST)
 	Set<Organization> getUserOrganizations(@RequestBody User user);

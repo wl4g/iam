@@ -17,10 +17,8 @@ package com.wl4g.iam.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Organization;
-import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamOrganizationHolder;
 import com.wl4g.iam.service.OrganizationService;
-
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
@@ -49,9 +46,7 @@ public class OrganizationController {
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
 
-		// Obtain login principal info.
-		IamPrincipal info = getPrincipalInfo();
-		List<Organization> groupsTree = groupService.getLoginOrganizationTree(info.getPrincipal(),info.getPrincipalId());
+		List<Organization> groupsTree = groupService.getLoginOrganizationTree();
 
 		resp.forMap().put("data", groupsTree);
 		return resp;

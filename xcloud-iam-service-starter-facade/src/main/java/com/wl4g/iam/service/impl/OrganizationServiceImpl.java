@@ -21,6 +21,7 @@ import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
+import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -53,7 +54,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private OrganizationRoleDao organizationRoleDao;
 
 	@Override
-	public List<Organization> getLoginOrganizationTree(String principal, String principalId) {
+	public List<Organization> getLoginOrganizationTree() {
+		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
 		Set<Organization> orgs = getUserOrganizations(new User(principal));
 		return transfromOrganTree(new ArrayList<>(orgs));
 	}

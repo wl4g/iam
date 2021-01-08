@@ -40,7 +40,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface RoleService {
 
 	@RequestMapping(value = "/getLoginRoles", method = POST)
-	List<Role> getLoginRoles(@RequestParam("principal")String principal, @RequestParam("principalId")String principalId);
+	List<Role> getLoginRoles();
 
 	// has too many Body parameters:
 	@RequestMapping(value = "/list", method = POST)
