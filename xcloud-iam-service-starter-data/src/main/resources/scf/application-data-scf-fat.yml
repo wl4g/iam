@@ -12,6 +12,8 @@
 #
 
 eureka:
+  datacenter: defaultDataCenter # Default by default
+  environment: ${spring.profiles.active:dev} # Default by test
   #password: password
   client:
     serviceUrl:
