@@ -34,7 +34,7 @@ class IamFacadeSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 
 	@Override
 	def Properties defaultProperties() {
-		def defaultProperties = new Properties();
+		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		defaultProperties.put(CONFIG_NAME_PROPERTY,
@@ -43,21 +43,21 @@ application,
 application-facade-dubbo,
 application-facade-sbf,
 application-facade-scf
-""");
+""")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-data-dev.yml'
-		def location = new StringBuffer("classpath:/");
+		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			location.append(",classpath:/scf/");
+			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
-			location.append(",classpath:/sbf/");
+			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			location.append(",classpath:/dubbo/");
+			location.append(",classpath:/dubbo/")
 		}
-		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString());
+		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 
-		return defaultProperties;
+		return defaultProperties
 	}
 
 }
