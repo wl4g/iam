@@ -13,7 +13,7 @@
 
 eureka:
   datacenter: defaultDataCenter # Default by default
-  environment: ${spring.profiles.active:dev} # Default by test
+  environment: dev # Default by test
   instance:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30

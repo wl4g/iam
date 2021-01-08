@@ -13,13 +13,14 @@
 
 eureka:
   datacenter: defaultDataCenter # Default by default
-  environment: ${spring.profiles.active:dev} # Default by test
-  #password: password
-  client:
-    serviceUrl:
-      #defaultZone: http://user:${eureka.password}@localhost:8761/eureka/
-      defaultZone: http://n1.devops.wl4gsafecloudcs.com:8761/eureka/
+  environment: pro # Default by test
   instance:
     leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+    #prefer-ip-address: true
+    #instance-id: ${spring.cloud.client.ipAddress}:${server.port}
     metadataMap:
       instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+  client:
+    serviceUrl:
+      defaultZone: http://user:123456@n1.devops.wl4gsafecloudcs.com:8761/eureka/
