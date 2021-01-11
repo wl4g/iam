@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("contactGroupDao")
+@SpringBootFeignClient("contactGroup-dao")
 @RequestMapping("/contactGroup")
 public interface ContactGroupDao {
 

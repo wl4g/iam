@@ -36,7 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("organizationService")
+@SpringBootFeignClient("organization-service")
 @RequestMapping("/organization")
 public interface OrganizationService {
 

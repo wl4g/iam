@@ -37,25 +37,23 @@ class IamDataSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		defaultProperties.put(CONFIG_NAME_PROPERTY,
-				"""
-application,
-application-data,
-application-data-dubbo,
-application-data-sbf,
-application-data-scf
-""")
+		def configName = new StringBuffer("application,application-data")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-data-dev.yml'
 		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
+			configName.append(",application-data-scf");
 			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
+			configName.append(",application-data-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
+			configName.append(",application-data-dubbo");
 			location.append(",classpath:/dubbo/")
 		}
+
+		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
 		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 
 		return defaultProperties

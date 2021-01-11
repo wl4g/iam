@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0.0
  * @see
  */
-@SpringBootFeignClient("clusterConfigService")
+@SpringBootFeignClient("clusterConfig-service")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigService {
 

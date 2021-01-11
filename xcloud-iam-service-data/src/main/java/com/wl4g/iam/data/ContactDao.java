@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("contactDao")
+@SpringBootFeignClient("contact-dao")
 @RequestMapping("/contact")
 public interface ContactDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

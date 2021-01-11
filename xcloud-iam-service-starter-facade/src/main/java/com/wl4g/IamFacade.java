@@ -30,9 +30,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignC
  * @sine v1.0
  * @see
  */
-// @EnableFeignClients("com.wl4g.iam.data")
 // @EnableFeignProviderProxies("com.wl4g.iam.service")
-// @EnableDiscoveryClient
 @EnableSpringBootFeignClients("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamFacade {

@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("userDao")
+@SpringBootFeignClient("user-dao")
 @RequestMapping("/user")
 public interface UserDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

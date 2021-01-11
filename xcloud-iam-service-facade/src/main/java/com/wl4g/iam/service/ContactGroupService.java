@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("contactGroupService")
+@SpringBootFeignClient("contactGroup-service")
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 

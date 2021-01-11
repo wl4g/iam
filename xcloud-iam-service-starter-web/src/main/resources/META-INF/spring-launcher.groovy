@@ -37,24 +37,23 @@ class IamWebSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		defaultProperties.put(CONFIG_NAME_PROPERTY,
-				"""
-application,
-application-web-dubbo,
-application-web-sbf,
-application-web-scf
-""")
+		def configName = new StringBuffer("application,application-web")
 
 		// Preset spring.config.location
-		// for example: spring auto load for 'classpath:/application-data-dev.yml'
+		// for example: spring auto load for 'classpath:/application-web-dev.yml'
 		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
+			configName.append(",application-web-scf");
 			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
+			configName.append(",application-web-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
+			configName.append(",application-web-dubbo");
 			location.append(",classpath:/dubbo/")
 		}
+
+		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
 		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 
 		return defaultProperties

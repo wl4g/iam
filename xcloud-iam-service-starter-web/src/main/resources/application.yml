@@ -16,8 +16,8 @@
 spring:
   application.name: iam-web
   profiles:
-    include: common,util,web-security
-    active: web-dev,web-sbf-dev
+    include: common,util,security
+    active: dev
 
 # Logging configuration.
 logging:

@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("organizationRoleDao")
+@SpringBootFeignClient("organizationRole-dao")
 @RequestMapping("/organizationRole")
 public interface OrganizationRoleDao {
 

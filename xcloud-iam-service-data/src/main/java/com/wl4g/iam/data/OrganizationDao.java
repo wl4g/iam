@@ -36,7 +36,7 @@ import java.util.Set;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("organizationDao")
+@SpringBootFeignClient("organization-dao")
 @RequestMapping("/organization")
 public interface OrganizationDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

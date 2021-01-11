@@ -17,7 +17,6 @@ package com.wl4g;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 //import com.wl4g.component.rpc.springcloud.feign.proxy.annotation.EnableFeignProviderProxies;
@@ -31,7 +30,7 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
  * @see
  */
 // @EnableFeignProviderProxies("com.wl4g.iam.data")
-// @EnableDiscoveryClient
+// @RibbonClient(name = "ribbon-iam-data")
 @EnableComponentDBConfiguration("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamData {

@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("clusterConfigDao")
+@SpringBootFeignClient("clusterConfig-dao")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigDao {
 

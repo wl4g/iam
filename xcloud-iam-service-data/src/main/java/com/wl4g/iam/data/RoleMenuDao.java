@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("roleMenuDao")
+@SpringBootFeignClient("roleMenu-dao")
 @RequestMapping("/roleMenu")
 public interface RoleMenuDao {
 
