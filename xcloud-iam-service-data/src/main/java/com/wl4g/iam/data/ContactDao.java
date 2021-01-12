@@ -24,6 +24,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.data.fallback.ContactDaoFallbackFactory;
 
 import java.util.List;
 
@@ -35,9 +36,10 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("contact-dao")
+@SpringBootFeignClient(name = "contact-dao", fallbackFactory = ContactDaoFallbackFactory.class)
 @RequestMapping("/contact")
 public interface ContactDao {
+
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 

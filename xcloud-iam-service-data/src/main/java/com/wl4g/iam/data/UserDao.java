@@ -38,6 +38,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @SpringBootFeignClient("user-dao")
 @RequestMapping("/user")
 public interface UserDao {
+
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);
 
@@ -57,10 +58,10 @@ public interface UserDao {
 	int updateByPrimaryKey(@RequestBody User record);
 
 	@RequestMapping(method = GET, value = "/list")
-	List<User> list(@RequestParam(value = "userId",required = false) @Param("userId") Long userId,
-					@RequestParam(value = "userName",required = false) @Param("userName") String userName,
-					@RequestParam(value = "nameZh",required = false) @Param("nameZh") String nameZh,
-					@RequestParam(value = "roleId",required = false) @Param("roleId") Long roleId);
+	List<User> list(@RequestParam(value = "userId", required = false) @Param("userId") Long userId,
+			@RequestParam(value = "userName", required = false) @Param("userName") String userName,
+			@RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh,
+			@RequestParam(value = "roleId", required = false) @Param("roleId") Long roleId);
 
 	@RequestMapping(method = GET, value = "/selectByUserName")
 	User selectByUserName(@RequestParam("userName") String userName);

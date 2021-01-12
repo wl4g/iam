@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.isNull;
 
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
 		if (DEFAULT_SUPER_USER.equals(principalName)) {
 			list = userDao.list(null, userName, displayName, roleId);
 		} else {
-			list = userDao.list(Long.valueOf(principalId), userName, displayName, roleId);
+			list = userDao.list(parseLongOrNull(principalId), userName, displayName, roleId);
 		}
 		for (User user : list) {
 			List<Organization> groups = groupDao.selectByUserId(user.getId());

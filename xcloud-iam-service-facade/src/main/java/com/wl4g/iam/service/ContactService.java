@@ -18,6 +18,8 @@ package com.wl4g.iam.service;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.service.fallback.ContactServiceFallbackFactory;
+
 import lombok.Getter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +45,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("contact-service")
+@SpringBootFeignClient(name = "contact-service", fallbackFactory = ContactServiceFallbackFactory.class)
 @RequestMapping("/contact")
 public interface ContactService {
 

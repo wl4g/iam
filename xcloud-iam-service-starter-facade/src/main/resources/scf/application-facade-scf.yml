@@ -9,11 +9,17 @@
 #
 
 # #### Environment(SpringCloud Feign for Uat) configuration. ####
-#
+# see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html
 
-#spring:
-#  cloud:
-#    #ipAddress: 
+spring:
+  cloud:
+    circuitbreaker:
+      hystrix:
+        enabled: true # Default by true
+    loadbalancer:
+      retry:
+        enabled: true
+    #ipAddress: 
 #    consul:
 #      discovery:
 #        enabled: true
@@ -25,7 +31,15 @@
 #        healthCheckPath: /actuator/health
 #        healthCheckInterval: 10s
 
-#management.endpoints.web.exposure.include=*
+management:
+  metrics:
+    binders:
+      hystrix:
+        enabled: true # Default by true
+  endpoint:
+    hystrix:
+      stream:
+        enabled: true # Default by true
 
 eureka:
   instance:
@@ -50,17 +64,28 @@ eureka:
     initialInstanceInfoReplicationIntervalSeconds: 40 # Default by 40
     instanceInfoReplicationIntervalSeconds: 30 # Default by 30
 
+# see: spring-cloud-netflix-hystrix-2.2.6.RELEASE.jar!/META-INF/spring-configuration-metadata.json
 hystrix:
+  shareSecurityContext: false # Default by false
+  metrics:
+    polling-interval-ms: 2000 # 2000ms
   command:
     default:
       execution:
         isolation:
+          strategy: SEMAPHORE # SEMAPHORE|THREAD
           thread:
-            timeoutInMilliseconds: 1500
+            # Official recommendation: ribbon retries * (ribbon.readTimeout + ribbon.connectTimeout)
+            # see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#hystrix-timeouts-and-ribbon-clients
+            timeoutInMilliseconds: 20_000 # Default by 1000ms
 
+# see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html/#example-disable-eureka-use-in-ribbon
+# see: https://github.com/Netflix/ribbon/wiki/Working-with-load-balancers#components-of-load-balancer
 ribbon:
-  connectTimeout: 9000
-  readTimeout: 10000
+  eureka:
+    enabled: true # Default by true
+  connectTimeout: 3000
+  readTimeout: 6000
   okToRetryOnAllOperations: true # Try again for all operations
   maxAutoRetriesNextServer: 2 # Number of retries for different instances of the same service
   maxAutoRetries: 1 # Same instance retries
