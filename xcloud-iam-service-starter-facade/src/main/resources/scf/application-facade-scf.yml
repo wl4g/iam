@@ -11,14 +11,26 @@
 # #### Environment(SpringCloud Feign for Uat) configuration. ####
 # see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html
 
+
 spring:
+  util.timeout.sec: 6 # Default by 1sec
   cloud:
+    # see: org.springframework.cloud.commons.util.InetUtilsProperties
+    inetutils:
+      useOnlySiteLocalInterfaces: true # Default by false
+      ignoredInterfaces: ['lo']
+      # In order to solve the problem that once the timeout occurs, the default IP is localhost.
+      # see: org.springframework.cloud.commons.util.InetUtils#convertAddress
+      timeoutSeconds: ${spring.util.timeout-sec:6} # Default by 1sec
     circuitbreaker:
       hystrix:
         enabled: true # Default by true
     loadbalancer:
       retry:
         enabled: true
+      # see: BlockingLoadBalancerClientRibbonWarnLogger#logWarning
+      ribbon:
+        enabled: false # Default by true
     #ipAddress: 
 #    consul:
 #      discovery:
@@ -46,13 +58,17 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
     leaseExpirationDurationInSeconds: 30
     prefer-ip-address: true
+    # see: org.springframework.cloud.client.HostInfoEnvironmentPostProcessor#postProcessEnvironment
+    # see: org.springframework.cloud.commons.util.IdUtils#getDefaultInstanceId
     #instance-id: ${spring.cloud.client.ipAddress}:${server.port}
     metadataMap:
       instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
   # see:https://github.com/Netflix/eureka/blob/master/eureka-client/src/main/java/com/netflix/discovery/EurekaClientConfig.java
   client:
     registerWithEureka: true # Default by true
-    fetchRegistry: false # Default by false
+    # [FIXED] FeignException$ServiceUnavailable:[Load balancer does not contain an instance for the service xx]
+    # The consumer side is required, and the server side is optional.
+    fetchRegistry: true # Default by false
     registryFetchIntervalSeconds: 30 # Default by 30
     gzipContent: true # Default by true
     eurekaConnectionIdleTimeoutSeconds: 30 # Default by true
@@ -93,3 +109,7 @@ ribbon:
 feign:
   hystrix:
     enabled: true
+  httpclient:
+    enabled: true # Default by true
+  okhttp:
+    enabled: false # Default by false

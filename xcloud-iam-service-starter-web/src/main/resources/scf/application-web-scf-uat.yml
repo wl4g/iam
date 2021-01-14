@@ -11,9 +11,17 @@
 # #### Environment(SpringCloud Feign for Uat) configuration. ####
 #
 
+spring:
+  cloud:
+    # see: org.springframework.cloud.commons.util.InetUtilsProperties
+    inetutils:
+      preferredNetworks: ['192.168.', '10.0.0.']
+
 eureka:
   datacenter: 'cn-south-sz1' # Default by default
   environment: uat # Default by test
+  instance:
+    #ip-address: 127.0.0.1
   # see:https://github.com/Netflix/eureka/blob/master/eureka-client/src/main/java/com/netflix/discovery/EurekaClientConfig.java
   client:
     serviceUrl:
