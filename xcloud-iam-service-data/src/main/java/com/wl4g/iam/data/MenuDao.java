@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:menu-dao}")
+@SpringBootFeignClient("${spring.cloud.provider-service:menu-dao}")
 @RequestMapping("/menu")
 public interface MenuDao {
 

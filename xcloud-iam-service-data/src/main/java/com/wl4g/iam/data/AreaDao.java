@@ -34,7 +34,7 @@ import com.wl4g.iam.common.bean.Area;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:area-dao}")
+@SpringBootFeignClient("${spring.cloud.provider-service:area-dao}")
 @RequestMapping("/area")
 public interface AreaDao {
 

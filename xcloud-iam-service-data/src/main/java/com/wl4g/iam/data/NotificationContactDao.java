@@ -26,7 +26,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.iam.common.bean.NotificationContact;
 
-@SpringBootFeignClient("${spring.application.name:notificationContact-dao}")
+@SpringBootFeignClient("${spring.cloud.provider-service:notificationContact-dao}")
 @RequestMapping("/notificationContact")
 public interface NotificationContactDao {
 

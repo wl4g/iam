@@ -13,6 +13,7 @@
 spring:
   util.timeout.sec: 60 # Default by 1sec
   cloud:
+    provider-service: iam-facade
     xcloud:
       component:
         rpc:

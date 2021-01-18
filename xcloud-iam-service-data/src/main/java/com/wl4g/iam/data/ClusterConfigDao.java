@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:clusterConfig-dao}")
+@SpringBootFeignClient("${spring.cloud.provider-service:clusterConfig-dao}")
 @RequestMapping("/clusterConfig")
 public interface ClusterConfigDao {
 

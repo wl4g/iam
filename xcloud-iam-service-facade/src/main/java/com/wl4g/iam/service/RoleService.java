@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:role-service}")
+@SpringBootFeignClient("${spring.cloud.provider-service:role-service}")
 @RequestMapping("/role")
 public interface RoleService {
 

@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.ContactChannel;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:contactChannel-dao}")
+@SpringBootFeignClient("${spring.cloud.provider-service:contactChannel-dao}")
 @RequestMapping("/contactChannel")
 public interface ContactChannelDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

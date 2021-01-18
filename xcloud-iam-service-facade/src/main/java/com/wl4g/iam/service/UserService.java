@@ -39,7 +39,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.application.name:user-service}")
+@SpringBootFeignClient("${spring.cloud.provider-service:user-service}")
 @RequestMapping("/user")
 public interface UserService {
 
