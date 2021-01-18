@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("role-dao")
+@SpringBootFeignClient("${spring.application.name:role-dao}")
 @RequestMapping("/role")
 public interface RoleDao {
 

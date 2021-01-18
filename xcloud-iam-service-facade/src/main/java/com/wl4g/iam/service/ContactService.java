@@ -45,7 +45,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "contact-service", fallbackFactory = ContactServiceFallbackFactory.class)
+@SpringBootFeignClient(name = "${spring.application.name:contact-service}", fallbackFactory = ContactServiceFallbackFactory.class)
 @RequestMapping("/contact")
 public interface ContactService {
 

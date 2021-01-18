@@ -36,7 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("menu-service")
+@SpringBootFeignClient("${spring.application.name:menu-service}")
 @RequestMapping("/menu")
 public interface MenuService {
 

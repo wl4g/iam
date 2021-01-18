@@ -33,7 +33,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("area-service")
+@SpringBootFeignClient("${spring.application.name:area-service}")
 @RequestMapping("/area")
 public interface AreaService {
 
