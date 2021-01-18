@@ -46,7 +46,9 @@ server:
   #address: 0.0.0.0
   sessionTimeout: 30
   servlet:
-    contextPath: /${spring.application.name}
+    #contextPath: /${spring.application.name}
+    # because spring-cloud-loadbalancer-2.2.6 not support metadata.contextPath
+    contextPath: /
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
