@@ -12,12 +12,11 @@
 #
 
 spring:
-  boot:
-    xcloud:
-      feign:
-        default-url: http://owner-node1:34040/iam-data
-        default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
-        client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
-        max-idle-connections: 520
-        connect-timeout: 11000
-        read-timeout: 12000
+  xcloud:
+    feign:
+      default-url: http://owner-node1:34040/iam-data
+      default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
+      client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
+      max-idle-connections: 520
+      connect-timeout: 11000
+      read-timeout: 12000

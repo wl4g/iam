@@ -11,54 +11,53 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  boot:
-    xcloud:
-      iam: # IAM server configuration.
-        cors:
-          rules:
-            '[/**]':
-              allows-origins:
-                - http://${IAM_ZONE:wl4g.dev}
-                - http://${IAM_ZONE:wl4g.dev:${server.port}}
-                - http://${IAM_ZONE:wl4g.local}
-                - http://${IAM_ZONE:wl4g.local:${server.port}}
-                - http://${IAM_ZONE:wl4g.debug}
-                - http://${IAM_ZONE:wl4g.debug:${server.port}}
-                - http://*.${IAM_ZONE:wl4g.debug}
-                - http://*.${IAM_ZONE:wl4g.debug:${server.port}}
-                - http://localhost
-                - http://localhost:14040
-                - http://127.0.0.1
-                - http://127.0.0.1:14040
-                - '*'
-        login-uri: http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/login.html
-        #login-uri: http://wl4g.debug/#/login # See: https://github.com/wl4g/xcloud-devops-view
-        unauthorized-uri: http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/403.html
-        success-endpoint: ${spring.application.name}@http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/index.html
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${IAM_ACL_DENY}
-        captcha:
-          #jigsaw:
-            #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
-        sns: # SNS configuration.
-          oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
-          wechat-mp:
-            app-id: yourappid
-            app-secret: yoursecret
-            redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
-          wechat:
-            app-id: yourappid
-            app-secret: yoursecret
-            redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/wechat/callback
-            href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
-          qq:
-            app-id: 101542056
-            app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/qq/callback
-        session:
-          global-session-timeout: 43200_000
+  xcloud:
+    iam: # IAM server configuration.
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - http://${IAM_ZONE:wl4g.dev}
+              - http://${IAM_ZONE:wl4g.dev:${server.port}}
+              - http://${IAM_ZONE:wl4g.local}
+              - http://${IAM_ZONE:wl4g.local:${server.port}}
+              - http://${IAM_ZONE:wl4g.debug}
+              - http://${IAM_ZONE:wl4g.debug:${server.port}}
+              - http://*.${IAM_ZONE:wl4g.debug}
+              - http://*.${IAM_ZONE:wl4g.debug:${server.port}}
+              - http://localhost
+              - http://localhost:14040
+              - http://127.0.0.1
+              - http://127.0.0.1:14040
+              - '*'
+      login-uri: http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/login.html
+      #login-uri: http://wl4g.debug/#/login # See: https://github.com/wl4g/xcloud-devops-view
+      unauthorized-uri: http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/403.html
+      success-endpoint: ${spring.application.name}@http://${IAM_ZONE:wl4g.debug}:14040${server.servlet.contextPath}/view/index.html
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${IAM_ACL_DENY}
+      captcha:
+        #jigsaw:
+          #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+      sns: # SNS configuration.
+        oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+        wechat-mp:
+          app-id: yourappid
+          app-secret: yoursecret
+          redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+        wechat:
+          app-id: yourappid
+          app-secret: yoursecret
+          redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/wechat/callback
+          href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+        qq:
+          app-id: 101542056
+          app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+          redirect-url: http://passport.wl4g.com${server.servlet.contextPath}/sns/qq/callback
+      session:
+        global-session-timeout: 43200_000
 
 # Redis configuration.
 redis:
