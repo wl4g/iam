@@ -11,37 +11,36 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  boot:
-    xcloud:
-      iam: # IAM configuration.
-        cors:
-          rules:
-            '[/**]':
-              allows-origins:
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev:${server.port}}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.local}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.local:${server.port}}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-                - http://localhost
-                - http://localhost:14040
-                - http://127.0.0.1
-                - http://127.0.0.1:14040
-                #- '*'
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: 127.0.0.1
-          denyIpRange: 
-        client:
-          server-uri: http://wl4g.debug:14040/iam-web # Required
-          # This config item is used to specify a custom login page, default to 
-          # {spring.cloud.devops.iam.client.server-uri}, that is, the login page controlled by iam-server.
-          #login-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/login.html
-          success-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/index.html # Required
-          unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html # Required
+  xcloud:
+    iam: # IAM configuration.
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.dev}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.dev:${server.port}}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.local}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.local:${server.port}}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
+              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              - http://localhost
+              - http://localhost:14040
+              - http://127.0.0.1
+              - http://127.0.0.1:14040
+              #- '*'
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: 127.0.0.1
+        denyIpRange: 
+      client:
+        server-uri: http://wl4g.debug:14040/iam-web # Required
+        # This config item is used to specify a custom login page, default to 
+        # {spring.cloud.devops.iam.client.server-uri}, that is, the login page controlled by iam-server.
+        #login-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/login.html
+        success-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/index.html # Required
+        unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html # Required
 
 # Redis configuration.
 redis:
