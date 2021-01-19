@@ -38,7 +38,7 @@ logging:
       apache: INFO
     feign: DEBUG
     com:
-      wl4g.iam.web: INFO
+      wl4g.iam.web: DEBUG
 
 # ### Server configuration. ###
 server:

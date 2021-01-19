@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.Department;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.cloud.provider-service:department-dao}")
+@SpringBootFeignClient("${provider.serviceId:department-dao}")
 @RequestMapping("/department")
 public interface DepartmentDao {
 

@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.Company;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.cloud.provider-service:company-dao}")
+@SpringBootFeignClient("${provider.serviceId:company-dao}")
 @RequestMapping("/company")
 public interface CompanyDao {
 

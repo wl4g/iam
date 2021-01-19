@@ -36,7 +36,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${spring.cloud.provider-service:contact-dao}", fallbackFactory = ContactDaoFallbackFactory.class)
+@SpringBootFeignClient(name = "${provider.serviceId:contact-dao}", fallbackFactory = ContactDaoFallbackFactory.class)
 // @FeignClient(name="contact-dao",fallbackFactory=ContactDaoFallbackFactory.class)//for-equivalent
 @RequestMapping("/contact")
 public interface ContactDao {

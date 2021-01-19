@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.Park;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.cloud.provider-service:park-dao}")
+@SpringBootFeignClient("${provider.serviceId:park-dao}")
 @RequestMapping("/park")
 public interface ParkDao {
 

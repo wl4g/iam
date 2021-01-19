@@ -33,7 +33,7 @@ import com.wl4g.iam.common.bean.ContactGroupRef;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.cloud.provider-service:contactGroupRef-dao}")
+@SpringBootFeignClient("${provider.serviceId:contactGroupRef-dao}")
 @RequestMapping("/contactGroupRef")
 public interface ContactGroupRefDao {
 

@@ -12,17 +12,16 @@
 # see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html
 spring:
   util.timeout.sec: 60 # Default by 1sec
+  xcloud:
+    component:
+      spring-cloud-feign:
+        lb: # fallback default: RoundRobinLoadbalancer
+          random:
+            enable: false # Default false
+          #gray:
+          #  enable: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
+          #  chooseExpression: ''
   cloud:
-    xcloud:
-      component:
-        rpc:
-          spring-cloud:
-            loadbalancer: # fallback default: RoundRobinLoadbalancer
-              random:
-                enable: false # Default false
-              #gray:
-              #  enable: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
-              #  chooseExpression: ''
     # see: org.springframework.cloud.commons.util.InetUtilsProperties
     inetutils:
       useOnlySiteLocalInterfaces: true # Default by false
@@ -38,7 +37,14 @@ spring:
       # see: org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration.BlockingLoadbalancerClientConfig
       # see: org.springframework.cloud.client.loadbalancer.reactive.OnNoRibbonDefaultCondition.RibbonNotEnabled
       ribbon.enabled: false # Default by false
-      retry.enabled: true
+      # [NOTE] spring-cloud-loadbalancer-2.2.6.RELEASE.jar Retrying is not supported at this time.
+      # see: o.s.c.client.loadbalancer.LoadBalancerRetryProperties
+      # see: o.s.c.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration.BlockingLoadbalancerClientConfig.BlockingLoadBalancerRetryConfig#loadBalancedRetryFactory
+      #retry:
+      #  enabled: true
+      #  retryOnAllOperations: false # Default by false
+      #  maxRetriesOnSameServiceInstance: 0
+      #  maxRetriesOnNextServiceInstance: 1
     #ipAddress: 
 #    consul:
 #      discovery:
@@ -94,11 +100,19 @@ eureka:
 # see: spring-cloud-netflix-hystrix-2.2.6.RELEASE.jar!/META-INF/spring-configuration-metadata.json
 hystrix:
   shareSecurityContext: false # Default by false
+  # see: com.netflix.hystrix.HystrixThreadPoolProperties
+  threadpool:
+    default:
+      coreSize: 200
+      maxQueueSize: 10
+      queueSizeRejectionThreshold: 100
   metrics:
-    polling-interval-ms: 2000 # 2000ms
-  command:
+    pollingIntervalMs: 2000 # 2000ms
+  command: # see: com.netflix.hystrix.HystrixCommandProperties
     default:
       execution:
+        timeout:
+          enabled: true # Default by true
         isolation:
           strategy: SEMAPHORE # SEMAPHORE|THREAD
           thread:
@@ -120,9 +134,11 @@ hystrix:
 #  maxAutoRetries: 1 # Same instance retries
 
 feign:
-  hystrix:
-    enabled: true
-  httpclient:
-    enabled: true # Default by true
+  hystrix: # see: org.springframework.cloud.openfeign.FeignAutoConfiguration.HystrixFeignTargeterConfiguration
+    enabled: true # Default by false
+  httpclient: # see: org.springframework.cloud.openfeign.FeignAutoConfiguration.HttpClientFeignConfiguration
+    enabled: false # Default by true
+  # see: org.springframework.cloud.openfeign.FeignAutoConfiguration.OkHttpFeignConfiguration
+  # see: org.springframework.cloud.openfeign.loadbalancer.OkHttpFeignLoadBalancerConfiguration
   okhttp:
-    enabled: false # Default by false
+    enabled: true # Default by false

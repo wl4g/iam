@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${spring.cloud.provider-service:dict-dao}")
+@SpringBootFeignClient("${provider.serviceId:dict-dao}")
 @RequestMapping("/dict")
 public interface DictDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
