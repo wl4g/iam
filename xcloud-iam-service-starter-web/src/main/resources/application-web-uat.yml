@@ -12,6 +12,15 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        # Redis configuration.
+        jedis:
+          passwd: ${REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis's cluster nodes.
+          nodes: ${IAM_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
     iam: # IAM server configuration.
       cors:
         rules:
@@ -47,11 +56,3 @@ spring:
           app-id: 101542056
           app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
           redirect-url: http://passport.wl4g.uat${server.servlet.contextPath}/sns/qq/callback
-
-# Redis configuration.
-redis:
-  passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${IAM_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
