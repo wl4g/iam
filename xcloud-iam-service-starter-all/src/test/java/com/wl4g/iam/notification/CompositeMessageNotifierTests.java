@@ -21,7 +21,7 @@ import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 
-import static com.wl4g.component.support.notification.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
+import static com.wl4g.component.support.constant.SupportConstant.KEY_SUPPORT_NOTIFY_PREFIX;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -32,14 +32,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = LocalIamWeb.class, properties = { KEY_NOTIFY_PREFIX + ".vms.enable=true",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.regionId=cn-hangzhou",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
+@SpringBootTest(classes = LocalIamWeb.class, properties = { KEY_SUPPORT_NOTIFY_PREFIX + ".vms.enable=true",
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.regionId=cn-hangzhou",
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
 		// Sensitive config, oneself setup
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.accessKeySecret=${aliyun_vms_secret}",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.accessKeySecret=${aliyun_vms_secret}",
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
+		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
 @FixMethodOrder(MethodSorters.JVM)
 public class CompositeMessageNotifierTests {
 

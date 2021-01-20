@@ -12,10 +12,12 @@
 #
 spring:
   xcloud:
-    embedded-webapps:
-      enable: true # Default false
-      base-uri: /view
-      webapp-location: classpath*:/default-webapps
+    component:
+      web:
+        embedded-webapps:
+          enable: true # Default false
+          base-uri: /view
+          webapp-location: classpath*:/default-webapps
     iam: # IAM server configuration.
       cors:
         enabled: true # Default: true
