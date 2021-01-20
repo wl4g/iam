@@ -24,7 +24,6 @@ import com.wl4g.iam.data.DictDao;
 import com.wl4g.iam.service.DictService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +59,6 @@ public class DictServiceImpl implements DictService {
 	private DictDao dictDao;
 
 	@Autowired
-	@Lazy
 	private JedisService jedisService;
 
 	@Override

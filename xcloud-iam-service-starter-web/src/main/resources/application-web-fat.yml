@@ -16,11 +16,11 @@ spring:
       support:
         # Redis configuration.
         jedis:
-          passwd: ${REDIS_PASSWD:zzx!@#$%}
+          passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis's cluster nodes.
-          nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381
+          nodes: ${IAM_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     iam: # IAM server configuration.
       cors:
         rules:

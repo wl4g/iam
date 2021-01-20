@@ -31,7 +31,7 @@ import com.wl4g.iam.web.ServiceApiV2Endpoint;
  * @since
  */
 @Configuration
-@ConditionalOnBean(IamServerMarkerConfiguration.class)
+@ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class IamServerApiV2AutoConfiguration extends GenericApiAutoConfiguration {
 

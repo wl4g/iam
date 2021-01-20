@@ -16,11 +16,11 @@ spring:
       support:
         # Redis configuration.
         jedis:
-          passwd: ${REDIS_PASSWD:zzx!@#$%}
+          passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis's cluster nodes.
-          nodes: ${IAM_XCLOUD_IAM_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+          nodes: ${IAM_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
     iam: # IAM server configuration.
       cors:
         rules:

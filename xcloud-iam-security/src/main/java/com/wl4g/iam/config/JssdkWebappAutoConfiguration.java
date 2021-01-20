@@ -34,7 +34,7 @@ import com.wl4g.iam.web.JssdkWebappEndpoint;
  * @since
  */
 @Configuration
-@ConditionalOnBean(IamServerMarkerConfiguration.class)
+@ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 public class JssdkWebappAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	@Bean

@@ -57,7 +57,7 @@ import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
  * @since
  */
 @Configuration
-@ConditionalOnBean(IamServerMarkerConfiguration.class)
+@ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class SnsAutoConfiguration extends AbstractIamConfiguration {
 

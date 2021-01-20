@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * @since
  */
 @Configuration
-@ConditionalOnBean(IamServerMarkerConfiguration.class)
+@ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class LoginAutoConfiguration extends PrefixHandlerMappingSupport {
 

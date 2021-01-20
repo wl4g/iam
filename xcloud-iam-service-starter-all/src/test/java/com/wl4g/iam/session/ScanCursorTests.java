@@ -26,11 +26,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.LocalIamWeb;
 import com.wl4g.component.common.serialize.ProtostuffUtils;
-import com.wl4g.component.support.redis.jedis.JedisOperatorFactory;
+import com.wl4g.component.support.redis.jedis.JedisOperatorBeanFactory;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.core.session.IamSession;
 
@@ -42,7 +43,8 @@ import redis.clients.jedis.ScanParams;
 public class ScanCursorTests {
 
 	@Autowired
-	private JedisOperatorFactory factory;
+	@Lazy
+	private JedisOperatorBeanFactory factory;
 
 	@Test
 	public void test1() {

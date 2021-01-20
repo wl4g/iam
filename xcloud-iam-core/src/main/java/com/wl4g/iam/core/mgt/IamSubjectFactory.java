@@ -61,25 +61,21 @@ import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
  * @since 1.2
  */
 public class IamSubjectFactory extends DefaultWebSubjectFactory {
-
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	/**
 	 * {@link AbstractIamProperties}
 	 */
-	final protected AbstractIamProperties<? extends ParamProperties> config;
+	protected final AbstractIamProperties<? extends ParamProperties> config;
 
 	/**
 	 * {@link IamShiroFilterFactoryBean#getFilterChainDefinitionMap()}
 	 */
-	final protected IamShiroFilterFactoryBean iamFilterFactory;
+	protected final IamShiroFilterFactoryBean factoryBean;
 
-	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
-			IamShiroFilterFactoryBean iamFilterFactory) {
-		notNullOf(config, "config");
-		notNullOf(iamFilterFactory, "iamFilterFactory");
-		this.config = config;
-		this.iamFilterFactory = iamFilterFactory;
+	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config, IamShiroFilterFactoryBean factoryBean) {
+		this.config = notNullOf(config, "config");
+		this.factoryBean = notNullOf(factoryBean, "factoryBean");
 	}
 
 	@Override
@@ -203,7 +199,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		/**
 		 * Check is internal protocol {@link IamFilter} chain mappings?
 		 */
-		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
+		for (Entry<String, String> ent : factoryBean.getFilterChainDefinitionMap().entrySet()) {
 			String pattern = ent.getKey();
 			String filterName = ent.getValue();
 			if (!NAME_ROOT_FILTER.equals(filterName) && defaultNonAccessTokenMatcher.matchStart(pattern, requestPath)) {

@@ -47,7 +47,7 @@ import static org.springframework.util.ReflectionUtils.*;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
-import com.wl4g.component.support.redis.jedis.JedisOperatorFactory;
+import com.wl4g.component.support.redis.jedis.JedisOperatorBeanFactory;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
@@ -177,20 +177,20 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
 	 * Using {@link Lazy} loading to solve cycle injection problem.
 	 * 
 	 * @param config
-	 * @param iamFilterFactory
+	 * @param factoryBean
 	 * @return
 	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public IamSubjectFactory iamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
-			@Lazy IamShiroFilterFactoryBean iamFilterFactory) {
-		return new IamSubjectFactory(config, iamFilterFactory);
+			@Lazy IamShiroFilterFactoryBean factoryBean) {
+		return new IamSubjectFactory(config, factoryBean);
 	}
 
 	@Bean
 	public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
-			JedisOperatorFactory jedisFactory) {
-		return new JedisIamCacheManager(config.getCache().getPrefix(), jedisFactory.getJedisOperator());
+			JedisOperatorBeanFactory factory) {
+		return new JedisIamCacheManager(config.getCache().getPrefix(), factory.getJedisOperator());
 	}
 
 	@Bean

@@ -46,7 +46,7 @@ import java.util.List;
  * @since
  */
 @Configuration
-@ConditionalOnBean(IamServerMarkerConfiguration.class)
+@ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 public class BasedConfigAutoConfiguration {
 
 	// Security components configuration
