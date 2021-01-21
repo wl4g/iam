@@ -21,13 +21,13 @@ import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleMenu;
+import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleMenuDao;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
-import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

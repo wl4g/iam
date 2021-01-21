@@ -17,10 +17,11 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
-import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

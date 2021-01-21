@@ -18,10 +18,11 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
-import com.wl4g.iam.service.utils.RpcIamSecurityUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
