@@ -47,13 +47,13 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.apache.shiro.util.Assert.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import com.wl4g.component.common.web.WebUtils2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
@@ -64,7 +64,6 @@ import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;
-import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.TooManyRequestAuthentcationException;
 import com.wl4g.iam.core.exception.UnauthorizedException;
@@ -215,12 +214,13 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
-		Throwable cause = getRootCause(ae);
-		if (!isNull(cause)) {
-			if (cause instanceof IamException)
-				log.warn("Authentication failed, cause by: {}", getMessage(cause));
-			else
-				log.warn("Authentication failed.", cause);
+		Throwable exroot = getRootCause(ae);
+		String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
+		String tip = format("Failed to authentication of token: %s", token);
+		if (WebUtils2.checkRequestErrorStacktrace(request)) {
+			log.error(tip, ae);
+		} else {
+			log.error("{}, caused by: {}", tip, errmsg);
 		}
 
 		// Failure redirect URL
@@ -228,7 +228,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		try {
 			failRedirectUrl = makeFailureRedirectUrl(token, ae, toHttp(request), toHttp(response));
 		} catch (TooManyRequestAuthentcationException ex) {
-			cause = ex;
+			exroot = ex;
 		}
 
 		// Post handle of authenticate failure.
@@ -238,10 +238,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// IAM server login page, otherwise the client will display the error
 		// page directly (to prevent unlimited redirection).
 		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
-		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) { // InvalidGrantTicketException
+		if (isNull(exroot) || (exroot instanceof InvalidGrantTicketException)) { // InvalidGrantTicketException
 			if (isRespJSON(toHttp(request))) {
 				try {
-					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, cause);
+					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, exroot);
 					String failMsg = toJSONString(resp);
 					log.debug("Failure authentication response: {}", failMsg);
 
@@ -262,11 +262,14 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// error, which may lead to unlimited redirection.
 		else {
 			try {
-				String errmsg = format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
-						getRootCausesString(cause));
-				/** See:{@link com.wl4g.component.core.web.error.com.wl4g.component.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()} */
-				/** See:{@link com.wl4g.component.core.web.error.ServletSmartErrorHandler#doAnyHandleError()} */
-				toHttp(response).sendError(errorConfigurer.getStatus(cause), errmsg);
+				/**
+				 * See:{@link com.wl4g.component.core.web.error.com.wl4g.component.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()}
+				 */
+				/**
+				 * See:{@link com.wl4g.component.core.web.error.ServletSmartErrorHandler#doAnyHandleError()}
+				 */
+				toHttp(response).sendError(errorConfigurer.getStatus(exroot), format("%s, %s",
+						bundle.getMessage("AbstractAuthenticationFilter.authc.failure"), getRootCausesString(exroot)));
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}

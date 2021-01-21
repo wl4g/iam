@@ -45,7 +45,7 @@ import org.springframework.core.env.Environment;
 import static org.springframework.util.ReflectionUtils.*;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.web.error.ErrorControllerAutoConfiguration.ErrorHandlerProperties;
+import com.wl4g.component.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.component.support.redis.jedis.JedisOperatorBeanFactory;
 import com.wl4g.iam.core.annotation.IamController;
