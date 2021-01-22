@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.core.utils;
+package com.wl4g.iam.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.component.common.codec.Base58;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +36,14 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * {@link IamOrganizationHolder}
+ * {@link IamOrganizationUtils}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2020年5月20日
  * @since
  */
-public abstract class IamOrganizationHolder extends IamSecurityHolder {
+public abstract class IamOrganizationUtils {
 
 	/**
 	 * Gets organizations from Session
@@ -50,7 +51,8 @@ public abstract class IamOrganizationHolder extends IamSecurityHolder {
 	 * @return
 	 */
 	public static List<OrganizationInfo> getSessionOrganizations() {
-		return safeList(getPrincipalInfo().getOrganization().getOrganizations());
+		IamPrincipal currentPrincipal = RpcIamSecurityUtils.currentIamPrincipal();
+		return safeList(currentPrincipal.getOrganization().getOrganizations());
 	}
 
 	/**
