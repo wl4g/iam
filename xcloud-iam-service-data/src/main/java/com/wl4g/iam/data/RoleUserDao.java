@@ -34,7 +34,7 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId:roleUser-dao}")
+@SpringBootFeignClient("${provider.serviceId.iam-data:roleUser-dao}")
 @RequestMapping("/roleUser")
 public interface RoleUserDao {
 

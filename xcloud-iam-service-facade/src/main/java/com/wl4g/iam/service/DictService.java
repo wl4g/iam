@@ -37,7 +37,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId:dict-service}")
+@SpringBootFeignClient("${provider.serviceId.iam-facade:dict-service}")
 @RequestMapping("/dict")
 public interface DictService {
 

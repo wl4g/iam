@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId:user-dao}")
+@SpringBootFeignClient("${provider.serviceId.iam-data:user-dao}")
 @RequestMapping("/user")
 public interface UserDao {
 
