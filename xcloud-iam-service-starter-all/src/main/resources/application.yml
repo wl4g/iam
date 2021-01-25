@@ -8,19 +8,15 @@
 # limitations under the License.
 #
 
-# #### Environment base configuration. ####
+# #### Spring Boot configuration. ####
 #
-
-# #### Spring boot configuration. ####
-#
-
 spring:
   # In order to simplify the configuration, the application name of local mode is the same as that of cluster mode (web module)
   application.name: iam-web
   profiles:
     # Notes: The placeholder '${spring.profiles.active}' springboot can't recognize it, but springcloud can!!! 
     #include: common,util,web-base,web-${spring.profiles.active},facade-${spring.profiles.active},dao-${spring.profiles.active}
-    include: common,util,web-security,web-dev,facade-dev,data-dev
+    include: common,util,security
     active: dev
 
 # Logging configuration.
