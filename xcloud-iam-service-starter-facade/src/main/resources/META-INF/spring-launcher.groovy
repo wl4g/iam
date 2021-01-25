@@ -37,19 +37,19 @@ class IamFacadeSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,application-facade")
+		def configName = new StringBuffer("application,iam-facade")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-facade-dev.yml'
 		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",application-facade-scf");
+			configName.append(",iam-facade-scf");
 			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
-			configName.append(",application-facade-sbf");
+			configName.append(",iam-facade-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			configName.append(",application-facade-dubbo");
+			configName.append(",iam-facade-dubbo");
 			location.append(",classpath:/dubbo/")
 		}
 
