@@ -74,15 +74,13 @@ public class IamSecurityContextConfigurer {
 
 		@Override
 		public Object[] preHandle(@NotNull Object target, @NotNull Method method, Object[] parameters) {
-			if (FeignContextProxyProcessor.isNeedIntercepting(target, method, parameters)) {
-				// Bind iam current attributes to rpc context.
-				IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
-				RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-				RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+			// Bind iam current attributes to rpc context.
+			IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
-				// Set to reference type for performance optimization.
-				RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
-			}
+			// Set to reference type for performance optimization.
+			RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
 			return parameters;
 		}
 
