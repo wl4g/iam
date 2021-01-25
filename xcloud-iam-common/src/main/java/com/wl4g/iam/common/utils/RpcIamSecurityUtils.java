@@ -51,7 +51,7 @@ public final class RpcIamSecurityUtils {
 			try {
 				Constructor<?> defaultConstr = refAttachmentKeyClass.getConstructor(String.class);
 				Object obj = defaultConstr.newInstance(CURRENT_IAM_PRINCIPAL);
-				return (IamPrincipal) invokeMethod(RPC_CONTEXT_HOLDER_INSTANCE_GET_METHOD, currentRpcContextHolder(), obj,
+				return (IamPrincipal) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD2, currentRpcContextHolder(), obj,
 						SimpleIamPrincipal.class);
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
@@ -63,8 +63,8 @@ public final class RpcIamSecurityUtils {
 
 	public static String currentIamPrincipalId() {
 		if (nonNull(rpcContextHolderClass)) { // Distributed?
-			return (String) invokeMethod(RPC_CONTEXT_HOLDER_INSTANCE_GET_METHOD, currentRpcContextHolder(),
-					CURRENT_IAM_PRINCIPAL_ID, String.class);
+			return (String) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD1, currentRpcContextHolder(), CURRENT_IAM_PRINCIPAL_ID,
+					String.class);
 		}
 		// Local mode
 		return currentIamPrincipal().getPrincipalId();
@@ -72,15 +72,15 @@ public final class RpcIamSecurityUtils {
 
 	public static String currentIamPrincipalName() {
 		if (nonNull(rpcContextHolderClass)) { // Distributed?
-			return (String) invokeMethod(RPC_CONTEXT_HOLDER_INSTANCE_GET_METHOD, currentRpcContextHolder(),
-					CURRENT_IAM_PRINCIPAL_USER, String.class);
+			return (String) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD1, currentRpcContextHolder(), CURRENT_IAM_PRINCIPAL_USER,
+					String.class);
 		}
 		// Local mode
 		return currentIamPrincipal().getPrincipal();
 	}
 
 	private static Object currentRpcContextHolder() {
-		Object currentRpcContextHolder = invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD, null);
+		Object currentRpcContextHolder = invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD0, null);
 		return notNullOf(currentRpcContextHolder, "currentRpcContextHolder");
 	}
 
@@ -90,9 +90,11 @@ public final class RpcIamSecurityUtils {
 	public static final Class<?> refAttachmentKeyClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey");
 
-	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD = findMethodNullable(rpcContextHolderClass, "get");
-	public static final Method RPC_CONTEXT_HOLDER_INSTANCE_GET_METHOD = findMethodNullable(rpcContextHolderClass, "get",
-			String.class, Class.class);
+	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD0 = findMethodNullable(rpcContextHolderClass, "get");
+	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD1 = findMethodNullable(rpcContextHolderClass, "get", String.class,
+			Class.class);
+	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD2 = findMethodNullable(rpcContextHolderClass, "get",
+			refAttachmentKeyClass, Class.class);
 	public static final Method IAMSECURITYHOLDER_GETPRINCIPALINFO_METHOD = findMethodNullable(
 			resolveClassNameNullable("com.wl4g.iam.core.utils.IamSecurityHolder"), "getPrincipalInfo");
 
