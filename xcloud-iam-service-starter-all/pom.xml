@@ -21,58 +21,16 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-data</artifactId>
 			<version>${project.parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-web</artifactId>
 			<version>${project.parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- Test's -->
 		<dependency>

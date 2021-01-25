@@ -18,6 +18,10 @@ spring:
     #include: common,util,web-base,web-${spring.profiles.active},facade-${spring.profiles.active},dao-${spring.profiles.active}
     include: common,util,security
     active: dev
+  xcloud:
+    component:
+      spring-boot-feign:
+        enable: false # Default by true, If you want to run in local mode, you should set false
 
 # Logging configuration.
 logging:
