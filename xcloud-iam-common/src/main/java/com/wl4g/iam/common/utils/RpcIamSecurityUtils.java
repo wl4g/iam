@@ -49,9 +49,9 @@ public final class RpcIamSecurityUtils {
 	public static IamPrincipal currentIamPrincipal() {
 		if (nonNull(rpcContextHolderClass) && nonNull(refAttachmentKeyClass)) { // Distributed?
 			try {
-				Constructor<?> defaultConstr = refAttachmentKeyClass.getConstructor(String.class);
-				Object obj = defaultConstr.newInstance(CURRENT_IAM_PRINCIPAL);
-				return (IamPrincipal) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD2, currentRpcContextHolder(), obj,
+				Constructor<?> refAttachmentConst = refAttachmentKeyClass.getConstructor(String.class);
+				Object refAttachmentKey = refAttachmentConst.newInstance(CURRENT_IAM_PRINCIPAL);
+				return (IamPrincipal) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD2, currentRpcContextHolder(), refAttachmentKey,
 						SimpleIamPrincipal.class);
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
@@ -86,7 +86,6 @@ public final class RpcIamSecurityUtils {
 
 	public static final Class<?> rpcContextHolderClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder");
-
 	public static final Class<?> refAttachmentKeyClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey");
 
