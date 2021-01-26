@@ -56,6 +56,13 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-shell-bom</artifactId>
+				<version>2.2.2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
 				<version>${spring-boot.version}</version>
