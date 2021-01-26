@@ -19,9 +19,9 @@ spring:
       rpc:
         feign:
           loadbalancer: # fallback default: RoundRobinLoadbalancer
-            random.enable: false # Default false
+            random.enabled: false # Default false
             #gray:
-            #  enable: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
+            #  enabled: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
             #  chooseExpression: ''
   cloud:
     # see: org.springframework.cloud.commons.util.InetUtilsProperties
