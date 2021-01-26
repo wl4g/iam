@@ -20,8 +20,7 @@ spring:
     active: dev
   xcloud:
     component:
-      spring-boot-feign:
-        enable: false # Default by true, If you want to run in local mode, you should set false
+      rpc.feign.enable: false # Default by true, If you want to run in local mode, you should set false
 
 # Logging configuration.
 logging:
