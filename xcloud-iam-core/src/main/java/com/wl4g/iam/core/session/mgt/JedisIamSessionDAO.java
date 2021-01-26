@@ -29,7 +29,7 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.wl4g.component.support.redis.jedis.JedisOperator;
+import com.wl4g.component.support.redis.jedis.JedisClient;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper;
 import com.wl4g.component.support.redis.locks.JedisLockManager;
@@ -72,8 +72,8 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
 		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
-		JedisOperator jedisOperator = ((JedisIamCacheManager) cacheManager).getJedisOperator();
-		return new ScanCursor<IamSession>(jedisOperator, cursor, IamSession.class, params) {
+		JedisClient jedisClient = ((JedisIamCacheManager) cacheManager).getJedisClient();
+		return new ScanCursor<IamSession>(jedisClient, cursor, IamSession.class, params) {
 			@Override
 			public synchronized IamSession next() {
 				IamSession s = super.next();

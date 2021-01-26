@@ -28,14 +28,14 @@ import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.redis.jedis.JedisOperator;
+import com.wl4g.component.support.redis.jedis.JedisClient;
 import com.wl4g.iam.core.cache.CacheKey.Serializer;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.support.redis.jedis.JedisOperator.RedisProtoUtil.isSuccess;
+import static com.wl4g.component.support.redis.jedis.JedisClient.RedisProtoUtil.isSuccess;
 import static com.wl4g.iam.core.cache.CacheKey.*;
 
 /**
@@ -50,13 +50,13 @@ public class JedisIamCache implements IamCache {
 	final protected SmartLogger log = getLogger(getClass());
 
 	private String name;
-	private JedisOperator jedisAdapter;
+	private JedisClient jedisClient;
 
-	public JedisIamCache(String name, JedisOperator jedisAdapter) {
+	public JedisIamCache(String name, JedisClient jedisClient) {
 		notNull(name, "'name' must not be null");
-		notNull(jedisAdapter, "'jedisAdapter' must not be null");
+		notNull(jedisClient, "'jedisClient' must not be null");
 		this.name = name;
-		this.jedisAdapter = jedisAdapter;
+		this.jedisClient = jedisClient;
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class JedisIamCache implements IamCache {
 		notNullOf(key.getValueClass(), "valueClass");
 		log.debug("Get key={}", key);
 
-		byte[] data = jedisAdapter.get(key.getKey(name));
+		byte[] data = jedisClient.get(key.getKey(name));
 		return key.getSerializer().deserialize(data, key.getValueClass());
 	}
 
@@ -85,9 +85,9 @@ public class JedisIamCache implements IamCache {
 
 		String ret = null;
 		if (key.hasExpire()) {
-			ret = jedisAdapter.setex(key.getKey(name), key.getExpire(), data);
+			ret = jedisClient.setex(key.getKey(name), key.getExpire(), data);
 		} else {
-			ret = jedisAdapter.set(key.getKey(name), data);
+			ret = jedisClient.set(key.getKey(name), data);
 		}
 		return String.valueOf(ret).equalsIgnoreCase("nil") ? null : ret;
 	}
@@ -96,7 +96,7 @@ public class JedisIamCache implements IamCache {
 	public Object remove(final CacheKey key) throws CacheException {
 		notNull(key, "'key' must not be null");
 		log.debug("Remove key={}", key);
-		return jedisAdapter.del(key.getKey(name));
+		return jedisClient.del(key.getKey(name));
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class JedisIamCache implements IamCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Clear name={}", name);
 		}
-		jedisAdapter.hdel(name);
+		jedisClient.hdel(name);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class JedisIamCache implements IamCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Size name={}", name);
 		}
-		return jedisAdapter.hlen(name).intValue();
+		return jedisClient.hlen(name).intValue();
 	}
 
 	@Deprecated
@@ -151,16 +151,16 @@ public class JedisIamCache implements IamCache {
 
 		byte[] realKey = key.getKey(name);
 		// New create.
-		if (!jedisAdapter.exists(realKey)) {
+		if (!jedisClient.exists(realKey)) {
 			// key -> createTime
-			jedisAdapter.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
+			jedisClient.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
 		}
 
 		// Get last TTL expire
-		Long lastTTL = jedisAdapter.ttl(realKey);
+		Long lastTTL = jedisClient.ttl(realKey);
 		// Less than or equal to 0 means immediate expiration
 		if (key.hasExpire()) {
-			jedisAdapter.expire(realKey, key.getExpire());
+			jedisClient.expire(realKey, key.getExpire());
 		}
 
 		return lastTTL;
@@ -175,10 +175,10 @@ public class JedisIamCache implements IamCache {
 	public Long incrementGet(CacheKey key, long incrBy) throws CacheException {
 		byte[] realKey = key.getKey(name);
 		// Increment
-		Long res = jedisAdapter.incrBy(key.getKey(name), incrBy);
+		Long res = jedisClient.incrBy(key.getKey(name), incrBy);
 		// Less than or equal to 0 means immediate expiration
 		if (key.hasExpire()) {
-			jedisAdapter.expire(realKey, key.getExpire());
+			jedisClient.expire(realKey, key.getExpire());
 		}
 		return res;
 	}
@@ -192,10 +192,10 @@ public class JedisIamCache implements IamCache {
 	public Long decrementGet(CacheKey key, long decrBy) throws CacheException {
 		byte[] realKey = key.getKey(name);
 		// Decrement
-		Long res = jedisAdapter.decr(realKey);
+		Long res = jedisClient.decr(realKey);
 		// Less than or equal to 0 means immediate expiration
 		if (key.hasExpire()) {
-			jedisAdapter.expire(realKey, key.getExpire());
+			jedisClient.expire(realKey, key.getExpire());
 		}
 		return res;
 	}
@@ -210,10 +210,10 @@ public class JedisIamCache implements IamCache {
 		byte[] data = key.getSerializer().serialize(value);
 
 		if (key.hasExpire()) {
-			String res = jedisAdapter.set(key.getKey(name), data, NX, PX, key.getExpireMs());
+			String res = jedisClient.set(key.getKey(name), data, NX, PX, key.getExpireMs());
 			return isSuccess(res);
 		}
-		Long res = jedisAdapter.setnx(key.getKey(name), data);
+		Long res = jedisClient.setnx(key.getKey(name), data);
 		return isSuccess(res);
 	}
 
@@ -252,9 +252,9 @@ public class JedisIamCache implements IamCache {
 		}));
 		// Hash map sets
 		byte[] mapKey = toKeyBytes(name);
-		String res = jedisAdapter.hmset(mapKey, dataMap);
+		String res = jedisClient.hmset(mapKey, dataMap);
 		if (expireSec > 0) {
-			jedisAdapter.expire(mapKey, expireSec);
+			jedisClient.expire(mapKey, expireSec);
 		}
 
 		return res;
@@ -267,7 +267,7 @@ public class JedisIamCache implements IamCache {
 		notNullOf(fieldKey.getValueClass(), "valueClass");
 
 		// Load bytes
-		byte[] data = jedisAdapter.hget(toKeyBytes(name), fieldKey.getKey());
+		byte[] data = jedisClient.hget(toKeyBytes(name), fieldKey.getKey());
 		if (isNull(data)) {
 			return null;
 		}
@@ -278,7 +278,7 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public <T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer) {
-		return safeMap(jedisAdapter.hgetAll(toKeyBytes(name))).entrySet().stream()
+		return safeMap(jedisClient.hgetAll(toKeyBytes(name))).entrySet().stream()
 				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
 					if (isNull(e.getValue()))
 						return null;
@@ -288,23 +288,23 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public Map<byte[], byte[]> getMapAll() {
-		return jedisAdapter.hgetAll(toKeyBytes(name));
+		return jedisClient.hgetAll(toKeyBytes(name));
 	}
 
 	@Override
 	public Long mapRemove(String fieldKey) {
 		hasTextOf(fieldKey, "fieldKey");
-		return jedisAdapter.hdel(toKeyBytes(name), toKeyBytes(fieldKey));
+		return jedisClient.hdel(toKeyBytes(name), toKeyBytes(fieldKey));
 	}
 
 	@Override
 	public void mapRemoveAll() {
-		jedisAdapter.del(toKeyBytes(name));
+		jedisClient.del(toKeyBytes(name));
 	}
 
 	@Override
 	public boolean expireMap(int expireSec) {
-		Long res = jedisAdapter.expire(toKeyBytes(name), expireSec);
+		Long res = jedisClient.expire(toKeyBytes(name), expireSec);
 		return !isNull(res) ? res > 0 : false;
 	}
 

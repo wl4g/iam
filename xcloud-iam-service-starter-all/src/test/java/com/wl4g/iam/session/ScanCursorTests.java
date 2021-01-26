@@ -18,8 +18,6 @@ package com.wl4g.iam.session;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 
-import java.io.IOException;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.LocalIamWeb;
 import com.wl4g.component.common.serialize.ProtostuffUtils;
-import com.wl4g.component.support.redis.jedis.JedisOperatorBeanFactory;
+import com.wl4g.component.support.redis.jedis.JedisClientFactoryBean;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.iam.core.session.IamSession;
 
@@ -44,21 +42,20 @@ public class ScanCursorTests {
 
 	@Autowired
 	@Lazy
-	private JedisOperatorBeanFactory factory;
+	private JedisClientFactoryBean factory;
 
 	@Test
-	public void test1() {
-		byte[] data = factory.getJedisOperator()
-				.get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
+	public void test1() throws Exception {
+		byte[] data = factory.getObject().get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
 		System.out.println("IamSession: " + ProtostuffUtils.deserialize(data, IamSession.class));
 	}
 
 	@Test
-	public void test2() throws IOException {
+	public void test2() throws Exception {
 		byte[] match = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getJedisOperator(), null, params) {
+		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getObject(), null, params) {
 		}.open();
 		System.out.println("ScanResult: " + sc);
 		while (sc.hasNext()) {

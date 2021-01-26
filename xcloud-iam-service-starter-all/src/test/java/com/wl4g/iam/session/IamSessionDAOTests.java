@@ -66,7 +66,7 @@ public class IamSessionDAOTests {
 		byte[] match = ("iam_" + CACHE_SESSION + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisService.getJedisAdapter(), null, params) {
+		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisService.getJedisClient(), null, params) {
 		}.open();
 		System.out.println("ScanResult: " + sc);
 		while (sc.hasNext()) {

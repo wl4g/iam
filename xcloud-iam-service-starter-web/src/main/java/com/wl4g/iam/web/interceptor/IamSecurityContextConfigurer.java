@@ -19,7 +19,7 @@
  */
 package com.wl4g.iam.web.interceptor;
 
-import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.RefAttachmentKey;
+import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.ReferenceKey;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
@@ -80,7 +80,7 @@ public class IamSecurityContextConfigurer {
 			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
 			// Set to reference type for performance optimization.
-			RpcContextHolder.get().set(new RefAttachmentKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
+			RpcContextHolder.get().set(new ReferenceKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
 			return parameters;
 		}
 

@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.cache;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
+import static com.wl4g.component.support.redis.jedis.JedisClient.RedisProtoUtil.keyFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import com.wl4g.component.support.redis.jedis.JedisOperator;
+import com.wl4g.component.support.redis.jedis.JedisClient;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching
@@ -36,22 +36,19 @@ import com.wl4g.component.support.redis.jedis.JedisOperator;
  * @since
  */
 public class JedisIamCacheManager implements IamCacheManager {
-
-	final private Map<String, IamCache> caching = new ConcurrentHashMap<>();
+	private final Map<String, IamCache> caching = new ConcurrentHashMap<>(16);
 
 	private String prefix;
-	private JedisOperator jedisOperator;
+	private JedisClient jedisClient;
 
-	public JedisIamCacheManager(String prefix, JedisOperator jedisOperator) {
+	public JedisIamCacheManager(String prefix, JedisClient jedisClient) {
 		notNullOf(prefix, "prefix");
-		notNullOf(jedisOperator, "jedisOperator");
-		// e.g: iam-server => iam_server
-		this.prefix = keyFormat(prefix, '_');
-		this.jedisOperator = jedisOperator;
+		this.prefix = keyFormat(prefix, '_'); // e.g. iam-server => iam_server
+		this.jedisClient = notNullOf(jedisClient, "jedisClient");
 	}
 
-	public JedisOperator getJedisOperator() {
-		return jedisOperator;
+	public JedisClient getJedisClient() {
+		return jedisClient;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +69,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 		String cacheName = getCacheName(name);
 		IamCache cache = caching.get(cacheName);
 		if (Objects.isNull(cache)) {
-			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisOperator)));
+			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisClient)));
 		}
 		return cache;
 	}

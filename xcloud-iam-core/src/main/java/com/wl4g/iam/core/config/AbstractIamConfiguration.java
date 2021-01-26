@@ -47,7 +47,7 @@ import static org.springframework.util.ReflectionUtils.*;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
-import com.wl4g.component.support.redis.jedis.JedisOperatorBeanFactory;
+import com.wl4g.component.support.redis.jedis.JedisClientFactoryBean;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
@@ -189,8 +189,8 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
 
 	@Bean
 	public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
-			JedisOperatorBeanFactory factory) {
-		return new JedisIamCacheManager(config.getCache().getPrefix(), factory.getJedisOperator());
+			JedisClientFactoryBean factory) throws Exception {
+		return new JedisIamCacheManager(config.getCache().getPrefix(), factory.getObject());
 	}
 
 	@Bean
