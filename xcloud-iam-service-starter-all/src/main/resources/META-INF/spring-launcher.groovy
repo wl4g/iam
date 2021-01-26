@@ -37,19 +37,19 @@ class IamWebSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,application-web,application-facade,application-data")
+		def configName = new StringBuffer("application,iam-web,iam-facade,iam-data")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
 		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",application-web-scf");
+			configName.append(",iam-web-scf");
 			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
-			configName.append(",application-web-sbf");
+			configName.append(",iam-web-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			configName.append(",application-web-dubbo");
+			configName.append(",iam-web-dubbo");
 			location.append(",classpath:/dubbo/")
 		}
 
