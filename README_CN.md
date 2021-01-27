@@ -17,7 +17,7 @@
 ```
 <dependency>
     <groupId>com.wl4g</groupId>
-    <artifactId>xcloud-client</artifactId>
+    <artifactId>xcloud-iam-client</artifactId>
     <version>${latest}</version>
 </dependency>
 ```
