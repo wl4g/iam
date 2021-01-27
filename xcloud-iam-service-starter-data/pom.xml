@@ -64,6 +64,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>${bootstrap-classname}</mainClass>
+					<finalName>iam-data-${project.parent.version}-bin</finalName>
 					<!-- <layout>ZIP</layout> -->
 				</configuration>
 				<executions>

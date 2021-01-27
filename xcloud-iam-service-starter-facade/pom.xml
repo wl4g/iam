@@ -74,6 +74,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<mainClass>${bootstrap-classname}</mainClass>
+					<finalName>iam-facade-${project.parent.version}-bin</finalName>
 					<!-- <layout>ZIP</layout> -->
 				</configuration>
 				<executions>
