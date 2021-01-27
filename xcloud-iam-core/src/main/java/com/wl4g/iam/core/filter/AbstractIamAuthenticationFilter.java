@@ -19,6 +19,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.convertBean;
@@ -38,7 +39,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -71,8 +71,7 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
  */
 public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamProperties<? extends ParamProperties>>
 		extends AuthenticatingFilter implements IamAuthenticationFilter {
-
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Iam properties.
@@ -83,7 +82,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+	@Qualifier(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
 	protected SessionResourceMessageBundler bundle;
 
 	/**

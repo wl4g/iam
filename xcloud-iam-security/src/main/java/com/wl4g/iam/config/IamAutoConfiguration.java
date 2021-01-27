@@ -31,7 +31,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.kit.access.IPAccessControl;
@@ -110,7 +109,6 @@ import com.wl4g.iam.web.CentralAuthenticatingEndpoint;
  * @version v1.0 2019年03月19日
  * @since
  */
-@Configuration
 @ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 public class IamAutoConfiguration extends AbstractIamConfiguration {
 

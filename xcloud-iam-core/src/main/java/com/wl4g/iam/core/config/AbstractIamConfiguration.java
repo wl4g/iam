@@ -94,7 +94,7 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
 	 * @return
 	 */
 	@Bean(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-	public SessionResourceMessageBundler sessionDelegateMessageBundle() {
+	public SessionResourceMessageBundler sessionDelegateMessageBundler() {
 		return new SessionResourceMessageBundler(AbstractIamConfiguration.class);
 	}
 

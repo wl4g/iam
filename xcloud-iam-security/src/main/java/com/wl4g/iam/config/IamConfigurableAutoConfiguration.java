@@ -29,7 +29,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,15 +38,14 @@ import static java.lang.String.format;
 import java.util.List;
 
 /**
- * Based context configuration
+ * Based context configurable auto configuration.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月24日
  * @since
  */
-@Configuration
 @ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
-public class BasedConfigAutoConfiguration {
+public class IamConfigurableAutoConfiguration {
 
 	// Security components configuration
 
