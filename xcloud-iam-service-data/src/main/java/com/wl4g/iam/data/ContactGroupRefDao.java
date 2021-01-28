@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.ContactGroupRef;
 
 /**
@@ -33,7 +33,7 @@ import com.wl4g.iam.common.bean.ContactGroupRef;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:contactGroupRef-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:contactGroupRef-dao}")
 @RequestMapping("/contactGroupRef")
 public interface ContactGroupRefDao {
 

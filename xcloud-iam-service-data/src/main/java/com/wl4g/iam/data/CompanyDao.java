@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Company;
 
 /**
@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.Company;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:company-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:company-dao}")
 @RequestMapping("/company")
 public interface CompanyDao {
 

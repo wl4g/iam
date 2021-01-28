@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.NotificationContact;
 
-@SpringBootFeignClient("${provider.serviceId.iam-data:notificationContact-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:notificationContact-dao}")
 @RequestMapping("/notificationContact")
 public interface NotificationContactDao {
 

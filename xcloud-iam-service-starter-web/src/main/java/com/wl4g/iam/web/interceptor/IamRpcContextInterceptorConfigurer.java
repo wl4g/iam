@@ -19,11 +19,10 @@
  */
 package com.wl4g.iam.web.interceptor;
 
-import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.ReferenceKey;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
-import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
-import com.wl4g.component.rpc.springboot.feign.context.interceptor.FeignRpcContextAutoConfiguration.FeignRpcContextProcessor;
+import com.wl4g.component.rpc.feign.core.context.RpcContextHolder;
+import com.wl4g.component.rpc.feign.core.context.interceptor.FeignRpcContextAutoConfiguration.FeignRpcContextProcessor;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
@@ -80,7 +79,7 @@ public class IamRpcContextInterceptorConfigurer {
 			RpcContextHolder.get().set(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
 			// Set to reference type for performance optimization.
-			RpcContextHolder.get().set(new ReferenceKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
+			RpcContextHolder.get().set(new RpcContextHolder.ReferenceKey(CURRENT_IAM_PRINCIPAL), currentPrincipal);
 			return parameters;
 		}
 

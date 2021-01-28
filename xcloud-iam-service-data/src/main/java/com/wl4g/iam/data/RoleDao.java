@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.data;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Role;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:role-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:role-dao}")
 @RequestMapping("/role")
 public interface RoleDao {
 

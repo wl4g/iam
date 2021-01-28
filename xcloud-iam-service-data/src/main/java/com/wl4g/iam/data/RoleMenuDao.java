@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.RoleMenu;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:roleMenu-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:roleMenu-dao}")
 @RequestMapping("/roleMenu")
 public interface RoleMenuDao {
 

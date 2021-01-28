@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.RoleUser;
 
 /**
@@ -34,7 +34,7 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:roleUser-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:roleUser-dao}")
 @RequestMapping("/roleUser")
 public interface RoleUserDao {
 

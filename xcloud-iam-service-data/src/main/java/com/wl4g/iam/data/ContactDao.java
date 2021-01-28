@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.data.fallback.ContactDaoFallbackFactory;
 
@@ -36,7 +36,7 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId.iam-data:contact-dao}", fallbackFactory = ContactDaoFallbackFactory.class)
+@FeignConsumer(name = "${provider.serviceId.iam-data:contact-dao}", fallbackFactory = ContactDaoFallbackFactory.class)
 // @FeignClient(name="contact-dao",fallbackFactory=ContactDaoFallbackFactory.class)//for-equivalent
 @RequestMapping("/contact")
 public interface ContactDao {

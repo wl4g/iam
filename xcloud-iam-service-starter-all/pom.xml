@@ -24,11 +24,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
@@ -43,11 +43,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
@@ -62,11 +62,11 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
+					<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
@@ -77,7 +77,7 @@
 		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+			<artifactId>xcloud-component-rpc-feign-core</artifactId>
 		</dependency>
 		<!-- Test's -->
 		<dependency>

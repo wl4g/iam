@@ -18,7 +18,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 
 /**
  * {@link IamFacade}
@@ -29,7 +29,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignC
  * @see
  */
 // @EnableFeignProviderProxies("com.wl4g.iam.service")
-@EnableSpringBootFeignClients("com.wl4g.iam.data")
+@EnableFeignConsumers("com.wl4g.iam.data")
 @SpringBootApplication
 public class IamFacade {
 

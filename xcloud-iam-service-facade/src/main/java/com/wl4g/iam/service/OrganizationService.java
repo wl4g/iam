@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-facade:organization-service}")
+@FeignConsumer("${provider.serviceId.iam-facade:organization-service}")
 @RequestMapping("/organization")
 public interface OrganizationService {
 

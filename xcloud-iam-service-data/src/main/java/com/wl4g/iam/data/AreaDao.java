@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Area;
 
 /**
@@ -34,7 +34,7 @@ import com.wl4g.iam.common.bean.Area;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:area-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:area-dao}")
 @RequestMapping("/area")
 public interface AreaDao {
 

@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.ContactGroup;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-facade:contactGroup-service}")
+@FeignConsumer("${provider.serviceId.iam-facade:contactGroup-service}")
 @RequestMapping("/contactGroup")
 public interface ContactGroupService {
 

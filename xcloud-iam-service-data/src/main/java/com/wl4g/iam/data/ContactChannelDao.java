@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.ContactChannel;
 
 /**
@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.ContactChannel;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("${provider.serviceId.iam-data:contactChannel-dao}")
+@FeignConsumer("${provider.serviceId.iam-data:contactChannel-dao}")
 @RequestMapping("/contactChannel")
 public interface ContactChannelDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
