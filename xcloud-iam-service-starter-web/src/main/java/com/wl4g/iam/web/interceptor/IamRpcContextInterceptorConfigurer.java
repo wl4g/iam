@@ -23,7 +23,7 @@ import static com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder.R
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
 import com.wl4g.component.rpc.springboot.feign.context.RpcContextHolder;
-import com.wl4g.component.rpc.springboot.feign.context.interceptor.FeignContextAutoConfiguration.FeignContextProxyProcessor;
+import com.wl4g.component.rpc.springboot.feign.context.interceptor.FeignRpcContextAutoConfiguration.FeignRpcContextProcessor;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
@@ -38,7 +38,7 @@ import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ContextIAMConstants.*;
 
 /**
- * {@link IamSecurityContextConfigurer}
+ * {@link IamRpcContextInterceptorConfigurer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-25
@@ -47,29 +47,29 @@ import static com.wl4g.iam.common.constant.ContextIAMConstants.*;
  */
 @Configuration
 @ConditionalOnClass(RpcContextHolder.class)
-public class IamSecurityContextConfigurer {
-	protected final SmartLogger log = getLogger(getClass());
+public class IamRpcContextInterceptorConfigurer {
 
 	@Bean
-	public IamContextAttributeProxyProcessor iamContextAttributeProxyProcessor() {
-		return new IamContextAttributeProxyProcessor();
+	public SecurityRpcContextProcessor securityRpcContextProcessor() {
+		return new SecurityRpcContextProcessor();
 	}
 
-	class IamContextAttributeProxyProcessor implements SmartProxyProcessor {
+	class SecurityRpcContextProcessor implements SmartProxyProcessor {
+		protected final SmartLogger log = getLogger(getClass());
 
 		@Override
 		public int getOrder() {
-			return FeignContextProxyProcessor.ORDER + 1;
+			return FeignRpcContextProcessor.ORDER + 1;
 		}
 
 		@Override
 		public boolean supportTypeProxy(Object target, Class<?> actualOriginalTargetClass) {
-			return FeignContextProxyProcessor.checkSupportTypeProxy(target, actualOriginalTargetClass);
+			return FeignRpcContextProcessor.checkSupportTypeProxy(target, actualOriginalTargetClass);
 		}
 
 		@Override
 		public boolean supportMethodProxy(Object target, Method method, Class<?> actualOriginalTargetClass, Object... args) {
-			return FeignContextProxyProcessor.checkSupportMethodProxy(target, method, actualOriginalTargetClass, args);
+			return FeignRpcContextProcessor.checkSupportMethodProxy(target, method, actualOriginalTargetClass, args);
 		}
 
 		@Override
