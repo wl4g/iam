@@ -47,10 +47,10 @@ public final class RpcIamSecurityUtils {
 	}
 
 	public static IamPrincipal currentIamPrincipal() {
-		if (nonNull(rpcContextHolderClass) && nonNull(refAttachmentKeyClass)) { // Distributed?
+		if (nonNull(rpcContextHolderClass) && nonNull(referenceKeyClass)) { // Distributed?
 			try {
-				Constructor<?> refAttachmentConst = refAttachmentKeyClass.getConstructor(String.class);
-				Object refAttachmentKey = refAttachmentConst.newInstance(CURRENT_IAM_PRINCIPAL);
+				Constructor<?> referenceKeyConst = referenceKeyClass.getConstructor(String.class);
+				Object refAttachmentKey = referenceKeyConst.newInstance(CURRENT_IAM_PRINCIPAL);
 				return (IamPrincipal) invokeMethod(RPC_CONTEXT_HOLDER_GET_METHOD2, currentRpcContextHolder(), refAttachmentKey,
 						SimpleIamPrincipal.class);
 			} catch (Exception e) {
@@ -86,14 +86,14 @@ public final class RpcIamSecurityUtils {
 
 	public static final Class<?> rpcContextHolderClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.feign.core.context.RpcContextHolder");
-	public static final Class<?> refAttachmentKeyClass = resolveClassNameNullable(
+	public static final Class<?> referenceKeyClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.feign.core.context.RpcContextHolder.ReferenceKey");
 
 	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD0 = findMethodNullable(rpcContextHolderClass, "get");
 	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD1 = findMethodNullable(rpcContextHolderClass, "get", String.class,
 			Class.class);
 	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD2 = findMethodNullable(rpcContextHolderClass, "get",
-			refAttachmentKeyClass, Class.class);
+			referenceKeyClass, Class.class);
 	public static final Method IAMSECURITYHOLDER_GETPRINCIPALINFO_METHOD = findMethodNullable(
 			resolveClassNameNullable("com.wl4g.iam.core.utils.IamSecurityHolder"), "getPrincipalInfo");
 
