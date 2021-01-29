@@ -28,6 +28,7 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.core.utils.web.WebUtils3.*;
 import static com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import static java.util.Objects.isNull;
@@ -51,7 +52,8 @@ public abstract class IamOrganizationUtils {
 	 * @return
 	 */
 	public static List<OrganizationInfo> getSessionOrganizations() {
-		IamPrincipal currentPrincipal = RpcIamSecurityUtils.currentIamPrincipal();
+		IamPrincipal currentPrincipal = RpcContextSecurityUtils.currentIamPrincipal();
+		notNullOf(currentPrincipal, "currentIamPrincipal");
 		return safeList(currentPrincipal.getOrganization().getOrganizations());
 	}
 

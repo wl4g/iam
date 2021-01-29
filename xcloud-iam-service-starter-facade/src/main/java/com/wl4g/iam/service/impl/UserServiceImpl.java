@@ -22,7 +22,7 @@ import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleUser;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
+import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.RoleDao;
@@ -75,8 +75,8 @@ public class UserServiceImpl implements UserService {
 		pm.count().startPage();
 
 		// Current login principal.
-		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
-		String principalName = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principalName = RpcContextSecurityUtils.currentIamPrincipalName();
 
 		List<User> list = null;
 		if (DEFAULT_SUPER_USER.equals(principalName)) {

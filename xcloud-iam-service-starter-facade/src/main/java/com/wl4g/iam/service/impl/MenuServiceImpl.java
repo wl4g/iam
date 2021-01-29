@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
+import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
@@ -80,8 +80,8 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public List<Menu> findMenuList() {
 
-		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
 		List<Menu> result;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			result = menuDao.selectWithRoot();// root
@@ -240,8 +240,8 @@ public class MenuServiceImpl implements MenuService {
 
 	private Set<Menu> obtainMenuSet() {
 
-		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
 
 		List<Menu> menus = null;
 		if (DEFAULT_SUPER_USER.equals(principal)) {

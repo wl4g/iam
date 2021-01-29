@@ -29,6 +29,7 @@ import com.wl4g.iam.core.config.CorsAutoConfiguration;
 import com.wl4g.iam.core.config.ReplayAutoConfiguration;
 import com.wl4g.iam.core.config.XsrfAutoConfiguration;
 import com.wl4g.iam.core.config.XssAutoConfiguration;
+import com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration;
 
 /**
  * When enabled, all requests go through spring.cloud.devops . iam.client.filter
@@ -47,7 +48,7 @@ import com.wl4g.iam.core.config.XssAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ IamClientAutoConfiguration.class, CorsAutoConfiguration.class, XsrfAutoConfiguration.class, XssAutoConfiguration.class,
-		ReplayAutoConfiguration.class, ConsoleAutoConfiguration.class })
+		ReplayAutoConfiguration.class, ConsoleAutoConfiguration.class, RpcContextIamSecurityAutoConfiguration.class })
 public @interface EnableIamClient {
 
 }

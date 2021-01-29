@@ -21,7 +21,7 @@ import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.RoleMenu;
-import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
+import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
 import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.data.RoleDao;
@@ -73,8 +73,8 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> getLoginRoles() {
-		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			return roleDao.selectWithRoot(null, null, null);
 		} else {
@@ -85,8 +85,8 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
 		// Current login principal.
-		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
-		String principalName = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principalName = RpcContextSecurityUtils.currentIamPrincipalName();
 
 		List<Long> groupIds = null;
 		if (isNotBlank(organizationId)) {

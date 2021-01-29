@@ -18,7 +18,7 @@ package com.wl4g.iam.service.impl;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
+import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
 import com.wl4g.iam.data.OrganizationDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.service.OrganizationService;
@@ -56,7 +56,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 	@Override
 	public List<Organization> getLoginOrganizationTree() {
-		String principal = RpcIamSecurityUtils.currentIamPrincipalName();
+		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
 		Set<Organization> orgs = getUserOrganizations(new User(principal));
 		return transfromOrganTree(new ArrayList<>(orgs));
 	}
