@@ -87,7 +87,7 @@ public final class RpcIamSecurityUtils {
 	public static final Class<?> rpcContextHolderClass = resolveClassNameNullable(
 			"com.wl4g.component.rpc.feign.core.context.RpcContextHolder");
 	public static final Class<?> refAttachmentKeyClass = resolveClassNameNullable(
-			"com.wl4g.component.rpc.feign.core.context.RpcContextHolder.RefAttachmentKey");
+			"com.wl4g.component.rpc.feign.core.context.RpcContextHolder.ReferenceKey");
 
 	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD0 = findMethodNullable(rpcContextHolderClass, "get");
 	public static final Method RPC_CONTEXT_HOLDER_GET_METHOD1 = findMethodNullable(rpcContextHolderClass, "get", String.class,
