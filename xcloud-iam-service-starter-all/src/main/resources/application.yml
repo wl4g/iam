@@ -40,7 +40,10 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.iam.data: DEBUG
+      wl4g.iam:
+        data: DEBUG
+        service: DEBUG
+        web: DEBUG
 
 # ### Server configuration. ###
 server:
