@@ -1,6 +1,17 @@
 ### A Unified identity authentication and access control management implementation, supporting wechat/qq/facebook and other SNS authentication, opensaml API authorization, built-in interface level AOP secondary authentication implementation.
 
 #### Quick Start
+- Compile Installing
+
+```
+cd xcloud-devops
+# Packaged as a single executable jar
+mvn -U clean install -DskipTests -T 2C -P springExecJar
+# Packaged as general software release package (directory structure)
+# mvn -U clean install -DskipTests -T 2C -P mvnAssTar
+```
+
+
 - 1，Server integration:
     - 1.1，Independent operation mode, using Iam database tables, is suitable for new system integration.
     - 1.2，Depending on embedded mode and using external custom database tables, it is suitable for old system transformation and integration.

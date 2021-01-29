@@ -1,6 +1,16 @@
 ### 一个基于CAS协议的SSO登录认证企业级增强实现(PC/Android/iOS/WechatMp统一接口)，还支持QQ/Facebook等社交SNS授权认证，提供Opensaml开放API授权，内置接口级AOP二次认证实现等.
 
 #### 一、快速开始
+- 编译安装
+
+```
+cd xcloud-iam
+# 打包为单个可执行jar
+mvn -U clean install -DskipTests -T 2C -P springExecJar
+# 打包为通用软件发布包(目录结构)
+# mvn -U clean install -DskipTests -T 2C -P mvnAssTar
+```
+
 
 ##### 1，服务端集成：
 - 1.1，独立运行模式，使用iam的数据库表，适用于新系统集成，
