@@ -63,7 +63,7 @@ public class DictServiceImpl implements DictService {
 
 	@Override
 	public PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description) {
-		pm.startPage();
+		pm.count().startPage();
 		pm.setRecords(dictDao.list(key, label, type, description, null));
 		return pm;
 	}

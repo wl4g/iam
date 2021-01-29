@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
-		pm.startPage();
+		pm.count().startPage();
 
 		// Current login principal.
 		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
