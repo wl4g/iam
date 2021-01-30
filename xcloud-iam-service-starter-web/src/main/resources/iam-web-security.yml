@@ -15,7 +15,7 @@ spring:
     component:
       web:
         embedded-webapps:
-          enable: true # Default false
+          enabled: true # Default false
           base-uri: /view
           webapp-location: classpath*:/default-webapps
     iam: # IAM server configuration.

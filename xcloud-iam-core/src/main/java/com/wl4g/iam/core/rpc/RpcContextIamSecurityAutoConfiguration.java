@@ -22,7 +22,7 @@ package com.wl4g.iam.core.rpc;
 import com.wl4g.component.common.bridge.FeignRpcContextProcessorBridgeUtils;
 import com.wl4g.component.common.bridge.RpcContextHolderBridgeUtils;
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.proxy.SmartProxyProcessor;
+import com.wl4g.component.core.framework.proxy.SmartProxyInterceptor;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
@@ -47,11 +47,11 @@ import static com.wl4g.iam.common.constant.RpcContextIAMConstants.*;
 public class RpcContextIamSecurityAutoConfiguration {
 
 	@Bean
-	public SecurityRpcContextProcessor securityRpcContextProcessor() {
-		return new SecurityRpcContextProcessor();
+	public RpcContextSecurityProxyInterceptor rpcContextSecurityProxyInterceptor() {
+		return new RpcContextSecurityProxyInterceptor();
 	}
 
-	class SecurityRpcContextProcessor implements SmartProxyProcessor {
+	class RpcContextSecurityProxyInterceptor implements SmartProxyInterceptor {
 		protected final SmartLogger log = getLogger(getClass());
 
 		@Override
