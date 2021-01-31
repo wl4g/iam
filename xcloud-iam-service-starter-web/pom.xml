@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-iam-service-starter-web</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Service Starter of Web</name>
+	<name>XCloud IAM Service Starter of Web (impl)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
