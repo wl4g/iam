@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wl4g.StandaloneIamWeb;
+import com.wl4g.StandaloneIamServer;
 import com.wl4g.component.common.serialize.ProtostuffUtils;
 import com.wl4g.component.support.redis.jedis.JedisClientFactoryBean;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
@@ -36,7 +36,7 @@ import com.wl4g.iam.core.session.IamSession;
 import redis.clients.jedis.ScanParams;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIamWeb.class)
+@SpringBootTest(classes = StandaloneIamServer.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class ScanCursorTests {
 

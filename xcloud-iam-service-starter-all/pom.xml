@@ -169,7 +169,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>com.wl4g.StandaloneIamWeb</mainClass>
+							<mainClass>com.wl4g.StandaloneIamServer</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 						</configuration>
 						<executions>
