@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.notification;
 
-import com.wl4g.StandaloneIamServer;
+import com.wl4g.StandaloneIamWeb;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIamServer.class, properties = { KEY_SUPPORT_NOTIFY_PREFIX + ".vms.enable=true",
+@SpringBootTest(classes = StandaloneIamWeb.class, properties = { KEY_SUPPORT_NOTIFY_PREFIX + ".vms.enable=true",
 		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.regionId=cn-hangzhou",
 		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
 		// Sensitive config, oneself setup

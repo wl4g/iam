@@ -29,10 +29,10 @@ import com.wl4g.iam.annotation.EnableIamServer;
 @EnableIamServer
 @EnableComponentDBConfiguration("com.wl4g.iam.data")
 @SpringBootApplication
-public class StandaloneIamServer {
+public class StandaloneIamWeb {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StandaloneIamServer.class, args);
+		SpringApplication.run(StandaloneIamWeb.class, args);
 	}
 
 }
