@@ -25,13 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wl4g.StandaloneIamWeb;
+import com.wl4g.StandaloneIamServer;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.core.web.AbstractApiEndpoint;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIamWeb.class)
+@SpringBootTest(classes = StandaloneIamServer.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class GenericApiEndpointTests {
 

@@ -22,12 +22,12 @@ import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wl4g.StandaloneIamWeb;
+import com.wl4g.StandaloneIamServer;
 import com.wl4g.iam.core.session.NoOpSession;
 import com.wl4g.iam.core.session.mgt.support.IamUidSessionIdGenerator;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIamWeb.class)
+@SpringBootTest(classes = StandaloneIamServer.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class IamUidSessionIdGeneratorTests {
 
