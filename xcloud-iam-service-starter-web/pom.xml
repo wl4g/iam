@@ -37,7 +37,8 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
+				<filtering>false</filtering>
 				<excludes>
 					<exclude>script/**</exclude>
 				</excludes>
@@ -138,9 +139,9 @@
 							<mainClass>${bootstrap-classname}</mainClass>
 							<finalName>iam-web-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
-                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
-                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
-                            <layout>ZIP</layout>
+							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+							<layout>ZIP</layout>
 						</configuration>
 						<executions>
 							<execution>
