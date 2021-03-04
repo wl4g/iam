@@ -26,10 +26,7 @@ import com.wl4g.component.core.bean.BaseBean;
  */
 public class ClusterConfig extends BaseBean {
 	private static final long serialVersionUID = -7546448616357790576L;
-
-	private Long clusterId;
-	private String name;
-	private String displayName;
+	private String appName;
 	private Integer type;
 	private String envType;
 	private String viewExtranetBaseUri;
@@ -39,25 +36,9 @@ public class ClusterConfig extends BaseBean {
 	public ClusterConfig() {
 	}
 
-	public ClusterConfig(String name, String viewExtranetBaseUri) {
-		this.name = name;
+	public ClusterConfig(String appName, String viewExtranetBaseUri) {
+		this.appName = appName;
 		this.viewExtranetBaseUri = viewExtranetBaseUri;
-	}
-
-	public Long getClusterId() {
-		return clusterId;
-	}
-
-	public void setClusterId(Long clusterId) {
-		this.clusterId = clusterId;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName == null ? null : displayName.trim();
 	}
 
 	public Integer getType() {
@@ -100,11 +81,11 @@ public class ClusterConfig extends BaseBean {
 		this.intranetBaseUri = intranetBaseUri == null ? null : intranetBaseUri.trim();
 	}
 
-	public String getName() {
-		return name;
+	public String getAppName() {
+		return appName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setAppName(String appName) {
+		this.appName = appName;
 	}
 }

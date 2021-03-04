@@ -121,7 +121,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 					iamHelper.getApplicationActiveEnvironmentType(), null);
 			for (ClusterConfig cc : ccs) {
 				ApplicationInfo app = new ApplicationInfo();
-				app.setAppName(cc.getName());
+				app.setAppName(cc.getAppName());
 				app.setExtranetBaseUri(cc.getExtranetBaseUri());
 				app.setIntranetBaseUri(cc.getIntranetBaseUri());
 				app.setViewExtranetBaseUri(cc.getViewExtranetBaseUri());

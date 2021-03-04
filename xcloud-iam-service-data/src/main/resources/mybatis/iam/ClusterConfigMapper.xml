@@ -3,8 +3,7 @@
 <mapper namespace="com.wl4g.iam.data.ClusterConfigDao">
 	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.ClusterConfig">
 		<id column="id" property="id" jdbcType="BIGINT" />
-		<result column="cluster_id" property="clusterId" jdbcType="BIGINT" />
-		<result column="display_name" property="displayName" jdbcType="VARCHAR" />
+		<result column="app_name" property="appName" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="INTEGER" />
 		<result column="env_type" property="envType" jdbcType="VARCHAR" />
 		<result column="view_extranet_base_uri" property="viewExtranetBaseUri" jdbcType="VARCHAR" />
@@ -16,17 +15,14 @@
 		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
-
-		<!--other -->
-		<result column="name" property="name" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, cluster_id, display_name, type, env_type, view_extranet_base_uri, extranet_base_uri,
+		id, app_name, type, env_type, view_extranet_base_uri, extranet_base_uri,
 		intranet_base_uri, remark,
 		create_by, create_date, update_by, update_date, del_flag
 	</sql>
 	<sql id="Base_Column_List_a">
-		a.id, a.cluster_id, a.display_name, a.type, a.env_type, a.view_extranet_base_uri, a.extranet_base_uri,
+		a.id, a.app_name, a.type, a.env_type, a.view_extranet_base_uri, a.extranet_base_uri,
 		a.intranet_base_uri, a.remark, a.create_by, a.create_date, a.update_by, a.update_date, a.del_flag
 	</sql>
 
@@ -41,13 +37,13 @@
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
-		insert into sys_cluster_config (id, cluster_id, display_name,
+		insert into sys_cluster_config (id, app_name,
 		type, env_type,
 		view_extranet_base_uri,
 		extranet_base_uri, intranet_base_uri, remark,
 		create_by, create_date, update_by,
 		update_date, del_flag)
-		values (#{id,jdbcType=BIGINT}, #{clusterId,jdbcType=BIGINT}, #{displayName,jdbcType=VARCHAR},
+		values (#{id,jdbcType=BIGINT}, #{appName,jdbcType=VARCHAR},
 		#{type,jdbcType=INTEGER},
 		#{envType,jdbcType=VARCHAR}, #{viewExtranetBaseUri,jdbcType=VARCHAR},
 		#{extranetBaseUri,jdbcType=VARCHAR},
@@ -63,11 +59,8 @@
 			<if test="id != null">
 				id,
 			</if>
-			<if test="clusterId != null">
-				cluster_id,
-			</if>
-			<if test="displayName != null">
-				display_name,
+			<if test="appName != null">
+				app_name,
 			</if>
 			<if test="type != null">
 				type,
@@ -107,11 +100,8 @@
 			<if test="id != null">
 				#{id,jdbcType=BIGINT},
 			</if>
-			<if test="clusterId != null">
-				#{clusterId,jdbcType=BIGINT},
-			</if>
-			<if test="displayName != null">
-				#{displayName,jdbcType=VARCHAR},
+			<if test="appName != null">
+				#{appName,jdbcType=VARCHAR},
 			</if>
 			<if test="type != null">
 				#{type,jdbcType=INTEGER},
@@ -151,11 +141,8 @@
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
 		update sys_cluster_config
 		<set>
-			<if test="clusterId != null">
-				cluster_id = #{clusterId,jdbcType=BIGINT},
-			</if>
-			<if test="displayName != null">
-				display_name = #{displayName,jdbcType=VARCHAR},
+			<if test="appName != null">
+				app_name = #{appName,jdbcType=VARCHAR},
 			</if>
 			<if test="type != null">
 				type = #{type,jdbcType=INTEGER},
@@ -195,8 +182,7 @@
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
 		update sys_cluster_config
-		set cluster_id = #{clusterId,jdbcType=BIGINT},
-		display_name = #{displayName,jdbcType=VARCHAR},
+		app_name = #{appName,jdbcType=VARCHAR},
 		type = #{type,jdbcType=INTEGER},
 		env_type = #{envType,jdbcType=VARCHAR},
 		view_extranet_base_uri = #{viewExtranetBaseUri,jdbcType=VARCHAR},
@@ -215,12 +201,9 @@
 	<select id="getByAppName" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List_a" />
-		,c.name
 		FROM
 		sys_cluster_config a
-		inner join erm_app_cluster c on a.cluster_id = c.id
-		where c.name = #{appName,jdbcType=VARCHAR}
-
+		where a.app_name = #{appName,jdbcType=VARCHAR}
 		<if test="envType != null and envType != ''">
 			and a.env_type = #{envType,jdbcType=VARCHAR}
 		</if>
@@ -234,10 +217,8 @@
 	<select id="getIamServer" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List_a" />
-		,c.name
 		FROM
 		sys_cluster_config a
-		inner join erm_app_cluster c on a.cluster_id = c.id
 		where a.type = 1
 	</select>
 
@@ -245,13 +226,11 @@
 	<select id="selectByAppNames" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List_a" />
-		,c.name
 		FROM
 		sys_cluster_config a
-		inner join erm_app_cluster c on a.cluster_id = c.id
 		<where>
 			<if test="appNames != null and appNames.length > 0">
-				c.name in
+				a.app_name in
 				<foreach collection="appNames" item="appName" index="index" open="(" close=")" separator=",">
 					#{appName}
 				</foreach>

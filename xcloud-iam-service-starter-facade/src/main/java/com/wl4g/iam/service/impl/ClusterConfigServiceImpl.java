@@ -49,7 +49,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
-			map.put(entryAddress.getName(), entryAddress);
+			map.put(entryAddress.getAppName(), entryAddress);
 		}
 		return map;
 	}
