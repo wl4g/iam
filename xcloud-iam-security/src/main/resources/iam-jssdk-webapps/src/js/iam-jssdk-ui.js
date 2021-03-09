@@ -215,7 +215,7 @@
 	    		//baseUri: "http://localhost:14040/iam-web", // Using auto extra configure
 				defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 	   			defaultServerPort: 14040, // IAM server的port
-	   			defaultContextPath: "/iam-server" // IAM server的contextPath
+	   			defaultContextPath: "/iam-web" // IAM server的contextPath
 	 		},
 	 		// 初始相关配置(Event)
 	 		init: {

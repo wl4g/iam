@@ -1589,7 +1589,7 @@
 			baseUri: null, // IAM后端服务baseURI
 			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 			defaultServerPort: 14040, // 默认IAM Server的port
-			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
+			defaultContextPath: "/iam-web", // 默认IAM Server的context-path
 		},
 		// 初始相关配置(Event)
  		init: {
@@ -1935,7 +1935,7 @@
         	return protocol + "//" + hostname + ":" + servPort + contextPath;
         }
         // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
-		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+		// (接口地址如：iam-web.wl4g.com/iam-web, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
         else {
         	var topDomainName = Common.Util.extTopDomainString(hostname);
         	return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
@@ -2523,7 +2523,7 @@
 
 	// Multi modular authenticating handler
 	var _multiModularAuthenticatingHandler = {
-		isRedirectingLogin: false, // 标记正在中定向到登录页（当iam-server会话失效），解决并发请求时会多次重复执行回调函数redirectFn
+		isRedirectingLogin: false, // 标记正在中定向到登录页（当iam-web会话失效），解决并发请求时会多次重复执行回调函数redirectFn
 		mutexControllerManager: new Map(),
 		// Do multi modular authenticating and biz request.
 		doMultiModularRequest: function (method, url, params, successFn, errorFn, completeFn) {
@@ -3279,7 +3279,7 @@
 	    		//baseUri: "http://localhost:14040/iam-web", // Using auto extra configure
 				defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 	   			defaultServerPort: 14040, // IAM server的port
-	   			defaultContextPath: "/iam-server" // IAM server的contextPath
+	   			defaultContextPath: "/iam-web" // IAM server的contextPath
 	 		},
 	 		// 初始相关配置(Event)
 	 		init: {
