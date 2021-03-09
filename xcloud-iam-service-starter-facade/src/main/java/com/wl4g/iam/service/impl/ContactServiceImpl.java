@@ -15,6 +15,17 @@
  */
 package com.wl4g.iam.service.impl;
 
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
+
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.util.Assert;
+
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
@@ -27,17 +38,6 @@ import com.wl4g.iam.data.ContactChannelDao;
 import com.wl4g.iam.data.ContactDao;
 import com.wl4g.iam.data.ContactGroupRefDao;
 import com.wl4g.iam.service.ContactService;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.util.Assert;
-
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.component.core.bean.BaseBean.ENABLED;
-
-import java.util.List;
 
 /**
  * Notification to contacts service implements.
@@ -132,6 +132,11 @@ public class ContactServiceImpl implements ContactService {
 		pm.count().startPage();
 		pm.setRecords(contactDao.list(name));
 		return pm;
+	}
+
+	@Override
+	public List<Contact> findContactByGroupIds(List<Long> groupIds) {
+		return contactDao.getContactByGroupIds(groupIds);
 	}
 
 	@Override

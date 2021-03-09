@@ -22,6 +22,8 @@ package com.wl4g.iam.service.fallback;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.stereotype.Component;
@@ -74,6 +76,12 @@ public class ContactServiceFallbackFactory implements FallbackFactory<ContactSer
 			@Override
 			public void del(Long id) {
 				log.warn(format("Cannot del, fallback handling... - {}", id), cause);
+			}
+
+			@Override
+			public List<Contact> findContactByGroupIds(List<Long> groupIds) {
+				log.warn(format("Cannot findContactByGroupIds, fallback handling... - {}", groupIds), cause);
+				return null;
 			}
 		};
 	}
