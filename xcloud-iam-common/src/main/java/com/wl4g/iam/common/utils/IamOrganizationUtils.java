@@ -52,7 +52,7 @@ public abstract class IamOrganizationUtils {
 	 * @return
 	 */
 	public static List<OrganizationInfo> getSessionOrganizations() {
-		IamPrincipal currentPrincipal = RpcContextSecurityUtils.currentIamPrincipal();
+		IamPrincipal currentPrincipal = RpcContextIamSecurityUtils.currentIamPrincipal();
 		notNullOf(currentPrincipal, "currentIamPrincipal");
 		return safeList(currentPrincipal.getOrganization().getOrganizations());
 	}

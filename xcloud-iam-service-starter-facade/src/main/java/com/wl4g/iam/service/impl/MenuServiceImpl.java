@@ -15,20 +15,6 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
-import com.wl4g.iam.data.MenuDao;
-import com.wl4g.iam.service.MenuService;
-import com.wl4g.iam.service.OrganizationService;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
 import static com.wl4g.component.common.serialize.JacksonUtils.deepClone;
@@ -36,6 +22,25 @@ import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
+import com.wl4g.iam.data.MenuDao;
+import com.wl4g.iam.service.MenuService;
+import com.wl4g.iam.service.OrganizationService;
 
 /**
  * Menu service implements.
@@ -79,9 +84,8 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<Menu> findMenuList() {
-
-		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
-		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
 		List<Menu> result;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
 			result = menuDao.selectWithRoot();// root
@@ -240,8 +244,8 @@ public class MenuServiceImpl implements MenuService {
 
 	private Set<Menu> obtainMenuSet() {
 
-		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
-		String principal = RpcContextSecurityUtils.currentIamPrincipalName();
+		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
 
 		List<Menu> menus = null;
 		if (DEFAULT_SUPER_USER.equals(principal)) {

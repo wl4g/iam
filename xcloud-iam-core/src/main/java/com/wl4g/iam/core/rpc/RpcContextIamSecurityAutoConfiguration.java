@@ -19,21 +19,24 @@
  */
 package com.wl4g.iam.core.rpc;
 
-import com.wl4g.component.common.bridge.FeignRpcContextProcessorBridgeUtils;
-import com.wl4g.component.common.bridge.RpcContextHolderBridgeUtils;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.proxy.SmartProxyInterceptor;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.core.utils.IamSecurityHolder;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
+
+import java.lang.reflect.Method;
+
+import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 
-import javax.validation.constraints.NotNull;
-import java.lang.reflect.Method;
-
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.*;
+import com.wl4g.component.common.bridge.RpcContextHolderBridges;
+import com.wl4g.component.common.bridge.RpcContextProviderInterceptorBridges;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.proxy.SmartProxyInterceptor;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.utils.IamSecurityHolder;
 
 /**
  * {@link RpcContextIamSecurityAutoConfiguration}
@@ -43,7 +46,7 @@ import static com.wl4g.iam.common.constant.RpcContextIAMConstants.*;
  * @sine v1.0
  * @see
  */
-@ConditionalOnClass(name = RpcContextHolderBridgeUtils.rpcContextHolderClassName)
+@ConditionalOnClass(name = RpcContextHolderBridges.rpcContextHolderClassName)
 public class RpcContextIamSecurityAutoConfiguration {
 
 	@Bean
@@ -56,31 +59,31 @@ public class RpcContextIamSecurityAutoConfiguration {
 
 		@Override
 		public int getOrder() {
-			return FeignRpcContextProcessorBridgeUtils.invokeFieldOrder() + 1;
+			return RpcContextProviderInterceptorBridges.invokeFieldOrder() + 1;
 		}
 
 		@Override
 		public boolean supportTypeProxy(Object target, Class<?> actualOriginalTargetClass) {
-			return FeignRpcContextProcessorBridgeUtils.invokeCheckSupportTypeProxy(target, actualOriginalTargetClass);
+			return RpcContextProviderInterceptorBridges.invokeCheckSupportTypeProxy(target, actualOriginalTargetClass);
 		}
 
 		@Override
 		public boolean supportMethodProxy(Object target, Method method, Class<?> actualOriginalTargetClass, Object... args) {
-			return FeignRpcContextProcessorBridgeUtils.invokeCheckSupportMethodProxy(target, method, actualOriginalTargetClass,
+			return RpcContextProviderInterceptorBridges.invokeCheckSupportMethodProxy(target, method, actualOriginalTargetClass,
 					args);
 		}
 
 		@Override
 		public Object[] preHandle(@NotNull Object target, @NotNull Method method, Object[] parameters) {
 			// Bind iam current attributes to rpc context.
-			if (RpcContextHolderBridgeUtils.hasRpcContextHolderClass()) { // Distributed?
+			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed?
 				IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-				RpcContextHolderBridgeUtils.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-				RpcContextHolderBridgeUtils.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+				RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+				RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
 				// Set to reference type for performance optimization.
-				RpcContextHolderBridgeUtils.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+				RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
 			}
 			return parameters;
 		}

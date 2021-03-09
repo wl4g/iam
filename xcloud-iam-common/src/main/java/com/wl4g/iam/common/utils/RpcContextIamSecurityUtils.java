@@ -19,30 +19,33 @@
  */
 package com.wl4g.iam.common.utils;
 
+import static com.wl4g.component.common.bridge.RpcContextHolderBridges.hasRpcContextHolderClass;
+import static com.wl4g.component.common.bridge.RpcContextHolderBridges.invokeGet;
+import static com.wl4g.component.common.bridge.RpcContextHolderBridges.invokeGetRef;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
+
+import com.wl4g.component.common.bridge.IamSecurityHolderBridges;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.*;
-
-import com.wl4g.component.common.bridge.IamSecurityHolderBridgeUtils;
-import com.wl4g.component.common.bridge.RpcContextHolderBridgeUtils;
-
 /**
- * {@link RpcContextSecurityUtils}
+ * {@link RpcContextIamSecurityUtils}
  *
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-05
  * @sine v1.0
  * @see {@link com.wl4g.iam.web.interceptor.IamContextAutoConfiguration}
  */
-public abstract class RpcContextSecurityUtils extends RpcContextHolderBridgeUtils {
+public abstract class RpcContextIamSecurityUtils {
 
 	public static IamPrincipal currentIamPrincipal() {
 		if (hasRpcContextHolderClass()) { // Distributed-mode?
 			return (IamPrincipal) invokeGetRef(CURRENT_IAM_PRINCIPAL, SimpleIamPrincipal.class);
 		}
 		// Standalone mode
-		return (IamPrincipal) IamSecurityHolderBridgeUtils.invokeGetPrincipalInfo();
+		return (IamPrincipal) IamSecurityHolderBridges.invokeGetPrincipalInfo();
 	}
 
 	public static String currentIamPrincipalId() {
