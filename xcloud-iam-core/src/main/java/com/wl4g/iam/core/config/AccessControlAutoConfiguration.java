@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.core.config;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import com.wl4g.component.core.kit.access.IPAccessControl;
 import com.wl4g.component.core.kit.access.IPAccessControl.IPAccessProperties;
 
@@ -31,18 +31,17 @@ import com.wl4g.component.core.kit.access.IPAccessControl.IPAccessProperties;
  * @date 2018年5月24日
  * @since
  */
-@Configuration
-public class AccessControlConfiguration {
-
-	@Bean
-	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
-		return new IPAccessControl(properties);
-	}
+public class AccessControlAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = IP_ACCESS_PREFIX)
 	public IPAccessProperties ipAccessProperties() {
 		return new IPAccessProperties();
+	}
+
+	@Bean
+	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
+		return new IPAccessControl(properties);
 	}
 
 	final static String IP_ACCESS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".acl";
