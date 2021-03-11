@@ -15,16 +15,18 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.Role;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.Role;
 
 /**
  * {@link RoleService}
@@ -44,11 +46,13 @@ public interface RoleService {
 
 	// has too many Body parameters:
 	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Role> list(PageHolder<Role> pm, @RequestParam(value = "organizationId",required = false) String organizationId,
-			@RequestParam(value = "name",required = false) String name, @RequestParam(value = "displayName",required = false) String displayName);
+	PageHolder<Role> list(@RequestBody PageHolder<Role> pm,
+			@RequestParam(value = "organizationId", required = false) String organizationId,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "displayName", required = false) String displayName);
 
 	@RequestMapping(value = "/save", method = POST)
-	void save(Role role);
+	void save(@RequestBody Role role);
 
 	@RequestMapping(value = "/del", method = POST)
 	void del(@RequestParam("id") Long id);

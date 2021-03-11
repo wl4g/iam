@@ -15,20 +15,20 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.bean.User;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Set;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.bean.User;
 
 /**
  * {@link UserService}
@@ -44,10 +44,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface UserService {
 
 	@RequestMapping(value = "/findSimpleUser", method = GET)
-	User findSimpleUser(Long id);
+	User findSimpleUser(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/getMenusByUser", method = GET)
-	Set<Menu> getMenusByUser(Long userId);
+	Set<Menu> getMenusByUser(@RequestParam("userId") Long userId);
 
 	@RequestMapping(path = "/list", method = RequestMethod.POST)
 	PageHolder<User> list(@RequestBody PageHolder<User> pm, @RequestParam(value = "userName", required = false) String userName,
@@ -55,13 +55,13 @@ public interface UserService {
 			@RequestParam(value = "roleId", required = false) Long roleId);
 
 	@RequestMapping(value = "/save", method = POST)
-	void save(User user);
+	void save(@RequestBody User user);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long userId);
+	void del(@RequestParam("userId") Long userId);
 
 	@RequestMapping(value = "/detail", method = GET)
-	User detail(Long userId);
+	User detail(@RequestParam("userId") Long userId);
 
 	@RequestMapping(value = "/findByUserName", method = GET)
 	User findByUserName(@RequestParam("userName") String userName);

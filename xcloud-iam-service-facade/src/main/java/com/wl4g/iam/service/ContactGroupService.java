@@ -15,16 +15,19 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.ContactGroup;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.ContactGroup;
 
 /**
  * {@link ContactGroupService}
@@ -46,9 +49,9 @@ public interface ContactGroupService {
 	void save(@RequestBody ContactGroup contactGroup);
 
 	@RequestMapping(value = "/del", method = { DELETE })
-	void del(Long id);
+	void del(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/findContactGroups", method = GET)
-	List<ContactGroup> findContactGroups(@RequestParam(value = "name",required = false) String name);
+	List<ContactGroup> findContactGroups(@RequestParam(value = "name", required = false) String name);
 
 }

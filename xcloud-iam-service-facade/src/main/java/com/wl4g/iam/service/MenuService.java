@@ -15,17 +15,19 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.Menu;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.Menu;
 
 /**
  * {@link MenuService}
@@ -47,13 +49,13 @@ public interface MenuService {
 	List<Menu> findMenuList();
 
 	@PostMapping("/save")
-	void save(Menu menu);
+	void save(@RequestBody Menu menu);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/detail", method = GET)
-	Menu detail(Long id);
+	Menu detail(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/findRoot", method = GET)
 	List<Menu> findRoot();

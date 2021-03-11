@@ -52,13 +52,13 @@ import lombok.Getter;
 public interface ContactService {
 
 	@RequestMapping(value = "/save", method = POST)
-	void save(Contact contact);
+	void save(@RequestBody Contact contact);
 
 	@RequestMapping(value = "/detail", method = GET)
-	Contact detail(Long id);
+	Contact detail(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam("id") Long id);
 
 	@RequestMapping(value = "/list", method = POST)
 	PageHolder<Contact> list(@RequestBody PageHolder<Contact> pm, @RequestParam("name") String name);
