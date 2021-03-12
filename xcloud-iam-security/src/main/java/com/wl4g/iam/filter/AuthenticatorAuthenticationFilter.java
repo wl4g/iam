@@ -67,7 +67,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		 * Exclude default success pages to prevent unlimited redirects. </br>
 		 * </br>
 		 * However, it should be noted that there are conflicts, such as when
-		 * the success URI is http://xx/iam-server/view/index.html In the end,
+		 * the success URI is http://xx/iam-web/view/index.html In the end,
 		 * return true allows the request to cause 404
 		 */
 		// if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(),

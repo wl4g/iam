@@ -70,7 +70,7 @@ public abstract class IamAuthenticatingUtils extends IamSecurityHolder {
 	 * e.g.
 	 *
 	 * <pre>
-	 *  http://iam.xx.com/iam-server/xx/list?id=1  =>  http://iam.xx.com/iam-server/authenticator?id=1
+	 *  http://iam.xx.com/iam-web/xx/list?id=1  =>  http://iam.xx.com/iam-web/authenticator?id=1
 	 *  http://iam.xx.com/xx/list?id=1             =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com/xx/list/?id=1            =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com:8080/xx/list/?id=1       =>  http://iam.xx.com:8080/xx/authenticator?id=1

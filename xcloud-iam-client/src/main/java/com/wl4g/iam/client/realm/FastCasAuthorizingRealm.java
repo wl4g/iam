@@ -183,7 +183,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	private TicketValidateResult<IamPrincipal> doRequestRemoteTicketValidation(IamAuthenticationToken token,
 			String granticket) {
 		/**
-		 * The purpose of this function is to make iam-server a new child,
+		 * The purpose of this function is to make iam-web a new child,
 		 * dataCipherKey/accesstoken.
 		 * 
 		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)

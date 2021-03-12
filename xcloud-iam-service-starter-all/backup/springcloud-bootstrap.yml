@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: iam-server
+  application.name: iam-web
   # Note: When the springboot version is different, here bootstrap.yml Execute parsing
   # in '${spring.profiles.active}' The mechanism result of expression is different ???
   # for example: 'dao-${spring.profiles.active}' => 'dao-dev,dao-${spring.profiles.active}' ???

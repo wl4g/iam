@@ -279,7 +279,7 @@ public interface ServiceIAMConstants extends ConfigIAMConstants {
 	 */
 	public static final String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
 	/**
-	 * IAM system service role: iam-server.</br>
+	 * IAM system service role: iam-web.</br>
 	 * Can be used for user-client interception of unregistered state
 	 * processing.
 	 */

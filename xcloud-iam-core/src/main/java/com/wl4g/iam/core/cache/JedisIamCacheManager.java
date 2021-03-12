@@ -43,7 +43,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 
 	public JedisIamCacheManager(String prefix, JedisClient jedisClient) {
 		notNullOf(prefix, "prefix");
-		this.prefix = keyFormat(prefix, '_'); // e.g. iam-server => iam_server
+		this.prefix = keyFormat(prefix, '_'); // e.g. iam-web => iam_server
 		this.jedisClient = notNullOf(jedisClient, "jedisClient");
 	}
 

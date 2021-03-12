@@ -45,7 +45,7 @@ logging:
 
 # ### Server configuration. ###
 server:
-  port: 24040
+  port: 18081
   #address: 0.0.0.0
   sessionTimeout: 30
   servlet:

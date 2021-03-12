@@ -39,12 +39,12 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * IAM server base URI (public network)
 	 */
-	private String serverUri = "http://localhost:14040/iam-web";
+	private String serverUri = "http://localhost:18080/iam-web";
 
 	/**
 	 * This configuration item is used to specify a custom login page, default
 	 * to {spring.xcloud.iam.client.server-uri}, that is, the login page
-	 * controlled by iam-server.
+	 * controlled by iam-web.
 	 */
 	private String loginUri;
 
@@ -56,7 +56,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * IAM server unauthorized(403) page URI
 	 */
-	private String unauthorizedUri = "http://localhost:14040/iam-web" + DEFAULT_VIEW_403_URI;
+	private String unauthorizedUri = "http://localhost:18080/iam-web" + DEFAULT_VIEW_403_URI;
 
 	/**
 	 * Re-login callback URL, whether to use the previously remembered URL.

@@ -420,7 +420,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		fullParams.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
 		fullParams.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		/**
-		 * Echo iam-server session info. (Optional) </br>
+		 * Echo iam-web session info. (Optional) </br>
 		 * @see:{@link com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint#handshake()}
 		 */
 		fullParams.put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
@@ -664,15 +664,15 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * E.G.:</br>
 	 * </br>
 	 *
-	 * <b>Req1：</b>http://localhost:14040/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * <b>Req1：</b>http://localhost:18080/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * <b>Resp1：</b>login.html</br>
 	 * </br>
 	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/iam-web/favicon.ico</br>
+	 * rootFilter)</b>http://localhost:18080/iam-web/favicon.ico</br>
 	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * 302->http://localhost:18080/iam-web/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * </br>
-	 * <b>Req3：</b>http://localhost:14040/iam-web/view/login.html</br>
+	 * <b>Req3：</b>http://localhost:18080/iam-web/view/login.html</br>
 	 * </br>
 	 * <p>
 	 * No parameters for the second request for login.html ??? This is the

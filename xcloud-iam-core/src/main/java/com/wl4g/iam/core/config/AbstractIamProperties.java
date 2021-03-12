@@ -102,8 +102,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * Redirect to login URI.</br>
 	 * e.g. </br>
-	 * In IAM-Client: {iam-server-uri}/authenticator </br>
-	 * In IAM-Server: {iam-server-uri}/view/login.html
+	 * In IAM-Client: {iam-web-uri}/authenticator </br>
+	 * In IAM-Server: {iam-web-uri}/view/login.html
 	 *
 	 * @return
 	 */

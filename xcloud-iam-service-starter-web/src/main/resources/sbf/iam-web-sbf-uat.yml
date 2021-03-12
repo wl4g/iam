@@ -16,8 +16,8 @@ spring:
     component:
       rpc:
         feign:
-          #default-url: http://owner-node5:24040/iam-facade
-          default-url: http://owner-node5:24040
+          #default-url: http://owner-node5:18081/iam-facade
+          default-url: http://owner-node5:18081
           default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
           client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
           max-idle-connections: 520

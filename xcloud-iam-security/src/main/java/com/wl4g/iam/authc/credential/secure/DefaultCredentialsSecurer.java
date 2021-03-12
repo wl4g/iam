@@ -89,7 +89,7 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 		// CodecSource privateSalt = new CodecSource("safecloud");
 		// CodecSource privateSalt = new
 		// CodecSource("IamWithCipherPrivateSalt");
-		CodecSource privateSalt = new CodecSource("iam-serverdev");
+		CodecSource privateSalt = new CodecSource("iam-webdev");
 		CodecSource publicSalt = CodecSource.fromHex("a3e0b320c73020aa81ebf87bd8611bf1");
 		CodecSource salt = new CodecSource(crossCombined(privateSalt.getBytes(), publicSalt.getBytes()));
 

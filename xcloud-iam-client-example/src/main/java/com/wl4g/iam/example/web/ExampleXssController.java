@@ -44,7 +44,7 @@ public class ExampleXssController extends BaseController {
 	 * e.g.
 	 *
 	 * <pre>
-	 * http://localhost:14040/devops-iam/test/xss2?name=&lt;script&gt;alert("fuck")&lt;/script&gt;
+	 * http://localhost:18080/devops-iam/test/xss2?name=&lt;script&gt;alert("fuck")&lt;/script&gt;
 	 * </pre>
 	 *
 	 * @param name
