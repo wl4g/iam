@@ -40,7 +40,7 @@ import com.wl4g.iam.common.bean.User;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:user-service}")
-@RequestMapping("/user")
+@RequestMapping("/user-service")
 public interface UserService {
 
 	@RequestMapping(value = "/findSimpleUser", method = GET)

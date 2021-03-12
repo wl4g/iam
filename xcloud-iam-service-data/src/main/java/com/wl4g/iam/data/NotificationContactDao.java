@@ -26,8 +26,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.NotificationContact;
 
-@FeignConsumer("${provider.serviceId.iam-data:notificationContact-dao}")
-@RequestMapping("/notificationContact")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/notificationContact-dao")
 public interface NotificationContactDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

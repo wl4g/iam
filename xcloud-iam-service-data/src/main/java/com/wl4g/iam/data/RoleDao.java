@@ -35,8 +35,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:role-dao}")
-@RequestMapping("/role")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/role-dao")
 public interface RoleDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

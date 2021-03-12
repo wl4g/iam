@@ -35,8 +35,8 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:organizationRole-dao}")
-@RequestMapping("/organizationRole")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/organizationRole-dao")
 public interface OrganizationRoleDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

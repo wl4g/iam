@@ -34,8 +34,8 @@ import com.wl4g.iam.common.bean.Area;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:area-dao}")
-@RequestMapping("/area")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/area-dao")
 public interface AreaDao {
 
 	@RequestMapping(method = POST, value = "/deleteByPrimaryKey")

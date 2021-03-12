@@ -32,8 +32,8 @@ import com.wl4g.iam.common.bean.Company;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:company-dao}")
-@RequestMapping("/company")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/company-dao")
 public interface CompanyDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

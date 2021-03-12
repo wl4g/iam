@@ -32,8 +32,8 @@ import com.wl4g.iam.common.bean.Park;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:park-dao}")
-@RequestMapping("/park")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/park-dao")
 public interface ParkDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

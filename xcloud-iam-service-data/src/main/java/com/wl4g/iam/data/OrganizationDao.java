@@ -36,8 +36,8 @@ import java.util.Set;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:organization-dao}")
-@RequestMapping("/organization")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/organization-dao")
 public interface OrganizationDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("id") Long id);

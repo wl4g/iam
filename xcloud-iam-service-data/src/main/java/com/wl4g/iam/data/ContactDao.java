@@ -15,18 +15,19 @@
  */
 package com.wl4g.iam.data;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.data.fallback.ContactDaoFallbackFactory;
-
-import java.util.List;
 
 /**
  * {@link ContactDao}
@@ -36,9 +37,9 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.iam-data:contact-dao}", fallbackFactory = ContactDaoFallbackFactory.class)
+@FeignConsumer(name = "${provider.serviceId.iam-data:iam-data}", fallbackFactory = ContactDaoFallbackFactory.class)
 // @FeignClient(name="contact-dao",fallbackFactory=ContactDaoFallbackFactory.class)//for-equivalent
-@RequestMapping("/contact")
+@RequestMapping("/contact-dao")
 public interface ContactDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

@@ -34,8 +34,8 @@ import com.wl4g.iam.common.bean.RoleUser;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:roleUser-dao}")
-@RequestMapping("/roleUser")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/roleUser-dao")
 public interface RoleUserDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

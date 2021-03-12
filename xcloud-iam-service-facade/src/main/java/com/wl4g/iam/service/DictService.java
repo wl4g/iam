@@ -38,7 +38,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:dict-service}")
-@RequestMapping("/dict")
+@RequestMapping("/dict-service")
 public interface DictService {
 
 	@RequestMapping(value = "/list", method = POST)

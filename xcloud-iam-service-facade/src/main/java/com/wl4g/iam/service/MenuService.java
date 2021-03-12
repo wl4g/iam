@@ -39,7 +39,7 @@ import com.wl4g.iam.common.bean.Menu;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:menu-service}")
-@RequestMapping("/menu")
+@RequestMapping("/menu-service")
 public interface MenuService {
 
 	@RequestMapping(value = "/findMenuTree", method = POST)

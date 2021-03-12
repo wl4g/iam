@@ -34,7 +34,7 @@ import java.util.List;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:area-service}")
-@RequestMapping("/area")
+@RequestMapping("/area-service")
 public interface AreaService {
 
 	@RequestMapping(value = "/getAreaTree", method = GET)

@@ -38,7 +38,7 @@ import com.wl4g.iam.common.bean.Role;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:role-service}")
-@RequestMapping("/role")
+@RequestMapping("/role-service")
 public interface RoleService {
 
 	@RequestMapping(value = "/getLoginRoles", method = POST)

@@ -38,7 +38,7 @@ import com.wl4g.iam.service.fallback.ContactServiceFallbackFactory;
  * @see
  */
 @FeignConsumer(name = "${provider.serviceId.iam-facade:notificationContact-service}", fallbackFactory = ContactServiceFallbackFactory.class)
-@RequestMapping("/notificationContact")
+@RequestMapping("/notificationContact-service")
 public interface NotificationContactService {
 
 	@RequestMapping(method = POST, value = "/save")

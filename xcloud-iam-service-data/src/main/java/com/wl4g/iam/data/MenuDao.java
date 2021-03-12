@@ -35,8 +35,8 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:menu-dao}")
-@RequestMapping("/menu")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/menu-dao")
 public interface MenuDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

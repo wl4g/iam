@@ -32,8 +32,8 @@ import com.wl4g.iam.common.bean.Department;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:department-dao}")
-@RequestMapping("/department")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/department-dao")
 public interface DepartmentDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

@@ -48,7 +48,7 @@ import lombok.Getter;
  * @see
  */
 @FeignConsumer(name = "${provider.serviceId.iam-facade:contact-service}", fallbackFactory = ContactServiceFallbackFactory.class)
-@RequestMapping("/contact")
+@RequestMapping("/contact-service")
 public interface ContactService {
 
 	@RequestMapping(value = "/save", method = POST)

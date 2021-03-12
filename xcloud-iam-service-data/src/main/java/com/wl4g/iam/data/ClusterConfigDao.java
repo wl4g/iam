@@ -35,8 +35,8 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:clusterConfig-dao}")
-@RequestMapping("/clusterConfig")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/clusterConfig-dao")
 public interface ClusterConfigDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

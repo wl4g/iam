@@ -35,8 +35,8 @@ import java.util.List;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:dict-dao}")
-@RequestMapping("/dict")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/dict-dao")
 public interface DictDao {
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
 	int deleteByPrimaryKey(@RequestParam("key") String key);

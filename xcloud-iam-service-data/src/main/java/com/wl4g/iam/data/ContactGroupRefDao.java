@@ -33,8 +33,8 @@ import com.wl4g.iam.common.bean.ContactGroupRef;
  * @sine v1.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-data:contactGroupRef-dao}")
-@RequestMapping("/contactGroupRef")
+@FeignConsumer("${provider.serviceId.iam-data:iam-data}")
+@RequestMapping("/contactGroupRef-dao")
 public interface ContactGroupRefDao {
 
 	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })

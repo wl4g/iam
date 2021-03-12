@@ -39,7 +39,7 @@ import com.wl4g.iam.common.bean.User;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:organization-service}")
-@RequestMapping("/organization")
+@RequestMapping("/organization-service")
 public interface OrganizationService {
 
 	@RequestMapping(value = "/save", method = POST)

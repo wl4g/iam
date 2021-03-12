@@ -36,7 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:clusterConfig-service}")
-@RequestMapping("/clusterConfig")
+@RequestMapping("/clusterConfig-service")
 public interface ClusterConfigService {
 
 	@RequestMapping(value = "/loadInit", method = GET)

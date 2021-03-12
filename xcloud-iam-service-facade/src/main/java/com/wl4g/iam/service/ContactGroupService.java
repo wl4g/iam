@@ -39,7 +39,7 @@ import com.wl4g.iam.common.bean.ContactGroup;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade:contactGroup-service}")
-@RequestMapping("/contactGroup")
+@RequestMapping("/contactGroup-service")
 public interface ContactGroupService {
 
 	@RequestMapping(value = "/list", method = POST)
