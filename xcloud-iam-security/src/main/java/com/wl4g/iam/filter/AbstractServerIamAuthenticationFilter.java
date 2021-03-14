@@ -273,7 +273,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		Throwable exroot = getRootCause(ae);
 		String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
 		String tip = format("Failed to authentication of token: %s", token);
-		if (WebUtils2.checkRequestErrorStacktrace(request)) {
+		if (WebUtils2.isStacktraceRequest(request)) {
 			log.error(tip, ae);
 		} else {
 			log.error("{}, caused by: {}", tip, errmsg);
