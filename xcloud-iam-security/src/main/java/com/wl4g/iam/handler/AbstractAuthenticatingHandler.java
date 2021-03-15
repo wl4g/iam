@@ -28,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
-import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 
 /**
  * Abstract base iam authenticating handler.

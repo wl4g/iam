@@ -44,10 +44,10 @@ import javax.servlet.ServletResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.filter.IamAuthenticationFilter;
-import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.iam.core.web.servlet.IamCookie;

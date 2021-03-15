@@ -16,10 +16,10 @@
 package com.wl4g.iam.core.web;
 
 import com.wl4g.component.core.web.BaseController;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.annotation.XsrfController;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.CorsProperties;
-import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository;
 

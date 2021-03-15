@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.core.i18n;
+package com.wl4g.iam.common.i18n;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_LANG_NAME;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 import java.util.Locale;
 import java.util.Objects;
 
+import com.wl4g.component.common.bridge.IamSecurityHolderBridges;
 import com.wl4g.component.core.i18n.AbstractResourceMessageBundler;
 
 /**
@@ -38,7 +38,7 @@ public class SessionResourceMessageBundler extends AbstractResourceMessageBundle
 
 	@Override
 	protected Locale getSessionLocale() {
-		Object loc = getBindValue(KEY_LANG_NAME);
+		Object loc = IamSecurityHolderBridges.invokeGetBindValue(KEY_LANG_NAME);
 		Locale locale = null;
 		if (loc instanceof Locale) {
 			locale = (Locale) loc;

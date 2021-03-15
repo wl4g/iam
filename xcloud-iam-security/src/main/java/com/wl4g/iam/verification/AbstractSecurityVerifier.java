@@ -44,11 +44,11 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.component.common.codec.Base58;
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.exception.VerificationException;
-import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.verification.model.GenericVerifyResult;
