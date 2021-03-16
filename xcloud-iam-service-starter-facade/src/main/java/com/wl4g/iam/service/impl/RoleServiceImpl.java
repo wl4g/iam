@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
@@ -28,7 +29,6 @@ import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleMenuDao;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -155,6 +155,7 @@ public class RoleServiceImpl implements RoleService {
 		for (Long menuId : role.getMenuIds()) {
 			RoleMenu roleMenu = new RoleMenu();
 			roleMenu.preInsert();
+			roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
 			roleMenu.setMenuId(menuId);
 			roleMenu.setRoleId(role.getId());
 			roleMenus.add(roleMenu);
@@ -173,6 +174,7 @@ public class RoleServiceImpl implements RoleService {
 		if (nonNull(role.getOrganizationId())) {
 			OrganizationRole groupRole = new OrganizationRole();
 			groupRole.preInsert();
+			groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
 			groupRole.setGroupId(role.getOrganizationId());
 			groupRole.setRoleId(role.getId());
 			groupRoles.add(groupRole);
@@ -193,6 +195,7 @@ public class RoleServiceImpl implements RoleService {
 		for (Long menuId : menuIds) {
 			RoleMenu roleMenu = new RoleMenu();
 			roleMenu.preInsert();
+			roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
 			roleMenu.setMenuId(menuId);
 			roleMenu.setRoleId(role.getId());
 			roleMenus.add(roleMenu);
@@ -205,6 +208,7 @@ public class RoleServiceImpl implements RoleService {
 		for (Long groupId : role.getGroupIds()) {
 			OrganizationRole groupRole = new OrganizationRole();
 			groupRole.preInsert();
+			groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
 			groupRole.setGroupId(groupId);
 			groupRole.setRoleId(role.getId());
 			groupRoles.add(groupRole);

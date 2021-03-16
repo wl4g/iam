@@ -233,6 +233,9 @@
 			<if test="userType != null">
 				#{userType,jdbcType=INTEGER},
 			</if>
+			<if test="pubSalt != null">
+				#{pubSalt,jdbcType=VARCHAR},
+			</if>
 			<if test="enable != null">
 				#{enable,jdbcType=INTEGER},
 			</if>
