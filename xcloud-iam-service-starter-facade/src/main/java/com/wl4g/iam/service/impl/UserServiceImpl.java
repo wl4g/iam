@@ -16,7 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 
 		// Current login principal.
 		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();

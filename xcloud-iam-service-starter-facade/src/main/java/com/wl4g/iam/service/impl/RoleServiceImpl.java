@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -96,7 +96,7 @@ public class RoleServiceImpl implements RoleService {
 			groupIds = new ArrayList<>(set);
 		}
 
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<Role> roles = null;
 		if (DEFAULT_SUPER_USER.equals(principalName)) {
 			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);

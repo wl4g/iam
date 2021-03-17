@@ -15,19 +15,20 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.service.MenuService;
+import static com.wl4g.component.common.lang.Assert2.notEmpty;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.wl4g.component.common.lang.Assert2.notEmpty;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.service.MenuService;
 
 /**
  * @author vjay
@@ -44,9 +45,7 @@ public class MenuController {
 	@RequestMapping(value = "/tree")
 	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
-
 		Map<String, Object> result = menuService.findMenuTree();
-
 		resp.setData(result);
 		return resp;
 	}

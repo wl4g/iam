@@ -26,8 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.Assert;
 
-import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
@@ -129,7 +129,7 @@ public class ContactServiceImpl implements ContactService {
 
 	@Override
 	public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(contactDao.list(name));
 		return pm;
 	}

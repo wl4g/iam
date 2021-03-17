@@ -16,8 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.data.DictDao;
@@ -63,7 +62,7 @@ public class DictServiceImpl implements DictService {
 
 	@Override
 	public PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dictDao.list(key, label, type, description, null));
 		return pm;
 	}

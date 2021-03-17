@@ -62,14 +62,14 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public Map<String, Object> findMenuTree() {
 		Map<String, Object> result = new HashMap<>();
-		Set<Menu> menusSet = obtainMenuSet();
-		// List<Menu> menuTree = new ArrayList<>(obtainMenuSet(info));
-		List<Menu> menuTree = new ArrayList<>(deepClone(menusSet));
-		processMenuRoutePath(menuTree);
+		Set<Menu> menuSet = getUserMenuSet();
+
+		List<Menu> menuTree = new ArrayList<>(deepClone(menuSet));
+		resolveMenuRoutePath(menuTree);
 		menuTree = transformMenuTree(menuTree);
 
 		result.put("data", menuTree);
-		result.put("data2", new ArrayList<>(menusSet));
+		result.put("data2", menuSet);
 		return result;
 	}
 
@@ -93,7 +93,7 @@ public class MenuServiceImpl implements MenuService {
 			result = menuDao.selectByUserId(parseLongOrNull(principalId));
 		}
 		// deal with route path
-		processMenuRoutePath(result);
+		resolveMenuRoutePath(result);
 		return result;
 	}
 
@@ -157,7 +157,7 @@ public class MenuServiceImpl implements MenuService {
 		menuDao.updateByPrimaryKeySelective(menu);
 	}
 
-	private void processMenuRoutePath(List<Menu> list) {
+	private void resolveMenuRoutePath(List<Menu> list) {
 		for (Menu menu : list) {
 			menu.setRoutePath(menu.getRouteNamespace());
 			if (menu.getParentId() != null && menu.getParentId() > 0 && StringUtils.isNotBlank(menu.getRouteNamespace())) {
@@ -242,8 +242,7 @@ public class MenuServiceImpl implements MenuService {
 		}
 	}
 
-	private Set<Menu> obtainMenuSet() {
-
+	private Set<Menu> getUserMenuSet() {
 		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
 		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
 
