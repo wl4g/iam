@@ -19,22 +19,23 @@
  */
 package com.wl4g.iam.core.rpc;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 
-import java.lang.reflect.Method;
-
-import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.wl4g.component.common.bridge.RpcContextHolderBridges;
-import com.wl4g.component.common.bridge.RpcContextProviderInterceptorBridges;
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.proxy.SmartProxyInterceptor;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
@@ -50,31 +51,34 @@ import com.wl4g.iam.core.utils.IamSecurityHolder;
 public class RpcContextIamSecurityAutoConfiguration {
 
 	@Bean
-	public RpcContextSecurityProxyInterceptor rpcContextSecurityProxyInterceptor() {
-		return new RpcContextSecurityProxyInterceptor();
+	public RpcContextSecurityHandlerInterceptor rpcContextSecurityHandlerInterceptor() {
+		return new RpcContextSecurityHandlerInterceptor();
 	}
 
-	class RpcContextSecurityProxyInterceptor implements SmartProxyInterceptor {
+	@Bean
+	public RpcContextSecurityInterceptorMvcConfigurer rpcContextSecurityInterceptorMvcConfigurer(
+			RpcContextSecurityHandlerInterceptor interceptor) {
+		return new RpcContextSecurityInterceptorMvcConfigurer(interceptor);
+	}
+
+	class RpcContextSecurityInterceptorMvcConfigurer implements WebMvcConfigurer {
+		private final RpcContextSecurityHandlerInterceptor interceptor;
+
+		public RpcContextSecurityInterceptorMvcConfigurer(RpcContextSecurityHandlerInterceptor interceptor) {
+			this.interceptor = notNullOf(interceptor, "interceptor");
+		}
+
+		@Override
+		public void addInterceptors(InterceptorRegistry registry) {
+			registry.addInterceptor(interceptor).addPathPatterns("/**");
+		}
+	}
+
+	class RpcContextSecurityHandlerInterceptor implements HandlerInterceptor {
 		protected final SmartLogger log = getLogger(getClass());
 
 		@Override
-		public int getOrder() {
-			return RpcContextProviderInterceptorBridges.invokeFieldOrder() + 1;
-		}
-
-		@Override
-		public boolean supportTypeProxy(Object target, Class<?> actualOriginalTargetClass) {
-			return RpcContextProviderInterceptorBridges.invokeCheckSupportTypeProxy(target, actualOriginalTargetClass);
-		}
-
-		@Override
-		public boolean supportMethodProxy(Object target, Method method, Class<?> actualOriginalTargetClass, Object... args) {
-			return RpcContextProviderInterceptorBridges.invokeCheckSupportMethodProxy(target, method, actualOriginalTargetClass,
-					args);
-		}
-
-		@Override
-		public Object[] preHandle(@NotNull Object target, @NotNull Method method, Object[] parameters) {
+		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 			// Bind iam current attributes to rpc context.
 			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed?
 				IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
@@ -85,7 +89,7 @@ public class RpcContextIamSecurityAutoConfiguration {
 				// Set to reference type for performance optimization.
 				RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
 			}
-			return parameters;
+			return true;
 		}
 
 	}
