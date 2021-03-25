@@ -123,7 +123,7 @@ public interface ServiceIAMConstants extends ConfigIAMConstants {
 	 * IAM server base URI. You need to ensure synchronization with the
 	 * configuration in bootstrap.yml [spring.cloud.devops.iam.filter-chain]
 	 */
-	public static final String URI_S_BASE = "/internal";
+	public static final String URI_S_BASE = "/iam-s-internal";
 	/** IAM server validate API URI. */
 	public static final String URI_S_VALIDATE = "validate";
 	/** IAM server logout API URI. */
@@ -206,7 +206,7 @@ public interface ServiceIAMConstants extends ConfigIAMConstants {
 	/**
 	 * Generic API v1 base URL.
 	 */
-	public static final String URI_S_API_V2_BASE = "/api/v2";
+	public static final String URI_S_API_V2_BASE = URI_S_BASE + "/api/v2";
 	/**
 	 * Generic API v1 sessions list query.
 	 */
@@ -308,7 +308,7 @@ public interface ServiceIAMConstants extends ConfigIAMConstants {
 	public static final String LOCK_SESSION_VALIDATING = ":iam:c:validating:";
 
 	/** Fast-CAS client base URI. */
-	public static final String URI_C_BASE = "/internal";
+	public static final String URI_C_BASE = "/iam-c-internal";
 	/** Fast-CAS client logout URI. */
 	public static final String URI_C_LOGOUT = "logout";
 

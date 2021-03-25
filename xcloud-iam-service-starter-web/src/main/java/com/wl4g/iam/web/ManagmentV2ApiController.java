@@ -15,14 +15,10 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.utils.bean.BeanMapConvert;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.iam.common.bean.ClusterConfig;
-import com.wl4g.iam.core.web.model.SessionAttributeModel;
-import com.wl4g.iam.service.ClusterConfigService;
-import com.wl4g.iam.web.model.SessionDestroyClientModel;
-import com.wl4g.iam.web.model.SessionQueryClientModel;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_BASE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +33,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_BASE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.utils.bean.BeanMapConvert;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.iam.common.bean.ClusterConfig;
+import com.wl4g.iam.core.web.model.SessionAttributeModel;
+import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.web.model.SessionDestroyClientModel;
+import com.wl4g.iam.web.model.SessionQueryClientModel;
 
 /**
  * IAM management API v1 controller.</br>
@@ -55,12 +55,9 @@ import static org.springframework.util.Assert.notNull;
 @RequestMapping("/mgr/v2")
 public class ManagmentV2ApiController extends BaseController {
 
-	@Autowired
-	protected RestTemplate restTemplate;
-
 	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private ClusterConfigService clusterConfigService;
+	private @Autowired ClusterConfigService clusterConfigService;
+	private @Autowired RestTemplate restTemplate;
 
 	/**
 	 * Find IAM server list of sys_cluster_config.
@@ -68,9 +65,9 @@ public class ManagmentV2ApiController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(path = "findIamServers")
+	@RequestMapping(path = "getIamServers")
 	@RequiresPermissions(value = { "iam:online" })
-	public RespBase<?> findIamServers() throws Exception {
+	public RespBase<?> getIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(clusterConfigService.findOfIamServers());
 		return resp;
@@ -86,20 +83,20 @@ public class ManagmentV2ApiController extends BaseController {
 	@RequestMapping(path = "getSessions")
 	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> getRemoteSessions(@Validated SessionQueryClientModel query) throws Exception {
-		log.info("Get remote sessions for <= {} ...", query);
+		log.info("Gets remote sessions <= {} ...", query);
 
 		// Get remote IAM base URI.
 		ClusterConfig config = clusterConfigService.getClusterConfig(query.getId());
-		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
+		String url = buildRemoteApiURL(config.getExtranetBaseUri());
 		url += "?".concat(new BeanMapConvert(query).toUriParmaters());
-		log.info("Request get remote sessions for clusterConfigId: {}, URL: {}", query.getId(), url);
+		log.info("Request get remote sessions of clusterConfigId: {}, URL: {}", query.getId(), url);
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
 
-		log.info("Got remote sessions response for => {}", resp);
+		log.info("Got remote sessions. => {}", resp);
 		return resp;
 	}
 
@@ -113,7 +110,7 @@ public class ManagmentV2ApiController extends BaseController {
 	@PostMapping(path = "destroySessions")
 	@RequiresPermissions(value = { "iam:online" })
 	public RespBase<?> destroyRemoteSessions(@Validated SessionDestroyClientModel destroy) throws Exception {
-		log.info("Destroy remote sessions by <= {}", destroy);
+		log.info("Destroy remote sessions. <= {}", destroy);
 
 		// Get cluster configuration.
 		ClusterConfig config = clusterConfigService.getClusterConfig(destroy.getId());
@@ -122,8 +119,8 @@ public class ManagmentV2ApiController extends BaseController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<?> entity = new HttpEntity<>(destroy, headers);
-		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
-		log.info("Request destroy remote sessions for clusterConfigId: {}, URL: {}", destroy.getId(), url);
+		String url = buildRemoteApiURL(config.getExtranetBaseUri());
+		log.info("Request destroy remote sessions of clusterConfigId: {}, URL: {}", destroy.getId(), url);
 
 		// Do request.
 		RespBase<?> resp = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<RespBase<?>>() {
@@ -134,12 +131,12 @@ public class ManagmentV2ApiController extends BaseController {
 	}
 
 	/**
-	 * Get remote API v1 session URI.
+	 * Build get remote session URL.
 	 * 
 	 * @param remoteBaseUri
 	 * @return
 	 */
-	private String getRemoteApiV1SessionUri(String remoteBaseUri) {
+	private String buildRemoteApiURL(String remoteBaseUri) {
 		hasText(remoteBaseUri, "Iam mangement for to remoteApiBase URI must not be empty");
 		return remoteBaseUri + URI_S_API_V2_BASE + URI_S_API_V2_SESSION;
 	}

@@ -15,6 +15,28 @@
  */
 package com.wl4g.iam.core.web;
 
+import static com.wl4g.component.common.lang.DateUtils2.formatDate;
+import static com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper.parse;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION_REFATTRS;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.subject.support.DefaultSubjectContext.AUTHENTICATED_SESSION_KEY;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.google.common.annotations.Beta;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
@@ -26,30 +48,10 @@ import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.session.IamSession;
 import com.wl4g.iam.core.session.mgt.IamSessionDAO;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
+import com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
+import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
 import com.wl4g.iam.core.web.model.SessionDestroyModel;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-
-import static com.wl4g.component.common.lang.DateUtils2.formatDate;
-import static com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper.*;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
-import static com.wl4g.iam.core.web.model.SessionAttributeModel.CursorIndex;
-import static com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTHENTICATED_SESSION_KEY;
 
 /**
  * Generic abstract API controller.
@@ -61,7 +63,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTH
 @Beta
 @ResponseBody
 public abstract class AbstractApiEndpoint extends BaseController implements InitializingBean {
-	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
+	public static final String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**
 	 * IAM properties configuration.
@@ -154,7 +156,7 @@ public abstract class AbstractApiEndpoint extends BaseController implements Init
 	@GetMapping(path = URI_S_API_V2_SESSION)
 	public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		log.info("Get sessions by <= {}", query);
+		log.info("Gets sessions <= {}", query);
 
 		// Priority search principal.
 		if (!isBlank(query.getPrincipal())) {

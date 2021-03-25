@@ -20,6 +20,7 @@
 package com.wl4g.iam.core.rpc;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
 import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
@@ -27,6 +28,8 @@ import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PR
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.UnavailableSecurityManagerException;
+import org.apache.shiro.subject.Subject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,6 +37,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.wl4g.component.common.bridge.RpcContextHolderBridges;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
 
@@ -47,6 +51,8 @@ import com.wl4g.iam.core.utils.IamSecurityHolder;
  */
 @ConditionalOnClass(name = RpcContextHolderBridges.rpcContextHolderClassName)
 public class RpcContextIamSecurityAutoConfiguration {
+
+	private final SmartLogger log = getLogger(getClass());
 
 	@Bean
 	public RpcContextSecurityHandlerInterceptor rpcContextSecurityHandlerInterceptor() {
@@ -77,16 +83,24 @@ public class RpcContextIamSecurityAutoConfiguration {
 		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 			// Bind iam current attributes to rpc context.
 			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed(cluster)?
-				// The current authentication information needs to be set only
-				// when it has been authenticated.
-				if (IamSecurityHolder.getSubject().isAuthenticated()) {
-					IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+				try {
+					Subject subject = IamSecurityHolder.getSubject();
+					// The current authentication information needs to be set
+					// only
+					// when it has been authenticated.
+					if (subject.isAuthenticated()) {
+						IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-					RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-					RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+						RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+						RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
-					// Set to reference type for performance optimization.
-					RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+						// Set to reference type for performance optimization.
+						RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+					}
+				} catch (UnavailableSecurityManagerException e) {
+					// It may be a request that does not carry a session, such
+					// as getting a list of remote Iam sessions.
+					log.debug("The current authentication information is not set. {}", e.getLocalizedMessage());
 				}
 			}
 			return true;
