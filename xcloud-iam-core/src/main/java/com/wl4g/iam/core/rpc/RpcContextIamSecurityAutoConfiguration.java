@@ -76,14 +76,18 @@ public class RpcContextIamSecurityAutoConfiguration {
 		@Override
 		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 			// Bind iam current attributes to rpc context.
-			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed?
-				IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed(cluster)?
+				// The current authentication information needs to be set only
+				// when it has been authenticated.
+				if (IamSecurityHolder.getSubject().isAuthenticated()) {
+					IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-				RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-				RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+					RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+					RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
-				// Set to reference type for performance optimization.
-				RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+					// Set to reference type for performance optimization.
+					RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+				}
 			}
 			return true;
 		}

@@ -24,7 +24,7 @@ span a{color:#3481CF;text-decoration:none}
 #checkbox{margin:20px 0 0 0}
 .con-foot{color:#a6cbec;font-size:8px}
 #con-but a{color:#225592}
-#foot{position:absolute!important;bottom:0;left:0;z-index:1000;padding:10px 0;width:100%;font-size:14px;line-height:36px;text-align:center;color:#8699db}
+#foot{position:fixed!important;bottom:0;left:0;z-index:1000;padding:10px 0;width:100%;font-size:14px;line-height:36px;text-align:center;color:#8699db}
 #foot a,#foot a:hover{color:#8699db}
 #foot a label{margin:0;cursor:pointer;font-weight:normal}
 .main-right{position:absolute;right:20px;bottom:20%}
