@@ -46,8 +46,7 @@ import com.wl4g.component.common.log.SmartLogger;
  * @since
  */
 public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
-
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	private FilterChainManager chainManager;
 

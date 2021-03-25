@@ -15,11 +15,17 @@
  */
 package com.wl4g.iam.core.utils;
 
-import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.Assert2.isTrueOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
-import static com.wl4g.iam.core.session.NoOpSession.*;
+import static com.wl4g.iam.core.session.NoOpSession.DefaultNoOpSession;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.Serializable;
@@ -28,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
@@ -37,8 +44,8 @@ import org.apache.shiro.subject.Subject;
 import com.wl4g.component.core.utils.bean.BeanCopierUtils;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipalWrapper;
-import com.wl4g.iam.core.session.NoOpSession;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
+import com.wl4g.iam.core.session.NoOpSession;
 
 /**
  * Session bind holder utility.
@@ -94,11 +101,11 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
 	public static IamPrincipal getPrincipalInfo(boolean assertion) {
-		IamPrincipalWrapper wrap = (IamPrincipalWrapper) getSession()
+		IamPrincipalWrapper ipw = (IamPrincipalWrapper) getSession()
 				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, IamPrincipalWrapper.class));
 		if (assertion) {
-			isTrue((!isNull(wrap) && !isNull(wrap.getInfo())), UnauthenticatedException.class,
-					"Iam subject is required! unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+			isTrue((nonNull(ipw) && nonNull(ipw.getInfo())), UnauthenticatedException.class,
+					"No Iam authentication info in current session! unauthenticated? or is @EnableIamServer/@EnableIamClient not enable? or the invoking order is wrong?");
 		}
 
 		/**
@@ -109,7 +116,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 		 * 
 		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
 		 */
-		return BeanCopierUtils.clone(wrap.getInfo());
+		return BeanCopierUtils.clone(ipw.getInfo());
 	}
 
 	/**
