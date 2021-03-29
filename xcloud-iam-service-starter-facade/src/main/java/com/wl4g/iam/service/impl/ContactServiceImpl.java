@@ -129,7 +129,7 @@ public class ContactServiceImpl implements ContactService {
 
 	@Override
 	public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(contactDao.list(name));
 		return pm;
 	}

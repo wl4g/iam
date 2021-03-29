@@ -75,7 +75,7 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 
 	@Override
 	public PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(contactGroupDao.list(name));
 		return pm;
 	}
