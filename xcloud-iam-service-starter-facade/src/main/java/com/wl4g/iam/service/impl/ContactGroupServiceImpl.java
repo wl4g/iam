@@ -19,14 +19,13 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.iam.common.bean.ContactGroup;
 import com.wl4g.iam.data.ContactGroupDao;
 import com.wl4g.iam.service.ContactGroupService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.component.core.bean.BaseBean.ENABLED;
-
-import java.util.List;
 
 /**
  * {@link ContactGroupServiceImpl}
@@ -71,6 +70,11 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 	@Override
 	public List<ContactGroup> findContactGroups(String name) {
 		return contactGroupDao.list(name);
+	}
+
+	@Override
+	public ContactGroup getById(Long id) {
+		return contactGroupDao.selectByPrimaryKey(id);
 	}
 
 	@Override

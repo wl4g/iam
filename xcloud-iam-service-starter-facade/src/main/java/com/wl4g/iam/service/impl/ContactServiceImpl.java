@@ -135,7 +135,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public List<Contact> findContactByGroupIds(List<Long> groupIds) {
+	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
 		return contactDao.getContactByGroupIds(groupIds);
 	}
 

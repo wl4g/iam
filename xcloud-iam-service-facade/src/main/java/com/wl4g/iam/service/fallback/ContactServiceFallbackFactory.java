@@ -79,7 +79,7 @@ public class ContactServiceFallbackFactory implements FallbackFactory<ContactSer
 			}
 
 			@Override
-			public List<Contact> findContactByGroupIds(List<Long> groupIds) {
+			public List<Contact> getContactByGroupIds(List<Long> groupIds) {
 				log.warn(format("Cannot findContactByGroupIds, fallback handling... - {}", groupIds), cause);
 				return null;
 			}
