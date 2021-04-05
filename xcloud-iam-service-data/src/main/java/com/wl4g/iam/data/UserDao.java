@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.data;
 
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Dict;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

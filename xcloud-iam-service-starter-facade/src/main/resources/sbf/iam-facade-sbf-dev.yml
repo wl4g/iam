@@ -14,7 +14,7 @@
 spring:
   xcloud:
     component:
-      rpc:
+      integration:
         feign:
           #default-url: http://localhost:18082/iam-data
           default-url: http://localhost:18082

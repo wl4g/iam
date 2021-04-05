@@ -14,7 +14,7 @@
 spring:
   xcloud:
     component:
-      rpc:
+      integration:
         feign:
           #default-url: http://owner-node1:18082/iam-data
           default-url: http://owner-node1:18082
