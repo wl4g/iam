@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(FAT Test) configuration. ####
+# #### Environment(IAM Data Fat Configuration) configuration. ####
 #
 spring:
   # Spring datasource configuration.

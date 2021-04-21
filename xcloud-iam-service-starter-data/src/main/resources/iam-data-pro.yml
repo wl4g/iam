@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(PRO) configuration. ####
+# #### Environment(IAM Data Pro Configuration) configuration. ####
 #
 spring:
   # Spring datasource configuration.

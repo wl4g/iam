@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(PRO) configuration. ####
+# #### Environment(IAM Web Pro Configuration) configuration. ####
 #
 spring:
   xcloud:

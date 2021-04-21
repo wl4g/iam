@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Dubbo for Dev) configuration. ####
+# #### Environment(IAM Facade Dubbo-Feign Dev Configuration) configuration. ####
 #
 
 # http://dubbo.apache.org/docs/v2.7/user/configuration/properties/
