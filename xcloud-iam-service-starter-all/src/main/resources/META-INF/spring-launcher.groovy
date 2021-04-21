@@ -37,7 +37,7 @@ class IamWebSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-web,iam-facade,iam-data")
+		def configName = new StringBuffer("application,iam-standalone,iam-web,iam-facade,iam-data")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
