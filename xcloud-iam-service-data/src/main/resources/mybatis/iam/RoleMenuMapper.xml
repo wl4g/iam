@@ -81,7 +81,7 @@
 		</trim>
 	</insert>
 
-	<insert id="insertBatch" parameterType="java.util.Map">
+	<insert id="insertBatch" parameterType="com.wl4g.iam.data.model.RoleMenuList">
 		INSERT INTO sys_role_menu (id, role_id, menu_id,create_by, create_date)
 		VALUES
 		<foreach collection="roleMenus" item="roleMenu" separator=",">

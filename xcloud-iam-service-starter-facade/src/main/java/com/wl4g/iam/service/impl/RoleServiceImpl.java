@@ -27,6 +27,8 @@ import com.wl4g.iam.data.MenuDao;
 import com.wl4g.iam.data.OrganizationRoleDao;
 import com.wl4g.iam.data.RoleDao;
 import com.wl4g.iam.data.RoleMenuDao;
+import com.wl4g.iam.data.model.OrganizationRoleList;
+import com.wl4g.iam.data.model.RoleMenuList;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,6 +151,7 @@ public class RoleServiceImpl implements RoleService {
 
 	private void insert(Role role) {
 		role.preInsert();
+		role.setId(SnowflakeIdGenerator.getDefault().nextId());
 		roleDao.insertSelective(role);
 		List<RoleMenu> roleMenus = new ArrayList<>();
 		// menu
@@ -161,7 +164,9 @@ public class RoleServiceImpl implements RoleService {
 			roleMenus.add(roleMenu);
 		}
 		if (!isEmpty(roleMenus)) {
-			roleMenuDao.insertBatch(roleMenus);
+			RoleMenuList roleMenuList = new RoleMenuList();
+			roleMenuList.setRoleMenus(roleMenus);
+			roleMenuDao.insertBatch(roleMenuList);
 		}
 		// group
 		List<OrganizationRole> groupRoles = new ArrayList<>();
@@ -180,7 +185,9 @@ public class RoleServiceImpl implements RoleService {
 			groupRoles.add(groupRole);
 		}
 		if (!isEmpty(groupRoles)) {
-			groupRoleDao.insertBatch(groupRoles);
+			OrganizationRoleList organizationRoleList = new OrganizationRoleList();
+			organizationRoleList.setGroupRoles(groupRoles);
+			groupRoleDao.insertBatch(organizationRoleList);
 		}
 	}
 
@@ -201,7 +208,9 @@ public class RoleServiceImpl implements RoleService {
 			roleMenus.add(roleMenu);
 		}
 		if (!isEmpty(roleMenus)) {
-			roleMenuDao.insertBatch(roleMenus);
+			RoleMenuList roleMenuList = new RoleMenuList();
+			roleMenuList.setRoleMenus(roleMenus);
+			roleMenuDao.insertBatch(roleMenuList);
 		}
 		// group
 		List<OrganizationRole> groupRoles = new ArrayList<>();
@@ -214,7 +223,9 @@ public class RoleServiceImpl implements RoleService {
 			groupRoles.add(groupRole);
 		}
 		if (!isEmpty(groupRoles)) {
-			groupRoleDao.insertBatch(groupRoles);
+			OrganizationRoleList organizationRoleList = new OrganizationRoleList();
+			organizationRoleList.setGroupRoles(groupRoles);
+			groupRoleDao.insertBatch(organizationRoleList);
 		}
 	}
 

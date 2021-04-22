@@ -58,7 +58,7 @@
 		#{createDate,jdbcType=TIMESTAMP})
 	</insert>
 
-	<insert id="insertBatch" parameterType="java.util.Map">
+	<insert id="insertBatch" parameterType="com.wl4g.iam.data.model.OrganizationRoleList">
 		insert into sys_organization_role (id, organization_id, role_id,create_by, create_date)
 		VALUES
 		<foreach collection="groupRoles" item="groupRole" separator=",">

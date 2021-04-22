@@ -20,7 +20,7 @@ import java.io.Serializable;
 import com.wl4g.component.core.bean.BaseBean;
 
 public class RoleMenu extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066881L;
 
 	private Long roleId;
 	private Long menuId;

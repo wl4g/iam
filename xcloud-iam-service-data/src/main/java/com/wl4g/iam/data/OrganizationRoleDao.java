@@ -15,17 +15,17 @@
  */
 package com.wl4g.iam.data;
 
-import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.OrganizationRole;
+import com.wl4g.iam.data.model.OrganizationRoleList;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link OrganizationRoleDao}
@@ -55,7 +55,7 @@ public interface OrganizationRoleDao {
 	int insertSelective(@RequestBody OrganizationRole record);
 
 	@RequestMapping(method = POST, value = "/insertBatch")
-	int insertBatch(@Param("groupRoles") List<OrganizationRole> groupRoles);
+	int insertBatch(@RequestBody OrganizationRoleList organizationRoleList);
 
 	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
 	OrganizationRole selectByPrimaryKey(@RequestParam("id") Long id);
