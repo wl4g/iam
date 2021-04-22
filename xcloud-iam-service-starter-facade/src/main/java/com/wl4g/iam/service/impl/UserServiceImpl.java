@@ -15,21 +15,13 @@
  */
 package com.wl4g.iam.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.iam.common.bean.Menu;
-import com.wl4g.iam.common.bean.Organization;
-import com.wl4g.iam.common.bean.Role;
-import com.wl4g.iam.common.bean.RoleUser;
-import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.bean.*;
 import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
-import com.wl4g.iam.data.MenuDao;
-import com.wl4g.iam.data.OrganizationDao;
-import com.wl4g.iam.data.RoleDao;
-import com.wl4g.iam.data.RoleUserDao;
-import com.wl4g.iam.data.UserDao;
+import com.wl4g.iam.data.*;
 import com.wl4g.iam.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -107,6 +99,7 @@ public class UserServiceImpl implements UserService {
 		User user1 = userDao.selectByUserName(user.getUserName());
 		Assert.isTrue(user1 == null, user.getUserName() + " is exist");
 		user.preInsert();
+		user.setId(SnowflakeIdGenerator.getDefault().nextId());
 		userDao.insertSelective(user);
 		List<Long> roleIds = user.getRoleIds();
 		for (Long roleId : roleIds) {
