@@ -15,16 +15,16 @@
  */
 package com.wl4g.iam.data;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.Area;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.Area;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link AreaDao}
@@ -54,9 +54,9 @@ public interface AreaDao {
 	List<Area> getTotal();
 
 	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(Area record);
+	int updateByPrimaryKeySelective(@RequestBody Area record);
 
 	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(Area record);
+	int updateByPrimaryKey(@RequestBody Area record);
 
 }

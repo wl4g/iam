@@ -15,17 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.component.core.bean.BaseBean.ENABLED;
-
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.util.Assert;
-
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
@@ -38,6 +28,16 @@ import com.wl4g.iam.data.ContactChannelDao;
 import com.wl4g.iam.data.ContactDao;
 import com.wl4g.iam.data.ContactGroupRefDao;
 import com.wl4g.iam.service.ContactService;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.util.Assert;
+
+import java.util.List;
+
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
 
 /**
  * Notification to contacts service implements.
@@ -74,6 +74,7 @@ public class ContactServiceImpl implements ContactService {
 			contactDao.updateByPrimaryKeySelective(contact);
 		} else {
 			contact.preInsert();
+			contact.setId(SnowflakeIdGenerator.getDefault().nextId());
 			contact.setDelFlag(DEL_FLAG_NORMAL);
 			contact.setEnable(ENABLED);
 			contactDao.insertSelective(contact);
@@ -83,6 +84,7 @@ public class ContactServiceImpl implements ContactService {
 			for (Long group : groups) {
 				ContactGroupRef contactGroupRef = new ContactGroupRef();
 				contactGroupRef.preInsert();
+				contactGroupRef.setId(SnowflakeIdGenerator.getDefault().nextId());
 				contactGroupRef.setContactGroupId(group);
 				contactGroupRef.setContactId(contact.getId());
 				contactGroupRefDao.insertSelective(contactGroupRef);
