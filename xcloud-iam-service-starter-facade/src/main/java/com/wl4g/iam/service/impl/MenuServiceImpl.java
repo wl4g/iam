@@ -73,15 +73,6 @@ public class MenuServiceImpl implements MenuService {
 		return result;
 	}
 
-	private Menu getParent(List<Menu> menus, Long parentId) {
-		for (Menu menu : menus) {
-			if (parentId != null && menu.getId() != null && menu.getId().longValue() == parentId.longValue()) {
-				return menu;
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public List<Menu> findMenuList() {
 		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
@@ -178,6 +169,15 @@ public class MenuServiceImpl implements MenuService {
 				}
 			}
 		}
+	}
+
+	private Menu getParent(List<Menu> menus, Long parentId) {
+		for (Menu menu : menus) {
+			if (parentId != null && menu.getId() != null && menu.getId().longValue() == parentId.longValue()) {
+				return menu;
+			}
+		}
+		return null;
 	}
 
 	private String fixRouteNamespace(String routeNamespace) {
