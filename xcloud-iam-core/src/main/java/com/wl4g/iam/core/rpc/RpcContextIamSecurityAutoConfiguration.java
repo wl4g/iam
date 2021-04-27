@@ -86,21 +86,20 @@ public class RpcContextIamSecurityAutoConfiguration {
 				try {
 					Subject subject = IamSecurityHolder.getSubject();
 					// The current authentication information needs to be set
-					// only
-					// when it has been authenticated.
+					// only when it has been authenticated.
 					if (subject.isAuthenticated()) {
 						IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-						RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-						RpcContextHolderBridges.invokeSet(CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+						RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+						RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
 						// Set to reference type for performance optimization.
-						RpcContextHolderBridges.invokeSetRef(CURRENT_IAM_PRINCIPAL, currentPrincipal);
+						RpcContextHolderBridges.invokeSetRef(false, CURRENT_IAM_PRINCIPAL, currentPrincipal);
 					}
 				} catch (UnavailableSecurityManagerException e) {
 					// It may be a request that does not carry a session, such
-					// as getting a list of remote Iam sessions.
-					log.debug("The current authentication information is not set. {}", e.getLocalizedMessage());
+					// as getting a list of remote IAM sessions.
+					log.warn("Cannot set current IAM authentication info. {}", e.getLocalizedMessage());
 				}
 			}
 			return true;

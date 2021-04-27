@@ -15,25 +15,34 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.iam.common.bean.*;
-import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
-import com.wl4g.iam.data.*;
-import com.wl4g.iam.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
+import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static java.util.Objects.isNull;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.TypeConverts.parseLongOrNull;
-import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
-import static java.util.Objects.isNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.bean.Organization;
+import com.wl4g.iam.common.bean.Role;
+import com.wl4g.iam.common.bean.RoleUser;
+import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
+import com.wl4g.iam.data.MenuDao;
+import com.wl4g.iam.data.OrganizationDao;
+import com.wl4g.iam.data.RoleDao;
+import com.wl4g.iam.data.RoleUserDao;
+import com.wl4g.iam.data.UserDao;
+import com.wl4g.iam.service.UserService;
 
 /**
  * User service implements.
@@ -47,20 +56,11 @@ import static java.util.Objects.isNull;
 // @org.springframework.web.bind.annotation.RestController
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserDao userDao;
-
-	@Autowired
-	private MenuDao menuDao;
-
-	@Autowired
-	private RoleDao roleDao;
-
-	@Autowired
-	private OrganizationDao groupDao;
-
-	@Autowired
-	private RoleUserDao roleUserDao;
+	private @Autowired UserDao userDao;
+	private @Autowired MenuDao menuDao;
+	private @Autowired RoleDao roleDao;
+	private @Autowired OrganizationDao groupDao;
+	private @Autowired RoleUserDao roleUserDao;
 
 	@Override
 	public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {

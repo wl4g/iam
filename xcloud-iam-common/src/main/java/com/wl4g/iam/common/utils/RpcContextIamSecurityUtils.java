@@ -41,26 +41,32 @@ import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 public abstract class RpcContextIamSecurityUtils {
 
 	public static IamPrincipal currentIamPrincipal() {
-		if (hasRpcContextHolderClass()) { // Distributed-mode?
-			return (IamPrincipal) invokeGetRef(CURRENT_IAM_PRINCIPAL, SimpleIamPrincipal.class);
+		if (hasRpcContextHolderClass()) { // Distributed(Cluster)
+			// @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
+			// @see:com.wl4g.component.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
+			return (IamPrincipal) invokeGetRef(true, CURRENT_IAM_PRINCIPAL, SimpleIamPrincipal.class);
 		}
-		// Standalone mode
+		// Standalone
 		return (IamPrincipal) IamSecurityHolderBridges.invokeGetPrincipalInfo();
 	}
 
 	public static String currentIamPrincipalId() {
-		if (hasRpcContextHolderClass()) { // Distributed-mode?
-			return (String) invokeGet(CURRENT_IAM_PRINCIPAL_ID, String.class);
+		if (hasRpcContextHolderClass()) { // Distributed(Cluster)
+			// @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
+			// @see:com.wl4g.component.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
+			return (String) invokeGet(true, CURRENT_IAM_PRINCIPAL_ID, String.class);
 		}
-		// Standalone mode
+		// Standalone
 		return currentIamPrincipal().getPrincipalId();
 	}
 
 	public static String currentIamPrincipalName() {
-		if (hasRpcContextHolderClass()) { // Distributed-mode?
-			return (String) invokeGet(CURRENT_IAM_PRINCIPAL_USER, String.class);
+		if (hasRpcContextHolderClass()) { // Distributed(Cluster)
+			// @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
+			// @see:com.wl4g.component.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
+			return (String) invokeGet(true, CURRENT_IAM_PRINCIPAL_USER, String.class);
 		}
-		// Standalone mode
+		// Standalone
 		return currentIamPrincipal().getPrincipal();
 	}
 

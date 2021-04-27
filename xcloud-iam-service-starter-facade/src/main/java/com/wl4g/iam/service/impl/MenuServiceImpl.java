@@ -88,7 +88,7 @@ public class MenuServiceImpl implements MenuService {
 		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
 		List<Menu> result;
 		if (DEFAULT_SUPER_USER.equals(principal)) {
-			result = menuDao.selectWithRoot();// root
+			result = menuDao.selectWithRoot();
 		} else {
 			result = menuDao.selectByUserId(parseLongOrNull(principalId));
 		}
