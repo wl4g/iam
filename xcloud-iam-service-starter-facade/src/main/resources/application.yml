@@ -18,6 +18,8 @@ spring:
   profiles:
     include: common,util
     active: dev
+  banner:
+      location: classpath:banner.txt
 
 # Logging configuration.
 logging:
