@@ -20,14 +20,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.component.core.web.mapping.annotation.EnableSmartRequestMapping;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
+import com.wl4g.component.data.annotation.EnableComponentDataConfiguration;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 // Only this package is considered for mapping.
 @EnableSmartRequestMapping("com.wl4g.iam.web")
 @EnableApiVersionManagement("com.wl4g.iam.web")
 @EnableIamServer
-@EnableComponentDBConfiguration("com.wl4g.iam.data")
+@EnableComponentDataConfiguration("com.wl4g.iam.data")
 @SpringBootApplication
 public class StandaloneIam {
 

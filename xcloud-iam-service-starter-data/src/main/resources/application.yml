@@ -20,12 +20,13 @@ spring:
     active: dev
   banner:
     location: classpath:banner.txt
-
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.iam.common.bean.*
+  xcloud:
+    component:
+      data:
+        mybatis:
+          configLocation: mybatis/mybatis-config.xml
+          mapperLocations: classpath:mybatis/**/*Mapper.xml
+          typeAliasesPackage: com.wl4g.iam.common.bean.*,com.wl4g.iam.common.bean.*.*
 
 # Logging configuration.
 logging:
