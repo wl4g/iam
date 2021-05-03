@@ -29,10 +29,10 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.wl4g.component.support.redis.jedis.JedisClient;
-import com.wl4g.component.support.redis.jedis.ScanCursor;
-import com.wl4g.component.support.redis.jedis.ScanCursor.CursorWrapper;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.jedis.JedisClient;
+import com.wl4g.component.support.cache.jedis.ScanCursor;
+import com.wl4g.component.support.cache.jedis.ScanCursor.CursorWrapper;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;

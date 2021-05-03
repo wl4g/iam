@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.kit.access.IPAccessControl;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
 import com.wl4g.iam.authc.credential.SmsCredentialsHashedMatcher;

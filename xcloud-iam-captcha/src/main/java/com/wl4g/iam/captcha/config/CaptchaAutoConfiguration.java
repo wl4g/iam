@@ -18,7 +18,7 @@ package com.wl4g.iam.captcha.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.verification.GifSecurityVerifier;
 import com.wl4g.iam.captcha.verification.JigsawSecurityVerifier;

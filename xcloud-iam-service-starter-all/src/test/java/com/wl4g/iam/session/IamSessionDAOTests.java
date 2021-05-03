@@ -29,8 +29,8 @@ import static com.google.common.base.Charsets.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 
 import com.wl4g.StandaloneIam;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.core.session.IamSession;
 import com.wl4g.iam.core.session.mgt.IamSessionDAO;
 

@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.data.DictDao;
 import com.wl4g.iam.service.DictService;
