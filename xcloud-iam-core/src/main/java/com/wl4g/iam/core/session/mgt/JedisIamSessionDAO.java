@@ -15,6 +15,12 @@
  */
 package com.wl4g.iam.core.session.mgt;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,12 +28,6 @@ import java.util.Set;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.component.support.cache.jedis.JedisClient;
 import com.wl4g.component.support.cache.jedis.ScanCursor;
@@ -73,13 +73,13 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
 		JedisClient jedisClient = ((JedisIamCacheManager) cacheManager).getJedisClient();
-		return new ScanCursor<IamSession>(jedisClient, cursor, IamSession.class, params) {
-			@Override
-			public synchronized IamSession next() {
-				IamSession s = super.next();
+		return new ScanCursor<IamSession>(jedisClient, cursor, IamSession.class, new ScanCursor.Deserializer() {
+			public Object deserialize(byte[] data, Class<?> clazz) {
+				IamSession s = (IamSession) super.deserialize(data, clazz);
 				awareRelationCache(s);
 				return s;
 			}
+		}, params) {
 		}.open();
 	}
 
