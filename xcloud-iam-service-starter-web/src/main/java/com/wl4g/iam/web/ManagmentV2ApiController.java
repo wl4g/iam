@@ -17,6 +17,8 @@ package com.wl4g.iam.web;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
@@ -25,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,7 +94,7 @@ public class ManagmentV2ApiController extends BaseController {
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
+				.exchange(url, GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
 
 		log.info("Got remote sessions. => {}", resp);
@@ -123,7 +124,7 @@ public class ManagmentV2ApiController extends BaseController {
 		log.info("Request destroy remote sessions of clusterConfigId: {}, URL: {}", destroy.getId(), url);
 
 		// Do request.
-		RespBase<?> resp = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<RespBase<?>>() {
+		RespBase<?> resp = restTemplate.exchange(url, POST, entity, new ParameterizedTypeReference<RespBase<?>>() {
 		}).getBody();
 
 		log.info("Destroyed remote sessions response for => {}", resp);

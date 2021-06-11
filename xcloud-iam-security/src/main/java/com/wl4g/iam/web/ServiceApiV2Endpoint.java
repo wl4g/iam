@@ -15,6 +15,12 @@
  */
 package com.wl4g.iam.web;
 
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_TOKEN;
+import static com.wl4g.iam.handler.CentralAuthenticatingHandler.getGrantCredentials;
+import static java.util.Objects.nonNull;
+
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.wl4g.iam.authc.GenericAuthenticationToken;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.WechatMpAuthenticationToken;
@@ -26,12 +32,6 @@ import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.core.web.AbstractApiEndpoint;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.core.web.model.SessionAttributeModel.IamSessionInfo;
-
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.iam.handler.CentralAuthenticatingHandler.*;
-import static java.util.Objects.nonNull;
 
 /**
  * IAM server API controller.

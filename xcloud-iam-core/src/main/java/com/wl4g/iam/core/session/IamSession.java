@@ -15,12 +15,26 @@
  */
 package com.wl4g.iam.core.session;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.iam.core.cache.CacheKey;
-import com.wl4g.iam.core.cache.IamCache;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionRemainingTime;
+import static java.lang.String.valueOf;
+import static java.util.Collections.emptySet;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.shiro.subject.support.DefaultSubjectContext.PRINCIPALS_SESSION_KEY;
 
-import io.protostuff.Tag;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.StoppedSessionException;
@@ -30,22 +44,12 @@ import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.iam.core.cache.CacheKey;
+import com.wl4g.iam.core.cache.IamCache;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
-import static java.lang.String.valueOf;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.shiro.subject.support.DefaultSubjectContext.PRINCIPALS_SESSION_KEY;
+import io.protostuff.Tag;
 
 /**
  * IAM session implements {@link org.apache.shiro.session.mgt.SimpleSession}
@@ -255,8 +259,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	 * @return relationAttrsCache
 	 */
 	public final IamCache getRelationAttrsCache() {
-		notNullOf(relationAttrsCache, "relationAttrsCache");
-		return this.relationAttrsCache;
+		return notNullOf(relationAttrsCache, "relationAttrsCache");
 	}
 
 	/**
@@ -265,7 +268,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	 * @param relationAttrsCache
 	 */
 	public final void setRelationAttrsCache(IamCache relationAttrsCache) {
-		this.relationAttrsCache = relationAttrsCache;
+		this.relationAttrsCache = notNullOf(relationAttrsCache, "relationAttrsCache");
 	}
 
 	/**
