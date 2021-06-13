@@ -22,7 +22,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 
 import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.cache.jedis.ScanCursor.CursorWrapper;
+import com.wl4g.component.support.cache.jedis.ScanCursor.CursorSpec;
 import com.wl4g.iam.core.session.IamSession;
 
 public interface IamSessionDAO extends SessionDAO {
@@ -48,7 +48,7 @@ public interface IamSessionDAO extends SessionDAO {
 	 * @param limit
 	 * @return
 	 */
-	ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
+	ScanCursor<IamSession> getAccessSessions(final CursorSpec cursor, final int limit);
 
 	/**
 	 * Gets access sessions by principal.
@@ -58,7 +58,7 @@ public interface IamSessionDAO extends SessionDAO {
 	 * @return
 	 */
 	default Set<IamSession> getAccessSessions(final Object principal) {
-		return getAccessSessions(new CursorWrapper(), 200, principal);
+		return getAccessSessions(new CursorSpec(), 200, principal);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public interface IamSessionDAO extends SessionDAO {
 	 *            Getting active sessions based on logon objects
 	 * @return
 	 */
-	Set<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
+	Set<IamSession> getAccessSessions(final CursorSpec cursor, final int limit, final Object principal);
 
 	/**
 	 * Remove access current users

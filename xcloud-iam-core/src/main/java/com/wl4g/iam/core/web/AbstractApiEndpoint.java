@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.web;
 
 import static com.wl4g.component.common.lang.DateUtils2.formatDate;
-import static com.wl4g.component.support.cache.jedis.ScanCursor.CursorWrapper.parse;
+import static com.wl4g.component.support.cache.jedis.ScanCursor.CursorSpec.parse;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION_REFATTRS;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
@@ -165,8 +165,9 @@ public abstract class AbstractApiEndpoint extends BaseController implements Init
 			resp.setData(new SessionAttributeModel(new CursorIndex(), sas));
 		} else { // Scan sessions all
 			ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(parse(query.getCursor()), query.getLimit());
+			List<IamSession> values = sc.readValues();
 			// Convert to SessionAttribute.
-			List<IamSessionInfo> sas = sc.readValues().stream().map(s -> convertIamSessionInfo(s)).collect(toList());
+			List<IamSessionInfo> sas = values.stream().map(s -> convertIamSessionInfo(s)).collect(toList());
 			// Setup response attributes.
 			CursorIndex index = new CursorIndex(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
 			resp.setData(new SessionAttributeModel(index, sas));

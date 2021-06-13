@@ -31,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.component.support.cache.jedis.JedisClient;
 import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.cache.jedis.ScanCursor.CursorWrapper;
+import com.wl4g.component.support.cache.jedis.ScanCursor.ClusterScanParams;
+import com.wl4g.component.support.cache.jedis.ScanCursor.CursorSpec;
 import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
@@ -39,8 +40,6 @@ import com.wl4g.iam.core.cache.JedisIamCacheManager;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.session.IamSession;
-
-import redis.clients.jedis.ScanParams;
 
 /**
  * Redis shiro session DAO.
@@ -64,14 +63,14 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final int limit) {
-		return getAccessSessions(new CursorWrapper(), limit);
+		return getAccessSessions(new CursorSpec(), limit);
 	}
 
 	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
+	public ScanCursor<IamSession> getAccessSessions(final CursorSpec cursor, int limit) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
 		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
-		ScanParams params = new ScanParams().count(limit).match(match);
+		ClusterScanParams params = new ClusterScanParams(limit, match);
 		JedisClient jedisClient = ((JedisIamCacheManager) cacheManager).getJedisClient();
 		return new ScanCursor<IamSession>(jedisClient, cursor, IamSession.class, new ScanCursor.Deserializer() {
 			public Object deserialize(byte[] data, Class<?> clazz) {
@@ -84,7 +83,7 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 	}
 
 	@Override
-	public Set<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
+	public Set<IamSession> getAccessSessions(final CursorSpec cursor, final int limit, final Object principal) {
 		Set<IamSession> principalSessions = new HashSet<>(4);
 		ScanCursor<IamSession> sc = getAccessSessions(cursor, limit);
 		while (sc.hasNext()) {

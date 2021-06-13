@@ -15,8 +15,8 @@ spring:
     component:
       support:
         jedis:
-          passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${IAM_REDIS_PASSWD:123456}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${IAM_REDIS_NODES:redis.wl4g.uat:6379,redis.wl4g.uat:6380,redis.wl4g.uat:6381,redis.wl4g.uat:7379,redis.wl4g.uat:7380,redis.wl4g.uat:7381}
+          nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.uat:6379,redis.iam.wl4g.uat:6380,redis.iam.wl4g.uat:6381,redis.iam.wl4g.uat:7379,redis.iam.wl4g.uat:7380,redis.iam.wl4g.uat:7381}

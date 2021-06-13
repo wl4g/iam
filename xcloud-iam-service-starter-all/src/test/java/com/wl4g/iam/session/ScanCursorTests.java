@@ -31,37 +31,36 @@ import com.wl4g.StandaloneIam;
 import com.wl4g.component.common.serialize.ProtostuffUtils;
 import com.wl4g.component.support.cache.jedis.JedisClientFactoryBean;
 import com.wl4g.component.support.cache.jedis.ScanCursor;
+import com.wl4g.component.support.cache.jedis.ScanCursor.ClusterScanParams;
 import com.wl4g.iam.core.session.IamSession;
-
-import redis.clients.jedis.ScanParams;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StandaloneIam.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class ScanCursorTests {
 
-	@Autowired
-	@Lazy
-	private JedisClientFactoryBean factory;
+    @Autowired
+    @Lazy
+    private JedisClientFactoryBean factory;
 
-	@Test
-	public void test1() throws Exception {
-		byte[] data = factory.getObject().get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
-		System.out.println("IamSession: " + ProtostuffUtils.deserialize(data, IamSession.class));
-	}
+    @Test
+    public void test1() throws Exception {
+        byte[] data = factory.getObject().get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
+        System.out.println("IamSession: " + ProtostuffUtils.deserialize(data, IamSession.class));
+    }
 
-	@Test
-	public void test2() throws Exception {
-		byte[] match = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
-		ScanParams params = new ScanParams().count(200).match(match);
+    @Test
+    public void test2() throws Exception {
+        byte[] pattern = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
+        ClusterScanParams params = new ClusterScanParams(200, pattern);
 
-		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getObject(), null, params) {
-		}.open();
-		System.out.println("ScanResult: " + sc);
-		while (sc.hasNext()) {
-			System.out.println("IamSession: " + sc.next());
-		}
+        ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getObject(), null, params) {
+        }.open();
+        System.out.println("ScanResult: " + sc);
+        while (sc.hasNext()) {
+            System.out.println("IamSession: " + sc.next());
+        }
 
-	}
+    }
 
 }
