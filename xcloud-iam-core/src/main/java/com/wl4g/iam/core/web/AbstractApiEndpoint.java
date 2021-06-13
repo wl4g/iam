@@ -165,9 +165,8 @@ public abstract class AbstractApiEndpoint extends BaseController implements Init
             resp.setData(new SessionAttributeModel(new CursorIndex(), sas));
         } else { // Scan sessions all
             ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(parse(query.getCursor()), query.getLimit());
-            List<IamSession> values = sc.readValues();
             // Convert to SessionAttribute.
-            List<IamSessionInfo> sas = values.stream().map(s -> convertIamSessionInfo(s)).collect(toList());
+            List<IamSessionInfo> sas = sc.readValues().stream().map(s -> convertIamSessionInfo(s)).collect(toList());
             // Setup response attributes.
             CursorIndex index = new CursorIndex(sc.getCursor().getCursorFullyString(), sc.getCursor().getHasNext());
             resp.setData(new SessionAttributeModel(index, sas));
