@@ -15,23 +15,30 @@
  */
 package com.wl4g.iam.core.config;
 
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static java.lang.String.format;
+import static java.util.Locale.US;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_CSV;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_ECMASCRIPT;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_HTML3;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_HTML4;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_JAVA;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_JSON;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML10;
+import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_XML11;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Locale.*;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringEscapeUtils.*;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.component.common.log.SmartLogger;
-
-import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * XSS configuration properties
@@ -41,145 +48,145 @@ import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
  * @since
  */
 public class XssProperties implements InitializingBean, Serializable {
-	final private static long serialVersionUID = -5701992202744439835L;
+    final private static long serialVersionUID = -5701992202744439835L;
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	/**
-	 * XSS attack solves AOP section expression
-	 */
-	private String expression;
+    /**
+     * XSS attack solves AOP section expression
+     */
+    private String expression;
 
-	/**
-	 * Escape translators alias.
-	 */
-	private List<CharTranslator> escapeTranslators = new ArrayList<>();
+    /**
+     * Escape translators alias.
+     */
+    private List<CharTranslator> escapeTranslators = new ArrayList<>();
 
-	public String getExpression() {
-		hasText(expression, format("XSS interception expression is required, and the '%s' configuration item does not exist?",
-				KEY_XSS_PREFIX));
-		return expression;
-	}
+    public String getExpression() {
+        hasText(expression, format("XSS interception expression is required, and the '%s' configuration item does not exist?",
+                KEY_XSS_PREFIX));
+        return expression;
+    }
 
-	public XssProperties setExpression(String expression) {
-		hasText(expression, "expression is emtpy, please check configure");
-		this.expression = expression;
-		return this;
-	}
+    public XssProperties setExpression(String expression) {
+        hasText(expression, "expression is emtpy, please check configure");
+        this.expression = expression;
+        return this;
+    }
 
-	public List<CharTranslator> getEscapeTranslators() {
-		return escapeTranslators;
-	}
+    public List<CharTranslator> getEscapeTranslators() {
+        return escapeTranslators;
+    }
 
-	public XssProperties setEscapeTranslators(List<CharTranslator> escapeTranslators) {
-		this.escapeTranslators = escapeTranslators;
-		return this;
-	}
+    public XssProperties setEscapeTranslators(List<CharTranslator> escapeTranslators) {
+        this.escapeTranslators = escapeTranslators;
+        return this;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		mergeIamInternalEndpointXss();
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        mergeIamInternalEndpointXss();
+    }
 
-	/**
-	 * Merge IAM XSS security internal configuration.
-	 */
-	private void mergeIamInternalEndpointXss() {
-		/*
-		 * [Expect]: In order to solve slight package structure changes.(The
-		 * first four levels of package start can be modified at will)
-		 *
-		 * execution(* com.wl4g.devops.iam.sns.web.*Controller.*(..)) or
-		 * execution(* com.wl4g.devops.iam.web.*Controller.*(..)) or ...
-		 */
-		int basedIamProjectPkgIndex = 4;
-		String[] pkgParts = getClass().getName().split("\\.");
-		if (pkgParts == null || pkgParts.length <= basedIamProjectPkgIndex) {
-			throw new Error(String.format("", basedIamProjectPkgIndex));
-		}
+    /**
+     * Merge IAM XSS security internal configuration.
+     */
+    private void mergeIamInternalEndpointXss() {
+        /*
+         * [Expect]: In order to solve slight package structure changes.(The
+         * first four levels of package start can be modified at will)
+         *
+         * execution(* com.wl4g.devops.iam.sns.web.*Controller.*(..)) or
+         * execution(* com.wl4g.devops.iam.web.*Controller.*(..)) or ...
+         */
+        int basedIamProjectPkgIndex = 4;
+        String[] pkgParts = getClass().getName().split("\\.");
+        if (pkgParts == null || pkgParts.length <= basedIamProjectPkgIndex) {
+            throw new Error(String.format("", basedIamProjectPkgIndex));
+        }
 
-		StringBuffer iamBasePkg = new StringBuffer(16);
-		// e.g. com.wl4g.devops.iam
-		for (int i = 0; i < pkgParts.length; i++) {
-			if (i < basedIamProjectPkgIndex) {
-				iamBasePkg.append(pkgParts[i]);
-				iamBasePkg.append(".");
-			} else {
-				break;
-			}
-		}
+        StringBuffer iamBasePkg = new StringBuffer(16);
+        // e.g. com.wl4g.devops.iam
+        for (int i = 0; i < pkgParts.length; i++) {
+            if (i < basedIamProjectPkgIndex) {
+                iamBasePkg.append(pkgParts[i]);
+                iamBasePkg.append(".");
+            } else {
+                break;
+            }
+        }
 
-		// Merge internal XSS expression.(Level names cannot be changed after
-		// package)
-		StringBuffer _expression = new StringBuffer(128);
-		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController
-		_expression.append("execution(* ");
-		_expression.append(iamBasePkg.toString());
-		_expression.append("sns.web.*Controller.*(..))");
-		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsEndpoint
-		_expression.append(" or execution(* ");
-		_expression.append(iamBasePkg.toString());
-		_expression.append("web.*Endpoint.*(..)) ");
-		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorController
-		_expression.append(" or execution(* ");
-		_expression.append(iamBasePkg.toString());
-		_expression.append("web.*Controller.*(..)) ");
-		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint
-		_expression.append(" or execution(* ");
-		_expression.append(iamBasePkg.toString());
-		_expression.append("web.*Endpoint.*(..)) ");
+        // Merge internal XSS expression.(Level names cannot be changed after
+        // package)
+        StringBuffer _expression = new StringBuffer(128);
+        // e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController
+        _expression.append("execution(* ");
+        _expression.append(iamBasePkg.toString());
+        _expression.append("sns.web.*Controller.*(..))");
+        // e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsEndpoint
+        _expression.append(" or execution(* ");
+        _expression.append(iamBasePkg.toString());
+        _expression.append("web.*Endpoint.*(..)) ");
+        // e.g: com.wl4g.devops.iam.web.LoginAuthenticatorController
+        _expression.append(" or execution(* ");
+        _expression.append(iamBasePkg.toString());
+        _expression.append("web.*Controller.*(..)) ");
+        // e.g: com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint
+        _expression.append(" or execution(* ");
+        _expression.append(iamBasePkg.toString());
+        _expression.append("web.*Endpoint.*(..)) ");
 
-		// Merge extra config expression
-		if (!isBlank(expression)) {
-			if (expression.toUpperCase(US).startsWith("OR")) {
-				_expression.append(getExpression());
-			} else {
-				_expression.append("or ");
-				_expression.append(getExpression());
-			}
-		}
-		setExpression(_expression.toString());
+        // Merge extra config expression
+        if (!isBlank(expression)) {
+            if (expression.toUpperCase(US).startsWith("OR")) {
+                _expression.append(getExpression());
+            } else {
+                _expression.append("or ");
+                _expression.append(getExpression());
+            }
+        }
+        setExpression(_expression.toString());
 
-		log.info("After merged the XSS interception expression as: {}", getExpression());
-	}
+        log.info("After merged the XSS interception expression as: {}", getExpression());
+    }
 
-	/**
-	 * Chars sequence translators definitions.
-	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2020年5月7日
-	 * @since
-	 */
-	public static enum CharTranslator {
+    /**
+     * Chars sequence translators definitions.
+     *
+     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @version v1.0 2020年5月7日
+     * @since
+     */
+    public static enum CharTranslator {
 
-		escapeJava(ESCAPE_JAVA),
+        escapeJava(ESCAPE_JAVA),
 
-		escapeEcmascript(ESCAPE_ECMASCRIPT),
+        escapeEcmascript(ESCAPE_ECMASCRIPT),
 
-		escapeJson(ESCAPE_JSON),
+        escapeJson(ESCAPE_JSON),
 
-		escapeXml10(ESCAPE_XML10),
+        escapeXml10(ESCAPE_XML10),
 
-		escapeXml11(ESCAPE_XML11),
+        escapeXml11(ESCAPE_XML11),
 
-		escapeHtml3(ESCAPE_HTML3),
+        escapeHtml3(ESCAPE_HTML3),
 
-		escapeHtml4(ESCAPE_HTML4),
+        escapeHtml4(ESCAPE_HTML4),
 
-		escapeCsv(ESCAPE_CSV);
+        escapeCsv(ESCAPE_CSV);
 
-		private final CharSequenceTranslator translator;
+        private final CharSequenceTranslator translator;
 
-		private CharTranslator(CharSequenceTranslator translator) {
-			notNullOf(translator, "translator");
-			this.translator = translator;
-		}
+        private CharTranslator(CharSequenceTranslator translator) {
+            notNullOf(translator, "translator");
+            this.translator = translator;
+        }
 
-		public CharSequenceTranslator getTranslator() {
-			return translator;
-		}
+        public CharSequenceTranslator getTranslator() {
+            return translator;
+        }
 
-	}
+    }
 
-	final public static String KEY_XSS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xss";
+    public static final String KEY_XSS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xss";
 }

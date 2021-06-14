@@ -15,22 +15,23 @@
  */
 package com.wl4g.iam.core.security.domain;
 
-import org.springframework.core.env.Environment;
-import org.springframework.web.filter.OncePerRequestFilter;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
-import com.wl4g.iam.core.config.AbstractIamProperties;
-import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
+import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import org.springframework.core.env.Environment;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.wl4g.iam.core.config.AbstractIamProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 /**
  * HTTP strict transport security filter
@@ -41,52 +42,50 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  */
 public class HstsSecurityFilter extends OncePerRequestFilter {
 
-	/**
-	 * {@link Environment}
-	 */
-	final Environment environment;
+    /**
+     * {@link Environment}
+     */
+    protected final Environment environment;
 
-	/**
-	 * {@link AbstractIamProperties}
-	 */
-	final protected AbstractIamProperties<? extends ParamProperties> config;
+    /**
+     * {@link AbstractIamProperties}
+     */
+    protected final AbstractIamProperties<? extends ParamProperties> config;
 
-	/**
-	 * Enabled hsts with profiles active. </br>
-	 * Http-Strict-Transport-Security
-	 */
-	final protected boolean enableHstsWithProfilesActive;
+    /**
+     * Enabled hsts on profiles active. </br>
+     * 'Http-Strict-Transport-Security'
+     */
+    protected final boolean enableHstsOnProfilesActive;
 
-	public HstsSecurityFilter(AbstractIamProperties<? extends ParamProperties> config, Environment environment) {
-		notNullOf(config, "config");
-		notNullOf(environment, "environment");
-		this.config = config;
-		this.environment = environment;
+    public HstsSecurityFilter(AbstractIamProperties<? extends ParamProperties> config, Environment environment) {
+        this.config = notNullOf(config, "config");
+        this.environment = notNullOf(environment, "environment");
 
-		// Http Strict-Transport-Security:
-		String active = environment.getRequiredProperty("spring.profiles.active");
-		Optional<String> hstsOpt = safeList(config.getDomain().getHstsProfilesActive()).stream()
-				.filter(a -> equalsIgnoreCase(a, active)).findAny();
-		this.enableHstsWithProfilesActive = hstsOpt.isPresent();
-	}
+        // HTTP Strict-Transport-Security:
+        String active = environment.getRequiredProperty("spring.profiles.active");
+        Optional<String> opt = safeList(config.getSecurity().getHstsOnProfilesActive()).stream()
+                .filter(a -> equalsIgnoreCase(a, active)).findAny();
+        this.enableHstsOnProfilesActive = opt.isPresent();
+    }
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-		// Sets Http-Strict-Transport-Security:
-		if (enableHstsWithProfilesActive) {
-			if (!response.containsHeader("Strict-Transport-Security")) {
-				response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-				response.addHeader("Strict-Transport-Security", "max-age=0");
-			}
-		}
+        // Sets Http-Strict-Transport-Security:
+        if (enableHstsOnProfilesActive) {
+            if (!response.containsHeader("Strict-Transport-Security")) {
+                response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+                response.addHeader("Strict-Transport-Security", "max-age=0");
+            }
+        }
 
-		// X-Download-Options:
-		// https://stackoverflow.com/questions/15299325/x-download-options-noopen-equivalent
-		response.setHeader("X-Download-Options", "noopen");
+        // X-Download-Options:
+        // https://stackoverflow.com/questions/15299325/x-download-options-noopen-equivalent
+        response.setHeader("X-Download-Options", "noopen");
 
-		filterChain.doFilter(request, response);
-	}
+        filterChain.doFilter(request, response);
+    }
 
 }

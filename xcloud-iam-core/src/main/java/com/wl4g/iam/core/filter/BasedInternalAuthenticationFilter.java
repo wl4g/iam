@@ -15,18 +15,18 @@
  */
 package com.wl4g.iam.core.filter;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.core.filter.IamAuthenticationFilter;
 
 /**
  * Interactive authentication processing filter for internal and application
@@ -40,29 +40,27 @@ import com.wl4g.iam.core.filter.IamAuthenticationFilter;
  * @since
  */
 public abstract class BasedInternalAuthenticationFilter extends AuthenticatingFilter implements IamAuthenticationFilter {
+    protected final SmartLogger log = getLogger(getClass());
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final AbstractIamProperties<? extends ParamProperties> config;
 
-	final protected AbstractIamProperties<? extends ParamProperties> config;
+    public BasedInternalAuthenticationFilter(AbstractIamProperties<? extends ParamProperties> config) {
+        this.config = notNullOf(config, "iamProperties");
+    }
 
-	public BasedInternalAuthenticationFilter(AbstractIamProperties<? extends ParamProperties> config) {
-		Assert.notNull(config, "'config' must not be null");
-		this.config = config;
-	}
+    @Override
+    protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return super.isAccessAllowed(request, response, mappedValue);
+    }
 
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		return super.isAccessAllowed(request, response, mappedValue);
-	}
-
-	@Override
-	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-		return false;
-	}
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        return false;
+    }
 
 }

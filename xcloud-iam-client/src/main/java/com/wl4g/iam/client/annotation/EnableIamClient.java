@@ -28,6 +28,7 @@ import com.wl4g.iam.client.config.IamClientAutoConfiguration;
 import com.wl4g.iam.core.config.AccessControlAutoConfiguration;
 import com.wl4g.iam.core.config.CorsAutoConfiguration;
 import com.wl4g.iam.core.config.ReplayAutoConfiguration;
+import com.wl4g.iam.core.config.RiskSecurityAutoConfiguration;
 import com.wl4g.iam.core.config.XsrfAutoConfiguration;
 import com.wl4g.iam.core.config.XssAutoConfiguration;
 import com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration;
@@ -49,8 +50,8 @@ import com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ IamClientAutoConfiguration.class, CorsAutoConfiguration.class, XsrfAutoConfiguration.class, XssAutoConfiguration.class,
-		ReplayAutoConfiguration.class, ConsoleAutoConfiguration.class, AccessControlAutoConfiguration.class,
-		RpcContextIamSecurityAutoConfiguration.class })
+        ReplayAutoConfiguration.class, RiskSecurityAutoConfiguration.class, ConsoleAutoConfiguration.class,
+        AccessControlAutoConfiguration.class, RpcContextIamSecurityAutoConfiguration.class })
 public @interface EnableIamClient {
 
 }

@@ -15,12 +15,6 @@
  */
 package com.wl4g.iam.core.filter;
 
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.servlet.Cookie;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.convertBean;
 import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
@@ -42,18 +36,23 @@ import java.util.Map.Entry;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
+import org.apache.shiro.web.servlet.Cookie;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.core.filter.IamAuthenticationFilter;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 
 /**
- * Abstract iam authentication filter.
+ * Abstract IAM authentication filter.
  * 
  * <pre>
  * [main]
@@ -70,126 +69,126 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
  * @since 1.2
  */
 public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamProperties<? extends ParamProperties>>
-		extends AuthenticatingFilter implements IamAuthenticationFilter {
-	protected final SmartLogger log = getLogger(getClass());
+        extends AuthenticatingFilter implements IamAuthenticationFilter {
+    protected final SmartLogger log = getLogger(getClass());
 
-	/**
-	 * Iam properties.
-	 */
-	@Autowired
-	protected C config;
+    /**
+     * IAM configuration properties.
+     */
+    @Autowired
+    protected C config;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Qualifier(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-	protected SessionResourceMessageBundler bundle;
+    /**
+     * Delegate message source.
+     */
+    @Qualifier(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    protected SessionResourceMessageBundler bundle;
 
-	/**
-	 * XSRF token repository. (If necessary)
-	 */
-	@Autowired(required = false)
-	protected XsrfTokenRepository xTokenRepository;
+    /**
+     * XSRF token repository. (If necessary)
+     */
+    @Autowired(required = false)
+    protected XsrfTokenRepository xTokenRepository;
 
-	/**
-	 * Gets legal authentication customization parameters.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	protected Map getLegalCustomParameters(ServletRequest request) {
-		Map<String, String> customParams = toQueryParams(toHttp(request).getQueryString());
-		// Cleaning not matches custom parameters.
-		Iterator<Entry<String, String>> it = customParams.entrySet().iterator();
-		while (it.hasNext()) {
-			Entry<String, String> param = it.next();
-			if (!config.getParam().getCustomParams().contains(param.getKey())) {
-				it.remove();
-			}
-		}
-		return customParams;
-	}
+    /**
+     * Gets legal authentication customization parameters.
+     * 
+     * @param request
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    protected Map getLegalCustomParameters(ServletRequest request) {
+        Map<String, String> customParams = toQueryParams(toHttp(request).getQueryString());
+        // Cleaning not matches custom parameters.
+        Iterator<Entry<String, String>> it = customParams.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<String, String> param = it.next();
+            if (!config.getParam().getCustomParams().contains(param.getKey())) {
+                it.remove();
+            }
+        }
+        return customParams;
+    }
 
-	/**
-	 * Puts principal authorization info(roles/permissions) and common security
-	 * headers to cookies.(if necessary)
-	 * 
-	 * @param token
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(AuthenticationToken token, ServletRequest request,
-			ServletResponse response) {
-		Map<String, String> authzInfo = new HashMap<>();
+    /**
+     * Puts principal authorization info(roles/permissions) and common security
+     * headers to cookies.(if necessary)
+     * 
+     * @param token
+     * @param request
+     * @param response
+     * @return
+     */
+    protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(AuthenticationToken token, ServletRequest request,
+            ServletResponse response) {
+        Map<String, String> authzInfo = new HashMap<>();
 
-		// Gets permits URl.
-		String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
-		authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
-		if (isBrowser(toHttp(request))) {
-			// Sets authorizes permits info.
-			Cookie c = new IamCookie(config.getCookie());
-			c.setName(config.getParam().getAuthzPermitsName());
-			c.setValue(permitUrl);
-			c.setMaxAge(60);
-			c.saveTo(toHttp(request), toHttp(response));
+        // Gets permits URl.
+        String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
+        authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
+        if (isBrowser(toHttp(request))) {
+            // Sets authorizes permits info.
+            Cookie c = new IamCookie(config.getCookie());
+            c.setName(config.getParam().getAuthzPermitsName());
+            c.setValue(permitUrl);
+            c.setMaxAge(60);
+            c.saveTo(toHttp(request), toHttp(response));
 
-			// Sets common security headers.
-			setSecurityHeadersIfNecessary(token, request, response);
-		}
+            // Sets common security headers.
+            setSecurityHeadersIfNecessary(token, request, response);
+        }
 
-		return authzInfo;
-	}
+        return authzInfo;
+    }
 
-	/**
-	 * Puts principal common security headers to cookies.(if necessary)
-	 * 
-	 * @param token
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	protected void setSecurityHeadersIfNecessary(AuthenticationToken token, ServletRequest request, ServletResponse response) {
-		// Sets P3P header.
-		if (isBrowser(toHttp(request))) {
-			toHttp(response).setHeader("P3P",
-					"CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
-		}
+    /**
+     * Puts principal common security headers to cookies.(if necessary)
+     * 
+     * @param token
+     * @param request
+     * @param response
+     * @return
+     */
+    protected void setSecurityHeadersIfNecessary(AuthenticationToken token, ServletRequest request, ServletResponse response) {
+        // Sets P3P header.
+        if (isBrowser(toHttp(request))) {
+            toHttp(response).setHeader("P3P",
+                    "CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
+        }
 
-	}
+    }
 
-	/**
-	 * Refresh puts principal xsrf token to cookies.(if necessary) </br>
-	 * 
-	 * @param token
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
-			ServletResponse response) {
-		// Generate & save xsrf token.
-		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);
-		// Deserialize xsrf token.
-		Map<String, String> xsrfInfo = convertBean(xtoken, typeRefHashMapString);
-		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
-	}
+    /**
+     * Refresh puts principal xsrf token to cookies.(if necessary) </br>
+     * 
+     * @param token
+     * @param request
+     * @param response
+     * @return
+     */
+    protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+            ServletResponse response) {
+        // Generate & save xsrf token.
+        XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);
+        // Deserialize xsrf token.
+        Map<String, String> xsrfInfo = convertBean(xtoken, typeRefHashMapString);
+        return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
+    }
 
-	/**
-	 * Gets authentication filter name.
-	 */
-	public abstract String getName();
+    /**
+     * Gets authentication filter name.
+     */
+    public abstract String getName();
 
-	/**
-	 * Root filter.
-	 */
-	final public static String NAME_ROOT_FILTER = "rootFilter";
+    /**
+     * Root filter.
+     */
+    public static final String NAME_ROOT_FILTER = "rootFilter";
 
-	/**
-	 * {@link TypeReference}
-	 */
-	final public static TypeReference<HashMap<String, String>> typeRefHashMapString = new TypeReference<HashMap<String, String>>() {
-	};
+    /**
+     * {@link TypeReference}
+     */
+    public static final TypeReference<HashMap<String, String>> typeRefHashMapString = new TypeReference<HashMap<String, String>>() {
+    };
 
 }

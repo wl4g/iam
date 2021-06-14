@@ -12,5 +12,6 @@ com.wl4g.iam.core.config.CorsAutoConfiguration,\
 com.wl4g.iam.core.config.XsrfAutoConfiguration,\
 com.wl4g.iam.core.config.XssAutoConfiguration,\
 com.wl4g.iam.core.config.ReplayAutoConfiguration,\
+com.wl4g.iam.core.config.RiskSecurityAutoConfiguration,\
 com.wl4g.iam.core.config.AccessControlAutoConfiguration,\
 com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration
