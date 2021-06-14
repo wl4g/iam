@@ -81,7 +81,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 
 				ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_BATCH_SIZE);
 				while (cursor.hasNext()) {
-					List<IamSession> activeSessions = cursor.readValues();
+					List<IamSession> activeSessions = cursor.toValues();
 
 					// Grant ticket of local sessions.
 					Map<String, Session> clientSessions = new HashMap<>(activeSessions.size());
