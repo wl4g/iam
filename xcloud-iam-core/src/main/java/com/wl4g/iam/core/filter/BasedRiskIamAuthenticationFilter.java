@@ -73,7 +73,7 @@ public abstract class BasedRiskIamAuthenticationFilter<C extends AbstractIamProp
             }
         }
 
-        return true;
+        return super.onPreHandle(request, response, mappedValue);
     }
 
 }
