@@ -15,13 +15,14 @@
  */
 package com.wl4g.iam.core.web.model;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
-import com.google.common.annotations.Beta;
-
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Sessions query model.
@@ -32,55 +33,55 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 @Beta
 public class SessionQueryModel implements Serializable {
-	private static final long serialVersionUID = 5766036036946339544L;
+    private static final long serialVersionUID = 5766036036946339544L;
 
-	/**
-	 * Scan search principal name.
-	 */
-	private String principal;
+    /**
+     * Scan search principal name.
+     */
+    private String principal;
 
-	/**
-	 * Scan cursor.
-	 */
-	@NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
-	private String cursor = "0@0";
+    /**
+     * Scan cursor.
+     */
+    @NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
+    private String cursor = "0@0";
 
-	/**
-	 * Page size.
-	 */
-	private int limit = 200;
+    /**
+     * Page size.
+     */
+    private int limit = 10;
 
-	public String getPrincipal() {
-		return principal;
-	}
+    public String getPrincipal() {
+        return principal;
+    }
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
-	}
+    public void setPrincipal(String principal) {
+        this.principal = principal;
+    }
 
-	public String getCursor() {
-		return cursor;
-	}
+    public String getCursor() {
+        return cursor;
+    }
 
-	public void setCursor(String cursor) {
-		if (!isBlank(cursor)) {
-			this.cursor = cursor;
-		}
-	}
+    public void setCursor(String cursor) {
+        if (!isBlank(cursor)) {
+            this.cursor = cursor;
+        }
+    }
 
-	public int getLimit() {
-		return limit;
-	}
+    public int getLimit() {
+        return limit;
+    }
 
-	public void setLimit(int limit) {
-		if (limit > 0) {
-			this.limit = limit;
-		}
-	}
+    public void setLimit(int limit) {
+        if (limit > 0) {
+            this.limit = limit;
+        }
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
 }
