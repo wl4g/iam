@@ -44,7 +44,7 @@ class IamDataSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-data")
+		def configName = new StringBuffer("application,iam-data,iam-data-etc")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-data-dev.yml'

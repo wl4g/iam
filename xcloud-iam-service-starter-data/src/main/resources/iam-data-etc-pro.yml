@@ -8,26 +8,17 @@
 # limitations under the License.
 #
 
-# #### Environment(IAM Standalone Dev Configuration) configuration. ####
+# #### Environment(IAM Data etc Pro Configuration) configuration. ####
 #
 spring:
-  xcloud:
-    component:
-      support:
-        jedis:
-          passwd: ${IAM_REDIS_PASSWD:123456}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
   # Spring datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
-      jdbcUrl: ${IAM_DB_URL:jdbc:mysql://rds.iam.wl4g.debug:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      jdbcUrl: ${IAM_DB_URL:jdbc:mysql://rds.iam.wl4g.com:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${IAM_DB_USER:iam}
-      password: ${IAM_DB_PASSWD:123456}
+      password: ${IAM_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       connectionTimeout: 30000
       idleTimeout: 600000
       initializationFailTimeout: 1
@@ -37,9 +28,9 @@ spring:
       validationTimeout: 5000
       leakDetectionThreshold: 0
 #    druid:
-#      url: ${IAM_DB_URL:jdbc:mysql://rds.iam.wl4g.debug:3306/iam?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+#      url: ${IAM_DB_URL:jdbc:mysql://rds.iam.wl4g.com:3306/iam?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
 #      username: ${IAM_DB_USER:iam}
-#      password: ${IAM_DB_PASSWD:123456}
+#      password: ${IAM_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
 #      initial-size: 10
 #      max-active: 100
 #      min-idle: 10
