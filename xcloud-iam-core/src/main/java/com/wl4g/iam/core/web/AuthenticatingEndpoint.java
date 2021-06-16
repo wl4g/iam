@@ -23,7 +23,7 @@ import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 
@@ -76,7 +76,7 @@ public interface AuthenticatingEndpoint {
 	 * @param param
 	 * @return
 	 */
-	default RespBase<SessionValidateResult> sessionValidate(@NotNull SessionValidateResult param) {
+	default RespBase<SessionValidateModel> sessionValidate(@NotNull SessionValidateModel param) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -37,7 +37,7 @@ import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.session.IamSession;
 import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
@@ -55,13 +55,13 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 	/**
 	 * Expire session validator
 	 */
-	final protected IamValidator<SessionValidateResult, SessionValidateResult> validator;
+	final protected IamValidator<SessionValidateModel, SessionValidateModel> validator;
 
 	@Autowired
 	protected JedisLockManager lockManager;
 
 	public IamClientSessionManager(IamClientProperties config, IamCacheManager cacheManager,
-			IamValidator<SessionValidateResult, SessionValidateResult> validator) {
+			IamValidator<SessionValidateModel, SessionValidateModel> validator) {
 		super(config, cacheManager, CACHE_TICKET_C);
 		this.validator = validator;
 	}
@@ -87,7 +87,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 					Map<String, Session> clientSessions = new HashMap<>(activeSessions.size());
 
 					// Make to validation request
-					SessionValidateResult request = new SessionValidateResult(config.getServiceName());
+					SessionValidateModel request = new SessionValidateModel(config.getServiceName());
 					for (IamSession session : activeSessions) {
 						String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
 						request.getTickets().add(grantTicket);
@@ -95,7 +95,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 					}
 
 					// Validation expires sessions.
-					SessionValidateResult assertion = validator.validate(request);
+					SessionValidateModel assertion = validator.validate(request);
 					for (String deadTicket : assertion.getTickets()) {
 						Session session = clientSessions.get(deadTicket);
 						try {

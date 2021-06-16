@@ -32,16 +32,16 @@ import com.wl4g.component.common.serialize.JacksonUtils;
  * @Long 2018年11月22日
  * @since
  */
-public final class SessionValidateResult extends BaseValidateModel {
+public final class SessionValidateModel extends BaseValidateModel {
 	private static final long serialVersionUID = 5483716885382988025L;
 
 	@NotEmpty
 	private List<String> tickets = new ArrayList<>();
 
-	public SessionValidateResult() {
+	public SessionValidateModel() {
 	}
 
-	public SessionValidateResult(String application) {
+	public SessionValidateModel(String application) {
 		super(application);
 	}
 

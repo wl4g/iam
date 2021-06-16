@@ -18,26 +18,26 @@ spring:
           passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
-          # Redis's cluster nodes.
-          nodes: ${IAM_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
-    iam:
+          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+          nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
+    iam: # IAM configuration.
       cors:
         rules:
           '[/**]':
             allows-origins:
-              - http://${IAM_SERVICE_ZONE:wl4g.dev}
-              - http://${IAM_SERVICE_ZONE:wl4g.dev:${server.port}}
-              - http://${IAM_SERVICE_ZONE:wl4g.local}
-              - http://${IAM_SERVICE_ZONE:wl4g.local:${server.port}}
-              - http://${IAM_SERVICE_ZONE:wl4g.debug}
-              - http://${IAM_SERVICE_ZONE:wl4g.debug:${server.port}}
-              - http://*.${IAM_SERVICE_ZONE:wl4g.debug}
-              - http://*.${IAM_SERVICE_ZONE:wl4g.debug:${server.port}}
+              - http://${IAM_ZONE:wl4g.dev}
+              - http://${IAM_ZONE:wl4g.dev:${server.port}}
+              - http://${IAM_ZONE:wl4g.local}
+              - http://${IAM_ZONE:wl4g.local:${server.port}}
+              - http://${IAM_ZONE:wl4g.debug}
+              - http://${IAM_ZONE:wl4g.debug:${server.port}}
+              - http://*.${IAM_ZONE:wl4g.debug}
+              - http://*.${IAM_ZONE:wl4g.debug:${server.port}}
               - http://localhost
               - http://localhost:18080
               - http://127.0.0.1
               - http://127.0.0.1:18080
-              #- '*'
+              - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
         allowIpRange: 127.0.0.1

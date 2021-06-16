@@ -29,7 +29,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.config.AbstractIamProperties;
@@ -105,7 +105,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	}
 
 	@Override
-	public SessionValidateResult sessionValidate(SessionValidateResult param) {
+	public SessionValidateModel sessionValidate(SessionValidateModel param) {
 		log.debug("Mock session validate. param: {}", param);
 		return null;
 	}

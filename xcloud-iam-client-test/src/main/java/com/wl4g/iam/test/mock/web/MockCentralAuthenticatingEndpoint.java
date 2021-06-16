@@ -36,7 +36,7 @@ import com.wl4g.component.core.web.BaseController;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.config.AbstractIamProperties;
@@ -94,10 +94,10 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
 	@Override
-	public RespBase<SessionValidateResult> sessionValidate(@NotNull @RequestBody SessionValidateResult param) {
+	public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {
 		log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<SessionValidateResult> resp = new RespBase<>();
+		RespBase<SessionValidateModel> resp = new RespBase<>();
 
 		// Session expires validate assertion.
 		resp.setData(authHandler.sessionValidate(param));

@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -40,7 +41,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.common.log.SmartLogger;
@@ -81,7 +81,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
     /**
      * Delegate message source.
      */
-    @Qualifier(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
     protected SessionResourceMessageBundler bundle;
 
     /**

@@ -26,7 +26,7 @@ import com.wl4g.iam.core.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.iam.core.authc.model.LoggedinResult;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.cache.CacheKey;
@@ -316,7 +316,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
 	}
 
 	@Override
-	public SessionValidateResult sessionValidate(SessionValidateResult model) {
+	public SessionValidateModel sessionValidate(SessionValidateModel model) {
 		hasTextOf(model.getApplication(), "grantAppname");
 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_SIZE);

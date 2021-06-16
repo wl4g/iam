@@ -15,6 +15,16 @@
  */
 package com.wl4g.iam.web;
 
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.component.common.web.WebUtils2.isTrue;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGOUT;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -29,20 +39,10 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.IamController;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.web.AuthenticatingEndpoint;
-
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.component.common.web.WebUtils2.isTrue;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGOUT;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * IAM central authenticator controller
@@ -54,69 +54,64 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 @IamController
 public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoint implements AuthenticatingEndpoint {
 
-	@PostMapping(URI_S_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
-		log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+    @PostMapping(URI_S_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
+        log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
-		// Ticket assertion.
-		resp.setData(authHandler.validate(param));
+        RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
+        // Ticket assertion.
+        resp.setData(authHandler.validate(param));
 
-		log.info("Ticket validated. => {}", resp);
-		return resp;
-	}
+        log.info("Ticket validated. => {}", resp);
+        return resp;
+    }
 
-	@PostMapping(URI_S_LOGOUT)
-	@ResponseBody
-	@Override
-	public RespBase<LogoutResult> logout(HttpServletRequest request, HttpServletResponse response) {
-		log.info("Logout <= {}", getFullRequestURL(request));
+    @PostMapping(URI_S_SECOND_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
+        log.info("Secondary validating ... sessionId={} <= {}", getSessionId(), getFullRequestURL(request));
+        RespBase<SecondaryAuthcValidateResult> resp = RespBase.create();
 
-		RespBase<LogoutResult> resp = new RespBase<>();
-		// Logout source application
-		String appName = getCleanParam(request, config.getParam().getApplication());
-		// hasTextOf(fromAppName, config.getParam().getApplication());
+        String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
+        String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
+        resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-		// Using coercion ignores remote exit failures
-		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-		resp.setData(authHandler.logout(forced, appName, request, response));
+        log.info("Secondary validated. => {}", resp);
+        return resp;
+    }
 
-		log.info("Logout => {}", resp);
-		return resp;
-	}
+    @PostMapping(URI_S_SESSION_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel req) {
+        log.info("Sessions validating ...  <= {}", toJSONString(req));
+        RespBase<SessionValidateModel> resp = RespBase.create();
 
-	@PostMapping(URI_S_SECOND_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
-		log.info("Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
+        resp.setData(authHandler.sessionValidate(req));
 
-		RespBase<SecondaryAuthcValidateResult> resp = new RespBase<>();
-		// Requires parameters
-		String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
-		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
-		// Secondary authentication assertion.
-		resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
+        log.info("Sessions validated. => {}", resp);
+        return resp;
+    }
 
-		log.info("Secondary validated. => {}", resp);
-		return resp;
-	}
+    @PostMapping(URI_S_LOGOUT)
+    @ResponseBody
+    @Override
+    public RespBase<LogoutResult> logout(HttpServletRequest request, HttpServletResponse response) {
+        log.info("Logout... <= {}", getFullRequestURL(request));
 
-	@PostMapping(URI_S_SESSION_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<SessionValidateResult> sessionValidate(@NotNull @RequestBody SessionValidateResult param) {
-		log.info("Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+        RespBase<LogoutResult> resp = new RespBase<>();
+        String appName = getCleanParam(request, config.getParam().getApplication());
+        // hasTextOf(fromAppName, config.getParam().getApplication());
 
-		RespBase<SessionValidateResult> resp = new RespBase<>();
+        // Using coercion ignores remote exit failures
+        boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
+        resp.setData(authHandler.logout(forced, appName, request, response));
 
-		// Session expires validate assertion.
-		resp.setData(authHandler.sessionValidate(param));
-
-		log.info("Sessions expires validated. => {}", resp);
-		return resp;
-	}
+        log.info("Logout. => {}", resp);
+        return resp;
+    }
 
 }

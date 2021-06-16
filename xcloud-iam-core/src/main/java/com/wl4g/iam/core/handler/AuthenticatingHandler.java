@@ -24,7 +24,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.model.LoggedinResult;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
-import com.wl4g.iam.core.authc.model.SessionValidateResult;
+import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.authc.model.TicketValidateRequest;
 import com.wl4g.iam.core.authc.model.TicketValidateResult;
 import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
@@ -131,7 +131,7 @@ public interface AuthenticatingHandler {
 	 * @param param
 	 * @return
 	 */
-	default SessionValidateResult sessionValidate(SessionValidateResult param) {
+	default SessionValidateModel sessionValidate(SessionValidateModel param) {
 		throw new UnsupportedOperationException();
 	}
 

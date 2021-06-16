@@ -273,8 +273,6 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
             try {
                 /**
                  * See:{@link com.wl4g.component.core.web.error.com.wl4g.component.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()}
-                 */
-                /**
                  * See:{@link com.wl4g.component.core.web.error.ServletSmartErrorHandler#doAnyHandleError()}
                  */
                 toHttp(response).sendError(errorConfigurer.getStatus(exroot), format("%s, %s",
