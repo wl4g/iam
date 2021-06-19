@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.cache;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.support.cache.jedis.JedisClient.RedisProtoUtil.keyFormat;
+import static com.wl4g.component.support.cache.jedis.util.RedisSpecUtil.safeFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -36,46 +36,46 @@ import com.wl4g.component.support.cache.jedis.JedisClient;
  * @since
  */
 public class JedisIamCacheManager implements IamCacheManager {
-	private final Map<String, IamCache> caching = new ConcurrentHashMap<>(16);
+    private final Map<String, IamCache> caching = new ConcurrentHashMap<>(16);
 
-	private String prefix;
-	private JedisClient jedisClient;
+    private String prefix;
+    private JedisClient jedisClient;
 
-	public JedisIamCacheManager(String prefix, JedisClient jedisClient) {
-		notNullOf(prefix, "prefix");
-		this.prefix = keyFormat(prefix, '_'); // e.g. iam-web => iam_server
-		this.jedisClient = notNullOf(jedisClient, "jedisClient");
-	}
+    public JedisIamCacheManager(String prefix, JedisClient jedisClient) {
+        notNullOf(prefix, "prefix");
+        this.prefix = safeFormat(prefix, '_'); // e.g. iam-web => iam_server
+        this.jedisClient = notNullOf(jedisClient, "jedisClient");
+    }
 
-	public JedisClient getJedisClient() {
-		return jedisClient;
-	}
+    public JedisClient getJedisClient() {
+        return jedisClient;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Cache<CacheKey, Object> getCache(String name) throws CacheException {
-		return getIamCache(name);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Cache<CacheKey, Object> getCache(String name) throws CacheException {
+        return getIamCache(name);
+    }
 
-	/**
-	 * Getting enhanced cache instance
-	 *
-	 * @param name
-	 * @return
-	 * @throws CacheException
-	 */
-	@Override
-	public IamCache getIamCache(String name) throws CacheException {
-		String cacheName = getCacheName(name);
-		IamCache cache = caching.get(cacheName);
-		if (Objects.isNull(cache)) {
-			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisClient)));
-		}
-		return cache;
-	}
+    /**
+     * Getting enhanced cache instance
+     *
+     * @param name
+     * @return
+     * @throws CacheException
+     */
+    @Override
+    public IamCache getIamCache(String name) throws CacheException {
+        String cacheName = getCacheName(name);
+        IamCache cache = caching.get(cacheName);
+        if (Objects.isNull(cache)) {
+            caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisClient)));
+        }
+        return cache;
+    }
 
-	private final String getCacheName(String name) {
-		return prefix + name;
-	}
+    private final String getCacheName(String name) {
+        return prefix + name;
+    }
 
 }
