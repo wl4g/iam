@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-iam-service-starter-all</artifactId>
@@ -15,6 +16,7 @@
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<final.name>standalone-iam</final.name>
+		<bootstrap-classname>com.wl4g.StandaloneIam</bootstrap-classname>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -74,7 +76,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
+		<!-- If there is a compiler dependent annotation such as @HystrixCommand, 
+			our only purpose is to enable it to be compiled and packaged -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-integration-feign-common</artifactId>
@@ -169,7 +172,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>com.wl4g.StandaloneIamServer</mainClass>
+							<mainClass>${bootstrap-classname}</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 						</configuration>
 						<executions>
@@ -179,6 +182,66 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docker:build:mvnAssTar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<finalName>${final.name}-${project.version}-bin</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assemble/package.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Usages: -->
+					<!-- [build]: mvn -Pdocker:build:mvnAssTar -->
+					<!-- [push]: mvn -Pdocker:build:mvnAssTar -->
+					<!-- [push]: mvn -Pdocker:build:mvnAssTar dockerfile:build dockerfile:push 
+						-Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default</id>
+								<goals>
+									<goal>build</goal>
+									<!-- <goal>push</goal> -->
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<skip>${dockerskip}</skip>
+							<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+							<repository>wl4g/${project.build.finalName}</repository>
+							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+							<tag>${project.version}</tag>
+							<readTimeoutMillis>30000</readTimeoutMillis>
+							<connectTimeoutMillis>10000</connectTimeoutMillis>
+							<buildArgs>
+								<APP_NAME>${project.build.finalName}</APP_NAME>
+								<APP_VERSION>${project.version}</APP_VERSION>
+								<APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
+								<APP_PORT>18080</APP_PORT>
+							</buildArgs>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
