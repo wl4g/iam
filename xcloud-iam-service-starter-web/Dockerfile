@@ -24,24 +24,12 @@ ARG APP_NAME
 ARG APP_VERSION
 ARG APP_MAINCLASS
 ARG APP_PORT
-ARG APP_ACTIVE
 ENV APP_NAME "${APP_NAME}"
 ENV APP_BIN_NAME "${APP_NAME}-${APP_VERSION}-bin"
 ENV APP_HOME_PARENT "/opt/apps/ecm/${APP_NAME}-package/"
 ENV APP_HOME "${APP_HOME_PARENT}/${APP_BIN_NAME}"
 ENV APP_DATA "/mnt/disk1/${APP_NAME}"
 ENV APP_LOG "/mnt/disk1/log/${APP_NAME}"
-RUN export APP_ACTIVE=${APP_ACTIVE:-pro}
-ENV APP_STARTUP "nohup java -server -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 \
--XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${APP_LOG}/jvm_dump.hprof \
--XX:-OmitStackTraceInFastThrow -Xloggc:${APP_LOG}/${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
--XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dfile.encoding=UTF-8 \
--Djava.security.egd=file:/dev/./urandom -cp \
-.:${APP_HOME}/conf:${APP_HOME}/ext-lib/*:${APP_HOME}/lib/* ${APP_MAINCLASS} \
---server.tomcat.basedir=${APP_DATA} \
---logging.file.name=${APP_LOG}/${APP_NAME}_${APP_ACTIVE}.log \
---spring.application.name=${APP_NAME} \
---spring.profiles.active=${APP_ACTIVE} 1>${APP_LOG}/${APP_NAME}_${APP_ACTIVE}.stdout 2>${APP_LOG}/${APP_NAME}_${APP_ACTIVE}.stderr"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
@@ -52,12 +40,35 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 
 COPY target/${APP_BIN_NAME}.tar /tmp/${APP_BIN_NAME}.tar
 
-RUN mkdir -p ${APP_HOME_PARENT} && mkdir -p ${APP_DATA} && mkdir -p ${APP_LOG}
+RUN mkdir -p ${APP_HOME_PARENT}
 RUN tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 && rm -rf /tmp/${APP_BIN_NAME}.tar
 
-RUN cd ${APP_HOME} && pwd && ls -al
+# Make app startup script.
+RUN touch /start.sh && chmod +x /start.sh
+RUN echo '#!/bin/bash' >>/start.sh
+RUN echo "[ -z \$APP_ACTIVE ] && export APP_ACTIVE=pro" >>/start.sh
+RUN echo "[ -z \$APP_PORT ] && export APP_PORT=${APP_PORT}" >>/start.sh
+RUN echo "[ -z \$APP_DATA ] && export APP_DATA=${APP_DATA}" >>/start.sh
+RUN echo "[ -z \$APP_LOG ] && export APP_LOG=${APP_LOG}\n" >>/start.sh
+RUN echo "mkdir -p \${APP_DATA} && mkdir -p \${APP_LOG}\n" >>/start.sh
+RUN echo "echo \"Starting ${APP_NAME}:${APP_VERSION} on port: \${APP_PORT}, active: \${APP_ACTIVE} ... \"\n" >>/start.sh
+RUN echo "nohup java -server -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 \
+-XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof -XX:-OmitStackTraceInFastThrow \
+-Xloggc:\${APP_LOG}/${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
+-XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M \
+-Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
+.:${APP_HOME}/conf:${APP_HOME}/ext-lib/*:${APP_HOME}/lib/* ${APP_MAINCLASS} \
+--logging.file.name=\${APP_LOG}/${APP_NAME}_\${APP_ACTIVE}.log \
+--server.port=\${APP_PORT} \
+--server.tomcat.basedir=\${APP_DATA} \
+--spring.application.name=${APP_NAME} \
+--spring.profiles.active=\${APP_ACTIVE} \
+1>\${APP_LOG}/${APP_NAME}_\${APP_ACTIVE}.stdout \
+2>\${APP_LOG}/${APP_NAME}_\${APP_ACTIVE}.stderr" >>/start.sh
+RUN echo -e "\necho \"Started ${APP_NAME}:${APP_VERSION} on port: \${APP_PORT}, active: \${APP_ACTIVE} \"\n" >>/start.sh
 
 EXPOSE ${APP_PORT}
 
-CMD ["/bin/bash", "-c", "${APP_STARTUP}"]
+CMD ["/bin/bash", "-c", "/start.sh"]
