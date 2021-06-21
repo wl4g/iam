@@ -46,14 +46,14 @@ RUN tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 
 # Make app startup script.
 RUN touch /start.sh && chmod +x /start.sh
-RUN echo '#!/bin/bash' >>/start.sh
-RUN echo "[ -z \$APP_ACTIVE ] && export APP_ACTIVE=pro" >>/start.sh
-RUN echo "[ -z \$APP_PORT ] && export APP_PORT=${APP_PORT}" >>/start.sh
-RUN echo "[ -z \$APP_DATA ] && export APP_DATA=${APP_DATA}" >>/start.sh
-RUN echo "[ -z \$APP_LOG ] && export APP_LOG=${APP_LOG}\n" >>/start.sh
-RUN echo "mkdir -p \${APP_DATA} && mkdir -p \${APP_LOG}\n" >>/start.sh
-RUN echo "echo \"Starting ${APP_NAME}:${APP_VERSION} on port: \${APP_PORT}, active: \${APP_ACTIVE} ... \"\n" >>/start.sh
-RUN echo "nohup java -server -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 \
+RUN echo -e '#!/bin/bash' >>/start.sh
+RUN echo -e "[ -z \$APP_ACTIVE ] && export APP_ACTIVE=pro" >>/start.sh
+RUN echo -e "[ -z \$APP_PORT ] && export APP_PORT=${APP_PORT}" >>/start.sh
+RUN echo -e "[ -z \$APP_DATA ] && export APP_DATA=${APP_DATA}" >>/start.sh
+RUN echo -e "[ -z \$APP_LOG ] && export APP_LOG=${APP_LOG}" >>/start.sh
+RUN echo -e "echo \"Starting ${APP_NAME}:${APP_VERSION} on port: \${APP_PORT}, active: \${APP_ACTIVE} ... \"\n" >>/start.sh
+RUN echo -e "mkdir -p \${APP_DATA} && mkdir -p \${APP_LOG}\n" >>/start.sh
+RUN echo -e "nohup java -server -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 \
 -XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof -XX:-OmitStackTraceInFastThrow \
 -Xloggc:\${APP_LOG}/${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
