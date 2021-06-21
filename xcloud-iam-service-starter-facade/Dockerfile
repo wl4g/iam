@@ -17,6 +17,7 @@
 ###      docker build -t com.wl4g/${APP_NAME}:${APP_VERSION} .
 ### 3). Manual run example:
 ###      docker run -d -p=${APP_PORT}:${APP_PORT} \
+###        -e=APP_NOHUP=y
 ###        -e=APP_DEBUG=y
 ###        -e=APP_DATA=/mnt/disk1/${APP_NAME}
 ###        -e=APP_LOG=/mnt/disk1/log/${APP_NAME}
@@ -55,17 +56,17 @@ RUN tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 # Make startup script.
 RUN touch /start.sh && chmod +x /start.sh
 RUN echo -e '#!/bin/bash' >>/start.sh
-RUN echo -e "[ -z \$APP_ACTIVE ] && export APP_ACTIVE=pro" >>/start.sh
-RUN echo -e "[ -z \$APP_PORT ] && export APP_PORT=${APP_PORT}" >>/start.sh
-RUN echo -e "[ -z \$APP_DATA ] && export APP_DATA=${APP_DATA}" >>/start.sh
-RUN echo -e "[ -z \$APP_LOG ] && export APP_LOG=${APP_LOG}" >>/start.sh
-RUN echo -e "[ -z \$APP_DEBUG ] && export DEBUG_OPTS=\"-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n\"" >>/start.sh
-RUN echo -e "[ -z \$APP_DEBUG ] && export NOHUP=\"nohup\"" >>/start.sh
+RUN echo -e "[ -z \"\$APP_ACTIVE\" ] && export APP_ACTIVE=pro" >>/start.sh
+RUN echo -e "[ -z \"\$APP_PORT\" ] && export APP_PORT=${APP_PORT}" >>/start.sh
+RUN echo -e "[ -z \"\$APP_DATA\" ] && export APP_DATA=${APP_DATA}" >>/start.sh
+RUN echo -e "[ -z \"\$APP_LOG\" ] && export APP_LOG=${APP_LOG}" >>/start.sh
+RUN echo -e "[ -z \"\$APP_NOHUP\" ] && export CMD_NOHUP=\"nohup\"" >>/start.sh
+RUN echo -e "[ -n \"\$APP_DEBUG\" ] && export DEBUG_OPTS=\"-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n\"" >>/start.sh
 RUN echo -e "echo \"Starting ${APP_NAME}:${APP_VERSION} on \${APP_PORT}:\${APP_ACTIVE} ... \"\n" >>/start.sh
 RUN echo -e "mkdir -p \${APP_DATA} && mkdir -p \${APP_LOG}\n" >>/start.sh
 
 # Make startup commands.
-RUN echo -e "cmdRun=\"\${NOHUP} java -server \${DEBUG_OPTS} -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
+RUN echo -e "cmdRun=\"\${CMD_NOHUP} java -server \${DEBUG_OPTS} -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof -XX:-OmitStackTraceInFastThrow \
 -Xloggc:\${APP_LOG}/${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
@@ -81,7 +82,7 @@ RUN echo -e "cmdRun=\"\${NOHUP} java -server \${DEBUG_OPTS} -Xms256M -Xmx1G -XX:
 2>\${APP_LOG}/${APP_NAME}_\${APP_ACTIVE}.stderr\"" >>/start.sh
 
 # Print startup info. (if debug mode)
-RUN echo -e "\n[ -n \$APP_DEBUG ] && echo \$cmdRun\n" >>/start.sh
+RUN echo -e "\n[ -n \"\$APP_DEBUG\" ] && echo \$cmdRun\n" >>/start.sh
 
 # Execute startup.
 RUN echo -e "exec \${cmdRun}" >>/start.sh
