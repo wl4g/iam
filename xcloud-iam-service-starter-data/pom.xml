@@ -183,18 +183,17 @@
 							</execution>
 						</executions>
 						<configuration>
-							<skip>${dockerskip}</skip>
-							<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+							<dockerConfigFile>${project.basedir}/Dockerfile</dockerConfigFile>
 							<repository>wl4g/${project.build.finalName}</repository>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<tag>${project.version}</tag>
-							<readTimeoutMillis>30000</readTimeoutMillis>
-							<connectTimeoutMillis>10000</connectTimeoutMillis>
+							<readTimeoutMillis>60000</readTimeoutMillis>
+							<connectTimeoutMillis>20000</connectTimeoutMillis>
 							<buildArgs>
 								<APP_NAME>${project.build.finalName}</APP_NAME>
 								<APP_VERSION>${project.version}</APP_VERSION>
 								<APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
-								<APP_PORT>18080</APP_PORT>
+								<APP_PORT>18082</APP_PORT>
 							</buildArgs>
 						</configuration>
 					</plugin>

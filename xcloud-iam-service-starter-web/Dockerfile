@@ -52,7 +52,7 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 
 COPY target/${APP_BIN_NAME}.tar /tmp/${APP_BIN_NAME}.tar
 
-RUN mkdir -p ${APP_HOME_PARENT}
+RUN mkdir -p ${APP_HOME_PARENT} && mkdir -p ${APP_DATA} && mkdir -p ${APP_LOG}
 RUN tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 && rm -rf /tmp/${APP_BIN_NAME}.tar
 

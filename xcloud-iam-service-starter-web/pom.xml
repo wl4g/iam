@@ -200,13 +200,12 @@
 							</execution>
 						</executions>
 						<configuration>
-							<skip>${dockerskip}</skip>
-							<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+							<contextDirectory>${project.basedir}</contextDirectory>
 							<repository>wl4g/${project.build.finalName}</repository>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<tag>${project.version}</tag>
-							<readTimeoutMillis>30000</readTimeoutMillis>
-							<connectTimeoutMillis>10000</connectTimeoutMillis>
+							<readTimeoutMillis>60000</readTimeoutMillis>
+							<connectTimeoutMillis>20000</connectTimeoutMillis>
 							<buildArgs>
 								<APP_NAME>${project.build.finalName}</APP_NAME>
 								<APP_VERSION>${project.version}</APP_VERSION>
