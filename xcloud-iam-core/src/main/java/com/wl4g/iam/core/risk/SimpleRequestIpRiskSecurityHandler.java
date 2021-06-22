@@ -21,12 +21,12 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESO
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.web.rest.RespBase;
@@ -45,7 +45,7 @@ public class SimpleRequestIpRiskSecurityHandler implements RiskSecurityHandler {
 
     protected SmartLogger log = getLogger(getClass());
 
-    @Qualifier(BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
     protected SessionResourceMessageBundler bundle;
 
     @Autowired
