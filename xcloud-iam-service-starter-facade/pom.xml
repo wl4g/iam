@@ -193,7 +193,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<dockerConfigFile>${project.basedir}/Dockerfile</dockerConfigFile>
+							<dockerConfigFile>${project.basedir}</dockerConfigFile>
 							<repository>wl4g/${project.build.finalName}</repository>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<tag>${project.version}</tag>
