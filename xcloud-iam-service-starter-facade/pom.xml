@@ -203,7 +203,6 @@
 								<APP_NAME>${project.build.finalName}</APP_NAME>
 								<APP_VERSION>${project.version}</APP_VERSION>
 								<APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
-								<APP_PORT>18081</APP_PORT>
 							</buildArgs>
 						</configuration>
 					</plugin>
