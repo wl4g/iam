@@ -35,7 +35,6 @@
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<maven-jar-plugin.version>2.6</maven-jar-plugin.version>
-		<maven-gpg-plugin.version>1.0</maven-gpg-plugin.version>
 		<maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
@@ -47,6 +46,7 @@
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<minify-maven-plugin.version>1.7.6</minify-maven-plugin.version>
 		<maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<spring-boot-maven.version>2.3.8.RELEASE</spring-boot-maven.version>
 	</properties>
 	<dependencyManagement>
@@ -164,10 +164,15 @@
 					<version>${maven-checkstyle-plugin.version}</version>
 				</plugin>
 				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>${spring-boot-maven.version}</version>
-				</plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${maven.springboot-version}</version>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
