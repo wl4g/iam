@@ -1,14 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>xcloud-iam</artifactId>
-	<version>master</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<name>XCloud IAM(Identity Authentication Management)</name>
 	<url>https://iam.xcloud.wl4g.com</url>
 	<description>A based CAS/SSO unified authentication implementation, supporting wechat/qq/facebook/... and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 	<modules>
+		<module>xcloud-iam-bom</module>
 		<module>xcloud-iam-client</module>
 		<module>xcloud-iam-client-example</module>
 		<module>xcloud-iam-client-test</module>
@@ -194,4 +196,99 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Source -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Javadoc -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
+									<!-- <additionalparam>-Xdoclint:none</additionalparam> --> <!-- 2.0.0 -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Usage: mvn versions:set -DnewVersion=latest -->
+					<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<configuration>
+							<!-- <newVersion>latest</newVersion> -->
+							<allowSnapshots>true</allowSnapshots>
+							<generateBackupPoms>false</generateBackupPoms>
+							<processAllModules>true</processAllModules>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<!-- <preparationGoals>clean install</preparationGoals> -->
+							<!-- <developmentVersion>latest</developmentVersion> -->
+						</configuration>
+					</plugin>
+					<!-- GPG -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- https://help.sonatype.com/repomanager2/staging-releases/configuring-your-project-for-deployment -->
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>sonatype-nexus-staging</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype-nexus-snapshots</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype-nexus-staging</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>
