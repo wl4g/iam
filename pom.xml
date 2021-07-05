@@ -9,6 +9,50 @@
 	<name>XCloud IAM(Identity Authentication Management)</name>
 	<url>https://iam.xcloud.wl4g.com</url>
 	<description>A based CAS/SSO unified authentication implementation, supporting wechat/qq/facebook/... and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
+	<organization>
+		<name>wl4g</name>
+		<url>https://xcloud.wl4g.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:wl4g/xcloud-iam.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/xcloud-iam.git</developerConnection>
+		<url>https://github.com/wl4g/xcloud-iam</url>
+		<tag>HEAD</tag>
+	</scm>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/wl4g/xcloud-iam/issues</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<id>Wangl01</id>
+			<name>Wanglsir</name>
+			<email>wanglsir@gmail.com,983708408@qq.com</email>
+			<roles>
+				<role>owner</role>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+		<developer>
+			<id>xburnerair00</id>
+			<name>xburnerair00</name>
+			<email>xburnerair00@163.com</email>
+			<roles>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+	</developers>
 	<modules>
 		<module>xcloud-iam-bom</module>
 		<module>xcloud-iam-client</module>
@@ -46,6 +90,7 @@
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<minify-maven-plugin.version>1.7.6</minify-maven-plugin.version>
 		<maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<spring-boot-maven.version>2.3.8.RELEASE</spring-boot-maven.version>
 	</properties>
@@ -164,15 +209,20 @@
 					<version>${maven-checkstyle-plugin.version}</version>
 				</plugin>
 				<plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${maven-gpg-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${maven.springboot-version}</version>
-                </plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${maven-deploy-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>${maven-gpg-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>${maven.springboot-version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
