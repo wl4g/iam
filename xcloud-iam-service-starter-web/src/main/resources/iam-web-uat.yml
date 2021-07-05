@@ -22,7 +22,7 @@ spring:
               - https://*.${IAM_ZONE:wl4g.uat}
               - http://*.${IAM_ZONE:wl4g.uat}
       #login-uri: /view/login.html
-      login-uri: http://devops.${IAM_ZONE:wl4g.uat}/#/login
+      login-uri: http://dopaas.${IAM_ZONE:wl4g.uat}/#/login
       unauthorized-uri: /view/403.html
       success-endpoint: umc-manager@http://umc.${IAM_ZONE:wl4g.uat}/umc-manager
       acl:
@@ -41,9 +41,9 @@ spring:
         wechat:
           app-id: yourappid
           app-secret: yoursecret
-          redirect-url: http://passport.wl4g.uat${server.servlet.contextPath}/sns/wechat/callback
+          redirect-url: http://iam.wl4g.uat${server.servlet.contextPath}/sns/wechat/callback
           href: https://${IAM_ZONE:wl4g.uat}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
         qq:
           app-id: 101542056
           app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-          redirect-url: http://passport.wl4g.uat${server.servlet.contextPath}/sns/qq/callback
+          redirect-url: http://iam.wl4g.uat${server.servlet.contextPath}/sns/qq/callback

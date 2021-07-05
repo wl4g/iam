@@ -21,7 +21,7 @@ spring:
               - http://${IAM_ZONE:wl4g.com}
               - https://*.${IAM_ZONE:wl4g.com}
               - http://*.${IAM_ZONE:wl4g.com}
-      login-uri: ${IAM_SCHEMA:https}://devops.${IAM_ZONE:wl4g.com}/#/login
+      login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
       unauthorized-uri: /view/403.html
       success-endpoint: umc-manager@https://umc.${IAM_ZONE:wl4g.com}/umc-manager
       acl:
