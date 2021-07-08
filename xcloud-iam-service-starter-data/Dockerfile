@@ -34,6 +34,7 @@ LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
 ARG APP_NAME
 ARG APP_VERSION
 ARG APP_MAINCLASS
+ARG APP_CLASSPATH # Optional
 ENV APP_BIN_NAME "${APP_NAME}-${APP_VERSION}-bin"
 ENV APP_HOME_PARENT "/opt/apps/ecm/${APP_NAME}-package/"
 ENV APP_HOME "${APP_HOME_PARENT}/${APP_BIN_NAME}"
@@ -73,7 +74,7 @@ RUN echo -e "cmdRun=\"\${CMD_NOHUP} java -server \${DEBUG_OPTS} -Xms256M -Xmx1G 
 -Xloggc:\${APP_LOG}/\${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
 -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M \
 -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
-.:${APP_HOME}/conf:${APP_HOME}/ext-lib/*:${APP_HOME}/lib/* ${APP_MAINCLASS} \
+.:${APP_HOME}/conf:${APP_CLASSPATH}:${APP_HOME}/ext-lib/*:${APP_HOME}/lib/* ${APP_MAINCLASS} \
 \${APP_PORT_OPTS} \
 --server.tomcat.basedir=\${APP_DATA} \
 --logging.file.name=\${APP_LOG}/\${APP_NAME}_\${APP_ACTIVE}.log \
