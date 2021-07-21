@@ -18,7 +18,8 @@
 			verifiedToken: null
 		}
 	};
-    var JigsawCaptcha = function (element, options) {
+    var JigsawCaptcha = function (element, iamCore, options) {
+        this.iamCore = iamCore;
         this.element0 = $(element);
         this.options = $.extend({}, JigsawCaptcha.DEFAULTS, options);
         var w = this.element0.width();
@@ -40,9 +41,9 @@
         getApplyCaptchaUrl: null,
         getVerifyAnalysisUrl: null,
         verifyDataKey: "verifyData", // Default: 'verifyData'
-		applyCaptcha: function(img1, img2, tipText) {
+		applyCaptcha: function(iamCore, img1, img2, tipText) {
 			var that = this;
-			var applyCaptchaUrl = Common.Util.checkEmpty("options.getApplyCaptchaUrl", that.getApplyCaptchaUrl());
+			var applyCaptchaUrl = Common.Util.checkEmpty("options.getApplyCaptchaUrl", that.getApplyCaptchaUrl(iamCore));
 			var _uri = applyCaptchaUrl.substring(0, applyCaptchaUrl.lastIndexOf("?"));
 			$.ajax({
 				url: _uri,
@@ -70,7 +71,7 @@
 				}
 			});
 		},
-		verifyAnalysis: function (arr, left) {
+		verifyAnalysis: function (iamCore, arr, left) {
 			// Additional algorithmic salt.
 			left = new String(left);
 			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
@@ -85,7 +86,7 @@
             };
             // 提交验证码获取分析结果
 			var that = this;
-			var verifyAnalysisUrl = Common.Util.checkEmpty("options.getVerifyAnalysisUrl", that.getVerifyAnalysisUrl());
+			var verifyAnalysisUrl = Common.Util.checkEmpty("options.getVerifyAnalysisUrl", that.getVerifyAnalysisUrl(iamCore));
 			var _uri = verifyAnalysisUrl.substring(0, verifyAnalysisUrl.lastIndexOf("?"));
 			var paramMap = Common.Util.toUrlQueryParam(verifyAnalysisUrl);
 			paramMap.set(Common.Util.checkEmpty("options.verifyDataKey", that.verifyDataKey), Common.Util.Codec.encodeBase58(JSON.stringify(verifyData)));
@@ -341,13 +342,13 @@
 	// Apply captcha.
     JigsawCaptcha.prototype.applyCaptcha = function() {
 		var tipText = this.text;
-		this.options.applyCaptcha(this.img1, this.img2, tipText);
+		this.options.applyCaptcha(this.iamCore, this.img1, this.img2, tipText);
 	};
 
 	// Verify captcha.
     JigsawCaptcha.prototype.verifyAnalysis = function () {
         var left = parseInt(this.block.style.left);
-        var verified = this.options.verifyAnalysis(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
+        var verified = this.options.verifyAnalysis(this.iamCore, this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
         return verified;
     };
 
@@ -368,7 +369,7 @@
     };
 
 	// Register to JQuery.
-    $.fn.JigsawIamCaptcha = function(option) {
+    $.fn.JigsawIamCaptcha = function(iamCore, option) {
         return this.each(function () {
             var $this = $(this);
             var jigsawCaptcha0 = $this.data('lgb.JigsawIamCaptcha');
@@ -378,7 +379,7 @@
 				$this.removeData("lgb.JigsawIamCaptcha");
 			}
             var options = typeof option === 'object' && option;
-            $this.data('lgb.JigsawIamCaptcha', jigsawCaptcha0 = new JigsawCaptcha(this, options));
+            $this.data('lgb.JigsawIamCaptcha', new JigsawCaptcha(this, iamCore, options));
             if (typeof option === 'string') jigsawCaptcha0[option]();
         });
     };

@@ -240,7 +240,6 @@
 	 		},
 			// 定义验证码显示面板配置
 			captcha: {
-				enable: true,
 				use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
 				panel: document.getElementById("iamjssdk_captcha_panel"), // Jigsaw验证码时必须
 				img: document.getElementById("iamjssdk_captcha_img"), // 验证码显示 img对象（仅jpeg/gif时需要）
@@ -254,7 +253,6 @@
 			},
 			// 登录认证配置
 			account: {
-				enable: true,
 				submitBtn: document.getElementById("iamjssdk_account_submit_btn"), // 登录提交触发对象
 				principalInput: document.getElementById("iamjssdk_account_username"), // 必填，获取填写的登录用户名
 				credentialInput: document.getElementById("iamjssdk_account_password"), // 获取登录账号密码，账号登录时必填
@@ -272,7 +270,6 @@
 				}
 			},
 			sms: { // SMS认证配置
-				enable: true,
 				submitBtn: document.getElementById("iamjssdk_sms_submit_btn"), // 登录提交触发对象
 				sendSmsBtn: document.getElementById("iamjssdk_sms_getcode_btn"), // 发送SMS验证码对象
 				mobileArea: $(".select-area"), // 手机号区域select对象
@@ -293,7 +290,6 @@
 			},
 			// SNS授权配置
 			sns: {
-				enable: true,
 				// 定义必须的请求参数
 				required: {
 					getWhich: function () { // 执行操作类型，必须：当使用登录功能时值填"login",当使用绑定功能时值填"bind"
@@ -340,7 +336,7 @@
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
 		IAMCore.Console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
-		runtime.iamCore.anyAuthenticators().build();
+		runtime.iamCore.anyAuthenticators().bind();
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
