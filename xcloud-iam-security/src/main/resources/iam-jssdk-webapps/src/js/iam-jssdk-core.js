@@ -1532,8 +1532,9 @@
 	};
 	// Export safeCheck
 	IAMCore.prototype.safeCheck = function(principal, callback, refreshHandshake) {
+		var that = this;
 		this._initHandshakeIfNecessary(refreshHandshake).then(res => {
-			_initSafeCheck(principal, callback);
+			that._initSafeCheck(principal, callback);
 		});
 		return this;
 	};
