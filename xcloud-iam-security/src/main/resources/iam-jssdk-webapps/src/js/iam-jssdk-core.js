@@ -1007,7 +1007,7 @@
 					return this;
 				}
 				// 渲染SNS登录二维码或页面
-				_snsViewReader(connectUrl, panelType);
+				that._snsViewReader(connectUrl, panelType);
 			}
 		}
 	};
