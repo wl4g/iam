@@ -8,6 +8,11 @@
 
 	// Base constants definition.
     var constant = {
+        // 基础资源定义
+        resources: {
+            loading: "data:image/gif;base64,R0lGODlhHgAeAPf/AGzI8iqM4ev4/YnU9YrR9HLK8le67+f2/Knf94zU9ZLV9nbK8vr9/uP1/fL7/k+57mTC8TCm6TOp6t/0/WG+8GPE8FO98HvH8rbj+LLi+JzX9mjE8czq+k2679Pu+yqI4Tar637L8z+y7fT7/s7s+8zt+zCg53jM83HJ8vf7/uv3/d7z/M3s+i+g6MLn+bTj+KPe95HV9Uy57j2x7dHu+4HP9DCm6S2b5iyV5SyW5S2Y5SyW5C6c5i2Z5i2X5S6e5zGn6S6f5yyV5C2Z5S2a5iyS4/b8/iyU5C6d5y+l6S+k6IPO8y6d5vT7/lW98GrH8S+j6C+i6C+h6P7///z+/yuQ4/X7/v3+/2zG8UK07cXq+i6e5vL6/drx/CuR45DW9dTw/O75/fH6/YjS9fn9/l7A77bj+Tiu62zD8dfx/IbP9C+k6XfN81zA7yyT5Nbw/EK27tv0/b/m+e/5/p/b93zK8kCy7C2b5TKn6r7n+fb9/vz//4XQ9GfG8I7T9XbL85XX9svr+km07cbp+tvx/MDo+oDQ9E257qXd+Pf9/t7z/XjK8pPX9tfw/D6s673m+SyT43/P9LPl+X3L8zKn6S2a5X/O84HP8+Dz/YHO9Jva9yuP4k237lu/7zCj6fz9/jer6srr+rfj+a3f963h97/n+WnF8Fa88NXu+2/J8vn9/4jS9F/C8JLV9ZLW9VzB70257qLd+HXK8jGn6pzZ9t3y/ILP9O34/S2a5aDe+GLB777m+XHI8fX8/4vS9afc9y6d53XL82/H8oHN8/v+/37J8v3//1a98JLX9lq/72fA74XP84XR9IfR9J3a9/D5/dfv/F2/8VK779vy/C6c5rzl+bvm+XbI8pvc9l7B8C+h6C6e6Eaw7Ea17ZbZ9zOd5pfX9UOy7L7n+i6a5S2Y5ZTV9p/a9y6h5/T8/tDu+8fp+uD0/c/u+57b99jx/L3o+SyS5JDU9ZvY9tLy/LXi9zeu633I8vf+/7Dh90Cv66Hd95zZ95za9i6f6P///////yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIyQjlEMzRFOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIyQjlEMzRGOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjJCOUQzNEM4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QjJCOUQzNEQ4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0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",
+        },
+        // 基础字典定义
 		iamVerboseStoredKey : '__IAM_VERBOSE',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
         authRedirectRecordStorageKey : '__IAM_AUTHC_REDIRECT_RECORD',
@@ -276,10 +281,6 @@
 
         // Core settings.
         this.settings = {
-            // 基础资源定义
-            resources: {
-                loading: "data:image/gif;base64,R0lGODlhHgAeAPf/AGzI8iqM4ev4/YnU9YrR9HLK8le67+f2/Knf94zU9ZLV9nbK8vr9/uP1/fL7/k+57mTC8TCm6TOp6t/0/WG+8GPE8FO98HvH8rbj+LLi+JzX9mjE8czq+k2679Pu+yqI4Tar637L8z+y7fT7/s7s+8zt+zCg53jM83HJ8vf7/uv3/d7z/M3s+i+g6MLn+bTj+KPe95HV9Uy57j2x7dHu+4HP9DCm6S2b5iyV5SyW5S2Y5SyW5C6c5i2Z5i2X5S6e5zGn6S6f5yyV5C2Z5S2a5iyS4/b8/iyU5C6d5y+l6S+k6IPO8y6d5vT7/lW98GrH8S+j6C+i6C+h6P7///z+/yuQ4/X7/v3+/2zG8UK07cXq+i6e5vL6/drx/CuR45DW9dTw/O75/fH6/YjS9fn9/l7A77bj+Tiu62zD8dfx/IbP9C+k6XfN81zA7yyT5Nbw/EK27tv0/b/m+e/5/p/b93zK8kCy7C2b5TKn6r7n+fb9/vz//4XQ9GfG8I7T9XbL85XX9svr+km07cbp+tvx/MDo+oDQ9E257qXd+Pf9/t7z/XjK8pPX9tfw/D6s673m+SyT43/P9LPl+X3L8zKn6S2a5X/O84HP8+Dz/YHO9Jva9yuP4k237lu/7zCj6fz9/jer6srr+rfj+a3f963h97/n+WnF8Fa88NXu+2/J8vn9/4jS9F/C8JLV9ZLW9VzB70257qLd+HXK8jGn6pzZ9t3y/ILP9O34/S2a5aDe+GLB777m+XHI8fX8/4vS9afc9y6d53XL82/H8oHN8/v+/37J8v3//1a98JLX9lq/72fA74XP84XR9IfR9J3a9/D5/dfv/F2/8VK779vy/C6c5rzl+bvm+XbI8pvc9l7B8C+h6C6e6Eaw7Ea17ZbZ9zOd5pfX9UOy7L7n+i6a5S2Y5ZTV9p/a9y6h5/T8/tDu+8fp+uD0/c/u+57b99jx/L3o+SyS5JDU9ZvY9tLy/LXi9zeu633I8vf+/7Dh90Cv66Hd95zZ95za9i6f6P///////yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIyQjlEMzRFOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIyQjlEMzRGOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjJCOUQzNEM4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QjJCOUQzNEQ4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0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",
-            },
             // 字典参数定义
             definition: {
                 codeOkValue: "200", // 接口返回成功码判定标准
@@ -1431,8 +1432,8 @@
 	 *	    var homeUrl = location.protocol + "//base." + topDomain;
 	 *	    new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
 	 *	        $(function() {
-	 *	            console.log("IAM JSSDK UI creation... ");
-	 *	            new IAMUi().initUI(document.getElementById("content-right"), options);
+	 *	            console.log("Initial IAM JSSDK UI ... ");
+	 *	            new IAMUi().initUI(document.getElementById("login_container_div"), options);
 	 *	        });
 	 *	    });
      *   </script>
@@ -1440,51 +1441,56 @@
 	 * -----------------------------------------------
 	 * </pre>
 	 */
-	IAMCore.prototype._checkAuthenticationAndRedirect = function() {
+	IAMCore.WindowFacade = function(iamCore) {
         var that = this;
-        return {
+        this.iamCore = iamCore;
+        this.props = {
             cache: {
                 bodyStyle: null,
                 bodyClass: null,
             },
             hideDocumentAndOpenLoading: function() {
-                var handler = that._checkAuthenticationAndRedirect();
+                var props = that.props;
                 var _body = $("body");
                 // Hide body
-                handler.cache.bodyStyle = _body.attr("style");
-                handler.cache.bodyClass = _body.attr("class");
+                props.cache.bodyStyle = _body.attr("style");
+                props.cache.bodyClass = _body.attr("class");
                 _body.removeAttr("style");
                 _body.removeAttr("class");
                 // Hide elements and open loading. (if necessary)
                 if ($(".iam_check_authc_redirect_style").length <= 0) {
                     $("<style class='iam_check_authc_redirect_style'>" +
-                        "div,img,span,p,a,b{display:none;}body{background:url(" + that.settings.resources.loading +
+                        "div,img,span,p,a,b{display:none;}body{background:url(" + constant.resources.loading +
                         ") no-repeat;background-position:center;!important}</style>").appendTo($("head"));
                 }
             },
             showDocumentAndCloseLoading: function() {
-                var handler = that._checkAuthenticationAndRedirect();
+                var props = that.props;
                 var _body = $("body");
                 // Show body(If necessary)
-                if (handler.cache.bodyStyle) { _body.attr("style", handler.cache.bodyStyle); }
-                if (handler.cache.bodyClass) { _body.attr("class", handler.cache.bodyClass); }
+                if (props.cache.bodyStyle) { _body.attr("style", props.cache.bodyStyle); }
+                if (props.cache.bodyClass) { _body.attr("class", props.cache.bodyClass); }
                 // Show elements and close loading
                 $(".iam_check_authc_redirect_style").remove();
             },
             // Prevent flashing when redirecting to the home page.
             doHandle: function(redirectUrl) {
+                if (Common.Util.isEmpty(redirectUrl)) {
+                    throw Error("Parameter 'redirectUrl' is required!");
+                }
                 IAMCore.Console.info("Checking unauthenticated and redirection ... ");
-                var handler = that._checkAuthenticationAndRedirect();
-
+                var props = that.props;
+    
                 // 首先添加隐藏元素的style, 避免body先渲染完出现闪屏)
-                handler.hideDocumentAndOpenLoading();
-                $(function() { handler.hideDocumentAndOpenLoading(); }); // body渲染完立即执行, loading才能显示
-
+                props.hideDocumentAndOpenLoading();
+                $(function() { props.hideDocumentAndOpenLoading(); }); // body渲染完立即执行, loading才能显示
+    
                 return new Promise(resolve => {
+                    var iamCore = that.iamCore;
                     // When initializing the page, the delayed loading animation is specially displayed to prevent the white flash screen.
                     IAMCore.Console.info("Checking authentication state ...");
-                    that._initHandshakeIfNecessary(true).then(res => {
-                        if(!that.checkRespUnauthenticated(res)) { // Authenticated?
+                    iamCore._initHandshakeIfNecessary(true).then(res => {
+                        if(!iamCore.checkRespUnauthenticated(res)) { // Authenticated?
                             var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
                             // Check null or expired?
                             if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 10000)) {
@@ -1499,13 +1505,13 @@
                             sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
                             IAMCore.Console.info("Authenticated and redirection to: ", redirectUrl);
                             setTimeout(function() {
-                                //handler.showDocumentAndCloseLoading(); // 即将跳转无需关闭
+                                //props.showDocumentAndCloseLoading(); // 即将跳转无需关闭
                                 window.location = redirectUrl;
                             }, (200+parseInt(Math.random()*500))); // Random
                         } else {
                             IAMCore.Console.info("Unauthentication rendering login page ... ");
                             setTimeout(function() {
-                                handler.showDocumentAndCloseLoading();
+                                props.showDocumentAndCloseLoading();
                                 sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // reset
                                 resolve(res);
                             }, (200+parseInt(Math.random()*2000))); // Random
@@ -1514,7 +1520,26 @@
                 });
             }
         };
-	};
+    };
+    // Because it is a singleton and needs to be called by multiple external instances, it is designed to be repeatable initialization.
+    IAMCore.WindowFacade.prototype.initFor = function(iamCore) {
+        if (Common.Util.isEmpty(iamCore)) {
+            throw Error("Parameter 'iamCore' is required!");
+        }
+        this.iamCore = iamCore;
+        return this;
+    };
+    // Obtain WindowFacade single method.
+    IAMCore.WindowFacade.getInstance = (function() {
+        var instance;
+        return function() {
+            if (instance) {
+                return instance;
+            }
+            // Build single instance
+            return instance = new IAMCore.WindowFacade();
+        };
+    })();
 
 	// Init Handshake authentication(PRE) implements.
 	IAMCore.prototype._initHandshakeIfNecessary = function(refresh) {
@@ -1600,7 +1625,7 @@
 
 	// Export check authentication and redirection
 	IAMCore.prototype.checkAuthenticationAndRedirect = function(redirectUrl) {
-        return this._checkAuthenticationAndRedirect().doHandle(redirectUrl);
+        return IAMCore.WindowFacade.getInstance().initFor(this).props.doHandle(redirectUrl);
     };
 
 	// Export function multi modular authenticating handler.
