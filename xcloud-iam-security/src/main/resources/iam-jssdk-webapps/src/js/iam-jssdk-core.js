@@ -1000,7 +1000,7 @@
 				var provider = curProviderEle.getAttribute("provider");
 				var panelType = curProviderEle.getAttribute("panelType");
 				// 请求社交网络认证的URL（与which、action相关）
-				var connectUrl = _getSnsConnectUrl(provider, panelType);
+				var connectUrl = that._getSnsConnectUrl(provider, panelType);
 				// 执行点击SNS按钮事件
 				if(!that.settings.sns.onBefore(provider, panelType, connectUrl)){
 					console.warn("onBefore has blocked execution");
@@ -1078,7 +1078,7 @@
 							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", that.runtime.applyModel.verifyType));
 							captchaParam.set("{umidTokenKey}", that.runtime.umid.getValue());
 							// 提交验证码
-							that._doIamRequest("post", _getVerifyAnalysisUrl(that), captchaParam, function(res){
+							that._doIamRequest("post", that._getVerifyAnalysisUrl(that), captchaParam, function(res){
 								that.runtime.flags.isVerifying = false; // Reset verify status.
 								var codeOkValue = _check("definition.codeOkValue",that.settings.definition.codeOkValue);
 								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
