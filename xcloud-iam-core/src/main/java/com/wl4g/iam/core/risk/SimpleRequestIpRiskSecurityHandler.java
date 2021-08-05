@@ -18,7 +18,6 @@ package com.wl4g.iam.core.risk;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.annotation.Resource;
@@ -28,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.component.common.lang.HostUtils;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
@@ -69,7 +69,7 @@ public class SimpleRequestIpRiskSecurityHandler implements RiskSecurityHandler {
         if (authenticated) {
             String clientAddr = getHttpRemoteAddr(toHttp(request));
             String loginAddr = IamSecurityHolder.getSession().getHost();
-            if (!equalsIgnoreCase(loginAddr, clientAddr)) {
+            if (!HostUtils.isSameHost(loginAddr, clientAddr)) {
                 log.warn("The request was rejected because the request addr: {} was inconsistent with the login {}: {}",
                         clientAddr, loginAddr);
 
