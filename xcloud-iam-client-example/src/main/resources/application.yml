@@ -34,6 +34,14 @@ spring:
       replay:
         enabled: true
         #exclude-valid-uri-patterns: 
+      #security:
+        #hsts-on-profiles-active: [pro,prod,production]
+      #risk:
+      #  check-request-ip-same-login: true
+      #acl:
+        #secure: false # Turn off protection will trust any same intranet IP.
+        #allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
+        #denyIpRange: ${XCLOUD_IAM_ACL_DENY}
       client: # IAM client configuration.
         service-name: ${spring.application.name}
         filter-chain:

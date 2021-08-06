@@ -543,7 +543,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(redirect.getRedirectUrl(), token, ae, request,
                 response);
         // Check loginUrl
-        isTrue(!isRelativeUri(determinedLoginUrl), IamException.class, "Custom failed loginUrl: '%s' is not an absolute URL",
+        isTrue(!isRelativeUri(determinedLoginUrl), IamException.class, "Invalid custom loginUrl: '%s' must is absolute URL",
                 determinedLoginUrl);
 
         redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Symbol check
