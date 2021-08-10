@@ -45,9 +45,9 @@ spring:
         #exclude-valid-uri-patterns: 
       xss:
         enabled: true # Default: true
-        expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
-                    execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
-                    execution(* com.wl4g.devops.iam.*.*Controller.*(..))
+        expression: execution(* com.wl4g.iam.core.*.*Controller.*(..)) or
+                    execution(* com.wl4g.iam.sns.*.*Controller.*(..)) or
+                    execution(* com.wl4g.iam.*.*Controller.*(..))
         escape-translators:
           #- escapeEcmascript
           #- escapeJava
@@ -58,8 +58,8 @@ spring:
        #unauthorized-uri: /view/403.html
        #success-endpoint: ${spring.cloud.devops.iam.service-name}@http://localhost:14041/iam-example
       filter-chain:
-        '[/public/**]': anon # Public rule
-      param: # Must be consistent with the client, otherwise authentication will never succeed
+        '[/public/**]': anon # Public router
+      param: # Must be consistent with the client, otherwise authentication will never succeed.
         sid: __sid
       matcher:
         fail-fast-match-max-attempts: 10
@@ -75,19 +75,19 @@ spring:
       cipher:
         enable-data-cipher: true # Default by true
       session:
-        enable-access-token-validity: true # Default by true
+        enable-access-token-validity: true # Default: true
         global-session-timeout: 7200_000 # Default: 1800_000ms
         session-validation-interval: 360_000 # Default: 360_000ms
       cookie:
         name: _TGC
-      #security:
-        #hsts-on-profiles-active: [pro,prod,production]
-      #risk:
-      #  check-request-ip-same-login: true
-      #acl:
-        #secure: false # Turn off protection will trust any same intranet IP.
-        #allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
-        #denyIpRange: ${XCLOUD_IAM_ACL_DENY}
+      security:
+        hsts-on-profiles-active: [pro,prod,production]
+      risk:
+        check-request-ip-same-login: true
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${XCLOUD_IAM_ACL_DENY}
       captcha:
         #kaptcha:
         #gif:
