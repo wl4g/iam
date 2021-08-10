@@ -14,39 +14,38 @@ spring:
   xcloud:
     component:
       support:
-        # Redis configuration.
         jedis:
-          passwd: ${REDIS_PASSWD:zzx!@#$%}
+          passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
-          # Redis's cluster nodes.
-          nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381
+          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+          nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
     iam: # IAM configuration.
       cors:
         rules:
           '[/**]':
             allows-origins:
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.dev}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.dev:${server.port}}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.local}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.local:${server.port}}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              - http://${IAM_ZONE:wl4g.dev}
+              - http://${IAM_ZONE:wl4g.dev:${server.port}}
+              - http://${IAM_ZONE:wl4g.local}
+              - http://${IAM_ZONE:wl4g.local:${server.port}}
+              - http://${IAM_ZONE:wl4g.debug}
+              - http://${IAM_ZONE:wl4g.debug:${server.port}}
+              - http://*.${IAM_ZONE:wl4g.debug}
+              - http://*.${IAM_ZONE:wl4g.debug:${server.port}}
               - http://localhost
               - http://localhost:18080
               - http://127.0.0.1
               - http://127.0.0.1:18080
-              #- '*'
+              - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
         allowIpRange: 127.0.0.1
         denyIpRange: 
       client:
-        server-uri: http://localhost:18080/iam-web # Required
+        server-uri: http://wl4g.debug:18080/iam-web # Required
         # This config item is used to specify a custom login page, default to 
         # {spring.cloud.devops.iam.client.server-uri}, that is, the login page controlled by iam-web.
-        #login-uri: http://localhost:${server.port}${server.servlet.contextPath}/login.html
-        success-uri: http://localhost:${server.port}${server.servlet.contextPath}/index.html # Required
-        unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html # Required
+        #login-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/login.html
+        success-uri: http:///wl4g.debug:${server.port}${server.servlet.contextPath}/index.html # Required
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html # Required

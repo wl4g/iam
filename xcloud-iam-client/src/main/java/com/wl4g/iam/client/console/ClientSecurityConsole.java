@@ -32,18 +32,19 @@ import com.wl4g.shell.springboot.annotation.ShellComponent;
 @ShellComponent
 public class ClientSecurityConsole {
 
-	@Autowired
-	private IamClientSessionManager clientSessionManager;
+    @Autowired
+    private IamClientSessionManager clientSessionManager;
 
-	@ShellMethod(keys = { "validateSessions" }, help = "Manual start validating sessions.", group = DEFAULT_CONSOLE_GROUP)
-	public void validateSessions(SimpleShellContext ctx) {
-		ctx.printf("Manual validating sessions ...");
+    @ShellMethod(keys = { "validateSessions" }, help = "Manual start validating sessions.", group = DEFAULT_CONSOLE_GROUP)
+    public void validateSessions(SimpleShellContext ctx) {
+        ctx.printf("Manual validating sessions ...");
 
-		clientSessionManager.validateSessions();
+        clientSessionManager.validateSessions();
 
-		ctx.printf("Validated sessions completed!");
-	}
+        ctx.printf("Validated sessions completed!");
+        ctx.completed();
+    }
 
-	public static final String DEFAULT_CONSOLE_GROUP = "IAM console for client";
+    public static final String DEFAULT_CONSOLE_GROUP = "IAM console for client";
 
 }

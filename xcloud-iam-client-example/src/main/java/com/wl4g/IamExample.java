@@ -20,13 +20,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 import com.wl4g.iam.client.annotation.EnableIamClient;
+import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 @EnableIamClient
+@EnableShellServer
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class IamExample {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IamExample.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IamExample.class, args);
+    }
 
 }

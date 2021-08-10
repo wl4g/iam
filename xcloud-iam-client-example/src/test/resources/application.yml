@@ -12,13 +12,51 @@
 #
 # Spring boot configuration.
 spring:
+  application.name: iam-example
+  profiles:
+    include: common,util
+    active: dev
+  xcloud:
+    iam: # IAM client configuration.
+      cors:
+        enabled: true # Default: true
+        # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
+        rules:
+          '[/**]':
+            allows-methods: [GET,HEAD,POST,OPTIONS]
+            allows-headers: [X-Iam-*]
+            allow-credentials: true
+            #allows-origins:
+              #- '*'
+      xsrf:
+        enabled: true
+        #exclude-valid-uri-patterns: 
+      replay:
+        enabled: true
+        #exclude-valid-uri-patterns: 
+      #security:
+        #hsts-on-profiles-active: [pro,prod,production]
+      #risk:
+      #  check-request-ip-same-login: true
+      #acl:
+        #secure: false # Turn off protection will trust any same intranet IP.
+        #allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
+        #denyIpRange: ${XCLOUD_IAM_ACL_DENY}
+      client: # IAM client configuration.
+        service-name: ${spring.application.name}
+        filter-chain:
+          /public/**: anon # Public rule release
+        param: # Must be consistent with the client, otherwise authentication will never succeed
+          sid: __sid
+        cache:
+          prefix: ${spring.application.name}
+        cookie:
+          name: _${spring.application.name}
+        cipher:
+          enable-data-cipher: true # Default by true
+        session:
+          enable-access-token-validity: true # Default by true
   resources.static-locations: classpath:/templates/
-  web:
-    xss:
-      enabled: true # Default: true
-      internal-protect: true # Default: true
-      expression: execution(* com.wl4g.iam.common.*.*Controller.*(..)) or
-                  execution(* com.wl4g.iam.example.*.*Controller.*(..))
   freemarker:
     request-context-attribute: req
     suffix: .html
@@ -48,3 +86,18 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+
+# #### Server configuration. ####
+server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
+  port: 18083
+  sessionTimeout: 30
+  tomcat:
+    uri-encoding: UTF-8
+    basedir: /tmp/${spring.application.name}
+    access-log-enabled: false
+    accesslog.directory: logs/
+    backgroundProcessorDelay: 30 #seconds
+    max-thread: 50 # Max worker threads(default:200).
