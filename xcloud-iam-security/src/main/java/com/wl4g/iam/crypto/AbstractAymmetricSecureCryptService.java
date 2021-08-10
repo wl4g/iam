@@ -15,17 +15,17 @@
  */
 package com.wl4g.iam.crypto;
 
-import static com.wl4g.component.common.codec.CodecSource.*;
+import static com.wl4g.component.common.codec.CodecSource.fromHex;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_CRYPTO;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
-import static org.springframework.util.Assert.notNull;
-
-import static java.util.concurrent.TimeUnit.*;
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
 
 import java.security.spec.KeySpec;
 import java.util.concurrent.locks.Lock;
@@ -42,6 +42,7 @@ import com.wl4g.iam.config.properties.CryptoProperties;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.cache.IamCacheManager;
+import com.wl4g.iam.core.exception.IamException;
 
 /**
  * Abstract secretKey asymmetric secure crypt service.
@@ -52,136 +53,142 @@ import com.wl4g.iam.core.cache.IamCacheManager;
  */
 public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec> implements SecureCryptService {
 
-	final protected SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-	/**
-	 * KeySpec class.
-	 */
-	final protected Class<K> keyPairSpecClass;
+    /**
+     * KeySpec class.
+     */
+    protected final Class<K> keyPairSpecClass;
 
-	/**
-	 * AsymmetricCryptor
-	 */
-	final protected AsymmetricCryptor cryptor;
+    /**
+     * AsymmetricCryptor
+     */
+    protected final AsymmetricCryptor cryptor;
 
-	/**
-	 * Simple lock manager.
-	 */
-	final protected Lock lock;
+    /**
+     * Simple lock manager.
+     */
+    protected final Lock lock;
 
-	/**
-	 * Cryptic properties.
-	 */
-	@Autowired
-	protected CryptoProperties config;
+    /**
+     * Cryptic properties.
+     */
+    @Autowired
+    protected CryptoProperties config;
 
-	/**
-	 * Iam cache manager.
-	 */
-	@Autowired
-	protected IamCacheManager cacheManager;
+    /**
+     * Iam cache manager.
+     */
+    @Autowired
+    protected IamCacheManager cacheManager;
 
-	@SuppressWarnings("unchecked")
-	public AbstractAymmetricSecureCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
-		notNullOf(lockManager, "lockManager");
-		notNullOf(cryptor, "cryptor");
-		this.cryptor = cryptor;
-		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_LOCK_EXPIRE_MS, MILLISECONDS);
+    @SuppressWarnings("unchecked")
+    public AbstractAymmetricSecureCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
+        notNullOf(lockManager, "lockManager");
+        this.cryptor = notNullOf(cryptor, "cryptor");
+        this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_LOCK_EXPIRE_MS, MILLISECONDS);
 
-		ResolvableType resolveType = ResolvableType.forClass(getClass());
-		this.keyPairSpecClass = (Class<K>) resolveType.getSuperType().getGeneric(0).resolve();
-		notNull(keyPairSpecClass, "KeySpecClass must not be null.");
-	}
+        ResolvableType resolveType = ResolvableType.forClass(getClass());
+        this.keyPairSpecClass = (Class<K>) resolveType.getSuperType().getGeneric(0).resolve();
+        notNull(keyPairSpecClass, "KeySpecClass must not be null.");
+    }
 
-	@Override
-	public String encrypt(KeySpec keySpec, String plaintext) {
-		return cryptor.encrypt(keySpec, new CodecSource(plaintext)).toHex();
-	}
+    @Override
+    public String encrypt(KeySpec keySpec, String plaintext) {
+        return cryptor.encrypt(keySpec, new CodecSource(plaintext)).toHex();
+    }
 
-	@Override
-	public String decrypt(KeySpec keySpec, String hexCiphertext) {
-		return cryptor.decrypt(keySpec, fromHex(hexCiphertext)).toString();
-	}
+    @Override
+    public String decrypt(KeySpec keySpec, String hexCiphertext) {
+        return cryptor.decrypt(keySpec, fromHex(hexCiphertext)).toString();
+    }
 
-	@Override
-	public KeyPairSpec generateKeyBorrow(int index) {
-		if (index < 0 || index >= config.getKeyPairPools()) {
-			int _index = current().nextInt(config.getKeyPairPools());
-			log.debug("Borrow keySpec index '{}' of out bound, used random index '{}'", index, _index);
-			index = _index;
-		}
+    @Override
+    public KeyPairSpec borrowKeyPair() {
+        int index = current().nextInt(config.getKeyPairPools());
+        return borrowKeyPair(index);
+    }
 
-		// Load keySpec by index.
-		IamCache cryptoCache = cacheManager.getIamCache(CACHE_CRYPTO);
-		KeyPairSpec keySpec = cryptoCache.getMapField(new CacheKey(index, keyPairSpecClass));
-		if (isNull(keySpec)) { // Expired?
-			try {
-				if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
-					doInitializingKeyPairSpecAll();
-				}
-			} catch (Exception e) {
-				wrapAndThrow(e);
-			} finally {
-				lock.unlock();
-			}
-			// Retry get.
-			keySpec = cryptoCache.getMapField(new CacheKey(index, keyPairSpecClass));
-		}
+    @Override
+    public KeyPairSpec borrowKeyPair(int index) {
+        if (index < 0 || index >= config.getKeyPairPools()) {
+            throw new IamException(format("Unable borrow keySpec index '{}' of out bound.", index));
+        }
 
-		notNull(keySpec, "Unable to borrow keySpec resource.");
-		return keySpec;
-	}
+        // Load keySpec by index.
+        IamCache cryptoCache = cacheManager.getIamCache(CACHE_CRYPTO);
+        CacheKey cacheKey = new CacheKey(index, keyPairSpecClass);
+        // Gets keyPairSpec
+        KeyPairSpec keySpec = cryptoCache.getMapField(cacheKey);
+        if (isNull(keySpec)) { // Expired?
+            try {
+                if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
+                    // Retry get.
+                    keySpec = cryptoCache.getMapField(cacheKey);
+                    if (isNull(keySpec)) {
+                        doInitializingKeyPairSpecAll();
+                    }
+                }
+            } catch (Exception e) {
+                wrapAndThrow(e);
+            } finally {
+                lock.unlock();
+            }
+        }
+        notNull(keySpec, "Unable to borrow keySpec data. index: %s, keyPairPools: %s", index, config.getKeyPairPools());
+        return keySpec;
+    }
 
-	@Override
-	public KeyPairSpec generateKeyPair() {
-		return cryptor.generateKeyPair();
-	}
+    @Override
+    public KeyPairSpec generateKeyPair() {
+        return cryptor.generateKeyPair();
+    }
 
-	@Override
-	public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
-		return cryptor.generateKeyPair(publicKey, privateKey);
-	}
+    @Override
+    public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
+        return cryptor.generateKeyPair(publicKey, privateKey);
+    }
 
-	@Override
-	public KeySpec generatePubKeySpec(byte[] publicKey) {
-		return cryptor.generatePubKeySpec(publicKey);
-	}
+    @Override
+    public KeySpec generatePubKeySpec(byte[] publicKey) {
+        return cryptor.generatePubKeySpec(publicKey);
+    }
 
-	@Override
-	public KeySpec generateKeySpec(byte[] privateKey) {
-		return cryptor.generateKeySpec(privateKey);
-	}
+    @Override
+    public KeySpec generateKeySpec(byte[] privateKey) {
+        return cryptor.generateKeySpec(privateKey);
+    }
 
-	@Override
-	public Class<K> getKeyPairSpecClass() {
-		return keyPairSpecClass;
-	}
+    @Override
+    public Class<K> getKeyPairSpecClass() {
+        return keyPairSpecClass;
+    }
 
-	/**
-	 * Initializing keyPairSpec pool.
-	 *
-	 * @return
-	 */
-	private synchronized void doInitializingKeyPairSpecAll() {
-		// Create generate cryptic keyPairs
-		for (int index = 0; index < config.getKeyPairPools(); index++) {
-			// Generate keyPairSpec.
-			KeyPairSpec keySpec = generateKeyPair();
-			// Storage to cache.
-			cacheManager.getIamCache(CACHE_CRYPTO).mapPut(new CacheKey(index, config.getKeyPairExpireMs()), keySpec);
-			log.debug("Puts keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
-		}
-		log.info("Initialized keySpec total: {}", config.getKeyPairPools());
-	}
+    /**
+     * Initializing keyPairSpec pool.
+     *
+     * @return
+     */
+    private synchronized void doInitializingKeyPairSpecAll() {
+        // Create generate cryptic keyPairs
+        for (int index = 0; index < config.getKeyPairPools(); index++) {
+            // Generate keyPairSpec.
+            KeyPairSpec keySpec = generateKeyPair();
+            // Storage to cache.
+            cacheManager.getIamCache(CACHE_CRYPTO).mapPut(new CacheKey(index, config.getKeyPairExpireMs()), keySpec);
+            log.debug("Puts keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
+        }
+        log.info("Initialized keySpec total: {}", config.getKeyPairPools());
+    }
 
-	/**
-	 * Default JIGSAW initializing mutex image timeoutMs
-	 */
-	final public static long DEFAULT_LOCK_EXPIRE_MS = 60_000L;
+    /**
+     * Default JIGSAW initializing mutex image timeoutMs
+     */
+    final public static long DEFAULT_LOCK_EXPIRE_MS = 60_000L;
 
-	/**
-	 * Try lock mutex timeoutMs.
-	 */
-	final public static long DEFAULT_TRYLOCK_TIMEOUT_MS = DEFAULT_LOCK_EXPIRE_MS / 2;
+    /**
+     * Try lock mutex timeoutMs.
+     */
+    final public static long DEFAULT_TRYLOCK_TIMEOUT_MS = DEFAULT_LOCK_EXPIRE_MS / 2;
 
 }

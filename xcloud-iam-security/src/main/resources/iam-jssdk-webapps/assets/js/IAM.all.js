@@ -2426,8 +2426,10 @@
 					that.settings.account.onError(Common.Util.isZhCN()?"请输入账户名和密码":"Please input your account and password");
 					return;
 				}
+                // 锁定登录按钮(必须在handshake和check接口之前锁定,否则当多次点击登录时,调用check接口保存在session的算法keyPair的index与调用generic接口时从session获取的不一致,会导致解密Description error)
+                $(Common.Util.checkEmpty("account.submitBtn", that.settings.account.submitBtn)).attr("disabled", true);
 
-				// [bugfix] 建议强制刷新handshake， 可以解决如：当从官网点击‘登录演示账号’window.open()到首页后，
+				// [bugfix] 强制刷新handshake， 可以解决如：当从官网点击‘登录演示账号’window.open()到首页后，
 				// 点击了退出，此时再次点击‘登录演示账号’时之前handshake保存的session已被销毁，check接口会出现400错误.
 				that._initHandshakeIfNecessary(true).then(res0 => {
 					that._initSafeCheck(principal, function(res) {
@@ -2455,9 +2457,6 @@
 						if(!that.settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
 							return;
 						}
-
-						// 锁定登录按钮
-						$(Common.Util.checkEmpty("account.submitBtn", that.settings.account.submitBtn)).attr("disabled", true);
 						// 创建登录请求参数
 						var loginParam = new Map();
 						loginParam.set("{principalKey}", principal);
@@ -2474,7 +2473,7 @@
 						Common.Util.mergeMap(that.settings.account.customParamMap, loginParam);
 						// 请求提交登录
 						that._doIamRequest("post", "{accountSubmitUri}", loginParam, function(res) {
-							// 解锁登录按钮
+							// 成功解锁登录按钮
 							$(Common.Util.checkEmpty("account.submitBtn", that.settings.account.submitBtn)).removeAttr("disabled");
 
 							that.runtime.verifiedModel.verifiedToken = ""; // Clear
@@ -2490,7 +2489,7 @@
 								}
 							}
 						}, function(errmsg){
-							// 失败时也要解锁登录按钮
+							// 失败也必须解锁登录按钮
 							$(Common.Util.checkEmpty("account.submitBtn", that.settings.account.submitBtn)).removeAttr("disabled");
 							that.runtime.verifiedModel.verifiedToken = ""; // Clear
 							that.settings.account.onError(errmsg); // 登录异常回调

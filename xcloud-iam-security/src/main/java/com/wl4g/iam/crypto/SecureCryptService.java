@@ -15,15 +15,15 @@
  */
 package com.wl4g.iam.crypto;
 
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+
+import java.security.spec.KeySpec;
+
 import com.wl4g.component.common.codec.Base58;
 import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.component.core.framework.operator.Operator;
-
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-
-import java.security.spec.KeySpec;
+import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
 /**
  * Secretkey asymmetric secure crypt service.
@@ -34,129 +34,127 @@ import java.security.spec.KeySpec;
  */
 public interface SecureCryptService extends Operator<CryptKind> {
 
-	/**
-	 * Encryption with hex plain.
-	 *
-	 * @param keySpec
-	 * @param plaintext
-	 * @return
-	 */
-	String encrypt(KeySpec keySpec, String plaintext);
+    /**
+     * Encryption with hex plain.
+     *
+     * @param keySpec
+     * @param plaintext
+     * @return
+     */
+    String encrypt(KeySpec keySpec, String plaintext);
 
-	/**
-	 * Decryption with hex cipher.
-	 *
-	 * @param keySpec
-	 * @param hexCiphertext
-	 * @return
-	 */
-	String decrypt(KeySpec keySpec, String hexCiphertext);
+    /**
+     * Decryption with hex cipher.
+     *
+     * @param keySpec
+     * @param hexCiphertext
+     * @return
+     */
+    String decrypt(KeySpec keySpec, String hexCiphertext);
 
-	/**
-	 * Gets borrow keyPairSpec.
-	 *
-	 * @return
-	 */
-	default KeyPairSpec borrowKeyPair() {
-		return generateKeyBorrow(-1);
-	}
+    /**
+     * Obtain borrow keyPairSpec by random index.
+     *
+     * @return
+     */
+    KeyPairSpec borrowKeyPair();
 
-	/**
-	 * Generate keyPairSpec.
-	 *
-	 * @param index
-	 * @return
-	 */
-	KeyPairSpec generateKeyBorrow(int index);
+    /**
+     * Obtain borrow keyPairSpec by index.
+     *
+     * @param index
+     * @return
+     */
+    KeyPairSpec borrowKeyPair(int index);
 
-	/**
-	 * Generate keyPairSpec.
-	 * 
-	 * @return
-	 */
-	KeyPairSpec generateKeyPair();
+    /**
+     * Generate keyPairSpec.
+     * 
+     * @return
+     */
+    KeyPairSpec generateKeyPair();
 
-	/**
-	 * Generate keyPairSpec by publicKey and privateKey.
-	 * 
-	 * @param publicKey
-	 * @param privateKey
-	 * @return
-	 */
-	KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey);
+    /**
+     * Generate keyPairSpec by publicKey and privateKey.
+     * 
+     * @param publicKey
+     * @param privateKey
+     * @return
+     */
+    KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey);
 
-	/**
-	 * Deserialization generate private KeySpec.
-	 * 
-	 * @param publicKey
-	 * @return
-	 */
-	KeySpec generatePubKeySpec(byte[] publicKey);
+    /**
+     * Deserialization generate private KeySpec.
+     * 
+     * @param publicKey
+     * @return
+     */
+    KeySpec generatePubKeySpec(byte[] publicKey);
 
-	/**
-	 * Deserialization generate private KeySpec.
-	 * 
-	 * @param privateKey
-	 * @return
-	 */
-	KeySpec generateKeySpec(byte[] privateKey);
+    /**
+     * Deserialization generate private KeySpec.
+     * 
+     * @param privateKey
+     * @return
+     */
+    KeySpec generateKeySpec(byte[] privateKey);
 
-	/**
-	 * Gets {@link KeyPairSpec} class implements.
-	 * 
-	 * @return
-	 */
-	Class<? extends KeyPairSpec> getKeyPairSpecClass();
+    /**
+     * Gets {@link KeyPairSpec} class implements.
+     * 
+     * @return
+     */
+    Class<? extends KeyPairSpec> getKeyPairSpecClass();
 
-	/**
-	 * Iam asymmetric secure crypt algorithm kind definitions.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年3月29日 v1.0.0
-	 * @see
-	 */
-	public static enum CryptKind {
+    /**
+     * Iam asymmetric secure crypt algorithm kind definitions.
+     * 
+     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @version 2020年3月29日 v1.0.0
+     * @see
+     */
+    public static enum CryptKind {
 
-		RSA("RSA/ECB/PKCS1Padding"),
+        RSA("RSA/ECB/PKCS1Padding"),
 
-		DSA("DSA"), // TODO
+        DSA("DSA"), // TODO
 
-		ECC("ECC"); // TODO
+        ECC("ECC"); // TODO
 
-		final private String algorithm;
+        final private String algorithm;
 
-		private CryptKind(String algorithm) {
-			hasTextOf(algorithm, "algorithm");
-			this.algorithm = algorithm;
-		}
+        private CryptKind(String algorithm) {
+            hasTextOf(algorithm, "algorithm");
+            this.algorithm = algorithm;
+        }
 
-		public String getAlgorithm() {
-			return algorithm;
-		}
+        public String getAlgorithm() {
+            return algorithm;
+        }
 
-		public static CryptKind of(String encodedAlgKind) {
-			return of(true, encodedAlgKind);
-		}
+        public static CryptKind of(String encodedAlgKind) {
+            return of(true, encodedAlgKind);
+        }
 
-		public static CryptKind of(boolean decode, String algKindStr) {
-			if (decode) {
-				algKindStr = new String(Base58.decodeBase58(algKindStr));
-			}
-			CryptKind kind = safeOf(algKindStr);
-			notNull(kind, "Illegal secure algorithm kind: %s", algKindStr);
-			return kind;
-		}
+        public static CryptKind of(boolean decode, String algKindStr) {
+            if (decode) {
+                algKindStr = new String(Base58.decodeBase58(algKindStr));
+            }
+            CryptKind kind = safeOf(algKindStr);
+            notNull(kind, "Illegal secure algorithm kind: %s", algKindStr);
+            return kind;
+        }
 
-		private static CryptKind safeOf(String cryptKind) {
-			for (CryptKind k : values()) {
-				if (String.valueOf(cryptKind).equalsIgnoreCase(k.name())
-						|| String.valueOf(cryptKind).equalsIgnoreCase(k.getAlgorithm())) {
-					return k;
-				}
-			}
-			return null;
-		}
+        private static CryptKind safeOf(String cryptKind) {
+            for (CryptKind k : values()) {
+                if (String.valueOf(cryptKind).equalsIgnoreCase(k.name())
+                        || String.valueOf(cryptKind).equalsIgnoreCase(k.getAlgorithm())) {
+                    return k;
+                }
+            }
+            return null;
+        }
 
-	}
+    }
 
 }
