@@ -522,7 +522,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 
     public abstract String getName();
 
-    final public static String SAVE_GRANT_TICKET = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
+    public static final String SAVE_GRANT_TICKET = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
 
     /**
      * What kind of URL request does not need to be remembered (i.e. using the
@@ -530,16 +530,16 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      * callback URLs ? <br/>
      * (For example, jump to IAM/login.html after executing logout)
      */
-    final public static String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
+    public static final String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
 
     /**
      * Remember last request URL.
      */
-    final public static String KEY_REMEMBER_URL = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
+    public static final String KEY_REMEMBER_URL = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
 
     /**
      * Redirection authentication failure retry upper limit key.
      */
-    final public static String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
+    public static final String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
 
 }

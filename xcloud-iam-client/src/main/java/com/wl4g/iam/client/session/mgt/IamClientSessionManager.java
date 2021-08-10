@@ -15,10 +15,12 @@
  */
 package com.wl4g.iam.client.session.mgt;
 
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -71,6 +73,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
         return super.getSessionId(request, response);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void validateSessions() {
         Lock lock = lockManager.getLock(LOCK_SESSION_VALIDATING);
@@ -82,6 +85,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
                 ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(ServiceIAMConstants.DEFAULT_SESSION_SCAN_BATCHS);
                 while (cursor.hasNext()) {
                     List<IamSession> activeSessions = cursor.toValues();
+                    log.debug("Activity client sessions: ", () -> toJSONString(activeSessions));
 
                     // Grant ticket of local sessions.
                     Map<String, Session> clientSessions = new HashMap<>(activeSessions.size());
@@ -90,8 +94,10 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
                     SessionValidateModel request = new SessionValidateModel(config.getServiceName());
                     for (IamSession session : activeSessions) {
                         String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
-                        request.getTickets().add(grantTicket);
-                        clientSessions.put(grantTicket, session);
+                        if (!isBlank(grantTicket)) {
+                            request.getTickets().add(grantTicket);
+                            clientSessions.put(grantTicket, session);
+                        }
                     }
 
                     // Validation expires sessions.
