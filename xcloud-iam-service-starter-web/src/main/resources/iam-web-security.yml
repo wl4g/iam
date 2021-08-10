@@ -56,7 +56,7 @@ spring:
        #service-name: ${spring.application.name}
        #login-uri: /view/login.html
        #unauthorized-uri: /view/403.html
-       #success-endpoint: ${spring.cloud.devops.iam.service-name}@http://localhost:14041/iam-example
+       #success-endpoint: ${spring.application.name}@http://localhost:18080/${spring.application.name}/view/index.html
       filter-chain:
         '[/public/**]': anon # Public router
       param: # Must be consistent with the client, otherwise authentication will never succeed.

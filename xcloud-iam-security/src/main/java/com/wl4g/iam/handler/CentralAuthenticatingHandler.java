@@ -71,6 +71,7 @@ import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.constant.ServiceIAMConstants;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
@@ -339,7 +340,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
     public SessionValidateModel sessionValidate(SessionValidateModel model) {
         hasTextOf(model.getApplication(), "grantAppName");
 
-        ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_SIZE);
+        ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(ServiceIAMConstants.DEFAULT_SESSION_SCAN_BATCHS);
         while (cursor.hasNext()) {
             Session session = cursor.next();
             // GrantTicket of session.
@@ -491,23 +492,18 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
     }
 
     /**
-     * Scan iteration batch size.
-     */
-    final public static int DEFAULT_SCAN_SIZE = 100;
-
-    /**
      * Default gets {@link GrantCredentialsInfo} lock expirtion(ms)
      */
-    final public static long DEFAULT_LOCK_CREDENTIALS_EXPIRE = 5000L;
+    public static final long DEFAULT_LOCK_CREDENTIALS_EXPIRE = 5000L;
 
     /**
      * IAM server grantTicket info of application.
      */
-    final public static String KEY_GRANTCREDENTIALS = "grantCredentials";
+    public static final String KEY_GRANTCREDENTIALS = "grantCredentials";
 
     /**
      * Permissived whitelist hosts.
      */
-    final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
+    public static final String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
 }

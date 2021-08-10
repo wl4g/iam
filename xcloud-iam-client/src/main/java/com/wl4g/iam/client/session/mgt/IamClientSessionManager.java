@@ -15,6 +15,9 @@
  */
 package com.wl4g.iam.client.session.mgt;
 
+import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
 import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
@@ -29,14 +32,11 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
-
 import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
+import com.wl4g.iam.common.constant.ServiceIAMConstants;
 import com.wl4g.iam.core.authc.model.SessionValidateModel;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.session.IamSession;
@@ -52,79 +52,74 @@ import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
  */
 public class IamClientSessionManager extends AbstractIamSessionManager<IamClientProperties> {
 
-	/**
-	 * Expire session validator
-	 */
-	final protected IamValidator<SessionValidateModel, SessionValidateModel> validator;
+    /**
+     * Expire session validator
+     */
+    final protected IamValidator<SessionValidateModel, SessionValidateModel> validator;
 
-	@Autowired
-	protected JedisLockManager lockManager;
+    @Autowired
+    protected JedisLockManager lockManager;
 
-	public IamClientSessionManager(IamClientProperties config, IamCacheManager cacheManager,
-			IamValidator<SessionValidateModel, SessionValidateModel> validator) {
-		super(config, cacheManager, CACHE_TICKET_C);
-		this.validator = validator;
-	}
+    public IamClientSessionManager(IamClientProperties config, IamCacheManager cacheManager,
+            IamValidator<SessionValidateModel, SessionValidateModel> validator) {
+        super(config, cacheManager, CACHE_TICKET_C);
+        this.validator = validator;
+    }
 
-	@Override
-	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
-		return super.getSessionId(request, response);
-	}
+    @Override
+    protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
+        return super.getSessionId(request, response);
+    }
 
-	@Override
-	public void validateSessions() {
-		Lock lock = lockManager.getLock(LOCK_SESSION_VALIDATING);
+    @Override
+    public void validateSessions() {
+        Lock lock = lockManager.getLock(LOCK_SESSION_VALIDATING);
 
-		try {
-			if (lock.tryLock()) {
-				log.info("Validating all active sessions...");
+        try {
+            if (lock.tryLock()) {
+                log.info("Validating all active sessions...");
 
-				ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_BATCH_SIZE);
-				while (cursor.hasNext()) {
-					List<IamSession> activeSessions = cursor.toValues();
+                ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(ServiceIAMConstants.DEFAULT_SESSION_SCAN_BATCHS);
+                while (cursor.hasNext()) {
+                    List<IamSession> activeSessions = cursor.toValues();
 
-					// Grant ticket of local sessions.
-					Map<String, Session> clientSessions = new HashMap<>(activeSessions.size());
+                    // Grant ticket of local sessions.
+                    Map<String, Session> clientSessions = new HashMap<>(activeSessions.size());
 
-					// Make to validation request
-					SessionValidateModel request = new SessionValidateModel(config.getServiceName());
-					for (IamSession session : activeSessions) {
-						String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
-						request.getTickets().add(grantTicket);
-						clientSessions.put(grantTicket, session);
-					}
+                    // Make to validation request
+                    SessionValidateModel request = new SessionValidateModel(config.getServiceName());
+                    for (IamSession session : activeSessions) {
+                        String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
+                        request.getTickets().add(grantTicket);
+                        clientSessions.put(grantTicket, session);
+                    }
 
-					// Validation expires sessions.
-					SessionValidateModel assertion = validator.validate(request);
-					for (String deadTicket : assertion.getTickets()) {
-						Session session = clientSessions.get(deadTicket);
-						try {
-							if (nonNull(session)) {
-								sessionDAO.delete(session);
-								log.info("Cleauping expired sessionId: {}", session.getId());
-							}
-						} catch (Exception e) {
-							log.warn("Failed to cleaup expired sessions. sessionId: {}, deadTicket: {}", session.getId(),
-									deadTicket);
-						}
-					}
+                    // Validation expires sessions.
+                    SessionValidateModel assertion = validator.validate(request);
+                    for (String deadTicket : assertion.getTickets()) {
+                        Session session = clientSessions.get(deadTicket);
+                        try {
+                            if (nonNull(session)) {
+                                sessionDAO.delete(session);
+                                log.info("Cleauping expired sessionId: {}", session.getId());
+                            }
+                        } catch (Exception e) {
+                            log.warn("Failed to cleaup expired sessions. sessionId: {}, deadTicket: {}", session.getId(),
+                                    deadTicket);
+                        }
+                    }
 
-				}
-			} else {
-				log.info("Skip validating all active sessions.");
-			}
+                }
+            } else {
+                log.info("Skip validating all active sessions.");
+            }
 
-		} catch (Exception e) {
-			log.error("Validating expire sessions failed", e);
-		} finally {
-			lock.unlock();
-		}
+        } catch (Exception e) {
+            log.error("Validating expire sessions failed", e);
+        } finally {
+            lock.unlock();
+        }
 
-	}
-
-	/**
-	 * Validating scan iteration batch size.
-	 */
-	final private static int DEFAULT_SCAN_BATCH_SIZE = 1000;
+    }
 
 }
