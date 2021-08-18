@@ -43,7 +43,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.collection.RegisteredSetList;
+import com.wl4g.component.common.collection.UniqueList;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.web.servlet.IamCookie;
@@ -480,7 +480,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
          * Authentication or authorization processing internal interface custom
          * parameters name.
          */
-        private List<String> customParams = new RegisteredSetList<String>(new ArrayList<>()) {
+        private List<String> customParams = new UniqueList<String>(new ArrayList<>()) {
             {
                 add("iam-x-type");
                 add("iam-x-token");

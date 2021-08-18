@@ -33,7 +33,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
-import com.wl4g.component.common.collection.RegisteredSetList;
+import com.wl4g.component.common.collection.UniqueList;
 
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.serialize.JacksonUtils.*;
@@ -175,10 +175,10 @@ public class CorsProperties implements InitializingBean, Serializable {
 		 */
 		final public static String DEFAULT_CORS_ALLOW_HEADER_PREFIX = "X-Iam";
 
-		private List<String> allowsMethods = new RegisteredSetList<>(new ArrayList<>(8));
-		private List<String> allowsHeaders = new RegisteredSetList<>(new ArrayList<>(8));
-		private List<String> allowsOrigins = new RegisteredSetList<>(new ArrayList<>(8));
-		private List<String> exposedHeaders = new RegisteredSetList<>(new ArrayList<>(8));
+		private List<String> allowsMethods = new UniqueList<>(new ArrayList<>(8));
+		private List<String> allowsHeaders = new UniqueList<>(new ArrayList<>(8));
+		private List<String> allowsOrigins = new UniqueList<>(new ArrayList<>(8));
+		private List<String> exposedHeaders = new UniqueList<>(new ArrayList<>(8));
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
 
