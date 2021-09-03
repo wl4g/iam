@@ -376,15 +376,20 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         // Gets request redirect
         String fromAppName = getCleanParam(request, config.getParam().getApplication());
         String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
-        String fallback = getCleanParam(request, config.getParam().getUseFallbackRedirect());
-        // Degradation is turned off by default only if "fallbackredirect" is
-        // blank and is not a request from the browser. (e.g:
-        // Andriod/iOS/WechatApplet)
-        boolean defaultFallback = true;
-        if (isBlank(fallback) && !isBrowser(toHttp(request))) {
-            defaultFallback = false;
+        // Whether to automatically use the fallback policy (i.e. use the
+        // default application redirection URL) when the login is successful,
+        // but you do not have permission to access the application represented
+        // by the redirection URL.
+        String useFallback = getCleanParam(request, config.getParam().getUseFallbackRedirect());
+        // When it is not set whether to enable degraded redirection, it will be
+        // automatically identified according to the client type (i.e. if it is
+        // a pc browser request, it will enable fallback redirection, otherwise
+        // it will not be enabled if it is an Android/iOS/WechatApplet, etc.)
+        boolean defaultUseFallback = true;
+        if (isBlank(useFallback) && !isBrowser(toHttp(request))) {
+            defaultUseFallback = false;
         }
-        RedirectInfo redirect = new RedirectInfo(fromAppName, redirectUrl, isTrue(fallback, defaultFallback));
+        RedirectInfo redirect = new RedirectInfo(fromAppName, redirectUrl, isTrue(useFallback, defaultUseFallback));
 
         // Fallback from last request bind.
         if (isBlank(redirect.getFromAppName())) {

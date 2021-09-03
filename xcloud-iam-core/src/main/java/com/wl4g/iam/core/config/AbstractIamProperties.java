@@ -489,7 +489,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
         };
 
         /**
-         * {@link com.wl4g.iam.core.authc.IamAuthenticationToken.RedirectInfo#useFallbackRedirect}
+         * {@link com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo#useFallbackRedirect}
          */
         private String useFallbackRedirect = "fallbackRedirect";
 
