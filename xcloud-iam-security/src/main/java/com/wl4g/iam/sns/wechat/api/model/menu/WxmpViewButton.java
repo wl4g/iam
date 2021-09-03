@@ -11,28 +11,28 @@ import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
  */
 public class WxmpViewButton extends WxmpButton {
 
-	private String type; // Menu type
-	private String url; // Menu click link
+    private WxButtonType type; // Menu type
+    private String url; // Menu click link
 
-	public String getType() {
-		return type;
-	}
+    public WxButtonType getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(WxButtonType type) {
+        this.type = type;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
 }

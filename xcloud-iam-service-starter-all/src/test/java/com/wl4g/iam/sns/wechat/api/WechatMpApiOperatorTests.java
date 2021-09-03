@@ -15,6 +15,9 @@
  */
 package com.wl4g.iam.sns.wechat.api;
 
+import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static java.lang.String.format;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -25,8 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.StandaloneIam;
-import static com.wl4g.iam.common.constant.ConfigIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import com.wl4g.iam.config.properties.SnsProperties;
+import com.wl4g.iam.sns.wechat.api.model.menu.WxButtonType;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpButton;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpComplexButton;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpMenu;
@@ -41,82 +44,73 @@ import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StandaloneIam.class, properties = { KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-id=${APP_ID}",
-		KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-secret=${APP_SECRET}" })
+        KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-secret=${APP_SECRET}" })
 @FixMethodOrder(MethodSorters.JVM)
 public class WechatMpApiOperatorTests {
 
-	@Autowired
-	private SnsProperties snsConfig;
+    @Autowired
+    private SnsProperties snsConfig;
 
-	@Autowired
-	private WechatMpApiOperator operator;
+    @Autowired
+    private WechatMpApiOperator operator;
 
-	private WxmpMenu menu;
+    private WxmpMenu menu;
 
-	@Before
-	public void wrapWxmpMenu() {
-		WxmpComplexButton btn1 = new WxmpComplexButton();
-		btn1.setName("XCloud DevOps");
-		WxmpViewButton btn11 = new WxmpViewButton();
-		btn11.setName("菜单11");
-		btn11.setType("view");
-		btn11.setUrl("http://wl4g.com/mb-product-energy.html");
-		WxmpViewButton btn12 = new WxmpViewButton();
-		btn12.setName("菜单12");
-		btn12.setType("view");
-		btn12.setUrl("http://wl4g.com/mb-product-solution.html");
-		WxmpViewButton btn13 = new WxmpViewButton();
-		btn13.setName("菜单13");
-		btn13.setType("view");
-		btn13.setUrl("http://wl4g.com/mb-product-service.html");
-		btn1.setSub_button(new WxmpViewButton[] { btn11, btn12, btn13 });
+    @Before
+    public void createWxmpMenu() {
+        WxmpComplexButton btn1 = new WxmpComplexButton();
+        btn1.setName("解决方案");
+        WxmpViewButton btn11 = new WxmpViewButton();
+        btn11.setName("电力能源");
+        btn11.setType(WxButtonType.view);
+        btn11.setUrl("https://wl4g.com/product-energy.html");
+        WxmpViewButton btn12 = new WxmpViewButton();
+        btn12.setName("工业制造");
+        btn12.setType(WxButtonType.view);
+        btn12.setUrl("https://wl4g.com/product-solution.html");
+        WxmpViewButton btn13 = new WxmpViewButton();
+        btn13.setName("建筑园区");
+        btn13.setType(WxButtonType.view);
+        btn13.setUrl("https://wl4g.com/product-service.html");
+        btn1.setSub_button(new WxmpViewButton[] { btn11, btn12, btn13 });
 
-		WxmpComplexButton btn2 = new WxmpComplexButton();
-		btn2.setName("关于我们");
-		WxmpViewButton btn21 = new WxmpViewButton();
-		btn21.setName("公司简介");
-		btn21.setType("view");
-		btn21.setUrl("http://wl4g.com/mb-about-introduce.html");
-		WxmpViewButton btn22 = new WxmpViewButton();
-		btn22.setName("联系我们");
-		btn22.setType("view");
-		btn22.setUrl("http://wl4g.com/mb-about-contact.html");
-		WxmpViewButton btn23 = new WxmpViewButton();
-		btn23.setName("最新动态");
-		btn23.setType("view");
-		btn23.setUrl("http://wl4g.com/mb-about-dynamic.html");
-		btn2.setSub_button(new WxmpViewButton[] { btn21, btn22, btn23 });
+        WxmpComplexButton btn2 = new WxmpComplexButton();
+        btn2.setName("关于我们");
+        WxmpViewButton btn21 = new WxmpViewButton();
+        btn21.setName("公司简介");
+        btn21.setType(WxButtonType.view);
+        btn21.setUrl("https://wl4g.com/about-introduce.html");
+        WxmpViewButton btn22 = new WxmpViewButton();
+        btn22.setName("联系我们");
+        btn22.setType(WxButtonType.view);
+        btn22.setUrl("https://wl4g.com/about-contact.html");
+        WxmpViewButton btn23 = new WxmpViewButton();
+        btn23.setName("最新动态");
+        btn23.setType(WxButtonType.view);
+        btn23.setUrl("https://wl4g.com/about-dynamic.html");
+        btn2.setSub_button(new WxmpViewButton[] { btn21, btn22, btn23 });
 
-		WxmpComplexButton btn3 = new WxmpComplexButton();
-		btn3.setName("菜单3");
-		WxmpViewButton btn31 = new WxmpViewButton();
-		btn31.setName("菜单31");
-		btn31.setType("view");
-		// String redirect_uri =
-		// "https://sso-services.wl4g.com/sso/sns/wechatmp/callback?which=client_auth";
-		// 无需redirect_url参数，iam已支持自动检测使用默认值
-		// String redirect_uri =
-		// "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile%26redirect_url%3Dhttps://m-services.wl4g.com/#/index";
-		String redirect_uri = "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile";
-		btn31.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + snsConfig.getWechatMp().getAppId()
-				+ "&redirect_uri=" + redirect_uri + "&response_type=code&scope=snsapi_userinfo#wechat_redirect");
-		WxmpViewButton btn32 = new WxmpViewButton();
-		btn32.setName("菜单32");
-		btn32.setType("view");
-		btn32.setUrl("http://wl4g.com/mb-wl4g-app.html");
-		WxmpViewButton btn33 = new WxmpViewButton();
-		btn33.setName("菜单33");
-		btn33.setType("view");
-		btn33.setUrl("http://wl4g.com/mb-ad-service.html");
-		btn3.setSub_button(new WxmpViewButton[] { btn31, btn32, btn33 });
+        WxmpViewButton btn3 = new WxmpViewButton();
+        btn3.setName("平台入口");
+        btn3.setType(WxButtonType.view);
+        // String redirect_uri =
+        // "https://sso-services.wl4g.com/sso/sns/wechatmp/callback?which=client_auth";
+        // 无需redirect_url参数，IAM已支持自动检测使用默认值
+        // String redirect_uri =
+        // "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile%26redirect_url%3Dhttps://m-services.wl4g.com/#/index";
+        String redirect_uri = "https%3A%2F%2Fsso-services.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26state%3D1%26service%3Dmobile";
+        String url = format(
+                "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo#wechat_redirect",
+                snsConfig.getWechatMp().getAppId(), redirect_uri);
+        btn3.setUrl(url);
 
-		menu = new WxmpMenu();
-		menu.setButton(new WxmpButton[] { btn1, btn2, btn3 });
-	}
+        menu = new WxmpMenu();
+        menu.setButton(new WxmpButton[] { btn1, btn2, btn3 });
+    }
 
-	@Test
-	public void createWxmpMenuCase1() {
-		System.out.println("Creating wxmp menu... " + menu);
-		System.out.println("Created wxmp menu result: " + operator.createWxmpMenu(menu));
-	}
+    @Test
+    public void createWxmpMenuCase1() {
+        System.out.println("Creating wxmp menu... " + menu);
+        System.out.println("Created wxmp menu result: " + operator.createWxmpMenu(menu));
+    }
 }
