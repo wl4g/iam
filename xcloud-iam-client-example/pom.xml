@@ -30,11 +30,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<artifactId>xcloud-iam-client-springboot</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client-test</artifactId>
+			<artifactId>xcloud-iam-client-mock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

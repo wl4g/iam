@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-client</artifactId>
+	<artifactId>xcloud-iam-client-mock</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Client</name>
+	<name>XCloud IAM Client for Mocks</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -14,6 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<jedis.version>2.9.0</jedis.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -29,15 +30,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-core</artifactId>
+			<artifactId>xcloud-iam-client-springboot</artifactId>
 		</dependency>
+		<!-- Hocon config -->
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
+			<groupId>com.typesafe</groupId>
+			<artifactId>config</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -115,7 +113,6 @@
 						<lib>${java.home}/lib/jce.jar</lib>
 					</libs>
 					<addMavenDescriptor>true</addMavenDescriptor>
-					<!-- <inFilter>com/wl4g/devops/scm/client/**</inFilter> -->
 					<injar>classes</injar>
 					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
