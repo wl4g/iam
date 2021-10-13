@@ -29,7 +29,9 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.event.EventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -43,6 +45,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
+import com.wl4g.component.common.eventbus.EventBusSupport;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
@@ -353,6 +356,36 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
         // '/**')
         filterBean.addUrlPatterns("/*");
         return filterBean;
+    }
+
+    // ==============================
+    // IAM _ EVENT BUS _ C O N F I G's.
+    // ==============================
+
+    @Bean(destroyMethod = "close")
+    public EventBusSupport iamEventBusSupport() {
+        return new EventBusSupport(3);
+    }
+
+    @Bean
+    public ShiroEventBusBeanPostProcessor shiroEventBusBeanPostProcessor(EventBusSupport eventBus) {
+        final com.google.common.eventbus.EventBus bus = eventBus.getBus();
+        return new ShiroEventBusBeanPostProcessor(new EventBus() {
+            @Override
+            public void unregister(Object object) {
+                bus.unregister(object);
+            }
+
+            @Override
+            public void register(Object object) {
+                bus.register(object);
+            }
+
+            @Override
+            public void publish(Object event) {
+                bus.post(event);
+            }
+        });
     }
 
     // ==============================

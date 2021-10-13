@@ -58,6 +58,8 @@
 		<module>client</module>
 		<module>common</module>
 		<module>core</module>
+		<module>gateway</module>
+		<module>rcm</module>
 		<module>captcha</module>
 		<module>security</module>
 		<module>service-data</module>

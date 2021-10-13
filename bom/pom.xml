@@ -44,20 +44,78 @@
 				<artifactId>xcloud-iam-client-mock</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
+			<!-- IAM gateway modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-gateway</artifactId>
+				<artifactId>xcloud-iam-gateway</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-gateway-core</artifactId>
+				<artifactId>xcloud-iam-gateway-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-gateway-starter</artifactId>
+				<artifactId>xcloud-iam-gateway-starter</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<!-- IAM rcm modules -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm</artifactId>
+				<version>${project.parent.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-analytic</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-analytic-core</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-analytic-flink-kafka</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-analytic-flink-pulsar</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-analytic-flink-rocketmq</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-eventbus</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-eventbus-core</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-eventbus-kafka</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-eventbus-pulsar</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-rcm-eventbus-rocketmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM server modules -->

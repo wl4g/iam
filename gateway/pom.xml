@@ -2,11 +2,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-client</artifactId>
+	<artifactId>xcloud-iam-gateway</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud IAM Client</name>
+	<name>XCloud IAM Gateway</name>
 	<url>https://iam.xcloud.wl4g.com</url>
-	<description>XCloud IAM Clients.</description>
+	<description>XCloud IAM for gateway.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-iam</artifactId>
@@ -58,9 +58,8 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>client-example</module>
-		<module>client-mock</module>
-		<module>client-springboot</module>
+		<module>gateway-core</module>
+		<module>gateway-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
