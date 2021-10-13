@@ -54,21 +54,18 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>xcloud-iam-bom</module>
-		<module>xcloud-iam-client-springboot</module>
-		<module>xcloud-iam-client-mock</module>
-		<module>xcloud-iam-client-example</module>
-		<module>xcloud-iam-client-gateway-starter</module>
-		<module>xcloud-iam-common</module>
-		<module>xcloud-iam-core</module>
-		<module>xcloud-iam-captcha</module>
-		<module>xcloud-iam-security</module>
-		<module>xcloud-iam-service-data</module>
-		<module>xcloud-iam-service-facade</module>
-		<module>xcloud-iam-service-starter-all</module>
-		<module>xcloud-iam-service-starter-data</module>
-		<module>xcloud-iam-service-starter-facade</module>
-		<module>xcloud-iam-service-starter-web</module>
+		<module>bom</module>
+		<module>client</module>
+		<module>common</module>
+		<module>core</module>
+		<module>captcha</module>
+		<module>security</module>
+		<module>service-data</module>
+		<module>service-facade</module>
+		<module>service-starter-all</module>
+		<module>service-starter-data</module>
+		<module>service-starter-facade</module>
+		<module>service-starter-web</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
