@@ -52,12 +52,34 @@ server:
   sessionTimeout: 30
   servlet:
     contextPath: /${spring.application.name}
-  tomcat:
-    uri-encoding: UTF-8
-    protocolHeader: x-forwarded-proto
-    remoteIpHeader: x-forwarded-for
+  tomcat: # see: org.springframework.boot.autoconfigure.web.ServerProperties.Tomcat
     basedir: /tmp/${spring.application.name}
-    access-log-enabled: false
-    accesslog.directory: logs/
-    backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).
+    accesslog:
+      enabled: false
+      directory: ${server.tomcat.basedir}/../log/${spring.application.name}/ # Directory in which log files are created. Can be absolute or relative to the Tomcat base dir.
+      requestAttributesEnabled: false # Set request attributes for the IP address, Hostname, protocol, and port used for the request.
+    backgroundProcessorDelay: 1000 # default: 10s
+    thread:
+      # Maximum amount of worker threads. for example 4C 8G, and the empirical value of thread number is 800. The operating system 
+      # has system overhead for switching and scheduling between threads, so not the more the better. The minimum number of idle working threads
+      # is 10 by default. (increase it appropriately to cope with the sudden increase of visits). default: 200
+      max: 50
+      min-spare: 5 # Minimum amount of worker threads. default: 10
+    # Maximum number of connections that the server accepts and processes at any given time. Once the limit has been reached, the
+    # operating system may still accept connections based on the "acceptCount" property. default: 8192
+    maxConnections: 8192
+    # Maximum queue length for incoming connection requests when all possible request processing threads are in use. defualt: 100
+    accept-count: 100
+    # Maximum number of idle processors that will be retained in the cache and reused with a subsequent request. When set to -1 
+    # the cache will be unlimited with a theoretical maximum size equal to the maximum number of connections. default: 200
+    processorCache: 200
+    maxHttpFormPostSize: 2MB # Maximum size of the form content in any HTTP post request.
+    maxSwallowSize: 2MB # Maximum amount of request body to swallow.
+    uri-encoding: UTF-8
+    mbeanregistry:
+      enable: true
+    remoteip:
+      remoteIpHeader: X-Forwarded-For
+      protocolHeader: X-Forwarded-Proto
+      hostHeader: X-Forwarded-Host
+      portHeader: X-Forwarded-Port
