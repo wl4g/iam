@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-captcha</artifactId>
+			<artifactId>xcloud-iam-service-captcha</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
