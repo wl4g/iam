@@ -78,7 +78,7 @@
 				<artifactId>xcloud-iam-gateway-starter</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
-			<!-- IAM rcm modules -->
+			<!-- IAM RCM modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-rcm</artifactId>
@@ -92,7 +92,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-rcm-analytic-core</artifactId>
+				<artifactId>xcloud-iam-rcm-analytic-flink-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>

@@ -78,7 +78,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${final.name}-${project.version}</finalName>
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>

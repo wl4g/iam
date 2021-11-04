@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dataworks.flink.streaming
-
-import com.google.common.annotations.Beta
+package com.wl4g.iam.rcm.analytic.flink
 
 /**
  * Generic program for saving consumption Apache Kafka data to HBase based on Flink Streaming.
  *
  * @author <wanglsir@gmail.com, 983708408@qq.com>
  */
-@Beta
-object GenericKafka2HbaseStreaming {
+object IamEventKafka2HbaseStreaming {
 
   def main(args: Array[String]) {
     println("TODO ...")
