@@ -55,20 +55,13 @@
 	</developers>
 	<modules>
 		<module>bom</module>
-		<module>examples</module>
 		<module>clients</module>
 		<module>common</module>
 		<module>core</module>
+		<module>examples</module>
 		<module>gateway</module>
 		<module>rcm</module>
-		<module>captcha</module>
-		<module>security</module>
-		<module>service-data</module>
-		<module>service-facade</module>
-		<module>service-starter-all</module>
-		<module>service-starter-data</module>
-		<module>service-starter-facade</module>
-		<module>service-starter-web</module>
+		<module>services</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

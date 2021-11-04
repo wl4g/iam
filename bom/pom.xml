@@ -135,7 +135,12 @@
 				<artifactId>xcloud-iam-rcm-eventbus-rocketmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
-			<!-- IAM server modules -->
+			<!-- IAM service modules -->
+			<dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>xcloud-iam-service</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-captcha</artifactId>

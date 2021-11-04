@@ -1,19 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-service-facade</artifactId>
+	<artifactId>xcloud-iam-service-data</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Service Facade Interface</name>
+	<name>XCloud IAM Service Data Interface</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam</artifactId>
+		<artifactId>xcloud-iam-service</artifactId>
 		<version>2.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<mybatis.version>3.5.5</mybatis.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -31,13 +32,18 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
 
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
 
 		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-component-integration-feign-core</artifactId> -->
+		<!-- <artifactId>xcloud-component-integration-feign-istio</artifactId> -->
 		<!-- </dependency> -->
 
 		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
@@ -52,6 +58,11 @@
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>xcloud-component-integration-feign-springcloud-dubbo</artifactId> -->
 		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

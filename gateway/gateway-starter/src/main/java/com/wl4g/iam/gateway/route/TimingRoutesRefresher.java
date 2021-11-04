@@ -61,7 +61,7 @@ public class TimingRoutesRefresher extends GenericTaskRunner<RunnerProperties> i
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        super.start();
+        super.initialize();
     }
 
     /**

@@ -2,40 +2,75 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-captcha</artifactId>
-	<packaging>jar</packaging>
-	<name>XCloud IAM Captcha</name>
-	<url>http://xcloud.wl4g.com</url>
+	<artifactId>xcloud-iam-service</artifactId>
+	<packaging>pom</packaging>
+	<name>XCloud IAM Services</name>
+	<url>https://iam.xcloud.wl4g.com</url>
+	<description>XCloud IAM Services.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-iam</artifactId>
 		<version>2.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+	<organization>
+		<name>wl4g</name>
+		<url>https://xcloud.wl4g.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:wl4g/xcloud-iam.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/xcloud-iam.git</developerConnection>
+		<url>https://github.com/wl4g/xcloud-iam</url>
+		<tag>HEAD</tag>
+	</scm>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/wl4g/xcloud-iam/issues</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<id>Wangl01</id>
+			<name>Wanglsir</name>
+			<email>wanglsir@gmail.com,983708408@qq.com</email>
+			<roles>
+				<role>owner</role>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+		<developer>
+			<id>xburnerair00</id>
+			<name>xburnerair00</name>
+			<email>xburnerair00@163.com</email>
+			<roles>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+	</developers>
+	<modules>
+		<module>captcha</module>
+		<module>security</module>
+		<module>service-data</module>
+		<module>service-facade</module>
+		<module>service-starter-all</module>
+		<module>service-starter-data</module>
+		<module>service-starter-facade</module>
+		<module>service-starter-web</module>
+	</modules>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-bom</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-opencv</artifactId>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -44,6 +79,8 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -58,49 +95,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- ProGuard confusion plug-in -->
-			<plugin>
-				<groupId>com.github.wvengen</groupId>
-				<artifactId>proguard-maven-plugin</artifactId>
-				<executions>
-					<!-- <execution> -->
-					<!-- <phase>package</phase> -->
-					<!-- <goals> -->
-					<!-- <goal>proguard</goal> -->
-					<!-- </goals> -->
-					<!-- </execution> -->
-				</executions>
-				<configuration>
-					<attach>true</attach>
-					<obfuscate>true</obfuscate>
-					<attachArtifactClassifier>pg</attachArtifactClassifier>
-					<proguardInclude>${basedir}/proguard.cfg</proguardInclude>
-					<options>
-						<option>-target 1.8</option>
-						<option>-dontshrink</option>
-						<option>-dontoptimize</option>
-						<option>-dontskipnonpubliclibraryclasses</option>
-						<option>-dontskipnonpubliclibraryclassmembers</option>
-						<option>-allowaccessmodification</option>
-						<option>-useuniqueclassmembernames</option>
-						<option>-keeppackagenames</option>
-						<option>-keepdirectories</option>
-						<option>-keepattributes
-							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
-						<option>-keepclassmembers public class * {void set*(***);***
-							get*();}</option>
-					</options>
-					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
-					<libs>
-						<lib>${java.home}/lib/rt.jar</lib>
-						<lib>${java.home}/lib/jsse.jar</lib>
-						<lib>${java.home}/lib/jce.jar</lib>
-					</libs>
-					<addMavenDescriptor>true</addMavenDescriptor>
-					<injar>classes</injar>
-					<outputDirectory>${project.build.directory}</outputDirectory>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -128,7 +122,6 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>attach-javadocs</id>
 								<phase>package</phase>
 								<goals>
 									<goal>jar</goal>
@@ -139,6 +132,27 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<!-- Usage: mvn versions:set -DnewVersion=latest -->
+					<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<configuration>
+							<!-- <newVersion>latest</newVersion> -->
+							<allowSnapshots>true</allowSnapshots>
+							<generateBackupPoms>false</generateBackupPoms>
+							<processAllModules>true</processAllModules>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<!-- <preparationGoals>clean install</preparationGoals> -->
+							<!-- <developmentVersion>latest</developmentVersion> -->
+						</configuration>
 					</plugin>
 					<!-- GPG -->
 					<plugin>
@@ -153,6 +167,7 @@
 							</execution>
 						</executions>
 					</plugin>
+					<!-- https://help.sonatype.com/repomanager2/staging-releases/configuring-your-project-for-deployment -->
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
