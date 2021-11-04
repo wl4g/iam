@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-security</artifactId>
+			<artifactId>xcloud-iam-service-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

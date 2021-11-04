@@ -143,12 +143,12 @@
             </dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-captcha</artifactId>
+				<artifactId>xcloud-iam-service-captcha</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-security</artifactId>
+				<artifactId>xcloud-iam-service-security</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
