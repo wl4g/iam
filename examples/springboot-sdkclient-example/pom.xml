@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-iam-example-springboot-sdkclient</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Example for Springboot Auth based on depend-on Sdk-Client</name>
+	<name>XCloud IAM Example for Springboot Auth based on Sdk-Client</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -111,4 +111,5 @@
 			</build>
 		</profile>
 	</profiles>
+	<description>XCloud IAM Example for Springboot Auth based on depend-on Sdk-Client</description>
 </project>

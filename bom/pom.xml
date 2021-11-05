@@ -58,7 +58,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-mock</artifactId>
+				<artifactId>xcloud-iam-client-springboot-mock</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM gateway modules -->

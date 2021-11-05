@@ -58,7 +58,7 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>client-mock</module>
+		<module>client-springboot-mock</module>
 		<module>client-springboot</module>
 	</modules>
 	<properties>

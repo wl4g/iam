@@ -111,4 +111,5 @@
 			</build>
 		</profile>
 	</profiles>
+	<description>XCloud IAM Example for Springboot Auth based on Gateway Servers</description>
 </project>

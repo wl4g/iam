@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-client-mock</artifactId>
+	<artifactId>xcloud-iam-client-springboot-mock</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Client for Mocks</name>
+	<name>XCloud IAM Client for Springboot Mocks</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -193,4 +193,5 @@
 	        </distributionManagement>
 	    </profile>
 	</profiles>
+	<description>XCloud IAM Client for Springboot Mocks</description>
 </project>
