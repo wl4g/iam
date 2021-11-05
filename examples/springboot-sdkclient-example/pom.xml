@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client-mock</artifactId>
+			<artifactId>xcloud-iam-client-springboot-mock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
