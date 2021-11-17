@@ -23,40 +23,40 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 
 import org.springframework.boot.Banner
 
-import com.wl4g.component.core.boot.listener.ISpringLauncherConfigurer
+import com.wl4g.component.core.boot.listener.IBootstrappingConfigurer
 
 /**
- * IAM facade implementation of {@link ISpringLauncherConfigurer}
+ * IAM data implementation of {@link IBootstrappingConfigurer}
  */
-class IamFacadeSpringLauncherConfigurer implements ISpringLauncherConfigurer {
+class IamDataBootstrappingConfigurer implements IBootstrappingConfigurer {
 
 	@Override
 	def int getOrder() {
 		return -100
 	}
 
-	def Banner.Mode bannerMode() {
+	def Banner.Mode bannerMode(Banner.Mode prevMode) {
 		return Banner.Mode.LOG;
 	}
 
 	@Override
-	def Properties defaultProperties() {
+	def Properties defaultProperties(Properties prevDefaultProperties) {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-facade,iam-facade-etc")
+		def configName = new StringBuffer("application,iam-data,iam-data-etc")
 
 		// Preset spring.config.location
-		// for example: spring auto load for 'classpath:/application-facade-dev.yml'
+		// for example: spring auto load for 'classpath:/application-data-dev.yml'
 		def location = new StringBuffer("classpath:/")
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",iam-facade-scf");
+			configName.append(",iam-data-scf");
 			location.append(",classpath:/scf/")
 		} else if (isPresent("com.wl4g.component.rpc.feign.core.annotation.FeignConsumer")) {
-			configName.append(",iam-facade-sbf");
+			configName.append(",iam-data-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			configName.append(",iam-facade-dubbo");
+			configName.append(",iam-data-dubbo");
 			location.append(",classpath:/dubbo/")
 		}
 
