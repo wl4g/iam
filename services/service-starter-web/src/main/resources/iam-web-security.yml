@@ -13,7 +13,7 @@
 spring:
   xcloud:
     component:
-      web:
+      core.web:
         embedded-webapps:
           enabled: true # Default false
           base-uri: /view

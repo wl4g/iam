@@ -21,7 +21,7 @@ import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 
-import static com.wl4g.component.support.constant.SupportConstant.KEY_SUPPORT_NOTIFY_PREFIX;
+import static com.wl4g.component.support.constant.SupportConfigConstant.KEY_SUPPORT_NOTIFY_PREFIX;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
