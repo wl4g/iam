@@ -14,6 +14,7 @@
 #
 ## 1). Run container for example:
 ##      export APP_NAME=myapp
+##      export APP_ACTIVE=pro
 ##      export APP_PORT=8080
 ##      export APP_DATA=/mnt/disk1/${APP_NAME}
 ##      export APP_LOG=/mnt/disk1/log/${APP_NAME}
