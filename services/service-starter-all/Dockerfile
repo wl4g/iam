@@ -18,6 +18,8 @@
 ##      export APP_PORT=8080
 ##      export APP_DATA=/mnt/disk1/${APP_NAME}
 ##      export APP_LOG=/mnt/disk1/log/${APP_NAME}
+##      export JAVA_OPTS='-Xms1G -Xmx1G'
+##      #export JAVA_TOOL_OPTIONS='-javaagent:/opt/apps/ecm/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/apps/ecm/javaagent/jmx-metrics.yml'
 ##      docker run -d \
 ##        -e=APP_NOHUP=y \
 ##        -e=APP_DEBUG=y \
@@ -27,7 +29,7 @@
 ##        -p=${APP_PORT}:${APP_PORT} \
 ##        -v=${APP_DATA}:${APP_DATA} \
 ##        -v=${APP_LOG}:${APP_LOG} \
-##        --name=${APP_NAME} ${APP_NAME}:latest /bin/bash
+##        --name=${APP_NAME} ${APP_NAME}:latest /bin/sh
 
 FROM openjdk:8-jre-alpine
 LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
@@ -61,7 +63,10 @@ RUN echo -e "export APP_NAME=${APP_NAME}" >>/start.sh
 RUN echo -e "export APP_ACTIVE=\${APP_ACTIVE:-pro}" >>/start.sh
 RUN echo -e "export APP_DATA=\${APP_DATA:-/mnt/disk1/\$APP_NAME}" >>/start.sh
 RUN echo -e "export APP_LOG=\${APP_LOG:-/mnt/disk1/log/\$APP_NAME}" >>/start.sh
-RUN echo -e "export APP_PORT=\${APP_PORT:-defaultPort}" >>/start.sh
+RUN echo -e "export APP_PORT=\${APP_PORT:-}" >>/start.sh
+# Standard JVM options, for production environment.
+RUN echo -e "export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}" >>/start.sh
+RUN echo -e "export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}" >>/start.sh
 RUN echo -e "[[ -n \"\$APP_PORT\" && \"\$APP_PORT\" != \"defaultPort\" ]] && export APP_PORT_OPTS=\${APP_PORT}" >>/start.sh
 RUN echo -e "[ -z \"\$APP_NOHUP\" ] && export CMD_NOHUP=\"nohup\"" >>/start.sh
 RUN echo -e "[ -n \"\$APP_DEBUG\" ] && export DEBUG_OPTS=\"-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n\"" >>/start.sh
@@ -69,12 +74,12 @@ RUN echo -e "echo \"Starting \${APP_NAME}:${APP_VERSION} on \${APP_PORT}:\${APP_
 RUN echo -e "mkdir -p \${APP_DATA} && mkdir -p \${APP_LOG}\n" >>/start.sh
 
 # Startup commands.
-RUN echo -e "cmdRun=\"\${CMD_NOHUP} java -server \${DEBUG_OPTS} -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
--XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError \
--XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof -XX:-OmitStackTraceInFastThrow \
+RUN echo -e "cmdRun=\"\${CMD_NOHUP} java -server \${DEBUG_OPTS} \${JAVA_OPTS} -XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof \
+-XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -XX:+HeapDumpOnOutOfMemoryError \
+-XX:-OmitStackTraceInFastThrow -XX:+UseG1GC -XX:MaxGCPauseMillis=20 \
 -Xloggc:\${APP_LOG}/\${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
 -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M \
--Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
+-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
 .:${APP_HOME}/conf:${APP_CLASSPATH}:${APP_HOME}/ext-lib/*:${APP_HOME}/lib/* ${APP_MAINCLASS} \
 \${APP_PORT_OPTS} \
 --server.tomcat.basedir=\${APP_DATA} \
