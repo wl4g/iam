@@ -13,13 +13,14 @@
 # limitations under the License.
 #
 ## 1). Run container for example:
+##      export JAVA_OPTS='-Xms1G -Xmx1G'
+##      #export JAVA_TOOL_OPTIONS='-javaagent:/opt/apps/ecm/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/apps/ecm/javaagent/jmx-metrics.yml'
 ##      export APP_NAME=myapp
 ##      export APP_ACTIVE=pro
 ##      export APP_PORT=8080
 ##      export APP_DATA=/mnt/disk1/${APP_NAME}
 ##      export APP_LOG=/mnt/disk1/log/${APP_NAME}
-##      export JAVA_OPTS='-Xms1G -Xmx1G'
-##      #export JAVA_TOOL_OPTIONS='-javaagent:/opt/apps/ecm/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/apps/ecm/javaagent/jmx-metrics.yml'
+##      #export APP_OPTS='--server.servlet.contextPath=/myapp'
 ##      docker run -d \
 ##        -e=APP_NOHUP=y \
 ##        -e=APP_DEBUG=y \
@@ -59,12 +60,13 @@ RUN tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 RUN touch /start.sh && chmod +x /start.sh
 RUN echo -e '#!/bin/bash' >>/start.sh
 RUN echo -e "export APP_NAME=${APP_NAME}" >>/start.sh
-# Support configurable environments.
+# Definition application configuration with default value.
 RUN echo -e "export APP_ACTIVE=\${APP_ACTIVE:-pro}" >>/start.sh
+RUN echo -e "export APP_PORT=\${APP_PORT:-}" >>/start.sh
 RUN echo -e "export APP_DATA=\${APP_DATA:-/mnt/disk1/\$APP_NAME}" >>/start.sh
 RUN echo -e "export APP_LOG=\${APP_LOG:-/mnt/disk1/log/\$APP_NAME}" >>/start.sh
-RUN echo -e "export APP_PORT=\${APP_PORT:-}" >>/start.sh
-# Standard JVM options, for production environment.
+RUN echo -e "export APP_OPTS=\${APP_OPTS:-}" >>/start.sh
+# Definition standard JVM options with default value.
 RUN echo -e "export JAVA_OPTS=\${JAVA_OPTS:-'-Xms256M -Xmx1G'}" >>/start.sh
 RUN echo -e "export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}" >>/start.sh
 RUN echo -e "[[ -n \"\$APP_PORT\" && \"\$APP_PORT\" != \"defaultPort\" ]] && export APP_PORT_OPTS=\${APP_PORT}" >>/start.sh
@@ -86,6 +88,7 @@ RUN echo -e "cmdRun=\"\${CMD_NOHUP} java -server \${DEBUG_OPTS} \${JAVA_OPTS} -X
 --logging.file.name=\${APP_LOG}/\${APP_NAME}_\${APP_ACTIVE}.log \
 --spring.application.name=\${APP_NAME} \
 --spring.profiles.active=\${APP_ACTIVE} \
+\${APP_OPTS} \
 1>\${APP_LOG}/\${APP_NAME}_\${APP_ACTIVE}.stdout \
 2>\${APP_LOG}/\${APP_NAME}_\${APP_ACTIVE}.stderr\"" >>/start.sh
 
