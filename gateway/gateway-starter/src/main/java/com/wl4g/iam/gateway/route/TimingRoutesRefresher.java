@@ -24,11 +24,10 @@ import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.component.common.task.GenericTaskRunner;
 import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.core.task.ApplicationTaskRunner;
 import com.wl4g.iam.gateway.exception.CurrentlyInRefreshingException;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 
@@ -39,7 +38,7 @@ import com.wl4g.iam.gateway.route.config.RouteProperties;
  * @version 2019年6月2日
  * @since v1.0
  */
-public class TimingRoutesRefresher extends GenericTaskRunner<RunnerProperties> implements ApplicationRunner, DisposableBean {
+public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerProperties> implements ApplicationRunner, DisposableBean {
 
     @Autowired
     protected RouteProperties config;
@@ -57,11 +56,6 @@ public class TimingRoutesRefresher extends GenericTaskRunner<RunnerProperties> i
     @Override
     public void destroy() throws Exception {
         super.close();
-    }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        super.initialize();
     }
 
     /**
