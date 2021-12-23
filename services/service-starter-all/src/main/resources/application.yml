@@ -27,14 +27,19 @@ spring:
 # Logging configuration.
 logging:
   file:
+    # see:com.wl4g.component.core.logging.logback.EnhancedLogbackConfigurer#apply
+    # see:org.springframework.boot.logging.LogFile#toString
     name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
-    clean-history-on-start: false
-    total-size-cap: 200GB # default to 200GB
-    max-size: 1GB # default to 10MB
-    max-history: 30 # default to 7
+    clean-history-on-start: false # By default: false
+    total-size-cap: 200GB # By default: 200GB
+    max-size: 1GB # By default: 500MB
+    max-history: 30 # By default: 7
   pattern:
-    #console: ${logging.pattern.file}
+    #console: ${logging.pattern.file.name}
     #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #dateformat: yyyy-MM-dd HH:mm:ss.SSS
+    #level: '%5p'
+    #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
   root: INFO
   level:
     de.codecentric.boot.admin: INFO
