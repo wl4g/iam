@@ -16,10 +16,10 @@
 ##      export appName=myapp
 ##      export appActive=pro
 ##      export appPort=8080
-##      export appDataDir="/mnt/disk1/${APP_NAME}"
-##      export appLogDir="/mnt/disk1/log/${APP_NAME}""
-##      #export appOpts='--server.servlet.contextPath=/myapp'
-##      #export javaOpts='-Xms1G -Xmx1G'
+##      export appDataDir="/mnt/disk1/${appName}"
+##      export appLogDir="/mnt/disk1/log/${appName}"
+##      #export appOpts="--server.servlet.contextPath=/myapp"
+##      #export javaOpts="-Xms1G -Xmx1G"
 ##      #export javaToolOptions='-javaagent:/opt/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/javaagent/jmx-metrics.yml'
 ##      docker run -d \
 ##        -e APP_NOHUP=y \
