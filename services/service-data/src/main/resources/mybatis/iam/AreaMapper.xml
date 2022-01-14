@@ -22,7 +22,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
-	<select id="getTotal" resultMap="BaseResultMap">
+	<select id="findAreaAll" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from sys_area

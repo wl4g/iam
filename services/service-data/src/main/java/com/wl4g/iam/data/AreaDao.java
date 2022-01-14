@@ -15,16 +15,17 @@
  */
 package com.wl4g.iam.data;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.Area;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.iam.common.bean.Area;
 
 /**
  * {@link AreaDao}
@@ -38,25 +39,25 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/area-dao")
 public interface AreaDao {
 
-	@RequestMapping(method = POST, value = "/deleteByPrimaryKey")
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = POST, value = "/deleteByPrimaryKey")
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody Area record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody Area record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody Area record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody Area record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	Area selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    Area selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = GET, value = "/getTotal")
-	List<Area> getTotal();
+    @RequestMapping(method = GET, value = "/findAreaAll")
+    List<Area> findAreaAll();
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody Area record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody Area record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody Area record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody Area record);
 
 }

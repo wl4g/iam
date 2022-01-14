@@ -15,15 +15,15 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.iam.common.bean.Area;
-import com.wl4g.iam.data.AreaDao;
-import com.wl4g.iam.service.AreaService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.wl4g.iam.common.bean.Area;
+import com.wl4g.iam.data.AreaDao;
+import com.wl4g.iam.service.AreaService;
 
 /**
  * {@link AreaServiceImpl}
@@ -39,50 +39,46 @@ import java.util.Objects;
 // @org.springframework.web.bind.annotation.RestController
 public class AreaServiceImpl implements AreaService {
 
-	@Autowired
-	private AreaDao areaDao;
+    @Autowired
+    private AreaDao areaDao;
 
-	@Override
-	public List<Area> getAreaTree() {
-		List<Area> total = getTotal();
-		List<Area> tops = transformAreaWithRoot(total);
-		for (Area top : tops) {
-			loadAreaChildren(total, top);
-		}
-		return tops;
-	}
+    @Override
+    public List<Area> getAreaTree() {
+        List<Area> areas = areaDao.findAreaAll();
+        List<Area> tops = findTopAreas(areas);
+        for (Area top : tops) {
+            handleAreaChildren(areas, top);
+        }
+        return tops;
+    }
 
-	public void loadAreaChildren(List<Area> total, Area top) {
-		for (Area area : total) {
-			if (top.getId().equals(area.getParentId())) {
-				getOrCreateChildren(top).add(area);
-				loadAreaChildren(total, area);
-			}
-		}
-	}
+    private void handleAreaChildren(List<Area> areas, Area top) {
+        for (Area area : areas) {
+            if (top.getId().equals(area.getParentId())) {
+                getOrCreateChildren(top).add(area);
+                handleAreaChildren(areas, area);
+            }
+        }
+    }
 
-	private List<Area> getTotal() {
-		return areaDao.getTotal();
-	}
+    private List<Area> findTopAreas(List<Area> areas) {
+        List<Area> list = new ArrayList<>();
+        for (Area area : areas) {
+            if (Objects.nonNull(area.getLevel()) && area.getLevel() == 0) {
+                list.add(area);
+            }
+        }
+        return list;
+    }
 
-	private List<Area> transformAreaWithRoot(List<Area> areas) {
-		List<Area> list = new ArrayList<>();
-		for (Area area : areas) {
-			if (Objects.nonNull(area.getLevel()) && area.getLevel() == 0) {
-				list.add(area);
-			}
-		}
-		return list;
-	}
-
-	private List<Area> getOrCreateChildren(Area area) {
-		if (Objects.isNull(area.getChildren())) {
-			List<Area> children = new ArrayList<>();
-			area.setChildren(children);
-			return children;
-		} else {
-			return area.getChildren();
-		}
-	}
+    private List<Area> getOrCreateChildren(Area area) {
+        if (Objects.isNull(area.getChildren())) {
+            List<Area> children = new ArrayList<>();
+            area.setChildren(children);
+            return children;
+        } else {
+            return area.getChildren();
+        }
+    }
 
 }
