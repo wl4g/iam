@@ -31,6 +31,7 @@
 				<include>*.yml</include>
 				<include>*.yaml</include>
 				<include>*.properties</include>
+				<include>*.txt</include>
 			</includes>
 		</fileSet>
 		<fileSet>
@@ -39,6 +40,10 @@
 			<includes>
 				<include>*.jar</include>
 			</includes>
+			<excludes>
+				<exclude>*-sources.jar</exclude>
+				<exclude>*-docker-info.jar</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
 			<directory>.</directory>

@@ -64,8 +64,8 @@ RUN mkdir -p ${APP_HOME_PARENT} \
 && tar -xf /tmp/${APP_BIN_NAME}.tar -C ${APP_HOME_PARENT} \
 && rm -rf /tmp/${APP_BIN_NAME}.tar \
 # Make control script.
-&& touch /startup.sh && chmod +x /startup.sh \
-&& echo -e "#!/bin/bash" >>/startup.sh \
+&& touch /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh \
+&& echo -e "#!/bin/bash" >>/docker-entrypoint.sh \
 && echo -e "\
 # Define app basic the immutable properties.\n\
 export APP_NAME=${APP_NAME:-}\n\
@@ -108,10 +108,18 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${APP_DEBUG_OPTS} \${JAVA_OPTS} -X
 # Execution.\n\
 echo \"Starting \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT} ...\"\n\
 exec \${CMD_EXEC}\n\
-echo \"Started \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT}\"\n" >>/startup.sh
+echo \"Started \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT}\"\n" >>/docker-entrypoint.sh
+
+# Using root-less run container. see:https://docs.docker.com/engine/security/rootless/
+# see:https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
+RUN adduser ${APP_NAME} --disabled-password \
+&& mkdir -p ${APP_HOME} \
+&& chown -R ${APP_NAME}:${APP_NAME} ${APP_HOME} /docker-entrypoint.sh \
+&& chmod -R 755 ${APP_HOME} /docker-entrypoint.sh
+USER ${APP_NAME}
 
 #EXPOSE ${APP_PORT} # Mapping ports when delegating to a start container.
 
 # [FIX]: Notice that if you use bash or sh to start the program, graceful termination cannot be achieved under kubernetes.
-#CMD ["/bin/bash", "-c", "/startup.sh"]
-CMD ["/startup.sh"]
+#CMD ["/bin/bash", "-c", "/docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh"]
