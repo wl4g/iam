@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-rcm-analytic-flink-pulsar</artifactId>
+	<artifactId>dopaas-iam-rcm-analytic-flink-pulsar</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM RCM Analytic for Flink Pulsar</name>
-	<url>http://xcloud.wl4g.com</url>
+	<name>DoPaaS IAM RCM Analytic for Flink Pulsar</name>
+	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam-rcm-analytic</artifactId>
+		<artifactId>dopaas-iam-rcm-analytic</artifactId>
 		<version>2.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-rcm-analytic-flink-core</artifactId>
+			<artifactId>dopaas-iam-rcm-analytic-flink-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

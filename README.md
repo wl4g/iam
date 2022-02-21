@@ -4,7 +4,7 @@
 - Compile Installing
 
 ```
-cd xcloud-devops
+cd dopaas-devops
 # Packaged as a single executable jar
 mvn -U clean install -DskipTests -T 2C -P springExecJar
 # Packaged as general software release package (directory structure)

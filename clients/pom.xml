@@ -2,20 +2,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-client</artifactId>
+	<artifactId>dopaas-iam-client</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud IAM Client</name>
-	<url>https://iam.xcloud.wl4g.com</url>
-	<description>XCloud IAM Clients.</description>
+	<name>DoPaaS IAM Client</name>
+	<url>https://iam.iam.dopaas.wl4g.com</url>
+	<description>DoPaaS IAM Clients.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam</artifactId>
-		<version>2.0.0</version>
+		<artifactId>dopaas-iam</artifactId>
+		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<organization>
 		<name>wl4g</name>
-		<url>https://xcloud.wl4g.com</url>
+		<url>https://iam.dopaas.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -25,14 +25,14 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:wl4g/xcloud-iam.git</connection>
-		<developerConnection>scm:git:git@github.com:wl4g/xcloud-iam.git</developerConnection>
-		<url>https://github.com/wl4g/xcloud-iam</url>
+		<connection>scm:git:git@github.com:wl4g/dopaas-iam.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/dopaas-iam.git</developerConnection>
+		<url>https://github.com/wl4g/dopaas-iam</url>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>github</system>
-		<url>https://github.com/wl4g/xcloud-iam/issues</url>
+		<url>https://github.com/wl4g/dopaas-iam/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>

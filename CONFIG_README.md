@@ -1,4 +1,4 @@
-#### 服务端(xcloud-iam-server)所支持完整配置项：
+#### 服务端(dopaas-iam-server)所支持完整配置项：
 
 ```
 spring:
@@ -67,7 +67,7 @@ spring:
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
 ```
 
-#### 客户端(xcloud-iam-client)所支持完整配置项：
+#### 客户端(dopaas-iam-client)所支持完整配置项：
 ```
 spring:
   cloud:

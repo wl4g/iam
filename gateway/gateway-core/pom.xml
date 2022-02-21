@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-gateway-core</artifactId>
+	<artifactId>dopaas-iam-gateway-core</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Gateway Core</name>
-	<url>http://xcloud.wl4g.com</url>
+	<name>DoPaaS IAM Gateway Core</name>
+	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam-gateway</artifactId>
-		<version>2.0.0</version>
+		<artifactId>dopaas-iam-gateway</artifactId>
+		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
@@ -19,7 +19,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-bom</artifactId>
+				<artifactId>dopaas-iam-bom</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-common</artifactId>
+			<artifactId>dopaas-iam-common</artifactId>
 			<exclusions>
 				<!-- Excludes spring MVC -->
 				<exclusion>
@@ -78,7 +78,7 @@
 					<configLocation>/../checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/xcloud-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/dopaas-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
 					<!-- <execution> -->
 					<!-- <id>checkstyle</id> -->
 					<!-- <phase>validate</phase> -->

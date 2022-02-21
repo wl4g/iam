@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-client-java</artifactId>
+	<artifactId>dopaas-iam-client-java</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Client Java</name>
-	<url>http://xcloud.wl4g.com</url>
+	<name>DoPaaS IAM Client Java</name>
+	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam</artifactId>
+		<artifactId>dopaas-iam</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -20,7 +20,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-bom</artifactId>
+				<artifactId>dopaas-bom</artifactId>
 				<version>master</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -30,7 +30,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-common</artifactId>
+			<artifactId>dopaas-infra-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

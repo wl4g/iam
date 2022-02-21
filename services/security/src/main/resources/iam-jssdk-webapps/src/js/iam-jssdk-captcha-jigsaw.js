@@ -1,7 +1,7 @@
 ﻿/**
  * IAM WebSDK CAPTCHA JIGSAW v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>, Inc. x
- * Licensed under Apache2.0 (https://github.com/wl4g/xcloud-iam/blob/master/LICENSE)
+ * Licensed under Apache2.0 (https://github.com/wl4g/dopaas-iam/blob/master/LICENSE)
  */
 (function ($) {
     'use strict';

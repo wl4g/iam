@@ -2,14 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-iam-example-springboot-sdkclient</artifactId>
+	<artifactId>dopaas-iam-example-springboot-sdkclient</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud IAM Example for Springboot Auth based on Sdk-Client</name>
-	<url>http://xcloud.wl4g.com</url>
+	<name>DoPaaS IAM Example for Springboot Auth based on Sdk-Client</name>
+	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-iam-example</artifactId>
-		<version>2.0.0</version>
+		<artifactId>dopaas-iam-example</artifactId>
+		<version>3.0.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -19,7 +19,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-bom</artifactId>
+				<artifactId>dopaas-iam-bom</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -29,11 +29,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client-springboot</artifactId>
+			<artifactId>dopaas-iam-client-springboot</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client-springboot-mock</artifactId>
+			<artifactId>dopaas-iam-client-springboot-mock</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -111,5 +111,5 @@
 			</build>
 		</profile>
 	</profiles>
-	<description>XCloud IAM Example for Springboot Auth based on depend-on Sdk-Client</description>
+	<description>DoPaaS IAM Example for Springboot Auth based on depend-on Sdk-Client</description>
 </project>

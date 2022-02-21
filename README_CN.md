@@ -4,7 +4,7 @@
 - 编译安装
 
 ```
-cd xcloud-iam
+cd dopaas-iam
 # 打包为单个可执行jar
 mvn -U clean install -DskipTests -T 2C -P springExecJar
 # 打包为通用软件发布包(目录结构)
@@ -20,14 +20,14 @@ mvn -U clean install -DskipTests -T 2C -P springExecJar
 
 ##### 2，客户端集成：
 - 2.1，PC集成(前后端分离)
-- 2.2，[安卓端接入（全局认证拦截器）](xcloud-iam-client-example/src/main/java/com/wl4g/iam/example/android/AndroidIamUserCoordinator.java)
+- 2.2，[安卓端接入（全局认证拦截器）](dopaas-iam-client-example/src/main/java/com/wl4g/iam/example/android/AndroidIamUserCoordinator.java)
 - 2.3，微信公众号集成，
 - 2.4，服务端所有支持的yml配置(以及默认值):
 
 ```
 <dependency>
     <groupId>com.wl4g</groupId>
-    <artifactId>xcloud-iam-client</artifactId>
+    <artifactId>dopaas-iam-client</artifactId>
     <version>${latest}</version>
 </dependency>
 ```
@@ -44,18 +44,18 @@ mvn -U clean install -DskipTests -T 2C -P springExecJar
 
 
 <p align="center">
-    <img src="https://github.com/wl4g/xcloud-iam/tree/master/shots/iam-logo.png" width="150">
-    <h3 align="center">XCloud IAM</h3>
+    <img src="https://github.com/wl4g/dopaas-iam/tree/master/shots/iam-logo.png" width="150">
+    <h3 align="center">DoPaaS IAM</h3>
     <p align="center">
         A Distributed IAM(CAS/SSO) SpringCloud Application.
         <br>
-        <a href="https://github.com/wl4g/xcloud-iam/"><strong>-- Home Page --</strong></a>
+        <a href="https://github.com/wl4g/dopaas-iam/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-sso/">
             <img src="https://img.shields.io/badge/Maven-3.5+-green.svg" >
         </a>
-         <a href="https://github.com/wl4g/xcloud-iam/releases">
+         <a href="https://github.com/wl4g/dopaas-iam/releases">
              <img src="https://img.shields.io/badge/release-v2.0.0-green.svg" >
          </a>
         <a href="http://www.apache.org/licenses/LICENSE-2.0">
@@ -67,7 +67,7 @@ mvn -U clean install -DskipTests -T 2C -P springExecJar
 
 ## Introduction
 
-XCloud IAM 是一个分布式单点登录框架。只需要登录一次就可以访问所有相互信任的应用系统。
+DoPaaS IAM 是一个分布式单点登录框架。只需要登录一次就可以访问所有相互信任的应用系统。
 拥有"轻量级、分布式、跨站/域、Cookie+Token均支持、Web+APP均支持"等特性。现已开放源代码，开箱即用。
 
 
@@ -94,7 +94,7 @@ XCloud IAM 是一个分布式单点登录框架。只需要登录一次就可以
 
 
 ## Development
-于2018年初，我在github上创建 XCloud IAM 项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
+于2018年初，我在github上创建 DoPaaS IAM 项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
 
 至今，IAM/SSO 已接入某物联网平台的生产环境，稳定运行1year+，接入场景如电商业务，O2O业务和核心中间件配置动态化等。
 
@@ -103,7 +103,7 @@ XCloud IAM 是一个分布式单点登录框架。只需要登录一次就可以
 
 ## Contributing
 
-欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/wl4g/xcloud-iam/issues/) 讨论新特性或者变更。
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/wl4g/dopaas-iam/issues/) 讨论新特性或者变更。
 
 
 ## Copyright and License

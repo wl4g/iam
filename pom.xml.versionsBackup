@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>dopaas-iam</artifactId>
-	<version>3.0.0</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<name>DoPaaS IAM(Identity Authentication Management)</name>
 	<url>https://iam.iam.dopaas.wl4g.com</url>
