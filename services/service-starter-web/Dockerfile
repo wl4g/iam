@@ -65,7 +65,7 @@ ENV APP_EXT_CLASSPATH "${APP_EXT_CLASSPATH}"
 ENV APP_BIN_NAME "${APP_NAME}-${APP_VERSION}-bin"
 ENV APP_HOME_PARENT "/opt/apps/ecm/${APP_NAME}-package"
 ENV APP_HOME "${APP_HOME_PARENT}/${APP_BIN_NAME}"
-ENV APP_HOME_LINK "${APP_HOME_PARENT}/${APP_NAME}"
+ENV APP_HOME_LINK "${APP_HOME_PARENT}/${APP_NAME}-current"
 
 ##
 ## Installation APP files.
@@ -110,7 +110,7 @@ export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 ## Make run commands.\n\
 export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \${JAVA_GC_OPTS} \${JVM_DEBUG_OPTS} \
 -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
-.:\${APP_HOME}/conf:\${APP_EXT_CLASSPATH}:\${APP_HOME}/ext-lib/*:\${APP_HOME}/lib/* \${APP_MAINCLASS} \
+.:\${APP_HOME_LINK}/conf:\${APP_EXT_CLASSPATH}:\${APP_HOME_LINK}/ext-lib/*:\${APP_HOME_LINK}/lib/* \${APP_MAINCLASS} \
 --spring.application.name=\${APP_NAME} \
 --spring.profiles.active=\${APP_ACTIVE} \
 \${APP_PORT_OPTS} \
