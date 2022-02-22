@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-## 1). for example:
+## 1). Example:
 ##      export appName=myapp
 ##      export appActive=pro
 ##      export appPort=8080
 ##      export appDataDir="/mnt/disk1/${appName}"
 ##      export appLogDir="/mnt/disk1/log/${appName}"
 ##      #export javaToolOptions='-javaagent:/opt/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/javaagent/jmx-metrics.yml'
-##      #export javaOpts="-Xms1G -Xmx1G"
-##      #export javaHeapOpts='-XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=${appLogDir}/jvm_dump.hprof'
+##      #export javaOpts=""
+##      #export javaHeapOpts='-Xms4G -Xmx4G -XX:MaxDirectMemorySize=4G'
+##      #export javaDumpOpts='-XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=${appLogDir}/jvm_dump.hprof'
 ##      #export javaGcOpts='-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:+DisableExplicitGC -Xloggc:${appLogDir}/${appName}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M'
 ##      docker run -d \
 ##        -e APP_NOHUP=y \
@@ -33,13 +34,15 @@
 ##        -e JAVA_TOOL_OPTIONS=${javaToolOptions} \
 ##        -e JAVA_OPTS=${javaOpts} \
 ##        -e JAVA_HEAP_OPTS=${javaHeapOpts} \
+##        -e JAVA_DUMP_OPTS=${javaDumpOpts} \
 ##        -e JAVA_GC_OPTS=${javaGcOpts} \
 ##        -p ${appPort}:${appPort} \
 ##        -v ${appDataDir}:${appDataDir} \
 ##        -v ${appLogDir}:${appLogDir} \
 ##        --name=${appName} ${appName}:latest
 
-FROM openjdk:8u191-jre-alpine AS wl4g_springboot_base
+# see:https://blogs.wl4g.com/archives/2969
+FROM openjdk:8u212-jre-alpine3.9 AS wl4g_springboot_base
 LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
@@ -59,16 +62,16 @@ ARG APP_NAME
 ARG APP_VERSION
 ARG APP_MAINCLASS
 ARG APP_EXT_CLASSPATH # Optional
-
 ENV APP_NAME "${APP_NAME}"
 ENV APP_VERSION "${APP_VERSION}"
 ENV APP_MAINCLASS "${APP_MAINCLASS}"
 ENV APP_EXT_CLASSPATH "${APP_EXT_CLASSPATH}"
-
 ENV APP_BIN_NAME "${APP_NAME}-${APP_VERSION}-bin"
 ENV APP_HOME_PARENT "/opt/apps/ecm/${APP_NAME}-package"
 ENV APP_HOME "${APP_HOME_PARENT}/${APP_BIN_NAME}"
 ENV APP_HOME_LINK "${APP_HOME_PARENT}/${APP_NAME}-current"
+ENV APP_DATA "${APP_HOME}/data"
+ENV APP_LOG "${APP_HOME}/log"
 
 ##
 ## Installation APP files.
@@ -91,17 +94,18 @@ export APP_NAME=\${APP_NAME:-${APP_NAME}}\n\
 export APP_PORT=\${APP_PORT:-'<default>'}\n\
 export APP_ACTIVE=\${APP_ACTIVE:-pro}\n\
 export APP_OPTS=\${APP_OPTS:-}\n\
-export APP_DATA=/mnt/disk1/\${APP_NAME}\n\
-export APP_LOG=/mnt/disk1/log/\${APP_NAME}\n\
 \
 ## Define the mutable JVM options.\n\
-export JAVA_OPTS=\${JAVA_OPTS:-'-Xms1G -Xmx1G'}\n\
+export JAVA_OPTS=\${JAVA_OPTS:-}\n\
 \
-export DEFAULT_JAVA_HEAP_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof\" \n\
-export JAVA_HEAP_OPTS=\${JAVA_HEAP_OPTS:-${DEFAULT_JAVA_HEAP_OPTS}}\n\
+export DEFAULT_JAVA_HEAP_OPTS=\"-XX:InitialRAMPercentage=80.0 -XX:MinRAMPercentage=80.0 -XX:MaxRAMPercentage=80.0\" \n\
+export JAVA_HEAP_OPTS=\${JAVA_HEAP_OPTS:-\${DEFAULT_JAVA_HEAP_OPTS}}\n\
+\
+export DEFAULT_JAVA_DUMP_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=\${APP_LOG}/jvm_dump.hprof\" \n\
+export JAVA_DUMP_OPTS=\${JAVA_DUMP_OPTS:-\${DEFAULT_JAVA_DUMP_OPTS}}\n\
 \
 export DEFAULT_JAVA_GC_OPTS=\"-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:+DisableExplicitGC -Xloggc:\${APP_LOG}/\${APP_NAME}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M\" \n\
-export JAVA_GC_OPTS=\${JAVA_GC_OPTS:-${DEFAULT_JAVA_GC_OPTS}}\n\
+export JAVA_GC_OPTS=\${JAVA_GC_OPTS:-\${DEFAULT_JAVA_GC_OPTS}}\n\
 \
 export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 \
@@ -111,7 +115,7 @@ export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 [[ \$APP_PORT != '' && \$APP_PORT != '<default>' ]] && export APP_PORT_OPTS='--server.port=\${APP_PORT}'\n\
 \
 ## Make run commands.\n\
-export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \${JAVA_GC_OPTS} \${JVM_DEBUG_OPTS} \
+export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \${JAVA_DUMP_OPTS} \${JAVA_GC_OPTS} \${JVM_DEBUG_OPTS} \
 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
 .:\${APP_HOME_LINK}/conf:\${APP_EXT_CLASSPATH}:\${APP_HOME_LINK}/ext-lib/*:\${APP_HOME_LINK}/lib/* \${APP_MAINCLASS} \
 --spring.application.name=\${APP_NAME} \
