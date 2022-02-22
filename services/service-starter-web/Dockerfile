@@ -109,8 +109,8 @@ export JAVA_GC_OPTS=\${JAVA_GC_OPTS:-\${DEFAULT_JAVA_GC_OPTS}}\n\
 \
 export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 \
-[ -n \$APP_NOHUP ] && export CMD_NOHUP='nohup' \n\
-[ -n \$APP_DEBUG ] && export JVM_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n' \n\
+[ -n \"\$APP_NOHUP\" ] && export CMD_NOHUP='nohup' \n\
+[ -n \"\$APP_DEBUG\" ] && export JVM_DEBUG_OPTS='-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n' \n\
 \
 [[ \$APP_PORT != '' && \$APP_PORT != '<default>' ]] && export APP_PORT_OPTS='--server.port=\${APP_PORT}'\n\
 \
@@ -127,7 +127,7 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \$
 2>\${APP_LOG}/\${APP_NAME}_\${APP_ACTIVE}.stderr\"\n\
 \
 ## Print run commands.\n\
-[ -n \$APP_DEBUG ] && echo \$CMD_EXEC\n\
+[ -n \"\$APP_DEBUG\" ] && echo \$CMD_EXEC\n\
 \
 ## Execution.\n\
 echo \"Starting \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT} ...\"\n\
