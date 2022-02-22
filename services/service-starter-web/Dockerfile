@@ -18,9 +18,10 @@
 ##      export appPort=8080
 ##      export appDataDir="/mnt/disk1/${appName}"
 ##      export appLogDir="/mnt/disk1/log/${appName}"
-##      #export appOpts="--server.servlet.contextPath=/myapp"
-##      #export javaOpts="-Xms1G -Xmx1G"
 ##      #export javaToolOptions='-javaagent:/opt/javaagent/jmx_prometheus_javaagent-0.16.1.jar=10105:/opt/javaagent/jmx-metrics.yml'
+##      #export javaOpts="-Xms1G -Xmx1G"
+##      #export javaHeapOpts='-XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=${appLogDir}/jvm_dump.hprof'
+##      #export javaGcOpts='-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:+DisableExplicitGC -Xloggc:${appLogDir}/${appName}-gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M'
 ##      docker run -d \
 ##        -e APP_NOHUP=y \
 ##        -e APP_DEBUG=y \
@@ -29,14 +30,16 @@
 ##        -e APP_DATA=${appDataDir} \
 ##        -e APP_LOG=${appLogDir} \
 ##        -e APP_OPTS=${appOpts} \
-##        -e JAVA_OPTS=${javaOpts} \
 ##        -e JAVA_TOOL_OPTIONS=${javaToolOptions} \
+##        -e JAVA_OPTS=${javaOpts} \
+##        -e JAVA_HEAP_OPTS=${javaHeapOpts} \
+##        -e JAVA_GC_OPTS=${javaGcOpts} \
 ##        -p ${appPort}:${appPort} \
 ##        -v ${appDataDir}:${appDataDir} \
 ##        -v ${appLogDir}:${appLogDir} \
 ##        --name=${appName} ${appName}:latest
 
-FROM openjdk:8-jre-alpine AS wl4g_springboot_base
+FROM openjdk:8u191-jre-alpine AS wl4g_springboot_base
 LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
@@ -109,7 +112,7 @@ export JAVA_TOOL_OPTIONS=\${JAVA_TOOL_OPTIONS:-}\n\
 \
 ## Make run commands.\n\
 export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \${JAVA_GC_OPTS} \${JVM_DEBUG_OPTS} \
--Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
+-Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -cp \
 .:\${APP_HOME_LINK}/conf:\${APP_EXT_CLASSPATH}:\${APP_HOME_LINK}/ext-lib/*:\${APP_HOME_LINK}/lib/* \${APP_MAINCLASS} \
 --spring.application.name=\${APP_NAME} \
 --spring.profiles.active=\${APP_ACTIVE} \
