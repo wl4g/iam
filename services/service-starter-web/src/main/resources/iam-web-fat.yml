@@ -11,39 +11,38 @@
 # #### Environment(IAM Web Fat Configuration) configuration. ####
 #
 spring:
-  xcloud:
-    iam: # IAM server configuration.
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              - https://${IAM_ZONE:wl4g.fat}
-              - http://${IAM_ZONE:wl4g.fat}
-              - https://*.${IAM_ZONE:wl4g.fat}
-              - http://*.${IAM_ZONE:wl4g.fat}
-      #login-uri: /view/login.html
-      login-uri: http://dopaas.${IAM_ZONE:wl4g.fat}/#/login
-      unauthorized-uri: /view/403.html
-      success-endpoint: umc-manager@http://umc.${IAM_ZONE:wl4g.fat}/umc-manager
-      acl:
-        secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${IAM_ACL_DENY}
-      captcha:
-        #jigsaw:
-          #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
-      sns: # SNS configuration.
-        oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
-        wechat-mp:
-          app-id: yourappid
-          app-secret: yoursecret
-          redirect-url: https://iam.${IAM_ZONE:wl4g.fat}${server.servlet.contextPath}/sns/wechatmp/callback
-        wechat:
-          app-id: yourappid
-          app-secret: yoursecret
-          redirect-url: http://iam.wl4g.fat${server.servlet.contextPath}/sns/wechat/callback
-          href: https://${IAM_ZONE:wl4g.fat}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
-        qq:
-          app-id: 101542056
-          app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-          redirect-url: http://iam.wl4g.fat${server.servlet.contextPath}/sns/qq/callback
+  iam: # IAM server configuration.
+    cors:
+      rules:
+        '[/**]':
+          allows-origins:
+            - https://${IAM_ZONE:wl4g.fat}
+            - http://${IAM_ZONE:wl4g.fat}
+            - https://*.${IAM_ZONE:wl4g.fat}
+            - http://*.${IAM_ZONE:wl4g.fat}
+    #login-uri: /view/login.html
+    login-uri: http://dopaas.${IAM_ZONE:wl4g.fat}/#/login
+    unauthorized-uri: /view/403.html
+    success-endpoint: umc-manager@http://umc.${IAM_ZONE:wl4g.fat}/umc-manager
+    acl:
+      secure: false # Turn off protection will trust any same intranet IP.
+      allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+      denyIpRange: ${IAM_ACL_DENY}
+    captcha:
+      #jigsaw:
+        #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+    sns: # SNS configuration.
+      oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+      wechat-mp:
+        app-id: yourappid
+        app-secret: yoursecret
+        redirect-url: https://iam.${IAM_ZONE:wl4g.fat}${server.servlet.contextPath}/sns/wechatmp/callback
+      wechat:
+        app-id: yourappid
+        app-secret: yoursecret
+        redirect-url: http://iam.wl4g.fat${server.servlet.contextPath}/sns/wechat/callback
+        href: https://${IAM_ZONE:wl4g.fat}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+      qq:
+        app-id: 101542056
+        app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+        redirect-url: http://iam.wl4g.fat${server.servlet.contextPath}/sns/qq/callback
