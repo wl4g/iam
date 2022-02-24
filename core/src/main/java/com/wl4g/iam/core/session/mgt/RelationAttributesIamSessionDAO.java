@@ -23,12 +23,12 @@ import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.lang.TypeConverts.safeLongToInt;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.*;
+import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.config.AbstractIamProperties;

@@ -22,8 +22,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.log.SmartLoggerFactory;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLoggerFactory;
 
 import reactor.core.publisher.Mono;
 

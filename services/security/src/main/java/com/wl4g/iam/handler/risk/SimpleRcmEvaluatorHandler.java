@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.handler.risk;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.web.CookieUtils.getCookie;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.web.CookieUtils.getCookie;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static java.util.Collections.sort;
 import static java.util.Locale.US;
@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;

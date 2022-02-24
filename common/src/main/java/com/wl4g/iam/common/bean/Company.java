@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.bean;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class Company extends BaseBean {
 	private static final long serialVersionUID = 6055405466492698537L;

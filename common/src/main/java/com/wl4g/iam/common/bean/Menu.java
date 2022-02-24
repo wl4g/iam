@@ -16,7 +16,7 @@
 package com.wl4g.iam.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import java.io.Serializable;
 import java.util.List;

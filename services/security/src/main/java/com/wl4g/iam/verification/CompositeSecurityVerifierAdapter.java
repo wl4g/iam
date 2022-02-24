@@ -20,7 +20,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
 
 /**

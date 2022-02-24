@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.iam.service.ClusterConfigService;
 import com.wl4g.iam.web.security.IamHelper;
 

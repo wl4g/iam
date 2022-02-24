@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.notification.GenericNotifyMessage;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.notification.GenericNotifyMessage;
+import com.wl4g.infra.support.notification.MessageNotifier;
+import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.ContactChannel;
 import com.wl4g.iam.common.bean.ContactGroupRef;
@@ -35,9 +35,9 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.component.core.bean.BaseBean.ENABLED;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 
 /**
  * Notification to contacts service implements.

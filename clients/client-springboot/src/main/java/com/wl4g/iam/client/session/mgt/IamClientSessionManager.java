@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.session.mgt;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
@@ -34,8 +34,8 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.constant.ServiceIAMConstants;

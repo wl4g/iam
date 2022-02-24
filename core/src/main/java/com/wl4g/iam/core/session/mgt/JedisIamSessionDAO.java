@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.session.mgt;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -29,11 +29,11 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.support.cache.jedis.JedisClient;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.cache.jedis.ScanCursor.ClusterScanParams;
-import com.wl4g.component.support.cache.jedis.ScanCursor.CursorSpec;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.support.cache.jedis.JedisClient;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.support.cache.jedis.ScanCursor.ClusterScanParams;
+import com.wl4g.infra.support.cache.jedis.ScanCursor.CursorSpec;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;

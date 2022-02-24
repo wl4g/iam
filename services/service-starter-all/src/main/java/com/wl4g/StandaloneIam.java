@@ -18,9 +18,9 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.core.web.mapping.annotation.EnableSmartRequestMapping;
-import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
-import com.wl4g.component.data.annotation.EnableComponentDataConfiguration;
+import com.wl4g.infra.core.web.mapping.annotation.EnableSmartRequestMapping;
+import com.wl4g.infra.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.infra.data.annotation.EnableComponentDataConfiguration;
 import com.wl4g.iam.annotation.EnableIamServer;
 
 // Only this package is considered for mapping.

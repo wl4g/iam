@@ -17,7 +17,7 @@ package com.wl4g.iam.config.properties;
 
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
-import static com.wl4g.component.common.web.WebUtils2.cleanURI;
+import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;

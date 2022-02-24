@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.security.domain;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.io.IOException;

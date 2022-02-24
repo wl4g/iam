@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.OrganizationRole;
 import com.wl4g.iam.common.bean.Role;
@@ -39,8 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
-import static com.wl4g.component.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.infra.common.collection.CollectionUtils2.disDupCollection;
+import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;

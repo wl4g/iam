@@ -22,7 +22,7 @@ import com.wl4g.iam.core.filter.AbstractWhiteListInternalAuthenticationFilter;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 
-import com.wl4g.component.core.kit.access.IPAccessControl;
+import com.wl4g.infra.core.kit.access.IPAccessControl;
 
 /**
  * Interactive authentication processing filter for internal and application

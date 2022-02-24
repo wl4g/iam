@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.core.mgt;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.web.CookieUtils.getCookie;
-import static com.wl4g.component.common.web.WebUtils2.isMediaRequest;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.web.CookieUtils.getCookie;
+import static com.wl4g.infra.common.web.WebUtils2.isMediaRequest;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.core.filter.AbstractIamAuthenticationFilter.NAME_ROOT_FILTER;
 import static com.wl4g.iam.core.session.mgt.AbstractIamSessionManager.isInternalTicketRequest;
@@ -52,8 +52,8 @@ import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.WebUtils2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.exception.InvalidAccessTokenAuthenticationException;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat.model;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.lang.String.format;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

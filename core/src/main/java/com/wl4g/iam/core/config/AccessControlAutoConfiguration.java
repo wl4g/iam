@@ -20,8 +20,8 @@ import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFI
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.component.core.kit.access.IPAccessControl;
-import com.wl4g.component.core.kit.access.IPAccessControl.IPAccessProperties;
+import com.wl4g.infra.core.kit.access.IPAccessControl;
+import com.wl4g.infra.core.kit.access.IPAccessControl.IPAccessProperties;
 
 /**
  * IP access configuration processor.

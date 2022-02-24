@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat.api.model.menu;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 /**
  * The complex button (parent button) contains the first level menu of secondary

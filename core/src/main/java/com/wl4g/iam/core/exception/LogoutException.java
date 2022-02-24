@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.exception;
 
-import com.wl4g.component.common.web.rest.FunctionalRuleRestrictException;
+import com.wl4g.infra.common.web.rest.FunctionalRuleRestrictException;
 
 public class LogoutException extends IamException implements FunctionalRuleRestrictException {
 	static final long serialVersionUID = -7034833390745766939L;

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.lang.FastTimeClock;
+import com.wl4g.infra.common.lang.FastTimeClock;
 
 /**
  * {@link TestsEnhancedRateLimitController}

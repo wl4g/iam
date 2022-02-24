@@ -18,8 +18,8 @@ package com.wl4g.iam.client.core;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.component.common.annotation.Nullable;
-import com.wl4g.component.common.remoting.standard.HttpStatus;
+import com.wl4g.infra.common.annotation.Nullable;
+import com.wl4g.infra.common.remoting.standard.HttpStatus;
 import com.wl4g.iam.client.core.HttpIamRequest.HttpCookie;
 
 /**

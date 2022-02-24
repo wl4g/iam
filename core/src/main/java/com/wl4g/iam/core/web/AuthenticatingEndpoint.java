@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.model.LogoutResult;
 import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;

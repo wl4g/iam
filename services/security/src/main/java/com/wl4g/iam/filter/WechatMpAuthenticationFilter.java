@@ -19,7 +19,7 @@ import com.wl4g.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.core.authc.IamAuthenticationToken;
 
-import static com.wl4g.component.common.lang.Assert2.isInstanceOf;
+import static com.wl4g.infra.common.lang.Assert2.isInstanceOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SNS_AUTHORIZED_INFO;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 

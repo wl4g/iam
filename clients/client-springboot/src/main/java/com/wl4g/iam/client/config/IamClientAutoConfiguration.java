@@ -26,8 +26,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.component.core.kit.access.IPAccessControl;
-import com.wl4g.component.core.web.error.CompositeErrorConfigurer;
+import com.wl4g.infra.core.kit.access.IPAccessControl;
+import com.wl4g.infra.core.web.error.CompositeErrorConfigurer;
 import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
 import com.wl4g.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;
 import com.wl4g.iam.client.configure.AnynothingClientSecurityConfigurer;

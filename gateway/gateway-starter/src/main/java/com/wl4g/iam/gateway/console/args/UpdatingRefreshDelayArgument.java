@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import com.wl4g.shell.common.annotation.ShellOption;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 

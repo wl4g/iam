@@ -22,8 +22,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
-import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
+import com.wl4g.infra.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
+import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.iam.web.JssdkWebappEndpoint;
 
 /**

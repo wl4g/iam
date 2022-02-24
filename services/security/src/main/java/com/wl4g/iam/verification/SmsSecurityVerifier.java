@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.verification;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.SmsParameter;
@@ -38,9 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.BIND;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;

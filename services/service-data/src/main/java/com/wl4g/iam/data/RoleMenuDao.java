@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.data;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.RoleMenu;
 import com.wl4g.iam.data.model.RoleMenuList;
 import org.springframework.web.bind.annotation.RequestBody;

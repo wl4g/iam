@@ -15,19 +15,19 @@
  */
 package com.wl4g.iam.client.filter;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.component.common.web.WebUtils2.applyQueryURL;
-import static com.wl4g.component.common.web.WebUtils2.cleanURI;
-import static com.wl4g.component.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.component.common.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.component.common.web.WebUtils2.writeJson;
-import static com.wl4g.component.common.web.WebUtils2.ResponseType.isRespJSON;
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.OK;
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.UNAUTHC;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.infra.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
+import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.infra.common.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.infra.common.web.WebUtils2.writeJson;
+import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_DATA_CIPHER_NAME;
@@ -72,9 +72,9 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
 
-import com.wl4g.component.common.web.WebUtils2;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.error.ErrorConfigurer;
+import com.wl4g.infra.common.web.WebUtils2;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
@@ -272,8 +272,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
         else {
             try {
                 /**
-                 * See:{@link com.wl4g.component.core.web.error.com.wl4g.component.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()}
-                 * See:{@link com.wl4g.component.core.web.error.ServletSmartErrorHandler#doAnyHandleError()}
+                 * See:{@link com.wl4g.infra.core.web.error.com.wl4g.infra.core.web.error.ReactiveSmartErrorHandler#renderErrorResponse()}
+                 * See:{@link com.wl4g.infra.core.web.error.ServletSmartErrorHandler#doAnyHandleError()}
                  */
                 toHttp(response).sendError(errorConfigurer.getStatus(exroot), format("%s, %s",
                         bundle.getMessage("AbstractAuthenticationFilter.authc.failure"), getRootCausesString(exroot)));

@@ -17,7 +17,7 @@ package com.wl4g.iam.common.bean;
 
 import java.io.Serializable;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class RoleUser extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;

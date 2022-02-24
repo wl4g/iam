@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.service.fallback.ContactServiceFallbackFactory;
 import lombok.Getter;
@@ -30,8 +30,8 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 

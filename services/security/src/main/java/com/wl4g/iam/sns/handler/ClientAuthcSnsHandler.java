@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.handler;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static java.util.Collections.singletonMap;
 
 import java.util.Map;

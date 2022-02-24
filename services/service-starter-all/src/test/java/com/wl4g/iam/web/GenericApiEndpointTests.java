@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.StandaloneIam;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.core.web.AbstractApiEndpoint;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
 

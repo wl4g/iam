@@ -12,10 +12,10 @@ import reactor.core.publisher.Mono;
 import static reactor.core.publisher.Flux.just;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.rest.RespBase;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.google.common.base.Charsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isAnyEmpty;
 

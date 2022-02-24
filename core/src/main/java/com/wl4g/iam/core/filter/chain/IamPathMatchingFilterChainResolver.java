@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.filter.chain;
 
-import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.state;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * IAM request matching filter chain URI pattern resolver

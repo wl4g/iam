@@ -15,14 +15,14 @@
  */
 package com.wl4g.iam.client.core;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.component.common.annotation.Nullable;
+import com.wl4g.infra.common.annotation.Nullable;
 
 import io.netty.handler.codec.http.HttpMethod;
 

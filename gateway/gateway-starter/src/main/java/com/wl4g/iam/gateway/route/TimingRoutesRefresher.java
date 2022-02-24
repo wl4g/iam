@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.route;
 
-import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -26,8 +26,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.iam.gateway.exception.CurrentlyInRefreshingException;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 

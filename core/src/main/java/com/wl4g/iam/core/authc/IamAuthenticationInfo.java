@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 
-import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.iam.common.subject.IamPrincipal;
 
 /**

@@ -22,8 +22,8 @@ import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.component.common.codec.CodecSource;
-import static com.wl4g.component.common.codec.CodecSource.fromHex;
+import com.wl4g.infra.common.codec.CodecSource;
+import static com.wl4g.infra.common.codec.CodecSource.fromHex;
 
 public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;

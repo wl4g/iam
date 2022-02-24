@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.web.model;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;

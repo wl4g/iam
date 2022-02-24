@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.handler;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.component.common.web.WebUtils2.isEqualWithDomain;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.state;
+import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.infra.common.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_S;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_TOKEN;
@@ -67,8 +67,8 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.bean.ApplicationInfo;
 import com.wl4g.iam.common.constant.ServiceIAMConstants;

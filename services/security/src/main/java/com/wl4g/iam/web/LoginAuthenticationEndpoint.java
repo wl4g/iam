@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.subject.IamPrincipal;
@@ -44,11 +44,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.wl4g.component.common.codec.Base58.*;
-import static com.wl4g.component.common.lang.TypeConverts.*;
-import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.component.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.component.common.web.WebUtils2.getRequestParam;
+import static com.wl4g.infra.common.codec.Base58.*;
+import static com.wl4g.infra.common.lang.TypeConverts.*;
+import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.infra.common.web.WebUtils2.getRequestParam;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.*;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;

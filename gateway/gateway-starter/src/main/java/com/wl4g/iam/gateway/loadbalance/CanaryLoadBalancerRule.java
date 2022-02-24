@@ -4,14 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.Server;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 import com.wl4g.iam.gateway.loadbalance.model.HostWeight;
 
 import org.apache.commons.lang3.RandomUtils;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.List;
 import java.util.Map;

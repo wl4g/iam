@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

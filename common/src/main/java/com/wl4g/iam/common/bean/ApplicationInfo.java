@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.common.bean;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
 
 import java.io.Serializable;
 

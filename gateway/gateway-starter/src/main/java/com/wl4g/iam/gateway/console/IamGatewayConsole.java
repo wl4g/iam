@@ -1,6 +1,6 @@
 package com.wl4g.iam.gateway.console;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.gateway.console.args.UpdatingRefreshDelayArgument;
 import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import reactor.core.publisher.Flux;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
-import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_AUTHENTICATOR;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config.properties;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;

@@ -17,15 +17,15 @@ package com.wl4g.iam.client.mock.configure;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.core.utils.AopUtils2.*;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.core.utils.AopUtils2.*;
 import static com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockFilter;
 import static com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockFilter.MockFilterType;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -42,8 +42,8 @@ import static org.springframework.http.HttpMethod.*;
 
 import com.google.common.net.InetAddresses;
 import com.typesafe.config.Config;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.typesafe.HoconConfigUtils;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.typesafe.HoconConfigUtils;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.mock.annotation.EnableIamMockAutoConfiguration;
 import com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockAuthzInfo;

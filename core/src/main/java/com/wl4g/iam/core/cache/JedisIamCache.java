@@ -16,12 +16,12 @@
 package com.wl4g.iam.core.cache;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.support.cache.jedis.util.RedisSpecUtil.isSuccess;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.support.cache.jedis.util.RedisSpecUtil.isSuccess;
 import static com.wl4g.iam.core.cache.CacheKey.toKeyBytes;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
@@ -35,8 +35,8 @@ import java.util.Set;
 import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.cache.jedis.JedisClient;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.support.cache.jedis.JedisClient;
 import com.wl4g.iam.core.cache.CacheKey.Serializer;
 
 import redis.clients.jedis.params.SetParams;

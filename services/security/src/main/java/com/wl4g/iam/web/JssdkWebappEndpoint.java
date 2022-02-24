@@ -15,13 +15,13 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.component.common.jvm.JvmRuntimeKit.*; 
+import static com.wl4g.infra.common.jvm.JvmRuntimeKit.*; 
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.component.core.web.embed.SimpleEmbedWebappEndpoint;
-import com.wl4g.component.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
+import com.wl4g.infra.core.web.embed.SimpleEmbedWebappEndpoint;
+import com.wl4g.infra.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
 
 /**
  * Jssdk embedded webapps endpoint.

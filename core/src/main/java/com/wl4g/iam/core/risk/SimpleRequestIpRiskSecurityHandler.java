@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.risk;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.lang.HostUtils;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.lang.HostUtils;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.config.RiskSecurityProperties;
 import com.wl4g.iam.core.utils.IamSecurityHolder;

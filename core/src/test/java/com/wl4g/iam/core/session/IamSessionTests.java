@@ -17,7 +17,7 @@ package com.wl4g.iam.core.session;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import com.wl4g.component.common.serialize.ProtostuffUtils;
+import com.wl4g.infra.common.serialize.ProtostuffUtils;
 import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
 import com.wl4g.iam.core.session.IamSession;
 

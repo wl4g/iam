@@ -28,10 +28,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.StandaloneIam;
-import com.wl4g.component.common.serialize.ProtostuffUtils;
-import com.wl4g.component.support.cache.jedis.JedisClientFactoryBean;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.cache.jedis.ScanCursor.ClusterScanParams;
+import com.wl4g.infra.common.serialize.ProtostuffUtils;
+import com.wl4g.infra.support.cache.jedis.JedisClientFactoryBean;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.support.cache.jedis.ScanCursor.ClusterScanParams;
 import com.wl4g.iam.core.session.IamSession;
 
 @RunWith(SpringRunner.class)

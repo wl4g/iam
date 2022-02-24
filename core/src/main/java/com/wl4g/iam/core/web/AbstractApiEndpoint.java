@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.web;
 
-import static com.wl4g.component.common.lang.DateUtils2.formatDate;
-import static com.wl4g.component.support.cache.jedis.ScanCursor.CursorSpec.parse;
+import static com.wl4g.infra.common.lang.DateUtils2.formatDate;
+import static com.wl4g.infra.support.cache.jedis.ScanCursor.CursorSpec.parse;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION_REFATTRS;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_API_V2_SESSION;
@@ -38,9 +38,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.cache.IamCacheManager;

@@ -29,7 +29,7 @@ import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
-import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.*;

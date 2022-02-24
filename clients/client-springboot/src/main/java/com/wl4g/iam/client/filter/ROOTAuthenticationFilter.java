@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.client.filter;
 
-import static com.wl4g.component.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.component.common.web.WebUtils2.getFirstParameters;
-import static com.wl4g.component.common.web.WebUtils2.getAvaliableRequestRememberUrl;
-import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.component.common.web.WebUtils2.isXHRRequest;
+import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.infra.common.web.WebUtils2.getFirstParameters;
+import static com.wl4g.infra.common.web.WebUtils2.getAvaliableRequestRememberUrl;
+import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.infra.common.web.WebUtils2.isXHRRequest;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 
-import com.wl4g.component.core.web.error.ErrorConfigurer;
+import com.wl4g.infra.core.web.error.ErrorConfigurer;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;

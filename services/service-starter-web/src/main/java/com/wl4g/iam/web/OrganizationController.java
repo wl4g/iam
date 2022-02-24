@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.utils.IamOrganizationUtils;
 import com.wl4g.iam.service.OrganizationService;

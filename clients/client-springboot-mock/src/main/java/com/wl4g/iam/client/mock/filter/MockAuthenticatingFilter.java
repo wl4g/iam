@@ -15,12 +15,12 @@
  */
 package com.wl4g.iam.client.mock.filter;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeToList;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.component.common.web.WebUtils2.writeJson;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeToList;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.infra.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -46,9 +46,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.rest.RespBase;
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.UNAUTHC;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.rest.RespBase;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.client.mock.configure.MockConfigurationFactory;

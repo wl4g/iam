@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.handler;
 
-import static com.wl4g.component.core.web.BaseController.REDIRECT_PREFIX;
+import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
 
 import java.util.Map;
 

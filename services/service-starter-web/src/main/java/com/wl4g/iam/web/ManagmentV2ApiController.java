@@ -34,9 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.utils.bean.BeanMapConvert;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.utils.bean.BeanMapConvert;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.iam.common.bean.ClusterConfig;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.service.ClusterConfigService;

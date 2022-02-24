@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.exception;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 
 import com.wl4g.iam.core.exception.IamException;
 

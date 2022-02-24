@@ -28,14 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.Assert;
 
-import static com.wl4g.component.core.web.BaseController.REDIRECT_PREFIX;
+import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
 import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.IllegalAuthorizer;
 import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
-import com.wl4g.component.common.web.WebUtils2;
+import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;

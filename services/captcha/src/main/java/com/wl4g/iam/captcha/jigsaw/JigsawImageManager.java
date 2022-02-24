@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.captcha.jigsaw;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.captcha.config.CaptchaProperties;
 import com.wl4g.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.iam.core.cache.CacheKey;
@@ -36,10 +36,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.component.common.codec.Encodes.toBytes;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.codec.Encodes.toBytes;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.state;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_VERIFY_JIGSAW_IMG;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.lang.String.format;

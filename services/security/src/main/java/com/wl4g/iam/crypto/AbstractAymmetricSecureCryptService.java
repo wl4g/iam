@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.crypto;
 
-import static com.wl4g.component.common.codec.CodecSource.fromHex;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.codec.CodecSource.fromHex;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_CRYPTO;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -33,11 +33,11 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
-import com.wl4g.component.common.codec.CodecSource;
-import com.wl4g.component.common.crypto.asymmetric.AsymmetricCryptor;
-import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.codec.CodecSource;
+import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.config.properties.CryptoProperties;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCache;

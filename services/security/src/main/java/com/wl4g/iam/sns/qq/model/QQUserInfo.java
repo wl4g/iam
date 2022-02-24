@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.qq.model;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 import com.wl4g.iam.sns.support.Oauth2UserProfile;
 
 public class QQUserInfo implements Oauth2UserProfile {

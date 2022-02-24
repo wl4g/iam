@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.authc.credential.secure;
 
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.*;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

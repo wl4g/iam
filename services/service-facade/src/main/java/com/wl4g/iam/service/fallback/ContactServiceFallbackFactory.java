@@ -19,7 +19,7 @@
  */
 package com.wl4g.iam.service.fallback;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 
 import java.util.List;
@@ -28,8 +28,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.stereotype.Component;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.service.ContactService;
 

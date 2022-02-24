@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.client.authc.secondary;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.common.web.WebUtils2.writeJson;
-import static com.wl4g.component.common.web.WebUtils2.ResponseType.isRespJSON;
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.PRECONDITITE_LIMITED;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.web.WebUtils2.writeJson;
+import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.PRECONDITITE_LIMITED;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
@@ -46,9 +46,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.utils.bean.BeanMapConvert;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.core.authc.SecondaryAuthenticationException;

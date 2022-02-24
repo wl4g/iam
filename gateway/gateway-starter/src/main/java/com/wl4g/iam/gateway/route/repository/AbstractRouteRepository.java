@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.route.repository;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.Map;
 
@@ -26,7 +26,7 @@ import org.springframework.cloud.gateway.route.InMemoryRouteDefinitionRepository
 import org.springframework.cloud.gateway.route.RouteDefinition;
 
 import com.google.common.collect.Maps;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.gateway.route.IRouteAlterSubscriber;
 import com.wl4g.iam.gateway.route.IRouteCacheRefresh;
 import com.wl4g.iam.gateway.route.NotifyType;

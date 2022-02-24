@@ -23,16 +23,16 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.session.Session;
 
-import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
 
 import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
 import static org.apache.commons.lang3.StringUtils.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.sha512;
-import static com.wl4g.component.common.codec.Base58.encodeBase58;
-import static com.wl4g.component.common.codec.Encodes.toBytes;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.codec.Base58.encodeBase58;
+import static com.wl4g.infra.common.codec.Encodes.toBytes;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
 import static java.lang.String.valueOf;
 

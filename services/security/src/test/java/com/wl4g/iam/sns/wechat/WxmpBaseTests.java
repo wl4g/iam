@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.sns.wechat;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.getDefaultObjectMapper;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.getDefaultObjectMapper;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.wl4g.iam.sns.wechat.api.model.WxmpAccessToken;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static java.lang.String.format;
 import static java.util.Locale.US;
@@ -38,7 +38,7 @@ import java.util.List;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * XSS configuration properties

@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.captcha.verification;
 
-import com.wl4g.component.common.codec.CheckSums;
-import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.codec.CheckSums;
+import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.captcha.config.CaptchaProperties;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.jigsaw.ImageTailor.TailoredImage;
@@ -43,8 +43,8 @@ import static org.springframework.util.Assert.isTrue;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.component.common.codec.Encodes.encodeBase64;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.codec.Encodes.encodeBase64;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 
 /**

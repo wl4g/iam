@@ -15,15 +15,15 @@
  */
 package com.wl4g.iam.authc.credential.secure;
 
-import static com.wl4g.component.common.codec.CheckSums.crc32;
-import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.infra.common.codec.CheckSums.crc32;
+import static com.wl4g.infra.common.lang.Assert2.*;
 
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource.Util;
 
-import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.core.cache.IamCacheManager;
 

@@ -59,7 +59,7 @@
 		<!-- </exclusions> -->
 		<!-- </dependency> -->
 
-		<!-- @see com.wl4g.component.core.web.error.ServletSmartErrorController @ControllerAdvice -->
+		<!-- @see com.wl4g.infra.core.web.error.ServletSmartErrorController @ControllerAdvice -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>dopaas-iam-client</artifactId> -->

@@ -15,10 +15,10 @@
  */
 package com.wl4g.iam.authc.credential.secure;
 
-import static com.wl4g.component.common.codec.CheckSums.crc32;
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.codec.CheckSums.crc32;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SECRET_INFO;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
@@ -41,10 +41,10 @@ import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.codec.CodecSource;
-import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.codec.CodecSource;
+import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;

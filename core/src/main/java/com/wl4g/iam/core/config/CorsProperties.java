@@ -33,11 +33,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
-import com.wl4g.component.common.collection.UniqueList;
+import com.wl4g.infra.common.collection.UniqueList;
 
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.serialize.JacksonUtils.*;
-import static com.wl4g.component.common.web.WebUtils2.isSameWildcardOrigin;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.serialize.JacksonUtils.*;
+import static com.wl4g.infra.common.web.WebUtils2.isSameWildcardOrigin;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.*;
 import static com.wl4g.iam.core.config.CorsProperties.IamCorsValidator.*;
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;

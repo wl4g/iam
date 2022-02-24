@@ -1,8 +1,8 @@
 package com.wl4g.iam.gateway.authc;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.getenv;
 import static java.security.MessageDigest.isEqual;
 import static org.apache.commons.lang3.StringUtils.isAnyEmpty;
@@ -28,9 +28,9 @@ import org.springframework.web.server.ServerWebExchange;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.hash.Hashing;
-import com.wl4g.component.common.jvm.JvmRuntimeKit;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.jvm.JvmRuntimeKit;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.web.rest.RespBase;
 
 //import org.springframework.core.io.buffer.DataBuffer;
 //import org.springframework.http.HttpStatus;

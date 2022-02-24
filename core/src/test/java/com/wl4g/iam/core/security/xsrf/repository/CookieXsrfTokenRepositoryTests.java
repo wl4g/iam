@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.security.xsrf.repository;
 
-import static com.wl4g.component.common.web.WebUtils2.extTopDomainString;
+import static com.wl4g.infra.common.web.WebUtils2.extTopDomainString;
 import static java.util.Locale.US;
 
 import java.net.URI;

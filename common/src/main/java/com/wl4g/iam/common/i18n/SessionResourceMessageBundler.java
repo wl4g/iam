@@ -20,8 +20,8 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_LANG_NAME;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.wl4g.component.common.bridge.IamSecurityHolderBridges;
-import com.wl4g.component.core.i18n.AbstractResourceMessageBundler;
+import com.wl4g.infra.common.bridge.IamSecurityHolderBridges;
+import com.wl4g.infra.core.i18n.AbstractResourceMessageBundler;
 
 /**
  * Session delegate resource bundle message source.

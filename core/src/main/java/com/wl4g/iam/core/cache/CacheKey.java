@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.core.cache;
 
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.lang.TypeConverts.safeLongToInt;
+import static com.wl4g.infra.common.lang.Assert2.*;
+import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -24,8 +24,8 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
-import com.wl4g.component.common.serialize.JdkSerializeUtils;
-import com.wl4g.component.common.serialize.ProtostuffUtils;
+import com.wl4g.infra.common.serialize.JdkSerializeUtils;
+import com.wl4g.infra.common.serialize.ProtostuffUtils;
 
 /**
  * Support for automatic expiration support, which can be used for login failure

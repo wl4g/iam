@@ -15,16 +15,16 @@
  */
 package com.wl4g.iam.client.mock.handler;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.client.mock.configure.MockAuthenticatingInitializer;
 import com.wl4g.iam.client.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockAuthzInfo;

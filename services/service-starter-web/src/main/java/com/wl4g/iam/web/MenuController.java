@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.component.common.lang.Assert2.notEmpty;
+import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.service.MenuService;
 

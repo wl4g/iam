@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.crypto;
 
-import com.wl4g.component.common.crypto.asymmetric.ECCCryptor;
-import com.wl4g.component.common.crypto.asymmetric.spec.ECCKeyPairSpec;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.crypto.asymmetric.ECCCryptor;
+import com.wl4g.infra.common.crypto.asymmetric.spec.ECCKeyPairSpec;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 
 /**
  * DSA cryptographic service.

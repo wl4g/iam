@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat.api.model.menu;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 /**
  * Common button (sub button), here the definition of submenu is as follows:

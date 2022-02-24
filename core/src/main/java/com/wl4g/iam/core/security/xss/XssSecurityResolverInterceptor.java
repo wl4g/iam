@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.security.xss;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.core.annotation.UnsafeXss;
 import com.wl4g.iam.core.config.XssProperties;
 import com.wl4g.iam.core.security.xss.resolver.XssSecurityResolver;
@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import static com.wl4g.component.common.bean.BeanUtils2.deepCopyFieldState;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.isCompatibleType;
+import static com.wl4g.infra.common.bean.BeanUtils2.deepCopyFieldState;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.isCompatibleType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

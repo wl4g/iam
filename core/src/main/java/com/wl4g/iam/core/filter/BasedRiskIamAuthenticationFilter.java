@@ -28,8 +28,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import com.wl4g.component.common.web.WebUtils2;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.WebUtils2;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.risk.RiskSecurityHandler;

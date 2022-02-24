@@ -17,8 +17,8 @@ package com.wl4g.iam.core.security.replay.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.component.common.web.rest.RESTfulException;
-import com.wl4g.component.common.web.rest.RespBase.RetCode;
+import com.wl4g.infra.common.web.rest.RESTfulException;
+import com.wl4g.infra.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
 

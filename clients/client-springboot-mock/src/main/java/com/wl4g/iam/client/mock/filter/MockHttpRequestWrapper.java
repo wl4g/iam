@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.mock.filter;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

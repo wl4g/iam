@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.captcha.jigsaw;
 
-import static com.wl4g.component.common.io.FileIOUtils.writeFile;
+import static com.wl4g.infra.common.io.FileIOUtils.writeFile;
 import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;

@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.core.Ordered;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 
 /**
  * Risk security checking handler.

@@ -15,11 +15,11 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.invokeMethod;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static java.lang.String.valueOf;
 import static java.util.Collections.unmodifiableMap;
@@ -42,9 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.collection.UniqueList;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.collection.UniqueList;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 
