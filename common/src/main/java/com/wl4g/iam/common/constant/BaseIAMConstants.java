@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.common.constant;
 
+import com.wl4g.infra.core.constant.BaseConstant;
+
 /**
  * Based IAM configuration constants.
  * 
@@ -23,9 +25,9 @@ package com.wl4g.iam.common.constant;
  * @sine v1.0
  * @see
  */
-public interface BaseIAMConstants {
+public abstract class BaseIAMConstants extends BaseConstant {
 
-    public static final String KEY_IAM_CONFIG_PREFIX = "spring.iam.dopaas.iam";
+    public static final String KEY_IAM_CONFIG_PREFIX = "spring.iam";
 
     /**
      * System dictionaries cache key.

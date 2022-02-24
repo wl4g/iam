@@ -11,8 +11,7 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  xcloud:
-    component:
+  infra:
       support:
         jedis:
           passwd: ${IAM_REDIS_PASSWD:zzx!@#$%}

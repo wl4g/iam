@@ -12,14 +12,13 @@
 #
 
 spring:
-  xcloud:
-    component:
-      integration:
-        feign:
-          #default-url: http://owner-node1:18081/iam-facade
-          default-url: http://owner-node1:18081
-          default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
-          client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
-          max-idle-connections: 520
-          connect-timeout: 11000
-          read-timeout: 12000
+  infra:
+    integration:
+      feign:
+        #default-url: http://owner-node1:18081/iam-facade
+        default-url: http://owner-node1:18081
+        default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
+        client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
+        max-idle-connections: 520
+        connect-timeout: 11000
+        read-timeout: 12000

@@ -23,7 +23,7 @@ package com.wl4g.iam.common.constant;
  * @date 2018年11月13日
  * @since
  */
-public interface GatewayIAMConstants extends BaseIAMConstants {
+public abstract class GatewayIAMConstants extends BaseIAMConstants {
 
     public static final String KEY_GATEWAY_ROUTES = ":iam:client:gateway:routes:";
 

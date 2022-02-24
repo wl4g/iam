@@ -20,9 +20,8 @@ spring:
     active: dev
   banner:
     location: classpath:banner.txt
-  xcloud:
-    component:
-      rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
+  infra:
+    rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
 
 # Logging configuration.
 logging:

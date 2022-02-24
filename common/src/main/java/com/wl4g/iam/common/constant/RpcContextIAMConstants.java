@@ -27,7 +27,7 @@ package com.wl4g.iam.common.constant;
  * @sine v1.0
  * @see
  */
-public interface RpcContextIAMConstants extends ServiceIAMConstants {
+public abstract class RpcContextIAMConstants extends ServiceIAMConstants {
 
 	public static final String CURRENT_IAM_PRINCIPAL_ID = "currentIamPrincipalId";
 	public static final String CURRENT_IAM_PRINCIPAL_USER = "currentIamPrincipalUser";

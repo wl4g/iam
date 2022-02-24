@@ -23,7 +23,7 @@ package com.wl4g.iam.common.constant;
  * @date 2018年11月13日
  * @since
  */
-public interface ServiceIAMConstants extends BaseIAMConstants {
+public abstract class ServiceIAMConstants extends BaseIAMConstants {
 
     //
     // Common and based.

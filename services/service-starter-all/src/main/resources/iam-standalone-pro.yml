@@ -11,15 +11,14 @@
 # #### Environment(IAM Standalone Pro Configuration) configuration. ####
 #
 spring:
-  xcloud:
-    component:
-      support:
-        jedis:
-          passwd: ${IAM_REDIS_PASSWD:123456}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.com:6379,redis.iam.wl4g.com:6380,redis.iam.wl4g.com:6381,redis.iam.wl4g.com:7379,redis.iam.wl4g.com:7380,redis.iam.wl4g.com:7381}
+  infra:
+    support:
+      jedis:
+        passwd: ${IAM_REDIS_PASSWD:123456}
+        connect-timeout: 10000
+        max-attempts: 10
+        # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+        nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.com:6379,redis.iam.wl4g.com:6380,redis.iam.wl4g.com:6381,redis.iam.wl4g.com:7379,redis.iam.wl4g.com:7380,redis.iam.wl4g.com:7381}
   # Spring datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
