@@ -16,46 +16,6 @@ spring:
   profiles:
     include: common,util
     active: dev
-  xcloud:
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,POST,OPTIONS]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-            #allows-origins:
-              #- '*'
-      xsrf:
-        enabled: true
-        #exclude-valid-uri-patterns: 
-      replay:
-        enabled: true
-        #exclude-valid-uri-patterns: 
-      #security:
-        #hsts-on-profiles-active: [pro,prod,production]
-      #risk:
-      #  check-request-ip-same-login: true
-      #acl:
-        #secure: false # Turn off protection will trust any same intranet IP.
-        #allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
-        #denyIpRange: ${XCLOUD_IAM_ACL_DENY}
-      client: # IAM client configuration.
-        service-name: ${spring.application.name}
-        filter-chain:
-          /public/**: anon # Public rule release
-        param: # Must be consistent with the client, otherwise authentication will never succeed
-          sid: __sid
-        cache:
-          prefix: ${spring.application.name}
-        cookie:
-          name: _${spring.application.name}
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
   resources.static-locations: classpath:/templates/
   freemarker:
     request-context-attribute: req
@@ -71,6 +31,45 @@ spring:
     settings:
       # Numeral formatting, no decimal point.
       number_format: '0.##'
+  iam: # IAM client configuration.
+    cors:
+      enabled: true # Default: true
+      # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
+      rules:
+        '[/**]':
+          allows-methods: [GET,HEAD,POST,OPTIONS]
+          allows-headers: [X-Iam-*]
+          allow-credentials: true
+          #allows-origins:
+            #- '*'
+    xsrf:
+      enabled: true
+      #exclude-valid-uri-patterns: 
+    replay:
+      enabled: true
+      #exclude-valid-uri-patterns: 
+    #security:
+      #hsts-on-profiles-active: [pro,prod,production]
+    #risk:
+    #  check-request-ip-same-login: true
+    #acl:
+      #secure: false # Turn off protection will trust any same intranet IP.
+      #allowIpRange: ${XCLOUD_IAM_ACL_ALLOW:127.0.0.1}
+      #denyIpRange: ${XCLOUD_IAM_ACL_DENY}
+    client: # IAM client configuration.
+      service-name: ${spring.application.name}
+      filter-chain:
+        /public/**: anon # Public rule release
+      param: # Must be consistent with the client, otherwise authentication will never succeed
+        sid: __sid
+      cache:
+        prefix: ${spring.application.name}
+      cookie:
+        name: _${spring.application.name}
+      cipher:
+        enable-data-cipher: true # Default by true
+      session:
+        enable-access-token-validity: true # Default by true
 
 # Logging configuration.
 logging:
