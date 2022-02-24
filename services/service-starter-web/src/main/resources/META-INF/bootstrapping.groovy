@@ -18,12 +18,12 @@
  * Reference to website: http://wl4g.com
  */
 
-import static com.wl4g.component.common.lang.ClassUtils2.isPresent
+import static com.wl4g.infra.common.lang.ClassUtils2.isPresent
 import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
 
 import org.springframework.boot.Banner
 
-import com.wl4g.component.core.boot.listener.IBootstrappingConfigurer
+import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
 
 /**
  * IAM web implementation of {@link IBootstrappingConfigurer}
@@ -52,7 +52,7 @@ class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
 			configName.append(",iam-web-scf");
 			location.append(",classpath:/scf/")
-		} else if (isPresent("com.wl4g.component.rpc.feign.core.annotation.FeignConsumer")) {
+		} else if (isPresent("com.wl4g.infra.rpc.feign.core.annotation.FeignConsumer")) {
 			configName.append(",iam-web-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
