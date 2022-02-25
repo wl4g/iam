@@ -34,20 +34,22 @@
 
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
 
-		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-core</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
+		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically 
+			configured. -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-integration-feign-springcloud</artifactId>
+			<artifactId>dopaas-infra-integration-feign-istio</artifactId>
 		</dependency>
 
-		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. Notes: 
-			Only relying on feign's interface annotation. -->
+		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically 
+			configured. -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-infra-integration-feign-springcloud</artifactId> -->
+		<!-- </dependency> -->
+
+		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically 
+			configured. Notes: Only relying on feign's interface annotation. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
@@ -80,76 +82,76 @@
 	</build>
 	<profiles>
 		<profile>
-	        <id>release</id>
-	        <build>
-	            <plugins>
-	                <!-- Source -->
-	                <plugin>
-	                    <groupId>org.apache.maven.plugins</groupId>
-	                    <artifactId>maven-source-plugin</artifactId>
-	                    <executions>
-	                        <execution>
-	                            <phase>package</phase>
-	                            <goals>
-	                                <goal>jar-no-fork</goal>
-	                            </goals>
-	                        </execution>
-	                    </executions>
-	                </plugin>
-	                <!-- Javadoc -->
-	                <plugin>
-	                    <groupId>org.apache.maven.plugins</groupId>
-	                    <artifactId>maven-javadoc-plugin</artifactId>
-	                    <executions>
-	                        <execution>
-	                            <id>attach-javadocs</id>
-	                            <phase>package</phase>
-	                            <goals>
-	                                <goal>jar</goal>
-	                            </goals>
-	                            <configuration>
-	                                <additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
-	                                <!-- <additionalparam>-Xdoclint:none</additionalparam> --> <!-- 2.0.0 -->
-	                            </configuration>
-	                        </execution>
-	                    </executions>
-	                </plugin>
-	                <!-- GPG -->
-	                <plugin>
-	                    <groupId>org.apache.maven.plugins</groupId>
-	                    <artifactId>maven-gpg-plugin</artifactId>
-	                    <executions>
-	                        <execution>
-	                            <phase>verify</phase>
-	                            <goals>
-	                                <goal>sign</goal>
-	                            </goals>
-	                        </execution>
-	                    </executions>
-	                </plugin>
-	                <plugin>
-	                    <groupId>org.sonatype.plugins</groupId>
-	                    <artifactId>nexus-staging-maven-plugin</artifactId>
-	                    <extensions>true</extensions>
-	                    <configuration>
-	                        <serverId>sonatype-nexus-staging</serverId>
-	                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-	                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-	                        <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
-	                    </configuration>
-	                </plugin>
-	            </plugins>
-	        </build>
-	        <distributionManagement>
-	            <snapshotRepository>
-	                <id>sonatype-nexus-snapshots</id>
-	                <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-	            </snapshotRepository>
-	            <repository>
-	                <id>sonatype-nexus-staging</id>
-	                <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-	            </repository>
-	        </distributionManagement>
-	    </profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Source -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Javadoc -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
+									<!-- <additionalparam>-Xdoclint:none</additionalparam> --> <!-- 2.0.0 -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- GPG -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>sonatype-nexus-staging</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype-nexus-snapshots</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype-nexus-staging</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
 	</profiles>
 </project>
