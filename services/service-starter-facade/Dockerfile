@@ -48,7 +48,7 @@ LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
 && apk update upgrade \
-&& apk add --no-cache procps unzip curl bash tzdata \
+&& apk add --no-cache procps unzip curl bash tini tzdata \
 && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone
 
@@ -144,7 +144,11 @@ RUN adduser ${APP_NAME} --disabled-password \
 USER ${APP_NAME}
 
 ##
-## [BUGFIX]: Notice that if you use bash or sh to start the program, graceful termination cannot be achieved under kubernetes.
+## [BUGFIX]: Notice that if you use bash or sh to start the program, graceful 
+## termination cannot be achieved under Kubernetes.
 ##
 #CMD ["/bin/bash", "-c", "/docker-entrypoint.sh"]
-CMD ["/docker-entrypoint.sh"]
+##
+## Elegantly manage the lifecycle of fork child processes, such as preventing
+## zombie process. see:https://github.com/wl4g-k8s/tini#alpine-linux-package
+ENTRYPOINT ["/sbin/tini", "-s", "-g", "--", "/docker-entrypoint.sh"]
