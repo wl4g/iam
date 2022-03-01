@@ -28,7 +28,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.hash.Hashing;
-import com.wl4g.infra.common.jvm.JvmRuntimeKit;
+import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.web.rest.RespBase;
 
@@ -67,7 +67,7 @@ public class SimpleAPIAuthenticatingFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (JvmRuntimeKit.isJVMDebugging) {
+        if (JvmRuntimeTool.isJvmInDebugging) {
             return chain.filter(exchange);
         }
 
@@ -190,6 +190,7 @@ public class SimpleAPIAuthenticatingFilter implements GlobalFilter, Ordered {
     }
 
     private final static Cache<String, String> signReplayValidityStore = CacheBuilder.newBuilder()
-            .expireAfterWrite(20, TimeUnit.MINUTES).build();
+            .expireAfterWrite(20, TimeUnit.MINUTES)
+            .build();
 
 }

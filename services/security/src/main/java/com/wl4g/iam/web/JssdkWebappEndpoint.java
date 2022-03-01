@@ -15,16 +15,16 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.infra.common.jvm.JvmRuntimeKit.*; 
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.infra.core.web.embed.SimpleEmbedWebappEndpoint;
+import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWebappProperties;
+import com.wl4g.infra.core.web.embed.SimpleEmbedWebappEndpoint;
 
 /**
- * Jssdk embedded webapps endpoint.
+ * JSSDK embedded webapps endpoint.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月10日
@@ -32,24 +32,23 @@ import com.wl4g.infra.core.web.embed.EmbedWebappAutoConfiguration.SimpleEmbedWeb
  */
 public class JssdkWebappEndpoint extends SimpleEmbedWebappEndpoint {
 
-	public JssdkWebappEndpoint(SimpleEmbedWebappProperties config) {
-		super(config);
-	}
+    public JssdkWebappEndpoint(SimpleEmbedWebappProperties config) {
+        super(config);
+    }
 
-	@Override
-	protected boolean preResponesPropertiesSet(String filepath, HttpServletRequest request) {
-		// Only debug mode can access source code file.
-		if (isJVMDebugging) {
-			return true;
-		} else if (filepath.contains(DEFAULT_JSSDK_FILE_EXT)) {
-			return filepath.contains(DEFAULT_JSSDK_FILE_BIN)
-					|| equalsAnyIgnoreCase(request.getServerName(), "127.0.0.1", "0:0:0:0:0:0:0:1", "localhost");
-		} else {
-			return true;
-		}
-	}
+    @Override
+    protected boolean preResponesPropertiesSet(String filepath, HttpServletRequest request) {
+        // Only debug mode can access source code file.
+        if (JvmRuntimeTool.isJvmInDebugging) {
+            return true;
+        } else if (filepath.contains(DEFAULT_JSSDK_FILE_EXT)) {
+            return filepath.contains(DEFAULT_JSSDK_FILE_BIN)
+                    || equalsAnyIgnoreCase(request.getServerName(), "127.0.0.1", "0:0:0:0:0:0:0:1", "localhost");
+        } else {
+            return true;
+        }
+    }
 
-	final public static String DEFAULT_JSSDK_FILE_BIN = ".min.";
-	final public static String DEFAULT_JSSDK_FILE_EXT = ".js";
-
+    public static final String DEFAULT_JSSDK_FILE_BIN = ".min.";
+    public static final String DEFAULT_JSSDK_FILE_EXT = ".js";
 }
