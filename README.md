@@ -1,6 +1,8 @@
-### A Unified identity authentication and access control management implementation, supporting wechat/qq/facebook and other SNS authentication, opensaml API authorization, built-in interface level AOP secondary authentication implementation.
+# IAM
 
-#### Quick Start
+A Unified identity authentication and access control management implementation, supporting wechat/qq/facebook and other SNS authentication, opensaml API authorization, built-in interface level AOP secondary authentication implementation.
+
+## Quick Start
 - Compile Installing
 
 ```
@@ -10,7 +12,6 @@ mvn -U clean install -DskipTests -T 2C -P springExecJar
 # Packaged as general software release package (directory structure)
 # mvn -U clean install -DskipTests -T 2C -P mvnAssTar
 ```
-
 
 - 1，Server integration:
     - 1.1，Independent operation mode, using Iam database tables, is suitable for new system integration.
@@ -123,8 +124,12 @@ spring:
             name: IAMTOKEN_${spring.application.name}
 ```
 
-#### Secondary Development
+## Secondary Development
 > * 3.1、Secondary development of Client
 > * 3.2、Secondary development of Server
 
-###### [Reference](https://www.zybuluo.com/mdeditor)
+## [Reference](https://www.zybuluo.com/mdeditor)
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/wl4g/dopaas-iam.svg)](https://starchart.cc/wl4g/dopaas-iam)

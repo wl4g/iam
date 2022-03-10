@@ -1,6 +1,8 @@
-### 一个基于CAS协议的SSO登录认证企业级增强实现(PC/Android/iOS/WechatMp统一接口)，还支持QQ/Facebook等社交SNS授权认证，提供Opensaml开放API授权，内置接口级AOP二次认证实现等.
+# IAM
 
-#### 一、快速开始
+一个基于CAS协议的SSO登录认证企业级增强实现(PC/Android/iOS/WechatMp统一接口)，还支持QQ/Facebook等社交SNS授权认证，提供Opensaml开放API授权，内置接口级AOP二次认证实现等.
+
+## 一、快速开始
 - 编译安装
 
 ```
@@ -10,15 +12,11 @@ mvn -U clean install -DskipTests -T 2C -P springExecJar
 # 打包为通用软件发布包(目录结构)
 # mvn -U clean install -DskipTests -T 2C -P mvnAssTar
 ```
-
-
-##### 1，服务端集成：
+## 1，服务端集成：
 - 1.1，独立运行模式，使用iam的数据库表，适用于新系统集成，
 - 1.2，依赖嵌入模式，使用外部自定义数据库表，适用于旧系统改造集成，
 - 1.3，所有支持的yml配置，
-
-
-##### 2，客户端集成：
+## 2，客户端集成：
 - 2.1，PC集成(前后端分离)
 - 2.2，[安卓端接入（全局认证拦截器）](dopaas-iam-client-example/src/main/java/com/wl4g/iam/example/android/AndroidIamUserCoordinator.java)
 - 2.3，微信公众号集成，
@@ -114,7 +112,10 @@ This product is open source and free, and will continue to provide free communit
 
 产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
 
-
 ## Donate
 
 无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠]()
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/wl4g/dopaas-iam.svg)](https://starchart.cc/wl4g/dopaas-iam)
