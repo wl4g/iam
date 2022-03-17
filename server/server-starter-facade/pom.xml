@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-iam-service-starter-facade</artifactId>
+	<artifactId>dopaas-iam-server-starter-facade</artifactId>
 	<packaging>jar</packaging>
 	<name>DoPaaS IAM Service Starter for Facade</name>
 	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam-service</artifactId>
+		<artifactId>dopaas-iam-server</artifactId>
 		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -32,11 +32,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-iam-service-data</artifactId>
+			<artifactId>dopaas-iam-server-data</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-iam-service-facade</artifactId>
+			<artifactId>dopaas-iam-server-facade</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

@@ -1,19 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-iam-service-facade</artifactId>
+	<artifactId>dopaas-iam-server-captcha</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS IAM Service Facade Interface</name>
+	<name>DoPaaS IAM Service Captcha</name>
 	<url>http://iam.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam-service</artifactId>
+		<artifactId>dopaas-iam-server</artifactId>
 		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -29,31 +29,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-iam-common</artifactId>
+			<artifactId>dopaas-iam-server-security</artifactId>
 		</dependency>
-
-		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
-
-		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically 
-			configured. -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-integration-feign-istio</artifactId>
+			<artifactId>dopaas-infra-opencv</artifactId>
 		</dependency>
-
-		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically 
-			configured. -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically 
-			configured. Notes: Only relying on feign's interface annotation. -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
-		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
@@ -77,6 +58,49 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- ProGuard confusion plug-in -->
+			<plugin>
+				<groupId>com.github.wvengen</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<executions>
+					<!-- <execution> -->
+					<!-- <phase>package</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>proguard</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
+				</executions>
+				<configuration>
+					<attach>true</attach>
+					<obfuscate>true</obfuscate>
+					<attachArtifactClassifier>pg</attachArtifactClassifier>
+					<proguardInclude>${basedir}/proguard.cfg</proguardInclude>
+					<options>
+						<option>-target 1.8</option>
+						<option>-dontshrink</option>
+						<option>-dontoptimize</option>
+						<option>-dontskipnonpubliclibraryclasses</option>
+						<option>-dontskipnonpubliclibraryclassmembers</option>
+						<option>-allowaccessmodification</option>
+						<option>-useuniqueclassmembernames</option>
+						<option>-keeppackagenames</option>
+						<option>-keepdirectories</option>
+						<option>-keepattributes
+							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
+						<option>-keepclassmembers public class * {void set*(***);***
+							get*();}</option>
+					</options>
+					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+						<lib>${java.home}/lib/jsse.jar</lib>
+						<lib>${java.home}/lib/jce.jar</lib>
+					</libs>
+					<addMavenDescriptor>true</addMavenDescriptor>
+					<injar>classes</injar>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

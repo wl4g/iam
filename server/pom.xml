@@ -1,71 +1,76 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-iam-service-data</artifactId>
-	<packaging>jar</packaging>
-	<name>DoPaaS IAM Service Data Interface</name>
-	<url>http://iam.dopaas.wl4g.com</url>
+	<artifactId>dopaas-iam-server</artifactId>
+	<packaging>pom</packaging>
+	<name>DoPaaS IAM Services</name>
+	<url>https://iam.iam.dopaas.wl4g.com</url>
+	<description>DoPaaS IAM Services.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam-service</artifactId>
+		<artifactId>dopaas-iam</artifactId>
 		<version>3.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+	<organization>
+		<name>wl4g</name>
+		<url>https://iam.dopaas.wl4g.com</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:wl4g/dopaas-iam.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/dopaas-iam.git</developerConnection>
+		<url>https://github.com/wl4g/dopaas-iam</url>
+		<tag>HEAD</tag>
+	</scm>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/wl4g/dopaas-iam/issues</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<id>Wangl01</id>
+			<name>Wanglsir</name>
+			<email>wanglsir@gmail.com,983708408@qq.com</email>
+			<roles>
+				<role>owner</role>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+		<developer>
+			<id>xburnerair00</id>
+			<name>xburnerair00</name>
+			<email>xburnerair00@163.com</email>
+			<roles>
+				<role>maintainer</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+	</developers>
+	<modules>
+		<module>captcha</module>
+		<module>security</module>
+		<module>server-data</module>
+		<module>server-facade</module>
+		<module>server-starter-all</module>
+		<module>server-starter-data</module>
+		<module>server-starter-facade</module>
+		<module>server-starter-web</module>
+	</modules>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<mybatis.version>3.5.5</mybatis.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-bom</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-iam-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>${mybatis.version}</version>
-		</dependency>
-
-		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
-
-		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically 
-			configured. -->
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-integration-feign-istio</artifactId>
-		</dependency>
-
-		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically 
-			configured. -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically 
-			configured. Notes: Only relying on feign's interface annotation. -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
-		<!-- </dependency> -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -74,6 +79,8 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -115,7 +122,6 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>attach-javadocs</id>
 								<phase>package</phase>
 								<goals>
 									<goal>jar</goal>
@@ -126,6 +132,27 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<!-- Usage: mvn versions:set -DnewVersion=latest -->
+					<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<configuration>
+							<!-- <newVersion>latest</newVersion> -->
+							<allowSnapshots>true</allowSnapshots>
+							<generateBackupPoms>false</generateBackupPoms>
+							<processAllModules>true</processAllModules>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<!-- <preparationGoals>clean install</preparationGoals> -->
+							<!-- <developmentVersion>latest</developmentVersion> -->
+						</configuration>
 					</plugin>
 					<!-- GPG -->
 					<plugin>
@@ -140,6 +167,7 @@
 							</execution>
 						</executions>
 					</plugin>
+					<!-- https://help.sonatype.com/repomanager2/staging-releases/configuring-your-project-for-deployment -->
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>

@@ -138,47 +138,47 @@
 			<!-- IAM service modules -->
 			<dependency>
                 <groupId>com.wl4g</groupId>
-                <artifactId>dopaas-iam-service</artifactId>
+                <artifactId>dopaas-iam-server</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-captcha</artifactId>
+				<artifactId>dopaas-iam-server-captcha</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-security</artifactId>
+				<artifactId>dopaas-iam-server-security</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-data</artifactId>
+				<artifactId>dopaas-iam-server-data</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-facade</artifactId>
+				<artifactId>dopaas-iam-server-facade</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-starter-all</artifactId>
+				<artifactId>dopaas-iam-server-starter-all</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-starter-data</artifactId>
+				<artifactId>dopaas-iam-server-starter-data</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-starter-facade</artifactId>
+				<artifactId>dopaas-iam-server-starter-facade</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-service-starter-web</artifactId>
+				<artifactId>dopaas-iam-server-starter-web</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 		</dependencies>
