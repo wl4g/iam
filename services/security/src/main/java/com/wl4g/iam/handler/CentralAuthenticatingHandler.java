@@ -27,7 +27,7 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_LANG_NAME;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_LOGOUT;
-import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.ExpiredAuthorized;
+import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel.Status.ExpiredAuthorized;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.generateAccessTokenSignKey;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.generateDataCipherKey;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
@@ -76,12 +76,12 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.core.authc.IamAuthenticationTokenWrapper;
-import com.wl4g.iam.core.authc.model.LoggedinResult;
-import com.wl4g.iam.core.authc.model.LogoutResult;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.LoginedModel;
+import com.wl4g.iam.core.authc.model.LogoutModel;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
@@ -147,8 +147,8 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
     }
 
     @Override
-    public TicketValidateResult<IamPrincipal> validate(TicketValidateRequest param) {
-        TicketValidateResult<IamPrincipal> assertion = new TicketValidateResult<>();
+    public ServiceTicketValidateModel<IamPrincipal> validate(ServiceTicketValidateRequest param) {
+        ServiceTicketValidateModel<IamPrincipal> assertion = new ServiceTicketValidateModel<>();
         String grantAppName = param.getApplication();
         hasTextOf(grantAppName, "grantAppName");
 
@@ -238,7 +238,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
     }
 
     @Override
-    public LoggedinResult loggedin(String grantAppname, Subject subject) {
+    public LoginedModel loggedin(String grantAppname, Subject subject) {
         hasTextOf(grantAppname, "grantAppname");
 
         // Check authentication.
@@ -261,13 +261,13 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
             // Puts grantInfo session => applications
             putGrantCredentials(session, grantAppname, new GrantApp().setGrantTicket(grantTicket));
 
-            return new LoggedinResult(grantTicket);
+            return new LoginedModel(grantTicket);
         }
         throw new AuthenticationException("Unauthenticated");
     }
 
     @Override
-    public LogoutResult logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
+    public LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
         log.debug("Logout from: {}, forced: {}, sessionId: {}", appName, forced, getSessionId());
         Subject subject = getSubject();
 
@@ -311,22 +311,22 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
             }
         }
 
-        return isNotBlank(appName) ? new LogoutResult(appName) : new LogoutResult();
+        return isNotBlank(appName) ? new LogoutModel(appName) : new LogoutModel();
     }
 
     @Override
-    public SecondaryAuthcValidateResult secondaryValidate(String secondAuthCode, String appName) {
-        CacheKey ekey = new CacheKey(secondAuthCode, SecondaryAuthcValidateResult.class);
+    public SecondaryAuthcValidateModel secondaryValidate(String secondAuthCode, String appName) {
+        CacheKey ekey = new CacheKey(secondAuthCode, SecondaryAuthcValidateModel.class);
         try {
             /*
              * Save authorized info to cache. See:
              * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
              */
-            SecondaryAuthcValidateResult assertion = (SecondaryAuthcValidateResult) cacheManager.getIamCache(SECOND_AUTHC_CACHE)
+            SecondaryAuthcValidateModel assertion = (SecondaryAuthcValidateModel) cacheManager.getIamCache(SECOND_AUTHC_CACHE)
                     .get(ekey);
             // Check assertion expired
             if (assertion == null) {
-                assertion = new SecondaryAuthcValidateResult(ExpiredAuthorized);
+                assertion = new SecondaryAuthcValidateModel(ExpiredAuthorized);
                 assertion.setErrdesc("Authorization expires, please re-authorize.");
             }
             return assertion;
@@ -365,7 +365,7 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
      * @throws InvalidGrantTicketException
      * @see {@link com.wl4g.iam.handler.CentralAuthenticatingHandler#loggedin}
      */
-    private void assertGrantingTicketValidity(Subject subject, TicketValidateRequest model) throws InvalidGrantTicketException {
+    private void assertGrantingTicketValidity(Subject subject, ServiceTicketValidateRequest model) throws InvalidGrantTicketException {
         if (isBlank(model.getTicket())) {
             log.warn("Invalid grantTicket: {}, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
                     getSessionId(subject));
@@ -411,14 +411,21 @@ public class CentralAuthenticatingHandler extends AbstractAuthenticatingHandler 
             // Gets grantTicket by appName
             String grantTicket = info.getGrantApps().get(app.getAppName()).getGrantTicket();
             // Build logout URL
-            String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
-                    .append("?").append(config.getParam().getGrantTicket()).append("=").append(grantTicket).toString();
+            String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE)
+                    .append("/")
+                    .append(URI_C_LOGOUT)
+                    .append("?")
+                    .append(config.getParam().getGrantTicket())
+                    .append("=")
+                    .append(grantTicket)
+                    .toString();
 
             // Post to remote client logout
             try {
-                RespBase<LogoutResult> resp = restTemplate
-                        .exchange(url, POST, null, new ParameterizedTypeReference<RespBase<LogoutResult>>() {
-                        }).getBody();
+                RespBase<LogoutModel> resp = restTemplate
+                        .exchange(url, POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
+                        })
+                        .getBody();
                 if (RespBase.isSuccess(resp))
                     log.info("Finished logout of principal: {}, appName: {}, url:{}", subject.getPrincipal(), app.getAppName(),
                             url);

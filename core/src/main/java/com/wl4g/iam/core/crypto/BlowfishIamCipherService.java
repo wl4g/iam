@@ -24,21 +24,21 @@ package com.wl4g.iam.core.crypto;
  */
 public class BlowfishIamCipherService extends AbstractSymmetricCipherService {
 
-	@Override
-	public CipherCryptKind kind() {
-		return CipherCryptKind.BLOWFISH;
-	}
+    @Override
+    public CipherCryptKind kind() {
+        return CipherCryptKind.BLOWFISH;
+    }
 
-	@Override
-	public String encrypt(byte[] key, String plaintext) {
-		// TODO
-		return null;
-	}
+    @Override
+    public String encrypt(byte[] key, String plaintext) {
+        // TODO
+        return null;
+    }
 
-	@Override
-	public String decrypt(byte[] key, String ciphertext) {
-		// TODO
-		return null;
-	}
+    @Override
+    public String decrypt(byte[] key, String ciphertext) {
+        // TODO
+        return null;
+    }
 
 }

@@ -48,85 +48,85 @@ import com.wl4g.iam.core.exception.IllegalCallbackDomainException;
 @Beta
 @IamFilter
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
-	final public static String NAME = "authenticatorFilter";
+    final public static String NAME = "authenticatorFilter";
 
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		Subject subject = getSubject(request, response);
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        Subject subject = getSubject(request, response);
 
-		try {
-			// Check authenticate redirect URL validity.
-			RedirectInfo redirect = getRedirectInfo(request);
-			authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
-		} catch (IllegalCallbackDomainException e) {
-			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
-		}
+        try {
+            // Check authenticate redirect URL validity.
+            RedirectInfo redirect = getRedirectInfo(request);
+            authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
+        } catch (IllegalCallbackDomainException e) {
+            log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
+        }
 
-		/**
-		 * If it is an authenticated state, execute the success logic directly,
-		 * Exclude default success pages to prevent unlimited redirects. </br>
-		 * </br>
-		 * However, it should be noted that there are conflicts, such as when
-		 * the success URI is http://xx/iam-web/view/index.html In the end,
-		 * return true allows the request to cause 404
-		 */
-		// if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(),
-		// request, response)) {
-		if (subject.isAuthenticated()) {
-			try {
-				return onLoginSuccess(createToken(request, response), subject, request, response);
-			} catch (Exception e) {
-				log.error("Failed to redirect successUrl with authenticated.", e);
-			}
-		}
+        /**
+         * If it is an authenticated state, execute the success logic directly,
+         * Exclude default success pages to prevent unlimited redirects. </br>
+         * </br>
+         * However, it should be noted that there are conflicts, such as when
+         * the success URI is http://xx/iam-web/view/index.html In the end,
+         * return true allows the request to cause 404
+         */
+        // if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(),
+        // request, response)) {
+        if (subject.isAuthenticated()) {
+            try {
+                return onLoginSuccess(createToken(request, response), subject, request, response);
+            } catch (Exception e) {
+                log.error("Failed to redirect successUrl with authenticated.", e);
+            }
+        }
 
-		// If not authenticated, it should be treated as failure.
-		return false;
-	}
+        // If not authenticated, it should be treated as failure.
+        return false;
+    }
 
-	@Override
-	protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		/**
-		 * [Note1]: The client wants to verify the credentials and redirect the
-		 * request. That is, if the current session has a value (has TCT), you
-		 * can get the current principal directly from the
-		 * 
-		 * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipal(boolean)}
-		 */
-		String principal = getPrincipal(false);
+    @Override
+    protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        /**
+         * [Note1]: The client wants to verify the credentials and redirect the
+         * request. That is, if the current session has a value (has TCT), you
+         * can get the current principal directly from the
+         * 
+         * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipal(boolean)}
+         */
+        String principal = getPrincipal(false);
 
-		/**
-		 * [Note2]: The request is redirected from the client logout, i.e. the
-		 * session is null(no TCT), To get the principal before logout, you can
-		 * only get it from the client request parameter.
-		 * 
-		 * @see {@link org.apache.shiro.subject.Subject#getSession()}
-		 */
-		principal = !isBlank(principal) ? principal : getCleanParam(request, config.getParam().getPrincipalName());
-		return new AuthenticatorAuthenticationToken(principal, remoteHost, redirectInfo);
-	}
+        /**
+         * [Note2]: The request is redirected from the client logout, i.e. the
+         * session is null(no TCT), To get the principal before logout, you can
+         * only get it from the client request parameter.
+         * 
+         * @see {@link org.apache.shiro.subject.Subject#getSession()}
+         */
+        principal = !isBlank(principal) ? principal : getCleanParam(request, config.getParam().getPrincipalName());
+        return new AuthenticatorAuthenticationToken(principal, remoteHost, redirectInfo);
+    }
 
-	@Override
-	protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
-			AuthenticationException ae, ServletRequest request, ServletResponse response) {
-		/**
-		 * Fix Infinite redirection, {@link AuthenticatorAuthenticationFilter}
-		 * may redirect to loginUrl, if failRedirectUrl equals getLoginUrl, it
-		 * will happen infinite redirection.
-		 **/
-		redirect.setRedirectUrl(getLoginUrl());
-		return super.determineFailureRedirect(redirect, token, ae, request, response);
-	}
+    @Override
+    protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
+            AuthenticationException ae, ServletRequest request, ServletResponse response) {
+        /**
+         * Fix Infinite redirection, {@link AuthenticatorAuthenticationFilter}
+         * may redirect to loginUrl, if failRedirectUrl equals getLoginUrl, it
+         * will happen infinite redirection.
+         **/
+        redirect.setRedirectUrl(getLoginUrl());
+        return super.determineFailureRedirect(redirect, token, ae, request, response);
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_AUTHENTICATOR;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_AUTHENTICATOR;
+    }
 
 }

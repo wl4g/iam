@@ -31,13 +31,13 @@ import com.wl4g.infra.common.log.SmartLogger;
  */
 public abstract class AbstractIamActuateEndpoint implements ApplicationEventPublisherAware {
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	protected ApplicationEventPublisher publisher;
+    protected ApplicationEventPublisher publisher;
 
-	@Override
-	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-		this.publisher = publisher;
-	}
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
 
 }

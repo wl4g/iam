@@ -41,114 +41,112 @@ import java.util.Map;
  * @since
  */
 public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingRealm {
-	final protected Logger log = getLogger(getClass());
+    final protected Logger log = getLogger(getClass());
 
-	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttribute";
-	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttribute";
+    final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttribute";
+    final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttribute";
 
-	/**
-	 * New create and merge {@link IamPrincipal} to
-	 * {@link PrincipalCollection}
-	 * 
-	 * @param info
-	 * @return
-	 */
-	protected PrincipalCollection createPermitPrincipalCollection(IamPrincipal info) {
-		return createPermitPrincipalCollection(info.getPrincipal(), info);
-	}
+    /**
+     * New create and merge {@link IamPrincipal} to {@link PrincipalCollection}
+     * 
+     * @param info
+     * @return
+     */
+    protected PrincipalCollection createPermitPrincipalCollection(IamPrincipal info) {
+        return createPermitPrincipalCollection(info.getPrincipal(), info);
+    }
 
-	/**
-	 * New create and merge {@link IamPrincipal} to
-	 * {@link PrincipalCollection}
-	 * 
-	 * @param principal
-	 * @param info
-	 * @return
-	 */
-	protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipal info) {
-		notNull(principal, "Principal can't null");
-		notNull(info, "IamPrincipalInfo can't null");
+    /**
+     * New create and merge {@link IamPrincipal} to {@link PrincipalCollection}
+     * 
+     * @param principal
+     * @param info
+     * @return
+     */
+    protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipal info) {
+        notNull(principal, "Principal can't null");
+        notNull(info, "IamPrincipalInfo can't null");
 
-		// Authenticate attributes.(roles/permissions/rememberMe)
-		Map<String, Object> principalMap = new HashMap<>(info.attributes());
-		principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
-		principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
+        // Authenticate attributes.(roles/permissions/rememberMe)
+        Map<String, Object> principalMap = new HashMap<>(info.attributes());
+        principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
+        principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
 
-		// Create simple-authentication info
-		List<Object> principals = CollectionUtils.asList(principal, principalMap);
-		return new SimplePrincipalCollection(principals, getName());
-	}
+        // Create simple-authentication info
+        List<Object> principals = CollectionUtils.asList(principal, principalMap);
+        return new SimplePrincipalCollection(principals, getName());
+    }
 
-	/**
-	 * Setup merge authorized roles and permission string.
-	 * 
-	 * @param authzInfo
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	protected SimpleAuthorizationInfo mergeAuthorizedString(PrincipalCollection principals, SimpleAuthorizationInfo authzInfo) {
-		// Retrieve principal account info.
-		SimplePrincipalCollection principals0 = (SimplePrincipalCollection) principals;
-		Map<String, String> principalMap = (Map<String, String>) principals0.asList().get(1);
+    /**
+     * Setup merge authorized roles and permission string.
+     * 
+     * @param authzInfo
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected SimpleAuthorizationInfo mergeAuthorizedString(PrincipalCollection principals, SimpleAuthorizationInfo authzInfo) {
+        // Retrieve principal account info.
+        SimplePrincipalCollection principals0 = (SimplePrincipalCollection) principals;
+        Map<String, String> principalMap = (Map<String, String>) principals0.asList().get(1);
 
-		// Principal roles.
-		String roles = principalMap.get(KEY_ROLES_ATTRIBUTE_NAME);
-		mergeRoles(authzInfo, splitPermitString(roles));
+        // Principal roles.
+        String roles = principalMap.get(KEY_ROLES_ATTRIBUTE_NAME);
+        mergeRoles(authzInfo, splitPermitString(roles));
 
-		// Principal permissions.
-		String permissions = principalMap.get(KEY_PERMITS_ATTRIBUTE_NAME);
-		return mergePermissions(authzInfo, splitPermitString(permissions));
-	}
+        // Principal permissions.
+        String permissions = principalMap.get(KEY_PERMITS_ATTRIBUTE_NAME);
+        return mergePermissions(authzInfo, splitPermitString(permissions));
+    }
 
-	/**
-	 * Split a string into a list of not empty and trimmed strings, delimiter is
-	 * a comma.
-	 * 
-	 * @param s
-	 *            the input string
-	 * @return the list of not empty and trimmed strings
-	 */
-	protected List<String> splitPermitString(String s) {
-		List<String> list = new ArrayList<String>();
-		String[] elements = StringUtils.split(s, ',');
-		if (elements != null && elements.length > 0) {
-			for (String element : elements) {
-				if (StringUtils.hasText(element)) {
-					list.add(element.trim());
-				}
-			}
-		}
-		return list;
-	}
+    /**
+     * Split a string into a list of not empty and trimmed strings, delimiter is
+     * a comma.
+     * 
+     * @param s
+     *            the input string
+     * @return the list of not empty and trimmed strings
+     */
+    protected List<String> splitPermitString(String s) {
+        List<String> list = new ArrayList<String>();
+        String[] elements = StringUtils.split(s, ',');
+        if (elements != null && elements.length > 0) {
+            for (String element : elements) {
+                if (StringUtils.hasText(element)) {
+                    list.add(element.trim());
+                }
+            }
+        }
+        return list;
+    }
 
-	/**
-	 * Add merge roles to the simple authorization info.
-	 * 
-	 * @param authzInfo
-	 * @param roles
-	 *            the list of roles to add
-	 * @return
-	 */
-	protected SimpleAuthorizationInfo mergeRoles(SimpleAuthorizationInfo authzInfo, List<String> roles) {
-		for (String role : roles) {
-			authzInfo.addRole(role);
-		}
-		return authzInfo;
-	}
+    /**
+     * Add merge roles to the simple authorization info.
+     * 
+     * @param authzInfo
+     * @param roles
+     *            the list of roles to add
+     * @return
+     */
+    protected SimpleAuthorizationInfo mergeRoles(SimpleAuthorizationInfo authzInfo, List<String> roles) {
+        for (String role : roles) {
+            authzInfo.addRole(role);
+        }
+        return authzInfo;
+    }
 
-	/**
-	 * Add merge permissions to the simple authorization info.
-	 * 
-	 * @param authzInfo
-	 * @param permissions
-	 *            the list of permissions to add
-	 * @return
-	 */
-	protected SimpleAuthorizationInfo mergePermissions(SimpleAuthorizationInfo authzInfo, List<String> permissions) {
-		for (String permission : permissions) {
-			authzInfo.addStringPermission(permission);
-		}
-		return authzInfo;
-	}
+    /**
+     * Add merge permissions to the simple authorization info.
+     * 
+     * @param authzInfo
+     * @param permissions
+     *            the list of permissions to add
+     * @return
+     */
+    protected SimpleAuthorizationInfo mergePermissions(SimpleAuthorizationInfo authzInfo, List<String> permissions) {
+        for (String permission : permissions) {
+            authzInfo.addStringPermission(permission);
+        }
+        return authzInfo;
+    }
 
 }

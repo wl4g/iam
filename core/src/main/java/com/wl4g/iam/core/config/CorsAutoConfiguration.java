@@ -37,66 +37,66 @@ import com.wl4g.iam.core.security.cors.CorsSecurityFilter.IamCorsProcessor;
  */
 public class CorsAutoConfiguration {
 
-	//
-	// C O R S _ P R O T E C T I O N _ C O N F I G's.
-	//
+    //
+    // C O R S _ P R O T E C T I O N _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = KEY_CORS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_CORS_PREFIX)
-	public CorsProperties corsProperties() {
-		return new CorsProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = KEY_CORS_PREFIX + ".enabled", matchIfMissing = true)
+    @ConfigurationProperties(prefix = KEY_CORS_PREFIX)
+    public CorsProperties corsProperties() {
+        return new CorsProperties();
+    }
 
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public IamCorsProcessor iamCorsProcessor() {
-		return new IamCorsProcessor();
-	}
+    @Bean
+    @ConditionalOnBean(CorsProperties.class)
+    public IamCorsProcessor iamCorsProcessor() {
+        return new IamCorsProcessor();
+    }
 
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, IamCorsProcessor corsProcessor) {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		// Merger transformation configuration
-		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.resolve()));
-		CorsSecurityFilter filter = new CorsSecurityFilter(source);
-		filter.setCorsProcessor(corsProcessor);
-		return filter;
-	}
+    @Bean
+    @ConditionalOnBean(CorsProperties.class)
+    public CorsSecurityFilter corsSecurityFilter(CorsProperties config, IamCorsProcessor corsProcessor) {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Merger transformation configuration
+        config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.resolve()));
+        CorsSecurityFilter filter = new CorsSecurityFilter(source);
+        filter.setCorsProcessor(corsProcessor);
+        return filter;
+    }
 
-	/**
-	 * The requirement for using the instruction is that the creation of
-	 * {@link CorsProperties} object beans must precede this</br>
-	 * e.g.
-	 *
-	 * <pre>
-	 * &#64;Bean
-	 * public CorsProperties corsProperties() {
-	 * 	...
-	 * }
-	 * </pre>
-	 *
-	 * <b style="color:red;font-size:40px">&nbsp;↑</b>
-	 *
-	 * <pre>
-	 * &#64;Bean
-	 * &#64;ConditionalOnBean(CorsProperties.class)
-	 * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
-	 * 	...
-	 * }
-	 * </pre>
-	 */
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean<CorsSecurityFilter> corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
-		// Register CORS filter
-		FilterRegistrationBean<CorsSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
-		filterBean.setOrder(ORDER_CORS_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*");
-		return filterBean;
-	}
+    /**
+     * The requirement for using the instruction is that the creation of
+     * {@link CorsProperties} object beans must precede this</br>
+     * e.g.
+     *
+     * <pre>
+     * &#64;Bean
+     * public CorsProperties corsProperties() {
+     * 	...
+     * }
+     * </pre>
+     *
+     * <b style="color:red;font-size:40px">&nbsp;↑</b>
+     *
+     * <pre>
+     * &#64;Bean
+     * &#64;ConditionalOnBean(CorsProperties.class)
+     * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
+     * 	...
+     * }
+     * </pre>
+     */
+    @Bean
+    @ConditionalOnBean(CorsProperties.class)
+    public FilterRegistrationBean<CorsSecurityFilter> corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
+        // Register CORS filter
+        FilterRegistrationBean<CorsSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
+        filterBean.setOrder(ORDER_CORS_PRECEDENCE);
+        // Cannot use '/*' or it will not be added to the container chain (only
+        // '/**')
+        filterBean.addUrlPatterns("/*");
+        return filterBean;
+    }
 
 }

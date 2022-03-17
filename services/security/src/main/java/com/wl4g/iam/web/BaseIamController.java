@@ -36,41 +36,41 @@ import com.wl4g.iam.core.handler.AuthenticatingHandler;
  * @version v1.0 2019年1月22日
  * @since
  */
-public abstract class AbstractAuthenticationEndpoint extends BaseController implements InitializingBean {
+public abstract class BaseIamController extends BaseController implements InitializingBean {
 
-	/**
-	 * IAM server properties configuration
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * IAM server properties configuration
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * Authentication handler
-	 */
-	@Autowired
-	protected AuthenticatingHandler authHandler;
+    /**
+     * Authentication handler
+     */
+    @Autowired
+    protected AuthenticatingHandler authHandler;
 
-	/**
-	 * IAM server security coprocessor.
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM server security coprocessor.
+     */
+    @Autowired
+    protected ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * IAM server security configurer.
-	 */
-	@Autowired
-	protected ServerSecurityConfigurer configurer;
+    /**
+     * IAM server security configurer.
+     */
+    @Autowired
+    protected ServerSecurityConfigurer configurer;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-	protected SessionResourceMessageBundler bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    protected SessionResourceMessageBundler bundle;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Ignore
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Ignore
+    }
 
 }

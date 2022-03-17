@@ -31,55 +31,55 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
  */
 public abstract class ClientSecretIamAuthenticationToken extends ServerIamAuthenticationToken {
 
-	private static final long serialVersionUID = 5483061935073949894L;
+    private static final long serialVersionUID = 5483061935073949894L;
 
-	/**
-	 * Iam asymmetric secure crypt algorithm kind definitions..
-	 */
-	@NotNull
-	final private CryptKind cryptKind;
+    /**
+     * Iam asymmetric secure crypt algorithm kind definitions..
+     */
+    @NotNull
+    final private CryptKind cryptKind;
 
-	/**
-	 * The secret key that the client requests for authentication is used to
-	 * login successfully encrypted additional ticket.
-	 */
-	final private String clientSecretKey;
+    /**
+     * The secret key that the client requests for authentication is used to
+     * login successfully encrypted additional ticket.
+     */
+    final private String clientSecretKey;
 
-	/**
-	 * UMID token.
-	 */
-	final private String umidToken;
+    /**
+     * UMID token.
+     */
+    final private String umidToken;
 
-	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken) {
-		this(kind, clientSecretKey, umidToken, null);
-	}
+    public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken) {
+        this(kind, clientSecretKey, umidToken, null);
+    }
 
-	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
-			final String remoteHost) {
-		this(kind, clientSecretKey, umidToken, remoteHost, null);
-	}
+    public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
+            final String remoteHost) {
+        this(kind, clientSecretKey, umidToken, remoteHost, null);
+    }
 
-	public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
-			final String remoteHost, final RedirectInfo redirectInfo) {
-		super(remoteHost, redirectInfo);
-		notNullOf(kind, "kind");
-		hasTextOf(clientSecretKey, "clientSecretKey");
-		hasTextOf(umidToken, "umidToken");
-		this.cryptKind = kind;
-		this.clientSecretKey = clientSecretKey;
-		this.umidToken = umidToken;
-	}
+    public ClientSecretIamAuthenticationToken(final CryptKind kind, final String clientSecretKey, String umidToken,
+            final String remoteHost, final RedirectInfo redirectInfo) {
+        super(remoteHost, redirectInfo);
+        notNullOf(kind, "kind");
+        hasTextOf(clientSecretKey, "clientSecretKey");
+        hasTextOf(umidToken, "umidToken");
+        this.cryptKind = kind;
+        this.clientSecretKey = clientSecretKey;
+        this.umidToken = umidToken;
+    }
 
-	public CryptKind getCryptKind() {
-		return cryptKind;
-	}
+    public CryptKind getCryptKind() {
+        return cryptKind;
+    }
 
-	public String getClientSecretKey() {
-		return clientSecretKey;
-	}
+    public String getClientSecretKey() {
+        return clientSecretKey;
+    }
 
-	public String getUmidToken() {
-		return umidToken;
-	}
+    public String getUmidToken() {
+        return umidToken;
+    }
 
 }

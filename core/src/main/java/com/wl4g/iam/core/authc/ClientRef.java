@@ -24,116 +24,116 @@ package com.wl4g.iam.core.authc;
  */
 public enum ClientRef {
 
-	/**
-	 * Client android platform.
-	 */
-	Android("Android"),
+    /**
+     * Client android platform.
+     */
+    Android("Android"),
 
-	/**
-	 * Client iOS platform.
-	 */
-	iOS("iOS"),
+    /**
+     * Client iOS platform.
+     */
+    iOS("iOS"),
 
-	/**
-	 * Client iPad platform.
-	 */
-	IPad("IPad"),
+    /**
+     * Client iPad platform.
+     */
+    IPad("IPad"),
 
-	/**
-	 * Client WeChat internal browser.
-	 */
-	MicroMessenger("MicroMessenger"),
+    /**
+     * Client WeChat internal browser.
+     */
+    MicroMessenger("MicroMessenger"),
 
-	/**
-	 * Client WeChat official platform.
-	 */
-	WeChatMp("wechatMp"),
+    /**
+     * Client WeChat official platform.
+     */
+    WeChatMp("wechatMp"),
 
-	/**
-	 * Client WeChat applet platform.
-	 */
-	WeChatApplet("wechatApplet"),
+    /**
+     * Client WeChat applet platform.
+     */
+    WeChatApplet("wechatApplet"),
 
-	/**
-	 * Client windows platform.
-	 */
-	Windows("Windows"),
+    /**
+     * Client windows platform.
+     */
+    Windows("Windows"),
 
-	/**
-	 * Client MAC platform.
-	 */
-	Mac("Mac"),
+    /**
+     * Client MAC platform.
+     */
+    Mac("Mac"),
 
-	/**
-	 * Client linux platform.
-	 */
-	Linux("Linux"),
+    /**
+     * Client linux platform.
+     */
+    Linux("Linux"),
 
-	/**
-	 * Client SunOS platform.
-	 */
-	SunOS("SunOS"),
+    /**
+     * Client SunOS platform.
+     */
+    SunOS("SunOS"),
 
-	/**
-	 * Client FreeBSD platform.
-	 */
-	FreeBSD("FreeBSD"),
+    /**
+     * Client FreeBSD platform.
+     */
+    FreeBSD("FreeBSD"),
 
-	/**
-	 * Client OpenBSD platform.
-	 */
-	OpenBSD("OpenBSD"),
+    /**
+     * Client OpenBSD platform.
+     */
+    OpenBSD("OpenBSD"),
 
-	/**
-	 * Client Solaris platform.
-	 */
-	Solaris("Solaris"),
+    /**
+     * Client Solaris platform.
+     */
+    Solaris("Solaris"),
 
-	/**
-	 * Client AIX platform.
-	 */
-	AIX("AIX"),
+    /**
+     * Client AIX platform.
+     */
+    AIX("AIX"),
 
-	/**
-	 * Client Irix platform.
-	 */
-	Irix("Irix"),
+    /**
+     * Client Irix platform.
+     */
+    Irix("Irix"),
 
-	/**
-	 * Client HP-UX platform.
-	 */
-	HP_UX("HP-UX"),
+    /**
+     * Client HP-UX platform.
+     */
+    HP_UX("HP-UX"),
 
-	/**
-	 * Client unknown platform.
-	 */
-	Unknown("Unknown");
+    /**
+     * Client unknown platform.
+     */
+    Unknown("Unknown");
 
-	final private String value;
+    final private String value;
 
-	private ClientRef(String value) {
-		this.value = value;
-	}
+    private ClientRef(String value) {
+        this.value = value;
+    }
 
-	final public String getValue() {
-		return value;
-	}
+    final public String getValue() {
+        return value;
+    }
 
-	final public static ClientRef of(String clientRef) {
-		ClientRef ref = safeOf(clientRef);
-		if (ref == null) {
-			throw new IllegalArgumentException(String.format("Illegal clientRef '%s'", clientRef));
-		}
-		return ref;
-	}
+    final public static ClientRef of(String clientRef) {
+        ClientRef ref = safeOf(clientRef);
+        if (ref == null) {
+            throw new IllegalArgumentException(String.format("Illegal clientRef '%s'", clientRef));
+        }
+        return ref;
+    }
 
-	final public static ClientRef safeOf(String clientRef) {
-		for (ClientRef ref : values()) {
-			if (ref.getValue().equalsIgnoreCase(clientRef) || ref.name().equalsIgnoreCase(clientRef)) {
-				return ref;
-			}
-		}
-		return null;
-	}
+    final public static ClientRef safeOf(String clientRef) {
+        for (ClientRef ref : values()) {
+            if (ref.getValue().equalsIgnoreCase(clientRef) || ref.name().equalsIgnoreCase(clientRef)) {
+                return ref;
+            }
+        }
+        return null;
+    }
 
 }

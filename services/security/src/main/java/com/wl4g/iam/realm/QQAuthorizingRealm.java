@@ -45,8 +45,8 @@ import com.wl4g.iam.authc.credential.IamBasedMatcher;
  */
 public class QQAuthorizingRealm extends Oauth2SnsAuthorizingRealm<QQAuthenticationToken> {
 
-	public QQAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public QQAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

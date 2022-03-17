@@ -63,489 +63,492 @@ import static org.springframework.http.HttpMethod.*;
  * @since
  */
 public class CorsProperties implements InitializingBean, Serializable {
-	final private static long serialVersionUID = -5701992202765239835L;
+    final private static long serialVersionUID = -5701992202765239835L;
 
-	/**
-	 * {@link CorsRule}
-	 */
-	private Map<String, CorsRule> rules = new HashMap<>();
+    /**
+     * {@link CorsRule}
+     */
+    private Map<String, CorsRule> rules = new HashMap<>();
 
-	public Map<String, CorsRule> getRules() {
-		return rules;
-	}
+    public Map<String, CorsRule> getRules() {
+        return rules;
+    }
 
-	public CorsProperties setRules(Map<String, CorsRule> rules) {
-		// if (!isEmpty(rules)) {
-		// rules.putAll(rules);
-		// }
-		this.rules = rules;
-		return this;
-	}
+    public CorsProperties setRules(Map<String, CorsRule> rules) {
+        // if (!isEmpty(rules)) {
+        // rules.putAll(rules);
+        // }
+        this.rules = rules;
+        return this;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		applyRulesProperties();
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        applyRulesProperties();
+    }
 
-	/**
-	 * Apply default and requires rules if necessary.
-	 */
-	private void applyRulesProperties() {
-		// Sets default cors rules, if necessary
-		if (isEmpty(getRules())) {
-			getRules().getOrDefault("/**", new CorsRule()).addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-					.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS);
-		}
+    /**
+     * Apply default and requires rules if necessary.
+     */
+    private void applyRulesProperties() {
+        // Sets default cors rules, if necessary
+        if (isEmpty(getRules())) {
+            getRules().getOrDefault("/**", new CorsRule())
+                    .addAllowsOrigins("http://localhost:8080")
+                    .setAllowCredentials(true)
+                    .addAllowsHeaders(DEFAULT_ALLOWED_HEADERS)
+                    .addAllowsMethods(DEFAULT_ALLOWED_METHODS);
+        }
 
-		// Adds requires cors rules
-		getRules().values().stream().forEach(rule -> rule.addAllowsHeaders(DEFAULT_REQUIRES_ALLOWED_HEADERS));
+        // Adds requires cors rules
+        getRules().values().stream().forEach(rule -> rule.addAllowsHeaders(DEFAULT_REQUIRES_ALLOWED_HEADERS));
 
-	}
+    }
 
-	//
-	// --- Function's. ---
-	//
+    //
+    // --- Function's. ---
+    //
 
-	/**
-	 * Assertion cors allowed headers.
-	 * 
-	 * @param requestHeaders
-	 */
-	public void assertCorsHeaders(List<String> requestHeaders) {
-		for (CorsRule rule : getRules().values()) {
-			List<String> allowedHeaders = rule.resolve().getAllowedHeaders();
-			List<String> legalHeaders = checkCorsHeaders(requestHeaders, allowedHeaders);
-			if (isEmpty(legalHeaders)) {
-				throw new IllegalArgumentException(
-						format("Invalid cors requestHeaders: %s, allowedHeaders: %s", requestHeaders, allowedHeaders));
-			}
-		}
-	}
+    /**
+     * Assertion cors allowed headers.
+     * 
+     * @param requestHeaders
+     */
+    public void assertCorsHeaders(List<String> requestHeaders) {
+        for (CorsRule rule : getRules().values()) {
+            List<String> allowedHeaders = rule.resolve().getAllowedHeaders();
+            List<String> legalHeaders = checkCorsHeaders(requestHeaders, allowedHeaders);
+            if (isEmpty(legalHeaders)) {
+                throw new IllegalArgumentException(
+                        format("Invalid cors requestHeaders: %s, allowedHeaders: %s", requestHeaders, allowedHeaders));
+            }
+        }
+    }
 
-	/**
-	 * Assertion cors allowed methods.
-	 * 
-	 * @param requestMethods
-	 */
-	public void assertCorsMethods(HttpMethod requestMethod) {
-		for (CorsRule rule : getRules().values()) {
-			List<String> allowedMethods = rule.resolve().getAllowedMethods();
-			List<HttpMethod> _allowedMethods = allowedMethods.stream().map(m -> resolve(m)).collect(toList());
-			List<HttpMethod> legalMethods = checkCorsMethod(requestMethod, _allowedMethods);
-			if (isEmpty(legalMethods)) {
-				throw new IllegalArgumentException(
-						format("Invalid cors requestMethod: %s, allowedMethods: %s", requestMethod, allowedMethods));
-			}
-		}
-	}
+    /**
+     * Assertion cors allowed methods.
+     * 
+     * @param requestMethods
+     */
+    public void assertCorsMethods(HttpMethod requestMethod) {
+        for (CorsRule rule : getRules().values()) {
+            List<String> allowedMethods = rule.resolve().getAllowedMethods();
+            List<HttpMethod> _allowedMethods = allowedMethods.stream().map(m -> resolve(m)).collect(toList());
+            List<HttpMethod> legalMethods = checkCorsMethod(requestMethod, _allowedMethods);
+            if (isEmpty(legalMethods)) {
+                throw new IllegalArgumentException(
+                        format("Invalid cors requestMethod: %s, allowedMethods: %s", requestMethod, allowedMethods));
+            }
+        }
+    }
 
-	/**
-	 * Assertion cors allowed origins.
-	 * 
-	 * @param requestOrigns
-	 */
-	public void assertCorsOrigin(String requestOrigin) {
-		for (CorsRule rule : getRules().values()) {
-			List<String> allowedOrigins = rule.resolve().getAllowedOrigins();
-			String legalOrigin = checkCorsOrigin(requestOrigin, allowedOrigins, rule.isAllowCredentials());
-			if (isBlank(legalOrigin)) {
-				throw new IllegalArgumentException(
-						format("Invalid cors requestOrigin: %s, allowedOrigins: %s", requestOrigin, allowedOrigins));
-			}
-		}
-	}
+    /**
+     * Assertion cors allowed origins.
+     * 
+     * @param requestOrigns
+     */
+    public void assertCorsOrigin(String requestOrigin) {
+        for (CorsRule rule : getRules().values()) {
+            List<String> allowedOrigins = rule.resolve().getAllowedOrigins();
+            String legalOrigin = checkCorsOrigin(requestOrigin, allowedOrigins, rule.isAllowCredentials());
+            if (isBlank(legalOrigin)) {
+                throw new IllegalArgumentException(
+                        format("Invalid cors requestOrigin: %s, allowedOrigins: %s", requestOrigin, allowedOrigins));
+            }
+        }
+    }
 
-	/**
-	 * CORS rule configuration
-	 *
-	 * @author wangl.sir
-	 * @version v1.0 2019年3月4日
-	 * @since
-	 */
-	public static class CorsRule implements Serializable {
-		private static final long serialVersionUID = 2691186807570014349L;
+    /**
+     * CORS rule configuration
+     *
+     * @author wangl.sir
+     * @version v1.0 2019年3月4日
+     * @since
+     */
+    public static class CorsRule implements Serializable {
+        private static final long serialVersionUID = 2691186807570014349L;
 
-		/**
-		 * Default cors allowed header prefix.
-		 */
-		final public static String DEFAULT_CORS_ALLOW_HEADER_PREFIX = "X-Iam";
+        /**
+         * Default cors allowed header prefix.
+         */
+        final public static String DEFAULT_CORS_ALLOW_HEADER_PREFIX = "X-Iam";
 
-		private List<String> allowsMethods = new UniqueList<>(new ArrayList<>(8));
-		private List<String> allowsHeaders = new UniqueList<>(new ArrayList<>(8));
-		private List<String> allowsOrigins = new UniqueList<>(new ArrayList<>(8));
-		private List<String> exposedHeaders = new UniqueList<>(new ArrayList<>(8));
-		private boolean allowCredentials = true;
-		private Long maxAge = 1800L;
+        private List<String> allowsMethods = new UniqueList<>(new ArrayList<>(8));
+        private List<String> allowsHeaders = new UniqueList<>(new ArrayList<>(8));
+        private List<String> allowsOrigins = new UniqueList<>(new ArrayList<>(8));
+        private List<String> exposedHeaders = new UniqueList<>(new ArrayList<>(8));
+        private boolean allowCredentials = true;
+        private Long maxAge = 1800L;
 
-		// [Temporary] Convert to cors configuration.
-		private transient volatile IamCorsValidator cors;
+        // [Temporary] Convert to cors configuration.
+        private transient volatile IamCorsValidator cors;
 
-		public CorsRule() {
-			super();
-		}
+        public CorsRule() {
+            super();
+        }
 
-		public List<String> getAllowsMethods() {
-			return allowsMethods;
-		}
+        public List<String> getAllowsMethods() {
+            return allowsMethods;
+        }
 
-		public CorsRule setAllowsMethods(List<String> allowsMethods) {
-			// if (!isEmpty(allowsMethods)) {
-			// this.allowsMethods.addAll(allowsMethods);
-			// }
-			this.allowsMethods = allowsMethods;
-			return this;
-		}
+        public CorsRule setAllowsMethods(List<String> allowsMethods) {
+            // if (!isEmpty(allowsMethods)) {
+            // this.allowsMethods.addAll(allowsMethods);
+            // }
+            this.allowsMethods = allowsMethods;
+            return this;
+        }
 
-		public CorsRule addAllowsMethods(String... allowsMethods) {
-			if (!isNull(allowsMethods)) {
-				this.allowsMethods.addAll(asList(allowsMethods));
-			}
-			return this;
-		}
+        public CorsRule addAllowsMethods(String... allowsMethods) {
+            if (!isNull(allowsMethods)) {
+                this.allowsMethods.addAll(asList(allowsMethods));
+            }
+            return this;
+        }
 
-		public List<String> getAllowsHeaders() {
-			return allowsHeaders;
-		}
+        public List<String> getAllowsHeaders() {
+            return allowsHeaders;
+        }
 
-		public CorsRule setAllowsHeaders(List<String> allowsHeaders) {
-			// if (!isEmpty(allowsHeaders)) {
-			// this.allowsHeaders.addAll(allowsHeaders);
-			// }
-			this.allowsHeaders = allowsHeaders;
-			return this;
-		}
+        public CorsRule setAllowsHeaders(List<String> allowsHeaders) {
+            // if (!isEmpty(allowsHeaders)) {
+            // this.allowsHeaders.addAll(allowsHeaders);
+            // }
+            this.allowsHeaders = allowsHeaders;
+            return this;
+        }
 
-		public CorsRule addAllowsHeaders(String... allowsHeaders) {
-			if (!isNull(allowsHeaders)) {
-				this.allowsHeaders.addAll(asList(allowsHeaders));
-			}
-			return this;
-		}
+        public CorsRule addAllowsHeaders(String... allowsHeaders) {
+            if (!isNull(allowsHeaders)) {
+                this.allowsHeaders.addAll(asList(allowsHeaders));
+            }
+            return this;
+        }
 
-		public List<String> getAllowsOrigins() {
-			return allowsOrigins;
-		}
+        public List<String> getAllowsOrigins() {
+            return allowsOrigins;
+        }
 
-		public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
-			// "allowsOrigin" may have a "*" wildcard character.
-			// e.g. http://*.mydomain.com
-			// if (!isEmpty(allowsOrigins)) {
-			// this.allowsOrigins.addAll(allowsOrigins);
-			// }
-			this.allowsOrigins = allowsOrigins;
-			return this;
-		}
+        public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
+            // "allowsOrigin" may have a "*" wildcard character.
+            // e.g. http://*.mydomain.com
+            // if (!isEmpty(allowsOrigins)) {
+            // this.allowsOrigins.addAll(allowsOrigins);
+            // }
+            this.allowsOrigins = allowsOrigins;
+            return this;
+        }
 
-		public CorsRule addAllowsOrigins(String... allowsOrigins) {
-			// "allowsOrigin" may have a "*" wildcard character.
-			// e.g. http://*.mydomain.com
-			if (!isNull(allowsOrigins)) {
-				this.allowsOrigins.addAll(asList(allowsOrigins));
-			}
-			return this;
-		}
+        public CorsRule addAllowsOrigins(String... allowsOrigins) {
+            // "allowsOrigin" may have a "*" wildcard character.
+            // e.g. http://*.mydomain.com
+            if (!isNull(allowsOrigins)) {
+                this.allowsOrigins.addAll(asList(allowsOrigins));
+            }
+            return this;
+        }
 
-		public List<String> getExposedHeaders() {
-			return exposedHeaders;
-		}
+        public List<String> getExposedHeaders() {
+            return exposedHeaders;
+        }
 
-		public CorsRule setExposedHeaders(List<String> exposedHeaders) {
-			// if (!isEmpty(exposedHeaders)) {
-			// this.exposedHeaders.addAll(exposedHeaders);
-			// }
-			this.exposedHeaders = exposedHeaders;
-			return this;
-		}
+        public CorsRule setExposedHeaders(List<String> exposedHeaders) {
+            // if (!isEmpty(exposedHeaders)) {
+            // this.exposedHeaders.addAll(exposedHeaders);
+            // }
+            this.exposedHeaders = exposedHeaders;
+            return this;
+        }
 
-		public CorsRule addExposedHeader(String... exposedHeaders) {
-			if (!isNull(exposedHeaders)) {
-				this.exposedHeaders.addAll(asList(exposedHeaders));
-			}
-			return this;
-		}
+        public CorsRule addExposedHeader(String... exposedHeaders) {
+            if (!isNull(exposedHeaders)) {
+                this.exposedHeaders.addAll(asList(exposedHeaders));
+            }
+            return this;
+        }
 
-		public boolean isAllowCredentials() {
-			return allowCredentials;
-		}
+        public boolean isAllowCredentials() {
+            return allowCredentials;
+        }
 
-		public CorsRule setAllowCredentials(boolean allowCredentials) {
-			this.allowCredentials = allowCredentials;
-			return this;
-		}
+        public CorsRule setAllowCredentials(boolean allowCredentials) {
+            this.allowCredentials = allowCredentials;
+            return this;
+        }
 
-		public Long getMaxAge() {
-			return maxAge;
-		}
+        public Long getMaxAge() {
+            return maxAge;
+        }
 
-		public CorsRule setMaxAge(Long maxAge) {
-			this.maxAge = maxAge;
-			return this;
-		}
+        public CorsRule setMaxAge(Long maxAge) {
+            this.maxAge = maxAge;
+            return this;
+        }
 
-		/**
-		 * Resolve to IAM CORS configuration.
-		 *
-		 * @return
-		 */
-		public synchronized IamCorsValidator resolve() {
-			if (isNull(cors)) {
-				cors = new IamCorsValidator();
-				// Merge & process wildcard
-				processWildcard(getAllowsOrigins());
-				processWildcard(getAllowsHeaders());
-				processWildcard(getAllowsMethods());
-				processWildcard(getExposedHeaders());
+        /**
+         * Resolve to IAM CORS configuration.
+         *
+         * @return
+         */
+        public synchronized IamCorsValidator resolve() {
+            if (isNull(cors)) {
+                cors = new IamCorsValidator();
+                // Merge & process wildcard
+                processWildcard(getAllowsOrigins());
+                processWildcard(getAllowsHeaders());
+                processWildcard(getAllowsMethods());
+                processWildcard(getExposedHeaders());
 
-				// Copy cors items.
-				cors.setAllowCredentials(isAllowCredentials());
-				cors.setMaxAge(getMaxAge());
-				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-				getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-				getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-				getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
-			}
-			return cors;
-		}
+                // Copy cors items.
+                cors.setAllowCredentials(isAllowCredentials());
+                cors.setMaxAge(getMaxAge());
+                getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+                getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+                getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+                getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+            }
+            return cors;
+        }
 
-		/**
-		 * Wild-card merge source collection and remove duplicate.
-		 *
-		 * @param sources
-		 * @return
-		 */
-		private void processWildcard(Collection<String> sources) {
-			if (isEmpty(sources)) {
-				return;
-			}
+        /**
+         * Wild-card merge source collection and remove duplicate.
+         *
+         * @param sources
+         * @return
+         */
+        private void processWildcard(Collection<String> sources) {
+            if (isEmpty(sources)) {
+                return;
+            }
 
-			// Clear other specific item configurations if '*' is present
-			Iterator<String> it1 = sources.iterator();
-			while (it1.hasNext()) {
-				String value = it1.next();
-				if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
-					sources.clear();
-					sources.add(ALL);
-					break;
-				}
-			}
+            // Clear other specific item configurations if '*' is present
+            Iterator<String> it1 = sources.iterator();
+            while (it1.hasNext()) {
+                String value = it1.next();
+                if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
+                    sources.clear();
+                    sources.add(ALL);
+                    break;
+                }
+            }
 
-			/*
-			 * Clean up invalid values that did not resolve successfully through
-			 * environment variables. e.g. http://${DEVOPS_SERVICE_ZONE}
-			 * https://${DEVOPS_SERVICE_ZONE}
-			 */
-			Iterator<String> it2 = sources.iterator();
-			while (it2.hasNext()) {
-				String value = it2.next();
-				if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
-					it2.remove();
-				}
-			}
-		}
+            /*
+             * Clean up invalid values that did not resolve successfully through
+             * environment variables. e.g. http://${DEVOPS_SERVICE_ZONE}
+             * https://${DEVOPS_SERVICE_ZONE}
+             */
+            Iterator<String> it2 = sources.iterator();
+            while (it2.hasNext()) {
+                String value = it2.next();
+                if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
+                    it2.remove();
+                }
+            }
+        }
 
-		@Override
-		public String toString() {
-			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-		}
+        @Override
+        public String toString() {
+            return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+        }
 
-	}
+    }
 
-	/**
-	 * Iam enhanced logic CORS configuration validator.
-	 *
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月21日
-	 * @since
-	 */
-	public static class IamCorsValidator extends CorsConfiguration {
+    /**
+     * Iam enhanced logic CORS configuration validator.
+     *
+     * @author Wangl.sir
+     * @version v1.0 2019年8月21日
+     * @since
+     */
+    public static class IamCorsValidator extends CorsConfiguration {
 
-		/**
-		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
-		 * </br>
-		 * 
-		 * For example supports:
-		 * 
-		 * <pre>
-		 *	http://*.domain.com      ->  http://aa.domain.com
-		 *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
-		 * </pre>
-		 */
-		@Override
-		public String checkOrigin(String requestOrigin) {
-			return checkCorsOrigin(requestOrigin, getAllowedOrigins(), getAllowCredentials());
-		}
+        /**
+         * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
+         * </br>
+         * 
+         * For example supports:
+         * 
+         * <pre>
+         *	http://*.domain.com      ->  http://aa.domain.com
+         *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
+         * </pre>
+         */
+        @Override
+        public String checkOrigin(String requestOrigin) {
+            return checkCorsOrigin(requestOrigin, getAllowedOrigins(), getAllowCredentials());
+        }
 
-		/**
-		 * <b>Note:</b> "allowedHeader" may have a "*" wildcard character.</br>
-		 * </br>
-		 * 
-		 * For example supports:
-		 * 
-		 * <pre>
-		 *	X-Iam-*                  ->  X-Iam-AccessToken, X-Iam-Authentication-Code
-		 *	X-Iam-Authentication-*   ->  X-Iam-Authentication-Code
-		 * </pre>
-		 */
-		@Override
-		public List<String> checkHeaders(List<String> requestHeaders) {
-			return checkCorsHeaders(requestHeaders, getAllowedHeaders());
-		}
+        /**
+         * <b>Note:</b> "allowedHeader" may have a "*" wildcard character.</br>
+         * </br>
+         * 
+         * For example supports:
+         * 
+         * <pre>
+         *	X-Iam-*                  ->  X-Iam-AccessToken, X-Iam-Authentication-Code
+         *	X-Iam-Authentication-*   ->  X-Iam-Authentication-Code
+         * </pre>
+         */
+        @Override
+        public List<String> checkHeaders(List<String> requestHeaders) {
+            return checkCorsHeaders(requestHeaders, getAllowedHeaders());
+        }
 
-		@Override
-		public void addAllowedMethod(String method) {
-			if (!isBlank(method)) {
-				// Check add method invalid.
-				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
-				super.addAllowedMethod(method.toUpperCase(US));
-			}
-		}
+        @Override
+        public void addAllowedMethod(String method) {
+            if (!isBlank(method)) {
+                // Check add method invalid.
+                isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
+                super.addAllowedMethod(method.toUpperCase(US));
+            }
+        }
 
-		/**
-		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
-		 * </br>
-		 * 
-		 * For example supports:
-		 * 
-		 * <pre>
-		 *	http://*.domain.com      ->  http://aa.domain.com
-		 *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
-		 * </pre>
-		 * 
-		 * @param requestOrigin
-		 * @return
-		 * @see {@link org.springframework.web.cors.CorsConfiguration#checkOrigin()}
-		 */
-		public static String checkCorsOrigin(String requestOrigin, List<String> allowedOrigins, boolean allowCredentials) {
-			if (isBlank(requestOrigin)) {
-				return null;
-			}
-			if (isEmpty(allowedOrigins)) {
-				return null;
-			}
+        /**
+         * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
+         * </br>
+         * 
+         * For example supports:
+         * 
+         * <pre>
+         *	http://*.domain.com      ->  http://aa.domain.com
+         *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
+         * </pre>
+         * 
+         * @param requestOrigin
+         * @return
+         * @see {@link org.springframework.web.cors.CorsConfiguration#checkOrigin()}
+         */
+        public static String checkCorsOrigin(String requestOrigin, List<String> allowedOrigins, boolean allowCredentials) {
+            if (isBlank(requestOrigin)) {
+                return null;
+            }
+            if (isEmpty(allowedOrigins)) {
+                return null;
+            }
 
-			if (allowedOrigins.contains(ALL)) {
-				/**
-				 * Note: Chrome will prompt: </br>
-				 * The value of the 'Access-Control-Allow-Origin' header in the
-				 * response must not be the wildcard '*' when the request's
-				 * credentials mode is 'include'. The credentials mode of
-				 * requests initiated by the XMLHttpRequest is controlled by the
-				 * withCredentials attribute.
-				 */
-				if (!allowCredentials) {
-					return ALL;
-				} else {
-					return requestOrigin;
-				}
-			}
-			for (String allowedOrigin : allowedOrigins) {
-				if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
-					return requestOrigin;
-				}
-				// e.g: allowedOrigin => "http://*.aa.mydomain.com"
-				if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
-					return requestOrigin;
-				}
-			}
-			return null;
-		}
+            if (allowedOrigins.contains(ALL)) {
+                /**
+                 * Note: Chrome will prompt: </br>
+                 * The value of the 'Access-Control-Allow-Origin' header in the
+                 * response must not be the wildcard '*' when the request's
+                 * credentials mode is 'include'. The credentials mode of
+                 * requests initiated by the XMLHttpRequest is controlled by the
+                 * withCredentials attribute.
+                 */
+                if (!allowCredentials) {
+                    return ALL;
+                } else {
+                    return requestOrigin;
+                }
+            }
+            for (String allowedOrigin : allowedOrigins) {
+                if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
+                    return requestOrigin;
+                }
+                // e.g: allowedOrigin => "http://*.aa.mydomain.com"
+                if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
+                    return requestOrigin;
+                }
+            }
+            return null;
+        }
 
-		/**
-		 * Check & gets legal headers name.
-		 * 
-		 * @param requestHeaders
-		 * @param allowedHeaders
-		 * @return
-		 */
-		public static List<String> checkCorsHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
-			if (isNull(requestHeaders)) {
-				return null;
-			}
-			if (requestHeaders.isEmpty()) {
-				return Collections.emptyList();
-			}
-			if (ObjectUtils.isEmpty(allowedHeaders)) {
-				return null;
-			}
+        /**
+         * Check & gets legal headers name.
+         * 
+         * @param requestHeaders
+         * @param allowedHeaders
+         * @return
+         */
+        public static List<String> checkCorsHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
+            if (isNull(requestHeaders)) {
+                return null;
+            }
+            if (requestHeaders.isEmpty()) {
+                return Collections.emptyList();
+            }
+            if (ObjectUtils.isEmpty(allowedHeaders)) {
+                return null;
+            }
 
-			boolean allowAnyHeader = allowedHeaders.contains(ALL);
-			List<String> result = new ArrayList<String>(requestHeaders.size());
-			for (String requestHeader : requestHeaders) {
-				if (StringUtils.hasText(requestHeader)) {
-					requestHeader = requestHeader.trim();
-					if (allowAnyHeader) {
-						result.add(requestHeader);
-					} else {
-						for (String allowedHeader : allowedHeaders) {
-							// e.g: allowedHeader => "X-Iam-*"
-							if (allowedHeader.contains(ALL)) {
-								String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
-								if (startsWithIgnoreCase(requestHeader, allowedHeaderPrefix)) {
-									result.add(requestHeader);
-									break;
-								}
-							} else if (requestHeader.equalsIgnoreCase(allowedHeader)) {
-								result.add(requestHeader);
-								break;
-							}
-						}
-					}
-				}
-			}
-			return (result.isEmpty() ? null : result);
-		}
+            boolean allowAnyHeader = allowedHeaders.contains(ALL);
+            List<String> result = new ArrayList<String>(requestHeaders.size());
+            for (String requestHeader : requestHeaders) {
+                if (StringUtils.hasText(requestHeader)) {
+                    requestHeader = requestHeader.trim();
+                    if (allowAnyHeader) {
+                        result.add(requestHeader);
+                    } else {
+                        for (String allowedHeader : allowedHeaders) {
+                            // e.g: allowedHeader => "X-Iam-*"
+                            if (allowedHeader.contains(ALL)) {
+                                String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
+                                if (startsWithIgnoreCase(requestHeader, allowedHeaderPrefix)) {
+                                    result.add(requestHeader);
+                                    break;
+                                }
+                            } else if (requestHeader.equalsIgnoreCase(allowedHeader)) {
+                                result.add(requestHeader);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return (result.isEmpty() ? null : result);
+        }
 
-		/**
-		 * Check the HTTP request method (or the method from the
-		 * Access-Control-Request-Method header on a pre-flight request) against
-		 * the configured allowed methods.
-		 * 
-		 * @param requestMethod
-		 * @param allowedMethods
-		 * @return
-		 * @see {@link org.springframework.web.cors.CorsConfiguration#checkHttpMethod()}
-		 */
-		public static List<HttpMethod> checkCorsMethod(HttpMethod requestMethod, List<HttpMethod> allowedMethods) {
-			if (isNull(requestMethod)) {
-				return null;
-			}
-			if (isNull(allowedMethods)) {
-				return Collections.singletonList(requestMethod);
-			}
-			return (allowedMethods.contains(requestMethod) ? allowedMethods : null);
-		}
+        /**
+         * Check the HTTP request method (or the method from the
+         * Access-Control-Request-Method header on a pre-flight request) against
+         * the configured allowed methods.
+         * 
+         * @param requestMethod
+         * @param allowedMethods
+         * @return
+         * @see {@link org.springframework.web.cors.CorsConfiguration#checkHttpMethod()}
+         */
+        public static List<HttpMethod> checkCorsMethod(HttpMethod requestMethod, List<HttpMethod> allowedMethods) {
+            if (isNull(requestMethod)) {
+                return null;
+            }
+            if (isNull(allowedMethods)) {
+                return Collections.singletonList(requestMethod);
+            }
+            return (allowedMethods.contains(requestMethod) ? allowedMethods : null);
+        }
 
-	}
+    }
 
-	/**
-	 * Cors key properties.
-	 */
-	final public static String KEY_CORS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".cors";
+    /**
+     * Cors key properties.
+     */
+    final public static String KEY_CORS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".cors";
 
-	/**
-	 * Default requires allowes headers.
-	 */
-	final public static String[] DEFAULT_REQUIRES_ALLOWED_HEADERS = { "Cookie", "X-Requested-With", "Content-Type",
-			"Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language", "Accept-Encoding" };
+    /**
+     * Default requires allowes headers.
+     */
+    final public static String[] DEFAULT_REQUIRES_ALLOWED_HEADERS = { "Cookie", "X-Requested-With", "Content-Type",
+            "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language", "Accept-Encoding" };
 
-	/**
-	 * Default allowes headers.
-	 */
-	@SuppressWarnings("serial")
-	final public static String[] DEFAULT_ALLOWED_HEADERS = new ArrayList<String>() {
-		{
-			add(DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*");
-		}
-	}.toArray(new String[] {});
+    /**
+     * Default allowes headers.
+     */
+    @SuppressWarnings("serial")
+    final public static String[] DEFAULT_ALLOWED_HEADERS = new ArrayList<String>() {
+        {
+            add(DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*");
+        }
+    }.toArray(new String[] {});
 
-	/**
-	 * Default allowes methods.
-	 */
-	final public static String[] DEFAULT_ALLOWED_METHODS = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
+    /**
+     * Default allowes methods.
+     */
+    final public static String[] DEFAULT_ALLOWED_METHODS = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
 
 }

@@ -32,18 +32,18 @@ import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
  */
 public class CompositeSecurityVerifierAdapter extends GenericOperatorAdapter<VerifyKind, SecurityVerifier> {
 
-	public CompositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
-		super(verifiers);
-	}
+    public CompositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
+        super(verifiers);
+    }
 
-	/**
-	 * Making the adaptation actually execute securityVerifier.
-	 *
-	 * @param request
-	 * @return
-	 */
-	public SecurityVerifier forOperator(@NotNull HttpServletRequest request) {
-		return forOperator(VerifyKind.of(request));
-	}
+    /**
+     * Making the adaptation actually execute securityVerifier.
+     *
+     * @param request
+     * @return
+     */
+    public SecurityVerifier forOperator(@NotNull HttpServletRequest request) {
+        return forOperator(VerifyKind.of(request));
+    }
 
 }

@@ -33,17 +33,17 @@ import com.wl4g.infra.core.kit.access.IPAccessControl.IPAccessProperties;
  */
 public class AccessControlAutoConfiguration {
 
-	@Bean
-	@ConfigurationProperties(prefix = IP_ACCESS_PREFIX)
-	public IPAccessProperties ipAccessProperties() {
-		return new IPAccessProperties();
-	}
+    @Bean
+    @ConfigurationProperties(prefix = IP_ACCESS_PREFIX)
+    public IPAccessProperties ipAccessProperties() {
+        return new IPAccessProperties();
+    }
 
-	@Bean
-	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
-		return new IPAccessControl(properties);
-	}
+    @Bean
+    public IPAccessControl ipAccessControl(IPAccessProperties properties) {
+        return new IPAccessControl(properties);
+    }
 
-	final static String IP_ACCESS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".acl";
+    final static String IP_ACCESS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".acl";
 
 }

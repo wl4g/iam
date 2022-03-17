@@ -30,9 +30,9 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 import com.wl4g.iam.core.authc.IamAuthenticationToken;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
-import com.wl4g.iam.core.exception.TicketValidateException;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
+import com.wl4g.iam.core.exception.ServiceTicketValidateException;
 
 import static com.wl4g.infra.common.lang.Assert2.*;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
@@ -75,7 +75,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 	public FastCasAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidateRequest, TicketValidateResult<IamPrincipal>> validator) {
+			IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> validator) {
 		super(config, validator);
 		super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
 	}
@@ -99,7 +99,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidateResult<IamPrincipal> validResult = doRequestRemoteTicketValidation(token, granticket);
+			ServiceTicketValidateModel<IamPrincipal> validResult = doRequestRemoteTicketValidation(token, granticket);
 
 			// Grant ticket assertion .
 			assertTicketValidation(validResult);
@@ -180,16 +180,16 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param granticket
 	 * @return
 	 */
-	private TicketValidateResult<IamPrincipal> doRequestRemoteTicketValidation(IamAuthenticationToken token,
+	private ServiceTicketValidateModel<IamPrincipal> doRequestRemoteTicketValidation(IamAuthenticationToken token,
 			String granticket) {
 		/**
 		 * The purpose of this function is to make iam-web a new child,
 		 * dataCipherKey/accesstoken.
 		 * 
-		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)
+		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(ServiceTicketValidateModel)
 		 */
 		String sessionId = valueOf(getSession(true).getId());
-		return ticketValidator.validate(new TicketValidateRequest(granticket, config.getServiceName(), sessionId)
+		return ticketValidator.validate(new ServiceTicketValidateRequest(granticket, config.getServiceName(), sessionId)
 				.withExtraParameters(token.getExtraParameters()));
 	}
 
@@ -197,21 +197,21 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * Assert ticket validate failure
 	 * 
 	 * @param assertion
-	 * @throws TicketValidateException
+	 * @throws ServiceTicketValidateException
 	 */
-	private void assertTicketValidation(TicketValidateResult<IamPrincipal> assertion) throws TicketValidateException {
+	private void assertTicketValidation(ServiceTicketValidateModel<IamPrincipal> assertion) throws ServiceTicketValidateException {
 		if (isNull(assertion)) {
-			throw new TicketValidateException("ticket assertion must not be null");
+			throw new ServiceTicketValidateException("ticket assertion must not be null");
 		}
 		IamPrincipal info = assertion.getIamPrincipal();
 		if (isNull(info)) {
-			throw new TicketValidateException("Principal info must not be null");
+			throw new ServiceTicketValidateException("Principal info must not be null");
 		}
 		if (isNull(info.getStoredCredentials())) {
-			throw new TicketValidateException("grant ticket must not be null");
+			throw new ServiceTicketValidateException("grant ticket must not be null");
 		}
 		if (isNull(info.getAttributes()) || info.getAttributes().isEmpty()) {
-			throw new TicketValidateException("'principal.attributes' must not be empty");
+			throw new ServiceTicketValidateException("'principal.attributes' must not be empty");
 		}
 		if (isBlank((String) info.getRoles())) {
 			log.warn("Principal '{}' role is empty", info.getPrincipal());

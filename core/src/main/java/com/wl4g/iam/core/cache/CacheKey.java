@@ -37,181 +37,181 @@ import com.wl4g.infra.common.serialize.ProtostuffUtils;
  * @since
  */
 public class CacheKey implements Serializable {
-	private static final long serialVersionUID = 3452072504066624385L;
+    private static final long serialVersionUID = 3452072504066624385L;
 
-	private String key;
-	private Integer expire; // 0 means never expired.
-	private Class<?> valueClass;
-	private Serializer serializer = PB_SERIALIZER;
+    private String key;
+    private Integer expire; // 0 means never expired.
+    private Class<?> valueClass;
+    private Serializer serializer = PB_SERIALIZER;
 
-	public CacheKey(Serializable key) {
-		this(key, -1); // -1:not overdue
-	}
+    public CacheKey(Serializable key) {
+        this(key, -1); // -1:not overdue
+    }
 
-	public CacheKey(byte[] key) {
-		this.key = new String(key);
-		this.expire = 0;
-	}
+    public CacheKey(byte[] key) {
+        this.key = new String(key);
+        this.expire = 0;
+    }
 
-	public CacheKey(Serializable key, Class<?> valueClass) {
-		notNull(key, "'key' must not be null");
-		notNull(valueClass, "'valueClass' must not be null");
-		this.key = getRealTypeKeyToString(key);
-		this.valueClass = valueClass;
-	}
+    public CacheKey(Serializable key, Class<?> valueClass) {
+        notNull(key, "'key' must not be null");
+        notNull(valueClass, "'valueClass' must not be null");
+        this.key = getRealTypeKeyToString(key);
+        this.valueClass = valueClass;
+    }
 
-	public CacheKey(Serializable key, long expireMs) {
-		this(key, safeLongToInt(MILLISECONDS.toSeconds(expireMs)));
-	}
+    public CacheKey(Serializable key, long expireMs) {
+        this(key, safeLongToInt(MILLISECONDS.toSeconds(expireMs)));
+    }
 
-	public CacheKey(Serializable key, int expireSec) {
-		notNull(key, "'key' must not be null");
-		this.key = getRealTypeKeyToString(key);
-		this.expire = expireSec;
-	}
+    public CacheKey(Serializable key, int expireSec) {
+        notNull(key, "'key' must not be null");
+        this.key = getRealTypeKeyToString(key);
+        this.expire = expireSec;
+    }
 
-	public byte[] getKey(String prefix) {
-		return toKeyBytes(prefix, key);
-	}
+    public byte[] getKey(String prefix) {
+        return toKeyBytes(prefix, key);
+    }
 
-	public byte[] getKey() {
-		return getKey(null);
-	}
+    public byte[] getKey() {
+        return getKey(null);
+    }
 
-	public boolean hasExpire() {
-		return (!isNull(getExpire()) && getExpire() >= 0);
-	}
+    public boolean hasExpire() {
+        return (!isNull(getExpire()) && getExpire() >= 0);
+    }
 
-	public Integer getExpire() {
-		return expire;
-	}
+    public Integer getExpire() {
+        return expire;
+    }
 
-	public Long getExpireMs() {
-		if (hasExpire()) {
-			return TimeUnit.SECONDS.toMillis(getExpire());
-		}
-		return null;
-	}
+    public Long getExpireMs() {
+        if (hasExpire()) {
+            return TimeUnit.SECONDS.toMillis(getExpire());
+        }
+        return null;
+    }
 
-	public Class<?> getValueClass() {
-		return valueClass;
-	}
+    public Class<?> getValueClass() {
+        return valueClass;
+    }
 
-	public CacheKey serializer(Serializer serializer) {
-		notNull(serializer, "'serializer' must not be null");
-		this.serializer = serializer;
-		return this;
-	}
+    public CacheKey serializer(Serializer serializer) {
+        notNull(serializer, "'serializer' must not be null");
+        this.serializer = serializer;
+        return this;
+    }
 
-	public Serializer getSerializer() {
-		return serializer;
-	}
+    public Serializer getSerializer() {
+        return serializer;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [" + (key != null ? "key=" + key + ", " : "")
-				+ (expire != null ? "expire=" + expire + ", " : "") + (valueClass != null ? "valueClass=" + valueClass : "")
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [" + (key != null ? "key=" + key + ", " : "")
+                + (expire != null ? "expire=" + expire + ", " : "") + (valueClass != null ? "valueClass=" + valueClass : "")
+                + "]";
+    }
 
-	/**
-	 * Gets real type key to string.
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public static String getRealTypeKeyToString(Serializable key) {
-		if (key instanceof byte[]) {
-			return new String((byte[]) key);
-		} else if (key instanceof Byte[]) {
-			Byte[] _key = (Byte[]) key;
-			byte[] __key = new byte[_key.length];
-			for (int i = 0; i < _key.length; i++) {
-				__key[i] = _key[i];
-			}
-			return new String(__key);
-		}
-		return key.toString();
-	}
+    /**
+     * Gets real type key to string.
+     * 
+     * @param key
+     * @return
+     */
+    public static String getRealTypeKeyToString(Serializable key) {
+        if (key instanceof byte[]) {
+            return new String((byte[]) key);
+        } else if (key instanceof Byte[]) {
+            Byte[] _key = (Byte[]) key;
+            byte[] __key = new byte[_key.length];
+            for (int i = 0; i < _key.length; i++) {
+                __key[i] = _key[i];
+            }
+            return new String(__key);
+        }
+        return key.toString();
+    }
 
-	/**
-	 * To key bytes.
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public static byte[] toKeyBytes(String key) {
-		return toKeyBytes(null, key);
-	}
+    /**
+     * To key bytes.
+     * 
+     * @param key
+     * @return
+     */
+    public static byte[] toKeyBytes(String key) {
+        return toKeyBytes(null, key);
+    }
 
-	/**
-	 * To key bytes.
-	 * 
-	 * @param prefix
-	 * @param key
-	 * @return
-	 */
-	public static byte[] toKeyBytes(String prefix, String key) {
-		notNull(key, "'key' must not be null");
-		return ((prefix == null ? "" : prefix) + key).getBytes(Charsets.UTF_8);
-	}
+    /**
+     * To key bytes.
+     * 
+     * @param prefix
+     * @param key
+     * @return
+     */
+    public static byte[] toKeyBytes(String prefix, String key) {
+        notNull(key, "'key' must not be null");
+        return ((prefix == null ? "" : prefix) + key).getBytes(Charsets.UTF_8);
+    }
 
-	/**
-	 * Serializer
-	 *
-	 * @author wangl.sir
-	 * @version v1.0 2019年1月22日
-	 * @since
-	 */
-	public static interface Serializer {
+    /**
+     * Serializer
+     *
+     * @author wangl.sir
+     * @version v1.0 2019年1月22日
+     * @since
+     */
+    public static interface Serializer {
 
-		/**
-		 * Serialization
-		 * 
-		 * @param bean
-		 * @return
-		 */
-		<T> byte[] serialize(T bean);
+        /**
+         * Serialization
+         * 
+         * @param bean
+         * @return
+         */
+        <T> byte[] serialize(T bean);
 
-		/**
-		 * Deserialization
-		 * 
-		 * @param data
-		 * @param clazz
-		 * @return
-		 */
-		<T> T deserialize(byte[] data, Class<T> clazz);
-	}
+        /**
+         * Deserialization
+         * 
+         * @param data
+         * @param clazz
+         * @return
+         */
+        <T> T deserialize(byte[] data, Class<T> clazz);
+    }
 
-	/**
-	 * Jdk object serializer
-	 */
-	final public static Serializer JDK_SERIALIZER = new Serializer() {
-		@Override
-		public <T> byte[] serialize(T bean) {
-			return JdkSerializeUtils.serialize(bean);
-		}
+    /**
+     * Jdk object serializer
+     */
+    final public static Serializer JDK_SERIALIZER = new Serializer() {
+        @Override
+        public <T> byte[] serialize(T bean) {
+            return JdkSerializeUtils.serialize(bean);
+        }
 
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T deserialize(byte[] data, Class<T> clazz) {
-			return (T) JdkSerializeUtils.unserialize(data);
-		}
-	};
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T deserialize(byte[] data, Class<T> clazz) {
+            return (T) JdkSerializeUtils.unserialize(data);
+        }
+    };
 
-	/**
-	 * Protostuff object serializer
-	 */
-	final public static Serializer PB_SERIALIZER = new Serializer() {
-		@Override
-		public <T> byte[] serialize(T bean) {
-			return ProtostuffUtils.serialize(bean);
-		}
+    /**
+     * Protostuff object serializer
+     */
+    final public static Serializer PB_SERIALIZER = new Serializer() {
+        @Override
+        public <T> byte[] serialize(T bean) {
+            return ProtostuffUtils.serialize(bean);
+        }
 
-		@Override
-		public <T> T deserialize(byte[] data, Class<T> clazz) {
-			return ProtostuffUtils.deserialize(data, clazz);
-		}
-	};
+        @Override
+        public <T> T deserialize(byte[] data, Class<T> clazz) {
+            return ProtostuffUtils.deserialize(data, clazz);
+        }
+    };
 
 }

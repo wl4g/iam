@@ -31,53 +31,53 @@ import java.util.List;
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月19日 v1.0.0
  */
-public abstract class RiskControlSecurityUtils extends IamAuthenticatingUtils {
+public abstract class RiskSecurityUtils extends IamAuthenticatingUtils {
 
-	//
-	// TODO Using risk service??
-	//
+    //
+    // TODO Using risk service??
+    //
 
-	/**
-	 * Gets version1 risk factor(e.g. Client remote IP and loginId)
-	 *
-	 * @param remoteHost
-	 * @param uid
-	 * @return
-	 */
-	public static List<String> getV1Factors(String remoteHost, String uid) {
-		return new ArrayList<String>(2) {
-			private static final long serialVersionUID = -5976569540781454836L;
-			{
-				String hostFactor = getIpFactor(remoteHost);
-				if (isNotBlank(hostFactor)) {
-					add(hostFactor);
-				}
-				String uidFactor = getUIDFactor(uid);
-				if (isNotBlank(uidFactor)) {
-					add(uidFactor);
-				}
-			}
-		};
-	}
+    /**
+     * Gets version1 risk factor(e.g. Client remote IP and loginId)
+     *
+     * @param remoteHost
+     * @param uid
+     * @return
+     */
+    public static List<String> getV1Factors(String remoteHost, String uid) {
+        return new ArrayList<String>(2) {
+            private static final long serialVersionUID = -5976569540781454836L;
+            {
+                String hostFactor = getIpFactor(remoteHost);
+                if (isNotBlank(hostFactor)) {
+                    add(hostFactor);
+                }
+                String uidFactor = getUIDFactor(uid);
+                if (isNotBlank(uidFactor)) {
+                    add(uidFactor);
+                }
+            }
+        };
+    }
 
-	/**
-	 * Gets remote IP limit factor.
-	 *
-	 * @param remoteHost
-	 * @return
-	 */
-	public static String getIpFactor(String remoteHost) {
-		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMIT_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
-	}
+    /**
+     * Gets remote IP limit factor.
+     *
+     * @param remoteHost
+     * @return
+     */
+    public static String getIpFactor(String remoteHost) {
+        return isNotBlank(remoteHost) ? (KEY_FAIL_LIMIT_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
+    }
 
-	/**
-	 * Gets login UID limit factor.
-	 *
-	 * @param uid
-	 * @return
-	 */
-	public static String getUIDFactor(String uid) {
-		return isNotBlank(uid) ? (KEY_FAIL_LIMIT_UID_PREFIX + uid) : EMPTY;
-	}
+    /**
+     * Gets login UID limit factor.
+     *
+     * @param uid
+     * @return
+     */
+    public static String getUIDFactor(String uid) {
+        return isNotBlank(uid) ? (KEY_FAIL_LIMIT_UID_PREFIX + uid) : EMPTY;
+    }
 
 }

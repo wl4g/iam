@@ -29,31 +29,31 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
  * @see
  */
 public class EmptyOauth2AuthenicationInfo implements IamAuthenticationInfo {
-	private static final long serialVersionUID = -1824494219125412412L;
+    private static final long serialVersionUID = -1824494219125412412L;
 
-	/**
-	 * Default only instance
-	 */
-	final public static EmptyOauth2AuthenicationInfo EMPTY = new EmptyOauth2AuthenicationInfo();
+    /**
+     * Default only instance
+     */
+    final public static EmptyOauth2AuthenicationInfo EMPTY = new EmptyOauth2AuthenicationInfo();
 
-	/**
-	 * Empty principal collection
-	 */
-	final private static PrincipalCollection emptyPrincipalCollection = new SimplePrincipalMap();
+    /**
+     * Empty principal collection
+     */
+    final private static PrincipalCollection emptyPrincipalCollection = new SimplePrincipalMap();
 
-	@Override
-	public PrincipalCollection getPrincipals() {
-		return emptyPrincipalCollection;
-	}
+    @Override
+    public PrincipalCollection getPrincipals() {
+        return emptyPrincipalCollection;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
-	@Override
-	public IamPrincipal getIamPrincipal() {
-		return null;
-	}
+    @Override
+    public IamPrincipal getIamPrincipal() {
+        return null;
+    }
 
 }

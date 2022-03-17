@@ -36,37 +36,37 @@ import com.wl4g.iam.core.security.xss.resolver.XssSecurityResolver;
  */
 public class XssAutoConfiguration {
 
-	//
-	// X S S _ P R O T E C T I O N _ C O N F I G's.
-	//
+    //
+    // X S S _ P R O T E C T I O N _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
-	public XssProperties xssProperties() {
-		return new XssProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
+    @ConfigurationProperties(prefix = KEY_XSS_PREFIX)
+    public XssProperties xssProperties() {
+        return new XssProperties();
+    }
 
-	@Bean
-	@ConditionalOnBean(XssProperties.class)
-	public DefaultXssSecurityResolver defaultXssSecurityResolver() {
-		return new DefaultXssSecurityResolver();
-	}
+    @Bean
+    @ConditionalOnBean(XssProperties.class)
+    public DefaultXssSecurityResolver defaultXssSecurityResolver() {
+        return new DefaultXssSecurityResolver();
+    }
 
-	@Bean
-	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssSecurityResolverInterceptor xssSecurityResolverInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssSecurityResolverInterceptor(config, resolver);
-	}
+    @Bean
+    @ConditionalOnBean({ XssSecurityResolver.class })
+    public XssSecurityResolverInterceptor xssSecurityResolverInterceptor(XssProperties config, XssSecurityResolver resolver) {
+        return new XssSecurityResolverInterceptor(config, resolver);
+    }
 
-	@Bean
-	@ConditionalOnBean(XssSecurityResolverInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssSecurityResolverInterceptor advice) {
-		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression(config.getExpression());
-		advisor.setAdvice(advice);
-		return advisor;
-	}
+    @Bean
+    @ConditionalOnBean(XssSecurityResolverInterceptor.class)
+    public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
+            XssSecurityResolverInterceptor advice) {
+        AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
+        advisor.setExpression(config.getExpression());
+        advisor.setAdvice(advice);
+        return advisor;
+    }
 
 }

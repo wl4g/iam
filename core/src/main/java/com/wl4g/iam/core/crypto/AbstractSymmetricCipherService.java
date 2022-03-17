@@ -28,6 +28,6 @@ import com.wl4g.infra.common.log.SmartLogger;
  */
 public abstract class AbstractSymmetricCipherService implements IamCipherService {
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
 }

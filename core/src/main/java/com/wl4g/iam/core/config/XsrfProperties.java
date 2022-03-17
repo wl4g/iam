@@ -49,201 +49,201 @@ import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
  * @since
  */
 public class XsrfProperties implements InitializingBean, Serializable {
-	final private static long serialVersionUID = -5701992202711439835L;
+    final private static long serialVersionUID = -5701992202711439835L;
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	/**
-	 * Default xsrf cookie name.
-	 */
-	private String xsrfCookieName = null;
+    /**
+     * Default xsrf cookie name.
+     */
+    private String xsrfCookieName = null;
 
-	/**
-	 * Default xsrf parameter name.
-	 */
-	private String xsrfParamName = DEFAULT_XSRF_PARAM_NAME;
+    /**
+     * Default xsrf parameter name.
+     */
+    private String xsrfParamName = DEFAULT_XSRF_PARAM_NAME;
 
-	/**
-	 * Default xsrf header name.
-	 */
-	private String xsrfHeaderName = DEFAULT_XSRF_HEADER_NAME;
+    /**
+     * Default xsrf header name.
+     */
+    private String xsrfHeaderName = DEFAULT_XSRF_HEADER_NAME;
 
-	/**
-	 * Enable cookie http only.</br>
-	 * 
-	 * <p>
-	 * For the implementation of xsrf token, for the front-end and back-end
-	 * separation architecture, generally JS obtains and appends the cookie to
-	 * the headers. At this time, httponly = true cannot be set
-	 * </p>
-	 */
-	private boolean cookieHttpOnly = false;
+    /**
+     * Enable cookie http only.</br>
+     * 
+     * <p>
+     * For the implementation of xsrf token, for the front-end and back-end
+     * separation architecture, generally JS obtains and appends the cookie to
+     * the headers. At this time, httponly = true cannot be set
+     * </p>
+     */
+    private boolean cookieHttpOnly = false;
 
-	/**
-	 * The path that the Cookie will be created with. This will override the
-	 * default functionality which uses the request context as the path.
-	 */
-	private String cookiePath;
+    /**
+     * The path that the Cookie will be created with. This will override the
+     * default functionality which uses the request context as the path.
+     */
+    private String cookiePath;
 
-	/**
-	 * Ignore xsrf validation request mappings. </br>
-	 * 
-	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
-	 */
-	private List<String> excludeValidUriPatterns = new ArrayList<>();
+    /**
+     * Ignore xsrf validation request mappings. </br>
+     * 
+     * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
+     */
+    private List<String> excludeValidUriPatterns = new ArrayList<>();
 
-	//
-	// --- Temporary fields. ---
-	//
+    //
+    // --- Temporary fields. ---
+    //
 
-	/**
-	 * Temporary core configuration.
-	 */
-	@Autowired
-	private transient AbstractIamProperties<? extends ParamProperties> cConfig;
+    /**
+     * Temporary core configuration.
+     */
+    @Autowired
+    private transient AbstractIamProperties<? extends ParamProperties> cConfig;
 
-	/**
-	 * Temporary cors configuration.
-	 */
-	@Autowired
-	private transient CorsProperties corsConfig;
+    /**
+     * Temporary cors configuration.
+     */
+    @Autowired
+    private transient CorsProperties corsConfig;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Apply default settings.
-		applyDefaultPropertiesSet();
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Apply default settings.
+        applyDefaultPropertiesSet();
 
-		if (!isEmpty(excludeValidUriPatterns)) {
-			// Remove duplicate.
-			disDupCollection(excludeValidUriPatterns);
-		}
+        if (!isEmpty(excludeValidUriPatterns)) {
+            // Remove duplicate.
+            disDupCollection(excludeValidUriPatterns);
+        }
 
-		// @Deprecated, Please use external cors custom configuration.
-		//
-		// // Add build-in xsrf endpoint cors rules.
-		// CorsRule xsrfCors = new CorsRule();
-		// /**
-		// * @see {@link
-		// com.wl4g.devops.iam.common.web.XsrfProtectionEndpoint#applyXsrfToken(HttpServletRequest,
-		// HttpServletResponse)}
-		// */
-		// xsrfCors.addAllowsMethods(HEAD.name());
-		// xsrfCors.addAllowsOrigins(allowsOrigins);
-		// corsConfig.getRules().put(DEFAULT_XSRF_BASE_PATTERN, xsrfCors);
+        // @Deprecated, Please use external cors custom configuration.
+        //
+        // // Add build-in xsrf endpoint cors rules.
+        // CorsRule xsrfCors = new CorsRule();
+        // /**
+        // * @see {@link
+        // com.wl4g.devops.iam.common.web.XsrfProtectionEndpoint#applyXsrfToken(HttpServletRequest,
+        // HttpServletResponse)}
+        // */
+        // xsrfCors.addAllowsMethods(HEAD.name());
+        // xsrfCors.addAllowsOrigins(allowsOrigins);
+        // corsConfig.getRules().put(DEFAULT_XSRF_BASE_PATTERN, xsrfCors);
 
-		// Check header name with cors allowed.
-		corsConfig.assertCorsHeaders(singletonList(getXsrfHeaderName()));
-	}
+        // Check header name with cors allowed.
+        corsConfig.assertCorsHeaders(singletonList(getXsrfHeaderName()));
+    }
 
-	public String getXsrfCookieName() {
-		return xsrfCookieName;
-	}
+    public String getXsrfCookieName() {
+        return xsrfCookieName;
+    }
 
-	public XsrfProperties setXsrfCookieName(String xsrfCookieName) {
-		this.xsrfCookieName = xsrfCookieName;
-		return this;
-	}
+    public XsrfProperties setXsrfCookieName(String xsrfCookieName) {
+        this.xsrfCookieName = xsrfCookieName;
+        return this;
+    }
 
-	public String getXsrfParamName() {
-		return xsrfParamName;
-	}
+    public String getXsrfParamName() {
+        return xsrfParamName;
+    }
 
-	public XsrfProperties setXsrfParamName(String xsrfParamName) {
-		this.xsrfParamName = xsrfParamName;
-		return this;
-	}
+    public XsrfProperties setXsrfParamName(String xsrfParamName) {
+        this.xsrfParamName = xsrfParamName;
+        return this;
+    }
 
-	public String getXsrfHeaderName() {
-		return xsrfHeaderName;
-	}
+    public String getXsrfHeaderName() {
+        return xsrfHeaderName;
+    }
 
-	public XsrfProperties setXsrfHeaderName(String xsrfHeaderName) {
-		// hasTextOf(xsrfHeaderName, "xsrfHeaderName");
-		this.xsrfHeaderName = xsrfHeaderName;
-		return this;
-	}
+    public XsrfProperties setXsrfHeaderName(String xsrfHeaderName) {
+        // hasTextOf(xsrfHeaderName, "xsrfHeaderName");
+        this.xsrfHeaderName = xsrfHeaderName;
+        return this;
+    }
 
-	public boolean isCookieHttpOnly() {
-		return cookieHttpOnly;
-	}
+    public boolean isCookieHttpOnly() {
+        return cookieHttpOnly;
+    }
 
-	/**
-	 * Sets the HttpOnly attribute on the cookie containing the CSRF token. The
-	 * cookie will only be marked as HttpOnly if both
-	 * <code>cookieHttpOnly</code> is <code>true</code> and the underlying
-	 * version of Servlet is 3.0 or greater. Defaults to <code>true</code> if
-	 * the underlying version of Servlet is 3.0 or greater. NOTE: The
-	 * {@link Cookie#setHttpOnly(boolean)} was introduced in Servlet 3.0.
-	 *
-	 * @param cookieHttpOnly
-	 *            <code>true</code> sets the HttpOnly attribute,
-	 *            <code>false</code> does not set it (depending on Servlet
-	 *            version)
-	 * @throws IllegalArgumentException
-	 *             if <code>cookieHttpOnly</code> is <code>true</code> and the
-	 *             underlying version of Servlet is less than 3.0
-	 */
-	public XsrfProperties setCookieHttpOnly(boolean cookieHttpOnly) {
-		this.cookieHttpOnly = cookieHttpOnly;
-		return this;
-	}
+    /**
+     * Sets the HttpOnly attribute on the cookie containing the CSRF token. The
+     * cookie will only be marked as HttpOnly if both
+     * <code>cookieHttpOnly</code> is <code>true</code> and the underlying
+     * version of Servlet is 3.0 or greater. Defaults to <code>true</code> if
+     * the underlying version of Servlet is 3.0 or greater. NOTE: The
+     * {@link Cookie#setHttpOnly(boolean)} was introduced in Servlet 3.0.
+     *
+     * @param cookieHttpOnly
+     *            <code>true</code> sets the HttpOnly attribute,
+     *            <code>false</code> does not set it (depending on Servlet
+     *            version)
+     * @throws IllegalArgumentException
+     *             if <code>cookieHttpOnly</code> is <code>true</code> and the
+     *             underlying version of Servlet is less than 3.0
+     */
+    public XsrfProperties setCookieHttpOnly(boolean cookieHttpOnly) {
+        this.cookieHttpOnly = cookieHttpOnly;
+        return this;
+    }
 
-	public String getCookiePath() {
-		return cookiePath;
-	}
+    public String getCookiePath() {
+        return cookiePath;
+    }
 
-	public XsrfProperties setCookiePath(String cookiePath) {
-		hasTextOf(cookiePath, "cookiePath");
-		this.cookiePath = cookiePath;
-		return this;
-	}
+    public XsrfProperties setCookiePath(String cookiePath) {
+        hasTextOf(cookiePath, "cookiePath");
+        this.cookiePath = cookiePath;
+        return this;
+    }
 
-	/**
-	 * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
-	 * @return
-	 */
-	public List<String> getExcludeValidUriPatterns() {
-		return excludeValidUriPatterns;
-	}
+    /**
+     * @see {@link com.wl4g.iam.test.configure.MockContextConfigureInitializer#applyDefaultMockContextProperties()}
+     * @return
+     */
+    public List<String> getExcludeValidUriPatterns() {
+        return excludeValidUriPatterns;
+    }
 
-	public XsrfProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
-		// if (!isEmpty(excludeValidXsrfMapping)) {
-		// this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
-		// }
-		this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
-		return this;
-	}
+    public XsrfProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
+        // if (!isEmpty(excludeValidXsrfMapping)) {
+        // this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
+        // }
+        this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
+        return this;
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
-	/**
-	 * Apply default properties fields settings.
-	 */
-	private void applyDefaultPropertiesSet() {
-		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
-		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+    /**
+     * Apply default properties fields settings.
+     */
+    private void applyDefaultPropertiesSet() {
+        getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
+        getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
 
-		// Automatically exclude patterns with filter chains of anon type
-		cConfig.getFilterChain().forEach((pattern, filter) -> {
-			if (StringUtils.equals(filter, anon.name())) {
-				getExcludeValidUriPatterns().add(pattern);
-			}
-		});
+        // Automatically exclude patterns with filter chains of anon type
+        cConfig.getFilterChain().forEach((pattern, filter) -> {
+            if (StringUtils.equals(filter, anon.name())) {
+                getExcludeValidUriPatterns().add(pattern);
+            }
+        });
 
-	}
+    }
 
-	final public static String KEY_XSRF_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xsrf";
+    final public static String KEY_XSRF_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xsrf";
 
-	/**
-	 * Use to: IAM-{serviceName}-XSRF-TOKEN
-	 */
-	@Deprecated
-	final public static String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
-	final public static String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
-	final public static String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
-	final public static String DEFAULT_XSRF_BASE_PATTERN = URI_XSRF_BASE + "/**";
+    /**
+     * Use to: IAM-{serviceName}-XSRF-TOKEN
+     */
+    @Deprecated
+    final public static String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
+    final public static String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
+    final public static String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
+    final public static String DEFAULT_XSRF_BASE_PATTERN = URI_XSRF_BASE + "/**";
 
 }

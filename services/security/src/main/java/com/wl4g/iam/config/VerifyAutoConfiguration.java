@@ -17,7 +17,7 @@ package com.wl4g.iam.config;
 
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.iam.annotation.VerifyAuthController;
-import com.wl4g.iam.web.VerifyAuthenticationEndpoint;
+import com.wl4g.iam.web.verification.VerificationController;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VERIFY_BASE;
 
@@ -38,14 +38,14 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
 public class VerifyAutoConfiguration extends PrefixHandlerMappingSupport {
 
-	@Bean
-	public VerifyAuthenticationEndpoint verifyAuthenticationEndpoint() {
-		return new VerifyAuthenticationEndpoint();
-	}
+    @Bean
+    public VerificationController verifyAuthenticationEndpoint() {
+        return new VerificationController();
+    }
 
-	@Bean
-	public Object verifyAuthenticationEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_VERIFY_BASE, VerifyAuthController.class);
-	}
+    @Bean
+    public Object verifyAuthenticationEndpointPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_S_VERIFY_BASE, VerifyAuthController.class);
+    }
 
 }

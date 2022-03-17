@@ -36,28 +36,28 @@ import com.wl4g.iam.core.authz.permission.EnhancedWildcardPermissionResovler;
  */
 public class EnhancedModularRealmAuthorizer extends ModularRealmAuthorizer {
 
-	public EnhancedModularRealmAuthorizer(Collection<Realm> realms) {
-		super(realms);
-		setPermissionResolver(new EnhancedWildcardPermissionResovler());
-	}
+    public EnhancedModularRealmAuthorizer(Collection<Realm> realms) {
+        super(realms);
+        setPermissionResolver(new EnhancedWildcardPermissionResovler());
+    }
 
-	/**
-	 * successfully Only after all realms are certified can they be considered
-	 * as passed.
-	 */
-	// @Override
-	// public boolean isPermitted(PrincipalCollection principals, String
-	// permission) {
-	// assertRealmsConfigured();
-	// for (Realm realm : getRealms()) {
-	// if (!(realm instanceof Authorizer)) {
-	// continue;
-	// }
-	// if (!((Authorizer) realm).isPermitted(principals, permission)) {
-	// return (permitted = false);
-	// }
-	// }
-	// return !getRealms().isEmpty();
-	// }
+    /**
+     * successfully Only after all realms are certified can they be considered
+     * as passed.
+     */
+    // @Override
+    // public boolean isPermitted(PrincipalCollection principals, String
+    // permission) {
+    // assertRealmsConfigured();
+    // for (Realm realm : getRealms()) {
+    // if (!(realm instanceof Authorizer)) {
+    // continue;
+    // }
+    // if (!((Authorizer) realm).isPermitted(principals, permission)) {
+    // return (permitted = false);
+    // }
+    // }
+    // return !getRealms().isEmpty();
+    // }
 
 }

@@ -59,97 +59,97 @@ import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
-	@Bean
-	public SnsProperties snsProperties() {
-		return new SnsProperties();
-	}
+    @Bean
+    public SnsProperties snsProperties() {
+        return new SnsProperties();
+    }
 
-	// Social provider oauth2 template's
-	//
+    // Social provider oauth2 template's
+    //
 
-	@Bean
-	public QQOauth2Template qqOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
-		return new QQOauth2Template(config.getQq(), restTemplate, cacheManager);
-	}
+    @Bean
+    public QQOauth2Template qqOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+        return new QQOauth2Template(config.getQq(), restTemplate, cacheManager);
+    }
 
-	@Bean
-	public WechatOauth2Template wechatOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
-		return new WechatOauth2Template(config.getWechat(), restTemplate, cacheManager);
-	}
+    @Bean
+    public WechatOauth2Template wechatOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+        return new WechatOauth2Template(config.getWechat(), restTemplate, cacheManager);
+    }
 
-	@Bean
-	public WechatMpOauth2Template wechatMpOauth2Template(SnsProperties config, RestTemplate restTemplate,
-			CacheManager cacheManager) {
-		return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
-	}
+    @Bean
+    public WechatMpOauth2Template wechatMpOauth2Template(SnsProperties config, RestTemplate restTemplate,
+            CacheManager cacheManager) {
+        return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Bean
-	public OAuth2ApiBindingFactory oAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
-		return new DefaultOAuth2ApiBindingFactory(apis);
-	}
+    @SuppressWarnings("rawtypes")
+    @Bean
+    public OAuth2ApiBindingFactory oAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
+        return new DefaultOAuth2ApiBindingFactory(apis);
+    }
 
-	//
-	// SNS security handler's
-	//
+    //
+    // SNS security handler's
+    //
 
-	@Bean
-	public DelegateSnsHandler delegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
-		return new DelegateSnsHandler(config, handlers);
-	}
+    @Bean
+    public DelegateSnsHandler delegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
+        return new DelegateSnsHandler(config, handlers);
+    }
 
-	@Bean
-	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
-	}
+    @Bean
+    public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
+        return new LoginSnsHandler(config, snsConfig, connectFactory, context);
+    }
 
-	@Bean
-	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
-	}
+    @Bean
+    public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+        return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
+    }
 
-	@Bean
-	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-		return new BindingSnsHandler(config, snsConfig, connectFactory, context);
-	}
+    @Bean
+    public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+        return new BindingSnsHandler(config, snsConfig, connectFactory, context);
+    }
 
-	@Bean
-	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-		return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
-	}
+    @Bean
+    public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+        return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
+    }
 
-	@Bean
-	public SecondaryAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-		return new SecondaryAuthcSnsHandler(config, snsConfig, connectFactory, context);
-	}
+    @Bean
+    public SecondaryAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+        return new SecondaryAuthcSnsHandler(config, snsConfig, connectFactory, context);
+    }
 
-	//
-	// SNS controller's
-	//
+    //
+    // SNS controller's
+    //
 
-	@Bean
-	public DefaultOauth2SnsController defaultOauth2SnsController(IamProperties config, SnsProperties snsConfig,
-			DelegateSnsHandler delegate) {
-		return new DefaultOauth2SnsController(config, snsConfig, delegate);
-	}
+    @Bean
+    public DefaultOauth2SnsController defaultOauth2SnsController(IamProperties config, SnsProperties snsConfig,
+            DelegateSnsHandler delegate) {
+        return new DefaultOauth2SnsController(config, snsConfig, delegate);
+    }
 
-	@Bean
-	public Object snsControllerPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_SNS_BASE, SnsController.class);
-	}
+    @Bean
+    public Object snsControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_S_SNS_BASE, SnsController.class);
+    }
 
-	//
-	// SNS api operator's
-	//
+    //
+    // SNS api operator's
+    //
 
-	@Bean
-	public WechatMpApiOperator wechatMpApiOperator(IamProperties config, SnsProperties snsConfig) {
-		return new WechatMpApiOperator(config, snsConfig);
-	}
+    @Bean
+    public WechatMpApiOperator wechatMpApiOperator(IamProperties config, SnsProperties snsConfig) {
+        return new WechatMpApiOperator(config, snsConfig);
+    }
 
 }

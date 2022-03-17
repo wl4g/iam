@@ -33,14 +33,14 @@ import com.wl4g.iam.sns.support.Oauth2UserProfile;
  */
 public interface OAuth2ApiBinding<T extends Oauth2AccessToken, O extends Oauth2OpenId, U extends Oauth2UserProfile> {
 
-	String providerId();
+    String providerId();
 
-	String getAuthorizeCodeUrl(String state, Map<String, String> queryParams);
+    String getAuthorizeCodeUrl(String state, Map<String, String> queryParams);
 
-	T getAccessToken(String code);
+    T getAccessToken(String code);
 
-	O getUserOpenId(T accessToken);
+    O getUserOpenId(T accessToken);
 
-	U getUserInfo(String accessToken, String openId);
+    U getUserInfo(String accessToken, String openId);
 
 }

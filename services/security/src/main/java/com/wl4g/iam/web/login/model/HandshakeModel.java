@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web.model;
+package com.wl4g.iam.web.login.model;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
@@ -32,13 +32,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.iam.core.web.model.SessionInfo;
 
 /**
- * Pre-processing handshake result model. {@link HandshakeResult}
+ * Pre-processing handshake result model. {@link HandshakeModel}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月10日 v1.0.0
  * @see
  */
-public class HandshakeResult implements Serializable {
+public class HandshakeModel implements Serializable {
 	private static final long serialVersionUID = 2636163327046053795L;
 
 	/**
@@ -62,11 +62,11 @@ public class HandshakeResult implements Serializable {
 	@JsonProperty(KEY_SESSIONINFO_NAME)
 	private SessionInfo session = new SessionInfo();
 
-	public HandshakeResult() {
+	public HandshakeModel() {
 		super();
 	}
 
-	public HandshakeResult(String version) {
+	public HandshakeModel(String version) {
 		// hasTextOf(version, "version");
 		setVersion(version);
 	}
@@ -97,7 +97,7 @@ public class HandshakeResult implements Serializable {
 		return session;
 	}
 
-	public HandshakeResult setSessionInfo(SessionInfo session) {
+	public HandshakeModel setSessionInfo(SessionInfo session) {
 		notNullOf(session, "session");
 		this.session = session;
 		return this;

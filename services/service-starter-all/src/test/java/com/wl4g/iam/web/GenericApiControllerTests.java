@@ -27,21 +27,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.StandaloneIam;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.iam.core.web.AbstractApiEndpoint;
+import com.wl4g.iam.core.web.BaseApiController;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StandaloneIam.class)
 @FixMethodOrder(MethodSorters.JVM)
-public class GenericApiEndpointTests {
+public class GenericApiControllerTests {
 
-	@Autowired
-	private AbstractApiEndpoint endpoint;
+    @Autowired
+    private BaseApiController endpoint;
 
-	@Test
-	public void scanSessionsTest1() throws Exception {
-		RespBase<?> resp = endpoint.getSessions(new SessionQueryModel());
-		System.out.println(toJSONString(resp));
-	}
+    @Test
+    public void scanSessionsTest1() throws Exception {
+        RespBase<?> resp = endpoint.getSessions(new SessionQueryModel());
+        System.out.println(toJSONString(resp));
+    }
 
 }

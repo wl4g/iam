@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web.model;
+package com.wl4g.iam.web.login.model;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -21,13 +21,13 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import java.io.Serializable;
 
 /**
- * {@link IamPrincipalPermitsResult}
+ * {@link IamPrincipalPermitsModel}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月30日
  * @since
  */
-public class IamPrincipalPermitsResult implements Serializable {
+public class IamPrincipalPermitsModel implements Serializable {
 	private static final long serialVersionUID = 8802525988725357453L;
 
 	/** Authenticate principal role codes. */
@@ -36,10 +36,10 @@ public class IamPrincipalPermitsResult implements Serializable {
 	/** Authenticate principal permission. */
 	private String permissions = EMPTY;
 
-	public IamPrincipalPermitsResult() {
+	public IamPrincipalPermitsModel() {
 	}
 
-	public IamPrincipalPermitsResult(String roles, String permissions) {
+	public IamPrincipalPermitsModel(String roles, String permissions) {
 		setRoles(roles);
 		setPermissions(permissions);
 	}

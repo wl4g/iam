@@ -45,64 +45,64 @@ import com.wl4g.iam.core.handler.AuthenticatingHandler;
  */
 @SuppressWarnings("deprecation")
 public abstract class AbstractAuthenticatingHandler implements AuthenticatingHandler, InitializingBean {
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * IAM server configuration properties
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * IAM security context handler
-	 */
-	@Autowired
-	protected ServerSecurityConfigurer configurer;
+    /**
+     * IAM security context handler
+     */
+    @Autowired
+    protected ServerSecurityConfigurer configurer;
 
-	/**
-	 * IAM server security processor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM server security processor
+     */
+    @Autowired
+    protected ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * Key id generator
-	 */
-	@Autowired
-	protected SessionIdGenerator idGenerator;
+    /**
+     * Key id generator
+     */
+    @Autowired
+    protected SessionIdGenerator idGenerator;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-	protected SessionResourceMessageBundler bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    protected SessionResourceMessageBundler bundle;
 
-	/**
-	 * Distributed locks.
-	 */
-	@Autowired
-	protected JedisLockManager lockManager;
+    /**
+     * Distributed locks.
+     */
+    @Autowired
+    protected JedisLockManager lockManager;
 
-	/**
-	 * Enhanced cache manager.
-	 */
-	@Autowired
-	protected IamCacheManager cacheManager;
+    /**
+     * Enhanced cache manager.
+     */
+    @Autowired
+    protected IamCacheManager cacheManager;
 
-	/**
-	 * Rest template
-	 */
-	@Autowired
-	protected RestTemplate restTemplate;
+    /**
+     * Rest template
+     */
+    @Autowired
+    protected RestTemplate restTemplate;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		factory.setReadTimeout(10000);
-		factory.setConnectTimeout(6000);
-		factory.setMaxResponseSize(65535);
-		// factory.setSslContext(sslContext);
-		this.restTemplate = new RestTemplate(factory);
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+        factory.setReadTimeout(10000);
+        factory.setConnectTimeout(6000);
+        factory.setMaxResponseSize(65535);
+        // factory.setSslContext(sslContext);
+        this.restTemplate = new RestTemplate(factory);
+    }
 
 }

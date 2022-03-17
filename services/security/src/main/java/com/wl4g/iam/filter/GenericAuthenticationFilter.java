@@ -39,40 +39,40 @@ import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.*;
  */
 @IamFilter
 public class GenericAuthenticationFilter extends AbstractServerIamAuthenticationFilter<GenericAuthenticationToken> {
-	final public static String NAME = "generic";
+    final public static String NAME = "generic";
 
-	@Override
-	protected GenericAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		rejectRequestMethod(true, request, response, "POST");
+    @Override
+    protected GenericAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        rejectRequestMethod(true, request, response, "POST");
 
-		// Bsse required parameters.
-		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		final String cipherCredentials = getCleanParam(request, config.getParam().getCredentialsName());
-		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
-		final String clientSecretKey = getCleanParam(request, config.getParam().getClientSecretKeyName());
-		final String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
-		final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
+        // Bsse required parameters.
+        final String principal = getCleanParam(request, config.getParam().getPrincipalName());
+        final String cipherCredentials = getCleanParam(request, config.getParam().getCredentialsName());
+        final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
+        final String clientSecretKey = getCleanParam(request, config.getParam().getClientSecretKeyName());
+        final String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
+        final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
+        final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 
-		// Additional optional parameters.
-		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherCredentials,
-				CryptKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
+        // Additional optional parameters.
+        GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherCredentials,
+                CryptKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
 
-		// Extra custom parameters.
-		token.setExtraParameters(getFirstParameters(request));
+        // Extra custom parameters.
+        token.setExtraParameters(getFirstParameters(request));
 
-		return token;
-	}
+        return token;
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + NAME;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + NAME;
+    }
 
 }

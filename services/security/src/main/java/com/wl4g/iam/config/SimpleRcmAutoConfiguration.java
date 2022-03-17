@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.config;
 
+import com.wl4g.iam.web.risk.SimpleRiskEvaluateController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
-import com.wl4g.iam.web.SimpleRcmEvaluatorEndpoint;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_RCM_BASE;
 
@@ -37,14 +37,14 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
 public class SimpleRcmAutoConfiguration extends PrefixHandlerMappingSupport {
 
-	@Bean
-	public SimpleRcmEvaluatorEndpoint simpleRcmEvaluatorController() {
-		return new SimpleRcmEvaluatorEndpoint();
-	}
+    @Bean
+    public SimpleRiskEvaluateController simpleRcmEvaluatorController() {
+        return new SimpleRiskEvaluateController();
+    }
 
-	@Bean
-	public Object simpleRcmEvaluatorControllerPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.iam.annotation.SimpleRcmController.class);
-	}
+    @Bean
+    public Object simpleRcmEvaluatorControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.iam.annotation.SimpleRcmController.class);
+    }
 
 }

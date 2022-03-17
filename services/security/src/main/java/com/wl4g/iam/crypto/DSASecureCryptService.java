@@ -28,13 +28,13 @@ import com.wl4g.infra.support.cache.locks.JedisLockManager;
  */
 public final class DSASecureCryptService extends AbstractAymmetricSecureCryptService<DSAKeyPairSpec> {
 
-	public DSASecureCryptService(JedisLockManager lockManager) {
-		super(lockManager, new DSACryptor());
-	}
+    public DSASecureCryptService(JedisLockManager lockManager) {
+        super(lockManager, new DSACryptor());
+    }
 
-	@Override
-	public CryptKind kind() {
-		return CryptKind.DSA;
-	}
+    @Override
+    public CryptKind kind() {
+        return CryptKind.DSA;
+    }
 
 }

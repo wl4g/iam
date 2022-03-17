@@ -29,41 +29,41 @@ import com.wl4g.iam.core.authc.IamAuthenticationToken;
  */
 public class LogoutAuthenticationToken implements IamAuthenticationToken, HostAuthenticationToken {
 
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	/**
-	 * Principal currently exiting
-	 */
-	final private String principal;
+    /**
+     * Principal currently exiting
+     */
+    final private String principal;
 
-	/**
-	 * Remote client host address
-	 */
-	final private String remoteHost;
+    /**
+     * Remote client host address
+     */
+    final private String remoteHost;
 
-	public LogoutAuthenticationToken(final String principal, final String remoteHost) {
-		/**
-		 * @see {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#doCreateToken()}:MARK1
-		 */
-		// hasTextOf(principal, "principal");
-		this.principal = principal;
-		// hasTextOf(remoteHost, "remoteHost");
-		this.remoteHost = remoteHost;
-	}
+    public LogoutAuthenticationToken(final String principal, final String remoteHost) {
+        /**
+         * @see {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#doCreateToken()}:MARK1
+         */
+        // hasTextOf(principal, "principal");
+        this.principal = principal;
+        // hasTextOf(remoteHost, "remoteHost");
+        this.remoteHost = remoteHost;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
-	@Override
-	public String getHost() {
-		return remoteHost;
-	}
+    @Override
+    public String getHost() {
+        return remoteHost;
+    }
 
 }

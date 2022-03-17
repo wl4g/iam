@@ -57,50 +57,50 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
  */
 public class GenericAuthorizingRealm extends AbstractAuthorizingRealm<GenericAuthenticationToken> {
 
-	public GenericAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public GenericAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
-	/**
-	 * Authenticates a user and retrieves its information.
-	 *
-	 * @param token
-	 *            the authentication token
-	 * @throws AuthenticationException
-	 *             if there is an error during authentication.
-	 */
-	@Override
-	protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
-		// Gets account by loginId
-		IamPrincipal iamPrincipal = configurer.getIamUserDetail(new SimpleParameter((String) token.getPrincipal()));
-		log.debug("Gots Iam principalInfo: {} by token:{}", iamPrincipal, token);
+    /**
+     * Authenticates a user and retrieves its information.
+     *
+     * @param token
+     *            the authentication token
+     * @throws AuthenticationException
+     *             if there is an error during authentication.
+     */
+    @Override
+    protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
+        // Gets account by loginId
+        IamPrincipal iamPrincipal = configurer.getIamUserDetail(new SimpleParameter((String) token.getPrincipal()));
+        log.debug("Gots Iam principalInfo: {} by token:{}", iamPrincipal, token);
 
-		// Wrapper authentication info
-		if (isNull(iamPrincipal) || isBlank(iamPrincipal.getPrincipal())) {
-			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
-		}
+        // Wrapper authentication info
+        if (isNull(iamPrincipal) || isBlank(iamPrincipal.getPrincipal())) {
+            throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+        }
 
-		// Authenticate attributes.(roles/permissions/rememberMe)
-		PrincipalCollection principals = createPermitPrincipalCollection(iamPrincipal);
-		return new GenericAuthenticationInfo(iamPrincipal, principals, getName());
-	}
+        // Authenticate attributes.(roles/permissions/rememberMe)
+        PrincipalCollection principals = createPermitPrincipalCollection(iamPrincipal);
+        return new GenericAuthenticationInfo(iamPrincipal, principals, getName());
+    }
 
-	/**
-	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).
-	 *
-	 * @param principals
-	 *            the primary identifying principals of the AuthorizationInfo
-	 *            that should be retrieved.
-	 * @return the AuthorizationInfo associated with this principals.
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// Create simple authorization info
-		GenericAuthorizationInfo info = new GenericAuthorizationInfo();
-		// Merge authorized string(roles/permission)
-		mergeAuthorizedString(principals, info);
-		return info;
-	}
+    /**
+     * Retrieves the AuthorizationInfo for the given principals (the CAS
+     * previously authenticated user : id + attributes).
+     *
+     * @param principals
+     *            the primary identifying principals of the AuthorizationInfo
+     *            that should be retrieved.
+     * @return the AuthorizationInfo associated with this principals.
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        // Create simple authorization info
+        GenericAuthorizationInfo info = new GenericAuthorizationInfo();
+        // Merge authorized string(roles/permission)
+        mergeAuthorizedString(principals, info);
+        return info;
+    }
 
 }

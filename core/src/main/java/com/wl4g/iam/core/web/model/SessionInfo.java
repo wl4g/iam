@@ -32,52 +32,52 @@ import com.wl4g.iam.core.session.IamSession;
  * @since
  */
 public class SessionInfo implements Serializable {
-	private static final long serialVersionUID = -4118097602451640788L;
+    private static final long serialVersionUID = -4118097602451640788L;
 
-	/**
-	 * Session keyname.
-	 */
-	@NotBlank
-	@JsonProperty(KEY_SESSION_NAME)
-	private String sessionKey;
+    /**
+     * Session keyname.
+     */
+    @NotBlank
+    @JsonProperty(KEY_SESSION_NAME)
+    private String sessionKey;
 
-	/**
-	 * Session value.
-	 */
-	@NotBlank
-	@JsonProperty(KEY_SESSION_VALUE)
-	private Serializable sessionValue;
+    /**
+     * Session value.
+     */
+    @NotBlank
+    @JsonProperty(KEY_SESSION_VALUE)
+    private Serializable sessionValue;
 
-	public SessionInfo() {
-		super();
-	}
+    public SessionInfo() {
+        super();
+    }
 
-	public SessionInfo(@NotBlank String sessionKey, @NotBlank Serializable sessionValue) {
-		setSessionKey(sessionKey);
-		setSessionValue(sessionValue);
-	}
+    public SessionInfo(@NotBlank String sessionKey, @NotBlank Serializable sessionValue) {
+        setSessionKey(sessionKey);
+        setSessionValue(sessionValue);
+    }
 
-	public String getSessionKey() {
-		return sessionKey;
-	}
+    public String getSessionKey() {
+        return sessionKey;
+    }
 
-	public SessionInfo setSessionKey(String sessionKey) {
-		notNullOf(sessionKey, "sessionKey");
-		this.sessionKey = sessionKey;
-		return this;
-	}
+    public SessionInfo setSessionKey(String sessionKey) {
+        notNullOf(sessionKey, "sessionKey");
+        this.sessionKey = sessionKey;
+        return this;
+    }
 
-	public Serializable getSessionValue() {
-		return sessionValue;
-	}
+    public Serializable getSessionValue() {
+        return sessionValue;
+    }
 
-	public SessionInfo setSessionValue(Serializable sessionValue) {
-		notNullOf(sessionValue, "sessionValue");
-		this.sessionValue = sessionValue;
-		return this;
-	}
+    public SessionInfo setSessionValue(Serializable sessionValue) {
+        notNullOf(sessionValue, "sessionValue");
+        this.sessionValue = sessionValue;
+        return this;
+    }
 
-	public static final String KEY_SESSION_NAME = "sk";
-	public static final String KEY_SESSION_VALUE = "sv";
+    public static final String KEY_SESSION_NAME = "sk";
+    public static final String KEY_SESSION_VALUE = "sv";
 
 }

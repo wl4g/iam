@@ -31,33 +31,33 @@ import com.wl4g.infra.common.serialize.JacksonUtils;
  * @since
  */
 public class BaseValidateModel implements Serializable {
-	private static final long serialVersionUID = 151897009229689455L;
+    private static final long serialVersionUID = 151897009229689455L;
 
-	@NotBlank
-	private String application;
+    @NotBlank
+    private String application;
 
-	public BaseValidateModel() {
-		super();
-	}
+    public BaseValidateModel() {
+        super();
+    }
 
-	public BaseValidateModel(String application) {
-		setApplication(application);
-	}
+    public BaseValidateModel(String application) {
+        setApplication(application);
+    }
 
-	public String getApplication() {
-		return application;
-	}
+    public String getApplication() {
+        return application;
+    }
 
-	public void setApplication(String application) {
-		Assert.hasText(application, "Application name must not be empty.");
-		if (!"NULL".equalsIgnoreCase(application)) {
-			this.application = application;
-		}
-	}
+    public void setApplication(String application) {
+        Assert.hasText(application, "Application name must not be empty.");
+        if (!"NULL".equalsIgnoreCase(application)) {
+            this.application = application;
+        }
+    }
 
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return JacksonUtils.toJSONString(this);
+    }
 
 }

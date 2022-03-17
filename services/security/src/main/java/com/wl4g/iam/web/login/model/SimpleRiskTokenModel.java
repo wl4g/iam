@@ -13,50 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web.model;
-
-import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+package com.wl4g.iam.web.login.model;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+
 /**
- * General check model.
- *
+ * Simple Risk control UMID result
+ * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019-08-24
+ * @version v1.0 2020年3月25日
  * @since
  */
-public class GenericCheckResult implements Serializable {
-
-	private static final long serialVersionUID = 2636165327046053795L;
-
-	/**
-	 * General response key-name.
-	 */
-	final public static String KEY_GENERIC_CHECK = "checkGeneric";
+public class SimpleRiskTokenModel implements Serializable {
+	private static final long serialVersionUID = -3434524148761808680L;
 
 	/**
-	 * Applied secret public key hex.
+	 * Risk control UMID token.
 	 */
-	private String secretKey;
+	@NotBlank
+	private String umidToken;
 
-	public GenericCheckResult() {
+	public SimpleRiskTokenModel() {
 		super();
 	}
 
-	public GenericCheckResult(String secretKey) {
-		// hasTextOf(secretKey, "secretKey");
-		setSecretKey(secretKey);
+	public SimpleRiskTokenModel(String umidToken) {
+		super();
+		this.umidToken = umidToken;
 	}
 
-	public String getSecretKey() {
-		return secretKey;
+	public String getUmidToken() {
+		return umidToken;
 	}
 
-	public GenericCheckResult setSecretKey(String secretKey) {
-		hasTextOf(secretKey, "secretKey");
-		this.secretKey = secretKey;
-		return this;
+	public void setUmidToken(String umidToken) {
+		this.umidToken = umidToken;
 	}
 
 }

@@ -24,21 +24,21 @@ package com.wl4g.iam.authc;
  * @since
  */
 public class QrcodeAuthenticationToken extends ServerIamAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	@Override
-	public Object getPrincipal() {
-		return null;
-	}
+    @Override
+    public Object getPrincipal() {
+        return null;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
-	@Override
-	public String getHost() {
-		return null;
-	}
+    @Override
+    public String getHost() {
+        return null;
+    }
 
 }

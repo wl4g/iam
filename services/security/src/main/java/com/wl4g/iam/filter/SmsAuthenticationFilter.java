@@ -36,27 +36,27 @@ import com.google.common.annotations.Beta;
 @IamFilter
 @Beta
 public class SmsAuthenticationFilter extends AbstractServerIamAuthenticationFilter<SmsAuthenticationToken> {
-	final public static String NAME = "sms";
+    final public static String NAME = "sms";
 
-	@Override
-	protected SmsAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		final String action = getCleanParam(request, config.getParam().getSmsActionName());
-		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		final String smsCode = getCleanParam(request, config.getParam().getCredentialsName());
-		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
-		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
-		return new SmsAuthenticationToken(CryptKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);
-	}
+    @Override
+    protected SmsAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        final String action = getCleanParam(request, config.getParam().getSmsActionName());
+        final String principal = getCleanParam(request, config.getParam().getPrincipalName());
+        final String smsCode = getCleanParam(request, config.getParam().getCredentialsName());
+        final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
+        final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
+        return new SmsAuthenticationToken(CryptKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + NAME;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + NAME;
+    }
 
 }

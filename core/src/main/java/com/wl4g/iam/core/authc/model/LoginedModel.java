@@ -27,34 +27,34 @@ import com.wl4g.infra.common.serialize.JacksonUtils;
  * @date 2018年11月22日
  * @since ServiceTicket
  */
-public final class LoggedinResult {
+public final class LoginedModel {
 
-	/**
-	 * Temporary authorization code(Used for fast-CAS login successfully
-	 * returned to application), only single use of work is effective.
-	 */
-	@NotBlank
-	private String grantTicket;
+    /**
+     * Temporary authorization code(Used for fast-CAS login successfully
+     * returned to application), only single use of work is effective.
+     */
+    @NotBlank
+    private String grantTicket;
 
-	public LoggedinResult() {
-		super();
-	}
+    public LoginedModel() {
+        super();
+    }
 
-	public LoggedinResult(String grantTicket) {
-		this.setGrantTicket(grantTicket);
-	}
+    public LoginedModel(String grantTicket) {
+        this.setGrantTicket(grantTicket);
+    }
 
-	public final String getGrantTicket() {
-		return grantTicket;
-	}
+    public final String getGrantTicket() {
+        return grantTicket;
+    }
 
-	public final void setGrantTicket(String serviceTicket) {
-		this.grantTicket = serviceTicket;
-	}
+    public final void setGrantTicket(String serviceTicket) {
+        this.grantTicket = serviceTicket;
+    }
 
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return JacksonUtils.toJSONString(this);
+    }
 
 }

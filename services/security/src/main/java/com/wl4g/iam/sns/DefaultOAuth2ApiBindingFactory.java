@@ -37,27 +37,27 @@ import com.wl4g.iam.sns.support.Oauth2UserProfile;
  */
 public class DefaultOAuth2ApiBindingFactory implements OAuth2ApiBindingFactory {
 
-	/**
-	 * Binding connection repository
-	 */
-	final private Map<String, OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
+    /**
+     * Binding connection repository
+     */
+    final private Map<String, OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public DefaultOAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
-		notEmptyOf(apis, "OAuth2ApiBindings");
-		for (OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> api : apis) {
-			if (nonNull(repository.putIfAbsent(api.providerId(), api))) {
-				throw new IllegalStateException(String.format("Already provider register", api.providerId()));
-			}
-		}
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public DefaultOAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
+        notEmptyOf(apis, "OAuth2ApiBindings");
+        for (OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> api : apis) {
+            if (nonNull(repository.putIfAbsent(api.providerId(), api))) {
+                throw new IllegalStateException(String.format("Already provider register", api.providerId()));
+            }
+        }
+    }
 
-	@Override
-	public OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider) {
-		if (!this.repository.containsKey(provider)) {
-			throw new NoSuchSocialProviderException(String.format("No such social provider [%s]", provider));
-		}
-		return this.repository.get(provider);
-	}
+    @Override
+    public OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider) {
+        if (!this.repository.containsKey(provider)) {
+            throw new NoSuchSocialProviderException(String.format("No such social provider [%s]", provider));
+        }
+        return this.repository.get(provider);
+    }
 
 }

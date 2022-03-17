@@ -52,58 +52,58 @@ import com.wl4g.iam.core.utils.IamSecurityHolder;
 @ConditionalOnClass(name = RpcContextHolderBridges.rpcContextHolderClassName)
 public class RpcContextIamSecurityAutoConfiguration {
 
-	private final SmartLogger log = getLogger(getClass());
+    private final SmartLogger log = getLogger(getClass());
 
-	@Bean
-	public RpcContextSecurityHandlerInterceptor rpcContextSecurityHandlerInterceptor() {
-		return new RpcContextSecurityHandlerInterceptor();
-	}
+    @Bean
+    public RpcContextSecurityHandlerInterceptor rpcContextSecurityHandlerInterceptor() {
+        return new RpcContextSecurityHandlerInterceptor();
+    }
 
-	@Bean
-	public RpcContextSecurityInterceptorMvcConfigurer rpcContextSecurityInterceptorMvcConfigurer(
-			RpcContextSecurityHandlerInterceptor interceptor) {
-		return new RpcContextSecurityInterceptorMvcConfigurer(interceptor);
-	}
+    @Bean
+    public RpcContextSecurityInterceptorMvcConfigurer rpcContextSecurityInterceptorMvcConfigurer(
+            RpcContextSecurityHandlerInterceptor interceptor) {
+        return new RpcContextSecurityInterceptorMvcConfigurer(interceptor);
+    }
 
-	class RpcContextSecurityInterceptorMvcConfigurer implements WebMvcConfigurer {
-		private final RpcContextSecurityHandlerInterceptor interceptor;
+    class RpcContextSecurityInterceptorMvcConfigurer implements WebMvcConfigurer {
+        private final RpcContextSecurityHandlerInterceptor interceptor;
 
-		public RpcContextSecurityInterceptorMvcConfigurer(RpcContextSecurityHandlerInterceptor interceptor) {
-			this.interceptor = notNullOf(interceptor, "interceptor");
-		}
+        public RpcContextSecurityInterceptorMvcConfigurer(RpcContextSecurityHandlerInterceptor interceptor) {
+            this.interceptor = notNullOf(interceptor, "interceptor");
+        }
 
-		@Override
-		public void addInterceptors(InterceptorRegistry registry) {
-			registry.addInterceptor(interceptor).addPathPatterns("/**");
-		}
-	}
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(interceptor).addPathPatterns("/**");
+        }
+    }
 
-	class RpcContextSecurityHandlerInterceptor implements HandlerInterceptor {
-		@Override
-		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-			// Bind iam current attributes to rpc context.
-			if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed(cluster)?
-				try {
-					Subject subject = IamSecurityHolder.getSubject();
-					// The current authentication information needs to be set
-					// only when it has been authenticated.
-					if (subject.isAuthenticated()) {
-						IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
+    class RpcContextSecurityHandlerInterceptor implements HandlerInterceptor {
+        @Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            // Bind iam current attributes to rpc context.
+            if (RpcContextHolderBridges.hasRpcContextHolderClass()) { // Distributed(cluster)?
+                try {
+                    Subject subject = IamSecurityHolder.getSubject();
+                    // The current authentication information needs to be set
+                    // only when it has been authenticated.
+                    if (subject.isAuthenticated()) {
+                        IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-						RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-						RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+                        RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+                        RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
 
-						// Set to reference type for performance optimization.
-						RpcContextHolderBridges.invokeSetRef(false, CURRENT_IAM_PRINCIPAL, currentPrincipal);
-					}
-				} catch (UnavailableSecurityManagerException e) {
-					// It may be a request that does not carry a session, such
-					// as getting a list of remote IAM sessions.
-					log.warn("Cannot set current IAM authentication info. {}", e.getLocalizedMessage());
-				}
-			}
-			return true;
-		}
-	}
+                        // Set to reference type for performance optimization.
+                        RpcContextHolderBridges.invokeSetRef(false, CURRENT_IAM_PRINCIPAL, currentPrincipal);
+                    }
+                } catch (UnavailableSecurityManagerException e) {
+                    // It may be a request that does not carry a session, such
+                    // as getting a list of remote IAM sessions.
+                    log.warn("Cannot set current IAM authentication info. {}", e.getLocalizedMessage());
+                }
+            }
+            return true;
+        }
+    }
 
 }

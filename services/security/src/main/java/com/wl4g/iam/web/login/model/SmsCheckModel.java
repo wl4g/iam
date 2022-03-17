@@ -13,47 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web.model;
+package com.wl4g.iam.web.login.model;
 
 import java.io.Serializable;
 
 /**
- * CAPTCHA check model.
+ * SMS verify check model.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-24
  * @since
  */
-public class CaptchaCheckResult implements Serializable {
+public class SmsCheckModel implements Serializable {
 	private static final long serialVersionUID = 2636165327046053795L;
 
 	/**
-	 * CAPTCHA check response key-name.
+	 * SMS PreCheck response key-name.
 	 */
-	final public static String KEY_CAPTCHA_CHECK = "checkCaptcha";
+	final public static String KEY_SMS_CHECK = "checkSms";
 
 	/**
-	 * Enable login CAPTCHA token for session.
+	 * Enable SMS login apply for session.
 	 */
 	private boolean enabled;
 
 	/**
-	 * CAPTCHA verify type support.
+	 * Mobile number.
 	 */
-	private String support;
+	private Long mobileNum;
 
 	/**
-	 * Apply CAPTCHA URL.
+	 * The remaining milliseconds to wait to re-apply for SMS dynamic password.
 	 */
-	private String applyUri;
+	private Long remainDelayMs;
 
-	public CaptchaCheckResult() {
+	public SmsCheckModel() {
 		super();
 	}
 
-	public CaptchaCheckResult(boolean enabled) {
+	public SmsCheckModel(Long mobileNum, Long remainDelayMs) {
+		this(true, mobileNum, remainDelayMs);
+	}
+
+	public SmsCheckModel(boolean enabled, Long mobileNum, Long remainDelayMs) {
 		super();
 		this.enabled = enabled;
+		this.mobileNum = mobileNum;
+		this.remainDelayMs = remainDelayMs;
 	}
 
 	public boolean isEnabled() {
@@ -64,20 +70,20 @@ public class CaptchaCheckResult implements Serializable {
 		this.enabled = enabled;
 	}
 
-	public String getSupport() {
-		return support;
+	public Long getMobileNum() {
+		return mobileNum;
 	}
 
-	public void setSupport(String support) {
-		this.support = support;
+	public void setMobileNum(Long mobileNum) {
+		this.mobileNum = mobileNum;
 	}
 
-	public String getApplyUri() {
-		return applyUri;
+	public Long getRemainDelayMs() {
+		return remainDelayMs;
 	}
 
-	public void setApplyUri(String applyUrl) {
-		this.applyUri = applyUrl;
+	public void setRemainDelayMs(Long remainDelayMs) {
+		this.remainDelayMs = remainDelayMs;
 	}
 
 }

@@ -35,37 +35,37 @@ import com.wl4g.iam.core.configure.SecurityCoprocessor;
 @Beta
 public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
-	/**
-	 * Preprocessing apply captcha handle
-	 *
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
-		return true;
-	}
+    /**
+     * Preprocessing apply captcha handle
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
+        return true;
+    }
 
-	/**
-	 * Preprocessing apply SMS verifyCode handle
-	 *
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	default boolean preApplySmsCode(ServletRequest request, ServletResponse response) {
-		return true;
-	}
+    /**
+     * Preprocessing apply SMS verifyCode handle
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    default boolean preApplySmsCode(ServletRequest request, ServletResponse response) {
+        return true;
+    }
 
-	/**
-	 * Preprocessing whether the generic authenticating check match is allowed.
-	 *
-	 * @param token
-	 * @param info
-	 * @return
-	 */
-	default boolean preAuthenticatingAllowed(IamAuthenticationToken token, AuthenticationInfo info) throws AccountException {
-		return true;
-	}
+    /**
+     * Preprocessing whether the generic authenticating check match is allowed.
+     *
+     * @param token
+     * @param info
+     * @return
+     */
+    default boolean preAuthenticatingAllowed(IamAuthenticationToken token, AuthenticationInfo info) throws AccountException {
+        return true;
+    }
 
 }

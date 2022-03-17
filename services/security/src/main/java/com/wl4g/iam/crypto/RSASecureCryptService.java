@@ -28,13 +28,13 @@ import com.wl4g.infra.support.cache.locks.JedisLockManager;
  */
 public final class RSASecureCryptService extends AbstractAymmetricSecureCryptService<RSAKeyPairSpec> {
 
-	public RSASecureCryptService(JedisLockManager lockManager) {
-		super(lockManager, new RSACryptor());
-	}
+    public RSASecureCryptService(JedisLockManager lockManager) {
+        super(lockManager, new RSACryptor());
+    }
 
-	@Override
-	public CryptKind kind() {
-		return CryptKind.RSA;
-	}
+    @Override
+    public CryptKind kind() {
+        return CryptKind.RSA;
+    }
 
 }

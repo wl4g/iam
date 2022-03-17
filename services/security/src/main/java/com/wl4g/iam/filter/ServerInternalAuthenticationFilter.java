@@ -37,20 +37,20 @@ import com.wl4g.infra.core.kit.access.IPAccessControl;
  */
 @IamFilter
 public class ServerInternalAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
-	final public static String NAME = "serverInternalFilter";
+    final public static String NAME = "serverInternalFilter";
 
-	public ServerInternalAuthenticationFilter(IPAccessControl control, AbstractIamProperties<? extends ParamProperties> config) {
-		super(control, config);
-	}
+    public ServerInternalAuthenticationFilter(IPAccessControl control, AbstractIamProperties<? extends ParamProperties> config) {
+        super(control, config);
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_S_BASE + "/**";
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_S_BASE + "/**";
+    }
 
 }

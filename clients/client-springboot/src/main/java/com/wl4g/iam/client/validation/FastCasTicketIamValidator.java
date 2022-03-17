@@ -22,11 +22,11 @@ import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
-import com.wl4g.iam.core.exception.TicketValidateException;
+import com.wl4g.iam.core.exception.ServiceTicketValidateException;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
 import static java.util.Objects.nonNull;
@@ -42,20 +42,20 @@ import java.util.Map;
  * @since
  */
 public class FastCasTicketIamValidator
-		extends AbstractBasedIamValidator<TicketValidateRequest, TicketValidateResult<SimpleIamPrincipal>> {
+		extends AbstractBasedIamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<SimpleIamPrincipal>> {
 
 	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
 	@Override
-	protected void postQueryParameterSet(TicketValidateRequest req, Map<String, Object> queryParams) {
+	protected void postQueryParameterSet(ServiceTicketValidateRequest req, Map<String, Object> queryParams) {
 		queryParams.put(config.getParam().getGrantTicket(), req.getTicket());
 	}
 
 	@Override
-	public TicketValidateResult<SimpleIamPrincipal> validate(TicketValidateRequest req) throws TicketValidateException {
-		final RespBase<TicketValidateResult<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
+	public ServiceTicketValidateModel<SimpleIamPrincipal> validate(ServiceTicketValidateRequest req) throws ServiceTicketValidateException {
+		final RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the
@@ -66,14 +66,14 @@ public class FastCasTicketIamValidator
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
 				throw new IllegalApplicationAccessException(resp.getMessage());
 			}
-			throw new TicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
+			throw new ServiceTicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
 		}
 		return resp.getData();
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<TicketValidateResult<SimpleIamPrincipal>>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<TicketValidateResult<SimpleIamPrincipal>>>() {
+	protected ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>>() {
 		};
 	}
 

@@ -27,27 +27,27 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class CallbackResult {
 
-	/**
-	 * OAuth2 callback refreshUrl
-	 */
-	final private String refreshUrl;
+    /**
+     * OAuth2 callback refreshUrl
+     */
+    final private String refreshUrl;
 
-	public CallbackResult(String refreshUrl) {
-		hasTextOf(refreshUrl, "SNS oauth2 refreshUrl");
-		this.refreshUrl = refreshUrl;
-	}
+    public CallbackResult(String refreshUrl) {
+        hasTextOf(refreshUrl, "SNS oauth2 refreshUrl");
+        this.refreshUrl = refreshUrl;
+    }
 
-	public boolean hasRefreshUrl() {
-		return !isBlank(getRefreshUrl());
-	}
+    public boolean hasRefreshUrl() {
+        return !isBlank(getRefreshUrl());
+    }
 
-	public String getRefreshUrl() {
-		return refreshUrl;
-	}
+    public String getRefreshUrl() {
+        return refreshUrl;
+    }
 
-	@Override
-	public String toString() {
-		return refreshUrl;
-	}
+    @Override
+    public String toString() {
+        return refreshUrl;
+    }
 
 }

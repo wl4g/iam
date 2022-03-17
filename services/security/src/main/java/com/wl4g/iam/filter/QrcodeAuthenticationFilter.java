@@ -24,23 +24,23 @@ import com.wl4g.iam.core.annotation.IamFilter;
 
 @IamFilter
 public class QrcodeAuthenticationFilter extends AbstractServerIamAuthenticationFilter<QrcodeAuthenticationToken> {
-	final public static String NAME = "qrcode";
+    final public static String NAME = "qrcode";
 
-	@Override
-	protected QrcodeAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+    @Override
+    protected QrcodeAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + NAME;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + NAME;
+    }
 
 }

@@ -32,7 +32,7 @@ import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.iam.core.annotation.IamFilter;
-import com.wl4g.iam.core.authc.model.LogoutResult;
+import com.wl4g.iam.core.authc.model.LogoutModel;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;
 import com.wl4g.iam.core.exception.GrantTicketNullException;
 import com.wl4g.iam.core.exception.IamException;
@@ -100,7 +100,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 		coprocessor.preLogout(token, toHttp(request), toHttp(response));
 
 		// Post to remote logout
-		LogoutResult logout = null;
+		LogoutModel logout = null;
 		try {
 			logout = doRequestRemoteLogout(token.isForced());
 		} catch (Exception e) {
@@ -111,7 +111,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 		}
 
 		// Check server logout result.
-		if (token.isForced() || checkLogoutResult(logout)) {
+		if (token.isForced() || checkLogoutModel(logout)) {
 			try {
 				// That session logout
 				// try/catch added for SHIRO-298:
@@ -151,15 +151,15 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 * @param forced
 	 * @return
 	 */
-	private LogoutResult doRequestRemoteLogout(boolean forced) {
+	private LogoutModel doRequestRemoteLogout(boolean forced) {
 		// Gets grantTicket
 		String grantTicket = getBindValue(SAVE_GRANT_TICKET);
 
 		// Post server logout URL by grantTicket
 		String url = buildRemoteLogoutUrl(grantTicket, forced);
 
-		RespBase<LogoutResult> resp = this.restTemplate
-				.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutResult>>() {
+		RespBase<LogoutModel> resp = this.restTemplate
+				.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
 				}).getBody();
 
 		if (!RespBase.isSuccess(resp)) {
@@ -174,7 +174,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 * @param logout
 	 * @return
 	 */
-	private boolean checkLogoutResult(LogoutResult logout) {
+	private boolean checkLogoutModel(LogoutModel logout) {
 		return (!isNull(logout) && config.getServiceName().equals(valueOf(logout.getApplication())));
 	}
 

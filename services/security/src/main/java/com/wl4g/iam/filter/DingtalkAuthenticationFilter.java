@@ -21,14 +21,14 @@ import com.wl4g.iam.core.annotation.IamFilter;
 @IamFilter
 public class DingtalkAuthenticationFilter extends Oauth2SnsAuthenticationFilter<DingtalkAuthenticationToken> {
 
-	@Override
-	public String getName() {
-		return ProviderSupport.DINGTALK.getName();
-	}
+    @Override
+    public String getName() {
+        return ProviderSupport.DINGTALK.getName();
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupport.DINGTALK.getName();
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + ProviderSupport.DINGTALK.getName();
+    }
 
 }

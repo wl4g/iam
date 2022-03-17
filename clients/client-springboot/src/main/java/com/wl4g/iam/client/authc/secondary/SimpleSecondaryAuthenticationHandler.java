@@ -25,7 +25,7 @@ import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_CONNECT;
-import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult.Status.Authenticated;
+import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel.Status.Authenticated;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -52,7 +52,7 @@ import com.wl4g.infra.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.core.authc.SecondaryAuthenticationException;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.core.exception.IamException;
 
@@ -227,13 +227,13 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 		// Validation URL
 		String validateUrl = buildValidateUrl(authCode);
 		// Request remote
-		RespBase<SecondaryAuthcValidateResult> resp = restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
-				new ParameterizedTypeReference<RespBase<SecondaryAuthcValidateResult>>() {
+		RespBase<SecondaryAuthcValidateModel> resp = restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<RespBase<SecondaryAuthcValidateModel>>() {
 				}).getBody();
 
 		// Check successful
 		if (RespBase.isSuccess(resp)) {
-			SecondaryAuthcValidateResult assertion = resp.getData();
+			SecondaryAuthcValidateModel assertion = resp.getData();
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
 					&& valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
 				throw new SecondaryAuthenticationException(assertion.getErrdesc());

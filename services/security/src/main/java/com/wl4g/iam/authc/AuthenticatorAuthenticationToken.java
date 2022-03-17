@@ -24,30 +24,30 @@ package com.wl4g.iam.authc;
  * @since
  */
 public class AuthenticatorAuthenticationToken extends ServerIamAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	/**
-	 * Principal currently exiting
-	 */
-	final private String principal;
+    /**
+     * Principal currently exiting
+     */
+    final private String principal;
 
-	public AuthenticatorAuthenticationToken(final String principal, final String remoteHost, final RedirectInfo redirectInfo) {
-		super(remoteHost, redirectInfo);
-		/**
-		 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#postCreateToken()}:MARK1
-		 */
-		// hasTextOf(principal, "principal");
-		this.principal = principal;
-	}
+    public AuthenticatorAuthenticationToken(final String principal, final String remoteHost, final RedirectInfo redirectInfo) {
+        super(remoteHost, redirectInfo);
+        /**
+         * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#postCreateToken()}:MARK1
+         */
+        // hasTextOf(principal, "principal");
+        this.principal = principal;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
 }

@@ -47,77 +47,77 @@ import java.util.List;
 @ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
 public class IamConfigurableAutoConfiguration {
 
-	// Security components configuration
+    // Security components configuration
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ServerSecurityConfigurer serverSecurityConfigurer() {
-		return new CheckImpledServerSecurityConfigurer();
-	}
+    @Bean
+    @ConditionalOnMissingBean
+    public ServerSecurityConfigurer serverSecurityConfigurer() {
+        return new CheckImpledServerSecurityConfigurer();
+    }
 
-	/**
-	 * Check whether ServerSecurityConfigurer has been implemented.
-	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019-07-27
-	 * @since
-	 */
-	public final static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
+    /**
+     * Check whether ServerSecurityConfigurer has been implemented.
+     *
+     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @version v1.0 2019-07-27
+     * @since
+     */
+    public final static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
 
-		@Override
-		public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
-				ServletRequest request, ServletResponse response) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+                ServletRequest request, ServletResponse response) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
-				ServletRequest request, ServletResponse response) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
+                ServletRequest request, ServletResponse response) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public ApplicationInfo getApplicationInfo(String applicationName) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public ApplicationInfo getApplicationInfo(String applicationName) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public IamPrincipal getIamUserDetail(Parameter parameter) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public IamPrincipal getIamUserDetail(Parameter parameter) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public boolean isApplicationAccessAuthorized(String principal, String application) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public boolean isApplicationAccessAuthorized(String principal, String application) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public <T extends SocialConnectInfo> List<T> findSocialConnections(String principal, String provider) {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public <T extends SocialConnectInfo> List<T> findSocialConnections(String principal, String provider) {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public void bindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public void bindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public void unbindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
-			throw new UnsupportedOperationException();
-		}
+        @Override
+        public void unbindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+            throw new UnsupportedOperationException();
+        }
 
-		@Override
-		public void afterPropertiesSet() throws Exception {
-			throw new IamException(format(
-					"\n\n=>\tWhen relying on IAM security module as a service, it is necessary to implements the '%s' interface!\n",
-					ServerSecurityConfigurer.class.getName()));
-		}
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            throw new IamException(format(
+                    "\n\n=>\tWhen relying on IAM security module as a service, it is necessary to implements the '%s' interface!\n",
+                    ServerSecurityConfigurer.class.getName()));
+        }
 
-	}
+    }
 
 }

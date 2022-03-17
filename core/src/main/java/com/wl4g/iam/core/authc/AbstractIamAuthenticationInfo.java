@@ -34,32 +34,32 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
  * @since
  */
 public abstract class AbstractIamAuthenticationInfo extends SimpleAuthenticationInfo implements IamAuthenticationInfo {
-	private static final long serialVersionUID = -2294251445038637917L;
+    private static final long serialVersionUID = -2294251445038637917L;
 
-	/**
-	 * IAM principal information.
-	 */
-	final private IamPrincipal iamPrincipal;
+    /**
+     * IAM principal information.
+     */
+    final private IamPrincipal iamPrincipal;
 
-	public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
-		this(iamPrincipal, principals, null, realmName);
-	}
+    public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
+        this(iamPrincipal, principals, null, realmName);
+    }
 
-	public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
-			String realmName) {
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-		 */
-		super(principals, (nonNull(iamPrincipal) ? iamPrincipal.getStoredCredentials() : EMPTY));
-		notNull(iamPrincipal, "Authenticate iamPrincipal can't null.");
-		this.iamPrincipal = iamPrincipal;
-		setCredentialsSalt(credentialsSalt);
-	}
+    public AbstractIamAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
+            String realmName) {
+        /*
+         * Password is a string that may be set to empty.
+         * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+         */
+        super(principals, (nonNull(iamPrincipal) ? iamPrincipal.getStoredCredentials() : EMPTY));
+        notNull(iamPrincipal, "Authenticate iamPrincipal can't null.");
+        this.iamPrincipal = iamPrincipal;
+        setCredentialsSalt(credentialsSalt);
+    }
 
-	@Override
-	public IamPrincipal getIamPrincipal() {
-		return iamPrincipal;
-	}
+    @Override
+    public IamPrincipal getIamPrincipal() {
+        return iamPrincipal;
+    }
 
 }

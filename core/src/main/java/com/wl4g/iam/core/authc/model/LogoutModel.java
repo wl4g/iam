@@ -16,21 +16,21 @@
 package com.wl4g.iam.core.authc.model;
 
 /**
- * {@link LogoutResult}
+ * {@link LogoutModel}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-13
  * @since
  */
-public final class LogoutResult extends BaseValidateModel {
-	private static final long serialVersionUID = 1383145313778896117L;
+public final class LogoutModel extends BaseValidateModel {
+    private static final long serialVersionUID = 1383145313778896117L;
 
-	public LogoutResult() {
-		super();
-	}
+    public LogoutModel() {
+        super();
+    }
 
-	public LogoutResult(String application) {
-		super(application);
-	}
+    public LogoutModel(String application) {
+        super(application);
+    }
 
 }

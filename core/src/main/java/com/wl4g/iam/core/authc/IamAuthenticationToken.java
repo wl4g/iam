@@ -29,13 +29,13 @@ import org.apache.shiro.authc.HostAuthenticationToken;
  */
 public interface IamAuthenticationToken extends HostAuthenticationToken {
 
-	/**
-	 * Gets extra request parameters.
-	 * 
-	 * @return
-	 */
-	default Map<String, String> getExtraParameters() {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Gets extra request parameters.
+     * 
+     * @return
+     */
+    default Map<String, String> getExtraParameters() {
+        throw new UnsupportedOperationException();
+    }
 
 }

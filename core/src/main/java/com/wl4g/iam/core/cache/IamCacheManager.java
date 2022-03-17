@@ -28,13 +28,13 @@ import org.apache.shiro.cache.CacheManager;
  */
 public interface IamCacheManager extends CacheManager {
 
-	/**
-	 * Gets {@link IamCache} instance
-	 *
-	 * @param name
-	 * @return
-	 * @throws CacheException
-	 */
-	IamCache getIamCache(String name) throws CacheException;
+    /**
+     * Gets {@link IamCache} instance
+     *
+     * @param name
+     * @return
+     * @throws CacheException
+     */
+    IamCache getIamCache(String name) throws CacheException;
 
 }

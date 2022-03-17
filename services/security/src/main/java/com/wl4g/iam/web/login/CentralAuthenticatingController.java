@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web;
+package com.wl4g.iam.web.login;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
@@ -37,30 +37,31 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.IamController;
-import com.wl4g.iam.core.authc.model.LogoutResult;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.LogoutModel;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
-import com.wl4g.iam.core.web.AuthenticatingEndpoint;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
+import com.wl4g.iam.core.web.AuthenticatingController;
+import com.wl4g.iam.web.BaseIamController;
 
 /**
- * IAM central authenticator controller
+ * IAM(Fast-CAS) central authenticator controller
  *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
  * @since
  */
 @IamController
-public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoint implements AuthenticatingEndpoint {
+public class CentralAuthenticatingController extends BaseIamController implements AuthenticatingController {
 
     @PostMapping(URI_S_VALIDATE)
     @ResponseBody
     @Override
-    public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
+    public RespBase<ServiceTicketValidateModel<IamPrincipal>> validate(@NotNull @RequestBody ServiceTicketValidateRequest param) {
         log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-        RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
+        RespBase<ServiceTicketValidateModel<IamPrincipal>> resp = new RespBase<>();
         // Ticket assertion.
         resp.setData(authHandler.validate(param));
 
@@ -71,9 +72,9 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
     @PostMapping(URI_S_SECOND_VALIDATE)
     @ResponseBody
     @Override
-    public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
+    public RespBase<SecondaryAuthcValidateModel> secondaryValidate(HttpServletRequest request) {
         log.info("Secondary validating ... sessionId={} <= {}", getSessionId(), getFullRequestURL(request));
-        RespBase<SecondaryAuthcValidateResult> resp = RespBase.create();
+        RespBase<SecondaryAuthcValidateModel> resp = RespBase.create();
 
         String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
         String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
@@ -99,10 +100,10 @@ public class CentralAuthenticatingEndpoint extends AbstractAuthenticationEndpoin
     @PostMapping(URI_S_LOGOUT)
     @ResponseBody
     @Override
-    public RespBase<LogoutResult> logout(HttpServletRequest request, HttpServletResponse response) {
+    public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
         log.info("Logout... <= {}", getFullRequestURL(request));
 
-        RespBase<LogoutResult> resp = new RespBase<>();
+        RespBase<LogoutModel> resp = new RespBase<>();
         String appName = getCleanParam(request, config.getParam().getApplication());
         // hasTextOf(fromAppName, config.getParam().getApplication());
 

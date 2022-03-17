@@ -28,13 +28,13 @@ import com.wl4g.infra.support.cache.locks.JedisLockManager;
  */
 public final class ECCSecureCryptService extends AbstractAymmetricSecureCryptService<ECCKeyPairSpec> {
 
-	public ECCSecureCryptService(JedisLockManager lockManager) {
-		super(lockManager, new ECCCryptor());
-	}
+    public ECCSecureCryptService(JedisLockManager lockManager) {
+        super(lockManager, new ECCCryptor());
+    }
 
-	@Override
-	public CryptKind kind() {
-		return CryptKind.ECC;
-	}
+    @Override
+    public CryptKind kind() {
+        return CryptKind.ECC;
+    }
 
 }

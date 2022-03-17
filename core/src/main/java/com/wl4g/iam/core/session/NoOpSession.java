@@ -33,81 +33,81 @@ import org.apache.shiro.session.Session;
  */
 public class NoOpSession implements Session {
 
-	/**
-	 * Default no operation session instance. {@link NoOpSession}
-	 */
-	final public static Session DefaultNoOpSession = new NoOpSession();
+    /**
+     * Default no operation session instance. {@link NoOpSession}
+     */
+    final public static Session DefaultNoOpSession = new NoOpSession();
 
-	@Override
-	public Serializable getId() {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public Serializable getId() {
+        // Ignored no operation
+        return null;
+    }
 
-	@Override
-	public Date getStartTimestamp() {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public Date getStartTimestamp() {
+        // Ignored no operation
+        return null;
+    }
 
-	@Override
-	public Date getLastAccessTime() {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public Date getLastAccessTime() {
+        // Ignored no operation
+        return null;
+    }
 
-	@Override
-	public long getTimeout() throws InvalidSessionException {
-		// Ignored no operation
-		return 0;
-	}
+    @Override
+    public long getTimeout() throws InvalidSessionException {
+        // Ignored no operation
+        return 0;
+    }
 
-	@Override
-	public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
-		// Ignored no operation
+    @Override
+    public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
+        // Ignored no operation
 
-	}
+    }
 
-	@Override
-	public String getHost() {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public String getHost() {
+        // Ignored no operation
+        return null;
+    }
 
-	@Override
-	public void touch() throws InvalidSessionException {
-		// Ignored no operation
+    @Override
+    public void touch() throws InvalidSessionException {
+        // Ignored no operation
 
-	}
+    }
 
-	@Override
-	public void stop() throws InvalidSessionException {
-		// Ignored no operation
+    @Override
+    public void stop() throws InvalidSessionException {
+        // Ignored no operation
 
-	}
+    }
 
-	@Override
-	public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-		// Ignored no operation
-		return emptyList();
-	}
+    @Override
+    public Collection<Object> getAttributeKeys() throws InvalidSessionException {
+        // Ignored no operation
+        return emptyList();
+    }
 
-	@Override
-	public Object getAttribute(Object key) throws InvalidSessionException {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public Object getAttribute(Object key) throws InvalidSessionException {
+        // Ignored no operation
+        return null;
+    }
 
-	@Override
-	public void setAttribute(Object key, Object value) throws InvalidSessionException {
-		// Ignored no operation
+    @Override
+    public void setAttribute(Object key, Object value) throws InvalidSessionException {
+        // Ignored no operation
 
-	}
+    }
 
-	@Override
-	public Object removeAttribute(Object key) throws InvalidSessionException {
-		// Ignored no operation
-		return null;
-	}
+    @Override
+    public Object removeAttribute(Object key) throws InvalidSessionException {
+        // Ignored no operation
+        return null;
+    }
 
 }

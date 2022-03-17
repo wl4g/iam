@@ -31,10 +31,10 @@ import com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockAuthzInfo
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
@@ -60,10 +60,10 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	protected MockConfigurationFactory mockFactory;
 
 	@Override
-	public TicketValidateResult<IamPrincipal> validate(TicketValidateRequest param) {
+	public ServiceTicketValidateModel<IamPrincipal> validate(ServiceTicketValidateRequest param) {
 		log.debug("Mock validating. param: {}", param);
 
-		TicketValidateResult<IamPrincipal> assertion = new TicketValidateResult<>();
+		ServiceTicketValidateModel<IamPrincipal> assertion = new ServiceTicketValidateModel<>();
 		String grantAppname = param.getApplication();
 		hasTextOf(grantAppname, "grantAppname");
 
@@ -99,7 +99,7 @@ public class MockCentralAuthenticatingHandler implements AuthenticatingHandler {
 	}
 
 	@Override
-	public SecondaryAuthcValidateResult secondaryValidate(String secondAuthCode, String appName) {
+	public SecondaryAuthcValidateModel secondaryValidate(String secondAuthCode, String appName) {
 		log.debug("Mock loggedin. secondAuthCode: {}, appName: {}", secondAuthCode, appName);
 		return null;
 	}

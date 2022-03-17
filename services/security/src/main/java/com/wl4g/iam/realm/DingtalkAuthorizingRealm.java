@@ -45,8 +45,8 @@ import com.wl4g.iam.authc.credential.IamBasedMatcher;
  */
 public class DingtalkAuthorizingRealm extends Oauth2SnsAuthorizingRealm<DingtalkAuthenticationToken> {
 
-	public DingtalkAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public DingtalkAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

@@ -24,11 +24,11 @@ package com.wl4g.iam.configure;
  */
 public interface SecureConfigureAdapter {
 
-	/**
-	 * Credenticals securer configuring.
-	 * 
-	 * @return
-	 */
-	SecureConfig configure();
+    /**
+     * Credenticals securer configuring.
+     * 
+     * @return
+     */
+    SecureConfig configure();
 
 }

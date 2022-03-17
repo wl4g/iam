@@ -30,7 +30,7 @@ import com.wl4g.iam.sns.support.Oauth2UserProfile;
  */
 public interface OAuth2ApiBindingFactory {
 
-	OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider)
-			throws NoSuchSocialProviderException;
+    OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider)
+            throws NoSuchSocialProviderException;
 
 }

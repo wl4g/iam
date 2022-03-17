@@ -30,37 +30,37 @@ import java.io.Serializable;
  */
 @Beta
 public class SessionDestroyModel implements Serializable {
-	private static final long serialVersionUID = 2579844578836104918L;
+    private static final long serialVersionUID = 2579844578836104918L;
 
-	/**
-	 * Destroy target principal.
-	 */
-	private String principal;
+    /**
+     * Destroy target principal.
+     */
+    private String principal;
 
-	/**
-	 * Destroy target sessionIds.
-	 */
-	private String sessionId;
+    /**
+     * Destroy target sessionIds.
+     */
+    private String sessionId;
 
-	public String getPrincipal() {
-		return principal;
-	}
+    public String getPrincipal() {
+        return principal;
+    }
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
-	}
+    public void setPrincipal(String principal) {
+        this.principal = principal;
+    }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+    public String getSessionId() {
+        return sessionId;
+    }
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
 }

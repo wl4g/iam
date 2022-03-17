@@ -32,91 +32,91 @@ import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
  * @since
  */
 public class GenericAuthenticationToken extends ClientSecretIamAuthenticationToken
-		implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+        implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	/**
-	 * The username principal
-	 */
-	final private String principal;
+    /**
+     * The username principal
+     */
+    final private String principal;
 
-	/**
-	 * The password credentials
-	 */
-	final private String credentials;
+    /**
+     * The password credentials
+     */
+    final private String credentials;
 
-	/**
-	 * Whether or not 'rememberMe' should be enabled for the corresponding login
-	 * attempt; default is <code>false</code>
-	 */
-	final private boolean rememberMe;
+    /**
+     * Whether or not 'rememberMe' should be enabled for the corresponding login
+     * attempt; default is <code>false</code>
+     */
+    final private boolean rememberMe;
 
-	/**
-	 * User client type.
-	 */
-	final private ClientRef clientRef;
+    /**
+     * User client type.
+     */
+    final private ClientRef clientRef;
 
-	/**
-	 * Verification code verifiedToken.
-	 */
-	final private String verifiedToken;
+    /**
+     * Verification code verifiedToken.
+     */
+    final private String verifiedToken;
 
-	/**
-	 * Verifier type.
-	 */
-	final private VerifyKind verifyKind;
+    /**
+     * Verifier type.
+     */
+    final private VerifyKind verifyKind;
 
-	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final CryptKind kind, final String clientSecretKey, final String umidToken,
-			final String clientRef, final String verifiedToken, final VerifyKind verifyType) {
-		this(remoteHost, redirectInfo, principal, credentials, kind, clientSecretKey, umidToken, clientRef, verifiedToken,
-				verifyType, false);
-	}
+    public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+            final String credentials, final CryptKind kind, final String clientSecretKey, final String umidToken,
+            final String clientRef, final String verifiedToken, final VerifyKind verifyType) {
+        this(remoteHost, redirectInfo, principal, credentials, kind, clientSecretKey, umidToken, clientRef, verifiedToken,
+                verifyType, false);
+    }
 
-	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final CryptKind secureAlgKind, final String clientSecretKey, String umidToken,
-			final String clientRef, final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
-		super(secureAlgKind, clientSecretKey, umidToken, remoteHost, redirectInfo);
-		hasTextOf(principal, "principal");
-		hasTextOf(credentials, "credentials");
-		hasTextOf(clientRef, "clientRef");
-		// hasTextOf(verifiedToken, "verifiedToken");
-		notNullOf(verifyKind, "verifyKind");
-		this.principal = principal;
-		this.credentials = credentials;
-		this.clientRef = ClientRef.of(clientRef);
-		this.verifiedToken = verifiedToken;
-		this.verifyKind = verifyKind;
-		this.rememberMe = rememberMe;
-	}
+    public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+            final String credentials, final CryptKind secureAlgKind, final String clientSecretKey, String umidToken,
+            final String clientRef, final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
+        super(secureAlgKind, clientSecretKey, umidToken, remoteHost, redirectInfo);
+        hasTextOf(principal, "principal");
+        hasTextOf(credentials, "credentials");
+        hasTextOf(clientRef, "clientRef");
+        // hasTextOf(verifiedToken, "verifiedToken");
+        notNullOf(verifyKind, "verifyKind");
+        this.principal = principal;
+        this.credentials = credentials;
+        this.clientRef = ClientRef.of(clientRef);
+        this.verifiedToken = verifiedToken;
+        this.verifyKind = verifyKind;
+        this.rememberMe = rememberMe;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return credentials;
-	}
+    @Override
+    public Object getCredentials() {
+        return credentials;
+    }
 
-	@Override
-	public boolean isRememberMe() {
-		return rememberMe;
-	}
+    @Override
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
 
-	public ClientRef getClientRef() {
-		return clientRef;
-	}
+    public ClientRef getClientRef() {
+        return clientRef;
+    }
 
-	@Override
-	public String getVerifiedToken() {
-		return verifiedToken;
-	}
+    @Override
+    public String getVerifiedToken() {
+        return verifiedToken;
+    }
 
-	@Override
-	public VerifyKind getVerifyType() {
-		return verifyKind;
-	}
+    @Override
+    public VerifyKind getVerifyType() {
+        return verifyKind;
+    }
 
 }

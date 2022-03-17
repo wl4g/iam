@@ -34,148 +34,148 @@ import com.wl4g.iam.core.cache.CacheKey.Serializer;
  */
 public interface IamCache extends Cache<CacheKey, Object> {
 
-	final static byte[] NX = "NX".getBytes(UTF_8);
-	final static byte[] PX = "PX".getBytes(UTF_8);
+    final static byte[] NX = "NX".getBytes(UTF_8);
+    final static byte[] PX = "PX".getBytes(UTF_8);
 
-	/**
-	 * Gets cache name.
-	 * 
-	 * @return
-	 */
-	String getCacheName();
+    /**
+     * Gets cache name.
+     * 
+     * @return
+     */
+    String getCacheName();
 
-	/**
-	 * Decay counter
-	 *
-	 * @param key
-	 *            Key that contains the actual EnhancedKey and expiration date
-	 * @param value
-	 * @return Returns the remaining valid time of this EnhancedKey before this
-	 *         setup
-	 * @throws CacheException
-	 */
-	Long timeToLive(CacheKey key, Object value) throws CacheException;
+    /**
+     * Decay counter
+     *
+     * @param key
+     *            Key that contains the actual EnhancedKey and expiration date
+     * @param value
+     * @return Returns the remaining valid time of this EnhancedKey before this
+     *         setup
+     * @throws CacheException
+     */
+    Long timeToLive(CacheKey key, Object value) throws CacheException;
 
-	/**
-	 * Get and add an atomic counter at the same time
-	 *
-	 * @param key
-	 * @return
-	 * @throws CacheException
-	 */
-	Long incrementGet(CacheKey key) throws CacheException;
+    /**
+     * Get and add an atomic counter at the same time
+     *
+     * @param key
+     * @return
+     * @throws CacheException
+     */
+    Long incrementGet(CacheKey key) throws CacheException;
 
-	/**
-	 * Get and add an atomic counter at the same time
-	 *
-	 * @param key
-	 * @param incrBy
-	 * @return
-	 * @throws CacheException
-	 */
-	Long incrementGet(CacheKey key, long incrBy) throws CacheException;
+    /**
+     * Get and add an atomic counter at the same time
+     *
+     * @param key
+     * @param incrBy
+     * @return
+     * @throws CacheException
+     */
+    Long incrementGet(CacheKey key, long incrBy) throws CacheException;
 
-	/**
-	 * Acquisition and reduction of atomic counter once at a time
-	 *
-	 * @param key
-	 * @return
-	 * @throws CacheException
-	 */
-	Long decrementGet(CacheKey key) throws CacheException;
+    /**
+     * Acquisition and reduction of atomic counter once at a time
+     *
+     * @param key
+     * @return
+     * @throws CacheException
+     */
+    Long decrementGet(CacheKey key) throws CacheException;
 
-	/**
-	 * Acquisition and reduction of atomic counter once at a time
-	 *
-	 * @param key
-	 * @param decrBy
-	 * @return
-	 * @throws CacheException
-	 */
-	Long decrementGet(CacheKey key, long decrBy) throws CacheException;
+    /**
+     * Acquisition and reduction of atomic counter once at a time
+     *
+     * @param key
+     * @param decrBy
+     * @return
+     * @throws CacheException
+     */
+    Long decrementGet(CacheKey key, long decrBy) throws CacheException;
 
-	/**
-	 * Put(If not exist)
-	 *
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	boolean putIfAbsent(CacheKey key, Object value);
+    /**
+     * Put(If not exist)
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    boolean putIfAbsent(CacheKey key, Object value);
 
-	// --- Enhanced API. ---
+    // --- Enhanced API. ---
 
-	/**
-	 * Puts map field.
-	 * 
-	 * @param fieldKey
-	 * @param fieldValue
-	 * @param expireMs
-	 * @return
-	 */
-	String mapPut(CacheKey fieldKey, Object fieldValue);
+    /**
+     * Puts map field.
+     * 
+     * @param fieldKey
+     * @param fieldValue
+     * @param expireMs
+     * @return
+     */
+    String mapPut(CacheKey fieldKey, Object fieldValue);
 
-	/**
-	 * Puts map fields all.
-	 * 
-	 * @param map
-	 * @param serializer
-	 * @return
-	 */
-	String mapPutAll(Map<Object, Object> map, Serializer serializer);
+    /**
+     * Puts map fields all.
+     * 
+     * @param map
+     * @param serializer
+     * @return
+     */
+    String mapPutAll(Map<Object, Object> map, Serializer serializer);
 
-	/**
-	 * Puts map fields all.
-	 * 
-	 * @param map
-	 * @param expireSec
-	 * @param serializer
-	 * @return
-	 */
-	String mapPutAll(Map<Object, Object> map, int expireSec, Serializer serializer);
+    /**
+     * Puts map fields all.
+     * 
+     * @param map
+     * @param expireSec
+     * @param serializer
+     * @return
+     */
+    String mapPutAll(Map<Object, Object> map, int expireSec, Serializer serializer);
 
-	/**
-	 * Remove f ields map.
-	 * 
-	 * @param fieldKey
-	 * @return
-	 */
-	Long mapRemove(String fieldKey);
+    /**
+     * Remove f ields map.
+     * 
+     * @param fieldKey
+     * @return
+     */
+    Long mapRemove(String fieldKey);
 
-	/**
-	 * Remove fields ma p.
-	 */
-	void mapRemoveAll();
+    /**
+     * Remove fields ma p.
+     */
+    void mapRemoveAll();
 
-	/**
-	 * Gets field of map.
-	 * 
-	 * @param fieldKey
-	 * @return
-	 */
-	<T> T getMapField(CacheKey fieldKey);
+    /**
+     * Gets field of map.
+     * 
+     * @param fieldKey
+     * @return
+     */
+    <T> T getMapField(CacheKey fieldKey);
 
-	/**
-	 * Gets fields map.
-	 * 
-	 * @param serializer
-	 * @return
-	 */
-	<T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer);
+    /**
+     * Gets fields map.
+     * 
+     * @param serializer
+     * @return
+     */
+    <T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer);
 
-	/**
-	 * Gets fields map.
-	 * 
-	 * @return
-	 */
-	Map<byte[], byte[]> getMapAll();
+    /**
+     * Gets fields map.
+     * 
+     * @return
+     */
+    Map<byte[], byte[]> getMapAll();
 
-	/**
-	 * Sets map block expireSec.
-	 * 
-	 * @param expireSec
-	 * @return
-	 */
-	boolean expireMap(int expireSec);
+    /**
+     * Sets map block expireSec.
+     * 
+     * @param expireSec
+     * @return
+     */
+    boolean expireMap(int expireSec);
 
 }

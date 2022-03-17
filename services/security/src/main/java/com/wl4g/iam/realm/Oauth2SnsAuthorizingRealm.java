@@ -46,58 +46,58 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
  */
 public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractAuthorizingRealm<T> {
 
-	/**
-	 * IAM Social connection factory
-	 */
-	@Autowired
-	protected OAuth2ApiBindingFactory connectFactory;
+    /**
+     * IAM Social connection factory
+     */
+    @Autowired
+    protected OAuth2ApiBindingFactory connectFactory;
 
-	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
-	/**
-	 * Authenticates a user and retrieves its information.
-	 *
-	 * @param token
-	 *            the authentication token
-	 * @throws AuthenticationException
-	 *             if there is an error during authentication.
-	 */
-	@Override
-	protected IamAuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
-		ProviderSupport.checkSupport(token.getSocial().getProvider());
+    /**
+     * Authenticates a user and retrieves its information.
+     *
+     * @param token
+     *            the authentication token
+     * @throws AuthenticationException
+     *             if there is an error during authentication.
+     */
+    @Override
+    protected IamAuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
+        ProviderSupport.checkSupport(token.getSocial().getProvider());
 
-		/**
-		 * Obtain the account information bound by openId.
-		 * {@link Oauth2AuthorizingBoundMatcher#doCredentialsMatch()}
-		 */
-		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
-				token.getSocial().getUnionId());
-		IamPrincipal pinfo = configurer.getIamUserDetail(parameter);
-		log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(pinfo), toJSONString(parameter));
+        /**
+         * Obtain the account information bound by openId.
+         * {@link Oauth2AuthorizingBoundMatcher#doCredentialsMatch()}
+         */
+        Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
+                token.getSocial().getUnionId());
+        IamPrincipal pinfo = configurer.getIamUserDetail(parameter);
+        log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(pinfo), toJSONString(parameter));
 
-		if (nonNull(pinfo) && !isBlank(pinfo.getPrincipal())) {
-			// Sets authentication attributes.(roles/permissions/rememberMe/...)
-			PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
-			return new Oauth2SnsAuthenticationInfo(pinfo, principals, getName());
-		}
+        if (nonNull(pinfo) && !isBlank(pinfo.getPrincipal())) {
+            // Sets authentication attributes.(roles/permissions/rememberMe/...)
+            PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
+            return new Oauth2SnsAuthenticationInfo(pinfo, principals, getName());
+        }
 
-		return EmptyOauth2AuthenicationInfo.EMPTY;
-	}
+        return EmptyOauth2AuthenicationInfo.EMPTY;
+    }
 
-	/**
-	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).</br>
-	 *
-	 * @param principals
-	 *            the primary identifying principals of the AuthorizationInfo
-	 *            that should be retrieved.
-	 * @return the AuthorizationInfo associated with this principals.
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		return new SimpleAuthorizationInfo();
-	}
+    /**
+     * Retrieves the AuthorizationInfo for the given principals (the CAS
+     * previously authenticated user : id + attributes).</br>
+     *
+     * @param principals
+     *            the primary identifying principals of the AuthorizationInfo
+     *            that should be retrieved.
+     * @return the AuthorizationInfo associated with this principals.
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        return new SimpleAuthorizationInfo();
+    }
 
 }

@@ -26,31 +26,31 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
  */
 public class IamAuthenticationTokenWrapper {
 
-	/**
-	 * Origin {@link IamAuthenticationToken}
-	 */
-	private IamAuthenticationToken token;
+    /**
+     * Origin {@link IamAuthenticationToken}
+     */
+    private IamAuthenticationToken token;
 
-	public IamAuthenticationTokenWrapper() {
-		super();
-	}
+    public IamAuthenticationTokenWrapper() {
+        super();
+    }
 
-	public IamAuthenticationTokenWrapper(IamAuthenticationToken token) {
-		super();
-		this.token = token;
-	}
+    public IamAuthenticationTokenWrapper(IamAuthenticationToken token) {
+        super();
+        this.token = token;
+    }
 
-	public IamAuthenticationToken getToken() {
-		return token;
-	}
+    public IamAuthenticationToken getToken() {
+        return token;
+    }
 
-	public void setToken(IamAuthenticationToken token) {
-		this.token = token;
-	}
+    public void setToken(IamAuthenticationToken token) {
+        this.token = token;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
 }

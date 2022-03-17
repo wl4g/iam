@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.iam.web.SimpleRcmEvaluatorEndpoint.*;
+import static com.wl4g.iam.web.risk.SimpleRiskEvaluateController.*;
 
 import java.util.Map;
 

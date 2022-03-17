@@ -23,7 +23,7 @@ import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.utils.cumulate.Cumulator;
 
 import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
-import static com.wl4g.iam.core.utils.RiskControlSecurityUtils.*;
+import static com.wl4g.iam.core.utils.RiskSecurityUtils.*;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;

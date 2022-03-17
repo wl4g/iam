@@ -33,7 +33,7 @@ import com.wl4g.iam.core.security.xsrf.XsrfProtectionSecurityFilter;
 import com.wl4g.iam.core.security.xsrf.handler.DefaultXsrfRejectHandler;
 import com.wl4g.iam.core.security.xsrf.handler.XsrfRejectHandler;
 import com.wl4g.iam.core.security.xsrf.repository.CookieXsrfTokenRepository;
-import com.wl4g.iam.core.web.XsrfProtectionEndpoint;
+import com.wl4g.iam.core.web.XsrfSecurityController;
 
 /**
  * XSRF protection auto configuration.
@@ -44,65 +44,65 @@ import com.wl4g.iam.core.web.XsrfProtectionEndpoint;
  */
 public class XsrfAutoConfiguration extends PrefixHandlerMappingSupport {
 
-	//
-	// X S R F _ F I L T E R _ C O N F I G's.
-	//
+    //
+    // X S R F _ F I L T E R _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
-	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
-	public XsrfProperties xsrfProperties() {
-		return new XsrfProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
+    @ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
+    public XsrfProperties xsrfProperties() {
+        return new XsrfProperties();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public CookieXsrfTokenRepository cookieXsrfTokenRepository() {
-		return new CookieXsrfTokenRepository();
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public CookieXsrfTokenRepository cookieXsrfTokenRepository() {
+        return new CookieXsrfTokenRepository();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	@ConditionalOnMissingBean(XsrfRejectHandler.class)
-	public DefaultXsrfRejectHandler defaultXsrfRejectHandler() {
-		return new DefaultXsrfRejectHandler();
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    @ConditionalOnMissingBean(XsrfRejectHandler.class)
+    public DefaultXsrfRejectHandler defaultXsrfRejectHandler() {
+        return new DefaultXsrfRejectHandler();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter() {
-		return new XsrfProtectionSecurityFilter();
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter() {
+        return new XsrfProtectionSecurityFilter();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public RequiresXsrfMatcher requiresXsrfMatcher() {
-		return new RequiresXsrfMatcher();
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public RequiresXsrfMatcher requiresXsrfMatcher() {
+        return new RequiresXsrfMatcher();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public FilterRegistrationBean<XsrfProtectionSecurityFilter> xsrfProtectionSecurityFilterBean(
-			XsrfProtectionSecurityFilter filter) {
-		// Register XSRF filter
-		FilterRegistrationBean<XsrfProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
-		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*");
-		return filterBean;
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public FilterRegistrationBean<XsrfProtectionSecurityFilter> xsrfProtectionSecurityFilterBean(
+            XsrfProtectionSecurityFilter filter) {
+        // Register XSRF filter
+        FilterRegistrationBean<XsrfProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
+        filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
+        // Cannot use '/*' or it will not be added to the container chain (only
+        // '/**')
+        filterBean.addUrlPatterns("/*");
+        return filterBean;
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionEndpoint xsrfProtectionEndpoint() {
-		return new XsrfProtectionEndpoint();
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public XsrfSecurityController xsrfProtectionEndpoint() {
+        return new XsrfSecurityController();
+    }
 
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public Object xsrfProtectionEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_XSRF_BASE, XsrfController.class);
-	}
+    @Bean
+    @ConditionalOnBean(XsrfProperties.class)
+    public Object xsrfProtectionEndpointPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_XSRF_BASE, XsrfController.class);
+    }
 
 }

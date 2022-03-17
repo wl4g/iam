@@ -282,8 +282,8 @@ public class JedisIamCache implements IamCache {
 
     @Override
     public <T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer) {
-        return safeMap(jedisClient.hgetAll(toKeyBytes(name))).entrySet().stream()
-                .collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
+        return safeMap(jedisClient.hgetAll(toKeyBytes(name))).entrySet().stream().collect(
+                toMap(e -> new String(e.getKey(), UTF_8), e -> {
                     if (isNull(e.getValue()))
                         return null;
                     return serializer.deserialize(e.getValue(), valueClass);

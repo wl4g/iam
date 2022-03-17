@@ -33,12 +33,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class IamServerMarkerConfiguration {
 
-	@Bean
-	public Marker iamServerMarkerBean() {
-		return new Marker();
-	}
+    @Bean
+    public Marker iamServerMarkerBean() {
+        return new Marker();
+    }
 
-	class Marker {
-	}
+    class Marker {
+    }
 
 }

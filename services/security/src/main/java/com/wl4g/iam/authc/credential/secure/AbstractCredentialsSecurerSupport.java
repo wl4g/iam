@@ -155,7 +155,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
      * 
      * @param principal
      * @return
-     * @see {@link com.wl4g.iam.web.LoginAuthenticationEndpoint#handhake()}
+     * @see {@link com.wl4g.iam.web.login.LoginAuthenticationController#handhake()}
      */
     @Override
     public String applySecret(@NotNull CryptKind kind, @NotNull String principal) {

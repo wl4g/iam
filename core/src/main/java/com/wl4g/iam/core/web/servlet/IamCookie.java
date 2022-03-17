@@ -49,47 +49,47 @@ import org.apache.shiro.web.servlet.SimpleCookie;
  */
 public class IamCookie extends SimpleCookie {
 
-	public IamCookie() {
-		super();
-	}
+    public IamCookie() {
+        super();
+    }
 
-	public IamCookie(String name) {
-		super(name);
-	}
+    public IamCookie(String name) {
+        super(name);
+    }
 
-	public IamCookie(Cookie cookie) {
-		super(cookie);
-	}
+    public IamCookie(Cookie cookie) {
+        super(cookie);
+    }
 
-	@Override
-	public void saveTo(HttpServletRequest request, HttpServletResponse response) {
-		if (!isSecure() && request.isSecure()) {
-			setSecure(true);
-		}
-		super.saveTo(request, response);
-	}
+    @Override
+    public void saveTo(HttpServletRequest request, HttpServletResponse response) {
+        if (!isSecure() && request.isSecure()) {
+            setSecure(true);
+        }
+        super.saveTo(request, response);
+    }
 
-	/**
-	 * Copy build cookie
-	 * 
-	 * @param cookie
-	 * @return
-	 */
-	public static IamCookie build(javax.servlet.http.Cookie cookie) {
-		if (isNull(cookie)) {
-			return null;
-		}
-		IamCookie _that = new IamCookie();
-		_that.setName(cookie.getName());
-		_that.setValue(cookie.getValue());
-		_that.setComment(cookie.getComment());
-		_that.setDomain(cookie.getDomain());
-		_that.setPath(cookie.getPath());
-		_that.setMaxAge(Math.max(DEFAULT_MAX_AGE, cookie.getMaxAge()));
-		_that.setVersion(Math.max(DEFAULT_VERSION, cookie.getVersion()));
-		_that.setSecure(cookie.getSecure());
-		_that.setHttpOnly(cookie.isHttpOnly());
-		return _that;
-	}
+    /**
+     * Copy build cookie
+     * 
+     * @param cookie
+     * @return
+     */
+    public static IamCookie build(javax.servlet.http.Cookie cookie) {
+        if (isNull(cookie)) {
+            return null;
+        }
+        IamCookie _that = new IamCookie();
+        _that.setName(cookie.getName());
+        _that.setValue(cookie.getValue());
+        _that.setComment(cookie.getComment());
+        _that.setDomain(cookie.getDomain());
+        _that.setPath(cookie.getPath());
+        _that.setMaxAge(Math.max(DEFAULT_MAX_AGE, cookie.getMaxAge()));
+        _that.setVersion(Math.max(DEFAULT_VERSION, cookie.getVersion()));
+        _that.setSecure(cookie.getSecure());
+        _that.setHttpOnly(cookie.isHttpOnly());
+        return _that;
+    }
 
 }

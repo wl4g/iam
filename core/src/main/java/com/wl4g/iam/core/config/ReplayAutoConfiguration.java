@@ -39,47 +39,47 @@ import com.wl4g.iam.core.security.replay.handler.ReplayRejectHandler;
  */
 public class ReplayAutoConfiguration {
 
-	//
-	// R E P L A Y _ P R O T E C T I O N _ C O N F I G's.
-	//
+    //
+    // R E P L A Y _ P R O T E C T I O N _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = KEY_REPLAY_PREFIX + ".enabled", matchIfMissing = false)
-	@ConfigurationProperties(prefix = KEY_REPLAY_PREFIX)
-	public ReplayProperties replayProperties() {
-		return new ReplayProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = KEY_REPLAY_PREFIX + ".enabled", matchIfMissing = false)
+    @ConfigurationProperties(prefix = KEY_REPLAY_PREFIX)
+    public ReplayProperties replayProperties() {
+        return new ReplayProperties();
+    }
 
-	@Bean
-	@ConditionalOnBean(ReplayProperties.class)
-	public RequiresReplayMatcher requiresReplayMatcher() {
-		return new RequiresReplayMatcher();
-	}
+    @Bean
+    @ConditionalOnBean(ReplayProperties.class)
+    public RequiresReplayMatcher requiresReplayMatcher() {
+        return new RequiresReplayMatcher();
+    }
 
-	@Bean
-	@ConditionalOnBean(ReplayProperties.class)
-	@ConditionalOnMissingBean(ReplayRejectHandler.class)
-	public DefaultReplayRejectHandler defaultReplayRejectHandler() {
-		return new DefaultReplayRejectHandler();
-	}
+    @Bean
+    @ConditionalOnBean(ReplayProperties.class)
+    @ConditionalOnMissingBean(ReplayRejectHandler.class)
+    public DefaultReplayRejectHandler defaultReplayRejectHandler() {
+        return new DefaultReplayRejectHandler();
+    }
 
-	@Bean
-	@ConditionalOnBean(ReplayProperties.class)
-	public ReplayProtectionSecurityFilter replayProtectionSecurityFilter() {
-		return new ReplayProtectionSecurityFilter();
-	}
+    @Bean
+    @ConditionalOnBean(ReplayProperties.class)
+    public ReplayProtectionSecurityFilter replayProtectionSecurityFilter() {
+        return new ReplayProtectionSecurityFilter();
+    }
 
-	@Bean
-	@ConditionalOnBean(ReplayProperties.class)
-	public FilterRegistrationBean<ReplayProtectionSecurityFilter> replayProtectionSecurityFilterBean(
-			ReplayProtectionSecurityFilter filter) {
-		// Register XSRF filter
-		FilterRegistrationBean<ReplayProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
-		filterBean.setOrder(ORDER_REPAY_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*"); // TODO config?
-		return filterBean;
-	}
+    @Bean
+    @ConditionalOnBean(ReplayProperties.class)
+    public FilterRegistrationBean<ReplayProtectionSecurityFilter> replayProtectionSecurityFilterBean(
+            ReplayProtectionSecurityFilter filter) {
+        // Register XSRF filter
+        FilterRegistrationBean<ReplayProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
+        filterBean.setOrder(ORDER_REPAY_PRECEDENCE);
+        // Cannot use '/*' or it will not be added to the container chain (only
+        // '/**')
+        filterBean.addUrlPatterns("/*"); // TODO config?
+        return filterBean;
+    }
 
 }

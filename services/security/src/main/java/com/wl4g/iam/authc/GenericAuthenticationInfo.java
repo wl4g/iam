@@ -26,22 +26,22 @@ import com.wl4g.infra.common.codec.CodecSource;
 import static com.wl4g.infra.common.codec.CodecSource.fromHex;
 
 public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
-	private static final long serialVersionUID = 1558934819432102687L;
+    private static final long serialVersionUID = 1558934819432102687L;
 
-	public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
-		this(iamPrincipal, principals, null, realmName);
-	}
+    public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, String realmName) {
+        this(iamPrincipal, principals, null, realmName);
+    }
 
-	public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
-			String realmName) {
-		super(iamPrincipal, principals, credentialsSalt, realmName);
-	}
+    public GenericAuthenticationInfo(IamPrincipal iamPrincipal, PrincipalCollection principals, ByteSource credentialsSalt,
+            String realmName) {
+        super(iamPrincipal, principals, credentialsSalt, realmName);
+    }
 
-	@Override
-	public CodecSource getPublicSalt() {
-		// from hex
-		final String pubSalt = getIamPrincipal().getPublicSalt();
-		return !isBlank(pubSalt) ? fromHex(pubSalt) : null;
-	}
+    @Override
+    public CodecSource getPublicSalt() {
+        // from hex
+        final String pubSalt = getIamPrincipal().getPublicSalt();
+        return !isBlank(pubSalt) ? fromHex(pubSalt) : null;
+    }
 
 }

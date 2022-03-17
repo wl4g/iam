@@ -35,14 +35,14 @@ import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.IamController;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateResult;
+import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.TicketValidateRequest;
-import com.wl4g.iam.core.authc.model.TicketValidateResult;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
-import com.wl4g.iam.core.web.AuthenticatingEndpoint;
+import com.wl4g.iam.core.web.AuthenticatingController;
 
 /**
  * Mock iam central authenticating endpoint
@@ -52,58 +52,58 @@ import com.wl4g.iam.core.web.AuthenticatingEndpoint;
  * @since
  */
 @IamController
-public class MockCentralAuthenticatingEndpoint extends BaseController implements AuthenticatingEndpoint {
+public class MockCentralAuthenticatingEndpoint extends BaseController implements AuthenticatingController {
 
-	@Autowired
-	protected AuthenticatingHandler authHandler;
+    @Autowired
+    protected AuthenticatingHandler authHandler;
 
-	@Autowired
-	protected AbstractIamProperties<? extends ParamProperties> config;
+    @Autowired
+    protected AbstractIamProperties<? extends ParamProperties> config;
 
-	@PostMapping(URI_S_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<TicketValidateResult<IamPrincipal>> validate(@NotNull @RequestBody TicketValidateRequest param) {
-		log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+    @PostMapping(URI_S_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<ServiceTicketValidateModel<IamPrincipal>> validate(@NotNull @RequestBody ServiceTicketValidateRequest param) {
+        log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<TicketValidateResult<IamPrincipal>> resp = new RespBase<>();
-		// Ticket assertion.
-		resp.setData(authHandler.validate(param));
+        RespBase<ServiceTicketValidateModel<IamPrincipal>> resp = new RespBase<>();
+        // Ticket assertion.
+        resp.setData(authHandler.validate(param));
 
-		log.debug("Mock Ticket validated. => {}", resp);
-		return resp;
-	}
+        log.debug("Mock Ticket validated. => {}", resp);
+        return resp;
+    }
 
-	@PostMapping(URI_S_SECOND_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<SecondaryAuthcValidateResult> secondaryValidate(HttpServletRequest request) {
-		log.debug("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
+    @PostMapping(URI_S_SECOND_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<SecondaryAuthcValidateModel> secondaryValidate(HttpServletRequest request) {
+        log.debug("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
 
-		RespBase<SecondaryAuthcValidateResult> resp = new RespBase<>();
-		// Requires parameters
-		String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
-		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
-		// Secondary authentication assertion.
-		resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
+        RespBase<SecondaryAuthcValidateModel> resp = new RespBase<>();
+        // Requires parameters
+        String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
+        String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
+        // Secondary authentication assertion.
+        resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-		log.debug("Mock Secondary validated. => {}", resp);
-		return resp;
-	}
+        log.debug("Mock Secondary validated. => {}", resp);
+        return resp;
+    }
 
-	@PostMapping(URI_S_SESSION_VALIDATE)
-	@ResponseBody
-	@Override
-	public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {
-		log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+    @PostMapping(URI_S_SESSION_VALIDATE)
+    @ResponseBody
+    @Override
+    public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {
+        log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
-		RespBase<SessionValidateModel> resp = new RespBase<>();
+        RespBase<SessionValidateModel> resp = new RespBase<>();
 
-		// Session expires validate assertion.
-		resp.setData(authHandler.sessionValidate(param));
+        // Session expires validate assertion.
+        resp.setData(authHandler.sessionValidate(param));
 
-		log.debug("Mock Sessions expires validated. => {}", resp);
-		return resp;
-	}
+        log.debug("Mock Sessions expires validated. => {}", resp);
+        return resp;
+    }
 
 }

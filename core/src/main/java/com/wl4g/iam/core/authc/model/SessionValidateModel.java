@@ -33,31 +33,31 @@ import com.wl4g.infra.common.serialize.JacksonUtils;
  * @since
  */
 public final class SessionValidateModel extends BaseValidateModel {
-	private static final long serialVersionUID = 5483716885382988025L;
+    private static final long serialVersionUID = 5483716885382988025L;
 
-	@NotEmpty
-	private List<String> tickets = new ArrayList<>();
+    @NotEmpty
+    private List<String> tickets = new ArrayList<>();
 
-	public SessionValidateModel() {
-	}
+    public SessionValidateModel() {
+    }
 
-	public SessionValidateModel(String application) {
-		super(application);
-	}
+    public SessionValidateModel(String application) {
+        super(application);
+    }
 
-	public List<String> getTickets() {
-		return tickets;
-	}
+    public List<String> getTickets() {
+        return tickets;
+    }
 
-	public void setTickets(List<String> tickets) {
-		if (!CollectionUtils.isEmpty(tickets)) {
-			this.tickets.addAll(tickets);
-		}
-	}
+    public void setTickets(List<String> tickets) {
+        if (!CollectionUtils.isEmpty(tickets)) {
+            this.tickets.addAll(tickets);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return JacksonUtils.toJSONString(this);
+    }
 
 }

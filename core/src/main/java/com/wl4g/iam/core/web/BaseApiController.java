@@ -62,7 +62,7 @@ import com.wl4g.iam.core.web.model.SessionQueryModel;
  */
 @Beta
 @ResponseBody
-public abstract class AbstractApiEndpoint extends BaseController implements InitializingBean {
+public abstract class BaseApiController extends BaseController implements InitializingBean {
     public static final String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
     /**

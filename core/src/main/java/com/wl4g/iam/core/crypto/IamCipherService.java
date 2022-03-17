@@ -29,60 +29,60 @@ import com.wl4g.infra.core.framework.operator.Operator;
  */
 public interface IamCipherService extends Operator<CipherCryptKind> {
 
-	/**
-	 * Encryption cipher text.
-	 * 
-	 * @param key
-	 * @param plaintext
-	 * @return
-	 */
-	String encrypt(byte[] key, String plaintext);
+    /**
+     * Encryption cipher text.
+     * 
+     * @param key
+     * @param plaintext
+     * @return
+     */
+    String encrypt(byte[] key, String plaintext);
 
-	/**
-	 * Decryption plain text.
-	 * 
-	 * @param key
-	 * @param hexCiphertext
-	 * @return
-	 */
-	String decrypt(byte[] key, String hexCiphertext);
+    /**
+     * Decryption plain text.
+     * 
+     * @param key
+     * @param hexCiphertext
+     * @return
+     */
+    String decrypt(byte[] key, String hexCiphertext);
 
-	/**
-	 * Iam symmetric secure crypt algorithm definitions.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年3月29日 v1.0.0
-	 * @see
-	 */
-	public static enum CipherCryptKind {
+    /**
+     * Iam symmetric secure crypt algorithm definitions.
+     * 
+     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @version 2020年3月29日 v1.0.0
+     * @see
+     */
+    public static enum CipherCryptKind {
 
-		AES("AES/ECB/PKCS5Padding"),
+        AES("AES/ECB/PKCS5Padding"),
 
-		BLOWFISH("BLOWFISH"), // TODO
+        BLOWFISH("BLOWFISH"), // TODO
 
-		DES3("DES3"); // TODO
+        DES3("DES3"); // TODO
 
-		final private String algorithm;
+        final private String algorithm;
 
-		private CipherCryptKind(String algorithm) {
-			hasTextOf(algorithm, "algorithm");
-			this.algorithm = algorithm;
-		}
+        private CipherCryptKind(String algorithm) {
+            hasTextOf(algorithm, "algorithm");
+            this.algorithm = algorithm;
+        }
 
-		public String getAlgorithm() {
-			return algorithm;
-		}
+        public String getAlgorithm() {
+            return algorithm;
+        }
 
-		public static CipherCryptKind safeOf(String algorithm) {
-			for (CipherCryptKind k : values()) {
-				if (String.valueOf(algorithm).equalsIgnoreCase(k.name())
-						|| String.valueOf(algorithm).equalsIgnoreCase(k.getAlgorithm())) {
-					return k;
-				}
-			}
-			return null;
-		}
+        public static CipherCryptKind safeOf(String algorithm) {
+            for (CipherCryptKind k : values()) {
+                if (String.valueOf(algorithm).equalsIgnoreCase(k.name())
+                        || String.valueOf(algorithm).equalsIgnoreCase(k.getAlgorithm())) {
+                    return k;
+                }
+            }
+            return null;
+        }
 
-	}
+    }
 
 }

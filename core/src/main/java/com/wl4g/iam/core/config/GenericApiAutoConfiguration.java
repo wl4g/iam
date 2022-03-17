@@ -31,9 +31,9 @@ import com.wl4g.iam.core.annotation.IamApiV2Controller;
  */
 public abstract class GenericApiAutoConfiguration extends PrefixHandlerMappingSupport {
 
-	@Bean
-	public Object genericApiEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_API_V2_BASE, IamApiV2Controller.class);
-	}
+    @Bean
+    public Object genericApiEndpointPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_S_API_V2_BASE, IamApiV2Controller.class);
+    }
 
 }

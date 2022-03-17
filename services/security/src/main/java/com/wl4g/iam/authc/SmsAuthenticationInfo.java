@@ -22,15 +22,15 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
 
 public class SmsAuthenticationInfo extends AbstractIamAuthenticationInfo {
-	private static final long serialVersionUID = 1558934819432102687L;
+    private static final long serialVersionUID = 1558934819432102687L;
 
-	public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, String realmName) {
-		this(accountInfo, principals, null, realmName);
-	}
+    public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, String realmName) {
+        this(accountInfo, principals, null, realmName);
+    }
 
-	public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
-			String realmName) {
-		super(accountInfo, principals, credentialsSalt, realmName);
-	}
+    public SmsAuthenticationInfo(IamPrincipal accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+            String realmName) {
+        super(accountInfo, principals, credentialsSalt, realmName);
+    }
 
 }

@@ -17,12 +17,12 @@ package com.wl4g.iam.core.filter;
 
 public interface IamAuthenticationFilter {
 
-	/**
-	 * Get URI mapping
-	 * {@link com.wl4g.iam.core.config.AbstractIamConfiguration#shiroFilter}
-	 *
-	 * @return
-	 */
-	String getUriMapping();
+    /**
+     * Get URI mapping
+     * {@link com.wl4g.iam.core.config.AbstractIamConfiguration#shiroFilter}
+     *
+     * @return
+     */
+    String getUriMapping();
 
 }

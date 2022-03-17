@@ -33,28 +33,28 @@ import com.wl4g.iam.common.subject.IamPrincipal;
  */
 public interface IamAuthenticationInfo extends AuthenticationInfo {
 
-	/**
-	 * Gets current authentication {@link Principal} information.
-	 * 
-	 * @return
-	 */
-	@NotNull
-	IamPrincipal getIamPrincipal();
+    /**
+     * Gets current authentication {@link Principal} information.
+     * 
+     * @return
+     */
+    @NotNull
+    IamPrincipal getIamPrincipal();
 
-	/**
-	 * Gets current authentication credentials public salt. </br>
-	 * </br>
-	 * for example: Salt is needed when you login with an account and a static
-	 * password.
-	 * 
-	 * @return Salt required for certification verification.
-	 * @throws UnsupportedOperationException
-	 *             When the current authentication mechanism does not support or
-	 *             does not need salt, an exception will be thrown.
-	 */
-	@NotNull
-	default CodecSource getPublicSalt() {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Gets current authentication credentials public salt. </br>
+     * </br>
+     * for example: Salt is needed when you login with an account and a static
+     * password.
+     * 
+     * @return Salt required for certification verification.
+     * @throws UnsupportedOperationException
+     *             When the current authentication mechanism does not support or
+     *             does not need salt, an exception will be thrown.
+     */
+    @NotNull
+    default CodecSource getPublicSalt() {
+        throw new UnsupportedOperationException();
+    }
 
 }

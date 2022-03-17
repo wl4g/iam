@@ -36,32 +36,32 @@ import javax.servlet.ServletResponse;
 @IamFilter
 public class WechatMpAuthenticationFilter extends Oauth2SnsAuthenticationFilter<WechatMpAuthenticationToken> {
 
-	@Override
-	public String getName() {
-		return ProviderSupport.WECHATMP.getName();
-	}
+    @Override
+    public String getName() {
+        return ProviderSupport.WECHATMP.getName();
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupport.WECHATMP.getName();
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + ProviderSupport.WECHATMP.getName();
+    }
 
-	@Override
-	protected boolean enabled() {
-		return true;
-	}
+    @Override
+    protected boolean enabled() {
+        return true;
+    }
 
-	@Override
-	protected IamAuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		// Gets sns wxmp token.
-		IamAuthenticationToken token = super.createToken(request, response);
-		isInstanceOf(WechatMpAuthenticationToken.class, token);
+    @Override
+    protected IamAuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+        // Gets sns wxmp token.
+        IamAuthenticationToken token = super.createToken(request, response);
+        isInstanceOf(WechatMpAuthenticationToken.class, token);
 
-		// Bind sns authorization info, for wxmp step 2 login with account
-		WechatMpAuthenticationToken wxmpToken = (WechatMpAuthenticationToken) token;
-		bind(KEY_SNS_AUTHORIZED_INFO, wxmpToken.getSocial());
+        // Bind sns authorization info, for wxmp step 2 login with account
+        WechatMpAuthenticationToken wxmpToken = (WechatMpAuthenticationToken) token;
+        bind(KEY_SNS_AUTHORIZED_INFO, wxmpToken.getSocial());
 
-		return token;
-	}
+        return token;
+    }
 
 }

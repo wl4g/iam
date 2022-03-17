@@ -39,41 +39,41 @@ import static com.wl4g.infra.common.web.rest.RespBase.RetCode.*;
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class IamErrorConfigurer extends ErrorConfigurer {
 
-	public IamErrorConfigurer(ErrorHandlerProperties config) {
-		super(config);
-	}
+    public IamErrorConfigurer(ErrorHandlerProperties config) {
+        super(config);
+    }
 
-	@Override
-	public Integer getStatus(Map<String, Object> model, Throwable th) {
-		// IAM Unauthenticated?
-		if ((th instanceof UnauthenticatedException) || (th instanceof com.wl4g.iam.core.exception.UnauthenticatedException)) {
-			return UNAUTHC.getErrcode();
-		}
-		// IAM Unauthorized?
-		else if ((th instanceof UnauthorizedException) || (th instanceof com.wl4g.iam.core.exception.UnauthorizedException)) {
-			return UNAUTHZ.getErrcode();
-		}
-		// see: IamSecurityHolder
-		else if (th instanceof UnknownSessionException) {
-			return BAD_PARAMS.getErrcode();
-		}
+    @Override
+    public Integer getStatus(Map<String, Object> model, Throwable th) {
+        // IAM Unauthenticated?
+        if ((th instanceof UnauthenticatedException) || (th instanceof com.wl4g.iam.core.exception.UnauthenticatedException)) {
+            return UNAUTHC.getErrcode();
+        }
+        // IAM Unauthorized?
+        else if ((th instanceof UnauthorizedException) || (th instanceof com.wl4g.iam.core.exception.UnauthorizedException)) {
+            return UNAUTHZ.getErrcode();
+        }
+        // see: IamSecurityHolder
+        else if (th instanceof UnknownSessionException) {
+            return BAD_PARAMS.getErrcode();
+        }
 
-		// Using next chain configuring.
-		return null;
-	}
+        // Using next chain configuring.
+        return null;
+    }
 
-	@Override
-	public String getRootCause(Map<String, Object> model, Throwable th) {
-		// IAM Unauthenticated or Unauthorized?
-		if ((th instanceof UnauthenticatedException) || (th instanceof UnauthorizedException)
-				|| (th instanceof com.wl4g.iam.core.exception.UnauthenticatedException)
-				|| (th instanceof com.wl4g.iam.core.exception.UnauthorizedException)) {
-			// return getRootCausesString(ex);
-			return getMessage(th);
-		}
+    @Override
+    public String getRootCause(Map<String, Object> model, Throwable th) {
+        // IAM Unauthenticated or Unauthorized?
+        if ((th instanceof UnauthenticatedException) || (th instanceof UnauthorizedException)
+                || (th instanceof com.wl4g.iam.core.exception.UnauthenticatedException)
+                || (th instanceof com.wl4g.iam.core.exception.UnauthorizedException)) {
+            // return getRootCausesString(ex);
+            return getMessage(th);
+        }
 
-		// Using next chain configuring.
-		return null;
-	}
+        // Using next chain configuring.
+        return null;
+    }
 
 }
