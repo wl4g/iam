@@ -44,7 +44,7 @@ class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-web,iam-web-etc")
+		def configName = new StringBuffer("application,iam-security,iam-web,iam-web-etc")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'

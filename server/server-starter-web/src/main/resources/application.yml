@@ -16,7 +16,7 @@
 spring:
   application.name: iam-web
   profiles:
-    include: common,util,security
+    include: common,util,default
     active: dev
   banner:
     location: classpath:banner.txt

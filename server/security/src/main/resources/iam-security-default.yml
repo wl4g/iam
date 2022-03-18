@@ -96,6 +96,6 @@ spring:
       bearer-realm-name: 'IAM OIDC Realm'
       id-token-digest-name: SHA-256
       jws-algorithm-name: RS256
-      jwks-json-resource: classpath*:/credentials/oidc/jwks.json
+      jwks-json-resource: classpath*:/credentials/oidc/default-jwks.json
       token-expiration-seconds: 36000
       code-expiration-seconds: 10
