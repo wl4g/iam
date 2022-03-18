@@ -21,7 +21,7 @@ import com.wl4g.infra.support.notification.GenericNotifyMessage;
 import com.wl4g.infra.support.notification.MessageNotifier;
 import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
 
-import static com.wl4g.infra.support.constant.SupportConfigConstant.KEY_SUPPORT_NOTIFY_PREFIX;
+import static com.wl4g.infra.support.constant.SupportInfraConstant.CONF_PREFIX_INFRA_SUPPORT;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -32,57 +32,57 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIam.class, properties = { KEY_SUPPORT_NOTIFY_PREFIX + ".vms.enable=true",
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.regionId=cn-hangzhou",
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
-		// Sensitive config, oneself setup
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.accessKeySecret=${aliyun_vms_secret}",
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
-		KEY_SUPPORT_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
+@SpringBootTest(classes = StandaloneIam.class, properties = { CONF_PREFIX_INFRA_SUPPORT + ".vms.enable=true",
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.regionId=cn-hangzhou",
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
+        // Sensitive config, oneself setup
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.accessKeySecret=${aliyun_vms_secret}",
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.calledShowNumber=055162153866",
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.templates.tts1=TTS_184820765",
+        CONF_PREFIX_INFRA_SUPPORT + ".vms.aliyun.templates.tts2=TTS_184825642" })
 @FixMethodOrder(MethodSorters.JVM)
 public class CompositeMessageNotifierTests {
 
-	@Autowired
-	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
+    @Autowired
+    private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
-	/**
-	 * 
-	 * [TTS_184820765]
-	 * 
-	 * <pre>
-	 * 您正在进行商物云身份验证，验证码${code}，打死不要告诉别人哦
-	 * </pre>
-	 */
-	// @Test
-	public void aliyunVmsCaptchaTest1() {
-		System.out.println("Send starting...");
-		GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts1");
-		// Add placeholder parameters for a specific template
-		msg.addParameter("code", "12345");
-		notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
-		System.out.println("Send end.");
-	}
+    /**
+     * 
+     * [TTS_184820765]
+     * 
+     * <pre>
+     * 您正在进行商物云身份验证，验证码${code}，打死不要告诉别人哦
+     * </pre>
+     */
+    // @Test
+    public void aliyunVmsCaptchaTest1() {
+        System.out.println("Send starting...");
+        GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts1");
+        // Add placeholder parameters for a specific template
+        msg.addParameter("code", "12345");
+        notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
+        System.out.println("Send end.");
+    }
 
-	/**
-	 * [TTS_184825642]
-	 * 
-	 * <pre>
-	 * 尊敬的客户您好，${product}云监控检测到有异常事件，事件源为${source}，当前状态为${state}，告警等级为${level}，告警内容：${msg}，请尽快登录系统查看具体告警内容并处理。
-	 * </pre>
-	 */
-	@Test
-	public void aliyunVmsNotificationTest2() {
-		System.out.println("Send starting...");
-		GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts2");
-		// Add placeholder parameters for a specific template
-		msg.addParameter("product", "Devops Cloud");
-		msg.addParameter("source", "测试设备1");
-		msg.addParameter("state", "异常中");
-		msg.addParameter("level", "严重");
-		msg.addParameter("msg", "此条为测试消息");
-		notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
-		System.out.println("Send end.");
-	}
+    /**
+     * [TTS_184825642]
+     * 
+     * <pre>
+     * 尊敬的客户您好，${product}云监控检测到有异常事件，事件源为${source}，当前状态为${state}，告警等级为${level}，告警内容：${msg}，请尽快登录系统查看具体告警内容并处理。
+     * </pre>
+     */
+    @Test
+    public void aliyunVmsNotificationTest2() {
+        System.out.println("Send starting...");
+        GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts2");
+        // Add placeholder parameters for a specific template
+        msg.addParameter("product", "Devops Cloud");
+        msg.addParameter("source", "测试设备1");
+        msg.addParameter("state", "异常中");
+        msg.addParameter("level", "严重");
+        msg.addParameter("msg", "此条为测试消息");
+        notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
+        System.out.println("Send end.");
+    }
 
 }

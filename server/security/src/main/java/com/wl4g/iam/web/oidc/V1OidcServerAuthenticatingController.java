@@ -67,6 +67,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.wl4g.iam.annotation.V1OidcServerController;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
@@ -86,6 +87,7 @@ import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
  * @date 2018年11月22日
  * @since
  */
+@V1OidcServerController
 public class V1OidcServerAuthenticatingController extends BaseIamController {
 
     private @Autowired IamProperties config;
