@@ -17,7 +17,7 @@ package com.wl4g.iam.core.session.mgt;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -69,7 +69,7 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final CursorSpec cursor, int limit) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
-		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
+		byte[] match = (cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION).getCacheName() + "*").getBytes(UTF_8);
 		ClusterScanParams params = new ClusterScanParams(limit, match);
 		JedisClient jedisClient = ((JedisIamCacheManager) cacheManager).getJedisClient();
 		return new ScanCursor<IamSession>(jedisClient, cursor, IamSession.class, new ScanCursor.Deserializer() {
@@ -139,17 +139,17 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 	@Override
 	protected void doPutIamSession(Session session) {
 		// Update session latest expiration time to timeout.
-		cacheManager.getIamCache(CACHE_SESSION).put(new CacheKey(session.getId(), session.getTimeout()), session);
+		cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION).put(new CacheKey(session.getId(), session.getTimeout()), session);
 	}
 
 	@Override
 	protected void doDeleteIamSession(Session session) {
-		cacheManager.getIamCache(CACHE_SESSION).remove(new CacheKey(session.getId()));
+		cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION).remove(new CacheKey(session.getId()));
 	}
 
 	@Override
 	protected Session doReadIamSession(Serializable sessionId) {
-		return (Session) cacheManager.getIamCache(CACHE_SESSION).get(new CacheKey(sessionId, IamSession.class));
+		return (Session) cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION).get(new CacheKey(sessionId, IamSession.class));
 	}
 
 }

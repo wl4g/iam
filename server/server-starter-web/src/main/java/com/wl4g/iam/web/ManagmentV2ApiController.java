@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_API_V2_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_API_V2_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_API_V2_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_API_V2_SESSION;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.util.Assert.hasText;
@@ -140,7 +140,7 @@ public class ManagmentV2ApiController extends BaseController {
      */
     private String buildRemoteApiURL(String remoteBaseUri) {
         hasText(remoteBaseUri, "Iam mangement for to remoteApiBase URI must not be empty");
-        return remoteBaseUri + URI_S_API_V2_BASE + URI_S_API_V2_SESSION;
+        return remoteBaseUri + URI_IAM_SERVER_API_V2_BASE + URI_IAM_SERVER_API_V2_SESSION;
     }
 
 }

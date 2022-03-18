@@ -15,8 +15,6 @@
  */
 package com.wl4g.iam.web;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.CACHE_DICT_INIT_NAME;
-
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wl4g.iam.common.bean.Dict;
+import com.wl4g.iam.service.DictService;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.infra.support.cache.jedis.JedisService;
-import com.wl4g.iam.common.bean.Dict;
-import com.wl4g.iam.service.DictService;
 
 /**
  * Dictionaries controller
@@ -43,16 +40,10 @@ import com.wl4g.iam.service.DictService;
 public class DictController extends BaseController {
 
     // @com.alibaba.dubbo.config.annotation.Reference
-    @Autowired
-    private DictService dictService;
-
-    @Autowired
-    private JedisService jedisService;
+    private @Autowired DictService dictService;
 
     /**
      * System initialization load dict information.
-     * 
-     * @return
      */
     @RequestMapping(value = "/loadInit")
     public RespBase<?> loadInit() {
@@ -92,7 +83,6 @@ public class DictController extends BaseController {
     public RespBase<?> del(String key) {
         RespBase<Object> resp = RespBase.create();
         dictService.del(key);
-        jedisService.del(CACHE_DICT_INIT_NAME);
         return resp;
     }
 

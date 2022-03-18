@@ -40,7 +40,7 @@ import static com.wl4g.infra.common.codec.Encodes.toBytes;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_VERIFY_JIGSAW_IMG;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_VERIFY_JIGSAW_IMG;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -83,7 +83,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
         notNullOf(lockManager, "lockManager");
         this.config = config;
         this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_JIGSAW_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
-        this.imgCache = cacheManager.getIamCache(CACHE_VERIFY_JIGSAW_IMG);
+        this.imgCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_VERIFY_JIGSAW_IMG);
     }
 
     @Override

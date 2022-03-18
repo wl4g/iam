@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config.properties;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.infra.common.lang.StringUtils2.startsWithIgnoreCase;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
@@ -30,7 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version v1.0 2019年1月8日
  * @since
  */
-@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".sns")
+@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".sns")
 public class SnsProperties {
 
     /**

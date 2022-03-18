@@ -30,9 +30,9 @@ import com.wl4g.infra.common.crypto.digest.DigestUtils2;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static com.wl4g.infra.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
@@ -79,8 +79,8 @@ public class ReplayProperties implements InitializingBean {
     private List<String> excludeValidUriPatterns = new ArrayList<String>() {
         private static final long serialVersionUID = 2330951352919056661L;
         {
-            add(URI_S_BASE + "/**");
-            add(URI_C_BASE + "/**");
+            add(URI_IAM_SERVER_BASE + "/**");
+            add(URI_IAM_CLIENT_BASE + "/**");
         }
     };
 
@@ -186,8 +186,8 @@ public class ReplayProperties implements InitializingBean {
      * Apply default properties fields settings.
      */
     private void applyDefaultPropertiesSet() {
-        getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
-        getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+        getExcludeValidUriPatterns().add(URI_IAM_SERVER_BASE + "/**");
+        getExcludeValidUriPatterns().add(URI_IAM_CLIENT_BASE + "/**");
 
         // Automatically exclude patterns with filter chains of anon type
         cConfig.getFilterChain().forEach((pattern, filter) -> {
@@ -201,6 +201,6 @@ public class ReplayProperties implements InitializingBean {
     final public static long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
     final public static String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
     final public static String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
-    final public static String KEY_REPLAY_PREFIX = KEY_IAM_CONFIG_PREFIX + ".replay";
+    final public static String KEY_REPLAY_PREFIX = CONF_PREFIX_IAM + ".replay";
 
 }

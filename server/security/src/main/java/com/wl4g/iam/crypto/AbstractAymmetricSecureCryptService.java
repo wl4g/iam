@@ -20,7 +20,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_CRYPTO;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_CRYPTO;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -116,7 +116,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
         }
 
         // Load keySpec by index.
-        IamCache cryptoCache = cacheManager.getIamCache(CACHE_CRYPTO);
+        IamCache cryptoCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_CRYPTO);
         CacheKey cacheKey = new CacheKey(index, keyPairSpecClass);
         // Gets keyPairSpec
         KeyPairSpec keySpec = cryptoCache.getMapField(cacheKey);
@@ -175,7 +175,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
             // Generate keyPairSpec.
             KeyPairSpec keySpec = generateKeyPair();
             // Storage to cache.
-            cacheManager.getIamCache(CACHE_CRYPTO).mapPut(new CacheKey(index, config.getKeyPairExpireMs()), keySpec);
+            cacheManager.getIamCache(CACHE_PREFIX_IAM_CRYPTO).mapPut(new CacheKey(index, config.getKeyPairExpireMs()), keySpec);
             log.debug("Puts keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
         }
         log.info("Initialized keySpec total: {}", config.getKeyPairPools());

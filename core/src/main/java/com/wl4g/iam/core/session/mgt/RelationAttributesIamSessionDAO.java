@@ -161,7 +161,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	 * @return
 	 */
 	private IamCache getRelationAttrsCache(final Serializable sessionId) {
-		return cacheManager.getIamCache(CACHE_SESSION_REFATTRS + sessionId);
+		return cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION_REFATTRS + sessionId);
 	}
 
 }

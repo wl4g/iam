@@ -66,7 +66,7 @@ public class SimpleRiskEvaluateController extends BaseIamController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = URI_S_RCM_UMTOKEN_APPLY, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_RCM_UMTOKEN_APPLY, method = { POST })
     @ResponseBody
     public RespBase<?> applyUmidToken(@RequestParam("umdata") String umdata, HttpServletRequest request) throws Exception {
         RespBase<Object> resp = RespBase.create(sessionStatus());

@@ -21,10 +21,10 @@ import static com.wl4g.infra.common.web.WebUtils2.writeJson;
 import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.PRECONDITITE_LIMITED;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SECOND_VALIDATE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SECOND_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_CONNECT;
 import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.Authenticated;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -164,8 +164,8 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 	 */
 	private String buildConnectAuthenticatingUrl(RequestResponse http, SecondaryAuthenticate annotation) {
 		StringBuffer url = new StringBuffer(config.getServerUri()); // ???
-		url.append(URI_S_SNS_BASE).append("/");
-		url.append(URI_S_SNS_CONNECT).append("/");
+		url.append(URI_IAM_SERVER_SNS_BASE).append("/");
+		url.append(URI_IAM_SERVER_SNS_CONNECT).append("/");
 		url.append(config.getSecondaryAuthenticatorProvider()).append("?");
 
 		// Parameter 'which'
@@ -194,8 +194,8 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 	 */
 	private String buildValidateUrl(String authCode) {
 		StringBuffer url = new StringBuffer(config.getServerUri());
-		url.append(URI_S_BASE).append("/");
-		url.append(URI_S_SECOND_VALIDATE).append("?");
+		url.append(URI_IAM_SERVER_BASE).append("/");
+		url.append(URI_IAM_SERVER_SECOND_VALIDATE).append("?");
 
 		// Parameter 'secondAuthCode'
 		Map<String, Object> param = new HashMap<>();

@@ -1,6 +1,6 @@
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 
 import java.io.Serializable;
 
@@ -28,6 +28,6 @@ public class RiskSecurityProperties implements Serializable {
         this.checkRequestIpSameLogin = checkRequestIpSameLogin;
     }
 
-    public static final String KEY_RISK_PREFIX = KEY_IAM_CONFIG_PREFIX + ".risk";
+    public static final String KEY_RISK_PREFIX = CONF_PREFIX_IAM + ".risk";
 
 }

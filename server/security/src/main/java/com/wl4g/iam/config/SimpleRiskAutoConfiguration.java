@@ -18,7 +18,7 @@ package com.wl4g.iam.config;
 import com.wl4g.iam.web.risk.SimpleRiskEvaluateController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_RCM_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_RCM_BASE;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -44,7 +44,7 @@ public class SimpleRiskAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object simpleRiskEvaluateControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.iam.annotation.SimpleRiskController.class);
+        return super.newPrefixHandlerMapping(URI_IAM_SERVER_RCM_BASE, com.wl4g.iam.annotation.SimpleRiskController.class);
     }
 
 }

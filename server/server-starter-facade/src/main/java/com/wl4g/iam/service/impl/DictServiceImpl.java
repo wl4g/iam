@@ -21,6 +21,7 @@ import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.data.DictDao;
 import com.wl4g.iam.service.DictService;
+import com.wl4g.iam.service.config.ServiceIamProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,8 +37,6 @@ import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.CACHE_DICT_INIT_EXPIRE_SEC;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.CACHE_DICT_INIT_NAME;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -54,11 +53,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 // @org.springframework.web.bind.annotation.RestController
 public class DictServiceImpl implements DictService {
 
-    @Autowired
-    private DictDao dictDao;
-
-    @Autowired
-    private JedisService jedisService;
+    private @Autowired ServiceIamProperties config;
+    private @Autowired JedisService jedisService;
+    private @Autowired DictDao dictDao;
 
     @Override
     public PageHolder<Dict> list(PageHolder<Dict> pm, String key, String label, String type, String description) {
@@ -78,7 +75,7 @@ public class DictServiceImpl implements DictService {
             dict.preInsert();
             dictDao.insertSelective(dict);
         }
-        jedisService.del(CACHE_DICT_INIT_NAME); // Cleanup cache.
+        jedisService.del(config.getDictCacheName()); // Cleanup cache.
     }
 
     @Override
@@ -94,6 +91,7 @@ public class DictServiceImpl implements DictService {
         dict.preUpdate();
         dict.setDelFlag(DEL_FLAG_DELETE);
         dictDao.updateByPrimaryKeySelective(dict);
+        jedisService.del(config.getDictCacheName());
     }
 
     @Override
@@ -114,7 +112,7 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public Map<String, Object> loadInit() {
-        String s = jedisService.get(CACHE_DICT_INIT_NAME);
+        String s = jedisService.get(config.getDictCacheName());
         Map<String, Object> result;
         if (!isBlank(s)) {
             result = parseJSON(s, new TypeReference<Map<String, Object>>() {
@@ -143,7 +141,7 @@ public class DictServiceImpl implements DictService {
 
             // Cache to redis
             String s1 = toJSONString(result);
-            jedisService.set(CACHE_DICT_INIT_NAME, s1, CACHE_DICT_INIT_EXPIRE_SEC);
+            jedisService.set(config.getDictCacheName(), s1, config.getDictCacheExpirationSeconds());
         }
         return result;
     }

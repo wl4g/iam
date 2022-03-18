@@ -16,7 +16,7 @@
 package com.wl4g.iam.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 /**
@@ -26,7 +26,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
  * @version v1.0 2019年1月8日
  * @since
  */
-@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".crypto")
+@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".crypto")
 public class CryptoProperties {
 
     private int keyPairPools = 64;

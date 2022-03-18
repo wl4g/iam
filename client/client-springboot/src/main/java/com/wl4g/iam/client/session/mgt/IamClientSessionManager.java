@@ -17,8 +17,8 @@ package com.wl4g.iam.client.session.mgt;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_TICKET_C;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.LOCK_SESSION_VALIDATING;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_TICKET_SERVER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.LOCK_PREFIX_IAM_SESSION_VALIDTING;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -64,7 +64,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 
     public IamClientSessionManager(IamClientProperties config, IamCacheManager cacheManager,
             IamValidator<SessionValidateModel, SessionValidateModel> validator) {
-        super(config, cacheManager, CACHE_TICKET_C);
+        super(config, cacheManager, CACHE_PREFIX_IAM_TICKET_SERVER);
         this.validator = validator;
     }
 
@@ -76,7 +76,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
     @SuppressWarnings("unchecked")
     @Override
     public void validateSessions() {
-        Lock lock = lockManager.getLock(LOCK_SESSION_VALIDATING);
+        Lock lock = lockManager.getLock(LOCK_PREFIX_IAM_SESSION_VALIDTING);
 
         try {
             if (lock.tryLock()) {

@@ -40,8 +40,8 @@ import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.infra.common.web.WebUtils2.getRequestParam;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_FAILFAST_MATCH_COUNTER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.newCumulator;
@@ -205,12 +205,12 @@ public abstract class BaseGraphSecurityVerifier extends AbstractSecurityVerifier
     public void afterPropertiesSet() throws Exception {
         MatcherProperties matcher = config.getMatcher();
         // Match accumulator.
-        this.matchCumulator = newCumulator(getCache(CACHE_FAILFAST_MATCH_COUNTER), matcher.getFailFastMatchDelay());
-        this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
+        this.matchCumulator = newCumulator(getCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH), matcher.getFailFastMatchDelay());
+        this.sessionMatchCumulator = newSessionCumulator(CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH, matcher.getFailFastMatchDelay());
 
         // CAPTCHA accumulator.
-        this.applyCaptchaCumulator = newCumulator(getCache(CACHE_FAILFAST_CAPTCHA_COUNTER), matcher.getFailFastCaptchaDelay());
-        this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
+        this.applyCaptchaCumulator = newCumulator(getCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA), matcher.getFailFastCaptchaDelay());
+        this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA,
                 matcher.getFailFastCaptchaDelay());
 
         notNull(matchCumulator, "matchCumulator is null, please check configure");

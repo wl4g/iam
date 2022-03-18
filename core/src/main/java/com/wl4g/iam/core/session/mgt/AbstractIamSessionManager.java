@@ -29,8 +29,8 @@ import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -454,6 +454,6 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	}
 
 	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
-	final private static String[] defaultInternalTicketRequestPathPatterns = { (URI_C_BASE + "/**"), (URI_S_BASE + "/**") };
+	final private static String[] defaultInternalTicketRequestPathPatterns = { (URI_IAM_CLIENT_BASE + "/**"), (URI_IAM_SERVER_BASE + "/**") };
 
 }

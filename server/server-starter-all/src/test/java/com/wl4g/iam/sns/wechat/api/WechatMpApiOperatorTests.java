@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat.api;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static java.lang.String.format;
 
 import org.junit.Before;
@@ -43,8 +43,8 @@ import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
  * @since
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StandaloneIam.class, properties = { KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-id=${APP_ID}",
-        KEY_IAM_CONFIG_PREFIX + ".sns.wechat-mp.app-secret=${APP_SECRET}" })
+@SpringBootTest(classes = StandaloneIam.class, properties = { CONF_PREFIX_IAM + ".sns.wechat-mp.app-id=${APP_ID}",
+        CONF_PREFIX_IAM + ".sns.wechat-mp.app-secret=${APP_SECRET}" })
 @FixMethodOrder(MethodSorters.JVM)
 public class WechatMpApiOperatorTests {
 

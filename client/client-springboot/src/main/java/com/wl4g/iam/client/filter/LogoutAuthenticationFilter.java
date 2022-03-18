@@ -51,9 +51,9 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.infra.common.web.WebUtils2.isTrue;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.*;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_LOGOUT;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGOUT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_LOGOUT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGOUT;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
@@ -195,7 +195,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		StringBuffer uri = new StringBuffer(config.getServerUri()).append(URI_S_BASE).append("/").append(URI_S_LOGOUT);
+		StringBuffer uri = new StringBuffer(config.getServerUri()).append(URI_IAM_SERVER_BASE).append("/").append(URI_IAM_SERVER_LOGOUT);
 		Map queryParams = new LinkedHashMap<>();
 		queryParams.put(config.getParam().getApplication(), config.getServiceName());
 		queryParams.put(config.getParam().getGrantTicket(), grantTicket);
@@ -211,7 +211,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 
 	@Override
 	public String getUriMapping() {
-		return "/" + URI_C_LOGOUT;
+		return "/" + URI_IAM_CLIENT_LOGOUT;
 	}
 
 }

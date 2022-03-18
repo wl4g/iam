@@ -21,12 +21,12 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.infra.common.web.WebUtils2.isEqualWithDomain;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_TICKET_S;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_TICKET_CLIENT;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_LOGOUT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_LOGOUT;
 import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.ExpiredAuthorized;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.generateAccessTokenSignKey;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.generateDataCipherKey;
@@ -171,7 +171,7 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
          * Synchronize with
          * xx.xx.handler.impl.FastCasAuthenticationHandler#validate#loggedin
          */
-        cacheManager.getCache(CACHE_TICKET_S).remove(new CacheKey(param.getTicket()));
+        cacheManager.getCache(CACHE_PREFIX_IAM_TICKET_CLIENT).remove(new CacheKey(param.getTicket()));
         log.debug("Clean older grantTicket: {}", param.getTicket());
 
         // --- Grant attributes setup. ---
@@ -413,9 +413,9 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
             // Gets grantTicket by appName
             String grantTicket = info.getGrantApps().get(app.getAppName()).getGrantTicket();
             // Build logout URL
-            String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE)
+            String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_IAM_CLIENT_BASE)
                     .append("/")
-                    .append(URI_C_LOGOUT)
+                    .append(URI_IAM_CLIENT_LOGOUT)
                     .append("?")
                     .append(config.getParam().getGrantTicket())
                     .append("=")
@@ -484,7 +484,7 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
          * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
          */
         long expireTime = getSessionRemainingTime(session); // Expiration time
-        cacheManager.getIamCache(CACHE_TICKET_S).put(new CacheKey(grant.getGrantTicket(), expireTime), valueOf(session.getId()));
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_TICKET_CLIENT).put(new CacheKey(grant.getGrantTicket(), expireTime), valueOf(session.getId()));
         log.debug("Sets grantTicket: '{}' of seesionId: '{}', expireTime: '{}'", grant, getSessionId(session), expireTime);
     }
 

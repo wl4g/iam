@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
 
 import java.util.List;
 
@@ -165,7 +165,7 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     public Object snsControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_S_SNS_BASE, SnsController.class);
+        return super.newPrefixHandlerMapping(URI_IAM_SERVER_SNS_BASE, SnsController.class);
     }
 
     //

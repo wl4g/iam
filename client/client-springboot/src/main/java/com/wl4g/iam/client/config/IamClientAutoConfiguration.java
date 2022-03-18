@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.config;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_BASE;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
@@ -259,7 +259,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public Object iamClientAuthenticatorControllerPrefixHandlerMapping() {
-		return super.newIamControllerPrefixHandlerMapping(URI_C_BASE);
+		return super.newIamControllerPrefixHandlerMapping(URI_IAM_CLIENT_BASE);
 	}
 
 	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";

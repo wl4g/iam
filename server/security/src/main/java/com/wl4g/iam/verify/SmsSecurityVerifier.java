@@ -42,7 +42,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.iam.authc.SmsAuthenticationToken.Action.BIND;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_FAILFAST_SMS_COUNTER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_FAILFAST_COUNTER_SMS;
 import static com.wl4g.iam.core.utils.cumulate.CumulateHolder.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -156,7 +156,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_SMS_COUNTER),
+        this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_SMS),
                 config.getMatcher().getFailFastSmsMaxDelay());
         notNullOf(applySmsCumulator, "applyCumulator");
     }

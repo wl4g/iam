@@ -23,10 +23,10 @@ package com.wl4g.iam.common.constant;
  * @date 2018年11月13日
  * @since
  */
-public abstract class FastCasIAMConstants extends BaseIAMConstants {
+public abstract class FastCasIAMConstants extends IAMConstants {
 
     //
-    // Common and based.
+    // --- IAM Common Constants. ---
     //
 
     /**
@@ -84,17 +84,17 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
      */
     public static final String URI_AUTHENTICATOR = "/authenticator";
 
-    public static final String CACHE_FASTCAS_PREFIX = CACHE_IAM_PREFIX + "fastcas:";
+    public static final String CACHE_PREFIX_IAM_FASTCAS = CACHE_PREFIX_IAM + "fastcas:";
 
     /**
      * {@link IamSession} relation attributes cache name.
      */
-    public static final String CACHE_SESSION_REFATTRS = CACHE_FASTCAS_PREFIX + "session:refattrs:";
+    public static final String CACHE_PREFIX_IAM_SESSION_REFATTRS = CACHE_PREFIX_IAM_FASTCAS + "session:refattrs:";
 
     /**
      * IAM replay attacks signature cache name.
      */
-    public static final String CACHE_REPLAY_SIGN = CACHE_FASTCAS_PREFIX + "security:replaysign:";
+    public static final String CACHE_PREFIX_IAM_REPLAY_SIGN = CACHE_PREFIX_IAM_FASTCAS + "security:replaysign:";
 
     /**
      * IAM XSRF endpoint base URI.
@@ -118,7 +118,7 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
     public static final int DEFAULT_SESSION_SCAN_BATCHS = 10_000;
 
     //
-    // Server configuration.
+    // --- IAM Server Constants. ---
     //
 
     /**
@@ -130,76 +130,76 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
      * IAM server base URI. You need to ensure synchronization with the
      * configuration in bootstrap.yml [spring.cloud.devops.iam.filter-chain]
      */
-    public static final String URI_S_BASE = "/iam-s-internal";
+    public static final String URI_IAM_SERVER_BASE = "/_fastcas-server";
     /** IAM server validate API URI. */
-    public static final String URI_S_VALIDATE = "validate";
+    public static final String URI_IAM_SERVER_VALIDATE = "validate";
     /** IAM server logout API URI. */
-    public static final String URI_S_LOGOUT = "logout";
+    public static final String URI_IAM_SERVER_LOGOUT = "logout";
     /** IAM server secondary authentication validate API URI. */
-    public static final String URI_S_SECOND_VALIDATE = "secondaryValidate";
+    public static final String URI_IAM_SERVER_SECOND_VALIDATE = "secondaryValidate";
     /** IAM server seesions authentication validate API URI. */
-    public static final String URI_S_SESSION_VALIDATE = "sessionValidate";
+    public static final String URI_IAM_SERVER_SESSION_VALIDATE = "sessionValidate";
 
     /**
      * Callback Processing and Path in third party social networks services
      */
-    public static final String URI_S_SNS_BASE = "/sns";
+    public static final String URI_IAM_SERVER_SNS_BASE = "/sns";
     /**
      * SNS connect URI
      */
-    public static final String URI_S_SNS_CONNECT = "connect";
+    public static final String URI_IAM_SERVER_SNS_CONNECT = "connect";
     /**
      * SNS connect callback URI
      */
-    public static final String URI_S_SNS_CALLBACK = "callback";
+    public static final String URI_IAM_SERVER_SNS_CALLBACK = "callback";
     /**
      * The callback proxy URI is suitable for the qq and sina authorized login
      * pages of front-end window.open, and the callback proxy processing pages
      * (closing the child forms and passing callback information to the parent
      * forms) when the authorization is successful.
      */
-    public static final String URI_S_AFTER_CALLBACK_AGENT = "after_callback_agent";
+    public static final String URI_IAM_SERVER_AFTER_CALLBACK_AGENT = "after_callback_agent";
 
     /**
      * WeChat public platform social services receive message URI.
      */
-    public static final String URI_S_WECHAT_MP_RECEIVE = "receive";
+    public static final String URI_IAM_SERVER_WECHAT_MP_RECEIVE = "receive";
 
     /** Based URI with login authenticator controller. */
-    public static final String URI_S_LOGIN_BASE = "/login";
+    public static final String URI_IAM_SERVER_LOGIN_BASE = "/login";
     /**
      * Pre-processing handshake, e.g, apply sessionKeyId, All clients are
      * unified, including PC/WEB/iOS/Andriod/WechatMp/WechatApplet
      */
-    public static final String URI_S_LOGIN_HANDSHAKE = "handshake";
+    public static final String URI_IAM_SERVER_LOGIN_HANDSHAKE = "handshake";
     /**
      * Initialization before login checks whether authentication code is
      * enabled, etc.
      */
-    public static final String URI_S_LOGIN_CHECK = "check";
+    public static final String URI_IAM_SERVER_LOGIN_CHECK = "check";
     /** URI for apply for locale. */
-    public static final String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
+    public static final String URI_IAM_SERVER_LOGIN_APPLY_LOCALE = "applylocale";
     /**
      * Gets the error information stored in the current session
      */
-    public static final String URI_S_LOGIN_ERRREAD = "errread";
+    public static final String URI_IAM_SERVER_LOGIN_ERRREAD = "errread";
     /**
      * Gets used for page Jump mode, to read authenticated roles/permissions/...
      * info.
      */
-    public static final String URI_S_LOGIN_PERMITS = "permits";
+    public static final String URI_IAM_SERVER_LOGIN_PERMITS = "permits";
 
     /** Based URI with verifier authenticator controller. */
-    public static final String URI_S_VERIFY_BASE = "/verify";
+    public static final String URI_IAM_SERVER_VERIFY_BASE = "/verify";
     /** URI for apply for CAPTCHA. */
-    public static final String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
+    public static final String URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA = "applycaptcha";
     /** URI for verify analyze for CAPTCHA. */
-    public static final String URI_S_VERIFY_ANALYSIS_CAPTCHA = "verifyanalysis";
+    public static final String URI_IAM_SERVER_VERIFY_ANALYSIS_CAPTCHA = "verifyanalysis";
     /** URI for apply for verify-code. */
-    public static final String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
+    public static final String URI_IAM_SERVER_VERIFY_SMS_APPLY = "applysmsverify";
 
     /** Based URI with simple risk control controller. */
-    public static final String URI_S_RCM_BASE = "/rcm";
+    public static final String URI_IAM_SERVER_RCM_BASE = "/rcm";
     /**
      * Before requesting authentication, the client needs to submit the device
      * fingerprint um, UA and other information to obtain the corresponding
@@ -208,61 +208,61 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
      * recommended to use a more professional external RiskControlService in the
      * production environment.
      */
-    public static final String URI_S_RCM_UMTOKEN_APPLY = "applyumtoken";
+    public static final String URI_IAM_SERVER_RCM_UMTOKEN_APPLY = "applyumtoken";
 
     /**
      * Generic API v1 base URL.
      */
-    public static final String URI_S_API_V2_BASE = URI_S_BASE + "/api/v2";
+    public static final String URI_IAM_SERVER_API_V2_BASE = URI_IAM_SERVER_BASE + "/api/v2";
     /**
      * Generic API v1 sessions list query.
      */
-    public static final String URI_S_API_V2_SESSION = "/sessions";
+    public static final String URI_IAM_SERVER_API_V2_SESSION = "/sessions";
 
     /**
-     * IAM server authentication session stored cache name.
+     * IAM client/server authentication session stored cache name.
      */
-    public static final String CACHE_SESSION = ":iam:session:id:";
-    /**
-     * IAM server authentication authorization information storage cache name.
-     */
-    public static final String CACHE_TICKET_S = ":iam:ticket:s:";
+    public static final String CACHE_PREFIX_IAM_SESSION = CACHE_PREFIX_IAM + "session:id:";
     /**
      * IAM client authentication authorization information storage cache name.
      */
-    public static final String CACHE_TICKET_C = ":iam:ticket:s:";
+    public static final String CACHE_PREFIX_IAM_TICKET_CLIENT = CACHE_PREFIX_IAM + "ticket:c:";
+    /**
+     * IAM server authentication authorization information storage cache name.
+     */
+    public static final String CACHE_PREFIX_IAM_TICKET_SERVER = CACHE_PREFIX_IAM + "ticket:s:";
 
     /**
      * Login authentication related processing cache name.
      */
-    public static final String CACHE_SNSAUTH = ":iam:snsauth:";
+    public static final String CACHE_PREFIX_IAM_SNSAUTH = CACHE_PREFIX_IAM + "snsauth:";
     /**
      * IAM server matching CAPTCHA verification failure counter cache name.
      */
-    public static final String CACHE_FAILFAST_CAPTCHA_COUNTER = ":iam:counter:captcha:";
+    public static final String CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA = CACHE_PREFIX_IAM + "counter:captcha:";
     /**
      * IAM server matching SMS verification failure counter cache name.
      */
-    public static final String CACHE_FAILFAST_SMS_COUNTER = ":iam:counter:sms:";
+    public static final String CACHE_PREFIX_IAM_FAILFAST_COUNTER_SMS = CACHE_PREFIX_IAM + "counter:sms:";
     /**
      * IAM server matching verification failure counter cache name.
      */
-    public static final String CACHE_FAILFAST_MATCH_COUNTER = ":iam:counter:credentials:";
+    public static final String CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH = CACHE_PREFIX_IAM + "counter:credentials:";
     /**
      * Security verifier for jigsaw captcha image cache name.
      */
-    public static final String CACHE_VERIFY_JIGSAW_IMG = ":iam:verify:jigsaw:imgs";
+    public static final String CACHE_PREFIX_IAM_VERIFY_JIGSAW_IMG = CACHE_PREFIX_IAM + "verify:jigsaw:img";
     /**
      * Cryptographic service cache name.
      */
-    public static final String CACHE_CRYPTO = ":iam:crypto:keypairs";
+    public static final String CACHE_PREFIX_IAM_CRYPTO = CACHE_PREFIX_IAM + "crypto:keypairs";
     /** Simple risk control handler umidToken cache key. */
-    public static final String CACHE_SIMPLE_RCM_UMIDTOKEN = ":iam:rcm:simpleumidtoken:";
+    public static final String CACHE_PREFIX_IAM_RCM_UMIDTOKEN = CACHE_PREFIX_IAM + "rcm:umidtoken:";
 
     /**
      * Login failure overrun, lock cache name.
      */
-    public static final String LOCK_CREDENTIALS_MATCH = ":iam:lock:credentials:";
+    public static final String LOCK_PREFIX_IAM_CREDENTIALS_MATCH = CACHE_PREFIX_IAM + "lock:credentials:";
 
     /**
      * The public key index by logged-in users
@@ -298,7 +298,7 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
     public static final String BEAN_SESSION_RESOURCE_MSG_BUNDLER = "iamSessionResourceMessageBundler";
 
     //
-    // Client configuration.
+    // --- IAM Client Constants. ---
     //
 
     /**
@@ -312,11 +312,11 @@ public abstract class FastCasIAMConstants extends BaseIAMConstants {
      * Only one node of the cluster is required to run the client session
      * validity verification.
      */
-    public static final String LOCK_SESSION_VALIDATING = ":iam:c:validating:";
+    public static final String LOCK_PREFIX_IAM_SESSION_VALIDTING = CACHE_PREFIX_IAM + "c:validating:";
 
     /** Fast-CAS client base URI. */
-    public static final String URI_C_BASE = "/iam-c-internal";
+    public static final String URI_IAM_CLIENT_BASE = "/_fastcas-client";
     /** Fast-CAS client logout URI. */
-    public static final String URI_C_LOGOUT = "logout";
+    public static final String URI_IAM_CLIENT_LOGOUT = "logout";
 
 }

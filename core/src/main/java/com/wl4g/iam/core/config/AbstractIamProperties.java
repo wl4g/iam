@@ -212,7 +212,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     }
 
     /**
-     * Apply default config property.
+     * Apply default property.
      */
     protected void applyDefaultPropertiesSet() {
         // Sets IAM client defaults serviceName.
@@ -221,7 +221,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
         }
 
         // Sets IAM client defaults filter-chains.
-        applyRequiresFilterChains(getFilterChain());
+        applyBuildinRequiredFilterChains(getFilterChain());
 
         // Sets IAM client defaults cache configuraton.
         if (isBlank(getCache().getPrefix())) {
@@ -237,12 +237,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     }
 
     /**
-     * Apply build-in defaults filter-chain.
+     * Apply build-in required filter chains.
      * 
      * @param pattern
      *            url pattern.
      */
-    protected void applyRequiresFilterChains(Map<String, String> chains) {
+    protected void applyBuildinRequiredFilterChains(Map<String, String> chains) {
         // Adds requires xsrf request rules.
         getFilterChain().putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
     }

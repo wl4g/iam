@@ -28,7 +28,7 @@ import static com.wl4g.infra.common.web.WebUtils2.writeJson;
 import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_TICKET_C;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_TICKET_SERVER;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SERVICE_ROLE;
@@ -142,7 +142,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
         this.coprocessor = notNullOf(coprocessor, "clientSecurityCoprocessor");
 
         notNull(cacheManager, "'cacheManager' must not be null");
-        this.clientTicketCache = cacheManager.getIamCache(CACHE_TICKET_C);
+        this.clientTicketCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_TICKET_SERVER);
         this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
     }
 

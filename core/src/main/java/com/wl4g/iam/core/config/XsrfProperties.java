@@ -20,9 +20,9 @@ import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_XSRF_BASE;
 import static java.util.Collections.singletonList;
 import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
@@ -223,8 +223,8 @@ public class XsrfProperties implements InitializingBean, Serializable {
      * Apply default properties fields settings.
      */
     private void applyDefaultPropertiesSet() {
-        getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
-        getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+        getExcludeValidUriPatterns().add(URI_IAM_SERVER_BASE + "/**");
+        getExcludeValidUriPatterns().add(URI_IAM_CLIENT_BASE + "/**");
 
         // Automatically exclude patterns with filter chains of anon type
         cConfig.getFilterChain().forEach((pattern, filter) -> {
@@ -235,7 +235,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
     }
 
-    final public static String KEY_XSRF_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xsrf";
+    final public static String KEY_XSRF_PREFIX = CONF_PREFIX_IAM + ".xsrf";
 
     /**
      * Use to: IAM-{serviceName}-XSRF-TOKEN

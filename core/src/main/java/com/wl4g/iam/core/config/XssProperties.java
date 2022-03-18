@@ -18,7 +18,7 @@ package com.wl4g.iam.core.config;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static java.lang.String.format;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringEscapeUtils.ESCAPE_CSV;
@@ -188,5 +188,5 @@ public class XssProperties implements InitializingBean, Serializable {
 
     }
 
-    public static final String KEY_XSS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".xss";
+    public static final String KEY_XSS_PREFIX = CONF_PREFIX_IAM + ".xss";
 }

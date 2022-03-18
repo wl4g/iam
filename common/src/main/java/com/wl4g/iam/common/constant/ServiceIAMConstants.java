@@ -20,17 +20,15 @@
 package com.wl4g.iam.common.constant;
 
 /**
- * {@link RpcContextServerIAMConstants}
+ * {@link ServiceIAMConstants}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-28
  * @sine v1.0
  * @see
  */
-public abstract class RpcContextServerIAMConstants extends FastCasIAMConstants {
+public abstract class ServiceIAMConstants extends IAMConstants {
 
-    public static final String CURRENT_IAM_PRINCIPAL_ID = "currentIamPrincipalId";
-    public static final String CURRENT_IAM_PRINCIPAL_USER = "currentIamPrincipalUser";
-    public static final String CURRENT_IAM_PRINCIPAL = "currentIamPrincipal";
+    public static final String CONF_PREFIX_IAM_SERVICE = CONF_PREFIX_IAM + ".service";
 
 }

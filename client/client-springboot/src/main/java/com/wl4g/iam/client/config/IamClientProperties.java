@@ -17,7 +17,7 @@ package com.wl4g.iam.client.config;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -28,7 +28,7 @@ import com.wl4g.iam.client.config.IamClientProperties.ClientParamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
-@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".client")
+@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {
     private static final long serialVersionUID = -8848998112902613969L;
 

@@ -25,7 +25,7 @@ import com.wl4g.iam.common.model.SessionValidateModel;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.SessionValidateException;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SESSION_VALIDATE;
 import static java.lang.String.format;
 
 /**
@@ -45,7 +45,7 @@ public class ExpiredSessionIamValidator
 
 	@Override
 	public SessionValidateModel validate(SessionValidateModel request) throws SessionValidateException {
-		final RespBase<SessionValidateModel> resp = doIamRemoteValidate(URI_S_SESSION_VALIDATE, request);
+		final RespBase<SessionValidateModel> resp = doIamRemoteValidate(URI_IAM_SERVER_SESSION_VALIDATE, request);
 		if (!RespBase.isSuccess(resp)) {
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(format("Remote validate error, %s", resp.getMessage()));

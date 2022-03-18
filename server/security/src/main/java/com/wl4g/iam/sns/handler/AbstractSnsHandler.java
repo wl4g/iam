@@ -39,9 +39,9 @@ import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.infra.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SNSAUTH;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SNSAUTH;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_AFTER_CALLBACK_AGENT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
 import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.URI_BASE_MAPPING;
 import static com.wl4g.iam.sns.web.AbstractSnsController.KEY_SNS_CALLBACK_PARAMS;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
@@ -234,7 +234,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
         }
 
         // Save to cache
-        cacheManager.getIamCache(CACHE_SNSAUTH)
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
                 .put(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, snsConfig.getOauth2ConnectExpireMs()), connectParamsAll);
     }
 
@@ -246,7 +246,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
      */
     @SuppressWarnings({ "unchecked" })
     protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
-        return (Map<String, String>) cacheManager.getIamCache(CACHE_SNSAUTH)
+        return (Map<String, String>) cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
                 .get(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, HashMap.class));
     }
 
@@ -288,7 +288,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
          */
         SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), userProfile);
         String callbackId = generateCallbackId();
-        cacheManager.getIamCache(CACHE_SNSAUTH).put(new CacheKey(getOAuth2CallbackKey(callbackId), 30), authInfo);
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH).put(new CacheKey(getOAuth2CallbackKey(callbackId), 30), authInfo);
         return callbackId;
     }
 
@@ -357,8 +357,8 @@ public abstract class AbstractSnsHandler implements SnsHandler {
          */
         if (nonNull(connectParams) && WebUtils2.isTrue(connectParams.get(config.getParam().getAgent()))) {
             StringBuffer url = new StringBuffer(getRFCBaseURI(request, true));
-            url.append(URI_S_SNS_BASE).append("/");
-            url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
+            url.append(URI_IAM_SERVER_SNS_BASE).append("/");
+            url.append(URI_IAM_SERVER_AFTER_CALLBACK_AGENT).append("?");
             url.append(config.getParam().getRefreshUrl()).append("=");
             url.append(safeEncodeURL(refreshUrl));
             refreshUrl = url.toString();
@@ -373,7 +373,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
      */
     private void cleanup(String state) {
         hasTextOf(state, config.getParam().getState());
-        cacheManager.getIamCache(CACHE_SNSAUTH).remove(new CacheKey(KEY_SNS_CONNECT_PARAMS + state));
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH).remove(new CacheKey(KEY_SNS_CONNECT_PARAMS + state));
     }
 
     /**

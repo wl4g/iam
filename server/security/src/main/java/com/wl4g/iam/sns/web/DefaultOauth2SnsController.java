@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.infra.common.web.rest.RespBase;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_CALLBACK;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_AFTER_CALLBACK_AGENT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_CALLBACK;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_CONNECT;
 
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.config.properties.IamProperties;
@@ -95,7 +95,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
      * @return
      * @throws IOException
      */
-    @GetMapping("/" + URI_S_SNS_CONNECT + "/{" + PARAM_SNS_PRIVIDER + "}")
+    @GetMapping("/" + URI_IAM_SERVER_SNS_CONNECT + "/{" + PARAM_SNS_PRIVIDER + "}")
     public void preOAuth2Connect(
             @PathVariable(PARAM_SNS_PRIVIDER) String provider,
             HttpServletRequest request,
@@ -160,7 +160,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
      * @param response
      * @throws Exception
      */
-    @GetMapping("/{" + PARAM_SNS_PRIVIDER + "}/" + URI_S_SNS_CALLBACK)
+    @GetMapping("/{" + PARAM_SNS_PRIVIDER + "}/" + URI_IAM_SERVER_SNS_CALLBACK)
     public void postOAuth2Callback(
             @PathVariable(PARAM_SNS_PRIVIDER) String provider,
             @NotBlank @RequestParam(PARAM_SNS_CODE) String code,
@@ -203,7 +203,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
      *            Actual after callback refresh URL
      * @throws IOException
      */
-    @GetMapping(URI_S_AFTER_CALLBACK_AGENT)
+    @GetMapping(URI_IAM_SERVER_AFTER_CALLBACK_AGENT)
     public void afterOAuth2CallbackAgent(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, String> callbackParams = toQueryParams(request.getQueryString());
         String attributeJsonstr = toJSONString(callbackParams).replaceAll("\\\"", "\\\\\"");

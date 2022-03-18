@@ -30,7 +30,7 @@ import java.util.Map;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static java.lang.String.format;
 
 import com.wl4g.infra.common.log.SmartLogger;
@@ -91,7 +91,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseValidateModel, A> 
 		notNullOf(req, "validateParameters");
 
 		StringBuffer url = new StringBuffer(config.getServerUri());
-		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
+		url.append(URI_IAM_SERVER_BASE).append("/").append(endpoint).append("?");
 
 		// To request query parameters
 		Map<String, Object> params = new LinkedHashMap<String, Object>() {

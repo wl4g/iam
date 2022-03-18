@@ -86,7 +86,7 @@ public class SimpleRiskEvaluateHandler implements RiskEvaluateHandler, Initializ
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.umidCache = cacheManager.getIamCache(CACHE_SIMPLE_RCM_UMIDTOKEN);
+        this.umidCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_RCM_UMIDTOKEN);
     }
 
     /**

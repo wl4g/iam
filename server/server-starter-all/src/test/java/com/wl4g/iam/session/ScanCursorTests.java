@@ -16,7 +16,7 @@
 package com.wl4g.iam.session;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SESSION;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class ScanCursorTests {
 
     @Test
     public void test2() throws Exception {
-        byte[] pattern = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
+        byte[] pattern = ("iam_server" + CACHE_PREFIX_IAM_SESSION + "*").getBytes(UTF_8);
         ClusterScanParams params = new ClusterScanParams(200, pattern);
 
         ScanCursor<IamSession> sc = new ScanCursor<IamSession>(factory.getObject(), null, params) {

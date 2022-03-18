@@ -79,14 +79,14 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();
-		this.lockCache = cacheManager.getIamCache(LOCK_CREDENTIALS_MATCH);
-		this.matchCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_MATCH_COUNTER),
+		this.lockCache = cacheManager.getIamCache(LOCK_PREFIX_IAM_CREDENTIALS_MATCH);
+		this.matchCumulator = newCumulator(cacheManager.getIamCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH),
 				matcher.getFailFastMatchDelay());
-		this.applyCaptchaCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+		this.applyCaptchaCumulator = newCumulator(cacheManager.getIamCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA),
 				matcher.getFailFastCaptchaDelay());
-		this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_PREFIX_IAM_FAILFAST_COUNTER_SMS),
 				matcher.getFailFastSmsMaxDelay());
-		this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
+		this.sessionMatchCumulator = newSessionCumulator(CACHE_PREFIX_IAM_FAILFAST_COUNTER_MATCH, matcher.getFailFastMatchDelay());
 
 		notNullOf(lockCache, "matcherLockCache");
 		notNullOf(matchCumulator, "matchCumulator");

@@ -15,11 +15,16 @@
  */
 package com.wl4g.iam.config.properties;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_API_V2_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_RCM_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
+import static com.wl4g.iam.common.constant.OidcIAMConstants.URI_IAM_OIDC_V1_SERVER;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
-import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
@@ -28,7 +33,6 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.wl4g.iam.config.properties.ServerParamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.filter.ServerInternalAuthenticationFilter;
 import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
@@ -41,7 +45,7 @@ import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
  * @date 2019年1月4日
  * @since
  */
-@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX)
+@ConfigurationProperties(prefix = CONF_PREFIX_IAM)
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
 
     private static final long serialVersionUID = -5858422822181237865L;
@@ -203,29 +207,30 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
         if (isBlank(getSuccessService())) {
             setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
         }
-
     }
 
     /**
-     * Adds iam server default filter chain settings. </br>
+     * Adds build-in requires filter chains to IAM server. </br>
      * For example: {@link DefaultOauth2SnsController#connect} </br>
      */
     @Override
-    protected void applyRequiresFilterChains(Map<String, String> chains) {
-        // Default view access files request rules.
+    protected void applyBuildinRequiredFilterChains(Map<String, String> chains) {
+        // Default view access files request allowed rules.
         chains.put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
-        // Default Iam-JSSDK controller rules.
+        // Default Iam-JSSDK controller allowed rules.
         chains.put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
-        // SNS authenticator controller rules.
-        chains.put(URI_S_SNS_BASE + "/**", "anon");
-        // Login authenticator controller rules.
-        chains.put(URI_S_LOGIN_BASE + "/**", "anon");
+        // SNS authenticator controller allowed rules.
+        chains.put(URI_IAM_SERVER_SNS_BASE + "/**", "anon");
+        // Login authenticator controller allowed rules.
+        chains.put(URI_IAM_SERVER_LOGIN_BASE + "/**", "anon");
         // Verify(CAPTCHA/SMS) authenticator controller rules.
-        chains.put(URI_S_VERIFY_BASE + "/**", "anon");
-        // RCM(Simple risk control) controller rules.
-        chains.put(URI_S_RCM_BASE + "/**", "anon");
-        // API(v1) controller rules.
-        chains.put(URI_S_API_V2_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
+        chains.put(URI_IAM_SERVER_VERIFY_BASE + "/**", "anon");
+        // RCM(Simple risk control) controller allowed rules.
+        chains.put(URI_IAM_SERVER_RCM_BASE + "/**", "anon");
+        // V2 API controller rules.
+        chains.put(URI_IAM_SERVER_API_V2_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
+        // V1 OIDC controller allowed rules.
+        chains.put(URI_IAM_OIDC_V1_SERVER + "/**", "anon");
     }
 
     /**

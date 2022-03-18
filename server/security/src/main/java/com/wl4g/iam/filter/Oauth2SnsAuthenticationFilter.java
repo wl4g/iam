@@ -32,7 +32,7 @@ import com.wl4g.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.state;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SNSAUTH;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SNSAUTH;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 
 /**
@@ -77,13 +77,13 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
         String callbackKey = AbstractSnsHandler.getOAuth2CallbackKey(callbackId);
         try {
             // Get SNS OAuth2 callback info,
-            SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getIamCache(CACHE_SNSAUTH)
+            SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
                     .get(new CacheKey(callbackKey, SocialAuthorizeInfo.class));
 
             // Create authentication token instance
             return authenticationTokenConstructor.newInstance(remoteHost, redirectInfo, authorizedInfo);
         } finally { // Cleanup temporary OAuth2 info.
-            cacheManager.getIamCache(CACHE_SNSAUTH).remove(new CacheKey(callbackKey));
+            cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH).remove(new CacheKey(callbackKey));
         }
     }
 

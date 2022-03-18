@@ -16,7 +16,7 @@
 package com.wl4g.iam.session;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SESSION;
 
 import java.io.IOException;
 
@@ -62,7 +62,7 @@ public class IamSessionDAOTests {
 
     @Test
     public void scanCursorTest() throws IOException {
-        byte[] pattern = ("iam_" + CACHE_SESSION + "*").getBytes(UTF_8);
+        byte[] pattern = ("iam_" + CACHE_PREFIX_IAM_SESSION + "*").getBytes(UTF_8);
         ClusterScanParams params = new ClusterScanParams(200, pattern);
 
         ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisService.getJedisClient(), null, params) {

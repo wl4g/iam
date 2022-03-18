@@ -15,17 +15,20 @@
  */
 package com.wl4g.iam.common.constant;
 
-/**
- * IAM client for gateway constants.
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月13日
- * @since
- */
-public abstract class GatewayIAMConstants extends IAMConstants {
+import com.wl4g.infra.core.constant.BaseConstants;
 
-    public static final String CACHE_GATEWAY_PREFIX = CONF_PREFIX_IAM + "gw:";
-    public static final String CACHE_GATEWAY_ROUTES = CACHE_GATEWAY_PREFIX + "routes:";
+/**
+ * Based IAM configuration constants.
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-11-17
+ * @sine v1.0
+ * @see
+ */
+public abstract class IAMConstants extends BaseConstants {
+
+    public static final String CONF_PREFIX_IAM = "spring.iam";
+
+    public static final String CACHE_PREFIX_IAM = ":iam:";
 
 }

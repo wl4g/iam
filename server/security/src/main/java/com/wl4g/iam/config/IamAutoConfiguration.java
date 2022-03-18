@@ -17,7 +17,7 @@ package com.wl4g.iam.config;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -592,7 +592,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     public Object iamCentralAuthenticatingControllerPrefixHandlerMapping() {
-        return super.newIamControllerPrefixHandlerMapping(URI_S_BASE);
+        return super.newIamControllerPrefixHandlerMapping(URI_IAM_SERVER_BASE);
     }
 
     // ==============================

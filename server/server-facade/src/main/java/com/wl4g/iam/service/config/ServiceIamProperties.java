@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.constant;
+package com.wl4g.iam.service.config;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * IAM client for gateway constants.
+ * {@link ServiceIamProperties}
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月13日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2022-03-18 v1.0.0
+ * @since v1.0.0
  */
-public abstract class GatewayIAMConstants extends IAMConstants {
-
-    public static final String CACHE_GATEWAY_PREFIX = CONF_PREFIX_IAM + "gw:";
-    public static final String CACHE_GATEWAY_ROUTES = CACHE_GATEWAY_PREFIX + "routes:";
-
+@Getter
+@Setter
+@ToString
+public class ServiceIamProperties {
+    private String dictCacheName = "iam:service:cache:dictionaries";
+    private int dictCacheExpirationSeconds = 120;
 }

@@ -18,9 +18,9 @@ package com.wl4g.iam.captcha.config;
 import java.util.Properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 
-@ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".captcha")
+@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".captcha")
 public class CaptchaProperties {
 
     private KaptchaProperties kaptcha = new KaptchaProperties();

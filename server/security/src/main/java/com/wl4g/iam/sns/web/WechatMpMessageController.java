@@ -29,7 +29,7 @@ import com.wl4g.iam.core.exception.IllegalRequestException;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURI;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_WECHAT_MP_RECEIVE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_WECHAT_MP_RECEIVE;
 import static java.lang.String.format;
 
 import java.io.IOException;
@@ -77,7 +77,7 @@ public abstract class WechatMpMessageController extends BaseController {
      * @param response
      * @throws IOException
      */
-    @GetMapping(URI_S_WECHAT_MP_RECEIVE)
+    @GetMapping(URI_IAM_SERVER_WECHAT_MP_RECEIVE)
     public void preReceive(
             @NotBlank @RequestParam(name = "signature") String signature,
             @NotBlank @RequestParam(name = "timestamp") String timestamp,
@@ -101,7 +101,7 @@ public abstract class WechatMpMessageController extends BaseController {
      * @throws IOException
      * @throws Exception
      */
-    @PostMapping(path = URI_S_WECHAT_MP_RECEIVE, consumes = { "application/xml;charset=UTF-8",
+    @PostMapping(path = URI_IAM_SERVER_WECHAT_MP_RECEIVE, consumes = { "application/xml;charset=UTF-8",
             "text/xml;charset=UTF-8" }, produces = { "application/xml;charset=UTF-8", "text/xml;charset=UTF-8" })
     public void postReceive(
             @NotBlank @RequestParam(name = "signature") String signature,

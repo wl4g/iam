@@ -139,7 +139,7 @@ public class SessionCumulator implements Cumulator {
 	 * The session-based limit accumulator is used to solve the problem that the
 	 * session cannot be tracked without an account name when applying for an
 	 * image authentication code. Reference: the accumulator corresponding to
-	 * {@link CACHE_FAILFAST_CAPTCHA_COUNTER}.
+	 * {@link CACHE_PREFIX_IAM_FAILFAST_COUNTER_CAPTCHA}.
 	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年5月16日

@@ -17,9 +17,9 @@ package com.wl4g.iam.client.mock.web;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SECOND_VALIDATE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SESSION_VALIDATE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SECOND_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VALIDATE;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
     @Autowired
     protected AbstractIamProperties<? extends ParamProperties> config;
 
-    @PostMapping(URI_S_VALIDATE)
+    @PostMapping(URI_IAM_SERVER_VALIDATE)
     @ResponseBody
     @Override
     public RespBase<ServiceTicketValidateModel<IamPrincipal>> validate(@NotNull @RequestBody ServiceTicketValidateRequest param) {
@@ -74,7 +74,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
         return resp;
     }
 
-    @PostMapping(URI_S_SECOND_VALIDATE)
+    @PostMapping(URI_IAM_SERVER_SECOND_VALIDATE)
     @ResponseBody
     @Override
     public RespBase<SecondaryAuthcValidateModel> secondaryValidate(HttpServletRequest request) {
@@ -91,7 +91,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
         return resp;
     }
 
-    @PostMapping(URI_S_SESSION_VALIDATE)
+    @PostMapping(URI_IAM_SERVER_SESSION_VALIDATE)
     @ResponseBody
     @Override
     public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {

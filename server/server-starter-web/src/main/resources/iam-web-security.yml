@@ -58,7 +58,6 @@ spring:
      #success-endpoint: ${spring.application.name}@http://localhost:18080/${spring.application.name}/view/index.html
     filter-chain:
       '[/public/**]': anon
-      '[/oidc/v1/**]': anon
     param: # Must be consistent with the client, otherwise authentication will never succeed.
       sid: __sid
     matcher:

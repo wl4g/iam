@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +44,6 @@ public class AccessControlAutoConfiguration {
         return new IPAccessControl(properties);
     }
 
-    final static String IP_ACCESS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".acl";
+    final static String IP_ACCESS_PREFIX = CONF_PREFIX_IAM + ".acl";
 
 }

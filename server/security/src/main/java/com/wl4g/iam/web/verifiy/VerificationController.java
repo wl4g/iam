@@ -76,7 +76,7 @@ public class VerificationController extends BaseIamController {
      * @param request
      * @param response
      */
-    @RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA, method = { POST })
     @ResponseBody
     public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
         RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -106,7 +106,7 @@ public class VerificationController extends BaseIamController {
      * @param response
      * @throws Exception
      */
-    @RequestMapping(value = URI_S_VERIFY_ANALYSIS_CAPTCHA, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_VERIFY_ANALYSIS_CAPTCHA, method = { POST })
     @ResponseBody
     public RespBase<?> verifyAnalysis(String verifyData, HttpServletRequest request) throws Exception {
         RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -130,7 +130,7 @@ public class VerificationController extends BaseIamController {
      * @throws IOException
      * @throws NoSuchOperatorException
      */
-    @RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_VERIFY_SMS_APPLY, method = { POST })
     @ResponseBody
     public RespBase<?> applySmsCode(HttpServletRequest request, HttpServletResponse response)
             throws NoSuchOperatorException, IOException {

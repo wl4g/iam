@@ -20,6 +20,10 @@ spring:
     active: dev
   banner:
       location: classpath:banner.txt
+  iam:
+    service:
+      dict.cache.name: iam:service:cache:dictionaries
+      dict-cache-expiration-seconds: 120
 
 # Logging configuration.
 logging:

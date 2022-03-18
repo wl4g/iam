@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.mock.config;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 
 import org.springframework.context.annotation.Bean;
 
@@ -67,7 +67,7 @@ public class MockIamAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object mockCentralValidationEndpointPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_S_BASE, FastCasController.class);
+        return super.newPrefixHandlerMapping(URI_IAM_SERVER_BASE, FastCasController.class);
     }
 
 }

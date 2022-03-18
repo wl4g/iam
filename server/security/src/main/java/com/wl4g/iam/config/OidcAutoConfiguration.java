@@ -43,7 +43,7 @@ public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object v1OidcServerAuthenticatingControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(OidcIAMConstants.URI_BASE_V1_OIDC_SERVER,
+        return super.newPrefixHandlerMapping(OidcIAMConstants.URI_IAM_OIDC_V1_SERVER,
                 com.wl4g.iam.annotation.V1OidcServerController.class);
     }
 

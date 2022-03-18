@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.web;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_LOGOUT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_CLIENT_LOGOUT;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ public class FastCasClientAuthenticatingController extends BaseController {
      * @param request
      * @return
      */
-    @PostMapping(URI_C_LOGOUT)
+    @PostMapping(URI_IAM_CLIENT_LOGOUT)
     @ResponseBody
     public RespBase<LogoutModel> logout(HttpServletRequest request) {
         if (log.isInfoEnabled()) {

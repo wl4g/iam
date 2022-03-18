@@ -23,7 +23,7 @@ package com.wl4g.iam.common.constant;
  * @date 2018年11月13日
  * @since
  */
-public abstract class OidcIAMConstants extends BaseIAMConstants {
+public abstract class OidcIAMConstants extends IAMConstants {
 
     public static final String METADATA_ENDPOINT = "/.well-known/openid-configuration";
     public static final String AUTHORIZATION_ENDPOINT = "/authorize";
@@ -32,11 +32,11 @@ public abstract class OidcIAMConstants extends BaseIAMConstants {
     public static final String JWKS_ENDPOINT = "/jwks";
     public static final String INTROSPECTION_ENDPOINT = "/introspect";
 
-    public static final String CACHE_OIDC_PREFIX = CACHE_IAM_PREFIX + "oidc:";
+    public static final String CACHE_OIDC_PREFIX = CONF_PREFIX_IAM + "oidc:";
     public static final String CACHE_OIDC_ACCESSTOKEN_PREFIX = CACHE_OIDC_PREFIX + "ak:";
     public static final String CACHE_OIDC_AUTHCODE_PREFIX = CACHE_OIDC_PREFIX + "code:";
 
     /** Based URI with IAM OIDC server controller. */
-    public static final String URI_BASE_V1_OIDC_SERVER = "/oidc/v1";
+    public static final String URI_IAM_OIDC_V1_SERVER = "/oidc/v1";
 
 }

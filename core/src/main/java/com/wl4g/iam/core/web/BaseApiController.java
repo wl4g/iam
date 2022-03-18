@@ -18,8 +18,8 @@ package com.wl4g.iam.core.web;
 import static com.wl4g.infra.common.lang.DateUtils2.formatDate;
 import static com.wl4g.infra.support.cache.jedis.ScanCursor.CursorSpec.parse;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SESSION_REFATTRS;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_API_V2_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_PREFIX_IAM_SESSION_REFATTRS;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_API_V2_SESSION;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -96,7 +96,7 @@ public abstract class BaseApiController extends BaseController implements Initia
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.relationAttrsCache = cacheManager.getIamCache(CACHE_SESSION_REFATTRS);
+        this.relationAttrsCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_SESSION_REFATTRS);
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class BaseApiController extends BaseController implements Initia
      *  }
      * </pre>
      */
-    @GetMapping(path = URI_S_API_V2_SESSION)
+    @GetMapping(path = URI_IAM_SERVER_API_V2_SESSION)
     public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
         RespBase<Object> resp = RespBase.create();
         log.info("Gets sessions <= {}", query);
@@ -183,7 +183,7 @@ public abstract class BaseApiController extends BaseController implements Initia
      * @return
      * @throws Exception
      */
-    @PostMapping(path = URI_S_API_V2_SESSION)
+    @PostMapping(path = URI_IAM_SERVER_API_V2_SESSION)
     public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy) throws Exception {
         RespBase<String> resp = RespBase.create();
         log.info("Destroy sessions by <= {}", destroy);

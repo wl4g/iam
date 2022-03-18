@@ -21,8 +21,8 @@ import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.infra.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGIN_BASE;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGIN_PERMITS;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_PERMITS;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.isNull;
@@ -126,7 +126,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
         Map<String, String> authzInfo = new HashMap<>();
 
         // Gets permits URl.
-        String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
+        String permitUrl = getRFCBaseURI(toHttp(request), true).concat(URI_IAM_SERVER_LOGIN_BASE).concat("/").concat(URI_IAM_SERVER_LOGIN_PERMITS);
         authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
         if (isBrowser(toHttp(request))) {
             // Sets authorizes permits info.

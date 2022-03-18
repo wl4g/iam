@@ -28,7 +28,7 @@ import com.wl4g.iam.core.exception.IllegalApplicationAccessException;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.ServiceTicketValidateException;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VALIDATE;
 import static java.util.Objects.nonNull;
 
 import java.util.Map;
@@ -55,7 +55,7 @@ public class FastCasTicketIamValidator
 
 	@Override
 	public ServiceTicketValidateModel<SimpleIamPrincipal> validate(ServiceTicketValidateRequest req) throws ServiceTicketValidateException {
-		final RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
+		final RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_IAM_SERVER_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the

@@ -67,7 +67,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * IAM login extra controller
+ * IAM login authentication controller
  *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
@@ -111,7 +111,7 @@ public class LoginAuthenticationController extends BaseIamController {
      *
      * @param request
      */
-    @RequestMapping(value = URI_S_LOGIN_HANDSHAKE, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_LOGIN_HANDSHAKE, method = { POST })
     @ResponseBody
     public RespBase<?> handshake(HttpServletRequest request, HttpServletResponse response) {
         checkSessionHandle(request, false);
@@ -137,7 +137,7 @@ public class LoginAuthenticationController extends BaseIamController {
      *
      * @param request
      */
-    @RequestMapping(value = URI_S_LOGIN_CHECK, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_LOGIN_CHECK, method = { POST })
     @ResponseBody
     public RespBase<?> check(HttpServletRequest request) {
         checkSessionHandle(request, true);
@@ -172,7 +172,8 @@ public class LoginAuthenticationController extends BaseIamController {
         if (verifier.forOperator(request).isEnabled(factors)) {
             captcha.setEnabled(true);
             captcha.setSupport(VerifyKind.SUPPORT_ALL); // Default
-            captcha.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
+            captcha.setApplyUri(
+                    getRFCBaseURI(request, true) + URI_IAM_SERVER_VERIFY_BASE + "/" + URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA);
         }
         resp.forMap().put(KEY_CAPTCHA_CHECK, captcha);
 
@@ -207,7 +208,7 @@ public class LoginAuthenticationController extends BaseIamController {
      * @param request
      * @return
      */
-    @RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET })
+    @RequestMapping(value = URI_IAM_SERVER_LOGIN_ERRREAD, method = { GET })
     @ResponseBody
     public RespBase<?> readError(HttpServletRequest request) {
         checkSessionHandle(request, true);
@@ -228,7 +229,7 @@ public class LoginAuthenticationController extends BaseIamController {
      * @param request
      * @return
      */
-    @RequestMapping(value = URI_S_LOGIN_PERMITS, method = { GET })
+    @RequestMapping(value = URI_IAM_SERVER_LOGIN_PERMITS, method = { GET })
     @ResponseBody
     public RespBase<?> readPermits(HttpServletRequest request) {
         checkSessionHandle(request, true);
@@ -250,7 +251,7 @@ public class LoginAuthenticationController extends BaseIamController {
      *
      * @param response
      */
-    @RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { POST })
+    @RequestMapping(value = URI_IAM_SERVER_LOGIN_APPLY_LOCALE, method = { POST })
     @ResponseBody
     public RespBase<?> applyLocale(HttpServletRequest request) {
         checkSessionHandle(request, true);

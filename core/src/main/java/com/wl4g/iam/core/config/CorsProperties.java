@@ -40,7 +40,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.*;
 import static com.wl4g.infra.common.web.WebUtils2.isSameWildcardOrigin;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.*;
 import static com.wl4g.iam.core.config.CorsProperties.IamCorsValidator.*;
-import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -528,7 +528,7 @@ public class CorsProperties implements InitializingBean, Serializable {
     /**
      * Cors key properties.
      */
-    final public static String KEY_CORS_PREFIX = KEY_IAM_CONFIG_PREFIX + ".cors";
+    final public static String KEY_CORS_PREFIX = CONF_PREFIX_IAM + ".cors";
 
     /**
      * Default requires allowes headers.

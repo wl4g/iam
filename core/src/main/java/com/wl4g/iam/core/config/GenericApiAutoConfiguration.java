@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_API_V2_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_API_V2_BASE;
 
 import org.springframework.context.annotation.Bean;
 
@@ -33,7 +33,7 @@ public abstract class GenericApiAutoConfiguration extends PrefixHandlerMappingSu
 
     @Bean
     public Object genericApiEndpointPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_S_API_V2_BASE, V2APIController.class);
+        return super.newPrefixHandlerMapping(URI_IAM_SERVER_API_V2_BASE, V2APIController.class);
     }
 
 }

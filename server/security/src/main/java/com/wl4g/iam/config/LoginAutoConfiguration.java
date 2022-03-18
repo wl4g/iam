@@ -19,7 +19,7 @@ import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.web.login.LoginAuthenticationController;
 
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGIN_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_BASE;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -45,7 +45,7 @@ public class LoginAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object loginAuthenticationEndpointPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_S_LOGIN_BASE, LoginAuthController.class);
+        return super.newPrefixHandlerMapping(URI_IAM_SERVER_LOGIN_BASE, LoginAuthController.class);
     }
 
 }
