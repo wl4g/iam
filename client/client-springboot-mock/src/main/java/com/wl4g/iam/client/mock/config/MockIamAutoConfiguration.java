@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.mock.config;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
 
 import org.springframework.context.annotation.Bean;
 
@@ -25,7 +25,7 @@ import com.wl4g.iam.client.mock.configure.MockConfigurationFactory;
 import com.wl4g.iam.client.mock.filter.MockAuthenticatingFilter;
 import com.wl4g.iam.client.mock.handler.MockCentralAuthenticatingHandler;
 import com.wl4g.iam.client.mock.web.MockCentralAuthenticatingEndpoint;
-import com.wl4g.iam.core.annotation.IamController;
+import com.wl4g.iam.core.annotation.FastCasController;
 
 /**
  * IAM mock auto configuration.
@@ -36,38 +36,38 @@ import com.wl4g.iam.core.annotation.IamController;
  */
 public class MockIamAutoConfiguration extends PrefixHandlerMappingSupport {
 
-	@Bean
-	public MockConfigurationFactory mockConfigurationFactory() {
-		return new MockConfigurationFactory();
-	}
+    @Bean
+    public MockConfigurationFactory mockConfigurationFactory() {
+        return new MockConfigurationFactory();
+    }
 
-	@Bean
-	public MockAuthenticatingInitializer mockAuthenticatingConfigurer() {
-		return new MockAuthenticatingInitializer();
-	}
+    @Bean
+    public MockAuthenticatingInitializer mockAuthenticatingConfigurer() {
+        return new MockAuthenticatingInitializer();
+    }
 
-	@Bean
-	public MockAuthenticatingFilter mockAuthenticatingFilter() {
-		return new MockAuthenticatingFilter();
-	}
+    @Bean
+    public MockAuthenticatingFilter mockAuthenticatingFilter() {
+        return new MockAuthenticatingFilter();
+    }
 
-	@Bean
-	public MockCentralAuthenticatingHandler mockCentralAuthenticatingHandler() {
-		return new MockCentralAuthenticatingHandler();
-	}
+    @Bean
+    public MockCentralAuthenticatingHandler mockCentralAuthenticatingHandler() {
+        return new MockCentralAuthenticatingHandler();
+    }
 
-	// ==============================
-	// Mock IAM endpoint's
-	// ==============================
+    // ==============================
+    // Mock IAM endpoint's
+    // ==============================
 
-	@Bean
-	public MockCentralAuthenticatingEndpoint mockCentralValidationEndpoint() {
-		return new MockCentralAuthenticatingEndpoint();
-	}
+    @Bean
+    public MockCentralAuthenticatingEndpoint mockCentralValidationEndpoint() {
+        return new MockCentralAuthenticatingEndpoint();
+    }
 
-	@Bean
-	public Object mockCentralValidationEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_BASE, IamController.class);
-	}
+    @Bean
+    public Object mockCentralValidationEndpointPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_S_BASE, FastCasController.class);
+    }
 
 }

@@ -46,7 +46,7 @@ spring:
       enabled: true # Default: true
       expression: execution(* com.wl4g.iam.core.*.*Controller.*(..)) or
                   execution(* com.wl4g.iam.sns.*.*Controller.*(..)) or
-                  execution(* com.wl4g.iam.*.*Controller.*(..))
+                  execution(* com.wl4g.iam.web.*.*Controller.*(..))
       escape-translators:
         #- escapeEcmascript
         #- escapeJava
@@ -57,7 +57,8 @@ spring:
      #unauthorized-uri: /view/403.html
      #success-endpoint: ${spring.application.name}@http://localhost:18080/${spring.application.name}/view/index.html
     filter-chain:
-      '[/public/**]': anon # Public router
+      '[/public/**]': anon
+      '[/oidc/v1/**]': anon
     param: # Must be consistent with the client, otherwise authentication will never succeed.
       sid: __sid
     matcher:
@@ -92,3 +93,10 @@ spring:
       #gif:
       jigsaw:
         pool-size: 64
+    oidc:
+      bearer-realm-name: 'IAM OIDC Realm'
+      id-token-digest-name: SHA-256
+      jws-algorithm-name: RS256
+      jwks-json-resource: classpath*:/credentials/oidc/jwks.json
+      token-expiration-seconds: 36000
+      code-expiration-seconds: 10

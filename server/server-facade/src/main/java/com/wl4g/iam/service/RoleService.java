@@ -41,31 +41,33 @@ import com.wl4g.iam.common.bean.Role;
 @RequestMapping("/role-service")
 public interface RoleService {
 
-	@RequestMapping(value = "/getLoginRoles", method = POST)
-	List<Role> getLoginRoles();
+    @RequestMapping(value = "/getLoginRoles", method = POST)
+    List<Role> getLoginRoles();
 
-	// has too many Body parameters:
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Role> list(@RequestBody PageHolder<Role> pm,
-			@RequestParam(value = "organizationId", required = false) String organizationId,
-			@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "displayName", required = false) String displayName);
+    // has too many Body parameters:
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<Role> list(
+            @RequestBody PageHolder<Role> pm,
+            @RequestParam(value = "organizationId", required = false) String organizationId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "displayName", required = false) String displayName);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Role role);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Role role);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("id") Long id);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/detail", method = GET)
-	Role detail(@RequestParam("id") Long id);
+    @RequestMapping(value = "/detail", method = GET)
+    Role detail(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/findByUserId", method = GET)
-	List<Role> findByUserId(@RequestParam("userId") Long userId);
+    @RequestMapping(value = "/findByUserId", method = GET)
+    List<Role> findByUserId(@RequestParam("userId") Long userId);
 
-	@RequestMapping(value = "/findRoot", method = POST)
-	List<Role> findRoot(@RequestParam(value = "groupIds", required = false) List<Long> groupIds,
-			@RequestParam(value = "roleCode", required = false) String roleCode,
-			@RequestParam(value = "nameZh", required = false) String nameZh);
+    @RequestMapping(value = "/findRoot", method = POST)
+    List<Role> findRoot(
+            @RequestParam(value = "groupIds", required = false) List<Long> groupIds,
+            @RequestParam(value = "roleCode", required = false) String roleCode,
+            @RequestParam(value = "nameZh", required = false) String nameZh);
 
 }

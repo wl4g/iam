@@ -16,7 +16,7 @@
 package com.wl4g.iam.handler;
 
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import javax.annotation.Resource;
 
@@ -50,50 +50,42 @@ public abstract class AbstractAuthenticatingHandler implements AuthenticatingHan
     /**
      * IAM server configuration properties
      */
-    @Autowired
-    protected IamProperties config;
+    protected @Autowired IamProperties config;
 
     /**
      * IAM security context handler
      */
-    @Autowired
-    protected ServerSecurityConfigurer configurer;
+    protected @Autowired ServerSecurityConfigurer configurer;
 
     /**
      * IAM server security processor
      */
-    @Autowired
-    protected ServerSecurityCoprocessor coprocessor;
+    protected @Autowired ServerSecurityCoprocessor coprocessor;
 
     /**
      * Key id generator
      */
-    @Autowired
-    protected SessionIdGenerator idGenerator;
+    protected @Autowired SessionIdGenerator idGenerator;
 
     /**
      * Delegate message source.
      */
-    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-    protected SessionResourceMessageBundler bundle;
+    protected @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER) SessionResourceMessageBundler bundle;
 
     /**
      * Distributed locks.
      */
-    @Autowired
-    protected JedisLockManager lockManager;
+    protected @Autowired JedisLockManager lockManager;
 
     /**
      * Enhanced cache manager.
      */
-    @Autowired
-    protected IamCacheManager cacheManager;
+    protected @Autowired IamCacheManager cacheManager;
 
     /**
      * Rest template
      */
-    @Autowired
-    protected RestTemplate restTemplate;
+    protected @Autowired RestTemplate restTemplate;
 
     @Override
     public void afterPropertiesSet() throws Exception {

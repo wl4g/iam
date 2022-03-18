@@ -41,10 +41,10 @@ import com.wl4g.iam.service.fallback.ContactServiceFallbackFactory;
 @RequestMapping("/notificationContact-service")
 public interface NotificationContactService {
 
-	@RequestMapping(method = POST, value = "/save")
-	int save(@RequestBody NotificationContact record);
+    @RequestMapping(method = POST, value = "/save")
+    int save(@RequestBody NotificationContact record);
 
-	@RequestMapping(method = GET, value = "/getByRecordId")
-	List<NotificationContact> getByRecordId(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/getByRecordId")
+    List<NotificationContact> getByRecordId(@RequestParam("id") Long id);
 
 }

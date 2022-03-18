@@ -17,6 +17,7 @@ package com.wl4g.iam.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 /**
  * Social networking services configuration
@@ -28,23 +29,28 @@ import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFI
 @ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".crypto")
 public class CryptoProperties {
 
-	private int keyPairPools = 64;
-	private long keyPairExpireMs = 600_000;
+    private int keyPairPools = 64;
+    private long keyPairExpireMs = 600_000;
 
-	public int getKeyPairPools() {
-		return keyPairPools;
-	}
+    public int getKeyPairPools() {
+        return keyPairPools;
+    }
 
-	public void setKeyPairPools(int keyPairPools) {
-		this.keyPairPools = keyPairPools;
-	}
+    public void setKeyPairPools(int keyPairPools) {
+        this.keyPairPools = keyPairPools;
+    }
 
-	public long getKeyPairExpireMs() {
-		return keyPairExpireMs;
-	}
+    public long getKeyPairExpireMs() {
+        return keyPairExpireMs;
+    }
 
-	public void setKeyPairExpireMs(long keyPairExpireMs) {
-		this.keyPairExpireMs = keyPairExpireMs;
-	}
+    public void setKeyPairExpireMs(long keyPairExpireMs) {
+        this.keyPairExpireMs = keyPairExpireMs;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
 }

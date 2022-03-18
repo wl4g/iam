@@ -38,50 +38,53 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
  */
 public class LoginSnsHandler extends AbstractSnsHandler {
 
-	public LoginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public LoginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
-		// Connecting
-		String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+    @Override
+    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+        // Connecting
+        String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
 
-		// Save connect parameters
-		saveOauth2ConnectParameters(provider, state, connectParams);
+        // Save connect parameters
+        saveOauth2ConnectParameters(provider, state, connectParams);
 
-		return REDIRECT_PREFIX + authorizingUrl;
-	}
+        return REDIRECT_PREFIX + authorizingUrl;
+    }
 
-	@Override
-	protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
-		super.checkConnectParameters(provider, state, connectParams);
+    @Override
+    protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
+        super.checkConnectParameters(provider, state, connectParams);
 
-		// Check connect parameters
-		Assert.notEmpty(connectParams, "Connect parameters must not be empty");
+        // Check connect parameters
+        Assert.notEmpty(connectParams, "Connect parameters must not be empty");
 
-		// PC-side browsers use agent redirection(QQ,sina)
-		Assert.hasText(connectParams.get(config.getParam().getAgent()),
-				String.format("'%s' must not be empty", config.getParam().getAgent()));
-	}
+        // PC-side browsers use agent redirection(QQ,sina)
+        Assert.hasText(connectParams.get(config.getParam().getAgent()),
+                String.format("'%s' must not be empty", config.getParam().getAgent()));
+    }
 
-	@Override
-	protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
-		// Check 'state'
-		Assert.notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
-		super.checkCallbackParameters(provider, state, code, connectParams);
-	}
+    @Override
+    protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
+        // Check 'state'
+        Assert.notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
+        super.checkCallbackParameters(provider, state, code, connectParams);
+    }
 
-	@Override
-	protected String postCallbackResponse(String provider, String callbackId, Map<String, String> connectParams,
-			HttpServletRequest request) {
-		return super.getLoginSubmitUrl(provider, callbackId, request);
-	}
+    @Override
+    protected String postCallbackResponse(
+            String provider,
+            String callbackId,
+            Map<String, String> connectParams,
+            HttpServletRequest request) {
+        return super.getLoginSubmitUrl(provider, callbackId, request);
+    }
 
-	@Override
-	public Which which() {
-		return Which.LOGIN;
-	}
+    @Override
+    public Which which() {
+        return Which.LOGIN;
+    }
 
 }

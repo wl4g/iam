@@ -35,54 +35,54 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private RoleService roleService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private RoleService roleService;
 
-	@RequestMapping(value = "/getRolesByUserGroups")
-	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> getRolesByUserGroups() {
-		RespBase<Object> resp = RespBase.create();
+    @RequestMapping(value = "/getRolesByUserGroups")
+    @RequiresPermissions(value = { "iam:role" })
+    public RespBase<?> getRolesByUserGroups() {
+        RespBase<Object> resp = RespBase.create();
 
-		List<Role> roles = roleService.getLoginRoles();
+        List<Role> roles = roleService.getLoginRoles();
 
-		resp.forMap().put("data", roles);
-		return resp;
-	}
+        resp.forMap().put("data", roles);
+        return resp;
+    }
 
-	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
-		RespBase<Object> resp = RespBase.create();
+    @RequestMapping(value = "/list")
+    @RequiresPermissions(value = { "iam:role" })
+    public RespBase<?> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
+        RespBase<Object> resp = RespBase.create();
 
-		resp.setData(roleService.list(pm, organizationId, roleCode, displayName));
+        resp.setData(roleService.list(pm, organizationId, roleCode, displayName));
 
-		return resp;
-	}
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> save(@RequestBody Role role) {
-		RespBase<Object> resp = RespBase.create();
-		roleService.save(role);
-		return resp;
-	}
+    @RequestMapping(value = "/save")
+    @RequiresPermissions(value = { "iam:role" })
+    public RespBase<?> save(@RequestBody Role role) {
+        RespBase<Object> resp = RespBase.create();
+        roleService.save(role);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> del(Long id) {
-		RespBase<Object> resp = RespBase.create();
-		roleService.del(id);
-		return resp;
-	}
+    @RequestMapping(value = "/del")
+    @RequiresPermissions(value = { "iam:role" })
+    public RespBase<?> del(Long id) {
+        RespBase<Object> resp = RespBase.create();
+        roleService.del(id);
+        return resp;
+    }
 
-	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "iam:role" })
-	public RespBase<?> detail(Long id) {
-		RespBase<Object> resp = RespBase.create();
-		Role role = roleService.detail(id);
-		resp.forMap().put("data", role);
-		return resp;
-	}
+    @RequestMapping(value = "/detail")
+    @RequiresPermissions(value = { "iam:role" })
+    public RespBase<?> detail(Long id) {
+        RespBase<Object> resp = RespBase.create();
+        Role role = roleService.detail(id);
+        resp.forMap().put("data", role);
+        return resp;
+    }
 
 }

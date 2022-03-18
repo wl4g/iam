@@ -31,8 +31,8 @@ import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_BASE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
 import static com.wl4g.infra.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;

@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_BASE;
 
 import java.util.List;
 
@@ -78,7 +78,9 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
     }
 
     @Bean
-    public WechatMpOauth2Template wechatMpOauth2Template(SnsProperties config, RestTemplate restTemplate,
+    public WechatMpOauth2Template wechatMpOauth2Template(
+            SnsProperties config,
+            RestTemplate restTemplate,
             CacheManager cacheManager) {
         return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
     }
@@ -99,32 +101,53 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
     }
 
     @Bean
-    public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-            ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
+    public LoginSnsHandler loginSnsHandler(
+            IamProperties config,
+            SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context,
+            ServerSecurityCoprocessor coprocessor,
+            JedisIamCacheManager cacheManager) {
         return new LoginSnsHandler(config, snsConfig, connectFactory, context);
     }
 
     @Bean
-    public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+    public ClientAuthcSnsHandler clientAuthcSnsHandler(
+            IamProperties config,
+            SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context,
+            ServerSecurityCoprocessor coprocessor) {
         return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
     }
 
     @Bean
-    public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+    public BindingSnsHandler bindingSnsHandler(
+            IamProperties config,
+            SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context,
+            ServerSecurityCoprocessor coprocessor) {
         return new BindingSnsHandler(config, snsConfig, connectFactory, context);
     }
 
     @Bean
-    public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+    public UnBindingSnsHandler unBindingSnsHandler(
+            IamProperties config,
+            SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context,
+            ServerSecurityCoprocessor coprocessor) {
         return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
     }
 
     @Bean
-    public SecondaryAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-            OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+    public SecondaryAuthcSnsHandler secondAuthcSnsHandler(
+            IamProperties config,
+            SnsProperties snsConfig,
+            OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context,
+            ServerSecurityCoprocessor coprocessor) {
         return new SecondaryAuthcSnsHandler(config, snsConfig, connectFactory, context);
     }
 
@@ -133,7 +156,9 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
     //
 
     @Bean
-    public DefaultOauth2SnsController defaultOauth2SnsController(IamProperties config, SnsProperties snsConfig,
+    public DefaultOauth2SnsController defaultOauth2SnsController(
+            IamProperties config,
+            SnsProperties snsConfig,
             DelegateSnsHandler delegate) {
         return new DefaultOauth2SnsController(config, snsConfig, delegate);
     }

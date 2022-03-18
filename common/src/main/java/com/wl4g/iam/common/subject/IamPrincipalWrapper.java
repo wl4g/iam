@@ -24,31 +24,31 @@ package com.wl4g.iam.common.subject;
  */
 public class IamPrincipalWrapper {
 
-	/**
-	 * {@link IamPrincipal}
-	 */
-	private IamPrincipal info;
+    /**
+     * {@link IamPrincipal}
+     */
+    private IamPrincipal info;
 
-	public IamPrincipalWrapper() {
-		super();
-	}
+    public IamPrincipalWrapper() {
+        super();
+    }
 
-	public IamPrincipalWrapper(IamPrincipal info) {
-		super();
-		this.info = info;
-	}
+    public IamPrincipalWrapper(IamPrincipal info) {
+        super();
+        this.info = info;
+    }
 
-	public IamPrincipal getInfo() {
-		return info;
-	}
+    public IamPrincipal getInfo() {
+        return info;
+    }
 
-	public void setInfo(IamPrincipal info) {
-		this.info = info;
-	}
+    public void setInfo(IamPrincipal info) {
+        this.info = info;
+    }
 
-	@Override
-	public String toString() {
-		return "IamPrincipalInfoWrapper [info=" + info + "]";
-	}
+    @Override
+    public String toString() {
+        return "IamPrincipalInfoWrapper [info=" + info + "]";
+    }
 
 }

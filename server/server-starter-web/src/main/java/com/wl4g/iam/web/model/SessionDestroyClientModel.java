@@ -32,9 +32,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SessionDestroyClientModel extends SessionDestroyModel {
-	private static final long serialVersionUID = 2579844578836104919L;
+    private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "IamServerId is requires")
-	private Long id;
+    @NotNull(message = "IamServerId is requires")
+    private Long id;
 
 }

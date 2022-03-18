@@ -19,56 +19,56 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class ContactChannel extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private Long contactId;
+    private Long contactId;
 
-	private String kind;
+    private String kind;
 
-	private String primaryAddress;
+    private String primaryAddress;
 
-	private Integer timeOfFreq;
+    private Integer timeOfFreq;
 
-	private Integer numOfFreq;
+    private Integer numOfFreq;
 
-	public String getKind() {
-		return kind;
-	}
+    public String getKind() {
+        return kind;
+    }
 
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
 
-	public Long getContactId() {
-		return contactId;
-	}
+    public Long getContactId() {
+        return contactId;
+    }
 
-	public void setContactId(Long contactId) {
-		this.contactId = contactId;
-	}
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
+    }
 
-	public String getPrimaryAddress() {
-		return primaryAddress;
-	}
+    public String getPrimaryAddress() {
+        return primaryAddress;
+    }
 
-	public void setPrimaryAddress(String primaryAddress) {
-		this.primaryAddress = primaryAddress == null ? null : primaryAddress.trim();
-	}
+    public void setPrimaryAddress(String primaryAddress) {
+        this.primaryAddress = primaryAddress == null ? null : primaryAddress.trim();
+    }
 
-	public Integer getTimeOfFreq() {
-		return timeOfFreq;
-	}
+    public Integer getTimeOfFreq() {
+        return timeOfFreq;
+    }
 
-	public void setTimeOfFreq(Integer timeOfFreq) {
-		this.timeOfFreq = timeOfFreq;
-	}
+    public void setTimeOfFreq(Integer timeOfFreq) {
+        this.timeOfFreq = timeOfFreq;
+    }
 
-	public Integer getNumOfFreq() {
-		return numOfFreq;
-	}
+    public Integer getNumOfFreq() {
+        return numOfFreq;
+    }
 
-	public void setNumOfFreq(Integer numOfFreq) {
-		this.numOfFreq = numOfFreq;
-	}
+    public void setNumOfFreq(Integer numOfFreq) {
+        this.numOfFreq = numOfFreq;
+    }
 
 }

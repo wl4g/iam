@@ -20,25 +20,25 @@ import java.io.Serializable;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class ContactGroupRef extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long contactGroupId;
+    private Long contactGroupId;
 
-	private Long contactId;
+    private Long contactId;
 
-	public Long getContactGroupId() {
-		return contactGroupId;
-	}
+    public Long getContactGroupId() {
+        return contactGroupId;
+    }
 
-	public void setContactGroupId(Long contactGroupId) {
-		this.contactGroupId = contactGroupId;
-	}
+    public void setContactGroupId(Long contactGroupId) {
+        this.contactGroupId = contactGroupId;
+    }
 
-	public Long getContactId() {
-		return contactId;
-	}
+    public Long getContactId() {
+        return contactId;
+    }
 
-	public void setContactId(Long contactId) {
-		this.contactId = contactId;
-	}
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
+    }
 }

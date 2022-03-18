@@ -39,12 +39,16 @@ import java.util.Map;
 @Service
 public class StandardSecurityCoprocessor implements ServerSecurityCoprocessor {
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	@Override
-	public void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, HttpServletRequest request,
-			HttpServletResponse response, Map<String, Object> respParams) {
+    @Override
+    public void postAuthenticatingSuccess(
+            AuthenticationToken token,
+            Subject subject,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Map<String, Object> respParams) {
 
-	}
+    }
 
 }

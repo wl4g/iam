@@ -25,9 +25,9 @@ import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 
+import static com.wl4g.iam.verify.SecurityVerifier.VerifyKind.*;
 import static com.wl4g.infra.common.web.WebUtils2.getFirstParameters;
 import static com.wl4g.infra.common.web.WebUtils2.rejectRequestMethod;
-import static com.wl4g.iam.verification.SecurityVerifier.VerifyKind.*;
 
 /**
  * {@link GenericAuthenticationFilter}
@@ -42,7 +42,10 @@ public class GenericAuthenticationFilter extends AbstractServerIamAuthentication
     final public static String NAME = "generic";
 
     @Override
-    protected GenericAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected GenericAuthenticationToken doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         rejectRequestMethod(true, request, response, "POST");
 

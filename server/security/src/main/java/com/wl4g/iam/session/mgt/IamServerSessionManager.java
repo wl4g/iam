@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.session.mgt;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_S;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_TICKET_S;
 
 import java.io.Serializable;
 
@@ -36,13 +36,13 @@ import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
  */
 public class IamServerSessionManager extends AbstractIamSessionManager<IamProperties> {
 
-	public IamServerSessionManager(IamProperties config, IamCacheManager cacheManager) {
-		super(config, cacheManager, CACHE_TICKET_S);
-	}
+    public IamServerSessionManager(IamProperties config, IamCacheManager cacheManager) {
+        super(config, cacheManager, CACHE_TICKET_S);
+    }
 
-	@Override
-	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
-		return super.getSessionId(request, response);
-	}
+    @Override
+    protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
+        return super.getSessionId(request, response);
+    }
 
 }

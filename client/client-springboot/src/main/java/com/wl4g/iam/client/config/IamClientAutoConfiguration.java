@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.config;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
@@ -38,12 +38,12 @@ import com.wl4g.iam.client.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.iam.client.filter.ClientInternalAuthenticationFilter;
 import com.wl4g.iam.client.filter.LogoutAuthenticationFilter;
 import com.wl4g.iam.client.filter.ROOTAuthenticationFilter;
-import com.wl4g.iam.client.realm.FastCasAuthorizingRealm;
+import com.wl4g.iam.client.realm.FastCasClientAuthorizingRealm;
 import com.wl4g.iam.client.session.mgt.IamClientSessionManager;
 import com.wl4g.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.iam.client.validation.IamValidator;
-import com.wl4g.iam.client.web.ClientAuthenticatorEndpoint;
+import com.wl4g.iam.client.web.FastCasClientAuthenticatingController;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;
@@ -181,9 +181,9 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
 	@ConditionalOnMissingBean
-	public FastCasAuthorizingRealm fastCasAuthorizingRealm(IamClientProperties config,
+	public FastCasClientAuthorizingRealm fastCasAuthorizingRealm(IamClientProperties config,
 			@Qualifier(BEAN_TICKET_VALIDATOR) IamValidator validator) {
-		return new FastCasAuthorizingRealm(config, validator);
+		return new FastCasClientAuthorizingRealm(config, validator);
 	}
 
 	// ==============================
@@ -253,8 +253,8 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public ClientAuthenticatorEndpoint clientAuthenticatorController() {
-		return new ClientAuthenticatorEndpoint();
+	public FastCasClientAuthenticatingController clientAuthenticatorController() {
+		return new FastCasClientAuthenticatingController();
 	}
 
 	@Bean

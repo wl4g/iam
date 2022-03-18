@@ -17,7 +17,7 @@ package com.wl4g.iam.config;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -78,7 +78,7 @@ import com.wl4g.iam.filter.SmsAuthenticationFilter;
 import com.wl4g.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.iam.filter.WechatMpAuthenticationFilter;
-import com.wl4g.iam.handler.CentralAuthenticatingHandler;
+import com.wl4g.iam.handler.fastcas.FastCasServerAuthenticatingHandler;
 import com.wl4g.iam.handler.risk.SimpleRiskEvaluateHandler;
 import com.wl4g.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.iam.realm.DingtalkAuthorizingRealm;
@@ -94,13 +94,13 @@ import com.wl4g.iam.realm.TwitterAuthorizingRealm;
 import com.wl4g.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.iam.session.mgt.IamServerSessionManager;
-import com.wl4g.iam.verification.CompositeSecurityVerifierAdapter;
-import com.wl4g.iam.verification.SecurityVerifier;
-import com.wl4g.iam.verification.SimpleJPEGSecurityVerifier;
-import com.wl4g.iam.verification.SmsSecurityVerifier;
-import com.wl4g.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
-import com.wl4g.iam.verification.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.iam.web.login.CentralAuthenticatingController;
+import com.wl4g.iam.verify.CompositeSecurityVerifierAdapter;
+import com.wl4g.iam.verify.SecurityVerifier;
+import com.wl4g.iam.verify.SimpleImageSecurityVerifier;
+import com.wl4g.iam.verify.SmsSecurityVerifier;
+import com.wl4g.iam.verify.SmsSecurityVerifier.PrintSmsHandleSender;
+import com.wl4g.iam.verify.SmsSecurityVerifier.SmsHandleSender;
+import com.wl4g.iam.web.fastcas.FastCasServerAuthenticatingController;
 
 /**
  * IAM server auto configuration.
@@ -158,8 +158,11 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     // ==============================
 
     @Bean
-    public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamServerSessionManager sessionManager,
-            ModularRealmAuthenticator authenticator, EnhancedModularRealmAuthorizer authorizer) {
+    public DefaultWebSecurityManager securityManager(
+            IamSubjectFactory subjectFactory,
+            IamServerSessionManager sessionManager,
+            ModularRealmAuthenticator authenticator,
+            EnhancedModularRealmAuthorizer authorizer) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSessionManager(sessionManager);
         securityManager.setRealms(authorizer.getRealms());
@@ -186,8 +189,12 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(IamServerSessionManager.class)
-    public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
-            IamCacheManager cacheManager, IamCookie cookie, IamProperties config) {
+    public IamServerSessionManager iamServerSessionManager(
+            IamSessionFactory sessionFactory,
+            JedisIamSessionDAO sessionDao,
+            IamCacheManager cacheManager,
+            IamCookie cookie,
+            IamProperties config) {
         IamServerSessionManager sessionManager = new IamServerSessionManager(config, cacheManager);
         sessionManager.setSessionFactory(sessionFactory);
         sessionManager.setSessionDAO(sessionDao);
@@ -252,7 +259,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     }
 
     @Bean
-    public ServerInternalAuthenticationFilter internalWhiteListServerAuthenticationFilter(IPAccessControl control,
+    public ServerInternalAuthenticationFilter internalWhiteListServerAuthenticationFilter(
+            IPAccessControl control,
             AbstractIamProperties<? extends ParamProperties> config) {
         return new ServerInternalAuthenticationFilter(control, config);
     }
@@ -531,8 +539,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     // ==============================
 
     @Bean
-    public CentralAuthenticatingHandler centralAuthenticatingHandler() {
-        return new CentralAuthenticatingHandler();
+    public FastCasServerAuthenticatingHandler centralAuthenticatingHandler() {
+        return new FastCasServerAuthenticatingHandler();
     }
 
     @Bean
@@ -545,9 +553,9 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     // ==============================
 
     /**
-     * {@link com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier}.
-     * {@link com.wl4g.devops.iam.captcha.verification.KaptchaSecurityVerifier}.
-     * {@link com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier}.
+     * {@link com.wl4g.devops.iam.captcha.verify.GifSecurityVerifier}.
+     * {@link com.wl4g.devops.iam.captcha.verify.KaptchaSecurityVerifier}.
+     * {@link com.wl4g.devops.iam.captcha.verify.JigsawSecurityVerifier}.
      *
      * @return
      */
@@ -557,8 +565,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     }
 
     @Bean
-    public SimpleJPEGSecurityVerifier simpleJPEGSecurityVerifier() {
-        return new SimpleJPEGSecurityVerifier();
+    public SimpleImageSecurityVerifier simpleJPEGSecurityVerifier() {
+        return new SimpleImageSecurityVerifier();
     }
 
     @Bean
@@ -578,8 +586,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     // ==============================
 
     @Bean
-    public CentralAuthenticatingController centralAuthenticatingController() {
-        return new CentralAuthenticatingController();
+    public FastCasServerAuthenticatingController centralAuthenticatingController() {
+        return new FastCasServerAuthenticatingController();
     }
 
     @Bean

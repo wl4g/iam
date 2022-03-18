@@ -17,9 +17,9 @@ package com.wl4g.iam.client.mock.web;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SECOND_VALIDATE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SECOND_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_VALIDATE;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,11 +34,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.core.annotation.IamController;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
-import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
-import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
+import com.wl4g.iam.core.annotation.FastCasController;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
+import com.wl4g.iam.common.model.SessionValidateModel;
+import com.wl4g.iam.common.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.common.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
@@ -51,7 +51,7 @@ import com.wl4g.iam.core.web.AuthenticatingController;
  * @version v1.0 2019年1月27日
  * @since
  */
-@IamController
+@FastCasController
 public class MockCentralAuthenticatingEndpoint extends BaseController implements AuthenticatingController {
 
     @Autowired

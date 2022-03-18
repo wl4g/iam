@@ -48,129 +48,129 @@ import static java.util.Objects.nonNull;
 // @org.springframework.web.bind.annotation.RestController
 public class OrganizationServiceImpl implements OrganizationService {
 
-	@Autowired
-	private OrganizationDao organizationDao;
+    @Autowired
+    private OrganizationDao organizationDao;
 
-	@Autowired
-	private OrganizationRoleDao organizationRoleDao;
+    @Autowired
+    private OrganizationRoleDao organizationRoleDao;
 
-	@Override
-	public List<Organization> getLoginOrganizationTree() {
-		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
-		Set<Organization> orgs = getUserOrganizations(new User(principal));
-		return transfromOrganTree(new ArrayList<>(orgs));
-	}
+    @Override
+    public List<Organization> getLoginOrganizationTree() {
+        String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
+        Set<Organization> orgs = getUserOrganizations(new User(principal));
+        return transfromOrganTree(new ArrayList<>(orgs));
+    }
 
-	@Override
-	public Set<Organization> getUserOrganizations(User user) {
-		List<Organization> orgs = null;
-		if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
-			orgs = organizationDao.selectByRoot();
-		} else {
-			orgs = organizationDao.selectByUserId(user.getId());
-		}
+    @Override
+    public Set<Organization> getUserOrganizations(User user) {
+        List<Organization> orgs = null;
+        if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
+            orgs = organizationDao.selectByRoot();
+        } else {
+            orgs = organizationDao.selectByUserId(user.getId());
+        }
 
-		Set<Organization> orgSet = new HashSet<>(orgs);
-		for (Organization org : orgs) {
-			Set<Long> orgIds = new HashSet<>();
-			orgIds.add(org.getId());
-			fillChildrenIds(org.getId(), orgIds);
+        Set<Organization> orgSet = new HashSet<>(orgs);
+        for (Organization org : orgs) {
+            Set<Long> orgIds = new HashSet<>();
+            orgIds.add(org.getId());
+            fillChildrenIds(org.getId(), orgIds);
 
-			org.setRoleCount(organizationDao.countRoleByOrganizationId(orgIds));
-			getChildrensList(org.getId(), orgSet);
-		}
-		return orgSet;
-	}
+            org.setRoleCount(organizationDao.countRoleByOrganizationId(orgIds));
+            getChildrensList(org.getId(), orgSet);
+        }
+        return orgSet;
+    }
 
-	void fillChildrenIds(Long parentId, Set<Long> orgSet) {
-		List<Organization> childrens = organizationDao.selectByParentId(parentId);
-		for (Organization org : childrens) {
-			orgSet.add(org.getId());
-		}
-		for (Organization org : childrens) {
-			fillChildrenIds(org.getId(), orgSet);
-		}
-	}
+    void fillChildrenIds(Long parentId, Set<Long> orgSet) {
+        List<Organization> childrens = organizationDao.selectByParentId(parentId);
+        for (Organization org : childrens) {
+            orgSet.add(org.getId());
+        }
+        for (Organization org : childrens) {
+            fillChildrenIds(org.getId(), orgSet);
+        }
+    }
 
-	@Override
-	public void save(Organization org) {
-		if (nonNull(org.getId())) {
-			org.preUpdate();
-			organizationDao.updateByPrimaryKeySelective(org);
-		} else {
-			org.preInsert();
-			organizationDao.insertSelective(org);
-		}
-	}
+    @Override
+    public void save(Organization org) {
+        if (nonNull(org.getId())) {
+            org.preUpdate();
+            organizationDao.updateByPrimaryKeySelective(org);
+        } else {
+            org.preInsert();
+            organizationDao.insertSelective(org);
+        }
+    }
 
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id is null");
-		Organization group = new Organization();
-		group.setId(id);
-		group.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		organizationDao.updateByPrimaryKeySelective(group);
-	}
+    @Override
+    public void del(Long id) {
+        Assert.notNull(id, "id is null");
+        Organization group = new Organization();
+        group.setId(id);
+        group.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        organizationDao.updateByPrimaryKeySelective(group);
+    }
 
-	@Override
-	public Organization detail(Long id) {
-		notNullOf(id, "orgId");
-		Organization org = notNullOf(organizationDao.selectByPrimaryKey(id), "organization");
-		List<Long> roleIds = organizationRoleDao.selectRoleIdsByGroupId(id);
-		org.setRoleIds(roleIds);
-		return org;
-	}
+    @Override
+    public Organization detail(Long id) {
+        notNullOf(id, "orgId");
+        Organization org = notNullOf(organizationDao.selectByPrimaryKey(id), "organization");
+        List<Long> roleIds = organizationRoleDao.selectRoleIdsByGroupId(id);
+        org.setRoleIds(roleIds);
+        return org;
+    }
 
-	private void getChildrensList(Long parentId, Set<Organization> set) {
-		List<Organization> childrens = organizationDao.selectByParentId(parentId);
-		set.addAll(childrens);
-		for (Organization org : childrens) {
-			getChildrensList(org.getId(), set);
-		}
-	}
+    private void getChildrensList(Long parentId, Set<Organization> set) {
+        List<Organization> childrens = organizationDao.selectByParentId(parentId);
+        set.addAll(childrens);
+        for (Organization org : childrens) {
+            getChildrensList(org.getId(), set);
+        }
+    }
 
-	private List<Organization> transfromOrganTree(List<Organization> groups) {
-		List<Organization> top = new ArrayList<>();
-		for (Organization group : groups) {
-			Organization parent = getParent(groups, group.getParentId());
-			if (parent == null) {
-				top.add(group);
-			}
-		}
-		for (Organization group : top) {
-			List<Organization> children = getChildren(groups, null, group.getId());
-			if (!CollectionUtils.isEmpty(children)) {
-				group.setChildren(children);
-			}
-		}
-		return top;
-	}
+    private List<Organization> transfromOrganTree(List<Organization> groups) {
+        List<Organization> top = new ArrayList<>();
+        for (Organization group : groups) {
+            Organization parent = getParent(groups, group.getParentId());
+            if (parent == null) {
+                top.add(group);
+            }
+        }
+        for (Organization group : top) {
+            List<Organization> children = getChildren(groups, null, group.getId());
+            if (!CollectionUtils.isEmpty(children)) {
+                group.setChildren(children);
+            }
+        }
+        return top;
+    }
 
-	private Organization getParent(List<Organization> orgs, Long parentId) {
-		for (Organization group : orgs) {
-			if (parentId != null && group.getId() != null && group.getId().longValue() == parentId.longValue()) {
-				return group;
-			}
-		}
-		return null;
-	}
+    private Organization getParent(List<Organization> orgs, Long parentId) {
+        for (Organization group : orgs) {
+            if (parentId != null && group.getId() != null && group.getId().longValue() == parentId.longValue()) {
+                return group;
+            }
+        }
+        return null;
+    }
 
-	private List<Organization> getChildren(List<Organization> groups, List<Organization> children, Long parentId) {
-		if (children == null) {
-			children = new ArrayList<>();
-		}
-		for (Organization group : groups) {
-			if (group.getParentId() != null && parentId != null && group.getParentId().longValue() == parentId.longValue()) {
-				children.add(group);
-			}
-		}
-		for (Organization group : children) {
-			List<Organization> children1 = getChildren(groups, null, group.getId());
-			if (!CollectionUtils.isEmpty(children1)) {
-				group.setChildren(children1);
-			}
-		}
-		return children;
-	}
+    private List<Organization> getChildren(List<Organization> groups, List<Organization> children, Long parentId) {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        for (Organization group : groups) {
+            if (group.getParentId() != null && parentId != null && group.getParentId().longValue() == parentId.longValue()) {
+                children.add(group);
+            }
+        }
+        for (Organization group : children) {
+            List<Organization> children1 = getChildren(groups, null, group.getId());
+            if (!CollectionUtils.isEmpty(children1)) {
+                group.setChildren(children1);
+            }
+        }
+        return children;
+    }
 
 }

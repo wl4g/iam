@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.client.validation;
 
-import com.wl4g.iam.core.authc.model.BaseValidateModel;
+import com.wl4g.iam.common.model.BaseValidateModel;
 import com.wl4g.iam.core.exception.ValidateException;
 
 /**

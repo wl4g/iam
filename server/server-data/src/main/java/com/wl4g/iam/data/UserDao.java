@@ -39,35 +39,37 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/user-dao")
 public interface UserDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody User record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody User record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody User record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody User record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	User selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    User selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody User record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody User record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody User record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody User record);
 
-	@RequestMapping(method = GET, value = "/list")
-	List<User> list(@RequestParam(value = "userId", required = false) @Param("userId") Long userId,
-			@RequestParam(value = "userName", required = false) @Param("userName") String userName,
-			@RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh,
-			@RequestParam(value = "roleId", required = false) @Param("roleId") Long roleId);
+    @RequestMapping(method = GET, value = "/list")
+    List<User> list(
+            @RequestParam(value = "userId", required = false) @Param("userId") Long userId,
+            @RequestParam(value = "userName", required = false) @Param("userName") String userName,
+            @RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh,
+            @RequestParam(value = "roleId", required = false) @Param("roleId") Long roleId);
 
-	@RequestMapping(method = GET, value = "/selectByUserName")
-	User selectByUserName(@RequestParam("userName") String userName);
+    @RequestMapping(method = GET, value = "/selectByUserName")
+    User selectByUserName(@RequestParam("userName") String userName);
 
-	@RequestMapping(method = GET, value = "/selectByUnionIdOrOpenId")
-	User selectByUnionIdOrOpenId(@RequestParam("unionId") @Param("unionId") String unionId,
-			@RequestParam("openId") @Param("openId") String openId);
+    @RequestMapping(method = GET, value = "/selectByUnionIdOrOpenId")
+    User selectByUnionIdOrOpenId(
+            @RequestParam("unionId") @Param("unionId") String unionId,
+            @RequestParam("openId") @Param("openId") String openId);
 
 }

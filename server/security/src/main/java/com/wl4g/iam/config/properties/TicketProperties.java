@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.config.properties;
 
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+
 import java.io.Serializable;
 
 /**
@@ -26,6 +28,11 @@ import java.io.Serializable;
  * @since
  */
 public class TicketProperties implements Serializable {
-	private static final long serialVersionUID = -2694422471852860689L;
+    private static final long serialVersionUID = -2694422471852860689L;
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
 }

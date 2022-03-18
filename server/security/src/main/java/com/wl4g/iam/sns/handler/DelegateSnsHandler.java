@@ -41,55 +41,55 @@ import com.wl4g.iam.sns.CallbackResult;
  */
 public class DelegateSnsHandler implements SnsHandler {
 
-	/**
-	 * SNS handler repository
-	 */
-	final private Map<Which, SnsHandler> repository = new ConcurrentHashMap<>();
+    /**
+     * SNS handler repository
+     */
+    final private Map<Which, SnsHandler> repository = new ConcurrentHashMap<>();
 
-	/**
-	 * IAM server properties configuration
-	 */
-	final protected IamProperties config;
+    /**
+     * IAM server properties configuration
+     */
+    final protected IamProperties config;
 
-	public DelegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notEmpty(handlers, "'handlers' must not be empty");
-		this.config = config;
-		for (SnsHandler handler : handlers) {
-			if (repository.putIfAbsent(handler.which(), handler) != null) {
-				throw new IllegalStateException(String.format("Already sns handler register", handler.which()));
-			}
-		}
-	}
+    public DelegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
+        Assert.notNull(config, "'config' must not be null");
+        Assert.notEmpty(handlers, "'handlers' must not be empty");
+        this.config = config;
+        for (SnsHandler handler : handlers) {
+            if (repository.putIfAbsent(handler.which(), handler) != null) {
+                throw new IllegalStateException(String.format("Already sns handler register", handler.which()));
+            }
+        }
+    }
 
-	@Override
-	public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
-		state = isBlank(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-		return getSnsHandler(which).doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
-	}
+    @Override
+    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+        state = isBlank(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
+        return getSnsHandler(which).doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+    }
 
-	@Override
-	public CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request) {
-		return getSnsHandler(which).doOAuth2Callback(which, provider, state, code, request);
-	}
+    @Override
+    public CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request) {
+        return getSnsHandler(which).doOAuth2Callback(which, provider, state, code, request);
+    }
 
-	@Override
-	public Which which() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Which which() {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Get target SNS handler
-	 *
-	 * @param which
-	 * @return
-	 */
-	private SnsHandler getSnsHandler(Which which) {
-		Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
-		if (!repository.containsKey(which)) {
-			throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));
-		}
-		return repository.get(which);
-	}
+    /**
+     * Get target SNS handler
+     *
+     * @param which
+     * @return
+     */
+    private SnsHandler getSnsHandler(Which which) {
+        Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
+        if (!repository.containsKey(which)) {
+            throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));
+        }
+        return repository.get(which);
+    }
 
 }

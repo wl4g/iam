@@ -41,35 +41,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class IamHelper {
 
-	@Autowired
-	private ConfigurableEnvironment environment;
+    @Autowired
+    private ConfigurableEnvironment environment;
 
-	public final String getApplicationActiveEnvironmentType() {
-		String active = environment.getRequiredProperty("spring.profiles.active");
+    public final String getApplicationActiveEnvironmentType() {
+        String active = environment.getRequiredProperty("spring.profiles.active");
 
-		Set<String> envFlags = new HashSet<>();
-		Matcher matcher = Pattern.compile(ENV_DEFINITIONS).matcher(active);
-		while (matcher.find()) {
-			envFlags.add(matcher.group());
-		}
-		if (envFlags.size() != 1) {
-			throw new IllegalStateException(
-					format("Unable initialization secure configuration. Ambiguous environments flag. - %s", active));
-		}
-		return envFlags.iterator().next();
-	}
+        Set<String> envFlags = new HashSet<>();
+        Matcher matcher = Pattern.compile(ENV_DEFINITIONS).matcher(active);
+        while (matcher.find()) {
+            envFlags.add(matcher.group());
+        }
+        if (envFlags.size() != 1) {
+            throw new IllegalStateException(
+                    format("Unable initialization secure configuration. Ambiguous environments flag. - %s", active));
+        }
+        return envFlags.iterator().next();
+    }
 
-	/**
-	 * <pre>
-	 * LOCAL - Local Development environment
-	 *   DEV - Development environment
-	 *   FWS - Feature Web Service Test environment
-	 *   FAT - Feature Acceptance Test environment
-	 *   LPT - Load and Performance Test environment
-	 *   UAT - User Acceptance Test environment
-	 *   PRO - Production environment
-	 * </pre>
-	 */
-	public static final String ENV_DEFINITIONS = "local|devel|develop|dev|test|fat|fws|uat|lpt|pro|prod|online";
+    /**
+     * <pre>
+     * LOCAL - Local Development environment
+     *   DEV - Development environment
+     *   FWS - Feature Web Service Test environment
+     *   FAT - Feature Acceptance Test environment
+     *   LPT - Load and Performance Test environment
+     *   UAT - User Acceptance Test environment
+     *   PRO - Production environment
+     * </pre>
+     */
+    public static final String ENV_DEFINITIONS = "local|devel|develop|dev|test|fat|fws|uat|lpt|pro|prod|online";
 
 }

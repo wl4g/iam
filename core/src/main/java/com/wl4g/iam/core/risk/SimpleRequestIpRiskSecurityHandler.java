@@ -17,7 +17,7 @@ package com.wl4g.iam.core.risk;
 
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.annotation.Resource;

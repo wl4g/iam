@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.authc;
 
-import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
+import com.wl4g.iam.verify.SecurityVerifier.VerifyKind;
 
 /**
  * Captcha & verification authentication token

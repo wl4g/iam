@@ -26,12 +26,12 @@ import java.io.Serializable;
  */
 public interface AssertionOAuth2Result extends Serializable {
 
-	/**
-	 * Used to assert the correctness of oauth2 authorization information.
-	 * 
-	 * @param <R>
-	 * @return
-	 */
-	<R extends AssertionOAuth2Result> R validate();
+    /**
+     * Used to assert the correctness of oauth2 authorization information.
+     * 
+     * @param <R>
+     * @return
+     */
+    <R extends AssertionOAuth2Result> R validate();
 
 }

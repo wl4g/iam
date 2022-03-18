@@ -17,8 +17,8 @@ package com.wl4g.iam.client.session.mgt;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_TICKET_C;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.LOCK_SESSION_VALIDATING;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_TICKET_C;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.LOCK_SESSION_VALIDATING;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -38,8 +38,8 @@ import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
-import com.wl4g.iam.common.constant.ServiceIAMConstants;
-import com.wl4g.iam.core.authc.model.SessionValidateModel;
+import com.wl4g.iam.common.constant.FastCasIAMConstants;
+import com.wl4g.iam.common.model.SessionValidateModel;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.session.IamSession;
 import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
@@ -82,7 +82,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
             if (lock.tryLock()) {
                 log.info("Validating all active sessions...");
 
-                ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(ServiceIAMConstants.DEFAULT_SESSION_SCAN_BATCHS);
+                ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(FastCasIAMConstants.DEFAULT_SESSION_SCAN_BATCHS);
                 while (cursor.hasNext()) {
                     List<IamSession> activeSessions = cursor.toValues();
                     log.debug("Activity client sessions: ", () -> toJSONString(activeSessions));

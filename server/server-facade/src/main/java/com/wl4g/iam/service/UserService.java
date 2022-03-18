@@ -43,30 +43,32 @@ import com.wl4g.iam.common.bean.User;
 @RequestMapping("/user-service")
 public interface UserService {
 
-	@RequestMapping(value = "/findSimpleUser", method = GET)
-	User findSimpleUser(@RequestParam("id") Long id);
+    @RequestMapping(value = "/findSimpleUser", method = GET)
+    User findSimpleUser(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/getMenusByUser", method = GET)
-	Set<Menu> getMenusByUser(@RequestParam("userId") Long userId);
+    @RequestMapping(value = "/getMenusByUser", method = GET)
+    Set<Menu> getMenusByUser(@RequestParam("userId") Long userId);
 
-	@RequestMapping(path = "/list", method = RequestMethod.POST)
-	PageHolder<User> list(@RequestBody PageHolder<User> pm, @RequestParam(value = "userName", required = false) String userName,
-			@RequestParam(value = "displayName", required = false) String displayName,
-			@RequestParam(value = "roleId", required = false) Long roleId);
+    @RequestMapping(path = "/list", method = RequestMethod.POST)
+    PageHolder<User> list(
+            @RequestBody PageHolder<User> pm,
+            @RequestParam(value = "userName", required = false) String userName,
+            @RequestParam(value = "displayName", required = false) String displayName,
+            @RequestParam(value = "roleId", required = false) Long roleId);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody User user);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody User user);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("userId") Long userId);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("userId") Long userId);
 
-	@RequestMapping(value = "/detail", method = GET)
-	User detail(@RequestParam("userId") Long userId);
+    @RequestMapping(value = "/detail", method = GET)
+    User detail(@RequestParam("userId") Long userId);
 
-	@RequestMapping(value = "/findByUserName", method = GET)
-	User findByUserName(@RequestParam("userName") String userName);
+    @RequestMapping(value = "/findByUserName", method = GET)
+    User findByUserName(@RequestParam("userName") String userName);
 
-	@RequestMapping(value = "/findByUnionIdOrOpenId", method = POST)
-	User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
+    @RequestMapping(value = "/findByUnionIdOrOpenId", method = POST)
+    User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
 
 }

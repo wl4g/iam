@@ -75,8 +75,12 @@ public interface SecurityCoprocessor {
      * @param response
      * @param respParams
      */
-    default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, HttpServletRequest request,
-            HttpServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
+    default void postAuthenticatingSuccess(
+            AuthenticationToken token,
+            Subject subject,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
     }
 
     /**
@@ -87,7 +91,10 @@ public interface SecurityCoprocessor {
      * @param request
      * @param response
      */
-    default void postAuthenticatingFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
+    default void postAuthenticatingFailure(
+            AuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
             ServletResponse response) throws AfterAuthenticatFailException {
     }
 

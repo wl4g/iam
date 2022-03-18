@@ -39,47 +39,53 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
  */
 public class ClientAuthcSnsHandler extends AbstractSnsHandler {
 
-	public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	public Which which() {
-		return Which.CLIENT_AUTH;
-	}
+    @Override
+    public Which which() {
+        return Which.CLIENT_AUTH;
+    }
 
-	@Override
-	protected Map<String, String> getAuthorizeUrlQueryParams(Which which, String provider, String state,
-			Map<String, String> connectParams) {
-		Map<String, String> queryParams = super.getAuthorizeUrlQueryParams(which, provider, state, connectParams);
-		/*
-		 * For redirect login needs,
-		 * <br/><br/>see:i.f.AbstractIamAuthenticationFilter#onLoginSuccess()
-		 * <br/><br/>grantTicket by xx.i.h.AuthenticationHandler#loggedin()
-		 */
-		String appKey = config.getParam().getApplication();
-		queryParams.put(appKey, connectParams.get(appKey));
-		return queryParams;
-	}
+    @Override
+    protected Map<String, String> getAuthorizeUrlQueryParams(
+            Which which,
+            String provider,
+            String state,
+            Map<String, String> connectParams) {
+        Map<String, String> queryParams = super.getAuthorizeUrlQueryParams(which, provider, state, connectParams);
+        /*
+         * For redirect login needs,
+         * <br/><br/>see:i.f.AbstractIamAuthenticationFilter#onLoginSuccess()
+         * <br/><br/>grantTicket by xx.i.h.AuthenticationHandler#loggedin()
+         */
+        String appKey = config.getParam().getApplication();
+        queryParams.put(appKey, connectParams.get(appKey));
+        return queryParams;
+    }
 
-	@Override
-	protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
-		super.checkConnectParameters(provider, state, connectParams);
-		// Check application
-		hasTextOf(connectParams.get(config.getParam().getApplication()), config.getParam().getApplication());
-	}
+    @Override
+    protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
+        super.checkConnectParameters(provider, state, connectParams);
+        // Check application
+        hasTextOf(connectParams.get(config.getParam().getApplication()), config.getParam().getApplication());
+    }
 
-	@Override
-	protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
-		return singletonMap(config.getParam().getApplication(), getCleanParam(request, config.getParam().getApplication()));
-	}
+    @Override
+    protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
+        return singletonMap(config.getParam().getApplication(), getCleanParam(request, config.getParam().getApplication()));
+    }
 
-	@Override
-	protected String postCallbackResponse(String provider, String callbackId, Map<String, String> connectParams,
-			HttpServletRequest request) {
-		String application = config.getParam().getApplication();
-		return getLoginSubmitUrl(provider, callbackId, request) + "&" + application + "=" + connectParams.get(application);
-	}
+    @Override
+    protected String postCallbackResponse(
+            String provider,
+            String callbackId,
+            Map<String, String> connectParams,
+            HttpServletRequest request) {
+        String application = config.getParam().getApplication();
+        return getLoginSubmitUrl(provider, callbackId, request) + "&" + application + "=" + connectParams.get(application);
+    }
 
 }

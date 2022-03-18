@@ -31,8 +31,8 @@ import com.wl4g.iam.annotation.EnableIamServer;
 @SpringBootApplication
 public class StandaloneIam {
 
-	public static void main(String[] args) {
-		SpringApplication.run(StandaloneIam.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(StandaloneIam.class, args);
+    }
 
 }

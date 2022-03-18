@@ -40,33 +40,33 @@ import java.util.Map;
 // @org.springframework.web.bind.annotation.RestController
 public class ClusterConfigServiceImpl implements ClusterConfigService {
 
-	@Autowired
-	private ClusterConfigDao clusterConfigDao;
+    @Autowired
+    private ClusterConfigDao clusterConfigDao;
 
-	@Override
-	public Map<String, Object> loadInit(String envType) {
-		List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, envType, null);
-		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
-		Map<String, Object> map = new HashMap<>();
-		for (ClusterConfig entryAddress : list) {
-			map.put(entryAddress.getAppName(), entryAddress);
-		}
-		return map;
-	}
+    @Override
+    public Map<String, Object> loadInit(String envType) {
+        List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, envType, null);
+        Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
+        Map<String, Object> map = new HashMap<>();
+        for (ClusterConfig entryAddress : list) {
+            map.put(entryAddress.getAppName(), entryAddress);
+        }
+        return map;
+    }
 
-	@Override
-	public ClusterConfig getClusterConfig(Long clusterConfigId) {
-		return clusterConfigDao.selectByPrimaryKey(clusterConfigId);
-	}
+    @Override
+    public ClusterConfig getClusterConfig(Long clusterConfigId) {
+        return clusterConfigDao.selectByPrimaryKey(clusterConfigId);
+    }
 
-	@Override
-	public List<ClusterConfig> findByAppNames(String[] appNames, String envType, String type) {
-		return clusterConfigDao.selectByAppNames(appNames, envType, type);
-	}
+    @Override
+    public List<ClusterConfig> findByAppNames(String[] appNames, String envType, String type) {
+        return clusterConfigDao.selectByAppNames(appNames, envType, type);
+    }
 
-	@Override
-	public List<ClusterConfig> findOfIamServers() {
-		return clusterConfigDao.getIamServer();
-	}
+    @Override
+    public List<ClusterConfig> findOfIamServers() {
+        return clusterConfigDao.getIamServer();
+    }
 
 }

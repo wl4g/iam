@@ -37,46 +37,46 @@ import java.util.List;
 @RequestMapping("/contactGroup")
 public class ContactGroupController extends BaseController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private ContactGroupService contactGroupService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private ContactGroupService contactGroupService;
 
-	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(String name, PageHolder<ContactGroup> pm) {
-		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(contactGroupService.list(pm, name));
-		return resp;
-	}
+    @RequestMapping(value = "/list")
+    @RequiresPermissions(value = { "iam:contact" })
+    public RespBase<?> list(String name, PageHolder<ContactGroup> pm) {
+        log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(contactGroupService.list(pm, name));
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> save(ContactGroup contactGroup) {
-		log.info("into ContactGroupController.save prarms::" + "contactGroup = {} ", contactGroup);
-		Assert.notNull(contactGroup, "group is null");
-		Assert.hasText(contactGroup.getName(), "groupName is null");
-		RespBase<Object> resp = RespBase.create();
-		contactGroupService.save(contactGroup);
-		return resp;
-	}
+    @RequestMapping(value = "/save")
+    @RequiresPermissions(value = { "iam:contact" })
+    public RespBase<?> save(ContactGroup contactGroup) {
+        log.info("into ContactGroupController.save prarms::" + "contactGroup = {} ", contactGroup);
+        Assert.notNull(contactGroup, "group is null");
+        Assert.hasText(contactGroup.getName(), "groupName is null");
+        RespBase<Object> resp = RespBase.create();
+        contactGroupService.save(contactGroup);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> del(Long id) {
-		log.info("into ContactController.del prarms::" + "id = {} ", id);
-		RespBase<Object> resp = RespBase.create();
-		contactGroupService.del(id);
-		return resp;
-	}
+    @RequestMapping(value = "/del")
+    @RequiresPermissions(value = { "iam:contact" })
+    public RespBase<?> del(Long id) {
+        log.info("into ContactController.del prarms::" + "id = {} ", id);
+        RespBase<Object> resp = RespBase.create();
+        contactGroupService.del(id);
+        return resp;
+    }
 
-	@RequestMapping(value = "/groupList")
-	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> groupList() {
-		RespBase<Object> resp = RespBase.create();
-		List<ContactGroup> contactGroups = contactGroupService.findContactGroups(null);
-		resp.setData(contactGroups);
-		return resp;
-	}
+    @RequestMapping(value = "/groupList")
+    @RequiresPermissions(value = { "iam:contact" })
+    public RespBase<?> groupList() {
+        RespBase<Object> resp = RespBase.create();
+        List<ContactGroup> contactGroups = contactGroupService.findContactGroups(null);
+        resp.setData(contactGroups);
+        return resp;
+    }
 
 }

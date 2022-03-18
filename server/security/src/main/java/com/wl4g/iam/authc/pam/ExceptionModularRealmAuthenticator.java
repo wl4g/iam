@@ -38,39 +38,39 @@ import com.wl4g.infra.common.log.SmartLogger;
  */
 public class ExceptionModularRealmAuthenticator extends ModularRealmAuthenticator {
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	@Override
-	protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {
-		AuthenticationStrategy strategy = getAuthenticationStrategy();
-		AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
-		if (log.isTraceEnabled()) {
-			log.trace("Iterating through {} realms for PAM authentication", realms.size());
-		}
+    @Override
+    protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {
+        AuthenticationStrategy strategy = getAuthenticationStrategy();
+        AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
+        if (log.isTraceEnabled()) {
+            log.trace("Iterating through {} realms for PAM authentication", realms.size());
+        }
 
-		for (Realm realm : realms) {
-			aggregate = strategy.beforeAttempt(realm, token, aggregate);
-			if (realm.supports(token)) {
-				if (log.isTraceEnabled()) {
-					log.trace("Attempting to authenticate token [{}] using realm [{}]", token, realm);
-				}
+        for (Realm realm : realms) {
+            aggregate = strategy.beforeAttempt(realm, token, aggregate);
+            if (realm.supports(token)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Attempting to authenticate token [{}] using realm [{}]", token, realm);
+                }
 
-				AuthenticationInfo info = null;
-				Throwable t = null;
-				try {
-					info = realm.getAuthenticationInfo(token);
-				} catch (Throwable throwable) {
-					t = throwable;
-					throw new AuthenticationException(t);
-				} finally {
-					aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
-				}
-			} else if (log.isDebugEnabled()) {
-				log.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
-			}
-		}
+                AuthenticationInfo info = null;
+                Throwable t = null;
+                try {
+                    info = realm.getAuthenticationInfo(token);
+                } catch (Throwable throwable) {
+                    t = throwable;
+                    throw new AuthenticationException(t);
+                } finally {
+                    aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
+                }
+            } else if (log.isDebugEnabled()) {
+                log.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
+            }
+        }
 
-		return strategy.afterAllAttempts(token, aggregate);
-	}
+        return strategy.afterAllAttempts(token, aggregate);
+    }
 
 }

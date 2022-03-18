@@ -39,31 +39,31 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/roleMenu-dao")
 public interface RoleMenuDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/deleteByRoleId")
-	int deleteByRoleId(@RequestParam("roleId") Long roleId);
+    @RequestMapping(method = POST, value = "/deleteByRoleId")
+    int deleteByRoleId(@RequestParam("roleId") Long roleId);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody RoleMenu record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody RoleMenu record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody RoleMenu record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody RoleMenu record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	RoleMenu selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    RoleMenu selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = GET, value = "/selectMenuIdByRoleId")
-	List<Long> selectMenuIdByRoleId(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectMenuIdByRoleId")
+    List<Long> selectMenuIdByRoleId(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody RoleMenu record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody RoleMenu record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody RoleMenu record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody RoleMenu record);
 
-	@RequestMapping(method = POST, value = "/insertBatch")
-	int insertBatch(@RequestBody RoleMenuList roleMenuList);
+    @RequestMapping(method = POST, value = "/insertBatch")
+    int insertBatch(@RequestBody RoleMenuList roleMenuList);
 
 }

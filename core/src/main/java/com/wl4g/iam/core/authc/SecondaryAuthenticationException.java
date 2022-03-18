@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.authc;
 
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel.Status;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status;
 import com.wl4g.iam.core.exception.UnauthenticatedException;
 
 public class SecondaryAuthenticationException extends UnauthenticatedException {

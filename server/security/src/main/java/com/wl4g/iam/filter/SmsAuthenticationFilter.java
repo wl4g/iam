@@ -39,7 +39,10 @@ public class SmsAuthenticationFilter extends AbstractServerIamAuthenticationFilt
     final public static String NAME = "sms";
 
     @Override
-    protected SmsAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected SmsAuthenticationToken doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         final String action = getCleanParam(request, config.getParam().getSmsActionName());
         final String principal = getCleanParam(request, config.getParam().getPrincipalName());

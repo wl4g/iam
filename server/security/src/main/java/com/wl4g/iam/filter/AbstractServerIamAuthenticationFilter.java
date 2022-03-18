@@ -35,14 +35,14 @@ import static com.wl4g.infra.common.web.WebUtils2.ResponseType.DEFAULT_RESPTYPE_
 import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_DATA_CIPHER_NAME;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SERVICE_ROLE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_SESSIONINFO_NAME;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_AUTH_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_TOKEN;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SERVICE_ROLE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SESSIONINFO_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_AUTH_BASE;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.SESSION_STATUS_AUTHC;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.generateAccessToken;
@@ -209,7 +209,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         return token;
     }
 
-    protected abstract T doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected abstract T doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -292,7 +295,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
+    protected boolean onLoginFailure(
+            AuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
             ServletResponse response) {
         IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
@@ -430,8 +436,14 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @throws Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
-            ServletResponse response, String grantTicket, String callbackUrl, Map fullParams) throws Exception {
+    protected RespBase<String> makeLoggedResponse(
+            AuthenticationToken token,
+            Subject subject,
+            ServletRequest request,
+            ServletResponse response,
+            String grantTicket,
+            String callbackUrl,
+            Map fullParams) throws Exception {
         hasTextOf(callbackUrl, "successCallbackUrl");
 
         // Redirection URL
@@ -504,8 +516,12 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @param response
      * @return
      */
-    protected RedirectInfo determineSuccessRedirect(RedirectInfo redirect, IamAuthenticationToken token, Subject subject,
-            ServletRequest request, ServletResponse response) {
+    protected RedirectInfo determineSuccessRedirect(
+            RedirectInfo redirect,
+            IamAuthenticationToken token,
+            Subject subject,
+            ServletRequest request,
+            ServletResponse response) {
 
         // Unvalidity using to default
         if (isBlank(redirect.getFromAppName())) {
@@ -538,8 +554,12 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @param response
      * @return
      */
-    protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
-            AuthenticationException ae, ServletRequest request, ServletResponse response) {
+    protected RedirectInfo determineFailureRedirect(
+            RedirectInfo redirect,
+            IamAuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
+            ServletResponse response) {
         if (isBlank(redirect.getRedirectUrl())) {
             redirect.setRedirectUrl(getLoginUrl());
         }
@@ -566,8 +586,12 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @param response
      * @param respParams
      */
-    protected void afterAuthenticatingSuccess(IamAuthenticationToken token, Subject subject, HttpServletRequest request,
-            HttpServletResponse response, Map<String, Object> respParams) {
+    protected void afterAuthenticatingSuccess(
+            IamAuthenticationToken token,
+            Subject subject,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Map<String, Object> respParams) {
         // Invoke authentication success.
         coprocessor.postAuthenticatingSuccess(token, subject, request, response, respParams);
     }
@@ -580,7 +604,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @param request
      * @param response
      */
-    protected void afterAuthenticatingFailure(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
+    protected void afterAuthenticatingFailure(
+            IamAuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
             ServletResponse response) {
         // Invoke authentication failure.
         coprocessor.postAuthenticatingFailure(token, ae, request, response);
@@ -598,7 +625,11 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @throws Exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params, ServletRequest request,
+    protected void postHandleSuccessSecretTokens(
+            AuthenticationToken token,
+            Subject subject,
+            Map params,
+            ServletRequest request,
             ServletResponse response) throws Exception {
 
         // Puts secret tokens to cookies.
@@ -625,7 +656,9 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @return
      * @throws DecoderException
      */
-    protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+    protected String[] putSuccessTokensCookieIfNecessary(
+            AuthenticationToken token,
+            ServletRequest request,
             ServletResponse response) throws DecoderException {
 
         String dataCipherKeyHex = null, accessToken = null, umidToken = null;

@@ -16,7 +16,7 @@
 package com.wl4g.iam.sns.handler;
 
 import static com.wl4g.infra.common.lang.Exceptions.getRootCauses;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 
 import com.wl4g.iam.common.bean.SocialConnectInfo;
@@ -35,25 +35,25 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
  */
 public class UnBindingSnsHandler extends BasedBindSnsHandler {
 
-	public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	protected void postBindingProcess(SocialConnectInfo info) {
-		try {
-			configurer.unbindSocialConnection(info);
-		} catch (Throwable e) {
-			log.warn("Failed to unbinding sns.", e);
-			// Save error to session
-			bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
-		}
-	}
+    @Override
+    protected void postBindingProcess(SocialConnectInfo info) {
+        try {
+            configurer.unbindSocialConnection(info);
+        } catch (Throwable e) {
+            log.warn("Failed to unbinding sns.", e);
+            // Save error to session
+            bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
+        }
+    }
 
-	@Override
-	public Which which() {
-		return Which.UNBIND;
-	}
+    @Override
+    public Which which() {
+        return Which.UNBIND;
+    }
 
 }

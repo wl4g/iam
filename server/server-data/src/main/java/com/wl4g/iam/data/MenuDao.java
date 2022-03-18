@@ -39,34 +39,34 @@ import java.util.List;
 @RequestMapping("/menu-dao")
 public interface MenuDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody Menu record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody Menu record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody Menu record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody Menu record);
 
-	@RequestMapping(method = GET, value = "/list")
-	Menu selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/list")
+    Menu selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody Menu record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody Menu record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody Menu record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody Menu record);
 
-	@RequestMapping(method = GET, value = "/selectByParentId")
-	List<Menu> selectByParentId(@RequestParam("parentId") Long parentId);
+    @RequestMapping(method = GET, value = "/selectByParentId")
+    List<Menu> selectByParentId(@RequestParam("parentId") Long parentId);
 
-	@RequestMapping(method = GET, value = "/selectByUserId")
-	List<Menu> selectByUserId(@RequestParam("userId") @Param("userId") Long userId);
+    @RequestMapping(method = GET, value = "/selectByUserId")
+    List<Menu> selectByUserId(@RequestParam("userId") @Param("userId") Long userId);
 
-	@RequestMapping(method = GET, value = "/selectByRoleId")
-	List<Menu> selectByRoleId(@RequestParam("ruleId") Long ruleId);
+    @RequestMapping(method = GET, value = "/selectByRoleId")
+    List<Menu> selectByRoleId(@RequestParam("ruleId") Long ruleId);
 
-	@RequestMapping(method = GET, value = "/selectWithRoot")
-	List<Menu> selectWithRoot();
+    @RequestMapping(method = GET, value = "/selectWithRoot")
+    List<Menu> selectWithRoot();
 
 }

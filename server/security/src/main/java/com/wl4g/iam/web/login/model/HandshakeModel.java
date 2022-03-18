@@ -16,7 +16,7 @@
 package com.wl4g.iam.web.login.model;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,68 +39,68 @@ import com.wl4g.iam.core.web.model.SessionInfo;
  * @see
  */
 public class HandshakeModel implements Serializable {
-	private static final long serialVersionUID = 2636163327046053795L;
+    private static final long serialVersionUID = 2636163327046053795L;
 
-	/**
-	 * Iam server version.
-	 */
-	@NotBlank
-	@JsonProperty("v")
-	private String version;
+    /**
+     * Iam server version.
+     */
+    @NotBlank
+    @JsonProperty("v")
+    private String version;
 
-	/**
-	 * Applied secretKey algorithms.
-	 */
-	@NotEmpty
-	@JsonProperty("algs")
-	private List<String> algorithms = new ArrayList<>();
+    /**
+     * Applied secretKey algorithms.
+     */
+    @NotEmpty
+    @JsonProperty("algs")
+    private List<String> algorithms = new ArrayList<>();
 
-	/**
-	 * Session info.
-	 */
-	@NotNull
-	@JsonProperty(KEY_SESSIONINFO_NAME)
-	private SessionInfo session = new SessionInfo();
+    /**
+     * Session info.
+     */
+    @NotNull
+    @JsonProperty(KEY_SESSIONINFO_NAME)
+    private SessionInfo session = new SessionInfo();
 
-	public HandshakeModel() {
-		super();
-	}
+    public HandshakeModel() {
+        super();
+    }
 
-	public HandshakeModel(String version) {
-		// hasTextOf(version, "version");
-		setVersion(version);
-	}
+    public HandshakeModel(String version) {
+        // hasTextOf(version, "version");
+        setVersion(version);
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public List<String> getAlgorithms() {
-		return algorithms;
-	}
+    public List<String> getAlgorithms() {
+        return algorithms;
+    }
 
-	public void setAlgorithms(List<String> algorithms) {
-		if (!CollectionUtils.isEmpty(algorithms)) {
-			for (String alg : algorithms) {
-				if (!this.algorithms.contains(alg)) {
-					this.algorithms.add(alg);
-				}
-			}
-		}
-	}
+    public void setAlgorithms(List<String> algorithms) {
+        if (!CollectionUtils.isEmpty(algorithms)) {
+            for (String alg : algorithms) {
+                if (!this.algorithms.contains(alg)) {
+                    this.algorithms.add(alg);
+                }
+            }
+        }
+    }
 
-	public SessionInfo getSession() {
-		return session;
-	}
+    public SessionInfo getSession() {
+        return session;
+    }
 
-	public HandshakeModel setSessionInfo(SessionInfo session) {
-		notNullOf(session, "session");
-		this.session = session;
-		return this;
-	}
+    public HandshakeModel setSessionInfo(SessionInfo session) {
+        notNullOf(session, "session");
+        this.session = session;
+        return this;
+    }
 
 }

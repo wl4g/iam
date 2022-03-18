@@ -38,38 +38,39 @@ import java.util.List;
 @FeignConsumer("${provider.serviceId.iam-data:iam-data}")
 @RequestMapping("/dict-dao")
 public interface DictDao {
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("key") String key);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody Dict record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody Dict record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody Dict record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody Dict record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	Dict selectByPrimaryKey(@RequestParam("key") String key);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    Dict selectByPrimaryKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody Dict record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody Dict record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody Dict record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody Dict record);
 
-	@RequestMapping(method = GET, value = "/selectByType")
-	List<Dict> selectByType(@RequestParam("type") String type);
+    @RequestMapping(method = GET, value = "/selectByType")
+    List<Dict> selectByType(@RequestParam("type") String type);
 
-	@RequestMapping(method = GET, value = "/allType")
-	List<String> allType();
+    @RequestMapping(method = GET, value = "/allType")
+    List<String> allType();
 
-	@RequestMapping(method = GET, value = "/getByKey")
-	Dict getByKey(@RequestParam("key") String key);
+    @RequestMapping(method = GET, value = "/getByKey")
+    Dict getByKey(@RequestParam("key") String key);
 
-	@RequestMapping(method = GET, value = "/list")
-	List<Dict> list(@RequestParam(value = "key", required = false) @Param("key") String key,
-			@RequestParam(value = "label", required = false) @Param("label") String label,
-			@RequestParam(value = "type", required = false) @Param("type") String type,
-			@Deprecated @RequestParam(value = "description", required = false) @Param("description") String description,
-			@RequestParam(value = "orderBySort", required = false) @Param("orderBySort") String orderBySort);
+    @RequestMapping(method = GET, value = "/list")
+    List<Dict> list(
+            @RequestParam(value = "key", required = false) @Param("key") String key,
+            @RequestParam(value = "label", required = false) @Param("label") String label,
+            @RequestParam(value = "type", required = false) @Param("type") String type,
+            @Deprecated @RequestParam(value = "description", required = false) @Param("description") String description,
+            @RequestParam(value = "orderBySort", required = false) @Param("orderBySort") String orderBySort);
 
 }

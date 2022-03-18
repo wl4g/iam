@@ -35,8 +35,8 @@ import com.wl4g.infra.data.annotation.EnableComponentDataConfiguration;
 @SpringBootApplication
 public class IamData {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IamData.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IamData.class, args);
+    }
 
 }

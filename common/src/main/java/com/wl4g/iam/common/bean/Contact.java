@@ -21,48 +21,48 @@ import java.util.List;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Contact extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
+    private String name;
 
-	private Long[] groups;
+    private Long[] groups;
 
-	private List<ContactChannel> contactChannels;
+    private List<ContactChannel> contactChannels;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public Long[] getGroups() {
-		return groups;
-	}
+    public Long[] getGroups() {
+        return groups;
+    }
 
-	public void setGroups(Long[] groups) {
-		this.groups = groups;
-	}
+    public void setGroups(Long[] groups) {
+        this.groups = groups;
+    }
 
-	public List<ContactChannel> getContactChannels() {
-		return contactChannels;
-	}
+    public List<ContactChannel> getContactChannels() {
+        return contactChannels;
+    }
 
-	public void setContactChannels(List<ContactChannel> contactChannels) {
-		this.contactChannels = contactChannels;
-	}
+    public void setContactChannels(List<ContactChannel> contactChannels) {
+        this.contactChannels = contactChannels;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		Contact other = (Contact) obj;
-		if (this.getId().equals(other.getId())) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        Contact other = (Contact) obj;
+        if (this.getId().equals(other.getId())) {
+            return true;
+        }
+        return false;
+    }
 
 }

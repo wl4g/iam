@@ -20,9 +20,9 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.convertBean;
 import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.infra.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGIN_BASE;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_LOGIN_PERMITS;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGIN_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_LOGIN_PERMITS;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.isNull;
@@ -119,7 +119,9 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
      * @param response
      * @return
      */
-    protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(AuthenticationToken token, ServletRequest request,
+    protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(
+            AuthenticationToken token,
+            ServletRequest request,
             ServletResponse response) {
         Map<String, String> authzInfo = new HashMap<>();
 
@@ -165,7 +167,9 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
      * @param response
      * @return
      */
-    protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+    protected Map<String, String> putXsrfTokenCookieIfNecessary(
+            AuthenticationToken token,
+            ServletRequest request,
             ServletResponse response) {
         // Generate & save xsrf token.
         XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);

@@ -42,25 +42,25 @@ import com.wl4g.iam.common.bean.Menu;
 @RequestMapping("/menu-service")
 public interface MenuService {
 
-	@RequestMapping(value = "/findMenuTree", method = POST)
-	Map<String, Object> findMenuTree();
+    @RequestMapping(value = "/findMenuTree", method = POST)
+    Map<String, Object> findMenuTree();
 
-	@RequestMapping(value = "/findMenuList", method = POST)
-	List<Menu> findMenuList();
+    @RequestMapping(value = "/findMenuList", method = POST)
+    List<Menu> findMenuList();
 
-	@PostMapping("/save")
-	void save(@RequestBody Menu menu);
+    @PostMapping("/save")
+    void save(@RequestBody Menu menu);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("id") Long id);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/detail", method = GET)
-	Menu detail(@RequestParam("id") Long id);
+    @RequestMapping(value = "/detail", method = GET)
+    Menu detail(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/findRoot", method = GET)
-	List<Menu> findRoot();
+    @RequestMapping(value = "/findRoot", method = GET)
+    List<Menu> findRoot();
 
-	@RequestMapping(value = "/findByUserId", method = GET)
-	List<Menu> findByUserId(@RequestParam("userId") Long userId);
+    @RequestMapping(value = "/findByUserId", method = GET)
+    List<Menu> findByUserId(@RequestParam("userId") Long userId);
 
 }

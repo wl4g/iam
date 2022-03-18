@@ -61,7 +61,8 @@ public class XssAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(XssSecurityResolverInterceptor.class)
-    public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
+    public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(
+            XssProperties config,
             XssSecurityResolverInterceptor advice) {
         AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
         advisor.setExpression(config.getExpression());

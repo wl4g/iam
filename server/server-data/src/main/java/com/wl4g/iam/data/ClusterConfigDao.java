@@ -39,35 +39,37 @@ import java.util.List;
 @RequestMapping("/clusterConfig-dao")
 public interface ClusterConfigDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/insert", method = { POST })
-	int insert(@RequestBody ClusterConfig record);
+    @RequestMapping(value = "/insert", method = { POST })
+    int insert(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/insertSelective", method = { POST })
-	int insertSelective(@RequestBody ClusterConfig record);
+    @RequestMapping(value = "/insertSelective", method = { POST })
+    int insertSelective(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/selectByPrimaryKey", method = GET)
-	ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/selectByPrimaryKey", method = GET)
+    ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
-	int updateByPrimaryKeySelective(@RequestBody ClusterConfig record);
+    @RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
+    int updateByPrimaryKeySelective(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
-	int updateByPrimaryKey(@RequestBody ClusterConfig record);
+    @RequestMapping(value = "/updateByPrimaryKey", method = { POST })
+    int updateByPrimaryKey(@RequestBody ClusterConfig record);
 
-	@RequestMapping(value = "/selectByAppNames", method = GET)
-	List<ClusterConfig> selectByAppNames(@RequestParam(name = "appNames", required = false) @Param("appNames") String[] appNames,
-			@RequestParam(name = "envType", required = false) @Param("envType") String envType,
-			@RequestParam(name = "type", required = false) @Param("type") String type);
+    @RequestMapping(value = "/selectByAppNames", method = GET)
+    List<ClusterConfig> selectByAppNames(
+            @RequestParam(name = "appNames", required = false) @Param("appNames") String[] appNames,
+            @RequestParam(name = "envType", required = false) @Param("envType") String envType,
+            @RequestParam(name = "type", required = false) @Param("type") String type);
 
-	@RequestMapping(value = "/getByAppName", method = GET)
-	ClusterConfig getByAppName(@RequestParam(name = "appName", required = false) @Param("appName") String appName,
-			@RequestParam(name = "envType", required = false) @Param("envType") String envType,
-			@RequestParam(name = "type", required = false) @Param("type") String type);
+    @RequestMapping(value = "/getByAppName", method = GET)
+    ClusterConfig getByAppName(
+            @RequestParam(name = "appName", required = false) @Param("appName") String appName,
+            @RequestParam(name = "envType", required = false) @Param("envType") String envType,
+            @RequestParam(name = "type", required = false) @Param("type") String type);
 
-	@RequestMapping(value = "/getIamServer", method = GET)
-	List<ClusterConfig> getIamServer();
+    @RequestMapping(value = "/getIamServer", method = GET)
+    List<ClusterConfig> getIamServer();
 
 }

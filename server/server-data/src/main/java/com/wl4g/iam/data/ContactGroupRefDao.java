@@ -38,28 +38,28 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/contactGroupRef-dao")
 public interface ContactGroupRefDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody ContactGroupRef record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody ContactGroupRef record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody ContactGroupRef record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody ContactGroupRef record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	ContactGroupRef selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    ContactGroupRef selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody ContactGroupRef record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody ContactGroupRef record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody ContactGroupRef record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody ContactGroupRef record);
 
-	@RequestMapping(method = POST, value = "/deleteByContactId")
-	int deleteByContactId(@RequestParam("id") Long id);
+    @RequestMapping(method = POST, value = "/deleteByContactId")
+    int deleteByContactId(@RequestParam("id") Long id);
 
-	@RequestMapping(method = GET, value = "/selectByContactId")
-	List<ContactGroupRef> selectByContactId(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByContactId")
+    List<ContactGroupRef> selectByContactId(@RequestParam("id") Long id);
 
 }

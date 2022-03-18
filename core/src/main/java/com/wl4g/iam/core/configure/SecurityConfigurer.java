@@ -51,8 +51,12 @@ public interface SecurityConfigurer {
      * @param response
      * @return
      */
-    default String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
-            ServletRequest request, ServletResponse response) {
+    default String decorateAuthenticateSuccessUrl(
+            String successUrl,
+            AuthenticationToken token,
+            Subject subject,
+            ServletRequest request,
+            ServletResponse response) {
         return successUrl;
     }
 
@@ -70,8 +74,12 @@ public interface SecurityConfigurer {
      * @param response
      * @return
      */
-    default String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
-            ServletRequest request, ServletResponse response) {
+    default String decorateAuthenticateFailureUrl(
+            String loginUrl,
+            AuthenticationToken token,
+            Throwable ae,
+            ServletRequest request,
+            ServletResponse response) {
         return loginUrl;
     }
 

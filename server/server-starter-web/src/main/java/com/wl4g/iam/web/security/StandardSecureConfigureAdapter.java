@@ -34,26 +34,26 @@ import com.wl4g.iam.configure.SecureConfigureAdapter;
 @Component
 public class StandardSecureConfigureAdapter implements SecureConfigureAdapter, InitializingBean {
 
-	@Autowired
-	private ConfigurableEnvironment environment;
+    @Autowired
+    private ConfigurableEnvironment environment;
 
-	@Autowired
-	private IamHelper iamHelper;
+    @Autowired
+    private IamHelper iamHelper;
 
-	private SecureConfig secureConfig;
+    private SecureConfig secureConfig;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		String appName = environment.getRequiredProperty("spring.application.name");
-		String envType = iamHelper.getApplicationActiveEnvironmentType();
-		String privateSalt = appName.concat(envType);
-		this.secureConfig = new SecureConfig(new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" }, privateSalt, 5,
-				2 * 60 * 60 * 1000L, 3 * 60 * 1000L);
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String appName = environment.getRequiredProperty("spring.application.name");
+        String envType = iamHelper.getApplicationActiveEnvironmentType();
+        String privateSalt = appName.concat(envType);
+        this.secureConfig = new SecureConfig(new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" }, privateSalt, 5,
+                2 * 60 * 60 * 1000L, 3 * 60 * 1000L);
+    }
 
-	@Override
-	public SecureConfig configure() {
-		return secureConfig;
-	}
+    @Override
+    public SecureConfig configure() {
+        return secureConfig;
+    }
 
 }

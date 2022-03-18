@@ -20,7 +20,7 @@ import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.filter.AbstractWhiteListInternalAuthenticationFilter;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_C_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_C_BASE;
 
 import com.wl4g.infra.core.kit.access.IPAccessControl;
 

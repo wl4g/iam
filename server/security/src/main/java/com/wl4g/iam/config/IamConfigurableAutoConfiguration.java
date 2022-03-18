@@ -65,14 +65,22 @@ public class IamConfigurableAutoConfiguration {
     public final static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
 
         @Override
-        public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
-                ServletRequest request, ServletResponse response) {
+        public String decorateAuthenticateSuccessUrl(
+                String successUrl,
+                AuthenticationToken token,
+                Subject subject,
+                ServletRequest request,
+                ServletResponse response) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
-                ServletRequest request, ServletResponse response) {
+        public String decorateAuthenticateFailureUrl(
+                String loginUrl,
+                AuthenticationToken token,
+                Throwable ae,
+                ServletRequest request,
+                ServletResponse response) {
             throw new UnsupportedOperationException();
         }
 

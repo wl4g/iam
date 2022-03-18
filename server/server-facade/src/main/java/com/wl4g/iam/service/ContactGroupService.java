@@ -39,20 +39,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping("/contactGroup-service")
 public interface ContactGroupService {
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<ContactGroup> list(@RequestBody PageHolder<ContactGroup> pm, @RequestParam("name") String name);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<ContactGroup> list(@RequestBody PageHolder<ContactGroup> pm, @RequestParam("name") String name);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody ContactGroup contactGroup);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody ContactGroup contactGroup);
 
-	@RequestMapping(value = "/del", method = { DELETE })
-	void del(@RequestParam("id") Long id);
+    @RequestMapping(value = "/del", method = { DELETE })
+    void del(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/findContactGroups", method = GET)
-	List<ContactGroup> findContactGroups(@RequestParam(value = "name", required = false) String name);
+    @RequestMapping(value = "/findContactGroups", method = GET)
+    List<ContactGroup> findContactGroups(@RequestParam(value = "name", required = false) String name);
 
-
-	@RequestMapping(value = "/getById", method = GET)
-	ContactGroup getById(@RequestParam(value = "id", required = false) Long id);
+    @RequestMapping(value = "/getById", method = GET)
+    ContactGroup getById(@RequestParam(value = "id", required = false) Long id);
 
 }

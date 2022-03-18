@@ -32,40 +32,40 @@ import com.wl4g.iam.sns.CallbackResult;
  */
 public interface SnsHandler {
 
-	/**
-	 * Request connects to a social network (requesting oauth2 authorization)
-	 * parameters binding session key name
-	 */
-	final public static String KEY_SNS_CONNECT_PARAMS = "connect_params_";
+    /**
+     * Request connects to a social network (requesting oauth2 authorization)
+     * parameters binding session key name
+     */
+    final public static String KEY_SNS_CONNECT_PARAMS = "connect_params_";
 
-	/**
-	 * Handling which(action) type
-	 *
-	 * @return
-	 */
-	Which which();
+    /**
+     * Handling which(action) type
+     *
+     * @return
+     */
+    Which which();
 
-	/**
-	 * Getting request SNS authorizing URL
-	 *
-	 * @param which
-	 * @param provider
-	 * @param state
-	 * @param connectParams
-	 * @return
-	 */
-	String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams);
+    /**
+     * Getting request SNS authorizing URL
+     *
+     * @param which
+     * @param provider
+     * @param state
+     * @param connectParams
+     * @return
+     */
+    String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams);
 
-	/**
-	 * SNS authorizing callback
-	 *
-	 * @param which
-	 * @param provider
-	 * @param state
-	 * @param code
-	 * @param request
-	 * @return
-	 */
-	CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request);
+    /**
+     * SNS authorizing callback
+     *
+     * @param which
+     * @param provider
+     * @param state
+     * @param code
+     * @param request
+     * @return
+     */
+    CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request);
 
 }

@@ -42,19 +42,19 @@ import com.wl4g.iam.common.bean.User;
 @RequestMapping("/organization-service")
 public interface OrganizationService {
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Organization org);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Organization org);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("id") Long id);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/detail", method = GET)
-	Organization detail(@RequestParam("id") Long id);
+    @RequestMapping(value = "/detail", method = GET)
+    Organization detail(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/getLoginOrganizationTree", method = POST)
-	List<Organization> getLoginOrganizationTree();
+    @RequestMapping(value = "/getLoginOrganizationTree", method = POST)
+    List<Organization> getLoginOrganizationTree();
 
-	@RequestMapping(value = "/getGroupsSet", method = POST)
-	Set<Organization> getUserOrganizations(@RequestBody User user);
+    @RequestMapping(value = "/getGroupsSet", method = POST)
+    Set<Organization> getUserOrganizations(@RequestBody User user);
 
 }

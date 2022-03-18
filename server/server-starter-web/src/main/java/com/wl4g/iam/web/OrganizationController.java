@@ -37,52 +37,52 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/organization")
 public class OrganizationController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private OrganizationService groupService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private OrganizationService groupService;
 
-	@RequestMapping(value = "/getGroupsTree")
-	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
-	public RespBase<?> getGroupsTree() {
-		RespBase<Object> resp = RespBase.create();
+    @RequestMapping(value = "/getGroupsTree")
+    @RequiresPermissions(value = { "iam:organization" }, logical = AND)
+    public RespBase<?> getGroupsTree() {
+        RespBase<Object> resp = RespBase.create();
 
-		List<Organization> groupsTree = groupService.getLoginOrganizationTree();
+        List<Organization> groupsTree = groupService.getLoginOrganizationTree();
 
-		resp.forMap().put("data", groupsTree);
-		return resp;
-	}
+        resp.forMap().put("data", groupsTree);
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
-	public RespBase<?> save(@RequestBody Organization group) {
-		RespBase<Object> resp = RespBase.create();
-		groupService.save(group);
-		return resp;
-	}
+    @RequestMapping(value = "/save")
+    @RequiresPermissions(value = { "iam:organization" }, logical = AND)
+    public RespBase<?> save(@RequestBody Organization group) {
+        RespBase<Object> resp = RespBase.create();
+        groupService.save(group);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
-	public RespBase<?> del(Long id) {
-		RespBase<Object> resp = RespBase.create();
-		groupService.del(id);
-		return resp;
-	}
+    @RequestMapping(value = "/del")
+    @RequiresPermissions(value = { "iam:organization" }, logical = AND)
+    public RespBase<?> del(Long id) {
+        RespBase<Object> resp = RespBase.create();
+        groupService.del(id);
+        return resp;
+    }
 
-	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "iam:organization" }, logical = AND)
-	public RespBase<?> detail(Long id) {
-		RespBase<Object> resp = RespBase.create();
-		Organization group = groupService.detail(id);
-		resp.forMap().put("data", group);
-		return resp;
-	}
+    @RequestMapping(value = "/detail")
+    @RequiresPermissions(value = { "iam:organization" }, logical = AND)
+    public RespBase<?> detail(Long id) {
+        RespBase<Object> resp = RespBase.create();
+        Organization group = groupService.detail(id);
+        resp.forMap().put("data", group);
+        return resp;
+    }
 
-	@RequestMapping(value = "/getOrganizations")
-	public RespBase<?> getOrganizationTree() {
-		RespBase<Object> resp = RespBase.create();
-		resp.forMap().put("tree", IamOrganizationUtils.getOrganizationTrees());
-		resp.forMap().put("list", IamOrganizationUtils.getSessionOrganizations());
-		return resp;
-	}
+    @RequestMapping(value = "/getOrganizations")
+    public RespBase<?> getOrganizationTree() {
+        RespBase<Object> resp = RespBase.create();
+        resp.forMap().put("tree", IamOrganizationUtils.getOrganizationTrees());
+        resp.forMap().put("list", IamOrganizationUtils.getSessionOrganizations());
+        return resp;
+    }
 
 }

@@ -21,7 +21,7 @@ import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
 import com.wl4g.iam.core.authc.ClientRef;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-import com.wl4g.iam.verification.SecurityVerifier.VerifyKind;
+import com.wl4g.iam.verify.SecurityVerifier.VerifyKind;
 
 /**
  * General (Username/Password) authentication token

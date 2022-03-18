@@ -58,204 +58,204 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 // @org.springframework.web.bind.annotation.RestController
 public class RoleServiceImpl implements RoleService {
 
-	@Autowired
-	private RoleDao roleDao;
+    @Autowired
+    private RoleDao roleDao;
 
-	@Autowired
-	private RoleMenuDao roleMenuDao;
+    @Autowired
+    private RoleMenuDao roleMenuDao;
 
-	@Autowired
-	private MenuDao menuDao;
+    @Autowired
+    private MenuDao menuDao;
 
-	@Autowired
-	private OrganizationService organizationService;
+    @Autowired
+    private OrganizationService organizationService;
 
-	@Autowired
-	private OrganizationRoleDao groupRoleDao;
+    @Autowired
+    private OrganizationRoleDao groupRoleDao;
 
-	@Override
-	public List<Role> getLoginRoles() {
-		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
-		if (DEFAULT_SUPER_USER.equals(principal)) {
-			return roleDao.selectWithRoot(null, null, null);
-		} else {
-			return roleDao.selectByUserId(Long.valueOf(principalId));
-		}
-	}
+    @Override
+    public List<Role> getLoginRoles() {
+        String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+        String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
+        if (DEFAULT_SUPER_USER.equals(principal)) {
+            return roleDao.selectWithRoot(null, null, null);
+        } else {
+            return roleDao.selectByUserId(Long.valueOf(principalId));
+        }
+    }
 
-	@Override
-	public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
-		// Current login principal.
-		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
-		String principalName = RpcContextIamSecurityUtils.currentIamPrincipalName();
+    @Override
+    public PageHolder<Role> list(PageHolder<Role> pm, String organizationId, String roleCode, String displayName) {
+        // Current login principal.
+        String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+        String principalName = RpcContextIamSecurityUtils.currentIamPrincipalName();
 
-		List<Long> groupIds = null;
-		if (isNotBlank(organizationId)) {
-			Set<Long> set = new HashSet<>();
-			set.add(Long.valueOf(organizationId));
-			((OrganizationServiceImpl) organizationService).fillChildrenIds(Long.valueOf(organizationId), set);
-			groupIds = new ArrayList<>(set);
-		}
+        List<Long> groupIds = null;
+        if (isNotBlank(organizationId)) {
+            Set<Long> set = new HashSet<>();
+            set.add(Long.valueOf(organizationId));
+            ((OrganizationServiceImpl) organizationService).fillChildrenIds(Long.valueOf(organizationId), set);
+            groupIds = new ArrayList<>(set);
+        }
 
-		pm.useCount().bind();
-		List<Role> roles = null;
-		if (DEFAULT_SUPER_USER.equals(principalName)) {
-			roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
-			setMenuStrs(roles);
-		} else {
-			roles = roleDao.selectByGroupIdsAndUserId(groupIds, principalId, roleCode, displayName);
-			setMenuStrs(roles);
-		}
-		for (Role role : roles) {
-			int userCount = roleDao.countRoleUsers(role.getId());
-			role.setUserCount(userCount);
-		}
+        pm.useCount().bind();
+        List<Role> roles = null;
+        if (DEFAULT_SUPER_USER.equals(principalName)) {
+            roles = roleDao.selectWithRoot(groupIds, roleCode, displayName);
+            setMenuStrs(roles);
+        } else {
+            roles = roleDao.selectByGroupIdsAndUserId(groupIds, principalId, roleCode, displayName);
+            setMenuStrs(roles);
+        }
+        for (Role role : roles) {
+            int userCount = roleDao.countRoleUsers(role.getId());
+            role.setUserCount(userCount);
+        }
 
-		pm.setRecords(roles);
-		return pm;
-	}
+        pm.setRecords(roles);
+        return pm;
+    }
 
-	private void setMenuStrs(List<Role> roles) {
-		for (Role role : roles) {
-			List<Menu> menus = menuDao.selectByRoleId(role.getId());
-			if (isEmpty(menus)) {
-				continue;
-			}
-			StringBuilder stringBuilder = new StringBuilder();
-			for (int i = 0; i < menus.size(); i++) {
-				if (i == menus.size() - 1) {
-					stringBuilder.append(menus.get(i).getNameZh());
-				} else {
-					stringBuilder.append(menus.get(i).getNameZh()).append(",");
-				}
-			}
-			role.setMenusStr(stringBuilder.toString());
-		}
-	}
+    private void setMenuStrs(List<Role> roles) {
+        for (Role role : roles) {
+            List<Menu> menus = menuDao.selectByRoleId(role.getId());
+            if (isEmpty(menus)) {
+                continue;
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < menus.size(); i++) {
+                if (i == menus.size() - 1) {
+                    stringBuilder.append(menus.get(i).getNameZh());
+                } else {
+                    stringBuilder.append(menus.get(i).getNameZh()).append(",");
+                }
+            }
+            role.setMenusStr(stringBuilder.toString());
+        }
+    }
 
-	@Override
-	public void save(Role role) {
-		if (!isEmpty(role.getMenuIds())) { // Menus repeat
-			role.setMenuIds((List<Long>) disDupCollection(role.getMenuIds()));
-		}
-		if (!isEmpty(role.getGroupIds())) { // Groups repeat
-			role.setGroupIds((List<Long>) disDupCollection(role.getGroupIds()));
-		}
-		if (nonNull(role.getId())) {
-			update(role);
-		} else {
-			insert(role);
-		}
-	}
+    @Override
+    public void save(Role role) {
+        if (!isEmpty(role.getMenuIds())) { // Menus repeat
+            role.setMenuIds((List<Long>) disDupCollection(role.getMenuIds()));
+        }
+        if (!isEmpty(role.getGroupIds())) { // Groups repeat
+            role.setGroupIds((List<Long>) disDupCollection(role.getGroupIds()));
+        }
+        if (nonNull(role.getId())) {
+            update(role);
+        } else {
+            insert(role);
+        }
+    }
 
-	private void insert(Role role) {
-		role.preInsert();
-		role.setId(SnowflakeIdGenerator.getDefault().nextId());
-		roleDao.insertSelective(role);
-		List<RoleMenu> roleMenus = new ArrayList<>();
-		// menu
-		for (Long menuId : role.getMenuIds()) {
-			RoleMenu roleMenu = new RoleMenu();
-			roleMenu.preInsert();
-			roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
-			roleMenu.setMenuId(menuId);
-			roleMenu.setRoleId(role.getId());
-			roleMenus.add(roleMenu);
-		}
-		if (!isEmpty(roleMenus)) {
-			RoleMenuList roleMenuList = new RoleMenuList();
-			roleMenuList.setRoleMenus(roleMenus);
-			roleMenuDao.insertBatch(roleMenuList);
-		}
-		// group
-		List<OrganizationRole> groupRoles = new ArrayList<>();
-		/*
-		 * for (Long groupId : role.getGroupIds()) { OrganizationRole groupRole
-		 * = new OrganizationRole(); groupRole.preInsert();
-		 * groupRole.setGroupId(groupId); groupRole.setRoleId(role.getId());
-		 * groupRoles.add(groupRole); }
-		 */
-		if (nonNull(role.getOrganizationId())) {
-			OrganizationRole groupRole = new OrganizationRole();
-			groupRole.preInsert();
-			groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
-			groupRole.setGroupId(role.getOrganizationId());
-			groupRole.setRoleId(role.getId());
-			groupRoles.add(groupRole);
-		}
-		if (!isEmpty(groupRoles)) {
-			OrganizationRoleList organizationRoleList = new OrganizationRoleList();
-			organizationRoleList.setGroupRoles(groupRoles);
-			groupRoleDao.insertBatch(organizationRoleList);
-		}
-	}
+    private void insert(Role role) {
+        role.preInsert();
+        role.setId(SnowflakeIdGenerator.getDefault().nextId());
+        roleDao.insertSelective(role);
+        List<RoleMenu> roleMenus = new ArrayList<>();
+        // menu
+        for (Long menuId : role.getMenuIds()) {
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.preInsert();
+            roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
+            roleMenu.setMenuId(menuId);
+            roleMenu.setRoleId(role.getId());
+            roleMenus.add(roleMenu);
+        }
+        if (!isEmpty(roleMenus)) {
+            RoleMenuList roleMenuList = new RoleMenuList();
+            roleMenuList.setRoleMenus(roleMenus);
+            roleMenuDao.insertBatch(roleMenuList);
+        }
+        // group
+        List<OrganizationRole> groupRoles = new ArrayList<>();
+        /*
+         * for (Long groupId : role.getGroupIds()) { OrganizationRole groupRole
+         * = new OrganizationRole(); groupRole.preInsert();
+         * groupRole.setGroupId(groupId); groupRole.setRoleId(role.getId());
+         * groupRoles.add(groupRole); }
+         */
+        if (nonNull(role.getOrganizationId())) {
+            OrganizationRole groupRole = new OrganizationRole();
+            groupRole.preInsert();
+            groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
+            groupRole.setGroupId(role.getOrganizationId());
+            groupRole.setRoleId(role.getId());
+            groupRoles.add(groupRole);
+        }
+        if (!isEmpty(groupRoles)) {
+            OrganizationRoleList organizationRoleList = new OrganizationRoleList();
+            organizationRoleList.setGroupRoles(groupRoles);
+            groupRoleDao.insertBatch(organizationRoleList);
+        }
+    }
 
-	private void update(Role role) {
-		role.preUpdate();
-		roleDao.updateByPrimaryKeySelective(role);
-		roleMenuDao.deleteByRoleId(role.getId());
-		groupRoleDao.deleteByRoleId(role.getId());
-		List<Long> menuIds = role.getMenuIds();
-		// menu
-		List<RoleMenu> roleMenus = new ArrayList<>();
-		for (Long menuId : menuIds) {
-			RoleMenu roleMenu = new RoleMenu();
-			roleMenu.preInsert();
-			roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
-			roleMenu.setMenuId(menuId);
-			roleMenu.setRoleId(role.getId());
-			roleMenus.add(roleMenu);
-		}
-		if (!isEmpty(roleMenus)) {
-			RoleMenuList roleMenuList = new RoleMenuList();
-			roleMenuList.setRoleMenus(roleMenus);
-			roleMenuDao.insertBatch(roleMenuList);
-		}
-		// group
-		List<OrganizationRole> groupRoles = new ArrayList<>();
-		for (Long groupId : role.getGroupIds()) {
-			OrganizationRole groupRole = new OrganizationRole();
-			groupRole.preInsert();
-			groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
-			groupRole.setGroupId(groupId);
-			groupRole.setRoleId(role.getId());
-			groupRoles.add(groupRole);
-		}
-		if (!isEmpty(groupRoles)) {
-			OrganizationRoleList organizationRoleList = new OrganizationRoleList();
-			organizationRoleList.setGroupRoles(groupRoles);
-			groupRoleDao.insertBatch(organizationRoleList);
-		}
-	}
+    private void update(Role role) {
+        role.preUpdate();
+        roleDao.updateByPrimaryKeySelective(role);
+        roleMenuDao.deleteByRoleId(role.getId());
+        groupRoleDao.deleteByRoleId(role.getId());
+        List<Long> menuIds = role.getMenuIds();
+        // menu
+        List<RoleMenu> roleMenus = new ArrayList<>();
+        for (Long menuId : menuIds) {
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.preInsert();
+            roleMenu.setId(SnowflakeIdGenerator.getDefault().nextId());
+            roleMenu.setMenuId(menuId);
+            roleMenu.setRoleId(role.getId());
+            roleMenus.add(roleMenu);
+        }
+        if (!isEmpty(roleMenus)) {
+            RoleMenuList roleMenuList = new RoleMenuList();
+            roleMenuList.setRoleMenus(roleMenus);
+            roleMenuDao.insertBatch(roleMenuList);
+        }
+        // group
+        List<OrganizationRole> groupRoles = new ArrayList<>();
+        for (Long groupId : role.getGroupIds()) {
+            OrganizationRole groupRole = new OrganizationRole();
+            groupRole.preInsert();
+            groupRole.setId(SnowflakeIdGenerator.getDefault().nextId());
+            groupRole.setGroupId(groupId);
+            groupRole.setRoleId(role.getId());
+            groupRoles.add(groupRole);
+        }
+        if (!isEmpty(groupRoles)) {
+            OrganizationRoleList organizationRoleList = new OrganizationRoleList();
+            organizationRoleList.setGroupRoles(groupRoles);
+            groupRoleDao.insertBatch(organizationRoleList);
+        }
+    }
 
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id is null");
-		Role role = new Role();
-		role.setId(id);
-		role.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		roleDao.updateByPrimaryKeySelective(role);
-	}
+    @Override
+    public void del(Long id) {
+        Assert.notNull(id, "id is null");
+        Role role = new Role();
+        role.setId(id);
+        role.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        roleDao.updateByPrimaryKeySelective(role);
+    }
 
-	@Override
-	public Role detail(Long id) {
-		Role role = roleDao.selectByPrimaryKey(id);
-		List<Long> menuIds = roleMenuDao.selectMenuIdByRoleId(id);
-		List<Long> groupIds = groupRoleDao.selectGroupIdByRoleId(id);
-		role.setMenuIds(menuIds);
-		role.setGroupIds(groupIds);
-		return role;
-	}
+    @Override
+    public Role detail(Long id) {
+        Role role = roleDao.selectByPrimaryKey(id);
+        List<Long> menuIds = roleMenuDao.selectMenuIdByRoleId(id);
+        List<Long> groupIds = groupRoleDao.selectGroupIdByRoleId(id);
+        role.setMenuIds(menuIds);
+        role.setGroupIds(groupIds);
+        return role;
+    }
 
-	@Override
-	public List<Role> findByUserId(Long userId) {
-		return roleDao.selectByUserId(userId);
-	}
+    @Override
+    public List<Role> findByUserId(Long userId) {
+        return roleDao.selectByUserId(userId);
+    }
 
-	@Override
-	public List<Role> findRoot(List<Long> groupIds, String roleCode, String nameZh) {
-		return roleDao.selectWithRoot(groupIds, roleCode, nameZh);
-	}
+    @Override
+    public List<Role> findRoot(List<Long> groupIds, String roleCode, String nameZh) {
+        return roleDao.selectWithRoot(groupIds, roleCode, nameZh);
+    }
 
 }

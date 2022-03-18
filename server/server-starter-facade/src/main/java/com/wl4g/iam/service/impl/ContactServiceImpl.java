@@ -53,107 +53,107 @@ import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 // @org.springframework.web.bind.annotation.RestController
 public class ContactServiceImpl implements ContactService {
 
-	@Autowired
-	private ContactDao contactDao;
+    @Autowired
+    private ContactDao contactDao;
 
-	@Autowired
-	private ContactGroupRefDao contactGroupRefDao;
+    @Autowired
+    private ContactGroupRefDao contactGroupRefDao;
 
-	@Autowired
-	private ContactChannelDao contactChannelDao;
+    @Autowired
+    private ContactChannelDao contactChannelDao;
 
-	@Lazy
-	@Autowired
-	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
+    @Lazy
+    @Autowired
+    private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
 
-	@Override
-	public void save(Contact contact) {
-		if (null != contact.getId() && contact.getId() > 0) {
-			contact.preUpdate();
-			contactGroupRefDao.deleteByContactId(contact.getId());
-			contactDao.updateByPrimaryKeySelective(contact);
-		} else {
-			contact.preInsert();
-			contact.setId(SnowflakeIdGenerator.getDefault().nextId());
-			contact.setDelFlag(DEL_FLAG_NORMAL);
-			contact.setEnable(ENABLED);
-			contactDao.insertSelective(contact);
-		}
-		Long[] groups = contact.getGroups();
-		if (null != groups) {
-			for (Long group : groups) {
-				ContactGroupRef contactGroupRef = new ContactGroupRef();
-				contactGroupRef.preInsert();
-				contactGroupRef.setId(SnowflakeIdGenerator.getDefault().nextId());
-				contactGroupRef.setContactGroupId(group);
-				contactGroupRef.setContactId(contact.getId());
-				contactGroupRefDao.insertSelective(contactGroupRef);
-			}
-		}
+    @Override
+    public void save(Contact contact) {
+        if (null != contact.getId() && contact.getId() > 0) {
+            contact.preUpdate();
+            contactGroupRefDao.deleteByContactId(contact.getId());
+            contactDao.updateByPrimaryKeySelective(contact);
+        } else {
+            contact.preInsert();
+            contact.setId(SnowflakeIdGenerator.getDefault().nextId());
+            contact.setDelFlag(DEL_FLAG_NORMAL);
+            contact.setEnable(ENABLED);
+            contactDao.insertSelective(contact);
+        }
+        Long[] groups = contact.getGroups();
+        if (null != groups) {
+            for (Long group : groups) {
+                ContactGroupRef contactGroupRef = new ContactGroupRef();
+                contactGroupRef.preInsert();
+                contactGroupRef.setId(SnowflakeIdGenerator.getDefault().nextId());
+                contactGroupRef.setContactGroupId(group);
+                contactGroupRef.setContactId(contact.getId());
+                contactGroupRefDao.insertSelective(contactGroupRef);
+            }
+        }
 
-		// TODO add 0313
-		contactChannelDao.deleteByContactId(contact.getId());
-		List<ContactChannel> contactChannels = contact.getContactChannels();
-		for (ContactChannel contactChannel : contactChannels) {
-			contactChannel.preInsert();
-			contactChannel.setContactId(contact.getId());
-			contactChannelDao.insertSelective(contactChannel);
-		}
+        // TODO add 0313
+        contactChannelDao.deleteByContactId(contact.getId());
+        List<ContactChannel> contactChannels = contact.getContactChannels();
+        for (ContactChannel contactChannel : contactChannels) {
+            contactChannel.preInsert();
+            contactChannel.setContactId(contact.getId());
+            contactChannelDao.insertSelective(contactChannel);
+        }
 
-	}
+    }
 
-	@Override
-	public Contact detail(Long id) {
-		Assert.notNull(id, "id can not be null");
-		Contact contact = contactDao.selectByPrimaryKey(id);
-		List<ContactGroupRef> contactGroupRefs = contactGroupRefDao.selectByContactId(id);
-		if (CollectionUtils.isNotEmpty(contactGroupRefs)) {
-			Long[] groups = new Long[contactGroupRefs.size()];
-			for (int i = 0; i < contactGroupRefs.size(); i++) {
-				groups[i] = contactGroupRefs.get(i).getContactGroupId();
-			}
-			contact.setGroups(groups);
-		} else {
-			contact.setGroups(new Long[0]);
-		}
-		return contact;
-	}
+    @Override
+    public Contact detail(Long id) {
+        Assert.notNull(id, "id can not be null");
+        Contact contact = contactDao.selectByPrimaryKey(id);
+        List<ContactGroupRef> contactGroupRefs = contactGroupRefDao.selectByContactId(id);
+        if (CollectionUtils.isNotEmpty(contactGroupRefs)) {
+            Long[] groups = new Long[contactGroupRefs.size()];
+            for (int i = 0; i < contactGroupRefs.size(); i++) {
+                groups[i] = contactGroupRefs.get(i).getContactGroupId();
+            }
+            contact.setGroups(groups);
+        } else {
+            contact.setGroups(new Long[0]);
+        }
+        return contact;
+    }
 
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id can not be null");
-		Contact contact = new Contact();
-		contact.preUpdate();
-		contact.setId(id);
-		contact.setDelFlag(1);
-		contactDao.updateByPrimaryKeySelective(contact);
-	}
+    @Override
+    public void del(Long id) {
+        Assert.notNull(id, "id can not be null");
+        Contact contact = new Contact();
+        contact.preUpdate();
+        contact.setId(id);
+        contact.setDelFlag(1);
+        contactDao.updateByPrimaryKeySelective(contact);
+    }
 
-	@Override
-	public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
-		pm.useCount().bind();
-		pm.setRecords(contactDao.list(name));
-		return pm;
-	}
+    @Override
+    public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
+        pm.useCount().bind();
+        pm.setRecords(contactDao.list(name));
+        return pm;
+    }
 
-	@Override
-	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
-		return contactDao.getContactByGroupIds(groupIds);
-	}
+    @Override
+    public List<Contact> getContactByGroupIds(List<Long> groupIds) {
+        return contactDao.getContactByGroupIds(groupIds);
+    }
 
-	@Override
-	public void notification(NotificationParameter parameter) {
-		List<Contact> contacts = contactDao.getContactByGroupIds(safeList(parameter.getContactGroupIds()));
-		for (Contact contact : contacts) {
-			for (ContactChannel ch : safeList(contact.getContactChannels())) {
-				if (ch.getEnable() == ENABLED) {
-					GenericNotifyMessage msg = new GenericNotifyMessage(ch.getPrimaryAddress(), parameter.getTemplateKey());
-					msg.addParameters(parameter.getParameters());
-					notifier.forOperator(ch.getKind()).send(msg);
-				}
-			}
-		}
+    @Override
+    public void notification(NotificationParameter parameter) {
+        List<Contact> contacts = contactDao.getContactByGroupIds(safeList(parameter.getContactGroupIds()));
+        for (Contact contact : contacts) {
+            for (ContactChannel ch : safeList(contact.getContactChannels())) {
+                if (ch.getEnable() == ENABLED) {
+                    GenericNotifyMessage msg = new GenericNotifyMessage(ch.getPrimaryAddress(), parameter.getTemplateKey());
+                    msg.addParameters(parameter.getParameters());
+                    notifier.forOperator(ch.getKind()).send(msg);
+                }
+            }
+        }
 
-	}
+    }
 
 }

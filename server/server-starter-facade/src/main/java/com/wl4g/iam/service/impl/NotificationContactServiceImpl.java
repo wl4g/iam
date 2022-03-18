@@ -37,17 +37,17 @@ import com.wl4g.iam.service.NotificationContactService;
 // @org.springframework.web.bind.annotation.RestController
 public class NotificationContactServiceImpl implements NotificationContactService {
 
-	@Autowired
-	private NotificationContactDao notificationContactDao;
+    @Autowired
+    private NotificationContactDao notificationContactDao;
 
-	@Override
-	public int save(NotificationContact record) {
-		return notificationContactDao.insertSelective(record);
-	}
+    @Override
+    public int save(NotificationContact record) {
+        return notificationContactDao.insertSelective(record);
+    }
 
-	@Override
-	public List<NotificationContact> getByRecordId(Long id) {
-		return notificationContactDao.getByRecordId(id);
-	}
+    @Override
+    public List<NotificationContact> getByRecordId(Long id) {
+        return notificationContactDao.getByRecordId(id);
+    }
 
 }

@@ -39,18 +39,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/clusterConfig-service")
 public interface ClusterConfigService {
 
-	@RequestMapping(value = "/loadInit", method = GET)
-	Map<String, Object> loadInit(@RequestParam(value = "envType", required = false) String envType);
+    @RequestMapping(value = "/loadInit", method = GET)
+    Map<String, Object> loadInit(@RequestParam(value = "envType", required = false) String envType);
 
-	@RequestMapping(value = "/getClusterConfig", method = GET)
-	ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
+    @RequestMapping(value = "/getClusterConfig", method = GET)
+    ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
 
-	@RequestMapping(value = "/getByAppNames", method = POST)
-	List<ClusterConfig> findByAppNames(@RequestParam(value = "appNames", required = false) String[] appNames,
-			@RequestParam(value = "envType", required = false) String envType,
-			@RequestParam(value = "type", required = false) String type);
+    @RequestMapping(value = "/getByAppNames", method = POST)
+    List<ClusterConfig> findByAppNames(
+            @RequestParam(value = "appNames", required = false) String[] appNames,
+            @RequestParam(value = "envType", required = false) String envType,
+            @RequestParam(value = "type", required = false) String type);
 
-	@RequestMapping(value = "/findOfIamServers", method = GET)
-	List<ClusterConfig> findOfIamServers();
+    @RequestMapping(value = "/findOfIamServers", method = GET)
+    List<ClusterConfig> findOfIamServers();
 
 }

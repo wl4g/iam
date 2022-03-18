@@ -36,8 +36,8 @@ import com.wl4g.iam.annotation.EnableIamServer;
 @SpringBootApplication
 public class IamWeb {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IamWeb.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IamWeb.class, args);
+    }
 
 }

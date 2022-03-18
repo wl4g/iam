@@ -41,29 +41,33 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/dict-service")
 public interface DictService {
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Dict> list(@RequestBody PageHolder<Dict> pm, @RequestParam("key") String key, @RequestParam("label") String label,
-			@RequestParam("type") String type, @RequestParam(name="description",required=false) String description);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<Dict> list(
+            @RequestBody PageHolder<Dict> pm,
+            @RequestParam("key") String key,
+            @RequestParam("label") String label,
+            @RequestParam("type") String type,
+            @RequestParam(name = "description", required = false) String description);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Dict dict, @RequestParam("isEdit") Boolean isEdit);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Dict dict, @RequestParam("isEdit") Boolean isEdit);
 
-	@RequestMapping(value = "/detail", method = GET)
-	Dict detail(@RequestParam("key") String key);
+    @RequestMapping(value = "/detail", method = GET)
+    Dict detail(@RequestParam("key") String key);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("key") String key);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("key") String key);
 
-	@RequestMapping(value = "/getByType", method = GET)
-	List<Dict> getByType(@RequestParam("type") String type);
+    @RequestMapping(value = "/getByType", method = GET)
+    List<Dict> getByType(@RequestParam("type") String type);
 
-	@RequestMapping(value = "/getByKey", method = GET)
-	Dict getByKey(@RequestParam("key") String key);
+    @RequestMapping(value = "/getByKey", method = GET)
+    Dict getByKey(@RequestParam("key") String key);
 
-	@RequestMapping(value = "/allType", method = GET)
-	List<String> allType();
+    @RequestMapping(value = "/allType", method = GET)
+    List<String> allType();
 
-	@RequestMapping(value = "/loadInit", method = GET)
-	Map<String, Object> loadInit();
+    @RequestMapping(value = "/loadInit", method = GET)
+    Map<String, Object> loadInit();
 
 }

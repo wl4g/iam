@@ -17,8 +17,8 @@ package com.wl4g.iam.sns.support;
 
 public interface Oauth2AccessToken extends AssertionOAuth2Result {
 
-	String accessToken();
+    String accessToken();
 
-	<T extends Oauth2AccessToken> T build(String message);
+    <T extends Oauth2AccessToken> T build(String message);
 
 }

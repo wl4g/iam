@@ -122,9 +122,11 @@ public class WebfluxHttpServletRequest implements HttpServletRequest {
         if (isNull(this.parameterMapCache)) {
             synchronized (this) {
                 if (isNull(this.parameterMapCache)) {
-                    this.parameterMapCache = safeMap(exchange.getRequest().getQueryParams()).entrySet().stream()
+                    this.parameterMapCache = safeMap(exchange.getRequest().getQueryParams()).entrySet()
+                            .stream()
                             .map(e -> singletonMap(e.getKey(), safeList(e.getValue()).toArray(new String[] {})))
-                            .flatMap(e -> e.entrySet().stream()).collect(toMap(e -> e.getKey(), e -> e.getValue()));
+                            .flatMap(e -> e.entrySet().stream())
+                            .collect(toMap(e -> e.getKey(), e -> e.getValue()));
                 }
             }
         }
@@ -208,8 +210,10 @@ public class WebfluxHttpServletRequest implements HttpServletRequest {
         if (isNull(this.cookiesCache)) {
             synchronized (this) {
                 if (isNull(this.cookiesCache)) {
-                    this.cookiesCache = safeMap(exchange.getRequest().getCookies()).values().stream()
-                            .map(cs -> safeList(cs).stream().map(c -> convertHttpCookie(c))).collect(toList())
+                    this.cookiesCache = safeMap(exchange.getRequest().getCookies()).values()
+                            .stream()
+                            .map(cs -> safeList(cs).stream().map(c -> convertHttpCookie(c)))
+                            .collect(toList())
                             .toArray(new Cookie[] {});
                 }
             }

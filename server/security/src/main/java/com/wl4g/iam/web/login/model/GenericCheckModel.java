@@ -28,35 +28,35 @@ import java.io.Serializable;
  */
 public class GenericCheckModel implements Serializable {
 
-	private static final long serialVersionUID = 2636165327046053795L;
+    private static final long serialVersionUID = 2636165327046053795L;
 
-	/**
-	 * General response key-name.
-	 */
-	final public static String KEY_GENERIC_CHECK = "checkGeneric";
+    /**
+     * General response key-name.
+     */
+    final public static String KEY_GENERIC_CHECK = "checkGeneric";
 
-	/**
-	 * Applied secret public key hex.
-	 */
-	private String secretKey;
+    /**
+     * Applied secret public key hex.
+     */
+    private String secretKey;
 
-	public GenericCheckModel() {
-		super();
-	}
+    public GenericCheckModel() {
+        super();
+    }
 
-	public GenericCheckModel(String secretKey) {
-		// hasTextOf(secretKey, "secretKey");
-		setSecretKey(secretKey);
-	}
+    public GenericCheckModel(String secretKey) {
+        // hasTextOf(secretKey, "secretKey");
+        setSecretKey(secretKey);
+    }
 
-	public String getSecretKey() {
-		return secretKey;
-	}
+    public String getSecretKey() {
+        return secretKey;
+    }
 
-	public GenericCheckModel setSecretKey(String secretKey) {
-		hasTextOf(secretKey, "secretKey");
-		this.secretKey = secretKey;
-		return this;
-	}
+    public GenericCheckModel setSecretKey(String secretKey) {
+        hasTextOf(secretKey, "secretKey");
+        this.secretKey = secretKey;
+        return this;
+    }
 
 }

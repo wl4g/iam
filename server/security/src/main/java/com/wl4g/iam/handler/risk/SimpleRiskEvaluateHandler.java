@@ -17,7 +17,7 @@ package com.wl4g.iam.handler.risk;
 
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.web.CookieUtils.getCookie;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
 import static java.util.Collections.sort;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;

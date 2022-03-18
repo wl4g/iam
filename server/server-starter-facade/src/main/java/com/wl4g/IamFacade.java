@@ -33,8 +33,8 @@ import com.wl4g.infra.integration.feign.core.annotation.EnableFeignConsumers;
 @SpringBootApplication
 public class IamFacade {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IamFacade.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IamFacade.class, args);
+    }
 
 }

@@ -20,63 +20,63 @@ import java.io.Serializable;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class NotificationContact extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long recordId;
-	private Long contactId;
+    private Long recordId;
+    private Long contactId;
 
-	private String status;
+    private String status;
 
-	// other
-	private String name;
-	private String email;
-	private String phone;
+    // other
+    private String name;
+    private String email;
+    private String phone;
 
-	public Long getRecordId() {
-		return recordId;
-	}
+    public Long getRecordId() {
+        return recordId;
+    }
 
-	public void setRecordId(Long recordId) {
-		this.recordId = recordId;
-	}
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
+    }
 
-	public Long getContactId() {
-		return contactId;
-	}
+    public Long getContactId() {
+        return contactId;
+    }
 
-	public void setContactId(Long contactId) {
-		this.contactId = contactId;
-	}
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status == null ? null : status.trim();
-	}
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

@@ -30,14 +30,14 @@ import java.util.Map;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_BASE;
 import static java.lang.String.format;
 
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.core.authc.model.BaseValidateModel;
+import com.wl4g.iam.common.model.BaseValidateModel;
 
 /**
  * Abstract validator implementation for tickets that must be validated against

@@ -28,41 +28,41 @@ import java.io.Serializable;
  * @since
  */
 public class IamPrincipalPermitsModel implements Serializable {
-	private static final long serialVersionUID = 8802525988725357453L;
+    private static final long serialVersionUID = 8802525988725357453L;
 
-	/** Authenticate principal role codes. */
-	private String roles = EMPTY;
+    /** Authenticate principal role codes. */
+    private String roles = EMPTY;
 
-	/** Authenticate principal permission. */
-	private String permissions = EMPTY;
+    /** Authenticate principal permission. */
+    private String permissions = EMPTY;
 
-	public IamPrincipalPermitsModel() {
-	}
+    public IamPrincipalPermitsModel() {
+    }
 
-	public IamPrincipalPermitsModel(String roles, String permissions) {
-		setRoles(roles);
-		setPermissions(permissions);
-	}
+    public IamPrincipalPermitsModel(String roles, String permissions) {
+        setRoles(roles);
+        setPermissions(permissions);
+    }
 
-	public String getRoles() {
-		return roles;
-	}
+    public String getRoles() {
+        return roles;
+    }
 
-	public void setRoles(String roles) {
-		this.roles = roles;
-	}
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 
-	public String getPermissions() {
-		return permissions;
-	}
+    public String getPermissions() {
+        return permissions;
+    }
 
-	public void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
 }

@@ -32,9 +32,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SessionQueryClientModel extends SessionQueryModel {
-	private static final long serialVersionUID = 2579844578836104919L;
+    private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "Private IAM service ID is requires")
-	private Long id;
+    @NotNull(message = "Private IAM service ID is requires")
+    private Long id;
 
 }

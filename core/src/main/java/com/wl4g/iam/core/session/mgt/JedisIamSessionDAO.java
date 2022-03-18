@@ -17,7 +17,7 @@ package com.wl4g.iam.core.session.mgt;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SESSION;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SESSION;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 

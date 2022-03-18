@@ -36,25 +36,25 @@ import com.wl4g.iam.common.bean.Company;
 @RequestMapping("/company-dao")
 public interface CompanyDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody Company record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody Company record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody Company record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody Company record);
 
-	@RequestMapping(value = "/selectByPrimaryKey", method = GET)
-	Company selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/selectByPrimaryKey", method = GET)
+    Company selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/selectByGroupId", method = GET)
-	Company selectByGroupId(@RequestParam("groupId") Long groupId);
+    @RequestMapping(value = "/selectByGroupId", method = GET)
+    Company selectByGroupId(@RequestParam("groupId") Long groupId);
 
-	@RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
-	int updateByPrimaryKeySelective(@RequestBody Company record);
+    @RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
+    int updateByPrimaryKeySelective(@RequestBody Company record);
 
-	@RequestMapping(value = "/updateByPrimaryKey", method = { POST })
-	int updateByPrimaryKey(@RequestBody Company record);
+    @RequestMapping(value = "/updateByPrimaryKey", method = { POST })
+    int updateByPrimaryKey(@RequestBody Company record);
 
 }

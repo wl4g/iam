@@ -41,47 +41,47 @@ import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 // @org.springframework.web.bind.annotation.RestController
 public class ContactGroupServiceImpl implements ContactGroupService {
 
-	@Autowired
-	private ContactGroupDao contactGroupDao;
+    @Autowired
+    private ContactGroupDao contactGroupDao;
 
-	@Override
-	public void save(ContactGroup contactGroup) {
-		Assert.notNull(contactGroup, "contactGroup is null");
-		if (contactGroup.getId() != null) {
-			contactGroup.preUpdate();
-			contactGroupDao.updateByPrimaryKeySelective(contactGroup);
-		} else {
-			contactGroup.preInsert();
-			contactGroup.setDelFlag(DEL_FLAG_NORMAL);
-			contactGroup.setEnable(ENABLED);
-			contactGroupDao.insertSelective(contactGroup);
-		}
-	}
+    @Override
+    public void save(ContactGroup contactGroup) {
+        Assert.notNull(contactGroup, "contactGroup is null");
+        if (contactGroup.getId() != null) {
+            contactGroup.preUpdate();
+            contactGroupDao.updateByPrimaryKeySelective(contactGroup);
+        } else {
+            contactGroup.preInsert();
+            contactGroup.setDelFlag(DEL_FLAG_NORMAL);
+            contactGroup.setEnable(ENABLED);
+            contactGroupDao.insertSelective(contactGroup);
+        }
+    }
 
-	@Override
-	public void del(Long id) {
-		ContactGroup contactGroup = new ContactGroup();
-		contactGroup.preUpdate();
-		contactGroup.setId(id);
-		contactGroup.setDelFlag(1);
-		contactGroupDao.updateByPrimaryKeySelective(contactGroup);
-	}
+    @Override
+    public void del(Long id) {
+        ContactGroup contactGroup = new ContactGroup();
+        contactGroup.preUpdate();
+        contactGroup.setId(id);
+        contactGroup.setDelFlag(1);
+        contactGroupDao.updateByPrimaryKeySelective(contactGroup);
+    }
 
-	@Override
-	public List<ContactGroup> findContactGroups(String name) {
-		return contactGroupDao.list(name);
-	}
+    @Override
+    public List<ContactGroup> findContactGroups(String name) {
+        return contactGroupDao.list(name);
+    }
 
-	@Override
-	public ContactGroup getById(Long id) {
-		return contactGroupDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public ContactGroup getById(Long id) {
+        return contactGroupDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name) {
-		pm.useCount().bind();
-		pm.setRecords(contactGroupDao.list(name));
-		return pm;
-	}
+    @Override
+    public PageHolder<ContactGroup> list(PageHolder<ContactGroup> pm, String name) {
+        pm.useCount().bind();
+        pm.setRecords(contactGroupDao.list(name));
+        return pm;
+    }
 
 }

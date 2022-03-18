@@ -21,7 +21,7 @@ import static com.wl4g.infra.common.lang.Assert2.isTrueOf;
 import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.iam.core.session.NoOpSession.DefaultNoOpSession;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;

@@ -73,8 +73,14 @@ public class WebfluxHttpServletResponse implements HttpServletResponse {
 
     @Override
     public void addCookie(Cookie c) {
-        exchange.getResponse().addCookie(ResponseCookie.from(c.getName(), c.getValue()).domain(c.getDomain())
-                .httpOnly(c.isHttpOnly()).maxAge(c.getMaxAge()).path(c.getPath()).secure(c.getSecure()).build());
+        exchange.getResponse()
+                .addCookie(ResponseCookie.from(c.getName(), c.getValue())
+                        .domain(c.getDomain())
+                        .httpOnly(c.isHttpOnly())
+                        .maxAge(c.getMaxAge())
+                        .path(c.getPath())
+                        .secure(c.getSecure())
+                        .build());
     }
 
     @Override

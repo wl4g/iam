@@ -18,25 +18,25 @@ package com.wl4g.iam.common.bean;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class OrganizationRole extends BaseBean {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long groupId;
-	private Long roleId;
+    private Long groupId;
+    private Long roleId;
 
-	public Long getGroupId() {
-		return groupId;
-	}
+    public Long getGroupId() {
+        return groupId;
+    }
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
-	public Long getRoleId() {
-		return roleId;
-	}
+    public Long getRoleId() {
+        return roleId;
+    }
 
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 
 }

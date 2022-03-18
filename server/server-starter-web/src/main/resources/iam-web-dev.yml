@@ -16,8 +16,8 @@ spring:
       rules:
         '[/**]':
           allows-origins:
-            - http://${IAM_ZONE:wl4g.dev}
-            - http://${IAM_ZONE:wl4g.dev:${server.port}}
+            - http://${IAM_ZONE:wl4g.debug}
+            - http://${IAM_ZONE:wl4g.debug:${server.port}}
             - http://${IAM_ZONE:wl4g.local}
             - http://${IAM_ZONE:wl4g.local:${server.port}}
             - http://${IAM_ZONE:wl4g.debug}

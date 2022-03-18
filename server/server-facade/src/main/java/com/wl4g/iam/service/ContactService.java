@@ -48,52 +48,52 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/contact-service")
 public interface ContactService {
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Contact contact);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Contact contact);
 
-	@RequestMapping(value = "/detail", method = GET)
-	Contact detail(@RequestParam("id") Long id);
+    @RequestMapping(value = "/detail", method = GET)
+    Contact detail(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam("id") Long id);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam("id") Long id);
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Contact> list(@RequestBody PageHolder<Contact> pm, @RequestParam("name") String name);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<Contact> list(@RequestBody PageHolder<Contact> pm, @RequestParam("name") String name);
 
-	@RequestMapping(method = GET, value = "/getContactByGroupIds")
-	List<Contact> getContactByGroupIds(@RequestParam("groupIds") List<Long> groupIds);
+    @RequestMapping(method = GET, value = "/getContactByGroupIds")
+    List<Contact> getContactByGroupIds(@RequestParam("groupIds") List<Long> groupIds);
 
-	/**
-	 * Notification sending with template message .
-	 * 
-	 * @param templateKey
-	 * @param parameters
-	 * @param contactGroupIds
-	 */
-	@RequestMapping(value = "/notification", method = POST)
-	void notification(@NotBlank @RequestBody NotificationParameter parameter);
+    /**
+     * Notification sending with template message .
+     * 
+     * @param templateKey
+     * @param parameters
+     * @param contactGroupIds
+     */
+    @RequestMapping(value = "/notification", method = POST)
+    void notification(@NotBlank @RequestBody NotificationParameter parameter);
 
-	@Getter
-	public static class NotificationParameter {
-		@NotBlank
-		private final String templateKey;
-		@Nullable
-		private final Map<String, Object> parameters;
-		@NotEmpty
-		private final List<Long> contactGroupIds;
+    @Getter
+    public static class NotificationParameter {
+        @NotBlank
+        private final String templateKey;
+        @Nullable
+        private final Map<String, Object> parameters;
+        @NotEmpty
+        private final List<Long> contactGroupIds;
 
-		public NotificationParameter(@NotBlank String templateKey, @NotEmpty List<Long> contactGroupIds) {
-			this(templateKey, null, contactGroupIds);
-		}
+        public NotificationParameter(@NotBlank String templateKey, @NotEmpty List<Long> contactGroupIds) {
+            this(templateKey, null, contactGroupIds);
+        }
 
-		public NotificationParameter(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
-				@NotEmpty List<Long> contactGroupIds) {
-			super();
-			this.templateKey = notNullOf(templateKey, "templateKey");
-			this.parameters = parameters;
-			this.contactGroupIds = notEmptyOf(contactGroupIds, "contactGroupIds");
-		}
+        public NotificationParameter(@NotBlank String templateKey, @Nullable Map<String, Object> parameters,
+                @NotEmpty List<Long> contactGroupIds) {
+            super();
+            this.templateKey = notNullOf(templateKey, "templateKey");
+            this.parameters = parameters;
+            this.contactGroupIds = notEmptyOf(contactGroupIds, "contactGroupIds");
+        }
 
-	}
+    }
 
 }

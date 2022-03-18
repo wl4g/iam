@@ -20,41 +20,42 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
-import com.wl4g.iam.captcha.verification.GifSecurityVerifier;
-import com.wl4g.iam.captcha.verification.JigsawSecurityVerifier;
+import com.wl4g.iam.captcha.verify.GifSecurityVerifier;
+import com.wl4g.iam.captcha.verify.JigsawSecurityVerifier;
 import com.wl4g.iam.core.cache.IamCacheManager;
-import com.wl4g.iam.verification.SimpleJPEGSecurityVerifier;
 
 @Configuration
 public class CaptchaAutoConfiguration {
 
-	@Bean
-	public CaptchaProperties captchaProperties() {
-		return new CaptchaProperties();
-	}
+    @Bean
+    public CaptchaProperties captchaProperties() {
+        return new CaptchaProperties();
+    }
 
-	/**
-	 * {@link SimpleJPEGSecurityVerifier}
-	 * {@link IamAutoConfiguration#captchaHandler}
-	 * 
-	 * @return
-	 */
-	@Bean
-	public GifSecurityVerifier gifSecurityVerifier() {
-		return new GifSecurityVerifier();
-	}
+    /**
+     * {@link SimpleJPEGSecurityVerifier}
+     * {@link IamAutoConfiguration#captchaHandler}
+     * 
+     * @return
+     */
+    @Bean
+    public GifSecurityVerifier gifSecurityVerifier() {
+        return new GifSecurityVerifier();
+    }
 
-	// --- Jigsaw ---
+    // --- Jigsaw ---
 
-	@Bean
-	public JigsawImageManager jigsawImageManager(CaptchaProperties config, IamCacheManager cacheManager,
-			JedisLockManager lockManager) {
-		return new JigsawImageManager(config, cacheManager, lockManager);
-	}
+    @Bean
+    public JigsawImageManager jigsawImageManager(
+            CaptchaProperties config,
+            IamCacheManager cacheManager,
+            JedisLockManager lockManager) {
+        return new JigsawImageManager(config, cacheManager, lockManager);
+    }
 
-	@Bean
-	public JigsawSecurityVerifier jigsawSecurityVerifier() {
-		return new JigsawSecurityVerifier();
-	}
+    @Bean
+    public JigsawSecurityVerifier jigsawSecurityVerifier() {
+        return new JigsawSecurityVerifier();
+    }
 
 }

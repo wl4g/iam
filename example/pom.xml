@@ -57,8 +57,8 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>springboot-gateway-example</module>
-		<module>springboot-sdkclient-example</module>
+		<module>springboot-gateway</module>
+		<module>springboot-sdkclient</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

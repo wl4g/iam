@@ -18,6 +18,7 @@
  * Reference to website: http://wl4g.com
  */
 package com.wl4g.iam.data.fallback;
+
 // Description: The callback handler under this package is only valid under the
 // springcloud + feign + hystrix(scf) architecture. For example, when using
 // springboot + feign + istio(sbf) architecture, demotion is scheduled by istio.

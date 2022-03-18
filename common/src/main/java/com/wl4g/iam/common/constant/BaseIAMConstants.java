@@ -39,4 +39,6 @@ public abstract class BaseIAMConstants extends BaseConstant {
      */
     public static final int CACHE_DICT_INIT_EXPIRE_SEC = 60;
 
+    public static final String CACHE_IAM_PREFIX = ":iam:";
+
 }

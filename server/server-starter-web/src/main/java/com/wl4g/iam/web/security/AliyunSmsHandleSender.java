@@ -17,14 +17,14 @@ package com.wl4g.iam.web.security;
 
 import java.util.Map;
 
-import com.wl4g.iam.verification.SmsSecurityVerifier.SmsHandleSender;
+import com.wl4g.iam.verify.SmsSecurityVerifier.SmsHandleSender;
 
 //@Service
 public class AliyunSmsHandleSender implements SmsHandleSender {
 
-	@Override
-	public void doSend(Map<String, Object> parameters) {
-		System.out.println("Do send sms message for :" + parameters);
-	}
+    @Override
+    public void doSend(Map<String, Object> parameters) {
+        System.out.println("Do send sms message for :" + parameters);
+    }
 
 }

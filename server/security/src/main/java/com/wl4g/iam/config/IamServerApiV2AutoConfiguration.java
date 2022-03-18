@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.iam.core.config.GenericApiAutoConfiguration;
-import com.wl4g.iam.web.api.ServiceApiV2Controller;
+import com.wl4g.iam.web.api.V2ServiceApiController;
 
 /**
  * Generic API v1 auto configuration.
@@ -36,8 +36,8 @@ import com.wl4g.iam.web.api.ServiceApiV2Controller;
 public class IamServerApiV2AutoConfiguration extends GenericApiAutoConfiguration {
 
     @Bean
-    public ServiceApiV2Controller iamServerApiV2Controller() {
-        return new ServiceApiV2Controller();
+    public V2ServiceApiController iamServerApiV2Controller() {
+        return new V2ServiceApiController();
     }
 
 }

@@ -33,73 +33,73 @@ import org.springframework.util.Assert;
  * @since
  */
 public abstract class Captcha {
-	private Font font = new Font("Verdana", Font.ITALIC | Font.BOLD, 28); // 字体
-	private int width = 150; // 验证码显示跨度
-	private int height = 40; // 验证码显示高度
-	private String capText; // 随机字符串
-	private int len; // 随机字符串的长度
+    private Font font = new Font("Verdana", Font.ITALIC | Font.BOLD, 28); // 字体
+    private int width = 150; // 验证码显示跨度
+    private int height = 40; // 验证码显示高度
+    private String capText; // 随机字符串
+    private int len; // 随机字符串的长度
 
-	public Captcha(String capText) {
-		this(0, 0, capText);
-	}
+    public Captcha(String capText) {
+        this(0, 0, capText);
+    }
 
-	public Captcha(int width, int height, String capText) {
-		this(null, width, height, capText);
-	}
+    public Captcha(int width, int height, String capText) {
+        this(null, width, height, capText);
+    }
 
-	public Captcha(Font font, int width, int height, String capText) {
-		super();
-		this.font = (font == null) ? this.font : font;
-		this.width = (width == 0) ? this.width : width;
-		this.height = (height == 0) ? this.height : height;
-		Assert.hasText(capText, "'capText' must not be empty");
-		this.capText = capText;
-		this.len = this.capText.length();
-	}
+    public Captcha(Font font, int width, int height, String capText) {
+        super();
+        this.font = (font == null) ? this.font : font;
+        this.width = (width == 0) ? this.width : width;
+        this.height = (height == 0) ? this.height : height;
+        Assert.hasText(capText, "'capText' must not be empty");
+        this.capText = capText;
+        this.len = this.capText.length();
+    }
 
-	public String getCapText() {
-		return capText;
-	}
+    public String getCapText() {
+        return capText;
+    }
 
-	public Font getFont() {
-		return font;
-	}
+    public Font getFont() {
+        return font;
+    }
 
-	public int getWidth() {
-		return width;
-	}
+    public int getWidth() {
+        return width;
+    }
 
-	public int getHeight() {
-		return height;
-	}
+    public int getHeight() {
+        return height;
+    }
 
-	public int getLen() {
-		return len;
-	}
+    public int getLen() {
+        return len;
+    }
 
-	/**
-	 * 给定范围获得随机颜色
-	 * 
-	 * @return Color 随机颜色
-	 */
-	protected Color color(int fc, int bc) {
-		if (fc > 255)
-			fc = 255;
-		if (bc > 255)
-			bc = 255;
-		int r = fc + num(bc - fc);
-		int g = fc + num(bc - fc);
-		int b = fc + num(bc - fc);
-		return new Color(r, g, b);
-	}
+    /**
+     * 给定范围获得随机颜色
+     * 
+     * @return Color 随机颜色
+     */
+    protected Color color(int fc, int bc) {
+        if (fc > 255)
+            fc = 255;
+        if (bc > 255)
+            bc = 255;
+        int r = fc + num(bc - fc);
+        int g = fc + num(bc - fc);
+        int b = fc + num(bc - fc);
+        return new Color(r, g, b);
+    }
 
-	/**
-	 * 验证码输出,抽象方法，由子类实现
-	 * 
-	 * @param os
-	 *            输出流
-	 * @throws IOException
-	 */
-	public abstract void out(OutputStream os) throws IOException;
+    /**
+     * 验证码输出,抽象方法，由子类实现
+     * 
+     * @param os
+     *            输出流
+     * @throws IOException
+     */
+    public abstract void out(OutputStream os) throws IOException;
 
 }

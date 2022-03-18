@@ -12,7 +12,6 @@ public class RoleMenuList {
 
     List<RoleMenu> roleMenus;
 
-
     public List<RoleMenu> getRoleMenus() {
         return roleMenus;
     }

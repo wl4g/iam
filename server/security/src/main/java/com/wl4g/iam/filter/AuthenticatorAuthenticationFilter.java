@@ -24,7 +24,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_AUTHENTICATOR;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_AUTHENTICATOR;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -85,7 +85,10 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
     }
 
     @Override
-    protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected IamAuthenticationToken doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         /**
          * [Note1]: The client wants to verify the credentials and redirect the
@@ -108,8 +111,12 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
     }
 
     @Override
-    protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
-            AuthenticationException ae, ServletRequest request, ServletResponse response) {
+    protected RedirectInfo determineFailureRedirect(
+            RedirectInfo redirect,
+            IamAuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
+            ServletResponse response) {
         /**
          * Fix Infinite redirection, {@link AuthenticatorAuthenticationFilter}
          * may redirect to loginUrl, if failRedirectUrl equals getLoginUrl, it

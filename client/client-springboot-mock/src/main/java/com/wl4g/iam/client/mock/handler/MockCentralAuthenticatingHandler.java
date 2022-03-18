@@ -31,10 +31,10 @@ import com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockAuthzInfo
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
-import com.wl4g.iam.core.authc.model.SessionValidateModel;
-import com.wl4g.iam.core.authc.model.ServiceTicketValidateRequest;
-import com.wl4g.iam.core.authc.model.ServiceTicketValidateModel;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
+import com.wl4g.iam.common.model.SessionValidateModel;
+import com.wl4g.iam.common.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.common.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;

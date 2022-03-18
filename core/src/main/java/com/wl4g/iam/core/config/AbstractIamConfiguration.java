@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.config;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
@@ -51,7 +51,7 @@ import com.wl4g.infra.core.web.error.AbstractErrorAutoConfiguration.ErrorHandler
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.infra.support.cache.jedis.JedisClientFactoryBean;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
-import com.wl4g.iam.core.annotation.IamController;
+import com.wl4g.iam.core.annotation.FastCasController;
 import com.wl4g.iam.core.annotation.IamFilter;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;
@@ -116,8 +116,10 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     }
 
     @Bean
-    public IamShiroFilterFactoryBean iamFilterFactoryBean(AbstractIamProperties<? extends ParamProperties> config,
-            DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
+    public IamShiroFilterFactoryBean iamFilterFactoryBean(
+            AbstractIamProperties<? extends ParamProperties> config,
+            DefaultWebSecurityManager securityManager,
+            FilterChainManager chainManager) {
         /*
          * Note: The purpose of using Iam Shiro FilterFactory Bean is to use Iam
          * Path Matching Filter Chain Resolver, while Iam Path Matching Filter
@@ -184,13 +186,15 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
      */
     @Bean
     @ConditionalOnMissingBean
-    public IamSubjectFactory iamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
+    public IamSubjectFactory iamSubjectFactory(
+            AbstractIamProperties<? extends ParamProperties> config,
             @Lazy IamShiroFilterFactoryBean factoryBean) {
         return new IamSubjectFactory(config, factoryBean);
     }
 
     @Bean
-    public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
+    public JedisIamCacheManager jedisIamCacheManager(
+            AbstractIamProperties<? extends ParamProperties> config,
             JedisClientFactoryBean factory) throws Exception {
         return new JedisIamCacheManager(config.getCache().getPrefix(), factory.getObject());
     }
@@ -201,8 +205,10 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     }
 
     @Bean
-    public JedisIamSessionDAO jedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
-            JedisIamCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
+    public JedisIamSessionDAO jedisIamSessionDAO(
+            AbstractIamProperties<? extends ParamProperties> config,
+            JedisIamCacheManager cacheManager,
+            IamUidSessionIdGenerator sessionIdGenerator) {
         JedisIamSessionDAO sessionDAO = new JedisIamSessionDAO(config, cacheManager);
         sessionDAO.setSessionIdGenerator(sessionIdGenerator);
         return sessionDAO;
@@ -273,7 +279,7 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
      * @return
      */
     protected Object newIamControllerPrefixHandlerMapping(@NotBlank String mappingPrefix) {
-        return super.newPrefixHandlerMapping(mappingPrefix, IamController.class);
+        return super.newPrefixHandlerMapping(mappingPrefix, FastCasController.class);
     }
 
     // ==============================
@@ -320,7 +326,8 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     }
 
     @Bean
-    public CipherRequestSecurityFilter cipherRequestSecurityFilter(AbstractIamProperties<? extends ParamProperties> config,
+    public CipherRequestSecurityFilter cipherRequestSecurityFilter(
+            AbstractIamProperties<? extends ParamProperties> config,
             CipherRequestWrapperFactory factory) {
         return new CipherRequestSecurityFilter(config, factory);
     }
@@ -342,7 +349,8 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     //
 
     @Bean
-    public HstsSecurityFilter hstsSecurityFilter(AbstractIamProperties<? extends ParamProperties> config,
+    public HstsSecurityFilter hstsSecurityFilter(
+            AbstractIamProperties<? extends ParamProperties> config,
             Environment environment) {
         return new HstsSecurityFilter(config, environment);
     }

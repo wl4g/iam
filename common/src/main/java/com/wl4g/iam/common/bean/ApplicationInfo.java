@@ -29,86 +29,86 @@ import java.io.Serializable;
  * @since
  */
 public class ApplicationInfo implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	/**
-	 * Application name
-	 */
-	private String appName;
+    /**
+     * Application name
+     */
+    private String appName;
 
-	/**
-	 * View intranet Basic URI.<br/>
-	 * e.g: https://portal.domain.com <br/>
-	 */
-	private String viewExtranetBaseUri;
+    /**
+     * View intranet Basic URI.<br/>
+     * e.g: https://portal.domain.com <br/>
+     */
+    private String viewExtranetBaseUri;
 
-	/**
-	 * Extranet Basic URI.<br/>
-	 * e.g: https://portal.domain.com/portal <br/>
-	 */
-	private String extranetBaseUri;
+    /**
+     * Extranet Basic URI.<br/>
+     * e.g: https://portal.domain.com/portal <br/>
+     */
+    private String extranetBaseUri;
 
-	/**
-	 * Intranet Basic URI.<br/>
-	 * e.g: http://192.168.210.101:8080/myapp <br/>
-	 */
-	private String intranetBaseUri;
+    /**
+     * Intranet Basic URI.<br/>
+     * e.g: http://192.168.210.101:8080/myapp <br/>
+     */
+    private String intranetBaseUri;
 
-	private String remark;
+    private String remark;
 
-	public ApplicationInfo() {
-		super();
-	}
+    public ApplicationInfo() {
+        super();
+    }
 
-	public ApplicationInfo(String appName, String extranetBaseUri) {
-		hasText(appName, "'applicationName' must not be empty");
-		hasText(extranetBaseUri, "'extranetBaseUri' must not be empty");
-		this.setAppName(appName);
-		this.setExtranetBaseUri(extranetBaseUri);
-	}
+    public ApplicationInfo(String appName, String extranetBaseUri) {
+        hasText(appName, "'applicationName' must not be empty");
+        hasText(extranetBaseUri, "'extranetBaseUri' must not be empty");
+        this.setAppName(appName);
+        this.setExtranetBaseUri(extranetBaseUri);
+    }
 
-	public String getAppName() {
-		return appName;
-	}
+    public String getAppName() {
+        return appName;
+    }
 
-	public void setAppName(String applicationName) {
-		this.appName = applicationName;
-	}
+    public void setAppName(String applicationName) {
+        this.appName = applicationName;
+    }
 
-	public String getViewExtranetBaseUri() {
-		return viewExtranetBaseUri;
-	}
+    public String getViewExtranetBaseUri() {
+        return viewExtranetBaseUri;
+    }
 
-	public void setViewExtranetBaseUri(String viewExtranetBaseUri) {
-		this.viewExtranetBaseUri = viewExtranetBaseUri;
-	}
+    public void setViewExtranetBaseUri(String viewExtranetBaseUri) {
+        this.viewExtranetBaseUri = viewExtranetBaseUri;
+    }
 
-	public String getExtranetBaseUri() {
-		return extranetBaseUri;
-	}
+    public String getExtranetBaseUri() {
+        return extranetBaseUri;
+    }
 
-	public void setExtranetBaseUri(String extranetBaseUri) {
-		this.extranetBaseUri = extranetBaseUri;
-	}
+    public void setExtranetBaseUri(String extranetBaseUri) {
+        this.extranetBaseUri = extranetBaseUri;
+    }
 
-	public String getIntranetBaseUri() {
-		return intranetBaseUri;
-	}
+    public String getIntranetBaseUri() {
+        return intranetBaseUri;
+    }
 
-	public void setIntranetBaseUri(String internalBaseUri) {
-		this.intranetBaseUri = internalBaseUri;
-	}
+    public void setIntranetBaseUri(String internalBaseUri) {
+        this.intranetBaseUri = internalBaseUri;
+    }
 
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return JacksonUtils.toJSONString(this);
+    }
 
-	public String getRemark() {
-		return remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

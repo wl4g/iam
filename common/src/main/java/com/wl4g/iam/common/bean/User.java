@@ -33,38 +33,38 @@ import java.util.List;
 @Getter
 @Setter
 public class User extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String userName;
-	private String nameEn;
-	private String nameZh;
-	private String password;
-	private String pubSalt; // public salt
-	private Integer userType;
-	private Integer status;
-	private String email;
-	private String phone;
-	private String wechatOpenId;
-	private String wechatUnionId;
-	private String facebookId;
-	private String googleId;
-	private String twitterId;
-	private String linkedinId;
-	private String alipayId;
-	private String githubId;
-	private String awsId;
+    private String userName;
+    private String nameEn;
+    private String nameZh;
+    private String password;
+    private String pubSalt; // public salt
+    private Integer userType;
+    private Integer status;
+    private String email;
+    private String phone;
+    private String wechatOpenId;
+    private String wechatUnionId;
+    private String facebookId;
+    private String googleId;
+    private String twitterId;
+    private String linkedinId;
+    private String alipayId;
+    private String githubId;
+    private String awsId;
 
-	// --- Temporary. ---
+    // --- Temporary. ---
 
-	private List<Long> roleIds;
-	private String roleStrs;
-	private String groupNameStrs;
+    private List<Long> roleIds;
+    private String roleStrs;
+    private String groupNameStrs;
 
-	public User() {
-	}
+    public User() {
+    }
 
-	public User(String userName) {
-		this.userName = userName;
-	}
+    public User(String userName) {
+        this.userName = userName;
+    }
 
 }

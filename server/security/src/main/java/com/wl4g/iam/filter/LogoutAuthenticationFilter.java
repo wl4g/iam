@@ -49,7 +49,10 @@ public class LogoutAuthenticationFilter extends AbstractServerIamAuthenticationF
     final public static String NAME = "logout";
 
     @Override
-    protected LogoutAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected LogoutAuthenticationToken doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         // MARK1: If the current status is unauthenticated, the principle cannot
         // be obtained if the logout is ignored.

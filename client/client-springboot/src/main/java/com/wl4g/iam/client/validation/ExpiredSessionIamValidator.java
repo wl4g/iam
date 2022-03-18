@@ -21,11 +21,11 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.common.web.rest.RespBase.RetCode;
 import com.wl4g.iam.client.config.IamClientProperties;
-import com.wl4g.iam.core.authc.model.SessionValidateModel;
+import com.wl4g.iam.common.model.SessionValidateModel;
 import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 import com.wl4g.iam.core.exception.SessionValidateException;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SESSION_VALIDATE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SESSION_VALIDATE;
 import static java.lang.String.format;
 
 /**

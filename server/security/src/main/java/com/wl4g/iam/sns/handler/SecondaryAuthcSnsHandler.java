@@ -29,10 +29,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.Assert;
 
 import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_SNS_BASE;
-import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel.Status.IllegalAuthorizer;
-import static com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel.Status.InvalidAuthorizer;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_AFTER_CALLBACK_AGENT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_SNS_BASE;
+import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.IllegalAuthorizer;
+import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
 import com.wl4g.infra.common.web.WebUtils2;
@@ -43,7 +43,7 @@ import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.core.authc.SecondaryAuthenticationException;
-import com.wl4g.iam.core.authc.model.SecondaryAuthcValidateModel;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
@@ -60,151 +60,164 @@ import com.wl4g.iam.sns.support.Oauth2OpenId;
  */
 public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 
-	/**
-	 * Secondary authentication cache name
-	 */
-	final public static String SECOND_AUTHC_CACHE = "second_auth_";
+    /**
+     * Secondary authentication cache name
+     */
+    final public static String SECOND_AUTHC_CACHE = "second_auth_";
 
-	public SecondaryAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public SecondaryAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+            ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
-		// Connecting
-		String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+    @Override
+    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+        // Connecting
+        String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
 
-		// Save connect parameters
-		saveOauth2ConnectParameters(provider, state, connectParams);
+        // Save connect parameters
+        saveOauth2ConnectParameters(provider, state, connectParams);
 
-		return REDIRECT_PREFIX + authorizingUrl;
-	}
+        return REDIRECT_PREFIX + authorizingUrl;
+    }
 
-	@Override
-	protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
-		super.checkConnectParameters(provider, state, connectParams);
+    @Override
+    protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
+        super.checkConnectParameters(provider, state, connectParams);
 
-		// Check connect parameters
-		Assert.notEmpty(connectParams, "Connect parameters must not be empty");
+        // Check connect parameters
+        Assert.notEmpty(connectParams, "Connect parameters must not be empty");
 
-		// Check 'application'
-		Assert.hasText(connectParams.get(config.getParam().getApplication()),
-				String.format("'%s' must not be empty", config.getParam().getApplication()));
+        // Check 'application'
+        Assert.hasText(connectParams.get(config.getParam().getApplication()),
+                String.format("'%s' must not be empty", config.getParam().getApplication()));
 
-		// Check 'authorizers'
-		Assert.hasText(connectParams.get(config.getParam().getAuthorizers()),
-				String.format("'%s' must not be empty", config.getParam().getAuthorizers()));
+        // Check 'authorizers'
+        Assert.hasText(connectParams.get(config.getParam().getAuthorizers()),
+                String.format("'%s' must not be empty", config.getParam().getAuthorizers()));
 
-		// Check 'agent'
-		String agentKey = config.getParam().getAgent();
-		String agentValue = connectParams.get(agentKey);
-		Assert.hasText(agentValue, String.format("'%s' must not be empty", agentKey));
-		Assert.state(WebUtils2.isTrue(agentValue), String.format("Parameter %s current supports only enabled mode", agentKey));
+        // Check 'agent'
+        String agentKey = config.getParam().getAgent();
+        String agentValue = connectParams.get(agentKey);
+        Assert.hasText(agentValue, String.format("'%s' must not be empty", agentKey));
+        Assert.state(WebUtils2.isTrue(agentValue), String.format("Parameter %s current supports only enabled mode", agentKey));
 
-		// Check 'funcId'
-		Assert.hasText(connectParams.get(config.getParam().getFuncId()),
-				String.format("'%s' must not be empty", config.getParam().getFuncId()));
-	}
+        // Check 'funcId'
+        Assert.hasText(connectParams.get(config.getParam().getFuncId()),
+                String.format("'%s' must not be empty", config.getParam().getFuncId()));
+    }
 
-	@Override
-	protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
-		// Check 'state'
-		Assert.notNull(connectParams, String.format("State '%s' is invalid or expired", state));
+    @Override
+    protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
+        // Check 'state'
+        Assert.notNull(connectParams, String.format("State '%s' is invalid or expired", state));
 
-		super.checkCallbackParameters(provider, state, code, connectParams);
-	}
+        super.checkCallbackParameters(provider, state, code, connectParams);
+    }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	protected String doHandleOAuth2Callback(String provider, String code, OAuth2ApiBinding connect,
-			Map<String, String> connectParams, HttpServletRequest request) {
-		// Got required parameters
-		String sourceApp = connectParams.get(config.getParam().getApplication());
-		// Authorizers
-		String authorizers = connectParams.get(config.getParam().getAuthorizers());
-		// Access token
-		Oauth2AccessToken ast = connect.getAccessToken(code);
-		// User openId
-		Oauth2OpenId openId = connect.getUserOpenId(ast);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    protected String doHandleOAuth2Callback(
+            String provider,
+            String code,
+            OAuth2ApiBinding connect,
+            Map<String, String> connectParams,
+            HttpServletRequest request) {
+        // Got required parameters
+        String sourceApp = connectParams.get(config.getParam().getApplication());
+        // Authorizers
+        String authorizers = connectParams.get(config.getParam().getAuthorizers());
+        // Access token
+        Oauth2AccessToken ast = connect.getAccessToken(code);
+        // User openId
+        Oauth2OpenId openId = connect.getUserOpenId(ast);
 
-		// Account by openId
-		Parameter parameter = new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId());
-		IamPrincipal account = configurer.getIamUserDetail(parameter);
+        // Account by openId
+        Parameter parameter = new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId());
+        IamPrincipal account = configurer.getIamUserDetail(parameter);
 
-		// Second authentication assertion
-		SecondaryAuthcValidateModel model = new SecondaryAuthcValidateModel(sourceApp, provider,
-				connectParams.get(config.getParam().getFuncId()));
-		try {
-			// Assertion
-			assertionSecondAuthentication(provider, openId, account, authorizers, connectParams);
-			model.setPrincipal(account.getPrincipal());
-			model.setValidFromDate(new Date());
-		} catch (SecondaryAuthenticationException e) {
-			log.error("Secondary authentication fail", e);
-			model.setStatus(e.getStatus());
-			model.setErrdesc(e.getMessage());
-		}
+        // Second authentication assertion
+        SecondaryAuthcValidateModel model = new SecondaryAuthcValidateModel(sourceApp, provider,
+                connectParams.get(config.getParam().getFuncId()));
+        try {
+            // Assertion
+            assertionSecondAuthentication(provider, openId, account, authorizers, connectParams);
+            model.setPrincipal(account.getPrincipal());
+            model.setValidFromDate(new Date());
+        } catch (SecondaryAuthenticationException e) {
+            log.error("Secondary authentication fail", e);
+            model.setStatus(e.getStatus());
+            model.setErrdesc(e.getMessage());
+        }
 
-		/*
-		 * Save authenticated to cache.
-		 * See:xx.iam.handler.DefaultAuthenticationHandler#secondValidate()
-		 */
-		String secondAuthCode = generateSecondaryAuthcCode(sourceApp);
-		CacheKey ekey = new CacheKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
-		cacheManager.getIamCache(SECOND_AUTHC_CACHE).put(ekey, model);
-		log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondaryAuthCode(), secondAuthCode,
-				model);
+        /*
+         * Save authenticated to cache.
+         * See:xx.iam.handler.DefaultAuthenticationHandler#secondValidate()
+         */
+        String secondAuthCode = generateSecondaryAuthcCode(sourceApp);
+        CacheKey ekey = new CacheKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
+        cacheManager.getIamCache(SECOND_AUTHC_CACHE).put(ekey, model);
+        log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondaryAuthCode(), secondAuthCode,
+                model);
 
-		return secondAuthCode;
-	}
+        return secondAuthCode;
+    }
 
-	@Override
-	protected String postCallbackResponse(String provider, String secondAuthCode, Map<String, String> connectParams,
-			HttpServletRequest request) {
-		return secondAuthCode;
-	}
+    @Override
+    protected String postCallbackResponse(
+            String provider,
+            String secondAuthCode,
+            Map<String, String> connectParams,
+            HttpServletRequest request) {
+        return secondAuthCode;
+    }
 
-	@Override
-	protected String decorateCallbackRefreshUrl(String secondAuthCode, Map<String, String> connectParams,
-			HttpServletRequest request) {
-		StringBuffer url = new StringBuffer(WebUtils2.getRFCBaseURI(request, true));
-		url.append(URI_S_SNS_BASE).append("/");
-		url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
-		url.append(config.getParam().getSecondaryAuthCode()).append("=");
-		url.append(secondAuthCode);
-		return url.toString();
-	}
+    @Override
+    protected String decorateCallbackRefreshUrl(
+            String secondAuthCode,
+            Map<String, String> connectParams,
+            HttpServletRequest request) {
+        StringBuffer url = new StringBuffer(WebUtils2.getRFCBaseURI(request, true));
+        url.append(URI_S_SNS_BASE).append("/");
+        url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
+        url.append(config.getParam().getSecondaryAuthCode()).append("=");
+        url.append(secondAuthCode);
+        return url.toString();
+    }
 
-	@Override
-	public Which which() {
-		return Which.SECOND_AUTH;
-	}
+    @Override
+    public Which which() {
+        return Which.SECOND_AUTH;
+    }
 
-	private void assertionSecondAuthentication(String provider, Oauth2OpenId openId, IamPrincipal account, String authorizers,
-			Map<String, String> connectParams) {
-		// Check authorizer effectiveness
-		if (isNull(account) || isBlank(account.getPrincipal())) {
-			throw new SecondaryAuthenticationException(InvalidAuthorizer, format("Invalid authorizer, openId info[%s]", openId));
-		}
-		// Check authorizer matches
-		else {
-			List<String> authorizerList = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(authorizers);
-			if (!authorizerList.contains(account.getPrincipal())) {
-				throw new SecondaryAuthenticationException(IllegalAuthorizer, String.format(
-						"Illegal authorizer, Please use [%s] account authorization bound by user [%s]", provider, authorizers));
-			}
-		}
-	}
+    private void assertionSecondAuthentication(
+            String provider,
+            Oauth2OpenId openId,
+            IamPrincipal account,
+            String authorizers,
+            Map<String, String> connectParams) {
+        // Check authorizer effectiveness
+        if (isNull(account) || isBlank(account.getPrincipal())) {
+            throw new SecondaryAuthenticationException(InvalidAuthorizer, format("Invalid authorizer, openId info[%s]", openId));
+        }
+        // Check authorizer matches
+        else {
+            List<String> authorizerList = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(authorizers);
+            if (!authorizerList.contains(account.getPrincipal())) {
+                throw new SecondaryAuthenticationException(IllegalAuthorizer, String.format(
+                        "Illegal authorizer, Please use [%s] account authorization bound by user [%s]", provider, authorizers));
+            }
+        }
+    }
 
-	/**
-	 * Generate second authentication code
-	 *
-	 * @param application
-	 * @return
-	 */
-	private String generateSecondaryAuthcCode(String application) {
-		return "sec_".concat(RandomStringUtils.randomAlphanumeric(32));
-	}
+    /**
+     * Generate second authentication code
+     *
+     * @param application
+     * @return
+     */
+    private String generateSecondaryAuthcCode(String application) {
+        return "sec_".concat(RandomStringUtils.randomAlphanumeric(32));
+    }
 
 }

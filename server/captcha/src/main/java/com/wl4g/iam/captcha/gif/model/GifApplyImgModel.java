@@ -17,7 +17,7 @@ package com.wl4g.iam.captcha.gif.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.iam.verification.model.GenericApplyResult;
+import com.wl4g.iam.verify.model.GenericApplyModel;
 
 /**
  * Apply GIF image CAPTCHA model
@@ -26,7 +26,7 @@ import com.wl4g.iam.verification.model.GenericApplyResult;
  * @version v1.0 2019年9月4日
  * @since
  */
-public class GifApplyImgModel extends GenericApplyResult {
+public class GifApplyImgModel extends GenericApplyModel {
 	private static final long serialVersionUID = 7017420698604587374L;
 
 	public GifApplyImgModel() {

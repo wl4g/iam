@@ -21,9 +21,9 @@ package com.wl4g.iam.core.rpc;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
+import static com.wl4g.iam.common.constant.RpcContextServerIAMConstants.CURRENT_IAM_PRINCIPAL;
+import static com.wl4g.iam.common.constant.RpcContextServerIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.RpcContextServerIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

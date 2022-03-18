@@ -44,65 +44,65 @@ import com.wl4g.iam.service.UserService;
 @RequestMapping("/user")
 public class UserController extends BaseController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private UserService userService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private IamSessionDAO sessionDAO;
+    @Autowired
+    private IamSessionDAO sessionDAO;
 
-	@Autowired
-	private CredentialsSecurer securer;
+    @Autowired
+    private CredentialsSecurer securer;
 
-	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(userService.list(pm, userName, displayName, roleId));
-		return resp;
-	}
+    @RequestMapping(value = "/list")
+    @RequiresPermissions(value = { "iam:user" })
+    public RespBase<?> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(userService.list(pm, userName, displayName, roleId));
+        return resp;
+    }
 
-	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> detail(Long userId) {
-		Assert.notNull(userId, "userId is null");
-		RespBase<Object> resp = RespBase.create();
-		User detail = userService.detail(userId);
-		resp.forMap().put("data", detail);
-		return resp;
-	}
+    @RequestMapping(value = "/detail")
+    @RequiresPermissions(value = { "iam:user" })
+    public RespBase<?> detail(Long userId) {
+        Assert.notNull(userId, "userId is null");
+        RespBase<Object> resp = RespBase.create();
+        User detail = userService.detail(userId);
+        resp.forMap().put("data", detail);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> del(Long userId) {
-		Assert.notNull(userId, "userId is null");
-		RespBase<Object> resp = RespBase.create();
-		userService.del(userId);
-		return resp;
-	}
+    @RequestMapping(value = "/del")
+    @RequiresPermissions(value = { "iam:user" })
+    public RespBase<?> del(Long userId) {
+        Assert.notNull(userId, "userId is null");
+        RespBase<Object> resp = RespBase.create();
+        userService.del(userId);
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "iam:user" })
-	public RespBase<?> save(@RequestBody User user) {
-		Assert.notNull(user, "user is null");
-		RespBase<Object> resp = RespBase.create();
+    @RequestMapping(value = "/save")
+    @RequiresPermissions(value = { "iam:user" })
+    public RespBase<?> save(@RequestBody User user) {
+        Assert.notNull(user, "user is null");
+        RespBase<Object> resp = RespBase.create();
 
-		if (isNotBlank(user.getPassword())) { // update-passwd
-			// TODO Dynamic choose algorithm!!! Default use RSA
-			CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
-			CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
-			String sign = securer.signature(crToken, publicSalt);
-			user.setPassword(sign); // ciphertext
-			user.setPubSalt(publicSalt.toHex());
-		}
+        if (isNotBlank(user.getPassword())) { // update-passwd
+            // TODO Dynamic choose algorithm!!! Default use RSA
+            CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
+            CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
+            String sign = securer.signature(crToken, publicSalt);
+            user.setPassword(sign); // ciphertext
+            user.setPubSalt(publicSalt.toHex());
+        }
 
-		// Save IAM session.
-		userService.save(user);
+        // Save IAM session.
+        userService.save(user);
 
-		// Update the password, need to logout the user
-		sessionDAO.removeAccessSession(user.getUserName());
+        // Update the password, need to logout the user
+        sessionDAO.removeAccessSession(user.getUserName());
 
-		return resp;
-	}
+        return resp;
+    }
 
 }

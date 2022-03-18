@@ -1,13 +1,14 @@
 # Application Auto Configuration.
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.wl4g.iam.config.IamConfigurableAutoConfiguration,\
 com.wl4g.iam.config.IamAutoConfiguration,\
-com.wl4g.iam.config.SnsAutoConfiguration,\
-com.wl4g.iam.config.LoginAutoConfiguration,\
-com.wl4g.iam.config.VerifyAutoConfiguration,\
-com.wl4g.iam.config.SimpleRcmAutoConfiguration,\
-com.wl4g.iam.config.JssdkWebappAutoConfiguration,\
+com.wl4g.iam.config.IamConfigurableAutoConfiguration,\
 com.wl4g.iam.config.IamServerApiV2AutoConfiguration,\
+com.wl4g.iam.config.JssdkWebappAutoConfiguration,\
+com.wl4g.iam.config.LoginAutoConfiguration,\
+com.wl4g.iam.config.OidcAutoConfiguration,\
+com.wl4g.iam.config.SimpleRiskAutoConfiguration,\
+com.wl4g.iam.config.SnsAutoConfiguration,\
+com.wl4g.iam.config.VerifyAutoConfiguration,\
 com.wl4g.iam.core.config.CorsAutoConfiguration,\
 com.wl4g.iam.core.config.XsrfAutoConfiguration,\
 com.wl4g.iam.core.config.XssAutoConfiguration,\

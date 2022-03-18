@@ -45,45 +45,45 @@ import feign.hystrix.FallbackFactory;
  */
 @Component
 public class ContactServiceFallbackFactory implements FallbackFactory<ContactService> {
-	protected final SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-	@Override
-	public ContactService create(Throwable cause) {
-		return new ContactService() {
+    @Override
+    public ContactService create(Throwable cause) {
+        return new ContactService() {
 
-			@Override
-			public void save(Contact contact) {
-				log.warn("Cannot save, fallback handling...", cause);
-			}
+            @Override
+            public void save(Contact contact) {
+                log.warn("Cannot save, fallback handling...", cause);
+            }
 
-			@Override
-			public void notification(@NotBlank NotificationParameter parameter) {
-				log.warn(format("Cannot notification, fallback handling... - {}", parameter), cause);
-			}
+            @Override
+            public void notification(@NotBlank NotificationParameter parameter) {
+                log.warn(format("Cannot notification, fallback handling... - {}", parameter), cause);
+            }
 
-			@Override
-			public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
-				log.warn(format("Cannot list, fallback handling... - {}, {}", pm, name), cause);
-				return null;
-			}
+            @Override
+            public PageHolder<Contact> list(PageHolder<Contact> pm, String name) {
+                log.warn(format("Cannot list, fallback handling... - {}, {}", pm, name), cause);
+                return null;
+            }
 
-			@Override
-			public Contact detail(Long id) {
-				log.warn(format("Cannot detail, fallback handling... - {}", id), cause);
-				return null;
-			}
+            @Override
+            public Contact detail(Long id) {
+                log.warn(format("Cannot detail, fallback handling... - {}", id), cause);
+                return null;
+            }
 
-			@Override
-			public void del(Long id) {
-				log.warn(format("Cannot del, fallback handling... - {}", id), cause);
-			}
+            @Override
+            public void del(Long id) {
+                log.warn(format("Cannot del, fallback handling... - {}", id), cause);
+            }
 
-			@Override
-			public List<Contact> getContactByGroupIds(List<Long> groupIds) {
-				log.warn(format("Cannot findContactByGroupIds, fallback handling... - {}", groupIds), cause);
-				return null;
-			}
-		};
-	}
+            @Override
+            public List<Contact> getContactByGroupIds(List<Long> groupIds) {
+                log.warn(format("Cannot findContactByGroupIds, fallback handling... - {}", groupIds), cause);
+                return null;
+            }
+        };
+    }
 
 }

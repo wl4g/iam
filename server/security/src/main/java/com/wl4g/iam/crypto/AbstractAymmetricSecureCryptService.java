@@ -20,7 +20,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_CRYPTO;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_CRYPTO;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.ThreadLocalRandom.current;

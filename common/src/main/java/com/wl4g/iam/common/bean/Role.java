@@ -21,119 +21,119 @@ import java.util.List;
 import java.util.Objects;
 
 public class Role extends BaseBean {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String roleCode;
+    private String roleCode;
 
-	private String nameZh;
+    private String nameZh;
 
-	private Integer type;
+    private Integer type;
 
-	private Integer status;
+    private Integer status;
 
-	private String groupDisplayName;
+    private String groupDisplayName;
 
-	private Long organizationId;
+    private Long organizationId;
 
-	private String menusStr;
+    private String menusStr;
 
-	private List<Long> menuIds;
-	private List<Long> groupIds;
+    private List<Long> menuIds;
+    private List<Long> groupIds;
 
-	private Integer userCount;
+    private Integer userCount;
 
-	public String getRoleCode() {
-		return roleCode;
-	}
+    public String getRoleCode() {
+        return roleCode;
+    }
 
-	public void setRoleCode(String roleCode) {
-		this.roleCode = roleCode;
-	}
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
 
-	public String getNameZh() {
-		return nameZh;
-	}
+    public String getNameZh() {
+        return nameZh;
+    }
 
-	public void setNameZh(String nameZh) {
-		this.nameZh = nameZh == null ? null : nameZh.trim();
-	}
+    public void setNameZh(String nameZh) {
+        this.nameZh = nameZh == null ? null : nameZh.trim();
+    }
 
-	public Integer getType() {
-		return type;
-	}
+    public Integer getType() {
+        return type;
+    }
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Integer getStatus() {
+        return status;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-	public List<Long> getMenuIds() {
-		return menuIds;
-	}
+    public List<Long> getMenuIds() {
+        return menuIds;
+    }
 
-	public void setMenuIds(List<Long> menuIds) {
-		this.menuIds = menuIds;
-	}
+    public void setMenuIds(List<Long> menuIds) {
+        this.menuIds = menuIds;
+    }
 
-	public String getGroupDisplayName() {
-		return groupDisplayName;
-	}
+    public String getGroupDisplayName() {
+        return groupDisplayName;
+    }
 
-	public void setGroupDisplayName(String groupDisplayName) {
-		this.groupDisplayName = groupDisplayName;
-	}
+    public void setGroupDisplayName(String groupDisplayName) {
+        this.groupDisplayName = groupDisplayName;
+    }
 
-	public List<Long> getGroupIds() {
-		return groupIds;
-	}
+    public List<Long> getGroupIds() {
+        return groupIds;
+    }
 
-	public void setGroupIds(List<Long> groupIds) {
-		this.groupIds = groupIds;
-	}
+    public void setGroupIds(List<Long> groupIds) {
+        this.groupIds = groupIds;
+    }
 
-	public Long getOrganizationId() {
-		return organizationId;
-	}
+    public Long getOrganizationId() {
+        return organizationId;
+    }
 
-	public void setOrganizationId(Long organizationId) {
-		this.organizationId = organizationId;
-	}
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
+    }
 
-	public String getMenusStr() {
-		return menusStr;
-	}
+    public String getMenusStr() {
+        return menusStr;
+    }
 
-	public void setMenusStr(String menusStr) {
-		this.menusStr = menusStr;
-	}
+    public void setMenusStr(String menusStr) {
+        this.menusStr = menusStr;
+    }
 
-	public Integer getUserCount() {
-		return userCount;
-	}
+    public Integer getUserCount() {
+        return userCount;
+    }
 
-	public void setUserCount(Integer userCount) {
-		this.userCount = userCount;
-	}
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Role role = (Role) o;
-		return Objects.equals(getId(), role.getId());
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Role role = (Role) o;
+        return Objects.equals(getId(), role.getId());
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

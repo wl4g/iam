@@ -43,60 +43,60 @@ import feign.hystrix.FallbackFactory;
  */
 @Component
 public class ContactDaoFallbackFactory implements FallbackFactory<ContactDao> {
-	protected final SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-	@Override
-	public ContactDao create(Throwable cause) {
-		return new ContactDao() {
+    @Override
+    public ContactDao create(Throwable cause) {
+        return new ContactDao() {
 
-			@Override
-			public int deleteByPrimaryKey(Long id) {
-				log.warn(format("Cannot deleteByPrimaryKey, fallback handling... - {}", id), cause);
-				return 0;
-			}
+            @Override
+            public int deleteByPrimaryKey(Long id) {
+                log.warn(format("Cannot deleteByPrimaryKey, fallback handling... - {}", id), cause);
+                return 0;
+            }
 
-			@Override
-			public int insert(Contact record) {
-				log.warn(format("Cannot insert, fallback handling... - {}", record), cause);
-				return 0;
-			}
+            @Override
+            public int insert(Contact record) {
+                log.warn(format("Cannot insert, fallback handling... - {}", record), cause);
+                return 0;
+            }
 
-			@Override
-			public int insertSelective(Contact record) {
-				log.warn(format("Cannot insertSelective, fallback handling... - {}", record), cause);
-				return 0;
-			}
+            @Override
+            public int insertSelective(Contact record) {
+                log.warn(format("Cannot insertSelective, fallback handling... - {}", record), cause);
+                return 0;
+            }
 
-			@Override
-			public Contact selectByPrimaryKey(Long id) {
-				log.warn(format("Cannot selectByPrimaryKey, fallback handling... - {}", id), cause);
-				return null;
-			}
+            @Override
+            public Contact selectByPrimaryKey(Long id) {
+                log.warn(format("Cannot selectByPrimaryKey, fallback handling... - {}", id), cause);
+                return null;
+            }
 
-			@Override
-			public int updateByPrimaryKeySelective(Contact record) {
-				log.warn(format("Cannot updateByPrimaryKeySelective, fallback handling... - {}", record), cause);
-				return 0;
-			}
+            @Override
+            public int updateByPrimaryKeySelective(Contact record) {
+                log.warn(format("Cannot updateByPrimaryKeySelective, fallback handling... - {}", record), cause);
+                return 0;
+            }
 
-			@Override
-			public int updateByPrimaryKey(Contact record) {
-				log.warn(format("Cannot updateByPrimaryKey, fallback handling... - {}", record), cause);
-				return 0;
-			}
+            @Override
+            public int updateByPrimaryKey(Contact record) {
+                log.warn(format("Cannot updateByPrimaryKey, fallback handling... - {}", record), cause);
+                return 0;
+            }
 
-			@Override
-			public List<Contact> list(String name) {
-				log.warn(format("Cannot list, fallback handling... - {}", name), cause);
-				return emptyList();
-			}
+            @Override
+            public List<Contact> list(String name) {
+                log.warn(format("Cannot list, fallback handling... - {}", name), cause);
+                return emptyList();
+            }
 
-			@Override
-			public List<Contact> getContactByGroupIds(List<Long> groupIds) {
-				log.warn(format("Cannot getContactByGroupIds, fallback handling... - {}", groupIds), cause);
-				return null;
-			}
-		};
-	}
+            @Override
+            public List<Contact> getContactByGroupIds(List<Long> groupIds) {
+                log.warn(format("Cannot getContactByGroupIds, fallback handling... - {}", groupIds), cause);
+                return null;
+            }
+        };
+    }
 
 }

@@ -38,28 +38,28 @@ import com.wl4g.iam.common.bean.RoleUser;
 @RequestMapping("/roleUser-dao")
 public interface RoleUserDao {
 
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody RoleUser record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody RoleUser record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody RoleUser record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody RoleUser record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	RoleUser selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    RoleUser selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody RoleUser record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody RoleUser record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody RoleUser record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody RoleUser record);
 
-	@RequestMapping(method = POST, value = "/deleteByUserId")
-	int deleteByUserId(@RequestParam("userId") Long userId);
+    @RequestMapping(method = POST, value = "/deleteByUserId")
+    int deleteByUserId(@RequestParam("userId") Long userId);
 
-	@RequestMapping(method = GET, value = "/selectRoleIdByUserId")
-	List<Long> selectRoleIdByUserId(@RequestParam("userID") Long userID);
+    @RequestMapping(method = GET, value = "/selectRoleIdByUserId")
+    List<Long> selectRoleIdByUserId(@RequestParam("userID") Long userID);
 
 }

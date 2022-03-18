@@ -56,163 +56,163 @@ import com.wl4g.iam.service.UserService;
 // @org.springframework.web.bind.annotation.RestController
 public class UserServiceImpl implements UserService {
 
-	private @Autowired UserDao userDao;
-	private @Autowired MenuDao menuDao;
-	private @Autowired RoleDao roleDao;
-	private @Autowired OrganizationDao groupDao;
-	private @Autowired RoleUserDao roleUserDao;
+    private @Autowired UserDao userDao;
+    private @Autowired MenuDao menuDao;
+    private @Autowired RoleDao roleDao;
+    private @Autowired OrganizationDao groupDao;
+    private @Autowired RoleUserDao roleUserDao;
 
-	@Override
-	public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
-		pm.useCount().bind();
+    @Override
+    public PageHolder<User> list(PageHolder<User> pm, String userName, String displayName, Long roleId) {
+        pm.useCount().bind();
 
-		// Current login principal.
-		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
-		String principalName = RpcContextIamSecurityUtils.currentIamPrincipalName();
+        // Current login principal.
+        String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+        String principalName = RpcContextIamSecurityUtils.currentIamPrincipalName();
 
-		List<User> list = null;
-		if (DEFAULT_SUPER_USER.equals(principalName)) {
-			list = userDao.list(null, userName, displayName, roleId);
-		} else {
-			list = userDao.list(parseLongOrNull(principalId), userName, displayName, roleId);
-		}
-		for (User user : list) {
-			List<Organization> groups = groupDao.selectByUserId(user.getId());
-			user.setGroupNameStrs(groups2Str(groups));
-			List<Role> roles = roleDao.selectByUserId(user.getId());
-			user.setRoleStrs(roles2Str(roles));
-		}
-		pm.setRecords(list);
-		return pm;
-	}
+        List<User> list = null;
+        if (DEFAULT_SUPER_USER.equals(principalName)) {
+            list = userDao.list(null, userName, displayName, roleId);
+        } else {
+            list = userDao.list(parseLongOrNull(principalId), userName, displayName, roleId);
+        }
+        for (User user : list) {
+            List<Organization> groups = groupDao.selectByUserId(user.getId());
+            user.setGroupNameStrs(groups2Str(groups));
+            List<Role> roles = roleDao.selectByUserId(user.getId());
+            user.setRoleStrs(roles2Str(roles));
+        }
+        pm.setRecords(list);
+        return pm;
+    }
 
-	@Override
-	public void save(User user) {
-		if (!isNull(user.getId())) {
-			update(user);
-		} else {
-			insert(user);
-		}
-	}
+    @Override
+    public void save(User user) {
+        if (!isNull(user.getId())) {
+            update(user);
+        } else {
+            insert(user);
+        }
+    }
 
-	private void insert(User user) {
-		User user1 = userDao.selectByUserName(user.getUserName());
-		Assert.isTrue(user1 == null, user.getUserName() + " is exist");
-		user.preInsert();
-		user.setId(SnowflakeIdGenerator.getDefault().nextId());
-		userDao.insertSelective(user);
-		List<Long> roleIds = user.getRoleIds();
-		for (Long roleId : roleIds) {
-			RoleUser roleUser = new RoleUser();
-			roleUser.preInsert();
-			roleUser.setUserId(user.getId());
-			roleUser.setRoleId(roleId);
-			roleUserDao.insertSelective(roleUser);
-		}
-	}
+    private void insert(User user) {
+        User user1 = userDao.selectByUserName(user.getUserName());
+        Assert.isTrue(user1 == null, user.getUserName() + " is exist");
+        user.preInsert();
+        user.setId(SnowflakeIdGenerator.getDefault().nextId());
+        userDao.insertSelective(user);
+        List<Long> roleIds = user.getRoleIds();
+        for (Long roleId : roleIds) {
+            RoleUser roleUser = new RoleUser();
+            roleUser.preInsert();
+            roleUser.setUserId(user.getId());
+            roleUser.setRoleId(roleId);
+            roleUserDao.insertSelective(roleUser);
+        }
+    }
 
-	private void update(User user) {
-		user.preUpdate();
-		userDao.updateByPrimaryKeySelective(user);
-		roleUserDao.deleteByUserId(user.getId());
-		for (Long roleId : safeList(user.getRoleIds())) {
-			RoleUser roleUser = new RoleUser();
-			roleUser.preInsert();
-			roleUser.setUserId(user.getId());
-			roleUser.setRoleId(roleId);
-			roleUserDao.insertSelective(roleUser);
-		}
-	}
+    private void update(User user) {
+        user.preUpdate();
+        userDao.updateByPrimaryKeySelective(user);
+        roleUserDao.deleteByUserId(user.getId());
+        for (Long roleId : safeList(user.getRoleIds())) {
+            RoleUser roleUser = new RoleUser();
+            roleUser.preInsert();
+            roleUser.setUserId(user.getId());
+            roleUser.setRoleId(roleId);
+            roleUserDao.insertSelective(roleUser);
+        }
+    }
 
-	@Override
-	public void del(Long userId) {
-		User user = new User();
-		user.setId(userId);
-		user.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		userDao.updateByPrimaryKeySelective(user);
-	}
+    @Override
+    public void del(Long userId) {
+        User user = new User();
+        user.setId(userId);
+        user.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        userDao.updateByPrimaryKeySelective(user);
+    }
 
-	@Override
-	public User detail(Long userId) {
-		User user = userDao.selectByPrimaryKey(userId);
-		if (user == null) {
-			return null;
-		}
-		List<Long> roleIds = roleUserDao.selectRoleIdByUserId(userId);
-		user.setRoleIds(roleIds);
-		return user;
-	}
+    @Override
+    public User detail(Long userId) {
+        User user = userDao.selectByPrimaryKey(userId);
+        if (user == null) {
+            return null;
+        }
+        List<Long> roleIds = roleUserDao.selectRoleIdByUserId(userId);
+        user.setRoleIds(roleIds);
+        return user;
+    }
 
-	@Override
-	public User findSimpleUser(Long id) {
-		return userDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public User findSimpleUser(Long id) {
+        return userDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public Set<Menu> getMenusByUser(Long userId) {
-		List<Menu> menus = menuDao.selectByUserId(userId);
-		Set<Menu> set = new HashSet<>(menus);
-		for (Menu menu : menus) {
-			getMenusByParentId(menu.getId(), set);
-		}
-		return set;
-	}
+    @Override
+    public Set<Menu> getMenusByUser(Long userId) {
+        List<Menu> menus = menuDao.selectByUserId(userId);
+        Set<Menu> set = new HashSet<>(menus);
+        for (Menu menu : menus) {
+            getMenusByParentId(menu.getId(), set);
+        }
+        return set;
+    }
 
-	@Override
-	public User findByUserName(String userName) {
-		return userDao.selectByUserName(userName);
-	}
+    @Override
+    public User findByUserName(String userName) {
+        return userDao.selectByUserName(userName);
+    }
 
-	@Override
-	public User findByUnionIdOrOpenId(String unionId, String openId) {
-		return userDao.selectByUnionIdOrOpenId(unionId, openId);
-	}
+    @Override
+    public User findByUnionIdOrOpenId(String unionId, String openId) {
+        return userDao.selectByUnionIdOrOpenId(unionId, openId);
+    }
 
-	private void getMenusByParentId(Long parentId, Set<Menu> menuSet) {
-		// TODO use cache
-		List<Menu> menus = menuDao.selectByParentId(parentId);
-		if (!CollectionUtils.isEmpty(menus)) {
-			if (menuSet != null) {
-				menuSet.addAll(menus);
-			}
-			for (Menu menu : menus) {
-				getMenusByParentId(menu.getId(), menuSet);
-			}
-		}
-	}
+    private void getMenusByParentId(Long parentId, Set<Menu> menuSet) {
+        // TODO use cache
+        List<Menu> menus = menuDao.selectByParentId(parentId);
+        if (!CollectionUtils.isEmpty(menus)) {
+            if (menuSet != null) {
+                menuSet.addAll(menus);
+            }
+            for (Menu menu : menus) {
+                getMenusByParentId(menu.getId(), menuSet);
+            }
+        }
+    }
 
-	private String roles2Str(List<Role> roles) {
-		if (CollectionUtils.isEmpty(roles)) {
-			return "";
-		}
-		StringBuilder stringBuilder = new StringBuilder();
+    private String roles2Str(List<Role> roles) {
+        if (CollectionUtils.isEmpty(roles)) {
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
 
-		for (int i = 0; i < roles.size(); i++) {
-			String displayName = roles.get(i).getNameZh();
-			if (i == roles.size() - 1) {
-				stringBuilder.append(displayName);
-			} else {
-				stringBuilder.append(displayName).append(",");
-			}
-		}
-		return stringBuilder.toString();
-	}
+        for (int i = 0; i < roles.size(); i++) {
+            String displayName = roles.get(i).getNameZh();
+            if (i == roles.size() - 1) {
+                stringBuilder.append(displayName);
+            } else {
+                stringBuilder.append(displayName).append(",");
+            }
+        }
+        return stringBuilder.toString();
+    }
 
-	private String groups2Str(List<Organization> groups) {
-		if (CollectionUtils.isEmpty(groups)) {
-			return "";
-		}
-		StringBuilder stringBuilder = new StringBuilder();
+    private String groups2Str(List<Organization> groups) {
+        if (CollectionUtils.isEmpty(groups)) {
+            return "";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
 
-		for (int i = 0; i < groups.size(); i++) {
-			String displayName = groups.get(i).getNameZh();
-			if (i == groups.size() - 1) {
-				stringBuilder.append(displayName);
-			} else {
-				stringBuilder.append(displayName).append(",");
-			}
-		}
-		return stringBuilder.toString();
-	}
+        for (int i = 0; i < groups.size(); i++) {
+            String displayName = groups.get(i).getNameZh();
+            if (i == groups.size() - 1) {
+                stringBuilder.append(displayName);
+            } else {
+                stringBuilder.append(displayName).append(",");
+            }
+        }
+        return stringBuilder.toString();
+    }
 
 }

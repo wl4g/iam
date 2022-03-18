@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
 import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.*;
 import static java.lang.String.format;

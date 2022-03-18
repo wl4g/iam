@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_XSRF_BASE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_XSRF_BASE;
 import static com.wl4g.iam.core.config.AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE;
 import static com.wl4g.iam.core.config.XsrfProperties.KEY_XSRF_PREFIX;
 

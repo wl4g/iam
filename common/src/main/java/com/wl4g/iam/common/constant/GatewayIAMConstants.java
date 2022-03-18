@@ -25,6 +25,7 @@ package com.wl4g.iam.common.constant;
  */
 public abstract class GatewayIAMConstants extends BaseIAMConstants {
 
-    public static final String KEY_GATEWAY_ROUTES = ":iam:client:gateway:routes:";
+    public static final String CACHE_GATEWAY_PREFIX = CACHE_IAM_PREFIX + "gw:";
+    public static final String CACHE_GATEWAY_ROUTES = CACHE_GATEWAY_PREFIX + "routes:";
 
 }

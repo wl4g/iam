@@ -18,6 +18,7 @@ package com.wl4g.iam.config.properties;
 import static com.wl4g.iam.common.constant.BaseIAMConstants.KEY_IAM_CONFIG_PREFIX;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.infra.common.lang.StringUtils2.startsWithIgnoreCase;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,255 +33,260 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = KEY_IAM_CONFIG_PREFIX + ".sns")
 public class SnsProperties {
 
-	/**
-	 * Number of SNS oauth2 milliseconds of oauth2 connect processing expiration
-	 */
-	private long oauth2ConnectExpireMs = 60_1000L;
+    /**
+     * Number of SNS oauth2 milliseconds of oauth2 connect processing expiration
+     */
+    private long oauth2ConnectExpireMs = 60_1000L;
 
-	private DingtalkSocialProperties dingtalk = new DingtalkSocialProperties();
-	private LinkedinSocialProperties linkedin = new LinkedinSocialProperties();
-	private TwitterSocialProperties twitter = new TwitterSocialProperties();
-	private GithubSocialProperties github = new GithubSocialProperties();
-	private GoogleSocialProperties google = new GoogleSocialProperties();
-	private FacebookSocialProperties facebook = new FacebookSocialProperties();
-	private QQSocialProperties qq = new QQSocialProperties();
-	private WechatSocialProperties wechat = new WechatSocialProperties();
-	private WechatMpSocialProperties wechatMp = new WechatMpSocialProperties();
+    private DingtalkSocialProperties dingtalk = new DingtalkSocialProperties();
+    private LinkedinSocialProperties linkedin = new LinkedinSocialProperties();
+    private TwitterSocialProperties twitter = new TwitterSocialProperties();
+    private GithubSocialProperties github = new GithubSocialProperties();
+    private GoogleSocialProperties google = new GoogleSocialProperties();
+    private FacebookSocialProperties facebook = new FacebookSocialProperties();
+    private QQSocialProperties qq = new QQSocialProperties();
+    private WechatSocialProperties wechat = new WechatSocialProperties();
+    private WechatMpSocialProperties wechatMp = new WechatMpSocialProperties();
 
-	public long getOauth2ConnectExpireMs() {
-		return oauth2ConnectExpireMs;
-	}
+    public long getOauth2ConnectExpireMs() {
+        return oauth2ConnectExpireMs;
+    }
 
-	public void setOauth2ConnectExpireMs(long connectExpireMs) {
-		this.oauth2ConnectExpireMs = connectExpireMs;
-	}
+    public void setOauth2ConnectExpireMs(long connectExpireMs) {
+        this.oauth2ConnectExpireMs = connectExpireMs;
+    }
 
-	public DingtalkSocialProperties getDingtalk() {
-		return dingtalk;
-	}
+    public DingtalkSocialProperties getDingtalk() {
+        return dingtalk;
+    }
 
-	public void setDingtalk(DingtalkSocialProperties dingtalk) {
-		this.dingtalk = dingtalk;
-	}
+    public void setDingtalk(DingtalkSocialProperties dingtalk) {
+        this.dingtalk = dingtalk;
+    }
 
-	public LinkedinSocialProperties getLinkedin() {
-		return linkedin;
-	}
+    public LinkedinSocialProperties getLinkedin() {
+        return linkedin;
+    }
 
-	public void setLinkedin(LinkedinSocialProperties linkedin) {
-		this.linkedin = linkedin;
-	}
+    public void setLinkedin(LinkedinSocialProperties linkedin) {
+        this.linkedin = linkedin;
+    }
 
-	public TwitterSocialProperties getTwitter() {
-		return twitter;
-	}
+    public TwitterSocialProperties getTwitter() {
+        return twitter;
+    }
 
-	public void setTwitter(TwitterSocialProperties twitter) {
-		this.twitter = twitter;
-	}
+    public void setTwitter(TwitterSocialProperties twitter) {
+        this.twitter = twitter;
+    }
 
-	public GithubSocialProperties getGithub() {
-		return github;
-	}
+    public GithubSocialProperties getGithub() {
+        return github;
+    }
 
-	public void setGithub(GithubSocialProperties github) {
-		this.github = github;
-	}
+    public void setGithub(GithubSocialProperties github) {
+        this.github = github;
+    }
 
-	public GoogleSocialProperties getGoogle() {
-		return google;
-	}
+    public GoogleSocialProperties getGoogle() {
+        return google;
+    }
 
-	public void setGoogle(GoogleSocialProperties google) {
-		this.google = google;
-	}
+    public void setGoogle(GoogleSocialProperties google) {
+        this.google = google;
+    }
 
-	public FacebookSocialProperties getFacebook() {
-		return facebook;
-	}
+    public FacebookSocialProperties getFacebook() {
+        return facebook;
+    }
 
-	public void setFacebook(FacebookSocialProperties facebook) {
-		this.facebook = facebook;
-	}
+    public void setFacebook(FacebookSocialProperties facebook) {
+        this.facebook = facebook;
+    }
 
-	public QQSocialProperties getQq() {
-		return qq;
-	}
+    public QQSocialProperties getQq() {
+        return qq;
+    }
 
-	public void setQq(QQSocialProperties qq) {
-		this.qq = qq;
-	}
+    public void setQq(QQSocialProperties qq) {
+        this.qq = qq;
+    }
 
-	public WechatSocialProperties getWechat() {
-		return wechat;
-	}
+    public WechatSocialProperties getWechat() {
+        return wechat;
+    }
 
-	public void setWechat(WechatSocialProperties wechat) {
-		this.wechat = wechat;
-	}
+    public void setWechat(WechatSocialProperties wechat) {
+        this.wechat = wechat;
+    }
 
-	public WechatMpSocialProperties getWechatMp() {
-		return wechatMp;
-	}
+    public WechatMpSocialProperties getWechatMp() {
+        return wechatMp;
+    }
 
-	public void setWechatMp(WechatMpSocialProperties wechatMp) {
-		this.wechatMp = wechatMp;
-	}
+    public void setWechatMp(WechatMpSocialProperties wechatMp) {
+        this.wechatMp = wechatMp;
+    }
 
-	/**
-	 * Abstract socical networking services platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static abstract class AbstractSocialProperties {
-		private String appId;
-		private String appSecret;
-		private String redirectUrl;
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
-		public String getAppId() {
-			return appId;
-		}
+    /**
+     * Abstract socical networking services platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static abstract class AbstractSocialProperties {
+        private String appId;
+        private String appSecret;
+        private String redirectUrl;
 
-		public void setAppId(String appId) {
-			this.appId = appId;
-		}
+        public String getAppId() {
+            return appId;
+        }
 
-		public String getAppSecret() {
-			return appSecret;
-		}
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
 
-		public void setAppSecret(String appSecret) {
-			this.appSecret = appSecret;
-		}
+        public String getAppSecret() {
+            return appSecret;
+        }
 
-		public String getRedirectUrl() {
-			return redirectUrl;
-		}
+        public void setAppSecret(String appSecret) {
+            this.appSecret = appSecret;
+        }
 
-		public void setRedirectUrl(String redirectUrl) {
-			this.redirectUrl = redirectUrl;
-		}
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
 
-	}
+        public void setRedirectUrl(String redirectUrl) {
+            this.redirectUrl = redirectUrl;
+        }
 
-	/**
-	 * Dingtalk open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class DingtalkSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Dingtalk open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class DingtalkSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Linkedin open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class LinkedinSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Linkedin open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class LinkedinSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Twitter open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class TwitterSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Twitter open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class TwitterSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Github open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class GithubSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Github open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class GithubSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Google open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class GoogleSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Google open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class GoogleSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Facebook open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class FacebookSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Facebook open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class FacebookSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * QQ open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class QQSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * QQ open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class QQSocialProperties extends AbstractSocialProperties {
 
-	/**
-	 * Wechat open platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class WechatSocialProperties extends AbstractSocialProperties {
+    }
 
-		/**
-		 * Wechat has added a new page style that supports custom
-		 * authorization.<br/>
-		 * See:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=2f2444cf6d55676b11a5de1b8b348ba202dbba8c&lang=zh_CN
-		 */
-		private String href;
+    /**
+     * Wechat open platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class WechatSocialProperties extends AbstractSocialProperties {
 
-		public String getHref() {
-			return href;
-		}
+        /**
+         * Wechat has added a new page style that supports custom
+         * authorization.<br/>
+         * See:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=2f2444cf6d55676b11a5de1b8b348ba202dbba8c&lang=zh_CN
+         */
+        private String href;
 
-		public void setHref(String href) {
-			if (!isBlank(href)) {
-				// Wechat oauth2 authorization interface only supports HTTPS
-				isTrue(startsWithIgnoreCase(href, "HTTPS"), "The 'href' link must be the absolute path of HTTPS protocol");
-				this.href = href;
-			}
-		}
+        public String getHref() {
+            return href;
+        }
 
-	}
+        public void setHref(String href) {
+            if (!isBlank(href)) {
+                // Wechat oauth2 authorization interface only supports HTTPS
+                isTrue(startsWithIgnoreCase(href, "HTTPS"), "The 'href' link must be the absolute path of HTTPS protocol");
+                this.href = href;
+            }
+        }
 
-	/**
-	 * Wechat public platform configuration properties
-	 *
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年2月17日
-	 * @since
-	 */
-	public static class WechatMpSocialProperties extends AbstractSocialProperties {
+    }
 
-	}
+    /**
+     * Wechat public platform configuration properties
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年2月17日
+     * @since
+     */
+    public static class WechatMpSocialProperties extends AbstractSocialProperties {
+
+    }
 
 }

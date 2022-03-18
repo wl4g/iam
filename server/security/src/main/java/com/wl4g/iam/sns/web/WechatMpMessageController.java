@@ -29,7 +29,7 @@ import com.wl4g.iam.core.exception.IllegalRequestException;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURI;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.URI_S_WECHAT_MP_RECEIVE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_S_WECHAT_MP_RECEIVE;
 import static java.lang.String.format;
 
 import java.io.IOException;
@@ -51,105 +51,111 @@ import javax.validation.constraints.NotBlank;
  */
 public abstract class WechatMpMessageController extends BaseController {
 
-	/**
-	 * WeChat public platform and basic configuration, checking tokens with User
-	 * message interaction API See:<code>
-	 * <a href=
-	 * "https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN">https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN</a>
-	 * </code>
-	 */
-	protected String validateToken;
+    /**
+     * WeChat public platform and basic configuration, checking tokens with User
+     * message interaction API See:<code>
+     * <a href=
+     * "https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN">https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN</a>
+     * </code>
+     */
+    protected String validateToken;
 
-	public WechatMpMessageController(String validateToken) {
-		hasText(validateToken, "'validateToken' is null please check configure");
-		this.validateToken = validateToken;
-	}
+    public WechatMpMessageController(String validateToken) {
+        hasText(validateToken, "'validateToken' is null please check configure");
+        this.validateToken = validateToken;
+    }
 
-	/**
-	 * Pre-verification authentication GET request from wechat server <br/>
-	 * See:<a href=
-	 * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5</a>
-	 *
-	 * @param signature
-	 * @param timestamp
-	 * @param nonce
-	 * @param echostr
-	 * @param response
-	 * @throws IOException
-	 */
-	@GetMapping(URI_S_WECHAT_MP_RECEIVE)
-	public void preReceive(@NotBlank @RequestParam(name = "signature") String signature,
-			@NotBlank @RequestParam(name = "timestamp") String timestamp, @NotBlank @RequestParam(name = "nonce") String nonce,
-			@NotBlank @RequestParam(name = "echostr") String echostr, HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
-		log.info("Verify from wechat get request. [{}]", getFullRequestURI(request));
-		hasTextOf(echostr, "echostr");
-		// Assertion signature
-		assertionSignature(signature, timestamp, nonce);
+    /**
+     * Pre-verification authentication GET request from wechat server <br/>
+     * See:<a href=
+     * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5</a>
+     *
+     * @param signature
+     * @param timestamp
+     * @param nonce
+     * @param echostr
+     * @param response
+     * @throws IOException
+     */
+    @GetMapping(URI_S_WECHAT_MP_RECEIVE)
+    public void preReceive(
+            @NotBlank @RequestParam(name = "signature") String signature,
+            @NotBlank @RequestParam(name = "timestamp") String timestamp,
+            @NotBlank @RequestParam(name = "nonce") String nonce,
+            @NotBlank @RequestParam(name = "echostr") String echostr,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        log.info("Verify from wechat get request. [{}]", getFullRequestURI(request));
+        hasTextOf(echostr, "echostr");
+        // Assertion signature
+        assertionSignature(signature, timestamp, nonce);
 
-		write(response, HttpServletResponse.SC_OK, MediaType.PLAIN_TEXT_UTF_8.toString(), echostr.getBytes(Charsets.UTF_8));
-	}
+        write(response, HttpServletResponse.SC_OK, MediaType.PLAIN_TEXT_UTF_8.toString(), echostr.getBytes(Charsets.UTF_8));
+    }
 
-	/**
-	 * Receiving messages sent by the wechat server
-	 *
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 * @throws Exception
-	 */
-	@PostMapping(path = URI_S_WECHAT_MP_RECEIVE, consumes = { "application/xml;charset=UTF-8",
-			"text/xml;charset=UTF-8" }, produces = { "application/xml;charset=UTF-8", "text/xml;charset=UTF-8" })
-	public void postReceive(@NotBlank @RequestParam(name = "signature") String signature,
-			@NotBlank @RequestParam(name = "timestamp") String timestamp, @NotBlank @RequestParam(name = "nonce") String nonce,
-			@RequestParam(name = "openid", required = false) String openId, HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
-		log.info("Receive from WeChat post [{}]", getFullRequestURI(request));
-		// Validation
-		assertionSignature(signature, timestamp, nonce);
+    /**
+     * Receiving messages sent by the wechat server
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws Exception
+     */
+    @PostMapping(path = URI_S_WECHAT_MP_RECEIVE, consumes = { "application/xml;charset=UTF-8",
+            "text/xml;charset=UTF-8" }, produces = { "application/xml;charset=UTF-8", "text/xml;charset=UTF-8" })
+    public void postReceive(
+            @NotBlank @RequestParam(name = "signature") String signature,
+            @NotBlank @RequestParam(name = "timestamp") String timestamp,
+            @NotBlank @RequestParam(name = "nonce") String nonce,
+            @RequestParam(name = "openid", required = false) String openId,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        log.info("Receive from WeChat post [{}]", getFullRequestURI(request));
+        // Validation
+        assertionSignature(signature, timestamp, nonce);
 
-		// Processing
-		String input = CharStreams.toString(new InputStreamReader(request.getInputStream(), Charsets.UTF_8));
-		String output = onReceive(input);
-		log.info("Reply to WeChat Server => {}", output);
+        // Processing
+        String input = CharStreams.toString(new InputStreamReader(request.getInputStream(), Charsets.UTF_8));
+        String output = onReceive(input);
+        log.info("Reply to WeChat Server => {}", output);
 
-		write(response, HttpServletResponse.SC_OK, MediaType.APPLICATION_XML_UTF_8.toString(), output.getBytes(Charsets.UTF_8));
-	}
+        write(response, HttpServletResponse.SC_OK, MediaType.APPLICATION_XML_UTF_8.toString(), output.getBytes(Charsets.UTF_8));
+    }
 
-	/**
-	 * Receive processing from WeChat message.
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	protected abstract String onReceive(String msg);
+    /**
+     * Receive processing from WeChat message.
+     * 
+     * @param msg
+     * @return
+     */
+    protected abstract String onReceive(String msg);
 
-	/**
-	 * WeChat platform signature validation
-	 *
-	 * @param signature
-	 * @param timestamp
-	 * @param nonce
-	 */
-	@SuppressWarnings("deprecation")
-	private void assertionSignature(String signature, String timestamp, String nonce) {
-		hasTextOf(signature, "signature");
-		hasTextOf(timestamp, "timestamp");
-		hasTextOf(nonce, "nonce");
+    /**
+     * WeChat platform signature validation
+     *
+     * @param signature
+     * @param timestamp
+     * @param nonce
+     */
+    @SuppressWarnings("deprecation")
+    private void assertionSignature(String signature, String timestamp, String nonce) {
+        hasTextOf(signature, "signature");
+        hasTextOf(timestamp, "timestamp");
+        hasTextOf(nonce, "nonce");
 
-		String[] combinedArr = { validateToken, timestamp, nonce };
-		Arrays.sort(combinedArr); // Dictionary ordering
-		// Combined
-		String plaintext = combinedArr[0] + combinedArr[1] + combinedArr[2];
+        String[] combinedArr = { validateToken, timestamp, nonce };
+        Arrays.sort(combinedArr); // Dictionary ordering
+        // Combined
+        String plaintext = combinedArr[0] + combinedArr[1] + combinedArr[2];
 
-		// Hashing
-		String ciphertext = Hashing.sha1().hashString(plaintext, Charsets.UTF_8).toString();
+        // Hashing
+        String ciphertext = Hashing.sha1().hashString(plaintext, Charsets.UTF_8).toString();
 
-		// Check validation
-		if (!(ciphertext != null && ciphertext.equalsIgnoreCase(String.valueOf(signature)))) {
-			throw new IllegalRequestException(
-					format("Illegal request signature[%s], timestamp[%s], nonce[%s]", signature, timestamp, nonce));
-		}
-	}
+        // Check validation
+        if (!(ciphertext != null && ciphertext.equalsIgnoreCase(String.valueOf(signature)))) {
+            throw new IllegalRequestException(
+                    format("Illegal request signature[%s], timestamp[%s], nonce[%s]", signature, timestamp, nonce));
+        }
+    }
 
 }

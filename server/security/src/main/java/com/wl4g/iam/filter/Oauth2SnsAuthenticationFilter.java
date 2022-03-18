@@ -32,7 +32,7 @@ import com.wl4g.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.state;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.CACHE_SNSAUTH;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.CACHE_SNSAUTH;
 import static com.wl4g.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 
 /**
@@ -66,7 +66,10 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
     }
 
     @Override
-    protected T doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected T doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         String callbackId = getCleanParam(request, PARAM_SNS_CALLBACK_ID);
         hasTextOf(callbackId, PARAM_SNS_CALLBACK_ID);

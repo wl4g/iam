@@ -18,45 +18,45 @@ package com.wl4g.iam.common.bean;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Department extends BaseBean {
-	private static final long serialVersionUID = -2227319200968900422L;
+    private static final long serialVersionUID = -2227319200968900422L;
 
-	private Long groupId;
+    private Long groupId;
 
-	private String displayName;
+    private String displayName;
 
-	private String contact;
+    private String contact;
 
-	private String contactPhone;
+    private String contactPhone;
 
-	public Long getGroupId() {
-		return groupId;
-	}
+    public Long getGroupId() {
+        return groupId;
+    }
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName == null ? null : displayName.trim();
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName == null ? null : displayName.trim();
+    }
 
-	public String getContact() {
-		return contact;
-	}
+    public String getContact() {
+        return contact;
+    }
 
-	public void setContact(String contact) {
-		this.contact = contact == null ? null : contact.trim();
-	}
+    public void setContact(String contact) {
+        this.contact = contact == null ? null : contact.trim();
+    }
 
-	public String getContactPhone() {
-		return contactPhone;
-	}
+    public String getContactPhone() {
+        return contactPhone;
+    }
 
-	public void setContactPhone(String contactPhone) {
-		this.contactPhone = contactPhone == null ? null : contactPhone.trim();
-	}
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone == null ? null : contactPhone.trim();
+    }
 }

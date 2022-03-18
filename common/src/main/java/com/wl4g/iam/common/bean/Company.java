@@ -18,55 +18,55 @@ package com.wl4g.iam.common.bean;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Company extends BaseBean {
-	private static final long serialVersionUID = 6055405466492698537L;
+    private static final long serialVersionUID = 6055405466492698537L;
 
-	private Long groupId;
+    private Long groupId;
 
-	private String displayName;
+    private String displayName;
 
-	private String contact;
+    private String contact;
 
-	private String contactPhone;
+    private String contactPhone;
 
-	private String address;
+    private String address;
 
-	public Long getGroupId() {
-		return groupId;
-	}
+    public Long getGroupId() {
+        return groupId;
+    }
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName == null ? null : displayName.trim();
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName == null ? null : displayName.trim();
+    }
 
-	public String getContact() {
-		return contact;
-	}
+    public String getContact() {
+        return contact;
+    }
 
-	public void setContact(String contact) {
-		this.contact = contact == null ? null : contact.trim();
-	}
+    public void setContact(String contact) {
+        this.contact = contact == null ? null : contact.trim();
+    }
 
-	public String getContactPhone() {
-		return contactPhone;
-	}
+    public String getContactPhone() {
+        return contactPhone;
+    }
 
-	public void setContactPhone(String contactPhone) {
-		this.contactPhone = contactPhone == null ? null : contactPhone.trim();
-	}
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone == null ? null : contactPhone.trim();
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address == null ? null : address.trim();
-	}
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
+    }
 }

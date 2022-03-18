@@ -37,23 +37,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/clusterConfig")
 public class ClusterConfigController extends BaseController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private ClusterConfigService clusterConfigService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private ClusterConfigService clusterConfigService;
 
-	@Autowired
-	private IamHelper iamHelper;
+    @Autowired
+    private IamHelper iamHelper;
 
-	/**
-	 * System initialization load dict information.
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/loadInit")
-	public RespBase<?> loadInit() {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(clusterConfigService.loadInit(iamHelper.getApplicationActiveEnvironmentType()));
-		return resp;
-	}
+    /**
+     * System initialization load dict information.
+     * 
+     * @return
+     */
+    @RequestMapping(value = "/loadInit")
+    public RespBase<?> loadInit() {
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(clusterConfigService.loadInit(iamHelper.getApplicationActiveEnvironmentType()));
+        return resp;
+    }
 
 }

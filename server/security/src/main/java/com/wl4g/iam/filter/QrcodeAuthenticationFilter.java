@@ -27,7 +27,10 @@ public class QrcodeAuthenticationFilter extends AbstractServerIamAuthenticationF
     final public static String NAME = "qrcode";
 
     @Override
-    protected QrcodeAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+    protected QrcodeAuthenticationToken doCreateToken(
+            String remoteHost,
+            RedirectInfo redirectInfo,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
         return null;

@@ -21,7 +21,7 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
@@ -29,7 +29,7 @@ import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.iam.core.cache.IamCacheManager;
-import com.wl4g.iam.verification.CompositeSecurityVerifierAdapter;
+import com.wl4g.iam.verify.CompositeSecurityVerifierAdapter;
 
 /**
  * IAM based matcher

@@ -18,7 +18,7 @@ package com.wl4g.iam.web.risk;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.TypeConverts.*;
 import static com.wl4g.infra.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.*;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.infra.common.codec.Base58;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.iam.annotation.SimpleRcmController;
+import com.wl4g.iam.annotation.SimpleRiskController;
 import com.wl4g.iam.handler.risk.SimpleRiskEvaluateHandler;
 import com.wl4g.iam.web.BaseIamController;
 import com.wl4g.iam.web.login.model.SimpleRiskTokenModel;
@@ -51,7 +51,7 @@ import com.wl4g.iam.web.login.model.SimpleRiskTokenModel;
  * @version v1.0 2020年3月25日
  * @since
  */
-@SimpleRcmController
+@SimpleRiskController
 public class SimpleRiskEvaluateController extends BaseIamController {
 
     @Autowired

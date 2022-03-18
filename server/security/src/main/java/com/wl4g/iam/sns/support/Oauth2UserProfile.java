@@ -17,6 +17,6 @@ package com.wl4g.iam.sns.support;
 
 public interface Oauth2UserProfile extends AssertionOAuth2Result {
 
-	<U extends Oauth2UserProfile> U build(String message);
+    <U extends Oauth2UserProfile> U build(String message);
 
 }

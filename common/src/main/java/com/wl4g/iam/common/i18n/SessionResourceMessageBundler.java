@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.i18n;
 
-import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_LANG_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -32,20 +32,20 @@ import com.wl4g.infra.core.i18n.AbstractResourceMessageBundler;
  */
 public class SessionResourceMessageBundler extends AbstractResourceMessageBundler {
 
-	public SessionResourceMessageBundler(Class<?> withClassPath) {
-		super(withClassPath);
-	}
+    public SessionResourceMessageBundler(Class<?> withClassPath) {
+        super(withClassPath);
+    }
 
-	@Override
-	protected Locale getSessionLocale() {
-		Object loc = IamSecurityHolderBridges.invokeGetBindValue(KEY_LANG_NAME);
-		Locale locale = null;
-		if (loc instanceof Locale) {
-			locale = (Locale) loc;
-		} else if (loc instanceof String) {
-			locale = new Locale((String) loc);
-		}
-		return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
-	}
+    @Override
+    protected Locale getSessionLocale() {
+        Object loc = IamSecurityHolderBridges.invokeGetBindValue(KEY_LANG_NAME);
+        Locale locale = null;
+        if (loc instanceof Locale) {
+            locale = (Locale) loc;
+        } else if (loc instanceof String) {
+            locale = new Locale((String) loc);
+        }
+        return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
+    }
 
 }

@@ -35,105 +35,105 @@ import com.wl4g.iam.sns.qq.model.QQUserInfo;
  */
 public class QQOauth2Template extends GenericOAuth2ApiBinding<QQSocialProperties, QQAccessToken, QQOpenId, QQUserInfo> {
 
-	final public static String PROVIDER_ID = "qq";
-	/**
-	 * Old: https://graph.qq.com/oauth2.0/authorize
-	 */
-	final public static String URI_AUTH_CODE = "https://graph.qq.com/oauth2.0/show";
-	final public static String URI_ACCESS_TOKEN = "https://graph.qq.com/oauth2.0/token";
-	final public static String URI_OPEN_ID = "https://graph.qq.com/oauth2.0/me";
-	final public static String URI_USER_INFO = "https://graph.qq.com/user/get_user_info";
+    final public static String PROVIDER_ID = "qq";
+    /**
+     * Old: https://graph.qq.com/oauth2.0/authorize
+     */
+    final public static String URI_AUTH_CODE = "https://graph.qq.com/oauth2.0/show";
+    final public static String URI_ACCESS_TOKEN = "https://graph.qq.com/oauth2.0/token";
+    final public static String URI_OPEN_ID = "https://graph.qq.com/oauth2.0/me";
+    final public static String URI_USER_INFO = "https://graph.qq.com/user/get_user_info";
 
-	public QQOauth2Template(QQSocialProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
-		super(config, restTemplate, cacheManager);
-	}
+    public QQOauth2Template(QQSocialProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+        super(config, restTemplate, cacheManager);
+    }
 
-	@Override
-	public String providerId() {
-		return PROVIDER_ID;
-	}
+    @Override
+    public String providerId() {
+        return PROVIDER_ID;
+    }
 
-	@Override
-	protected void postGetAuthorizationCodeUrl(Map<String, String> parameters) {
-		parameters.put("which", "login");
-		parameters.put("display", "pc");
-	}
+    @Override
+    protected void postGetAuthorizationCodeUrl(Map<String, String> parameters) {
+        parameters.put("which", "login");
+        parameters.put("display", "pc");
+    }
 
-	@Override
-	protected void postGetAccessTokenUrl(Map<String, String> parameters) {
+    @Override
+    protected void postGetAccessTokenUrl(Map<String, String> parameters) {
 
-	}
+    }
 
-	@Override
-	protected void postGetOpenIdUrl(Map<String, String> parameters) {
+    @Override
+    protected void postGetOpenIdUrl(Map<String, String> parameters) {
 
-	}
+    }
 
-	@Override
-	protected void postGetUserInfoUrl(Map<String, String> parameters) {
-		parameters.remove(DEFAULT_PARAM_CLIENT_ID);
-		parameters.put("oauth_consumer_key", config.getAppId());
-	}
+    @Override
+    protected void postGetUserInfoUrl(Map<String, String> parameters) {
+        parameters.remove(DEFAULT_PARAM_CLIENT_ID);
+        parameters.put("oauth_consumer_key", config.getAppId());
+    }
 
-	@Override
-	protected String scope() {
-		return Scope.get_user_info.name();
-	}
+    @Override
+    protected String scope() {
+        return Scope.get_user_info.name();
+    }
 
-	@Override
-	protected String getAuthorizationCodeUriEndpoint() {
-		return URI_AUTH_CODE;
-	}
+    @Override
+    protected String getAuthorizationCodeUriEndpoint() {
+        return URI_AUTH_CODE;
+    }
 
-	@Override
-	protected String getAccessTokenUriEndpoint() {
-		return URI_ACCESS_TOKEN;
-	}
+    @Override
+    protected String getAccessTokenUriEndpoint() {
+        return URI_ACCESS_TOKEN;
+    }
 
-	@Override
-	protected String getOpenIdUriEndpoint() {
-		return URI_OPEN_ID;
-	}
+    @Override
+    protected String getOpenIdUriEndpoint() {
+        return URI_OPEN_ID;
+    }
 
-	@Override
-	protected String getUserInfoUriEndpoint() {
-		return URI_USER_INFO;
-	}
+    @Override
+    protected String getUserInfoUriEndpoint() {
+        return URI_USER_INFO;
+    }
 
-	public static enum Scope {
-		get_user_info(true), list_album, upload_pic, do_like;
+    public static enum Scope {
+        get_user_info(true), list_album, upload_pic, do_like;
 
-		private boolean isDefault = false;
+        private boolean isDefault = false;
 
-		private Scope() {
-		}
+        private Scope() {
+        }
 
-		private Scope(boolean isDefault) {
-			this.isDefault = isDefault;
-		}
+        private Scope(boolean isDefault) {
+            this.isDefault = isDefault;
+        }
 
-		public boolean isDefault() {
-			return isDefault;
-		}
+        public boolean isDefault() {
+            return isDefault;
+        }
 
-	}
+    }
 
-	public static enum Display {
-		pc(true), mobile;
+    public static enum Display {
+        pc(true), mobile;
 
-		private boolean isDefault = false;
+        private boolean isDefault = false;
 
-		private Display() {
-		}
+        private Display() {
+        }
 
-		private Display(boolean isDefault) {
-			this.isDefault = isDefault;
-		}
+        private Display(boolean isDefault) {
+            this.isDefault = isDefault;
+        }
 
-		public boolean isDefault() {
-			return isDefault;
-		}
+        public boolean isDefault() {
+            return isDefault;
+        }
 
-	}
+    }
 
 }

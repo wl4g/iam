@@ -25,67 +25,67 @@ import com.wl4g.infra.core.bean.BaseBean;
  * @since
  */
 public class ClusterConfig extends BaseBean {
-	private static final long serialVersionUID = -7546448616357790576L;
-	private String appName;
-	private Integer type;
-	private String envType;
-	private String viewExtranetBaseUri;
-	private String extranetBaseUri;
-	private String intranetBaseUri;
+    private static final long serialVersionUID = -7546448616357790576L;
+    private String appName;
+    private Integer type;
+    private String envType;
+    private String viewExtranetBaseUri;
+    private String extranetBaseUri;
+    private String intranetBaseUri;
 
-	public ClusterConfig() {
-	}
+    public ClusterConfig() {
+    }
 
-	public ClusterConfig(String appName, String viewExtranetBaseUri) {
-		this.appName = appName;
-		this.viewExtranetBaseUri = viewExtranetBaseUri;
-	}
+    public ClusterConfig(String appName, String viewExtranetBaseUri) {
+        this.appName = appName;
+        this.viewExtranetBaseUri = viewExtranetBaseUri;
+    }
 
-	public Integer getType() {
-		return type;
-	}
+    public Integer getType() {
+        return type;
+    }
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
-	public String getEnvType() {
-		return envType;
-	}
+    public String getEnvType() {
+        return envType;
+    }
 
-	public void setEnvType(String envType) {
-		this.envType = envType == null ? null : envType.trim();
-	}
+    public void setEnvType(String envType) {
+        this.envType = envType == null ? null : envType.trim();
+    }
 
-	public String getViewExtranetBaseUri() {
-		return viewExtranetBaseUri;
-	}
+    public String getViewExtranetBaseUri() {
+        return viewExtranetBaseUri;
+    }
 
-	public void setViewExtranetBaseUri(String viewExtranetBaseUri) {
-		this.viewExtranetBaseUri = viewExtranetBaseUri == null ? null : viewExtranetBaseUri.trim();
-	}
+    public void setViewExtranetBaseUri(String viewExtranetBaseUri) {
+        this.viewExtranetBaseUri = viewExtranetBaseUri == null ? null : viewExtranetBaseUri.trim();
+    }
 
-	public String getExtranetBaseUri() {
-		return extranetBaseUri;
-	}
+    public String getExtranetBaseUri() {
+        return extranetBaseUri;
+    }
 
-	public void setExtranetBaseUri(String extranetBaseUri) {
-		this.extranetBaseUri = extranetBaseUri == null ? null : extranetBaseUri.trim();
-	}
+    public void setExtranetBaseUri(String extranetBaseUri) {
+        this.extranetBaseUri = extranetBaseUri == null ? null : extranetBaseUri.trim();
+    }
 
-	public String getIntranetBaseUri() {
-		return intranetBaseUri;
-	}
+    public String getIntranetBaseUri() {
+        return intranetBaseUri;
+    }
 
-	public void setIntranetBaseUri(String intranetBaseUri) {
-		this.intranetBaseUri = intranetBaseUri == null ? null : intranetBaseUri.trim();
-	}
+    public void setIntranetBaseUri(String intranetBaseUri) {
+        this.intranetBaseUri = intranetBaseUri == null ? null : intranetBaseUri.trim();
+    }
 
-	public String getAppName() {
-		return appName;
-	}
+    public String getAppName() {
+        return appName;
+    }
 
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
 }

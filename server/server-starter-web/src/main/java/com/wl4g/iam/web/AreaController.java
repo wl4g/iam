@@ -30,15 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/area")
 public class AreaController {
 
-	// @com.alibaba.dubbo.config.annotation.Reference
-	@Autowired
-	private AreaService areaService;
+    // @com.alibaba.dubbo.config.annotation.Reference
+    @Autowired
+    private AreaService areaService;
 
-	@RequestMapping(value = "/getAreaTree")
-	public RespBase<?> getAreaTree() {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(areaService.getAreaTree());
-		return resp;
-	}
+    @RequestMapping(value = "/getAreaTree")
+    public RespBase<?> getAreaTree() {
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(areaService.getAreaTree());
+        return resp;
+    }
 
 }

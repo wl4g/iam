@@ -27,29 +27,29 @@ import javax.validation.constraints.NotBlank;
  * @since
  */
 public class SimpleRiskTokenModel implements Serializable {
-	private static final long serialVersionUID = -3434524148761808680L;
+    private static final long serialVersionUID = -3434524148761808680L;
 
-	/**
-	 * Risk control UMID token.
-	 */
-	@NotBlank
-	private String umidToken;
+    /**
+     * Risk control UMID token.
+     */
+    @NotBlank
+    private String umidToken;
 
-	public SimpleRiskTokenModel() {
-		super();
-	}
+    public SimpleRiskTokenModel() {
+        super();
+    }
 
-	public SimpleRiskTokenModel(String umidToken) {
-		super();
-		this.umidToken = umidToken;
-	}
+    public SimpleRiskTokenModel(String umidToken) {
+        super();
+        this.umidToken = umidToken;
+    }
 
-	public String getUmidToken() {
-		return umidToken;
-	}
+    public String getUmidToken() {
+        return umidToken;
+    }
 
-	public void setUmidToken(String umidToken) {
-		this.umidToken = umidToken;
-	}
+    public void setUmidToken(String umidToken) {
+        this.umidToken = umidToken;
+    }
 
 }

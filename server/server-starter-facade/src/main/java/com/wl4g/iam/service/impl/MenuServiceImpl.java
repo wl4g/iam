@@ -54,265 +54,265 @@ import com.wl4g.iam.service.OrganizationService;
 // @org.springframework.web.bind.annotation.RestController
 public class MenuServiceImpl implements MenuService {
 
-	@Autowired
-	protected MenuDao menuDao;
-	@Autowired
-	protected OrganizationService groupService;
+    @Autowired
+    protected MenuDao menuDao;
+    @Autowired
+    protected OrganizationService groupService;
 
-	@Override
-	public Map<String, Object> findMenuTree() {
-		Map<String, Object> result = new HashMap<>();
-		Set<Menu> menuSet = getUserMenuSet();
+    @Override
+    public Map<String, Object> findMenuTree() {
+        Map<String, Object> result = new HashMap<>();
+        Set<Menu> menuSet = getUserMenuSet();
 
-		List<Menu> menuTree = new ArrayList<>(deepClone(menuSet));
-		resolveMenuRoutePath(menuTree);
-		menuTree = transformMenuTree(menuTree);
+        List<Menu> menuTree = new ArrayList<>(deepClone(menuSet));
+        resolveMenuRoutePath(menuTree);
+        menuTree = transformMenuTree(menuTree);
 
-		result.put("data", menuTree);
-		result.put("data2", menuSet);
-		return result;
-	}
+        result.put("data", menuTree);
+        result.put("data2", menuSet);
+        return result;
+    }
 
-	@Override
-	public List<Menu> findMenuList() {
-		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
-		List<Menu> result;
-		if (DEFAULT_SUPER_USER.equals(principal)) {
-			result = menuDao.selectWithRoot();
-		} else {
-			result = menuDao.selectByUserId(parseLongOrNull(principalId));
-		}
-		// deal with route path
-		resolveMenuRoutePath(result);
-		return result;
-	}
+    @Override
+    public List<Menu> findMenuList() {
+        String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+        String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
+        List<Menu> result;
+        if (DEFAULT_SUPER_USER.equals(principal)) {
+            result = menuDao.selectWithRoot();
+        } else {
+            result = menuDao.selectByUserId(parseLongOrNull(principalId));
+        }
+        // deal with route path
+        resolveMenuRoutePath(result);
+        return result;
+    }
 
-	@Override
-	public void save(Menu menu) {
-		checkRepeat(menu);
-		checkMenuProperties(menu);
-		if (menu.getId() != null) {
-			update(menu);
-		} else {
-			insert(menu);
-		}
-	}
+    @Override
+    public void save(Menu menu) {
+        checkRepeat(menu);
+        checkMenuProperties(menu);
+        if (menu.getId() != null) {
+            update(menu);
+        } else {
+            insert(menu);
+        }
+    }
 
-	@Override
-	public void del(Long id) {
-		Assert.notNull(id, "id is null");
-		Menu menu = new Menu();
-		menu.setId(id);
-		menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
+    @Override
+    public void del(Long id) {
+        Assert.notNull(id, "id is null");
+        Menu menu = new Menu();
+        menu.setId(id);
+        menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        menuDao.updateByPrimaryKeySelective(menu);
+    }
 
-	@Override
-	public Menu detail(Long id) {
-		return menuDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public Menu detail(Long id) {
+        return menuDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public List<Menu> findRoot() {
-		return menuDao.selectWithRoot();
-	}
+    @Override
+    public List<Menu> findRoot() {
+        return menuDao.selectWithRoot();
+    }
 
-	@Override
-	public List<Menu> findByUserId(Long userId) {
-		return menuDao.selectByUserId(userId);
-	}
+    @Override
+    public List<Menu> findByUserId(Long userId) {
+        return menuDao.selectByUserId(userId);
+    }
 
-	private void insert(Menu menu) {
-		menu.preInsert();
-		Long parentId = menu.getParentId();
-		// if menu type is button
-		if (nonNull(menu.getType()) && menu.getType().intValue() == 3) {
-			menu.setLevel(0);
-		} else {
-			// if has parent menu , set level = parent's level + 1
-			if (nonNull(parentId) && 0 != parentId) {
-				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
-				Assert.notNull(parentMenu, "parentMenu is null");
-				Assert.notNull(parentMenu.getLevel(), "parentMenu's level is null");
-				menu.setLevel(parentMenu.getLevel() + 1);
-			} else {// if is parent menu , set level = 1
-				menu.setLevel(1);
-			}
-		}
-		menuDao.insertSelective(menu);
-	}
+    private void insert(Menu menu) {
+        menu.preInsert();
+        Long parentId = menu.getParentId();
+        // if menu type is button
+        if (nonNull(menu.getType()) && menu.getType().intValue() == 3) {
+            menu.setLevel(0);
+        } else {
+            // if has parent menu , set level = parent's level + 1
+            if (nonNull(parentId) && 0 != parentId) {
+                Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
+                Assert.notNull(parentMenu, "parentMenu is null");
+                Assert.notNull(parentMenu.getLevel(), "parentMenu's level is null");
+                menu.setLevel(parentMenu.getLevel() + 1);
+            } else {// if is parent menu , set level = 1
+                menu.setLevel(1);
+            }
+        }
+        menuDao.insertSelective(menu);
+    }
 
-	private void update(Menu menu) {
-		menu.preUpdate();
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
+    private void update(Menu menu) {
+        menu.preUpdate();
+        menuDao.updateByPrimaryKeySelective(menu);
+    }
 
-	private void resolveMenuRoutePath(List<Menu> list) {
-		for (Menu menu : list) {
-			menu.setRoutePath(menu.getRouteNamespace());
-			if (menu.getParentId() != null && menu.getParentId() > 0 && StringUtils.isNotBlank(menu.getRouteNamespace())) {
-				updateMenuRoutePath(list, menu, menu.getParentId());
-			}
-		}
-	}
+    private void resolveMenuRoutePath(List<Menu> list) {
+        for (Menu menu : list) {
+            menu.setRoutePath(menu.getRouteNamespace());
+            if (menu.getParentId() != null && menu.getParentId() > 0 && StringUtils.isNotBlank(menu.getRouteNamespace())) {
+                updateMenuRoutePath(list, menu, menu.getParentId());
+            }
+        }
+    }
 
-	private void updateMenuRoutePath(List<Menu> list, Menu menu, long parentId) {
-		if (parentId != 0) {
-			for (Menu m : list) {
-				if (m.getId().equals(parentId)) {
-					menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace()) + fixRouteNamespace(menu.getRoutePath()));
-					if (m.getParentId() != null && m.getParentId() > 0) {
-						updateMenuRoutePath(list, menu, m.getParentId());
-					}
-					break;
-				}
-			}
-		}
-	}
+    private void updateMenuRoutePath(List<Menu> list, Menu menu, long parentId) {
+        if (parentId != 0) {
+            for (Menu m : list) {
+                if (m.getId().equals(parentId)) {
+                    menu.setRoutePath(fixRouteNamespace(m.getRouteNamespace()) + fixRouteNamespace(menu.getRoutePath()));
+                    if (m.getParentId() != null && m.getParentId() > 0) {
+                        updateMenuRoutePath(list, menu, m.getParentId());
+                    }
+                    break;
+                }
+            }
+        }
+    }
 
-	private Menu getParent(List<Menu> menus, Long parentId) {
-		for (Menu menu : menus) {
-			if (parentId != null && menu.getId() != null && menu.getId().longValue() == parentId.longValue()) {
-				return menu;
-			}
-		}
-		return null;
-	}
+    private Menu getParent(List<Menu> menus, Long parentId) {
+        for (Menu menu : menus) {
+            if (parentId != null && menu.getId() != null && menu.getId().longValue() == parentId.longValue()) {
+                return menu;
+            }
+        }
+        return null;
+    }
 
-	private String fixRouteNamespace(String routeNamespace) {
-		if (StringUtils.equals("/", routeNamespace)) {
-			return "";
-		}
-		if (routeNamespace != null && routeNamespace.length() > 1) {
-			if (!routeNamespace.startsWith("/")) {
-				routeNamespace = "/" + routeNamespace;
-			}
-			while (routeNamespace.endsWith("/")) {
-				routeNamespace = routeNamespace.substring(0, routeNamespace.length() - 1);
-			}
-			routeNamespace = routeNamespace.trim();
-			while (routeNamespace.contains("//")) {
-				routeNamespace = routeNamespace.replaceAll("//", "/");
-			}
-		}
-		return routeNamespace;
-	}
+    private String fixRouteNamespace(String routeNamespace) {
+        if (StringUtils.equals("/", routeNamespace)) {
+            return "";
+        }
+        if (routeNamespace != null && routeNamespace.length() > 1) {
+            if (!routeNamespace.startsWith("/")) {
+                routeNamespace = "/" + routeNamespace;
+            }
+            while (routeNamespace.endsWith("/")) {
+                routeNamespace = routeNamespace.substring(0, routeNamespace.length() - 1);
+            }
+            routeNamespace = routeNamespace.trim();
+            while (routeNamespace.contains("//")) {
+                routeNamespace = routeNamespace.replaceAll("//", "/");
+            }
+        }
+        return routeNamespace;
+    }
 
-	/**
-	 * <pre>
-	 * 父/子 动态      静态     按钮
-	 * 动态  1         1       0
-	 * 静态  1         1       1(无需设菜单文件夹的pagelocation和route_namespace为空)
-	 * 按钮  0         0       0
-	 * </pre>
-	 *
-	 * @param menu
-	 */
-	private void checkMenuProperties(Menu menu) {
-		String routeNamespace = menu.getRouteNamespace();
-		final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/")
-				&& routeNamespace.length() > 1;
-		isTrue(isLegal, "illegal routeNamespace: '%s', e.g: '/edit'", routeNamespace);
+    /**
+     * <pre>
+     * 父/子 动态      静态     按钮
+     * 动态  1         1       0
+     * 静态  1         1       1(无需设菜单文件夹的pagelocation和route_namespace为空)
+     * 按钮  0         0       0
+     * </pre>
+     *
+     * @param menu
+     */
+    private void checkMenuProperties(Menu menu) {
+        String routeNamespace = menu.getRouteNamespace();
+        final boolean isLegal = routeNamespace.startsWith("/") && routeNamespace.indexOf("/") == routeNamespace.lastIndexOf("/")
+                && routeNamespace.length() > 1;
+        isTrue(isLegal, "illegal routeNamespace: '%s', e.g: '/edit'", routeNamespace);
 
-		if (menu.getParentId() == null) {
-			return;
-		}
-		Menu parentMenu = menuDao.selectByPrimaryKey(menu.getParentId());
-		if (null != parentMenu) {
-			if (parentMenu.getType() == 1) {
-				return;
-			}
-			if (parentMenu.getType() == 2 && menu.getType() == 3) {
-				throw new UnsupportedOperationException("can not save because parentType=2(dynamic) and menuType=3(button)");
-			}
-			if (parentMenu.getType() == 3) {
-				throw new UnsupportedOperationException("can not save because parentType=3(button)");
-			}
-		}
-	}
+        if (menu.getParentId() == null) {
+            return;
+        }
+        Menu parentMenu = menuDao.selectByPrimaryKey(menu.getParentId());
+        if (null != parentMenu) {
+            if (parentMenu.getType() == 1) {
+                return;
+            }
+            if (parentMenu.getType() == 2 && menu.getType() == 3) {
+                throw new UnsupportedOperationException("can not save because parentType=2(dynamic) and menuType=3(button)");
+            }
+            if (parentMenu.getType() == 3) {
+                throw new UnsupportedOperationException("can not save because parentType=3(button)");
+            }
+        }
+    }
 
-	private void checkRepeat(Menu menu) {
-		List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
-		for (Menu m : menus) {
-			if (!m.getId().equals(menu.getId())) {
-				isTrue(!equalsIgnoreCase(m.getRouteNamespace(), menu.getRouteNamespace()), "menu's route path is repeat");
-				isTrue(!menu.getSort().equals(m.getSort()), "menu's sort repeat");
-			}
-		}
-	}
+    private void checkRepeat(Menu menu) {
+        List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
+        for (Menu m : menus) {
+            if (!m.getId().equals(menu.getId())) {
+                isTrue(!equalsIgnoreCase(m.getRouteNamespace(), menu.getRouteNamespace()), "menu's route path is repeat");
+                isTrue(!menu.getSort().equals(m.getSort()), "menu's sort repeat");
+            }
+        }
+    }
 
-	private Set<Menu> getUserMenuSet() {
-		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
-		String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
+    private Set<Menu> getUserMenuSet() {
+        String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
+        String principal = RpcContextIamSecurityUtils.currentIamPrincipalName();
 
-		List<Menu> menus = null;
-		if (DEFAULT_SUPER_USER.equals(principal)) {
-			menus = menuDao.selectWithRoot();
-		} else {
-			Long userId = null;
-			if (isNotBlank(principalId)) {
-				userId = Long.parseLong(principalId);
-			}
-			menus = menuDao.selectByUserId(userId);
-		}
-		Set<Menu> set = new LinkedHashSet<>();
-		set.addAll(menus);
-		// Clean unused fields
-		for (Menu menu : set) {
-			menu.setRoutePath(null);
-			menu.setLevel(null);
-			menu.setClassify(null);
-			// menu.setPageLocation(null);
-			// menu.setRenderTarget(null);
-			// menu.setRouteNamespace(null);
-			menu.setStatus(null);
-			// menu.setType(null);
-			menu.setDelFlag(null);
-			menu.setUpdateBy(null);
-			menu.setUpdateDate(null);
-			menu.setCreateDate(null);
-			menu.setCreateBy(null);
-			menu.setOrganizationCode(null);
-		}
-		return set;
-	}
+        List<Menu> menus = null;
+        if (DEFAULT_SUPER_USER.equals(principal)) {
+            menus = menuDao.selectWithRoot();
+        } else {
+            Long userId = null;
+            if (isNotBlank(principalId)) {
+                userId = Long.parseLong(principalId);
+            }
+            menus = menuDao.selectByUserId(userId);
+        }
+        Set<Menu> set = new LinkedHashSet<>();
+        set.addAll(menus);
+        // Clean unused fields
+        for (Menu menu : set) {
+            menu.setRoutePath(null);
+            menu.setLevel(null);
+            menu.setClassify(null);
+            // menu.setPageLocation(null);
+            // menu.setRenderTarget(null);
+            // menu.setRouteNamespace(null);
+            menu.setStatus(null);
+            // menu.setType(null);
+            menu.setDelFlag(null);
+            menu.setUpdateBy(null);
+            menu.setUpdateDate(null);
+            menu.setCreateDate(null);
+            menu.setCreateBy(null);
+            menu.setOrganizationCode(null);
+        }
+        return set;
+    }
 
-	private List<Menu> transformMenuTree(List<Menu> menus) {
-		List<Menu> top = new ArrayList<>();
-		for (Menu menu : menus) {
-			Menu parent = getParent(menus, menu.getParentId());
-			if (parent == null) {
-				top.add(menu);
-			}
-		}
-		for (Menu menu : top) {
-			List<Menu> children = getChildren(menus, null, menu);
-			if (!CollectionUtils.isEmpty(children)) {
-				menu.setChildren(children);
-			}
-		}
-		return top;
-	}
+    private List<Menu> transformMenuTree(List<Menu> menus) {
+        List<Menu> top = new ArrayList<>();
+        for (Menu menu : menus) {
+            Menu parent = getParent(menus, menu.getParentId());
+            if (parent == null) {
+                top.add(menu);
+            }
+        }
+        for (Menu menu : top) {
+            List<Menu> children = getChildren(menus, null, menu);
+            if (!CollectionUtils.isEmpty(children)) {
+                menu.setChildren(children);
+            }
+        }
+        return top;
+    }
 
-	private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Menu parent) {
-		if (children == null) {
-			children = new ArrayList<>();
-		}
-		for (Menu menu : menus) {
-			if (menu.getParentId() != null && parent.getId() != null
-					&& menu.getParentId().longValue() == parent.getId().longValue()) {
-				menu.setParentRoutePath(parent.getRoutePath());
-				children.add(menu);
-			}
-		}
-		for (Menu menu : children) {
-			List<Menu> children1 = getChildren(menus, null, menu);
-			if (!CollectionUtils.isEmpty(children1)) {
-				menu.setChildren(children1);
-			}
-		}
-		return children;
-	}
+    private List<Menu> getChildren(List<Menu> menus, List<Menu> children, Menu parent) {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        for (Menu menu : menus) {
+            if (menu.getParentId() != null && parent.getId() != null
+                    && menu.getParentId().longValue() == parent.getId().longValue()) {
+                menu.setParentRoutePath(parent.getRoutePath());
+                children.add(menu);
+            }
+        }
+        for (Menu menu : children) {
+            List<Menu> children1 = getChildren(menus, null, menu);
+            if (!CollectionUtils.isEmpty(children1)) {
+                menu.setChildren(children1);
+            }
+        }
+        return children;
+    }
 
 }

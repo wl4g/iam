@@ -35,25 +35,25 @@ import com.wl4g.iam.common.bean.ContactChannel;
 @FeignConsumer("${provider.serviceId.iam-data:iam-data}")
 @RequestMapping("/contactChannel-dao")
 public interface ContactChannelDao {
-	@RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
-	int deleteByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
+    int deleteByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/deleteByContactId")
-	int deleteByContactId(@RequestParam("id") Long id);
+    @RequestMapping(method = POST, value = "/deleteByContactId")
+    int deleteByContactId(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/insert")
-	int insert(@RequestBody ContactChannel record);
+    @RequestMapping(method = POST, value = "/insert")
+    int insert(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = POST, value = "/insertSelective")
-	int insertSelective(@RequestBody ContactChannel record);
+    @RequestMapping(method = POST, value = "/insertSelective")
+    int insertSelective(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = GET, value = "/selectByPrimaryKey")
-	ContactChannel selectByPrimaryKey(@RequestParam("id") Long id);
+    @RequestMapping(method = GET, value = "/selectByPrimaryKey")
+    ContactChannel selectByPrimaryKey(@RequestParam("id") Long id);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
-	int updateByPrimaryKeySelective(@RequestBody ContactChannel record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
+    int updateByPrimaryKeySelective(@RequestBody ContactChannel record);
 
-	@RequestMapping(method = POST, value = "/updateByPrimaryKey")
-	int updateByPrimaryKey(@RequestBody ContactChannel record);
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
+    int updateByPrimaryKey(@RequestBody ContactChannel record);
 
 }

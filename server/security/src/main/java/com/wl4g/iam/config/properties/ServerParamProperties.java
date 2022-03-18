@@ -27,86 +27,86 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
  * @since
  */
 public class ServerParamProperties extends ParamProperties {
-	private static final long serialVersionUID = 3258460473711285504L;
+    private static final long serialVersionUID = 3258460473711285504L;
 
-	/**
-	 * Password parameter name at login time of account password.
-	 */
-	private String credentialsName = "credential";
+    /**
+     * Password parameter name at login time of account password.
+     */
+    private String credentialsName = "credential";
 
-	/**
-	 * Client type reference parameter name at login time of account password.
-	 */
-	private String clientRefName = "client_ref";
+    /**
+     * Client type reference parameter name at login time of account password.
+     */
+    private String clientRefName = "client_ref";
 
-	/**
-	 * UmidToken parameter name.
-	 */
-	private String umidTokenName = "umidToken";
+    /**
+     * UmidToken parameter name.
+     */
+    private String umidTokenName = "umidToken";
 
-	/**
-	 * Secure asymmetric cryptic algorithm name.
-	 * 
-	 * @see {@link CryptKind }
-	 */
-	private String secretAlgKindName = "alg";
+    /**
+     * Secure asymmetric cryptic algorithm name.
+     * 
+     * @see {@link CryptKind }
+     */
+    private String secretAlgKindName = "alg";
 
-	/**
-	 * Verification verifiedToken parameter name.
-	 */
-	private String verifiedTokenName = "verifiedToken";
+    /**
+     * Verification verifiedToken parameter name.
+     */
+    private String verifiedTokenName = "verifiedToken";
 
-	/**
-	 * Dynamic verification code operation action type parameter key-name.
-	 */
-	private String smsActionName = "action";
+    /**
+     * Dynamic verification code operation action type parameter key-name.
+     */
+    private String smsActionName = "action";
 
-	public String getCredentialsName() {
-		return credentialsName;
-	}
+    public String getCredentialsName() {
+        return credentialsName;
+    }
 
-	public void setCredentialsName(String loginPassword) {
-		this.credentialsName = loginPassword;
-	}
+    public void setCredentialsName(String loginPassword) {
+        this.credentialsName = loginPassword;
+    }
 
-	public String getClientRefName() {
-		return clientRefName;
-	}
+    public String getClientRefName() {
+        return clientRefName;
+    }
 
-	public void setClientRefName(String clientRefName) {
-		this.clientRefName = clientRefName;
-	}
+    public void setClientRefName(String clientRefName) {
+        this.clientRefName = clientRefName;
+    }
 
-	public String getUmidTokenName() {
-		return umidTokenName;
-	}
+    public String getUmidTokenName() {
+        return umidTokenName;
+    }
 
-	public void setUmidTokenName(String umidTokenName) {
-		this.umidTokenName = umidTokenName;
-	}
+    public void setUmidTokenName(String umidTokenName) {
+        this.umidTokenName = umidTokenName;
+    }
 
-	public String getSecretAlgKindName() {
-		return secretAlgKindName;
-	}
+    public String getSecretAlgKindName() {
+        return secretAlgKindName;
+    }
 
-	public void setSecretAlgKindName(String cryptAlgKindName) {
-		this.secretAlgKindName = cryptAlgKindName;
-	}
+    public void setSecretAlgKindName(String cryptAlgKindName) {
+        this.secretAlgKindName = cryptAlgKindName;
+    }
 
-	public String getVerifiedTokenName() {
-		return verifiedTokenName;
-	}
+    public String getVerifiedTokenName() {
+        return verifiedTokenName;
+    }
 
-	public void setVerifiedTokenName(String verifiedTokenName) {
-		this.verifiedTokenName = verifiedTokenName;
-	}
+    public void setVerifiedTokenName(String verifiedTokenName) {
+        this.verifiedTokenName = verifiedTokenName;
+    }
 
-	public String getSmsActionName() {
-		return smsActionName;
-	}
+    public String getSmsActionName() {
+        return smsActionName;
+    }
 
-	public void setSmsActionName(String smsActionName) {
-		this.smsActionName = smsActionName;
-	}
+    public void setSmsActionName(String smsActionName) {
+        this.smsActionName = smsActionName;
+    }
 
 }
