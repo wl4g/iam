@@ -102,7 +102,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
     /**
      * IAM server OIDC configuration properties.
      */
-    private OidcProperties oidc = new OidcProperties();
+    private V1OidcProperties v1Oidc = new V1OidcProperties();
 
     public String getLoginUri() {
         return loginUri;
@@ -179,12 +179,12 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
         this.api = api;
     }
 
-    public OidcProperties getOidc() {
-        return oidc;
+    public V1OidcProperties getV1Oidc() {
+        return v1Oidc;
     }
 
-    public void setOidc(OidcProperties oidc) {
-        this.oidc = oidc;
+    public void setV1Oidc(V1OidcProperties v1Oidc) {
+        this.v1Oidc = v1Oidc;
     }
 
     @Override

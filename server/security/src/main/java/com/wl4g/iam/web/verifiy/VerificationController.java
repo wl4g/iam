@@ -60,7 +60,7 @@ public class VerificationController extends BaseIamController {
     /**
      * Verify CAPTCHA apply model key-name.
      */
-    final public static String KEY_APPLY_RESULT = "applyModel";
+    public static final String KEY_APPLY_RESULT = "applyModel";
 
     /**
      * Composite verifier handler.

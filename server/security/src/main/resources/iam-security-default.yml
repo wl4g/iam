@@ -92,11 +92,11 @@ spring:
       #gif:
       jigsaw:
         pool-size: 64
-    oidc:
+    v1-oidc: # see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
       www-realm-name: 'IAM OIDC Realm'
       id-token-digest-name: SHA-256
       jws-algorithm-name: RS256
       jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
       code-challenge-methods-supported: ["plain", "S256"]
-      token-expiration-seconds: 36000
+      token-expiration-seconds: 3600
       code-expiration-seconds: 10

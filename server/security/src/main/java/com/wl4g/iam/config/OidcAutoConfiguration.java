@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.config;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,15 +26,15 @@ import com.wl4g.iam.web.oidc.V1OidcServerAuthenticatingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
 /**
- * IAM OIDC server auto configuration
+ * IAM V1-OIDC endpoint server auto configuration
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
+ * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
 @Configuration
 @ConditionalOnBean(IamServerMarkerConfiguration.Marker.class)
-@AutoConfigureAfter({ LoginAutoConfiguration.class })
 public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean

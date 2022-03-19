@@ -105,12 +105,12 @@ import com.wl4g.infra.common.resource.StreamResource;
 import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
- * IAM OIDC authentication controller implements
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月22日
- * @since
+ * IAM V1-OIDC authentication controller.
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2022-03-18 v1.0.0
+ * @since v3.0.0
+ * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
 @V1OidcServerController
 public class V1OidcServerAuthenticatingController extends BaseIamController {
@@ -130,20 +130,20 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
 
         ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver(
                 Thread.currentThread().getContextClassLoader());
-        Set<StreamResource> resources = resolver.getResources(config.getOidc().getJwksJsonResource());
+        Set<StreamResource> resources = resolver.getResources(config.getV1Oidc().getJwksJsonResource());
         if (resources.isEmpty()) {
-            throw new IamException(format("Not found jwks resource: %s", config.getOidc().getJwksJsonResource()));
+            throw new IamException(format("Not found jwks resource: %s", config.getV1Oidc().getJwksJsonResource()));
         }
         StreamResource jwksRes = resources.iterator().next();
         if (resources.size() > 1) {
             log.warn(format("[WARNNING] Found multi jwks resources %s by %s, Using the first one by default %s", resources,
-                    config.getOidc().getJwksJsonResource(), jwksRes));
+                    config.getV1Oidc().getJwksJsonResource(), jwksRes));
         }
         JWKSet jwkSet = JWKSet.load(jwksRes.getInputStream());
         JWK key = jwkSet.getKeys().get(0);
         this.signer = new RSASSASigner((RSAKey) key);
         this.pubJWKSet = jwkSet.toPublicJWKSet();
-        this.jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse(config.getOidc().getJwsAlgorithmName())).keyID(key.getKeyID())
+        this.jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse(config.getV1Oidc().getJwsAlgorithmName())).keyID(key.getKeyID())
                 .build();
     }
 
@@ -175,7 +175,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                         KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
                         KEY_IAM_OIDC_CLAIMS_EMAIL))
                 // PKCE support advertised
-                .code_challenge_methods_supported(config.getOidc().getCodeChallengeMethodsSupported())
+                .code_challenge_methods_supported(config.getV1Oidc().getCodeChallengeMethodsSupported())
                 .build();
     }
 
@@ -263,6 +263,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
 
     /**
      * Provides token endpoint.
+     * 
+     * @see https://openid.net/specs/openid-connect-core-1_0.html#TokenRequestValidation
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
@@ -295,7 +297,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 return wrapErrorJson("invalid_request", "code_verifier missing");
             }
             if ("S256".equals(codeInfo.getCodeChallengeMethod())) {
-                MessageDigest s256 = MessageDigest.getInstance(config.getOidc().getIdTokenDigestName());
+                MessageDigest s256 = MessageDigest.getInstance(config.getV1Oidc().getIdTokenDigestName());
                 s256.reset();
                 s256.update(code_verifier.getBytes(StandardCharsets.UTF_8));
                 String hashedVerifier = Base64URL.encode(s256.digest()).toString();
@@ -322,7 +324,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .access_token(access_token)
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                 .scope(codeInfo.getScope())
-                .expires_in(config.getOidc().getTokenExpirationSeconds())
+                .expires_in(config.getV1Oidc().getTokenExpirationSeconds())
                 .id_token(id_token)
                 .build();
         return ResponseEntity.ok(accessToken);
@@ -364,7 +366,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 Set<String> responseType = fromSpaceSeparatedString(response_type);
                 String iss = uriBuilder.replacePath("/").build().encode().toUriString();
 
-                // implicit flow
+                // Implicit flow
+                // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
                 if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN)) {
                     log.info("Using implicit flow. scope={} response_type={} client_id={} redirect_uri={}", scope, response_type,
                             client_id, redirect_uri);
@@ -373,10 +376,11 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     String id_token = createIdToken(iss, user, client_id, nonce, access_token);
                     String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(access_token) + "&token_type="
                             + KEY_IAM_OIDC_TOKEN_TYPE_BEARER + "&state=" + Encodes.urlEncode(state) + "&expires_in="
-                            + config.getOidc().getTokenExpirationSeconds() + "&id_token=" + Encodes.urlEncode(id_token);
+                            + config.getV1Oidc().getTokenExpirationSeconds() + "&id_token=" + Encodes.urlEncode(id_token);
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
-                // authorization code flow
+                // Authorization code flow
+                // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
                 else if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) {
                     log.info("Using authorization code flow {}", code_challenge != null ? "with PKCE" : "");
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
@@ -384,7 +388,10 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     String url = redirect_uri.concat("?").concat("code=").concat(code).concat("&state=").concat(
                             Encodes.urlEncode(state));
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
-                } else {
+                }
+                // Not implements to Hybrid flow
+                // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
+                else {
                     String url = redirect_uri + "#" + "error=unsupported_response_type";
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
@@ -419,7 +426,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
 
     private String createAccessToken(String iss, V1OidcUser user, String client_id, String scope) throws JOSEException {
         // create JWT claims
-        Date expiration = new Date(System.currentTimeMillis() + config.getOidc().getTokenExpirationSeconds() * 1000L);
+        Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .audience(client_id)
@@ -441,7 +448,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     private String createIdToken(String iss, V1OidcUser user, String client_id, String nonce, String accessToken)
             throws NoSuchAlgorithmException, JOSEException {
         // compute at_hash
-        MessageDigest digest = MessageDigest.getInstance(config.getOidc().getIdTokenDigestName());
+        MessageDigest digest = MessageDigest.getInstance(config.getV1Oidc().getIdTokenDigestName());
         digest.reset();
         digest.update(accessToken.getBytes(StandardCharsets.UTF_8));
         byte[] hashBytes = digest.digest();
@@ -452,7 +459,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .issuer(iss)
                 .audience(client_id)
                 .issueTime(new Date())
-                .expirationTime(new Date(currentTimeMillis() + config.getOidc().getTokenExpirationSeconds() * 1000L))
+                .expirationTime(new Date(currentTimeMillis() + config.getV1Oidc().getTokenExpirationSeconds() * 1000L))
                 .jwtID(UUID.randomUUID().toString())
                 .claim(KEY_IAM_OIDC_CLAIMS_NONCE, nonce)
                 .claim(KEY_IAM_OIDC_CLAIMS_AT_HASH, encodedHash)
@@ -484,7 +491,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     private ResponseEntity<String> wrapUnauthentication() {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.TEXT_HTML);
-        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getOidc().getWwwRealmName()));
+        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getV1Oidc().getWwwRealmName()));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
                 "<html><body><h1>401 Unauthorized</h1>IAM V1 OIDC server</body></html>");
     }

@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -154,10 +156,10 @@ public abstract class BaseApiController extends BaseController implements Initia
      * </pre>
      */
     @GetMapping(path = URI_IAM_SERVER_API_V2_SESSION)
-    public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
-        RespBase<Object> resp = RespBase.create();
-        log.info("Gets sessions <= {}", query);
+    public RespBase<?> getSessions(@Validated SessionQueryModel query, HttpServletRequest request) throws Exception {
+        log.info("called:getSessions '{}' from '{}', query={}", URI_IAM_SERVER_API_V2_SESSION, request.getRemoteHost(), query);
 
+        RespBase<Object> resp = RespBase.create();
         // Priority search principal.
         if (!isBlank(query.getPrincipal())) {
             Collection<IamSession> ss = sessionDAO.getAccessSessions(query.getPrincipal());
@@ -171,8 +173,7 @@ public abstract class BaseApiController extends BaseController implements Initia
             CursorIndex index = new CursorIndex(sc.getCursor().getCursorFullyString(), sc.getCursor().getHasNext());
             resp.setData(new SessionAttributeModel(index, sas));
         }
-
-        log.info("Get sessions => {}", resp.asJson());
+        log.info("resp:getSessions {}", resp.asJson());
         return resp;
     }
 
@@ -184,21 +185,21 @@ public abstract class BaseApiController extends BaseController implements Initia
      * @throws Exception
      */
     @PostMapping(path = URI_IAM_SERVER_API_V2_SESSION)
-    public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy) throws Exception {
-        RespBase<String> resp = RespBase.create();
-        log.info("Destroy sessions by <= {}", destroy);
+    public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy, HttpServletRequest request)
+            throws Exception {
+        log.info("called:destroySessions '{}' from '{}', destroy={}", URI_IAM_SERVER_API_V2_SESSION, request.getRemoteHost(),
+                destroy);
 
+        RespBase<String> resp = RespBase.create();
         // Destroy with sessionIds.
         if (!isBlank(destroy.getSessionId())) {
             sessionDAO.delete(new IamSession((Serializable) destroy.getSessionId()));
         }
-
         // Destroy with principal.
         if (!isBlank(destroy.getPrincipal())) {
             sessionDAO.removeAccessSession(destroy.getPrincipal());
         }
-
-        log.info("Destroy sessions => {}", resp);
+        log.info("resp:DestroySessions {}", resp);
         return resp;
     }
 
@@ -290,7 +291,6 @@ public abstract class BaseApiController extends BaseController implements Initia
 
         // Authentication principal.
         sa.setPrincipal(session.getPrimaryPrincipal());
-
         return sa;
     }
 

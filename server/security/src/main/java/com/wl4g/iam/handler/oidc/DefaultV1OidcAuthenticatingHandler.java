@@ -38,7 +38,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
         jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
-                config.getOidc().getTokenExpirationSeconds());
+                config.getV1Oidc().getTokenExpirationSeconds());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
         jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
-                config.getOidc().getCodeExpirationSeconds());
+                config.getV1Oidc().getCodeExpirationSeconds());
     }
 
     @Override

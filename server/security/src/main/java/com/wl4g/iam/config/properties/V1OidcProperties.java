@@ -31,13 +31,14 @@ import java.util.List;
 import com.nimbusds.jose.JWSAlgorithm;
 
 /**
- * IAM OIDC configuration properties
+ * IAM V1-OIDC configuration properties
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-17 v1.0.0
  * @since v1.0.0
+ * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
-public class OidcProperties implements Serializable {
+public class V1OidcProperties implements Serializable {
     private static final long serialVersionUID = -2694422471852860689L;
 
     private String wwwRealmName = "IAM OIDC Realm";
