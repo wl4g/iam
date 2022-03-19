@@ -15,13 +15,35 @@
  */
 package com.wl4g.iam.web.oidc;
 
-import static com.wl4g.iam.common.constant.OidcIAMConstants.AUTHORIZATION_ENDPOINT;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.INTROSPECTION_ENDPOINT;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.JWKS_ENDPOINT;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.METADATA_ENDPOINT;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.TOKEN_ENDPOINT;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.USERINFO_ENDPOINT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_AT_HASH;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EMAIL;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_FAMILY_NAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_GIVEN_NAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_ISS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_NAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_NONCE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_SUB;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_IMPLICIT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_CODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_EMAIL;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_OPENID;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_PROFILE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SUBJECT_PUBLIC;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_AUTHORIZE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECTION;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_JWKS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_METADATA;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +55,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,12 +89,15 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcServerController;
+import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUser;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.core.exception.IamException;
+import com.wl4g.iam.handler.oidc.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.BaseIamController;
 import com.wl4g.infra.common.codec.Encodes;
 import com.wl4g.infra.common.resource.StreamResource;
@@ -90,15 +114,14 @@ import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 @V1OidcServerController
 public class V1OidcServerAuthenticatingController extends BaseIamController {
 
+    private final SecureRandom random = new SecureRandom();
+
     private @Autowired IamProperties config;
+    private @Autowired V1OidcAuthenticatingHandler oidcHandler;
 
     private JWSSigner signer;
     private JWKSet pubJWKSet;
     private JWSHeader jwsHeader;
-
-    private final Map<String, V1AccessTokenInfo> accessTokens = new HashMap<>();
-    private final Map<String, V1AuthorizationCodeInfo> authorizationCodes = new HashMap<>();
-    private static final SecureRandom random = new SecureRandom();
 
     @PostConstruct
     public void init() throws IOException, ParseException, JOSEException {
@@ -108,7 +131,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 Thread.currentThread().getContextClassLoader());
         Set<StreamResource> resources = resolver.getResources(config.getOidc().getJwksJsonResource());
         if (resources.isEmpty()) {
-            throw new IamException(format("Not found jwks resource by %s", config.getOidc().getJwksJsonResource()));
+            throw new IamException(format("Not found jwks resource: %s", config.getOidc().getJwksJsonResource()));
         }
         StreamResource jwksRes = resources.iterator().next();
         if (resources.size() > 1) {
@@ -127,29 +150,31 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
      * Provides OIDC metadata. See the spec at
      * https://openid.net/specs/openid-connect-discovery-1_0.html
      */
-    @RequestMapping(value = METADATA_ENDPOINT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_METADATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public V1MetadataEndpointModel metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
-        log.info("called '{}' from '{}'", METADATA_ENDPOINT, req.getRemoteHost());
+        log.info("called '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
 
         String urlPrefix = uriBuilder.replacePath(null).build().encode().toUriString();
         // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
         // https://tools.ietf.org/html/rfc8414#section-2
         return V1MetadataEndpointModel.builder()
                 .issuer(urlPrefix.concat("/")) // REQUIRED
-                .authorization_endpoint(urlPrefix.concat(AUTHORIZATION_ENDPOINT)) // REQUIRED
-                .token_endpoint(urlPrefix.concat(TOKEN_ENDPOINT)) // REQUIRED
-                .userinfo_endpoint(urlPrefix.concat(USERINFO_ENDPOINT)) // RECOMMENDED
-                .jwks_uri(urlPrefix.concat(JWKS_ENDPOINT)) // REQUIRED
-                .introspection_endpoint(urlPrefix.concat(INTROSPECTION_ENDPOINT))
-                .scopes_supported(Arrays.asList("openid", "profile", "email")) // REQUIRED
-                .response_types_supported(Arrays.asList("id_token token", "code")) // REQUIRED
-                .grant_types_supported(Arrays.asList("authorization_code", "implicit")) // OPTIONAL
-                .subject_types_supported(Collections.singletonList("public")) // REQUIRED
-                .id_token_signing_alg_values_supported(Arrays.asList("RS256", "none")) // REQUIRED
-                .claims_supported(Arrays.asList("sub", "iss", "name", "family_name", "given_name", "preferred_username", "email"))
+                .authorization_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_AUTHORIZE)) // REQUIRED
+                .token_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_TOKEN)) // REQUIRED
+                .userinfo_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO)) // RECOMMENDED
+                .jwks_uri(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_JWKS)) // REQUIRED
+                .introspection_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
+                .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL)) // REQUIRED
+                .response_types_supported(asList(KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) // REQUIRED
+                .grant_types_supported(asList(KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_IMPLICIT)) // OPTIONAL
+                .subject_types_supported(singletonList(KEY_IAM_OIDC_SUBJECT_PUBLIC)) // REQUIRED
+                .id_token_signing_alg_values_supported(asList("RS256", "none")) // REQUIRED
+                .claims_supported(asList(KEY_IAM_OIDC_CLAIMS_SUB, KEY_IAM_OIDC_CLAIMS_ISS, KEY_IAM_OIDC_CLAIMS_NAME,
+                        KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
+                        KEY_IAM_OIDC_CLAIMS_EMAIL))
                 // PKCE support advertised
-                .code_challenge_methods_supported(Arrays.asList("plain", "S256"))
+                .code_challenge_methods_supported(asList("plain", "S256"))
                 .build();
     }
 
@@ -157,42 +182,43 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
      * Provides JSON Web Key Set containing the public part of the key used to
      * sign ID tokens.
      */
-    @RequestMapping(value = JWKS_ENDPOINT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_JWKS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> jwks(HttpServletRequest req) {
-        log.info("called '{}' from '{}'", JWKS_ENDPOINT, req.getRemoteHost());
+        log.info("called '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_JWKS, req.getRemoteHost());
         return ResponseEntity.ok().body(pubJWKSet.toString());
     }
 
     /**
      * Provides claims about a user. Requires a valid access token.
      */
-    @RequestMapping(value = USERINFO_ENDPOINT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_USERINFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(allowedHeaders = { "Authorization", "Content-Type" })
     public ResponseEntity<?> userinfo(
             @RequestHeader("Authorization") String auth,
             @RequestParam(required = false) String access_token,
             HttpServletRequest req) {
 
-        log.info("called '{}' from '{}' auth={}, access_token={}", USERINFO_ENDPOINT, req.getRemoteHost(), auth, access_token);
+        log.info("called '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO, req.getRemoteHost(),
+                auth, access_token);
 
-        if (!auth.startsWith("Bearer ")) {
+        if (!auth.startsWith(KEY_IAM_OIDC_TOKEN_TYPE_BEARER.concat(" "))) {
             if (access_token == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No token");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is required.");
             }
             auth = access_token;
         } else {
             auth = auth.substring(7);
         }
-        V1AccessTokenInfo accessToken = accessTokens.get(auth);
-        if (accessToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("access token not found");
+        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(auth);
+        if (accessTokenInfo == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid is access token.");
         }
-        Set<String> scopes = setFromSpaceSeparatedString(accessToken.getScope());
+        Set<String> scopes = fromSpaceSeparatedString(accessTokenInfo.getScope());
         Map<String, Object> m = new LinkedHashMap<>();
-        V1OidcUser user = accessToken.getUser();
+        V1OidcUser user = accessTokenInfo.getUser();
         m.put("sub", user.getSub());
-        if (scopes.contains("profile")) {
+        if (scopes.contains(KEY_IAM_OIDC_SCOPE_PROFILE)) {
             user = V1OidcUser.builder()
                     .name(user.getName())
                     .family_name(user.getFamily_name())
@@ -200,7 +226,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     .preferred_username(user.getPreferred_username())
                     .build();
         }
-        if (scopes.contains("email")) {
+        if (scopes.contains(KEY_IAM_OIDC_SCOPE_EMAIL)) {
             user = V1OidcUser.builder().email(user.getEmail()).build();
         }
         return ResponseEntity.ok().body(user);
@@ -209,38 +235,41 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     /**
      * Provides information about a supplied access token.
      */
-    @RequestMapping(value = INTROSPECTION_ENDPOINT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_INTROSPECTION, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> introspection(
-            @RequestParam String token,
             @RequestHeader("Authorization") String auth,
+            @RequestParam String token,
             HttpServletRequest req) {
 
-        log.info("called '{}' from '{}', token={}, auth={} ", INTROSPECTION_ENDPOINT, req.getRemoteHost(), token, auth);
+        log.info("called '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECTION, req.getRemoteHost(), token,
+                auth);
 
-        Map<String, Object> m = new LinkedHashMap<>();
-        V1AccessTokenInfo accessToken = accessTokens.get(token);
-        if (accessToken == null) {
+        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(auth);
+        if (accessTokenInfo == null) {
             log.error("token not found in memory: {}", token);
-            m.put("active", false);
+            return ResponseEntity.ok().body(V1IntrospectionAccessToken.builder().active(true).build());
         } else {
-            log.info("found token for user {}, releasing scopes: {}", accessToken.getUser().getSub(), accessToken.getScope());
+            log.info("Found token for user {}, releasing scopes: {}", accessTokenInfo.getUser().getSub(),
+                    accessTokenInfo.getScope());
             // https://tools.ietf.org/html/rfc7662#section-2.2 for all claims
-            m.put("active", true);
-            m.put("scope", accessToken.getScope());
-            m.put("client_id", accessToken.getClientId());
-            m.put("username", accessToken.getUser().getSub());
-            m.put("token_type", "Bearer");
-            m.put("exp", accessToken.getExpiration().toInstant().toEpochMilli());
-            m.put("sub", accessToken.getUser().getSub());
-            m.put("iss", accessToken.getIss());
+            V1IntrospectionAccessToken accessToken = V1IntrospectionAccessToken.builder()
+                    .active(true)
+                    .scope(accessTokenInfo.getScope())
+                    .client_id(accessTokenInfo.getClientId())
+                    .username(accessTokenInfo.getUser().getSub())
+                    .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                    .exp(accessTokenInfo.getExpiration().toInstant().toEpochMilli())
+                    .sub(accessTokenInfo.getUser().getSub())
+                    .iss(accessTokenInfo.getIss())
+                    .build();
+            return ResponseEntity.ok().body(accessToken);
         }
-        return ResponseEntity.ok().body(m);
     }
 
     /**
      * Provides token endpoint.
      */
-    @RequestMapping(value = TOKEN_ENDPOINT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> token(
             @RequestParam String grant_type,
@@ -252,23 +281,23 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws NoSuchAlgorithmException, JOSEException {
 
-        log.info("called '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", TOKEN_ENDPOINT, req.getRemoteHost(),
-                grant_type, code, redirect_uri, client_id);
+        log.info("called '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
+                req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
         if (!"authorization_code".equals(grant_type)) {
-            return jsonError("unsupported_grant_type", "grant_type is not authorization_code");
+            return wrapErrorJson("unsupported_grant_type", "grant_type is not authorization_code");
         }
-        V1AuthorizationCodeInfo codeInfo = authorizationCodes.get(code);
+        V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
         if (codeInfo == null) {
-            return jsonError("invalid_grant", "code not valid");
+            return wrapErrorJson("invalid_grant", "code not valid");
         }
         if (!redirect_uri.equals(codeInfo.getRedirect_uri())) {
-            return jsonError("invalid_request", "redirect_uri not valid");
+            return wrapErrorJson("invalid_request", "redirect_uri not valid");
         }
         if (codeInfo.getCodeChallenge() != null) {
             // check PKCE
             if (code_verifier == null) {
-                return jsonError("invalid_request", "code_verifier missing");
+                return wrapErrorJson("invalid_request", "code_verifier missing");
             }
             if ("S256".equals(codeInfo.getCodeChallengeMethod())) {
                 MessageDigest s256 = MessageDigest.getInstance(config.getOidc().getIdTokenDigestName());
@@ -278,33 +307,36 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
                             hashedVerifier, codeInfo.getCodeChallenge());
-                    return jsonError("invalid_request", "code_verifier not correct");
+                    return wrapErrorJson("invalid_request", "code_verifier not correct");
                 }
                 log.info("code_verifier OK");
             } else {
                 if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
                     log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
-                    return jsonError("invalid_request", "code_verifier not correct");
+                    return wrapErrorJson("invalid_request", "code_verifier not correct");
                 }
             }
         }
-        // return access token
-        Map<String, String> map = new LinkedHashMap<>();
-        String accessToken = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+
+        // response access token
+        String access_token = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
                 codeInfo.getScope());
-        map.put("access_token", accessToken);
-        map.put("token_type", "Bearer");
-        map.put("expires_in", String.valueOf(config.getOidc().getTokenExpirationSeconds()));
-        map.put("scope", codeInfo.getScope());
-        map.put("id_token",
-                createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce(), accessToken));
-        return ResponseEntity.ok(map);
+        String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce(),
+                access_token);
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(access_token)
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .scope(codeInfo.getScope())
+                .expires_in(config.getOidc().getTokenExpirationSeconds())
+                .id_token(id_token)
+                .build();
+        return ResponseEntity.ok(accessToken);
     }
 
     /**
      * Provides authorization endpoint.
      */
-    @RequestMapping(value = AUTHORIZATION_ENDPOINT, method = RequestMethod.GET)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_AUTHORIZE, method = RequestMethod.GET)
     public ResponseEntity<?> authorize(
             @RequestParam String client_id,
             @RequestParam String redirect_uri,
@@ -319,35 +351,35 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
 
-        log.info("called '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}", AUTHORIZATION_ENDPOINT,
+        log.info("called '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}", URI_IAM_OIDC_ENDPOINT_AUTHORIZE,
                 req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
 
         if (auth == null) {
             log.info("User and password not provided. scope={} response_type={} client_id={} redirect_uri={}", scope,
                     response_type, client_id, redirect_uri);
-            return response401();
+            return wrapUnauthentication();
         } else {
             String[] creds = new String(Base64.getDecoder().decode(auth.split(" ")[1])).split(":", 2);
-            String login = creds[0];
+            String username = creds[0];
             String password = creds[1];
-            V1OidcUser user = getV1OidcUser();
-            if (user.getLogin_name().equals(login) && user.getPassword().equals(password)) {
-                log.info("password for user {} is correct", login);
-                Set<String> responseType = setFromSpaceSeparatedString(response_type);
+            V1OidcUser user = oidcHandler.getV1OidcUser(username, password);
+            if (user.getLogin_name().equals(username) && user.getPassword().equals(password)) {
+                log.info("Password {} for user {} is correct.", password, username);
+                Set<String> responseType = fromSpaceSeparatedString(response_type);
                 String iss = uriBuilder.replacePath("/").build().encode().toUriString();
                 // implicit flow
-                if (responseType.contains("token")) {
+                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN)) {
                     log.info("Using implicit flow. scope={} response_type={} client_id={} redirect_uri={}", scope, response_type,
                             client_id, redirect_uri);
                     String access_token = createAccessToken(iss, user, client_id, scope);
                     String id_token = createIdToken(iss, user, client_id, nonce, access_token);
-                    String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(access_token) + "&token_type=Bearer"
-                            + "&state=" + Encodes.urlEncode(state) + "&expires_in=" + config.getOidc().getTokenExpirationSeconds()
-                            + "&id_token=" + Encodes.urlEncode(id_token);
+                    String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(access_token) + "&token_type="
+                            + KEY_IAM_OIDC_TOKEN_TYPE_BEARER + "&state=" + Encodes.urlEncode(state) + "&expires_in="
+                            + config.getOidc().getTokenExpirationSeconds() + "&id_token=" + Encodes.urlEncode(id_token);
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
                 // authorization code flow
-                else if (responseType.contains("code")) {
+                else if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) {
                     log.info("Using authorization code flow {}", code_challenge != null ? "with PKCE" : "");
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
                             iss, scope, nonce);
@@ -360,14 +392,9 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             } else {
                 log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
                         response_type, client_id, redirect_uri);
-                return response401();
+                return wrapUnauthentication();
             }
         }
-    }
-
-    private V1OidcUser getV1OidcUser() {
-        // TODO
-        return new V1OidcUser();
     }
 
     private String createAuthorizationCode(
@@ -382,9 +409,12 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         byte[] bytes = new byte[16];
         random.nextBytes(bytes);
         String code = Base64URL.encode(bytes).toString();
-        log.info("issuing code={}", code);
-        authorizationCodes.put(code, new V1AuthorizationCodeInfo(code_challenge, code_challenge_method, code, client_id,
-                redirect_uri, user, iss, scope, nonce));
+
+        V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code_challenge, code_challenge_method, code, client_id,
+                redirect_uri, user, iss, scope, nonce);
+        oidcHandler.putAuthorizationCode(code, codeInfo);
+
+        log.info("Issuing authorization code={}, code info={}", code, codeInfo);
         return code;
     }
 
@@ -404,7 +434,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         // sign the JWT token
         jwt.sign(signer);
         String access_token = jwt.serialize();
-        accessTokens.put(access_token, new V1AccessTokenInfo(user, access_token, expiration, scope, client_id, iss));
+
+        oidcHandler.putAccessToken(access_token, new V1AccessTokenInfo(user, access_token, expiration, scope, client_id, iss));
         return access_token;
     }
 
@@ -422,33 +453,33 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .issuer(iss)
                 .audience(client_id)
                 .issueTime(new Date())
-                .expirationTime(new Date(System.currentTimeMillis() + config.getOidc().getTokenExpirationSeconds() * 1000L))
+                .expirationTime(new Date(currentTimeMillis() + config.getOidc().getTokenExpirationSeconds() * 1000L))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("nonce", nonce)
-                .claim("at_hash", encodedHash)
+                .claim(KEY_IAM_OIDC_CLAIMS_NONCE, nonce)
+                .claim(KEY_IAM_OIDC_CLAIMS_AT_HASH, encodedHash)
                 .build();
         // create JWT token
-        SignedJWT myToken = new SignedJWT(jwsHeader, jwtClaimsSet);
+        SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
         // sign the JWT token
-        myToken.sign(signer);
-        return myToken.serialize();
+        jwt.sign(signer);
+        return jwt.serialize();
     }
 
-    private ResponseEntity<String> response401() {
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.TEXT_HTML);
-        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getOidc().getBearerRealmName()));
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
-                "<html><body><h1>401 Unauthorized</h1>IAM OIDC server</body></html>");
-    }
-
-    private Set<String> setFromSpaceSeparatedString(String s) {
+    private Set<String> fromSpaceSeparatedString(String s) {
         if (s == null || StringUtils.isEmpty(s))
             return Collections.emptySet();
-        return new HashSet<>(Arrays.asList(s.split(" ")));
+        return new HashSet<>(asList(s.split(" ")));
     }
 
-    private ResponseEntity<?> jsonError(String error, String error_description) {
+    private ResponseEntity<String> wrapUnauthentication() {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.TEXT_HTML);
+        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getOidc().getWwwRealmName()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
+                "<html><body><h1>401 Unauthorized</h1>IAM V1 OIDC server</body></html>");
+    }
+
+    private ResponseEntity<?> wrapErrorJson(String error, String error_description) {
         log.warn("error={} error_description={}", error, error_description);
         Map<String, String> map = new LinkedHashMap<>();
         map.put("error", error);

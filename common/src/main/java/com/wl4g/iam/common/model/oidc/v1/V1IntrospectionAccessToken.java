@@ -13,26 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.handler.oidc;
+package com.wl4g.iam.common.model.oidc.v1;
 
-import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
-import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Wither;
 
 /**
- * {@link OidcAuthenticatingHandler}
+ * {@link V1IntrospectionAccessToken}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
  */
-public interface OidcAuthenticatingHandler {
-
-    void putAccessToken(String authorizationBearer, V1AccessTokenInfo accessToken);
-
-    V1AccessTokenInfo loadAccessToken(String authorizationBearer);
-
-    void putAuthorizationCode(String authorizationCode, V1AccessTokenInfo accessToken);
-
-    V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode);
-
+@Getter
+@Setter
+@ToString
+@Wither
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class V1IntrospectionAccessToken {
+    private Boolean active;
+    private String scope;
+    private String client_id;
+    private String username;
+    private String token_type;
+    private Long exp;
+    private String sub;
+    private String iss;
 }

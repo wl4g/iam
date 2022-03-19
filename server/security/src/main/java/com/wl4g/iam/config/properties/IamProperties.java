@@ -20,7 +20,7 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LO
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_RCM_BASE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
-import static com.wl4g.iam.common.constant.OidcIAMConstants.URI_IAM_OIDC_V1_SERVER;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT;
 import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
@@ -230,7 +230,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
         // V2 API controller rules.
         chains.put(URI_IAM_SERVER_API_V2_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
         // V1 OIDC controller allowed rules.
-        chains.put(URI_IAM_OIDC_V1_SERVER + "/**", "anon");
+        chains.put(URI_IAM_OIDC_ENDPOINT + "/**", "anon");
     }
 
     /**

@@ -17,38 +17,45 @@ package com.wl4g.iam.handler.oidc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.iam.common.constant.OidcIAMConstants;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import com.wl4g.iam.common.model.oidc.v1.V1OidcUser;
 import com.wl4g.iam.handler.AbstractAuthenticatingHandler;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 
 /**
- * {@link DefaultOidcAuthenticatingHandler}
+ * {@link DefaultV1OidcAuthenticatingHandler}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
  */
-public class DefaultOidcAuthenticatingHandler extends AbstractAuthenticatingHandler implements OidcAuthenticatingHandler {
+public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHandler implements V1OidcAuthenticatingHandler {
 
     private @Autowired JedisService jedisService;
 
     @Override
-    public void putAccessToken(String authorizationBearer, V1AccessTokenInfo accessToken) {
-        jedisService.setObjectAsJson(buildAccessTokenKey(authorizationBearer), accessToken,
+    public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
+        jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
                 config.getOidc().getTokenExpirationSeconds());
     }
 
     @Override
-    public V1AccessTokenInfo loadAccessToken(String authorizationBearer) {
-        return jedisService.getObjectAsJson(buildAccessTokenKey(authorizationBearer), V1AccessTokenInfo.class);
+    public V1AccessTokenInfo loadAccessToken(String accessToken) {
+        return jedisService.getObjectAsJson(buildAccessTokenKey(accessToken), V1AccessTokenInfo.class);
     }
 
     @Override
-    public void putAuthorizationCode(String authorizationCode, V1AccessTokenInfo accessToken) {
-        jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), accessToken,
+    public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
+        jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
                 config.getOidc().getCodeExpirationSeconds());
+    }
+
+    @Override
+    public V1OidcUser getV1OidcUser(String username, String password) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -56,12 +63,12 @@ public class DefaultOidcAuthenticatingHandler extends AbstractAuthenticatingHand
         return jedisService.getObjectAsJson(buildAuthorizationCodeKey(authorizationCode), V1AuthorizationCodeInfo.class);
     }
 
-    private String buildAccessTokenKey(String authorizationBearer) {
-        return OidcIAMConstants.CACHE_OIDC_ACCESSTOKEN_PREFIX.concat(authorizationBearer);
+    private String buildAccessTokenKey(String accessToken) {
+        return V1OidcIAMConstants.CACHE_OIDC_ACCESSTOKEN_PREFIX.concat(accessToken);
     }
 
     private String buildAuthorizationCodeKey(String authorizationCode) {
-        return OidcIAMConstants.CACHE_OIDC_AUTHCODE_PREFIX.concat(authorizationCode);
+        return V1OidcIAMConstants.CACHE_OIDC_AUTHCODE_PREFIX.concat(authorizationCode);
     }
 
 }

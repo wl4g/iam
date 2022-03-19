@@ -39,7 +39,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 public class OidcProperties implements Serializable {
     private static final long serialVersionUID = -2694422471852860689L;
 
-    private String bearerRealmName = "IAM OIDC Realm";
+    private String wwwRealmName = "IAM OIDC Realm";
 
     private String idTokenDigestName = "SHA-256";
 
@@ -57,12 +57,12 @@ public class OidcProperties implements Serializable {
      */
     private int codeExpirationSeconds = 10;
 
-    public String getBearerRealmName() {
-        return bearerRealmName;
+    public String getWwwRealmName() {
+        return wwwRealmName;
     }
 
-    public void setBearerRealmName(String bearerRealmName) {
-        this.bearerRealmName = bearerRealmName;
+    public void setWwwRealmName(String wwwRealmName) {
+        this.wwwRealmName = wwwRealmName;
     }
 
     public String getIdTokenDigestName() {

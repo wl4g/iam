@@ -20,7 +20,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.iam.common.constant.OidcIAMConstants;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants;
+import com.wl4g.iam.handler.oidc.DefaultV1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.V1OidcServerAuthenticatingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
@@ -43,8 +45,13 @@ public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object v1OidcServerAuthenticatingControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(OidcIAMConstants.URI_IAM_OIDC_V1_SERVER,
+        return super.newPrefixHandlerMapping(V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT,
                 com.wl4g.iam.annotation.V1OidcServerController.class);
+    }
+
+    @Bean
+    public V1OidcAuthenticatingHandler defaultV1OidcAuthenticatingHandler() {
+        return new DefaultV1OidcAuthenticatingHandler();
     }
 
 }

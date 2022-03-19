@@ -93,7 +93,7 @@ spring:
       jigsaw:
         pool-size: 64
     oidc:
-      bearer-realm-name: 'IAM OIDC Realm'
+      www-realm-name: 'IAM OIDC Realm'
       id-token-digest-name: SHA-256
       jws-algorithm-name: RS256
       jwks-json-resource: classpath*:/credentials/oidc/default-jwks.json
