@@ -24,6 +24,7 @@ import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class OidcProperties implements Serializable {
     private String jwsAlgorithmName = "RS256";
 
     private String jwksJsonResource = "classpath*:/credentials/oidc/jwks.json";
+
+    private List<String> codeChallengeMethodsSupported = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            add("plain");
+            add("S256");
+        }
+    };
 
     /**
      * OIDC access token expiration seconds.
@@ -93,6 +102,14 @@ public class OidcProperties implements Serializable {
 
     public void setJwksJsonResource(String jwksJsonResource) {
         this.jwksJsonResource = jwksJsonResource;
+    }
+
+    public List<String> getCodeChallengeMethodsSupported() {
+        return codeChallengeMethodsSupported;
+    }
+
+    public void setCodeChallengeMethods(List<String> codeChallengeMethodsSupported) {
+        this.codeChallengeMethodsSupported = codeChallengeMethodsSupported;
     }
 
     public int getTokenExpirationSeconds() {

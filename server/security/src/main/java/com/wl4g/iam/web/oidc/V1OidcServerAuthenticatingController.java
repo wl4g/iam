@@ -44,6 +44,7 @@ import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -174,7 +175,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                         KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
                         KEY_IAM_OIDC_CLAIMS_EMAIL))
                 // PKCE support advertised
-                .code_challenge_methods_supported(asList("plain", "S256"))
+                .code_challenge_methods_supported(config.getOidc().getCodeChallengeMethodsSupported())
                 .build();
     }
 
@@ -202,15 +203,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         log.info("called '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO, req.getRemoteHost(),
                 auth, access_token);
 
-        if (!auth.startsWith(KEY_IAM_OIDC_TOKEN_TYPE_BEARER.concat(" "))) {
-            if (access_token == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token is required.");
-            }
-            auth = access_token;
-        } else {
-            auth = auth.substring(7);
-        }
-        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(auth);
+        String accessToken = getAccessTokenFrom(auth, access_token);
+        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(accessToken);
         if (accessTokenInfo == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid is access token.");
         }
@@ -244,9 +238,10 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         log.info("called '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECTION, req.getRemoteHost(), token,
                 auth);
 
+        // String accessToken = getAccessTokenFrom(auth, token);
         V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(auth);
         if (accessTokenInfo == null) {
-            log.error("token not found in memory: {}", token);
+            log.error("Not found {}", token);
             return ResponseEntity.ok().body(V1IntrospectionAccessToken.builder().active(true).build());
         } else {
             log.info("Found token for user {}, releasing scopes: {}", accessTokenInfo.getUser().getSub(),
@@ -365,12 +360,15 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             V1OidcUser user = oidcHandler.getV1OidcUser(username, password);
             if (user.getLogin_name().equals(username) && user.getPassword().equals(password)) {
                 log.info("Password {} for user {} is correct.", password, username);
+
                 Set<String> responseType = fromSpaceSeparatedString(response_type);
                 String iss = uriBuilder.replacePath("/").build().encode().toUriString();
+
                 // implicit flow
                 if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN)) {
                     log.info("Using implicit flow. scope={} response_type={} client_id={} redirect_uri={}", scope, response_type,
                             client_id, redirect_uri);
+
                     String access_token = createAccessToken(iss, user, client_id, scope);
                     String id_token = createIdToken(iss, user, client_id, nonce, access_token);
                     String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(access_token) + "&token_type="
@@ -383,7 +381,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     log.info("Using authorization code flow {}", code_challenge != null ? "with PKCE" : "");
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
                             iss, scope, nonce);
-                    String url = redirect_uri + "?" + "code=" + code + "&state=" + Encodes.urlEncode(state);
+                    String url = redirect_uri.concat("?").concat("code=").concat(code).concat("&state=").concat(
+                            Encodes.urlEncode(state));
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 } else {
                     String url = redirect_uri + "#" + "error=unsupported_response_type";
@@ -463,6 +462,17 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         // sign the JWT token
         jwt.sign(signer);
         return jwt.serialize();
+    }
+
+    private String getAccessTokenFrom(String authorizationHeader, String accessTokenParam) {
+        if (!authorizationHeader.startsWith(KEY_IAM_OIDC_TOKEN_TYPE_BEARER.concat(" "))) {
+            if (isBlank(accessTokenParam)) {
+                return null;
+            }
+            return accessTokenParam;
+        } else {
+            return authorizationHeader.substring(7);
+        }
     }
 
     private Set<String> fromSpaceSeparatedString(String s) {
