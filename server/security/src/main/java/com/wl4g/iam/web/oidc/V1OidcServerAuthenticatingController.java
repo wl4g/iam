@@ -154,7 +154,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_METADATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public V1MetadataEndpointModel metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
-        log.info("called '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
+        log.info("called:metadata '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
 
         String urlPrefix = uriBuilder.replacePath(null).build().encode().toUriString();
         // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
@@ -186,7 +186,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_JWKS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> jwks(HttpServletRequest req) {
-        log.info("called '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_JWKS, req.getRemoteHost());
+        log.info("called:jwks '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_JWKS, req.getRemoteHost());
         return ResponseEntity.ok().body(pubJWKSet.toString());
     }
 
@@ -200,8 +200,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             @RequestParam(required = false) String access_token,
             HttpServletRequest req) {
 
-        log.info("called '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO, req.getRemoteHost(),
-                auth, access_token);
+        log.info("called:userinfo '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO,
+                req.getRemoteHost(), auth, access_token);
 
         String accessToken = getAccessTokenFrom(auth, access_token);
         V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(accessToken);
@@ -235,8 +235,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             @RequestParam String token,
             HttpServletRequest req) {
 
-        log.info("called '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECTION, req.getRemoteHost(), token,
-                auth);
+        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECTION,
+                req.getRemoteHost(), token, auth);
 
         // String accessToken = getAccessTokenFrom(auth, token);
         V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(auth);
@@ -276,7 +276,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws NoSuchAlgorithmException, JOSEException {
 
-        log.info("called '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
+        log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
                 req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
         if (!"authorization_code".equals(grant_type)) {
@@ -346,8 +346,8 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
 
-        log.info("called '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}", URI_IAM_OIDC_ENDPOINT_AUTHORIZE,
-                req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
+        log.info("called:authorize '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}",
+                URI_IAM_OIDC_ENDPOINT_AUTHORIZE, req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
 
         if (auth == null) {
             log.info("User and password not provided. scope={} response_type={} client_id={} redirect_uri={}", scope,

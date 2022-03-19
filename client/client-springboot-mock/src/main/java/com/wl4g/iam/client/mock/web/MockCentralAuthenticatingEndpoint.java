@@ -15,12 +15,11 @@
  */
 package com.wl4g.iam.client.mock.web;
 
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.infra.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SECOND_VALIDATE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SESSION_VALIDATE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VALIDATE;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -31,18 +30,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
+import com.wl4g.iam.common.model.ServiceTicketValidateModel;
+import com.wl4g.iam.common.model.ServiceTicketValidateRequest;
+import com.wl4g.iam.common.model.SessionValidateModel;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.FastCasController;
-import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
-import com.wl4g.iam.common.model.SessionValidateModel;
-import com.wl4g.iam.common.model.ServiceTicketValidateRequest;
-import com.wl4g.iam.common.model.ServiceTicketValidateModel;
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
 import com.wl4g.iam.core.web.AuthenticatingController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.utils.web.WebUtils3;
+import com.wl4g.infra.core.web.BaseController;
 
 /**
  * Mock iam central authenticating endpoint
@@ -64,13 +64,13 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
     @ResponseBody
     @Override
     public RespBase<ServiceTicketValidateModel<IamPrincipal>> validate(@NotNull @RequestBody ServiceTicketValidateRequest param) {
-        log.debug("Mock Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+        HttpServletRequest request = WebUtils3.currentServletRequest();
+        log.info("called:validate '{}' from '{}', sessionId={}, param={}", URI_IAM_SERVER_VALIDATE, request.getRemoteHost(),
+                getSessionId(), toJSONString(param));
 
         RespBase<ServiceTicketValidateModel<IamPrincipal>> resp = new RespBase<>();
-        // Ticket assertion.
         resp.setData(authHandler.validate(param));
-
-        log.debug("Mock Ticket validated. => {}", resp);
+        log.debug("called:validate {}", resp);
         return resp;
     }
 
@@ -78,7 +78,8 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
     @ResponseBody
     @Override
     public RespBase<SecondaryAuthcValidateModel> secondaryValidate(HttpServletRequest request) {
-        log.debug("Mock Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
+        log.info("called:secondaryValidate '{}' from '{}', sessionId={}, param={}", URI_IAM_SERVER_SECOND_VALIDATE,
+                request.getRemoteHost(), getSessionId());
 
         RespBase<SecondaryAuthcValidateModel> resp = new RespBase<>();
         // Requires parameters
@@ -87,7 +88,7 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
         // Secondary authentication assertion.
         resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-        log.debug("Mock Secondary validated. => {}", resp);
+        log.debug("resp:secondaryValidate {}", resp);
         return resp;
     }
 
@@ -95,14 +96,15 @@ public class MockCentralAuthenticatingEndpoint extends BaseController implements
     @ResponseBody
     @Override
     public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {
-        log.debug("Mock Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+        HttpServletRequest request = WebUtils3.currentServletRequest();
+        log.info("called:sessionValidate '{}' from '{}', sessionId={}, param={}", URI_IAM_SERVER_SESSION_VALIDATE,
+                request.getRemoteHost(), getSessionId(), toJSONString(param));
 
         RespBase<SessionValidateModel> resp = new RespBase<>();
-
         // Session expires validate assertion.
         resp.setData(authHandler.sessionValidate(param));
 
-        log.debug("Mock Sessions expires validated. => {}", resp);
+        log.debug("resp:sessionValidate {}", resp);
         return resp;
     }
 

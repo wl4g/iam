@@ -15,8 +15,50 @@
  */
 package com.wl4g.iam.web.login;
 
-import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_APPLY_LOCALE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_CHECK;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_ERRREAD;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_HANDSHAKE;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_PERMITS;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
+import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.V2_0_0;
+import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
+import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.checkSession;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getSession;
+import static com.wl4g.iam.core.utils.RiskSecurityUtils.getV1Factors;
+import static com.wl4g.iam.web.login.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
+import static com.wl4g.iam.web.login.model.GenericCheckModel.KEY_GENERIC_CHECK;
+import static com.wl4g.iam.web.login.model.SmsCheckModel.KEY_SMS_CHECK;
+import static com.wl4g.infra.common.codec.Base58.encodeBase58;
+import static com.wl4g.infra.common.lang.TypeConverts.parseLongOrNull;
+import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.infra.common.web.WebUtils2.getRequestParam;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.wl4g.iam.annotation.LoginAuthController;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.subject.IamPrincipal;
@@ -33,38 +75,8 @@ import com.wl4g.iam.web.login.model.GenericCheckModel;
 import com.wl4g.iam.web.login.model.HandshakeModel;
 import com.wl4g.iam.web.login.model.IamPrincipalPermitsModel;
 import com.wl4g.iam.web.login.model.SmsCheckModel;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import static com.wl4g.infra.common.codec.Base58.*;
-import static com.wl4g.infra.common.lang.TypeConverts.*;
-import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.infra.common.web.WebUtils2.getRequestParam;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
-import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.*;
-import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.checkSession;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
-import static com.wl4g.iam.core.utils.RiskSecurityUtils.*;
-import static com.wl4g.iam.web.login.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
-import static com.wl4g.iam.web.login.model.GenericCheckModel.KEY_GENERIC_CHECK;
-import static com.wl4g.iam.web.login.model.SmsCheckModel.KEY_SMS_CHECK;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
  * IAM login authentication controller
@@ -114,6 +126,7 @@ public class LoginAuthenticationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_LOGIN_HANDSHAKE, method = { POST })
     @ResponseBody
     public RespBase<?> handshake(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("called:handshake '{}' from '{}'", URI_IAM_SERVER_LOGIN_HANDSHAKE, request.getRemoteHost());
         checkSessionHandle(request, false);
 
         RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -140,6 +153,7 @@ public class LoginAuthenticationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_LOGIN_CHECK, method = { POST })
     @ResponseBody
     public RespBase<?> check(HttpServletRequest request) {
+        log.debug("called:check '{}' from '{}'", URI_IAM_SERVER_LOGIN_CHECK, request.getRemoteHost());
         checkSessionHandle(request, true);
 
         RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -211,6 +225,7 @@ public class LoginAuthenticationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_LOGIN_ERRREAD, method = { GET })
     @ResponseBody
     public RespBase<?> readError(HttpServletRequest request) {
+        log.debug("called:readError '{}' from '{}'", URI_IAM_SERVER_LOGIN_ERRREAD, request.getRemoteHost());
         checkSessionHandle(request, true);
 
         RespBase<String> resp = RespBase.create(sessionStatus());
@@ -232,6 +247,7 @@ public class LoginAuthenticationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_LOGIN_PERMITS, method = { GET })
     @ResponseBody
     public RespBase<?> readPermits(HttpServletRequest request) {
+        log.debug("called:readPermits '{}' from '{}'", URI_IAM_SERVER_LOGIN_PERMITS, request.getRemoteHost());
         checkSessionHandle(request, true);
 
         RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -254,6 +270,7 @@ public class LoginAuthenticationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_LOGIN_APPLY_LOCALE, method = { POST })
     @ResponseBody
     public RespBase<?> applyLocale(HttpServletRequest request) {
+        log.debug("called:applyLocale '{}' from '{}'", URI_IAM_SERVER_LOGIN_APPLY_LOCALE, request.getRemoteHost());
         checkSessionHandle(request, true);
 
         RespBase<Locale> resp = RespBase.create(sessionStatus());
@@ -279,7 +296,6 @@ public class LoginAuthenticationController extends BaseIamController {
             // @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()
             checkSession();
         }
-
         // Check umidToken validatity.
         riskEvaluatorHandler.checkEvaluation(request);
     }

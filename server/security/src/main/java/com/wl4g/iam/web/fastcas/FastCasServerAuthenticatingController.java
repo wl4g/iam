@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.utils.web.WebUtils3;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.FastCasController;
 import com.wl4g.iam.common.model.LogoutModel;
@@ -59,13 +60,14 @@ public class FastCasServerAuthenticatingController extends BaseIamController imp
     @ResponseBody
     @Override
     public RespBase<ServiceTicketValidateModel<IamPrincipal>> validate(@NotNull @RequestBody ServiceTicketValidateRequest param) {
-        log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
+        HttpServletRequest request = WebUtils3.currentServletRequest();
+        log.info("called:validate '{}' from '{}', sessionId={}, param={}", URI_IAM_SERVER_VALIDATE, request.getRemoteHost(),
+                getSessionId(), toJSONString(param));
 
         RespBase<ServiceTicketValidateModel<IamPrincipal>> resp = new RespBase<>();
-        // Ticket assertion.
         resp.setData(authHandler.validate(param));
 
-        log.info("Ticket validated. => {}", resp);
+        log.info("resp:validate {}", resp);
         return resp;
     }
 
@@ -73,27 +75,30 @@ public class FastCasServerAuthenticatingController extends BaseIamController imp
     @ResponseBody
     @Override
     public RespBase<SecondaryAuthcValidateModel> secondaryValidate(HttpServletRequest request) {
-        log.info("Secondary validating ... sessionId={} <= {}", getSessionId(), getFullRequestURL(request));
+        log.info("called:secondaryValidate '{}' from '{}', sessionId={}, fullRequestURL={}", URI_IAM_SERVER_SECOND_VALIDATE,
+                request.getRemoteHost(), getSessionId(), getFullRequestURL(request));
         RespBase<SecondaryAuthcValidateModel> resp = RespBase.create();
 
         String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
         String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
         resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-        log.info("Secondary validated. => {}", resp);
+        log.info("resp:secondaryValidate {}", resp);
         return resp;
     }
 
     @PostMapping(URI_IAM_SERVER_SESSION_VALIDATE)
     @ResponseBody
     @Override
-    public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel req) {
-        log.info("Sessions validating ...  <= {}", toJSONString(req));
+    public RespBase<SessionValidateModel> sessionValidate(@NotNull @RequestBody SessionValidateModel param) {
+        HttpServletRequest request = WebUtils3.currentServletRequest();
+        log.info("called:sessionValidate '{}' from '{}', sessionId={}, fullRequestURL={}", URI_IAM_SERVER_SESSION_VALIDATE,
+                request.getRemoteHost(), getSessionId(), toJSONString(param));
+
         RespBase<SessionValidateModel> resp = RespBase.create();
+        resp.setData(authHandler.sessionValidate(param));
 
-        resp.setData(authHandler.sessionValidate(req));
-
-        log.info("Sessions validated. => {}", resp);
+        log.info("resp:sessionValidate {}", resp);
         return resp;
     }
 
@@ -101,7 +106,8 @@ public class FastCasServerAuthenticatingController extends BaseIamController imp
     @ResponseBody
     @Override
     public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Logout... <= {}", getFullRequestURL(request));
+        log.info("called:logout '{}' from '{}', sessionId={}, fullRequestURL={}", URI_IAM_SERVER_LOGOUT, request.getRemoteHost(),
+                getSessionId(), getFullRequestURL(request));
 
         RespBase<LogoutModel> resp = new RespBase<>();
         String appName = getCleanParam(request, config.getParam().getApplication());
@@ -111,7 +117,7 @@ public class FastCasServerAuthenticatingController extends BaseIamController imp
         boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
         resp.setData(authHandler.logout(forced, appName, request, response));
 
-        log.info("Logout. => {}", resp);
+        log.info("resp:logout {}", resp);
         return resp;
     }
 

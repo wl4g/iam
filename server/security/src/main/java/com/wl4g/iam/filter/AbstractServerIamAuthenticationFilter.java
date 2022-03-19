@@ -168,7 +168,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        log.debug("Access denied url: {}", toHttp(request).getRequestURI());
+        log.debug("called:onAccessDenied url: {}", toHttp(request).getRequestURI());
         return executeLogin(request, response);
     }
 

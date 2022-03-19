@@ -56,12 +56,11 @@ public abstract class BasedRiskIamAuthenticationFilter<C extends AbstractIamProp
 
     @Override
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-
         if (nonNull(riskHandlers)) {
             for (RiskSecurityHandler handler : riskHandlers) {
                 try {
                     RespBase<Object> resp = handler.inspecting(toHttp(request), toHttp(response));
-                    log.debug("Risk inspecting result: {}", resp);
+                    log.debug("called:onPreHandle inspected: {}", resp);
                     if (nonNull(resp)) {
                         WebUtils2.writeJson(toHttp(response), resp.asJson());
                         response.flushBuffer();
@@ -72,7 +71,6 @@ public abstract class BasedRiskIamAuthenticationFilter<C extends AbstractIamProp
                 }
             }
         }
-
         return super.onPreHandle(request, response, mappedValue);
     }
 

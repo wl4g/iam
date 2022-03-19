@@ -79,6 +79,8 @@ public class VerificationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA, method = { POST })
     @ResponseBody
     public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        log.debug("called:applyCaptcha '{}' from '{}'", URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA, request.getRemoteHost());
+
         RespBase<Object> resp = RespBase.create(sessionStatus());
         if (!coprocessor.preApplyCapcha(request, response)) {
             throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
@@ -109,6 +111,8 @@ public class VerificationController extends BaseIamController {
     @RequestMapping(value = URI_IAM_SERVER_VERIFY_ANALYSIS_CAPTCHA, method = { POST })
     @ResponseBody
     public RespBase<?> verifyAnalysis(String verifyData, HttpServletRequest request) throws Exception {
+        log.debug("called:applyCaptcha '{}' from '{}', verifyData: {}", URI_IAM_SERVER_VERIFY_ANALYSIS_CAPTCHA,
+                request.getRemoteHost(), verifyData);
         RespBase<Object> resp = RespBase.create(sessionStatus());
 
         // LoginId number or mobileNum(Optional)
@@ -134,7 +138,9 @@ public class VerificationController extends BaseIamController {
     @ResponseBody
     public RespBase<?> applySmsCode(HttpServletRequest request, HttpServletResponse response)
             throws NoSuchOperatorException, IOException {
+        log.debug("called:applySmsCode '{}' from '{}'", URI_IAM_SERVER_VERIFY_SMS_APPLY, request.getRemoteHost());
         RespBase<Object> resp = RespBase.create(sessionStatus());
+
         if (!coprocessor.preApplySmsCode(request, response)) {
             throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
         }
