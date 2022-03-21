@@ -47,6 +47,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     /** V1-OIDC grant definitions. */
     public static final String KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE = "authorization_code";
     public static final String KEY_IAM_OIDC_GRANT_IMPLICIT = "implicit";
+    public static final String KEY_IAM_OIDC_GRANT_REFRESH_TOKEN = "refresh_token";
 
     /** V1-OIDC subject definitions. */
     public static final String KEY_IAM_OIDC_SUBJECT_PUBLIC = "public";
