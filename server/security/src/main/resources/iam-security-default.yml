@@ -98,5 +98,6 @@ spring:
       jws-algorithm-name: RS256
       jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
       code-challenge-methods-supported: ["plain", "S256"]
-      token-expiration-seconds: 3600
+      access-token-expiration-seconds: 3600
+      refresh-token-expiration-seconds: 86400
       code-expiration-seconds: 10

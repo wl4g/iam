@@ -236,11 +236,12 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     log.info("Using implicit flow. scope={} response_type={} client_id={} redirect_uri={}", scope, response_type,
                             client_id, redirect_uri);
 
-                    String access_token = createAccessToken(iss, user, client_id, scope);
-                    String id_token = createIdToken(iss, user, client_id, nonce, access_token);
-                    String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(access_token) + "&token_type="
-                            + KEY_IAM_OIDC_TOKEN_TYPE_BEARER + "&state=" + Encodes.urlEncode(state) + "&expires_in="
-                            + config.getV1Oidc().getTokenExpirationSeconds() + "&id_token=" + Encodes.urlEncode(id_token);
+                    V1AccessTokenInfo accessTokenInfo = createAccessToken(iss, user, client_id, scope);
+                    String id_token = createIdToken(iss, user, client_id, nonce, accessTokenInfo.getAccessToken());
+                    String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(accessTokenInfo.getAccessToken())
+                            + "&token_type=" + KEY_IAM_OIDC_TOKEN_TYPE_BEARER + "&state=" + Encodes.urlEncode(state)
+                            + "&expires_in=" + config.getV1Oidc().getAccessTokenExpirationSeconds() + "&id_token="
+                            + Encodes.urlEncode(id_token);
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
                 // Authorization code flow
@@ -365,20 +366,20 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
         if (!equalsAny(grant_type, KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_REFRESH_TOKEN)) {
-            return wrapErrorJson("unsupported_grant_type", format("grant_type must is '%s' or '%s'",
+            return wrapErrorRFC6749("unsupported_grant_type", format("grant_type must is '%s' or '%s'",
                     KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_REFRESH_TOKEN));
         }
         V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
         if (isNull(codeInfo)) {
-            return wrapErrorJson("invalid_grant", "code not valid");
+            return wrapErrorRFC6749("invalid_grant", "code not valid");
         }
         if (!StringUtils.equals(redirect_uri, codeInfo.getRedirect_uri())) {
-            return wrapErrorJson("invalid_request", "redirect_uri not valid");
+            return wrapErrorRFC6749("invalid_request", "redirect_uri not valid");
         }
         if (!isBlank(codeInfo.getCodeChallenge())) {
             // check PKCE
             if (isBlank(code_verifier)) {
-                return wrapErrorJson("invalid_request", "code_verifier missing");
+                return wrapErrorRFC6749("invalid_request", "code_verifier missing");
             }
             if ("S256".equals(codeInfo.getCodeChallengeMethod())) {
                 MessageDigest s256 = MessageDigest.getInstance(config.getV1Oidc().getIdTokenDigestName());
@@ -388,50 +389,55 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
                             hashedVerifier, codeInfo.getCodeChallenge());
-                    return wrapErrorJson("invalid_request", "code_verifier not correct");
+                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
                 }
                 log.info("code_verifier OK");
             } else {
                 if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
                     log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
-                    return wrapErrorJson("invalid_request", "code_verifier not correct");
+                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
                 }
             }
         }
 
-        // response token
+        // response access token
         switch (grant_type) {
         case KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE: // authorization_code
-            String access_token = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+            V1AccessTokenInfo accessTokenInfo = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
                     codeInfo.getScope());
             String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce(),
-                    access_token);
+                    accessTokenInfo.getAccessToken());
             V1AccessToken accessToken = V1AccessToken.builder()
-                    .access_token(access_token)
-                    .refresh_token("")
+                    .access_token(accessTokenInfo.getAccessToken())
+                    .refresh_token(accessTokenInfo.getRefreshToken())
                     .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                     .scope(codeInfo.getScope())
-                    .expires_in(config.getV1Oidc().getTokenExpirationSeconds())
+                    .expires_in(config.getV1Oidc().getAccessTokenExpirationSeconds())
                     .id_token(id_token)
                     .build();
             return ResponseEntity.ok(accessToken);
         case KEY_IAM_OIDC_GRANT_REFRESH_TOKEN: // refresh_token
             if (isBlank(refresh_token)) {
-                return wrapErrorJson("invalid_request", "refresh_token not missing");
+                return wrapErrorRFC6749("invalid_request", "refresh_token not missing");
             }
-            access_token = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getScope());
-            access_token = createRefreshToken(access_token, codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+            // Check refresh_token valid?
+            String lastAccessToken = oidcHandler.loadRefreshToken(refresh_token);
+            if (isBlank(lastAccessToken)) {
+                return wrapErrorRFC6749("invalid_request", "refresh_token not invalid");
+            }
+            // New generate access_token
+            accessTokenInfo = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
                     codeInfo.getScope());
             accessToken = V1AccessToken.builder()
-                    .access_token(access_token)
-                    .refresh_token("")
+                    .access_token(accessTokenInfo.getAccessToken())
+                    .refresh_token(accessTokenInfo.getRefreshToken())
                     .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                    .expires_in(config.getV1Oidc().getTokenExpirationSeconds())
+                    .expires_in(config.getV1Oidc().getAccessTokenExpirationSeconds())
                     .scope(codeInfo.getScope())
                     .build();
             return ResponseEntity.ok(accessToken);
         default:
-            return ResponseEntity.badRequest().build();
+            return wrapErrorRFC6749("invalid_request", "unknown");
         }
     }
 
@@ -527,9 +533,10 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         return code;
     }
 
-    private String createAccessToken(String iss, V1OidcUser user, String client_id, String scope) throws JOSEException {
-        // create JWT claims
-        Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getTokenExpirationSeconds() * 1000L);
+    private V1AccessTokenInfo createAccessToken(String iss, V1OidcUser user, String client_id, String scope)
+            throws JOSEException {
+        // Create JWT claims
+        Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .subject(user.getSub())
@@ -539,20 +546,27 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", scope)
                 .build();
-        // create JWT token
+        // Create JWT token
         SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
-        // sign the JWT token
+        // Sign the JWT token
         jwt.sign(signer);
         String access_token = jwt.serialize();
 
-        oidcHandler.putAccessToken(access_token, new V1AccessTokenInfo(user, access_token, expiration, scope, client_id, iss));
-        return access_token;
+        // Generate refresh token.
+        String refresh_token = createRefreshToken(access_token, iss, user, client_id, scope);
+
+        V1AccessTokenInfo accessTokenInfo = new V1AccessTokenInfo(user, access_token, refresh_token, expiration, scope, client_id,
+                iss);
+
+        oidcHandler.putAccessToken(access_token, accessTokenInfo);
+        oidcHandler.putRefreshToken(refresh_token, access_token);
+        return accessTokenInfo;
     }
 
     private String createRefreshToken(String access_token, String iss, V1OidcUser user, String client_id, String scope)
             throws JOSEException {
         // create JWT claims
-        Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getTokenExpirationSeconds() * 1000L);
+        Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .subject(user.getSub())
@@ -584,7 +598,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .issuer(iss)
                 .audience(client_id)
                 .issueTime(new Date())
-                .expirationTime(new Date(currentTimeMillis() + config.getV1Oidc().getTokenExpirationSeconds() * 1000L))
+                .expirationTime(new Date(currentTimeMillis() + config.getV1Oidc().getAccessTokenExpirationSeconds() * 1000L))
                 .jwtID(UUID.randomUUID().toString())
                 .claim(KEY_IAM_OIDC_CLAIMS_NONCE, nonce)
                 .claim(KEY_IAM_OIDC_CLAIMS_AT_HASH, encodedHash)
@@ -622,8 +636,11 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 "<html><body><h1>401 Unauthorized</h1>IAM V1 OIDC server</body></html>");
     }
 
-    private ResponseEntity<?> wrapErrorJson(String error, String error_description) {
-        log.warn("error={} error_description={}", error, error_description);
+    /**
+     * https://datatracker.ietf.org/doc/html/rfc6749
+     */
+    private ResponseEntity<?> wrapErrorRFC6749(String error, String error_description) {
+        log.warn("Wrap rfc6749 error={} error_description={}", error, error_description);
         Map<String, String> map = new LinkedHashMap<>();
         map.put("error", error);
         map.put("error_description", error_description);

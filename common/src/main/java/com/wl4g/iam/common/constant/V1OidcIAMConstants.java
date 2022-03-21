@@ -37,6 +37,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     /** V1-OIDC cache key definitions. */
     public static final String CACHE_OIDC_PREFIX = CONF_PREFIX_IAM + "oidc:";
     public static final String CACHE_OIDC_ACCESSTOKEN_PREFIX = CACHE_OIDC_PREFIX + "ak:";
+    public static final String CACHE_OIDC_REFRESHTOKEN_PREFIX = CACHE_OIDC_PREFIX + "rk:";
     public static final String CACHE_OIDC_AUTHCODE_PREFIX = CACHE_OIDC_PREFIX + "code:";
 
     /** V1-OIDC scope definitions. */

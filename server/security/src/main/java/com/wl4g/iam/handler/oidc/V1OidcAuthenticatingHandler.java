@@ -32,6 +32,10 @@ public interface V1OidcAuthenticatingHandler {
 
     V1AccessTokenInfo loadAccessToken(String accessToken);
 
+    void putRefreshToken(String refreshToken, String accessToken);
+
+    String loadRefreshToken(String refreshToken);
+
     void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
 
     V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode);

@@ -42,6 +42,7 @@ import lombok.experimental.Wither;
 public class V1AccessTokenInfo {
     private V1OidcUser user;
     private String accessToken;
+    private String refreshToken;
     private Date expiration;
     private String scope;
     private String clientId;

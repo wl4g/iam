@@ -38,12 +38,23 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
         jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
-                config.getV1Oidc().getTokenExpirationSeconds());
+                config.getV1Oidc().getAccessTokenExpirationSeconds());
     }
 
     @Override
     public V1AccessTokenInfo loadAccessToken(String accessToken) {
         return jedisService.getObjectAsJson(buildAccessTokenKey(accessToken), V1AccessTokenInfo.class);
+    }
+
+    @Override
+    public void putRefreshToken(String refreshToken, String accessTokenInfo) {
+        jedisService.set(buildRefreshTokenKey(refreshToken), accessTokenInfo,
+                config.getV1Oidc().getRefreshTokenExpirationSeconds());
+    }
+
+    @Override
+    public String loadRefreshToken(String accessToken) {
+        return jedisService.get(buildRefreshTokenKey(accessToken));
     }
 
     @Override
@@ -55,6 +66,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public V1OidcUser getV1OidcUser(String username, String password) {
         // TODO Auto-generated method stub
+        // TODO
         return null;
     }
 
@@ -65,6 +77,10 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
 
     private String buildAccessTokenKey(String accessToken) {
         return V1OidcIAMConstants.CACHE_OIDC_ACCESSTOKEN_PREFIX.concat(accessToken);
+    }
+
+    private String buildRefreshTokenKey(String refreshToken) {
+        return V1OidcIAMConstants.CACHE_OIDC_REFRESHTOKEN_PREFIX.concat(refreshToken);
     }
 
     private String buildAuthorizationCodeKey(String authorizationCode) {

@@ -60,7 +60,12 @@ public class V1OidcProperties implements Serializable {
     /**
      * OIDC access token expiration seconds.
      */
-    private int tokenExpirationSeconds = 3600;
+    private int accessTokenExpirationSeconds = 3600;
+
+    /**
+     * OIDC refresh token expiration seconds.
+     */
+    private int refreshTokenExpirationSeconds = 3600 * 24;
 
     /**
      * OIDC authorization code expiration seconds.
@@ -113,13 +118,22 @@ public class V1OidcProperties implements Serializable {
         this.codeChallengeMethodsSupported = codeChallengeMethodsSupported;
     }
 
-    public int getTokenExpirationSeconds() {
-        return tokenExpirationSeconds;
+    public int getAccessTokenExpirationSeconds() {
+        return accessTokenExpirationSeconds;
     }
 
-    public void setTokenExpirationSeconds(int tokenExpirationSeconds) {
-        isTrue(tokenExpirationSeconds > 0, "tokenExpirationSeconds must >0");
-        this.tokenExpirationSeconds = tokenExpirationSeconds;
+    public void setAccessTokenExpirationSeconds(int accessTokenExpirationSeconds) {
+        isTrue(accessTokenExpirationSeconds > 0, "accessTokenExpirationSeconds must >0");
+        this.accessTokenExpirationSeconds = accessTokenExpirationSeconds;
+    }
+
+    public int getRefreshTokenExpirationSeconds() {
+        return refreshTokenExpirationSeconds;
+    }
+
+    public void setRefreshTokenExpirationSeconds(int refreshTokenExpirationSeconds) {
+        isTrue(refreshTokenExpirationSeconds > 0, "refreshTokenExpirationSeconds must >0");
+        this.refreshTokenExpirationSeconds = refreshTokenExpirationSeconds;
     }
 
     public int getCodeExpirationSeconds() {
