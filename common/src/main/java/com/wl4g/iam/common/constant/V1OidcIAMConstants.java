@@ -15,6 +15,13 @@
  */
 package com.wl4g.iam.common.constant;
 
+import static java.lang.String.format;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * IAM V1-OIDC constants.
  * 
@@ -27,6 +34,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** V1-OIDC endpoint URIs definitions. */
     public static final String URI_IAM_OIDC_ENDPOINT = "/oidc/v1";
+    // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
     public static final String URI_IAM_OIDC_ENDPOINT_METADATA = "/.well-known/openid-configuration";
     public static final String URI_IAM_OIDC_ENDPOINT_JWKS = "/jwks";
     public static final String URI_IAM_OIDC_ENDPOINT_TOKEN = "/token";
@@ -44,6 +52,8 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_SCOPE_OPENID = "openid";
     public static final String KEY_IAM_OIDC_SCOPE_PROFILE = "profile";
     public static final String KEY_IAM_OIDC_SCOPE_EMAIL = "email";
+    public static final String KEY_IAM_OIDC_SCOPE_ADDRESS = "address";
+    public static final String KEY_IAM_OIDC_SCOPE_PHONE = "phone";
 
     /** V1-OIDC grant definitions. */
     public static final String KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE = "authorization_code";
@@ -52,6 +62,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** V1-OIDC subject definitions. */
     public static final String KEY_IAM_OIDC_SUBJECT_PUBLIC = "public";
+    public static final String KEY_IAM_OIDC_SUBJECT_PAIRWISE = "pairwise";
 
     /** V1-OIDC response type definitions. */
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE = "code";
@@ -62,6 +73,43 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** V1-OIDC token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";
+
+    /** V1-OIDC code challenge methods algorithm definitions. */
+    @Getter
+    @AllArgsConstructor
+    public static enum CodeChallengeMethodsSupported {
+        plain(""), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
+        private final String digestAlgName;
+
+        public static String parseChallengeMethodDigest(String name) {
+            for (CodeChallengeMethodsSupported m : values()) {
+                if (StringUtils.equals(m.name(), name)) {
+                    return m.getDigestAlgName();
+                }
+            }
+            throw new IllegalArgumentException(format("Invalid challenge digest alias name for '%s'", name));
+        }
+    }
+
+    /** V1-OIDC token signing algorithm definitions. */
+    @Getter
+    @AllArgsConstructor
+    public static enum IdTokenDigestSupported {
+        none("none"), S256("SHA-256");
+        private final String digestAlgName;
+
+        public static String parseIdTokenDigest(String name) {
+            for (IdTokenDigestSupported m : values()) {
+                if (StringUtils.equals(m.name(), name)) {
+                    return m.getDigestAlgName();
+                }
+            }
+            throw new IllegalArgumentException(format("Invalid idToken digest alias name for '%s'", name));
+        }
+    }
+
+    /** V1-OIDC display definitions. */
+    public static final String KEY_IAM_OIDC_DISPLAY_PAGE = "page";
 
     /** V1-OIDC claims definitions. */
     public static final String KEY_IAM_OIDC_CLAIMS_SUB = "sub";

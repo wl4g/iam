@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.iam.common.constant.V1OidcIAMConstants;
-import com.wl4g.iam.handler.oidc.DefaultV1OidcAuthenticatingHandler;
-import com.wl4g.iam.handler.oidc.V1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.V1OidcServerAuthenticatingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 

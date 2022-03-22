@@ -21,18 +21,26 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
-public class AnynothingClientSecurityConfigurer implements ClientSecurityConfigurer {
+public class NoOpClientSecurityConfigurer implements ClientSecurityConfigurer {
 
-	@Override
-	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
-			ServletRequest request, ServletResponse response) {
-		return successUrl;
-	}
+    @Override
+    public String decorateAuthenticateSuccessUrl(
+            String successUrl,
+            AuthenticationToken token,
+            Subject subject,
+            ServletRequest request,
+            ServletResponse response) {
+        return successUrl;
+    }
 
-	@Override
-	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae, ServletRequest request,
-			ServletResponse response) {
-		return loginUrl;
-	}
+    @Override
+    public String decorateAuthenticateFailureUrl(
+            String loginUrl,
+            AuthenticationToken token,
+            Throwable ae,
+            ServletRequest request,
+            ServletResponse response) {
+        return loginUrl;
+    }
 
 }

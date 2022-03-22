@@ -115,7 +115,7 @@ public class SimpleIamPrincipal implements IamPrincipal {
     }
 
     public final void setPrincipal(String principal) {
-        this.principal = hasTextOf(principal, "principalName");
+        this.principal = hasTextOf(principal, "principal");
     }
 
     public final SimpleIamPrincipal withPrincipal(String principal) {

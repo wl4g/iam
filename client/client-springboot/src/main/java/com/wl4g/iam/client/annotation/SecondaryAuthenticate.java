@@ -35,18 +35,18 @@ import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticator;
 @Documented
 public @interface SecondaryAuthenticate {
 
-	/**
-	 * Function ID, not duplicated
-	 * 
-	 * @return
-	 */
-	String funcId();
+    /**
+     * Function ID, not duplicated
+     * 
+     * @return
+     */
+    String funcId();
 
-	/**
-	 * Handler class
-	 * 
-	 * @return
-	 */
-	Class<? extends SecondaryAuthenticator> handleClass();
+    /**
+     * Handler class
+     * 
+     * @return
+     */
+    Class<? extends SecondaryAuthenticator> handleClass();
 
 }

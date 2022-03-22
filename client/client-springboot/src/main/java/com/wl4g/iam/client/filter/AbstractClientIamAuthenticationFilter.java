@@ -221,7 +221,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
     }
 
     @Override
-    protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
+    protected boolean onLoginFailure(
+            AuthenticationToken token,
+            AuthenticationException ae,
+            ServletRequest request,
             ServletResponse response) {
         Throwable exroot = getRootCause(ae);
         String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
@@ -296,7 +299,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      * @param request
      * @return
      */
-    protected String makeFailureRedirectUrl(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+    protected String makeFailureRedirectUrl(
+            AuthenticationToken token,
+            Throwable cause,
+            HttpServletRequest request,
             HttpServletResponse response) {
         if (cause instanceof UnauthorizedException) { // Unauthorized error?
             return config.getUnauthorizedUri();
@@ -349,7 +355,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      * @param request
      * @param params
      */
-    protected void customFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+    protected void customFailureRedirectParams(
+            AuthenticationToken token,
+            Throwable cause,
+            HttpServletRequest request,
             Map<String, String> params) {
     }
 
@@ -362,7 +371,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      * @param response
      * @return
      */
-    protected String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
+    protected String determineSuccessRedirectUrl(
+            AuthenticationToken token,
+            Subject subject,
+            ServletRequest request,
             ServletResponse response) {
         // Priority obtain redirectURL from request.
         String successUrl = getRedirectUrl(request);
@@ -423,8 +435,12 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      *            login success redirect URL
      * @return
      */
-    protected RespBase<String> makeLoggedResponse(AuthenticationToken token, ServletRequest request, ServletResponse response,
-            Subject subject, String redirectUri) {
+    protected RespBase<String> makeLoggedResponse(
+            AuthenticationToken token,
+            ServletRequest request,
+            ServletResponse response,
+            Subject subject,
+            String redirectUri) {
         hasTextOf(redirectUri, "redirectUri");
 
         // Make successful message
@@ -485,7 +501,9 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      * @param response
      * @return
      */
-    protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+    protected String[] putSuccessTokensCookieIfNecessary(
+            AuthenticationToken token,
+            ServletRequest request,
             ServletResponse response) {
         // Sets child dataCipherKeys to cookie.
         String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_NAME);

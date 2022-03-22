@@ -18,12 +18,11 @@ package com.wl4g.iam.common.model.oidc.v1;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Wither;
+import lombok.experimental.SuperBuilder;
 
 /**
  * {@link V1MetadataEndpointModel}
@@ -35,8 +34,7 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @ToString
-@Wither
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1MetadataEndpointModel {
@@ -52,7 +50,9 @@ public class V1MetadataEndpointModel {
     private List<String> grant_types_supported; // OPTIONAL
     private List<String> subject_types_supported; // REQUIRED
     private List<String> id_token_signing_alg_values_supported; // REQUIRED
-    private List<String> claims_supported;
+    private List<String> claims_supported; // REQUIRED
+    private List<String> display_values_supported; // OPTIONAL
+    private String service_documentation; // OPTIONAL
     // PKCE support advertised
     private List<String> code_challenge_methods_supported;
 }

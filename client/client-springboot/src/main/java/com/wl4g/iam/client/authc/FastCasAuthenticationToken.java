@@ -28,58 +28,58 @@ import com.wl4g.iam.core.authc.AbstractIamAuthenticationToken;
  * @since 1.2
  */
 public class FastCasAuthenticationToken extends AbstractIamAuthenticationToken implements RememberMeAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	/*
-	 * the service ticket returned by the CAS server
-	 */
-	private String ticket;
+    /*
+     * the service ticket returned by the CAS server
+     */
+    private String ticket;
 
-	/*
-	 * the user identifier
-	 */
-	private String principal;
+    /*
+     * the user identifier
+     */
+    private String principal;
 
-	/*
-	 * is the user in a remember me mode ?
-	 */
-	private boolean isRememberMe = false;
+    /*
+     * is the user in a remember me mode ?
+     */
+    private boolean isRememberMe = false;
 
-	public FastCasAuthenticationToken(String ticket) {
-		this(ticket, null);
-	}
+    public FastCasAuthenticationToken(String ticket) {
+        this(ticket, null);
+    }
 
-	public FastCasAuthenticationToken(String ticket, String host) {
-		super(host);
-		this.ticket = ticket;
-	}
+    public FastCasAuthenticationToken(String ticket, String host) {
+        super(host);
+        this.ticket = ticket;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	public void setPrincipal(String principal) {
-		this.principal = principal;
-	}
+    public void setPrincipal(String principal) {
+        this.principal = principal;
+    }
 
-	@NotBlank
-	@Override
-	public Object getCredentials() {
-		return ticket;
-	}
+    @NotBlank
+    @Override
+    public Object getCredentials() {
+        return ticket;
+    }
 
-	public void setCredentials(String credentials) {
-		this.ticket = credentials;
-	}
+    public void setCredentials(String credentials) {
+        this.ticket = credentials;
+    }
 
-	@Override
-	public boolean isRememberMe() {
-		return isRememberMe;
-	}
+    @Override
+    public boolean isRememberMe() {
+        return isRememberMe;
+    }
 
-	public void setRememberMe(boolean isRememberMe) {
-		this.isRememberMe = isRememberMe;
-	}
+    public void setRememberMe(boolean isRememberMe) {
+        this.isRememberMe = isRememberMe;
+    }
 
 }

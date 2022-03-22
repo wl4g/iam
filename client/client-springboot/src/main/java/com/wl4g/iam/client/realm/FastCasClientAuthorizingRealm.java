@@ -74,160 +74,162 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class FastCasClientAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
-	public FastCasClientAuthorizingRealm(IamClientProperties config,
-			IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> validator) {
-		super(config, validator);
-		super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
-	}
+    public FastCasClientAuthorizingRealm(IamClientProperties config,
+            IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> validator) {
+        super(config, validator);
+        super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
+    }
 
-	/**
-	 * Authenticates a user and retrieves its information.
-	 * 
-	 * @param token
-	 *            the authentication token
-	 * @throws AuthenticationException
-	 *             if there is an error during authentication.
-	 */
-	@Override
-	protected IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException {
-		String granticket = EMPTY;
-		try {
-			notNullOf(token, "authenticationToken");
-			FastCasAuthenticationToken ftk = (FastCasAuthenticationToken) token;
+    /**
+     * Authenticates a user and retrieves its information.
+     * 
+     * @param token
+     *            the authentication token
+     * @throws AuthenticationException
+     *             if there is an error during authentication.
+     */
+    @Override
+    protected IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException {
+        String granticket = EMPTY;
+        try {
+            notNullOf(token, "authenticationToken");
+            FastCasAuthenticationToken ftk = (FastCasAuthenticationToken) token;
 
-			// Get request flash grant ticket(May be empty)
-			granticket = (String) ftk.getCredentials();
+            // Get request flash grant ticket(May be empty)
+            granticket = (String) ftk.getCredentials();
 
-			// Contact CAS remote server to validate ticket
-			ServiceTicketValidateModel<IamPrincipal> validResult = doRequestRemoteTicketValidation(token, granticket);
+            // Contact CAS remote server to validate ticket
+            ServiceTicketValidateModel<IamPrincipal> validResult = doRequestRemoteTicketValidation(token, granticket);
 
-			// Grant ticket assertion .
-			assertTicketValidation(validResult);
+            // Grant ticket assertion .
+            assertTicketValidation(validResult);
 
-			/**
-			 * {@link JedisIamSessionDAO#update()} </br>
-			 * Update session expire date time.
-			 */
-			long validUntilTime = validResult.getValidUntilTime();
-			long maxIdleTimeMs = validUntilTime - currentTimeMillis();
-			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
-					validUntilTime, maxIdleTimeMs));
-			getSession().setTimeout(maxIdleTimeMs);
+            /**
+             * {@link JedisIamSessionDAO#update()} </br>
+             * Update session expire date time.
+             */
+            long validUntilTime = validResult.getValidUntilTime();
+            long maxIdleTimeMs = validUntilTime - currentTimeMillis();
+            state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
+                    validUntilTime, maxIdleTimeMs));
+            getSession().setTimeout(maxIdleTimeMs);
 
-			// Currenly authentication principal info.
-			IamPrincipal info = validResult.getIamPrincipal();
-			Attributes attrs = info.attributes();
+            // Currenly authentication principal info.
+            IamPrincipal info = validResult.getIamPrincipal();
+            Attributes attrs = info.attributes();
 
-			// Save common attributes
-			saveCommonAttributes(attrs);
+            // Save common attributes
+            saveCommonAttributes(attrs);
 
-			// Update save grant ticket
-			String newGrantTicket = valueOf(info.getStoredCredentials());
-			ftk.setCredentials(newGrantTicket);
+            // Update save grant ticket
+            String newGrantTicket = valueOf(info.getStoredCredentials());
+            ftk.setCredentials(newGrantTicket);
 
-			// Merge add attributes
-			String principal = validResult.getIamPrincipal().getPrincipal();
-			ftk.setPrincipal(principal); // MARK1
-			ftk.setRememberMe(attrs.getRememberMe());
-			ftk.setHost(attrs.getClientHost());
-			log.info("Validated principal: {}, grantTicket: {}, newGrantTicket: {}", principal, granticket, newGrantTicket);
+            // Merge add attributes
+            String principal = validResult.getIamPrincipal().getPrincipal();
+            ftk.setPrincipal(principal); // MARK1
+            ftk.setRememberMe(attrs.getRememberMe());
+            ftk.setHost(attrs.getClientHost());
+            log.info("Validated principal: {}, grantTicket: {}, newGrantTicket: {}", principal, granticket, newGrantTicket);
 
-			// Authenticate attributes.(roles/permissions/rememberMe)
-			PrincipalCollection principals = createPermitPrincipalCollection(info);
+            // Authenticate attributes.(roles/permissions/rememberMe)
+            PrincipalCollection principals = createPermitPrincipalCollection(info);
 
-			// You should always use token credentials because the default
-			// SimpleCredentialsMatcher checks.
-			return new FastAuthenticationInfo(info, principals, getName());
-		} catch (Exception e) {
-			throw new CredentialsException(format("Unable to validate ticket [%s]", granticket), e);
-		}
+            // You should always use token credentials because the default
+            // SimpleCredentialsMatcher checks.
+            return new FastAuthenticationInfo(info, principals, getName());
+        } catch (Exception e) {
+            throw new CredentialsException(format("Unable to validate ticket [%s]", granticket), e);
+        }
 
-	}
+    }
 
-	/**
-	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).
-	 * 
-	 * @param principals
-	 *            the primary identifying principals of the AuthorizationInfo
-	 *            that should be retrieved.
-	 * @return the AuthorizationInfo associated with this principals.
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// Merge authorized string(roles/permission)
-		return mergeAuthorizedString(principals, new SimpleAuthorizationInfo());
-	}
+    /**
+     * Retrieves the AuthorizationInfo for the given principals (the CAS
+     * previously authenticated user : id + attributes).
+     * 
+     * @param principals
+     *            the primary identifying principals of the AuthorizationInfo
+     *            that should be retrieved.
+     * @return the AuthorizationInfo associated with this principals.
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        // Merge authorized string(roles/permission)
+        return mergeAuthorizedString(principals, new SimpleAuthorizationInfo());
+    }
 
-	/**
-	 * Save some common attributes for quick get.
-	 * 
-	 * @param attrs
-	 */
-	protected void saveCommonAttributes(Attributes attrs) {
-		// Save some common attributes for quick get.
-		bind(KEY_LANG_NAME, attrs.getSessionLang());
-		bind(KEY_AUTHC_HOST_NAME, attrs.getClientHost());
-		bind(KEY_PARENT_SESSIONID_NAME, attrs.getParentSessionId());
-		bind(KEY_DATA_CIPHER_NAME, attrs.getDataCipher());
-		bind(KEY_ACCESSTOKEN_SIGN_NAME, attrs.getAccessTokenSign());
-	}
+    /**
+     * Save some common attributes for quick get.
+     * 
+     * @param attrs
+     */
+    protected void saveCommonAttributes(Attributes attrs) {
+        // Save some common attributes for quick get.
+        bind(KEY_LANG_NAME, attrs.getSessionLang());
+        bind(KEY_AUTHC_HOST_NAME, attrs.getClientHost());
+        bind(KEY_PARENT_SESSIONID_NAME, attrs.getParentSessionId());
+        bind(KEY_DATA_CIPHER_NAME, attrs.getDataCipher());
+        bind(KEY_ACCESSTOKEN_SIGN_NAME, attrs.getAccessTokenSign());
+    }
 
-	/**
-	 * Contact fast-CAS remote server to validate ticket.
-	 * 
-	 * @param token
-	 * @param granticket
-	 * @return
-	 */
-	private ServiceTicketValidateModel<IamPrincipal> doRequestRemoteTicketValidation(IamAuthenticationToken token,
-			String granticket) {
-		/**
-		 * The purpose of this function is to make iam-web a new child,
-		 * dataCipherKey/accesstoken.
-		 * 
-		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(ServiceTicketValidateModel)
-		 */
-		String sessionId = valueOf(getSession(true).getId());
-		return ticketValidator.validate(new ServiceTicketValidateRequest(granticket, config.getServiceName(), sessionId)
-				.withExtraParameters(token.getExtraParameters()));
-	}
+    /**
+     * Contact fast-CAS remote server to validate ticket.
+     * 
+     * @param token
+     * @param granticket
+     * @return
+     */
+    private ServiceTicketValidateModel<IamPrincipal> doRequestRemoteTicketValidation(
+            IamAuthenticationToken token,
+            String granticket) {
+        /**
+         * The purpose of this function is to make iam-web a new child,
+         * dataCipherKey/accesstoken.
+         * 
+         * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(ServiceTicketValidateModel)
+         */
+        String sessionId = valueOf(getSession(true).getId());
+        return ticketValidator.validate(new ServiceTicketValidateRequest(granticket, config.getServiceName(), sessionId)
+                .withExtraParameters(token.getExtraParameters()));
+    }
 
-	/**
-	 * Assert ticket validate failure
-	 * 
-	 * @param assertion
-	 * @throws ServiceTicketValidateException
-	 */
-	private void assertTicketValidation(ServiceTicketValidateModel<IamPrincipal> assertion) throws ServiceTicketValidateException {
-		if (isNull(assertion)) {
-			throw new ServiceTicketValidateException("ticket assertion must not be null");
-		}
-		IamPrincipal info = assertion.getIamPrincipal();
-		if (isNull(info)) {
-			throw new ServiceTicketValidateException("Principal info must not be null");
-		}
-		if (isNull(info.getStoredCredentials())) {
-			throw new ServiceTicketValidateException("grant ticket must not be null");
-		}
-		if (isNull(info.getAttributes()) || info.getAttributes().isEmpty()) {
-			throw new ServiceTicketValidateException("'principal.attributes' must not be empty");
-		}
-		if (isBlank((String) info.getRoles())) {
-			log.warn("Principal '{}' role is empty", info.getPrincipal());
-			// throw new TicketValidationException(String.format("Principal '%s'
-			// roles must not empty", principal.getName()));
-		}
-		if (isBlank((String) info.getPermissions())) {
-			log.warn("Principal '{}' permits is empty", info.getPrincipal());
-			// throw new TicketValidationException(String.format("Principal '%s'
-			// permits must not empty", principal.getName()));
-		}
-		if (isNull(info.getOrganization())) {
-			log.warn("Principal '{}' organization is empty", info.getPrincipal());
-			// throw new TicketValidationException(String.format("Principal '%s'
-			// organization must not empty", principal.getName()));
-		}
-	}
+    /**
+     * Assert ticket validate failure
+     * 
+     * @param assertion
+     * @throws ServiceTicketValidateException
+     */
+    private void assertTicketValidation(ServiceTicketValidateModel<IamPrincipal> assertion)
+            throws ServiceTicketValidateException {
+        if (isNull(assertion)) {
+            throw new ServiceTicketValidateException("ticket assertion must not be null");
+        }
+        IamPrincipal info = assertion.getIamPrincipal();
+        if (isNull(info)) {
+            throw new ServiceTicketValidateException("Principal info must not be null");
+        }
+        if (isNull(info.getStoredCredentials())) {
+            throw new ServiceTicketValidateException("grant ticket must not be null");
+        }
+        if (isNull(info.getAttributes()) || info.getAttributes().isEmpty()) {
+            throw new ServiceTicketValidateException("'principal.attributes' must not be empty");
+        }
+        if (isBlank((String) info.getRoles())) {
+            log.warn("Principal '{}' role is empty", info.getPrincipal());
+            // throw new TicketValidationException(String.format("Principal '%s'
+            // roles must not empty", principal.getName()));
+        }
+        if (isBlank((String) info.getPermissions())) {
+            log.warn("Principal '{}' permits is empty", info.getPrincipal());
+            // throw new TicketValidationException(String.format("Principal '%s'
+            // permits must not empty", principal.getName()));
+        }
+        if (isNull(info.getOrganization())) {
+            log.warn("Principal '{}' organization is empty", info.getPrincipal());
+            // throw new TicketValidationException(String.format("Principal '%s'
+            // organization must not empty", principal.getName()));
+        }
+    }
 
 }

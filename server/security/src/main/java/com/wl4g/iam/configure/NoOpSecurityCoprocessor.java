@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.client.configure;
+package com.wl4g.iam.configure;
 
-import javax.servlet.Filter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-public class AnynothingClientSecurityCoprocessor implements ClientSecurityCoprocessor {
-
-	@Override
-	public boolean preCreateToken(Filter filter, HttpServletRequest request, HttpServletResponse response) {
-		return true;
-	}
+/**
+ * IAM default Not-Operation security processor
+ *
+ * @author wangl.sir
+ * @version v1.0 2019年1月18日
+ * @since
+ */
+public class NoOpSecurityCoprocessor implements ServerSecurityCoprocessor {
 
 }

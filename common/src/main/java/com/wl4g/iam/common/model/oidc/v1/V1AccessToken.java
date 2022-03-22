@@ -16,12 +16,11 @@
 package com.wl4g.iam.common.model.oidc.v1;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Wither;
+import lombok.experimental.SuperBuilder;
 
 /**
  * {@link V1AccessToken}
@@ -33,8 +32,7 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @ToString
-@Wither
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1AccessToken {

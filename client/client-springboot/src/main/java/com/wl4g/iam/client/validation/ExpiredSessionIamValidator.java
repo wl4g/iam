@@ -36,29 +36,28 @@ import static java.lang.String.format;
  * @date 2018年11月29日
  * @since
  */
-public class ExpiredSessionIamValidator
-		extends AbstractBasedIamValidator<SessionValidateModel, SessionValidateModel> {
+public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<SessionValidateModel, SessionValidateModel> {
 
-	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
-		super(config, restTemplate);
-	}
+    public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
+        super(config, restTemplate);
+    }
 
-	@Override
-	public SessionValidateModel validate(SessionValidateModel request) throws SessionValidateException {
-		final RespBase<SessionValidateModel> resp = doIamRemoteValidate(URI_IAM_SERVER_SESSION_VALIDATE, request);
-		if (!RespBase.isSuccess(resp)) {
-			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
-				throw new InvalidGrantTicketException(format("Remote validate error, %s", resp.getMessage()));
-			}
-			throw new SessionValidateException(format("Remote sessions expires validate error, %s", resp.getMessage()));
-		}
-		return resp.getData();
-	}
+    @Override
+    public SessionValidateModel validate(SessionValidateModel request) throws SessionValidateException {
+        final RespBase<SessionValidateModel> resp = doIamRemoteValidate(URI_IAM_SERVER_SESSION_VALIDATE, request);
+        if (!RespBase.isSuccess(resp)) {
+            if (RespBase.eq(resp, RetCode.UNAUTHC)) {
+                throw new InvalidGrantTicketException(format("Remote validate error, %s", resp.getMessage()));
+            }
+            throw new SessionValidateException(format("Remote sessions expires validate error, %s", resp.getMessage()));
+        }
+        return resp.getData();
+    }
 
-	@Override
-	protected ParameterizedTypeReference<RespBase<SessionValidateModel>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<SessionValidateModel>>() {
-		};
-	}
+    @Override
+    protected ParameterizedTypeReference<RespBase<SessionValidateModel>> getTypeReference() {
+        return new ParameterizedTypeReference<RespBase<SessionValidateModel>>() {
+        };
+    }
 
 }

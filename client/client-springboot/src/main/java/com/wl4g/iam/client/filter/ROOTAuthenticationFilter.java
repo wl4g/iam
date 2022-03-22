@@ -60,62 +60,62 @@ import com.wl4g.iam.core.cache.JedisIamCacheManager;
  */
 @IamFilter
 public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFilter<FastCasAuthenticationToken> {
-	final public static String NAME = NAME_ROOT_FILTER;
+    final public static String NAME = NAME_ROOT_FILTER;
 
-	public ROOTAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer configurer,
-			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		super(errorConfigurer, configurer, coprocessor, cacheManager);
-	}
+    public ROOTAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer configurer,
+            ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
+        super(errorConfigurer, configurer, coprocessor, cacheManager);
+    }
 
-	/**
-	 * The token created for this authentication is a CasToken containing the
-	 * CAS service ticket received on the CAS service url (on which the filter
-	 * must be configured).
-	 * 
-	 * @param request
-	 *            the incoming request
-	 * @param response
-	 *            the outgoing response
-	 * @throws Exception
-	 *             if there is an error processing the request.
-	 */
-	@Override
-	protected FastCasAuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
-		FastCasAuthenticationToken token = new FastCasAuthenticationToken(ticket);
-		token.withExtraParameters(getFirstParameters(request));
-		return token;
-	}
+    /**
+     * The token created for this authentication is a CasToken containing the
+     * CAS service ticket received on the CAS service url (on which the filter
+     * must be configured).
+     * 
+     * @param request
+     *            the incoming request
+     * @param response
+     *            the outgoing response
+     * @throws Exception
+     *             if there is an error processing the request.
+     */
+    @Override
+    protected FastCasAuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        String ticket = getCleanParam(request, config.getParam().getGrantTicket());
+        FastCasAuthenticationToken token = new FastCasAuthenticationToken(ticket);
+        token.withExtraParameters(getFirstParameters(request));
+        return token;
+    }
 
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
 
-		/**
-		 * See:{@link com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#getClearSavedRememberUrl()}
-		 */
-		if (config.isUseRememberRedirect() && isBrowser(toHttp(request)) && !isXHRRequest(toHttp(request))) {
-			// Remember URL.
-			String rememberUrl = getAvaliableRequestRememberUrl(toHttp(request));
-			if (isNotBlank(rememberUrl)) {
-				bind(KEY_REMEMBER_URL, rememberUrl);
-			} else {
-				log.warn("Cannot get rememberURL via: {}", getFullRequestURL(toHttp(request)));
-			}
-		}
+        /**
+         * See:{@link com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#getClearSavedRememberUrl()}
+         */
+        if (config.isUseRememberRedirect() && isBrowser(toHttp(request)) && !isXHRRequest(toHttp(request))) {
+            // Remember URL.
+            String rememberUrl = getAvaliableRequestRememberUrl(toHttp(request));
+            if (isNotBlank(rememberUrl)) {
+                bind(KEY_REMEMBER_URL, rememberUrl);
+            } else {
+                log.warn("Cannot get rememberURL via: {}", getFullRequestURL(toHttp(request)));
+            }
+        }
 
-		return SecurityUtils.getSubject().isAuthenticated();
-	}
+        return SecurityUtils.getSubject().isAuthenticated();
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return "/**";
-	}
+    @Override
+    public String getUriMapping() {
+        return "/**";
+    }
 
 }

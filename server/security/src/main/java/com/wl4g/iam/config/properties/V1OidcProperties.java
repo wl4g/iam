@@ -19,16 +19,19 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeMethodsSupported;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.IdTokenDigestSupported;
 
 /**
  * IAM V1-OIDC configuration properties
@@ -52,8 +55,14 @@ public class V1OidcProperties implements Serializable {
     private List<String> codeChallengeMethodsSupported = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
         {
-            add("plain");
-            add("S256");
+            addAll(asList(CodeChallengeMethodsSupported.values()).stream().map(m -> m.name()).collect(toList()));
+        }
+    };
+
+    private List<String> idTokenAlgSupported = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
+        {
+            addAll(asList(IdTokenDigestSupported.values()).stream().map(m -> m.name()).collect(toList()));
         }
     };
 
@@ -72,6 +81,11 @@ public class V1OidcProperties implements Serializable {
      */
     private int codeExpirationSeconds = 10;
 
+    /**
+     * OIDC service documentation URI.
+     */
+    private String serviceDocumentation = "https://oidc.iam.wl4g.com/connect/service_documentation.html";
+
     public String getWwwRealmName() {
         return wwwRealmName;
     }
@@ -85,8 +99,9 @@ public class V1OidcProperties implements Serializable {
     }
 
     public void setIdTokenDigestName(String idTokenDigestName) {
-        isTrue(SUPPORT_IDTOKEN_DIGESTS.stream().anyMatch(s -> s.equalsIgnoreCase(idTokenDigestName)),
-                format("Invalid idToken digest for {}, The supported digests are: ", idTokenDigestName, SUPPORT_IDTOKEN_DIGESTS));
+        List<IdTokenDigestSupported> digests = asList(IdTokenDigestSupported.values());
+        isTrue(digests.stream().map(d -> d.name()).anyMatch(n -> n.equalsIgnoreCase(idTokenDigestName)),
+                format("Invalid idToken digest for {}, The supported digests are: ", idTokenDigestName, digests));
         this.idTokenDigestName = idTokenDigestName;
     }
 
@@ -114,8 +129,31 @@ public class V1OidcProperties implements Serializable {
         return codeChallengeMethodsSupported;
     }
 
-    public void setCodeChallengeMethods(List<String> codeChallengeMethodsSupported) {
+    public void setCodeChallengeMethodsSupported(List<String> codeChallengeMethodsSupported) {
+        List<String> definitionAlgNames = asList(CodeChallengeMethodsSupported.values()).stream().map(d -> d.name()).collect(
+                toList());
+        for (String m : safeList(codeChallengeMethodsSupported)) {
+            if (!definitionAlgNames.stream().allMatch(d -> d.equalsIgnoreCase(m))) {
+                throw new IllegalArgumentException(format(
+                        "Invalid codeCallengeMethods digest for {}, The supported digests alg are: ", m, definitionAlgNames));
+            }
+        }
         this.codeChallengeMethodsSupported = codeChallengeMethodsSupported;
+    }
+
+    public List<String> getIdTokenAlgSupported() {
+        return idTokenAlgSupported;
+    }
+
+    public void setIdTokenAlgSupported(List<String> idTokenAlgSupported) {
+        List<String> definitionAlgNames = asList(IdTokenDigestSupported.values()).stream().map(d -> d.name()).collect(toList());
+        for (String m : safeList(idTokenAlgSupported)) {
+            if (!definitionAlgNames.stream().allMatch(d -> d.equalsIgnoreCase(m))) {
+                throw new IllegalArgumentException(
+                        format("Invalid idToken digest for {}, The supported digests alg are: ", m, definitionAlgNames));
+            }
+        }
+        this.idTokenAlgSupported = idTokenAlgSupported;
     }
 
     public int getAccessTokenExpirationSeconds() {
@@ -145,11 +183,17 @@ public class V1OidcProperties implements Serializable {
         this.codeExpirationSeconds = codeExpirationSeconds;
     }
 
+    public String getServiceDocumentation() {
+        return serviceDocumentation;
+    }
+
+    public void setService_documentation(String serviceDocumentation) {
+        this.serviceDocumentation = serviceDocumentation;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
     }
-
-    private static final List<String> SUPPORT_IDTOKEN_DIGESTS = Arrays.asList(new String[] { "SHA-256", "SHA-384", "SHA-512" });
 
 }

@@ -26,39 +26,39 @@ import org.apache.shiro.authc.AuthenticationToken;
  */
 public class LogoutAuthenticationToken implements AuthenticationToken {
 
-	final private static long serialVersionUID = -7503506620220450148L;
+    final private static long serialVersionUID = -7503506620220450148L;
 
-	/**
-	 * Forced signout?
-	 */
-	final private boolean forced;
+    /**
+     * Forced signout?
+     */
+    final private boolean forced;
 
-	/**
-	 * Principal currently exiting
-	 */
-	final private String principal;
+    /**
+     * Principal currently exiting
+     */
+    final private String principal;
 
-	public LogoutAuthenticationToken(final boolean forced, final String principal) {
-		this.forced = forced;
-		/**
-		 * @see {@link com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter#doCreateToken()}
-		 */
-		// hasTextOf(principal, "principal");
-		this.principal = principal;
-	}
+    public LogoutAuthenticationToken(final boolean forced, final String principal) {
+        this.forced = forced;
+        /**
+         * @see {@link com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter#doCreateToken()}
+         */
+        // hasTextOf(principal, "principal");
+        this.principal = principal;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
-	public boolean isForced() {
-		return forced;
-	}
+    public boolean isForced() {
+        return forced;
+    }
 
 }

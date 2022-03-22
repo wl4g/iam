@@ -24,14 +24,17 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIM
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_NONCE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_SUB;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_DISPLAY_PAGE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_IMPLICIT;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_REFRESH_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_CODE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_ADDRESS;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_EMAIL;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_OPENID;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_PHONE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_PROFILE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SUBJECT_PUBLIC;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
@@ -41,6 +44,8 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_METADATA;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeMethodsSupported.parseChallengeMethodDigest;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.IdTokenDigestSupported.parseIdTokenDigest;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
@@ -93,6 +98,7 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcServerController;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeMethodsSupported;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
@@ -101,7 +107,7 @@ import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUser;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.core.exception.IamException;
-import com.wl4g.iam.handler.oidc.V1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.BaseIamController;
 import com.wl4g.infra.common.codec.Encodes;
 import com.wl4g.infra.common.resource.StreamResource;
@@ -152,7 +158,9 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
 
     /**
      * Provides OIDC metadata. See the spec at
-     * https://openid.net/specs/openid-connect-discovery-1_0.html
+     * 
+     * @see https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery
+     * @see https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_METADATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
@@ -169,15 +177,18 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .userinfo_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO)) // RECOMMENDED
                 .jwks_uri(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_JWKS)) // REQUIRED
                 .introspection_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
-                .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL)) // REQUIRED
+                .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL,
+                        KEY_IAM_OIDC_SCOPE_ADDRESS, KEY_IAM_OIDC_SCOPE_PHONE)) // REQUIRED
                 .response_types_supported(asList(KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) // REQUIRED
                 .grant_types_supported(asList(KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_IMPLICIT,
                         KEY_IAM_OIDC_GRANT_REFRESH_TOKEN)) // OPTIONAL
                 .subject_types_supported(singletonList(KEY_IAM_OIDC_SUBJECT_PUBLIC)) // REQUIRED
-                .id_token_signing_alg_values_supported(asList("RS256", "none")) // REQUIRED
+                .id_token_signing_alg_values_supported(config.getV1Oidc().getIdTokenAlgSupported()) // REQUIRED
                 .claims_supported(asList(KEY_IAM_OIDC_CLAIMS_SUB, KEY_IAM_OIDC_CLAIMS_ISS, KEY_IAM_OIDC_CLAIMS_NAME,
                         KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
                         KEY_IAM_OIDC_CLAIMS_EMAIL))
+                .display_values_supported(asList(KEY_IAM_OIDC_DISPLAY_PAGE))
+                .service_documentation(config.getV1Oidc().getServiceDocumentation())
                 // PKCE support advertised
                 .code_challenge_methods_supported(config.getV1Oidc().getCodeChallengeMethodsSupported())
                 .build();
@@ -195,7 +206,11 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     }
 
     /**
-     * Provides authorization endpoint.
+     * Provides authorization endpoint. </br>
+     * </br>
+     * 
+     * For the description of parameter "code_challenge", see: <a href=
+     * "https://blog.csdn.net/weixin_34415923/article/details/89691037">https://blog.csdn.net/weixin_34415923/article/details/89691037</a>
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_AUTHORIZE, method = RequestMethod.GET)
     public ResponseEntity<?> authorize(
@@ -227,7 +242,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             if (user.getLogin_name().equals(username) && user.getPassword().equals(password)) {
                 log.info("Password {} for user {} is correct.", password, username);
 
-                Set<String> responseType = fromSpaceSeparatedString(response_type);
+                Set<String> responseType = toSpaceSeparatedParams(response_type);
                 String iss = uriBuilder.replacePath("/").build().encode().toUriString();
 
                 // Implicit flow
@@ -236,28 +251,33 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     log.info("Using implicit flow. scope={} response_type={} client_id={} redirect_uri={}", scope, response_type,
                             client_id, redirect_uri);
 
-                    V1AccessTokenInfo accessTokenInfo = createAccessToken(iss, user, client_id, scope);
+                    V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(iss, user, client_id, scope);
                     String id_token = createIdToken(iss, user, client_id, nonce, accessTokenInfo.getAccessToken());
-                    String url = redirect_uri + "#" + "access_token=" + Encodes.urlEncode(accessTokenInfo.getAccessToken())
-                            + "&token_type=" + KEY_IAM_OIDC_TOKEN_TYPE_BEARER + "&state=" + Encodes.urlEncode(state)
-                            + "&expires_in=" + config.getV1Oidc().getAccessTokenExpirationSeconds() + "&id_token="
-                            + Encodes.urlEncode(id_token);
+                    String url = format("%s#access_token=%s&token_type=%s&state=%s&expires_in=%s&id_token=%s", redirect_uri,
+                            Encodes.urlEncode(accessTokenInfo.getAccessToken()), KEY_IAM_OIDC_TOKEN_TYPE_BEARER,
+                            Encodes.urlEncode(state), config.getV1Oidc().getAccessTokenExpirationSeconds(),
+                            Encodes.urlEncode(id_token));
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
                 // Authorization code flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
                 else if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) {
-                    log.info("Using authorization code flow {}", code_challenge != null ? "with PKCE" : "");
+                    // Check challenge method supported.
+                    if (!config.getV1Oidc().getCodeChallengeMethodsSupported().contains(code_challenge_method)) {
+                        return wrapErrorRFC6749("unsupported_code_challenge_method",
+                                format("code_challenge_method must contains is '%s'",
+                                        config.getV1Oidc().getCodeChallengeMethodsSupported()));
+                    }
+                    log.info("Using authorization code flow {}", !isBlank(code_challenge) ? "with PKCE" : "");
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
                             iss, scope, nonce);
-                    String url = redirect_uri.concat("?").concat("code=").concat(code).concat("&state=").concat(
-                            Encodes.urlEncode(state));
+                    String url = format("%s?code=%s&state=%s", redirect_uri, code, Encodes.urlEncode(state));
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
                 // Not supported to Hybrid flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
                 else {
-                    String url = redirect_uri + "#" + "error=unsupported_response_type";
+                    String url = format("%s#error=unsupported_response_type", redirect_uri);
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
             } else {
@@ -381,30 +401,29 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             if (isBlank(code_verifier)) {
                 return wrapErrorRFC6749("invalid_request", "code_verifier missing");
             }
-            if ("S256".equals(codeInfo.getCodeChallengeMethod())) {
-                MessageDigest s256 = MessageDigest.getInstance(config.getV1Oidc().getIdTokenDigestName());
-                s256.reset();
-                s256.update(code_verifier.getBytes(StandardCharsets.UTF_8));
-                String hashedVerifier = Base64URL.encode(s256.digest()).toString();
+            if (CodeChallengeMethodsSupported.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
+                if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
+                    log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
+                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
+                }
+            } else {
+                String hashedVerifier = Base64URL
+                        .encode(doDigestHash(parseChallengeMethodDigest(codeInfo.getCodeChallengeMethod()), code_verifier))
+                        .toString();
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
                             hashedVerifier, codeInfo.getCodeChallenge());
                     return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
                 }
-                log.info("code_verifier OK");
-            } else {
-                if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
-                    log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
-                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
-                }
+                log.debug("code_verifier OK");
             }
         }
 
         // response access token
         switch (grant_type) {
         case KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE: // authorization_code
-            V1AccessTokenInfo accessTokenInfo = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
-                    codeInfo.getScope());
+            V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(),
+                    codeInfo.getClient_id(), codeInfo.getScope());
             String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce(),
                     accessTokenInfo.getAccessToken());
             V1AccessToken accessToken = V1AccessToken.builder()
@@ -426,7 +445,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 return wrapErrorRFC6749("invalid_request", "refresh_token not invalid");
             }
             // New generate access_token
-            accessTokenInfo = createAccessToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+            accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
                     codeInfo.getScope());
             accessToken = V1AccessToken.builder()
                     .access_token(accessTokenInfo.getAccessToken())
@@ -489,25 +508,28 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         log.info("called:userinfo '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO,
                 req.getRemoteHost(), auth, access_token);
 
-        String accessToken = getAccessTokenFrom(auth, access_token);
+        String accessToken = toDetermineAccessToken(auth, access_token);
         V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(accessToken);
         if (accessTokenInfo == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid is access token.");
         }
-        Set<String> scopes = fromSpaceSeparatedString(accessTokenInfo.getScope());
-        Map<String, Object> m = new LinkedHashMap<>();
+        Set<String> scopes = toSpaceSeparatedParams(accessTokenInfo.getScope());
         V1OidcUser user = accessTokenInfo.getUser();
-        m.put("sub", user.getSub());
+        user.setSub(user.getSub());
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_PROFILE)) {
-            user = V1OidcUser.builder()
-                    .name(user.getName())
-                    .family_name(user.getFamily_name())
-                    .given_name(user.getGiven_name())
-                    .preferred_username(user.getPreferred_username())
-                    .build();
+            user = user.withName(user.getName())
+                    .withFamily_name(user.getFamily_name())
+                    .withGiven_name(user.getGiven_name())
+                    .withPreferred_username(user.getPreferred_username());
         }
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_EMAIL)) {
-            user = V1OidcUser.builder().email(user.getEmail()).build();
+            user = user.withEmail(user.getEmail());
+        }
+        if (scopes.contains(KEY_IAM_OIDC_SCOPE_ADDRESS)) {
+            user = user.withAddress(user.getAddress());
+        }
+        if (scopes.contains(KEY_IAM_OIDC_SCOPE_PHONE)) {
+            user = user.withPhone(user.getPhone());
         }
         return ResponseEntity.ok().body(user);
     }
@@ -533,7 +555,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         return code;
     }
 
-    private V1AccessTokenInfo createAccessToken(String iss, V1OidcUser user, String client_id, String scope)
+    private V1AccessTokenInfo createAccessTokenInfo(String iss, V1OidcUser user, String client_id, String scope)
             throws JOSEException {
         // Create JWT claims
         Date expiration = new Date(System.currentTimeMillis() + config.getV1Oidc().getAccessTokenExpirationSeconds() * 1000L);
@@ -555,8 +577,15 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         // Generate refresh token.
         String refresh_token = createRefreshToken(access_token, iss, user, client_id, scope);
 
-        V1AccessTokenInfo accessTokenInfo = new V1AccessTokenInfo(user, access_token, refresh_token, expiration, scope, client_id,
-                iss);
+        V1AccessTokenInfo accessTokenInfo = V1AccessTokenInfo.builder()
+                .user(user)
+                .accessToken(access_token)
+                .refreshToken(refresh_token)
+                .expiration(expiration)
+                .scope(scope)
+                .clientId(client_id)
+                .iss(iss)
+                .build();
 
         oidcHandler.putAccessToken(access_token, accessTokenInfo);
         oidcHandler.putRefreshToken(refresh_token, access_token);
@@ -587,10 +616,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
     private String createIdToken(String iss, V1OidcUser user, String client_id, String nonce, String access_token)
             throws NoSuchAlgorithmException, JOSEException {
         // compute at_hash
-        MessageDigest digest = MessageDigest.getInstance(config.getV1Oidc().getIdTokenDigestName());
-        digest.reset();
-        digest.update(access_token.getBytes(StandardCharsets.UTF_8));
-        byte[] hashBytes = digest.digest();
+        byte[] hashBytes = doDigestHash(parseIdTokenDigest(config.getV1Oidc().getIdTokenDigestName()), access_token);
         byte[] hashBytesLeftHalf = Arrays.copyOf(hashBytes, hashBytes.length / 2);
         Base64URL encodedHash = Base64URL.encode(hashBytesLeftHalf);
         // create JWT claims
@@ -610,7 +636,14 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         return jwt.serialize();
     }
 
-    private String getAccessTokenFrom(String authorizationHeader, String accessTokenParam) {
+    private byte[] doDigestHash(String digestAlgName, String plaintext) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance(digestAlgName);
+        digest.reset();
+        digest.update(plaintext.getBytes(StandardCharsets.UTF_8));
+        return digest.digest();
+    }
+
+    private String toDetermineAccessToken(String authorizationHeader, String accessTokenParam) {
         if (!authorizationHeader.startsWith(KEY_IAM_OIDC_TOKEN_TYPE_BEARER.concat(" "))) {
             if (isBlank(accessTokenParam)) {
                 return null;
@@ -621,11 +654,11 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         }
     }
 
-    private Set<String> fromSpaceSeparatedString(String s) {
-        if (isBlank(s)) {
+    private Set<String> toSpaceSeparatedParams(String param) {
+        if (isBlank(param)) {
             return emptySet();
         }
-        return new HashSet<>(asList(s.split(" ")));
+        return new HashSet<>(asList(param.split(" ")));
     }
 
     private ResponseEntity<String> wrapUnauthentication() {

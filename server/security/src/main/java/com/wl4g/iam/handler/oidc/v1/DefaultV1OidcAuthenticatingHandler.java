@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.handler.oidc;
+package com.wl4g.iam.handler.oidc.v1;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -66,7 +66,6 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public V1OidcUser getV1OidcUser(String username, String password) {
         // TODO Auto-generated method stub
-        // TODO
         return null;
     }
 

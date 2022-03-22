@@ -37,34 +37,34 @@ import com.wl4g.iam.core.cache.JedisIamCacheManager;
  */
 @IamFilter
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
-	final public static String NAME = "authenticatorFilter";
+    final public static String NAME = "authenticatorFilter";
 
-	public AuthenticatorAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
-		super(errorConfigurer, context, coprocessor, cacheManager);
-	}
+    public AuthenticatorAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer context,
+            ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
+        super(errorConfigurer, context, coprocessor, cacheManager);
+    }
 
-	/**
-	 * Access is not allowed to handle duplicate authentication requests
-	 * (http://passport.domain/com/devops-iam/authenticator), as this will
-	 * result in 404 errors.<br/>
-	 * Final execution: super#executeLogin()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		log.info("Request of: {}", () -> getFullRequestURL(toHttp(request)));
-		return false;
-	}
+    /**
+     * Access is not allowed to handle duplicate authentication requests
+     * (http://passport.domain/com/devops-iam/authenticator), as this will
+     * result in 404 errors.<br/>
+     * Final execution: super#executeLogin()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        log.info("Request of: {}", () -> getFullRequestURL(toHttp(request)));
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_AUTHENTICATOR;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_AUTHENTICATOR;
+    }
 
 }

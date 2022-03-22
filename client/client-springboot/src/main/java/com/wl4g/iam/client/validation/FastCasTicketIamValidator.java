@@ -42,39 +42,40 @@ import java.util.Map;
  * @since
  */
 public class FastCasTicketIamValidator
-		extends AbstractBasedIamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<SimpleIamPrincipal>> {
+        extends AbstractBasedIamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<SimpleIamPrincipal>> {
 
-	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
-		super(config, restTemplate);
-	}
+    public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
+        super(config, restTemplate);
+    }
 
-	@Override
-	protected void postQueryParameterSet(ServiceTicketValidateRequest req, Map<String, Object> queryParams) {
-		queryParams.put(config.getParam().getGrantTicket(), req.getTicket());
-	}
+    @Override
+    protected void postQueryParameterSet(ServiceTicketValidateRequest req, Map<String, Object> queryParams) {
+        queryParams.put(config.getParam().getGrantTicket(), req.getTicket());
+    }
 
-	@Override
-	public ServiceTicketValidateModel<SimpleIamPrincipal> validate(ServiceTicketValidateRequest req) throws ServiceTicketValidateException {
-		final RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_IAM_SERVER_VALIDATE, req);
-		if (!RespBase.isSuccess(resp)) {
-			// Only if the error is not authenticated, can it be redirected to
-			// the IAM server login page, otherwise the client will display the
-			// error page directly (to prevent unlimited redirection).
-			/** See:{@link CentralAuthenticatorController#validate()} */
-			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
-				throw new InvalidGrantTicketException(resp.getMessage());
-			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
-				throw new IllegalApplicationAccessException(resp.getMessage());
-			}
-			throw new ServiceTicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
-		}
-		return resp.getData();
-	}
+    @Override
+    public ServiceTicketValidateModel<SimpleIamPrincipal> validate(ServiceTicketValidateRequest req)
+            throws ServiceTicketValidateException {
+        final RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>> resp = doIamRemoteValidate(URI_IAM_SERVER_VALIDATE, req);
+        if (!RespBase.isSuccess(resp)) {
+            // Only if the error is not authenticated, can it be redirected to
+            // the IAM server login page, otherwise the client will display the
+            // error page directly (to prevent unlimited redirection).
+            /** See:{@link CentralAuthenticatorController#validate()} */
+            if (RespBase.eq(resp, RetCode.UNAUTHC)) {
+                throw new InvalidGrantTicketException(resp.getMessage());
+            } else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
+                throw new IllegalApplicationAccessException(resp.getMessage());
+            }
+            throw new ServiceTicketValidateException(nonNull(resp) ? resp.getMessage() : "Unknown error");
+        }
+        return resp.getData();
+    }
 
-	@Override
-	protected ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>>() {
-		};
-	}
+    @Override
+    protected ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>> getTypeReference() {
+        return new ParameterizedTypeReference<RespBase<ServiceTicketValidateModel<SimpleIamPrincipal>>>() {
+        };
+    }
 
 }

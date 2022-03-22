@@ -29,13 +29,13 @@ import com.wl4g.iam.core.exception.ValidateException;
  */
 public interface IamValidator<R extends BaseValidateModel, A> {
 
-	/**
-	 * Do execute validation
-	 * 
-	 * @param request
-	 * @return
-	 * @throws ValidateException
-	 */
-	A validate(R request) throws ValidateException;
+    /**
+     * Do execute validation
+     * 
+     * @param request
+     * @return
+     * @throws ValidateException
+     */
+    A validate(R request) throws ValidateException;
 
 }

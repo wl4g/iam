@@ -16,11 +16,11 @@
 package com.wl4g.iam.common.model.oidc.v1;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.experimental.Wither;
 
 /**
@@ -34,7 +34,7 @@ import lombok.experimental.Wither;
 @Setter
 @ToString
 @Wither
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1OidcUser {
@@ -44,6 +44,8 @@ public class V1OidcUser {
     private String name;
     private String given_name;
     private String family_name;
-    private String email;
     private String preferred_username;
+    private String email;
+    private String address;
+    private String phone;
 }

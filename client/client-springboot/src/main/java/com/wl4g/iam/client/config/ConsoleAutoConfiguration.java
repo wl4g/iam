@@ -31,9 +31,9 @@ import com.wl4g.shell.springboot.annotation.ShellComponent;
 @ConditionalOnClass(ShellComponent.class)
 public class ConsoleAutoConfiguration {
 
-	@Bean
-	public ClientSecurityConsole clientSecurityConsole() {
-		return new ClientSecurityConsole();
-	}
+    @Bean
+    public ClientSecurityConsole clientSecurityConsole() {
+        return new ClientSecurityConsole();
+    }
 
 }

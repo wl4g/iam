@@ -43,7 +43,7 @@ import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.authc.pam.ExceptionModularRealmAuthenticator;
 import com.wl4g.iam.config.properties.CryptoProperties;
 import com.wl4g.iam.config.properties.IamProperties;
-import com.wl4g.iam.configure.AnynothingSecurityCoprocessor;
+import com.wl4g.iam.configure.NoOpSecurityCoprocessor;
 import com.wl4g.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.iam.configure.SecureConfigureAdapter;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -601,8 +601,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ServerSecurityCoprocessor serverSecurityCoprocessor() {
-        return new AnynothingSecurityCoprocessor();
+    public ServerSecurityCoprocessor noOpServerSecurityCoprocessor() {
+        return new NoOpSecurityCoprocessor();
     }
 
     final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";

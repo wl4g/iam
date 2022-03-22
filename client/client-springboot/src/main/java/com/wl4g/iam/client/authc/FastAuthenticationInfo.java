@@ -22,15 +22,15 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.authc.AbstractIamAuthenticationInfo;
 
 public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
-	private static final long serialVersionUID = -2294251445038637917L;
+    private static final long serialVersionUID = -2294251445038637917L;
 
-	public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, String realmName) {
-		this(principalInfo, principals, null, realmName);
-	}
+    public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, String realmName) {
+        this(principalInfo, principals, null, realmName);
+    }
 
-	public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, ByteSource credentialsSalt,
-			String realmName) {
-		super(principalInfo, principals, credentialsSalt, realmName);
-	}
+    public FastAuthenticationInfo(IamPrincipal principalInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+            String realmName) {
+        super(principalInfo, principals, credentialsSalt, realmName);
+    }
 
 }

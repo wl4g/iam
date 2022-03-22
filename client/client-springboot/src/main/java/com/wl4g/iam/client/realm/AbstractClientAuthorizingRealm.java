@@ -42,39 +42,39 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
  */
 public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingAuthorizingRealm {
 
-	/**
-	 * Ticket validation properties.
-	 */
-	final protected IamClientProperties config;
+    /**
+     * Ticket validation properties.
+     */
+    final protected IamClientProperties config;
 
-	/**
-	 * From the fast-CAS client is used to validate a service ticket on server
-	 */
-	final protected IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> ticketValidator;
+    /**
+     * From the fast-CAS client is used to validate a service ticket on server
+     */
+    final protected IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> ticketValidator;
 
-	public AbstractClientAuthorizingRealm(IamClientProperties config,
-			IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> ticketValidator) {
-		this.config = config;
-		this.ticketValidator = ticketValidator;
-	}
+    public AbstractClientAuthorizingRealm(IamClientProperties config,
+            IamValidator<ServiceTicketValidateRequest, ServiceTicketValidateModel<IamPrincipal>> ticketValidator) {
+        this.config = config;
+        this.ticketValidator = ticketValidator;
+    }
 
-	/**
-	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
-	 */
-	@Override
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		IamAuthenticationInfo info = doAuthenticationInfo((IamAuthenticationToken) token);
-		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalWrapper(info.getIamPrincipal()));
-		return info;
-	}
+    /**
+     * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        IamAuthenticationInfo info = doAuthenticationInfo((IamAuthenticationToken) token);
+        bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalWrapper(info.getIamPrincipal()));
+        return info;
+    }
 
-	/**
-	 * Get current authenticating principal {@link IamAuthenticationInfo}.</br>
-	 * 
-	 * @param token
-	 * @return
-	 * @throws AuthenticationException
-	 */
-	protected abstract IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException;
+    /**
+     * Get current authenticating principal {@link IamAuthenticationInfo}.</br>
+     * 
+     * @param token
+     * @return
+     * @throws AuthenticationException
+     */
+    protected abstract IamAuthenticationInfo doAuthenticationInfo(IamAuthenticationToken token) throws AuthenticationException;
 
 }

@@ -269,7 +269,6 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
 
     @Override
     public LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
-        log.debug("Logout from: {}, forced: {}, sessionId: {}", appName, forced, getSessionId());
         Subject subject = getSubject();
 
         // From client signout
@@ -484,7 +483,8 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
          * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
          */
         long expireTime = getSessionRemainingTime(session); // Expiration time
-        cacheManager.getIamCache(CACHE_PREFIX_IAM_TICKET_CLIENT).put(new CacheKey(grant.getGrantTicket(), expireTime), valueOf(session.getId()));
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_TICKET_CLIENT).put(new CacheKey(grant.getGrantTicket(), expireTime),
+                valueOf(session.getId()));
         log.debug("Sets grantTicket: '{}' of seesionId: '{}', expireTime: '{}'", grant, getSessionId(session), expireTime);
     }
 
