@@ -30,15 +30,15 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
  */
 public interface IamCredentialsSecurer extends CredentialsSecurer {
 
-	/**
-	 * Apply asymmetric algorithm secret public key
-	 * 
-	 * @param kind
-	 * @param principal
-	 * @return
-	 */
-	default String applySecret(@NotNull CryptKind kind, @NotBlank String principal) {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Apply asymmetric algorithm secret public key
+     * 
+     * @param kind
+     * @param principal
+     * @return
+     */
+    default String applySecret(@NotNull CryptKind kind, @NotBlank String principal) {
+        throw new UnsupportedOperationException();
+    }
 
 }

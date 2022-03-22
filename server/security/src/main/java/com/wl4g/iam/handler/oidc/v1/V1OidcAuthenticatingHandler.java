@@ -17,7 +17,7 @@ package com.wl4g.iam.handler.oidc.v1;
 
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
-import com.wl4g.iam.common.model.oidc.v1.V1OidcUser;
+import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 
 /**
  * {@link V1OidcAuthenticatingHandler}
@@ -40,6 +40,8 @@ public interface V1OidcAuthenticatingHandler {
 
     V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode);
 
-    V1OidcUser getV1OidcUser(String username, String password);
+    V1OidcUserClaims getV1OidcUser(String loginName);
+
+    boolean validate(V1OidcUserClaims user, String password);
 
 }

@@ -652,8 +652,7 @@ public interface IamPrincipal extends Principal, Serializable {
         final private String principal;
 
         public BaseParameter(String principal) {
-            Assert.hasText(principal, "'principal' must not be empty");
-            this.principal = principal;
+            this.principal = notNullOf(principal, "principal");
         }
 
         public String getPrincipal() {
@@ -675,7 +674,6 @@ public interface IamPrincipal extends Principal, Serializable {
         public SimpleParameter(String principal) {
             super(principal);
         }
-
     }
 
     /**

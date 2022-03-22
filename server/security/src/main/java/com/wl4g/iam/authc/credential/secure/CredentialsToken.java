@@ -32,67 +32,64 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
  */
 public final class CredentialsToken {
 
-	/**
-	 * Request authentication principal.
-	 */
-	@NotBlank
-	final private String principal;
+    /**
+     * Request authentication principal.
+     */
+    @NotBlank
+    private final String principal;
 
-	/**
-	 * Request authentication credentials.
-	 */
-	@NotBlank
-	final private String credentials;
+    /**
+     * Request authentication credentials.
+     */
+    @NotBlank
+    private final String credentials;
 
-	/**
-	 * Iam asymmetric secure crypt algorithm kind definitions..
-	 */
-	@NotNull
-	final private CryptKind kind;
+    /**
+     * Iam asymmetric secure crypt algorithm kind definitions..
+     */
+    @NotNull
+    private final CryptKind kind;
 
-	/**
-	 * Whether the tag has resolved the encrypted password passed from the front
-	 * end.
-	 */
-	final private boolean isSolved;
+    /**
+     * Whether the tag has resolved the encrypted password passed from the front
+     * end.
+     */
+    private final boolean isSolved;
 
-	public CredentialsToken(CredentialsToken token) {
-		this(token.getPrincipal(), token.getCredentials(), token.getKind());
-	}
+    public CredentialsToken(CredentialsToken token) {
+        this(token.getPrincipal(), token.getCredentials(), token.getKind());
+    }
 
-	public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind) {
-		this(principal, credentials, kind, false);
-	}
+    public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind) {
+        this(principal, credentials, kind, false);
+    }
 
-	public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind, boolean isSolved) {
-		hasTextOf(principal, "principal");
-		hasTextOf(credentials, "credentials");
-		notNullOf(kind, "kind");
-		this.principal = principal;
-		this.credentials = credentials;
-		this.kind = kind;
-		this.isSolved = isSolved;
-	}
+    public CredentialsToken(@NotBlank String principal, @NotBlank String credentials, @NotNull CryptKind kind, boolean isSolved) {
+        this.principal = hasTextOf(principal, "principal");
+        this.credentials = hasTextOf(credentials, "credentials");
+        this.kind = notNullOf(kind, "kind");
+        this.isSolved = isSolved;
+    }
 
-	final public String getPrincipal() {
-		return principal;
-	}
+    final public String getPrincipal() {
+        return principal;
+    }
 
-	final public String getCredentials() {
-		return credentials;
-	}
+    final public String getCredentials() {
+        return credentials;
+    }
 
-	public CryptKind getKind() {
-		return kind;
-	}
+    public CryptKind getKind() {
+        return kind;
+    }
 
-	final public boolean isSolved() {
-		return isSolved;
-	}
+    final public boolean isSolved() {
+        return isSolved;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    }
 
 }

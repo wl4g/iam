@@ -38,7 +38,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1AccessTokenInfo {
-    private V1OidcUser user;
+    private V1OidcUserClaims user;
     private String accessToken;
     private String refreshToken;
     private Date expiration;

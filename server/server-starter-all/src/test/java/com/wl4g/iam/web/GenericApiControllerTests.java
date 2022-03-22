@@ -23,12 +23,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.StandaloneIam;
-import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.core.web.BaseApiController;
 import com.wl4g.iam.core.web.model.SessionQueryModel;
+import com.wl4g.infra.common.web.rest.RespBase;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StandaloneIam.class)
@@ -40,7 +41,7 @@ public class GenericApiControllerTests {
 
     @Test
     public void scanSessionsTest1() throws Exception {
-        RespBase<?> resp = endpoint.getSessions(new SessionQueryModel());
+        RespBase<?> resp = endpoint.getSessions(new SessionQueryModel(), new MockHttpServletRequest());
         System.out.println(toJSONString(resp));
     }
 

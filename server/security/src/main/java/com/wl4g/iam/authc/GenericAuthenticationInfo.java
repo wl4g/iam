@@ -39,8 +39,7 @@ public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 
     @Override
     public CodecSource getPublicSalt() {
-        // from hex
-        final String pubSalt = getIamPrincipal().getPublicSalt();
+        final String pubSalt = getIamPrincipal().getPublicSalt(); // hex
         return !isBlank(pubSalt) ? fromHex(pubSalt) : null;
     }
 

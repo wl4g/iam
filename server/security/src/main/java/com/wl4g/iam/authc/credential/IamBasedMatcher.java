@@ -41,42 +41,37 @@ import com.wl4g.iam.verify.CompositeSecurityVerifierAdapter;
  */
 public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 
-	final protected SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-	/**
-	 * IAM verification handler
-	 */
-	@Autowired
-	protected CompositeSecurityVerifierAdapter verifier;
+    /**
+     * IAM verification handler
+     */
+    protected @Autowired CompositeSecurityVerifierAdapter verifier;
 
-	/**
-	 * Matcher configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * Matcher configuration properties
+     */
+    protected @Autowired IamProperties config;
 
-	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
-	 */
-	@Autowired
-	protected IamCacheManager cacheManager;
+    /**
+     * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
+     */
+    protected @Autowired IamCacheManager cacheManager;
 
-	/**
-	 * IAM credentials securer
-	 */
-	@Autowired
-	protected IamCredentialsSecurer securer;
+    /**
+     * IAM credentials securer
+     */
+    protected @Autowired IamCredentialsSecurer securer;
 
-	/**
-	 * IAM security Coprocessor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM security Coprocessor
+     */
+    protected @Autowired ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
-	protected SessionResourceMessageBundler bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_SESSION_RESOURCE_MSG_BUNDLER)
+    protected SessionResourceMessageBundler bundle;
 
 }

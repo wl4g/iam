@@ -32,18 +32,17 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
  */
 public abstract class CredentialsSecurerAdapter implements CredentialsSecurer {
 
-	@Autowired
-	private IamCredentialsSecurer securer;
+    private @Autowired IamCredentialsSecurer securer;
 
-	@Override
-	public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
-		return securer.signature(token, publicSalt);
-	}
+    @Override
+    public String signature(@NotNull CredentialsToken token, @NotNull CodecSource publicSalt) {
+        return securer.signature(token, publicSalt);
+    }
 
-	@Override
-	public boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
-			throws CredentialsException, RuntimeException {
-		return securer.validate(token, info);
-	}
+    @Override
+    public boolean validate(@NotNull CredentialsToken token, @NotNull IamAuthenticationInfo info)
+            throws CredentialsException, RuntimeException {
+        return securer.validate(token, info);
+    }
 
 }

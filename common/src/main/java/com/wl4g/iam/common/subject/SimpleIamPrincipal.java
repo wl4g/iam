@@ -21,6 +21,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -95,11 +96,11 @@ public class SimpleIamPrincipal implements IamPrincipal {
         return isBlank(principalId) ? EMPTY : principalId;
     }
 
-    public final void setPrincipalId(String principalId) {
+    public final void setPrincipalId(@NotBlank String principalId) {
         this.principalId = hasTextOf(principalId, "principalId");
     }
 
-    public final SimpleIamPrincipal withPrincipalId(String principalId) {
+    public final SimpleIamPrincipal withPrincipalId(@NotBlank String principalId) {
         setPrincipalId(principalId);
         return this;
     }
@@ -114,11 +115,11 @@ public class SimpleIamPrincipal implements IamPrincipal {
         return isBlank(principal) ? EMPTY : principal;
     }
 
-    public final void setPrincipal(String principal) {
+    public final void setPrincipal(@NotBlank String principal) {
         this.principal = hasTextOf(principal, "principal");
     }
 
-    public final SimpleIamPrincipal withPrincipal(String principal) {
+    public final SimpleIamPrincipal withPrincipal(@NotBlank String principal) {
         setPrincipal(principal);
         return this;
     }
@@ -133,13 +134,11 @@ public class SimpleIamPrincipal implements IamPrincipal {
         return isBlank(storedCredentials) ? EMPTY : storedCredentials;
     }
 
-    public final void setStoredCredentials(String storedCredentials) {
-        // hasText(storedCredentials, "Authenticate storedCredentials can't
-        // empty");
+    public final void setStoredCredentials(@Nullable String storedCredentials) {
         this.storedCredentials = storedCredentials;
     }
 
-    public final SimpleIamPrincipal withStoredCredentials(String storedCredentials) {
+    public final SimpleIamPrincipal withStoredCredentials(@Nullable String storedCredentials) {
         setStoredCredentials(storedCredentials);
         return this;
     }
@@ -163,7 +162,7 @@ public class SimpleIamPrincipal implements IamPrincipal {
         this.publicSalt = hasTextOf(publicSaltHex, "publicSaltHex");
     }
 
-    public final SimpleIamPrincipal withPublicSalt(String publicSalt) {
+    public final SimpleIamPrincipal withPublicSalt(@NotBlank String publicSalt) {
         setPublicSalt(publicSalt);
         return this;
     }
@@ -178,12 +177,11 @@ public class SimpleIamPrincipal implements IamPrincipal {
         return isBlank(roles) ? EMPTY : roles;
     }
 
-    public final void setRoles(String roles) {
-        // hasText(roles, "Authenticate roles can't empty");
+    public final void setRoles(@Nullable String roles) {
         this.roles = roles;
     }
 
-    public final SimpleIamPrincipal withRoles(String roles) {
+    public final SimpleIamPrincipal withRoles(@Nullable String roles) {
         setRoles(roles);
         return this;
     }
@@ -198,12 +196,11 @@ public class SimpleIamPrincipal implements IamPrincipal {
         return isBlank(permissions) ? EMPTY : permissions;
     }
 
-    public final void setPermissions(String permissions) {
-        // hasText(permissions, "Authenticate permissions can't empty");
+    public final void setPermissions(@Nullable String permissions) {
         this.permissions = permissions;
     }
 
-    public final SimpleIamPrincipal withPermissions(String permissions) {
+    public final SimpleIamPrincipal withPermissions(@Nullable String permissions) {
         setPermissions(permissions);
         return this;
     }

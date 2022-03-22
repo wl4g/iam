@@ -41,7 +41,7 @@ public class V1AuthorizationCodeInfo {
     private String code;
     private String client_id;
     private String redirect_uri;
-    private V1OidcUser user;
+    private V1OidcUserClaims user;
     private String iss;
     private String scope;
     private String nonce;

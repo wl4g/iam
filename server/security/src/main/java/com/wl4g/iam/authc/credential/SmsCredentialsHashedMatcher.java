@@ -32,18 +32,18 @@ import com.wl4g.iam.verify.SecurityVerifier.VerifyKind;
  * @date 2018年11月29日
  * @since
  */
-public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
+public class SmsCredentialsHashedMatcher extends BasedAttemptsLockedMatcher {
 
-	@Override
-	public boolean doMatching(IamAuthenticationToken token, IamAuthenticationInfo info, List<String> factors) {
-		SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
-		verifier.forOperator(VerifyKind.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
-		return true;
-	}
+    @Override
+    public boolean doMatching(IamAuthenticationToken token, IamAuthenticationInfo info, List<String> factors) {
+        SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
+        verifier.forOperator(VerifyKind.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
+        return true;
+    }
 
-	@Override
-	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
-		// Nothing
-	}
+    @Override
+    protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
+        // Nothing
+    }
 
 }

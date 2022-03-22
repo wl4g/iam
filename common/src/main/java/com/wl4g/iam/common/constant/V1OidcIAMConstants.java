@@ -16,6 +16,9 @@
 package com.wl4g.iam.common.constant;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -68,43 +71,41 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE = "code";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN = "id_token";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN = "token";
+    public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " "
+            + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " "
             + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
+    public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_CODE + " "
+            + KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN;
+    public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_CODE + " "
+            + KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " " + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
+
+    /**
+     * Notice: There is no separate 'token' response type.
+     * 
+     * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationExamples
+     */
+    public static final List<String> KEY_IAM_OIDC_RESPONSE_TYPE_ALL = asList(KEY_IAM_OIDC_RESPONSE_TYPE_CODE,
+            KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN,
+            KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN);
 
     /** V1-OIDC token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";
 
-    /** V1-OIDC code challenge methods algorithm definitions. */
+    /** V1-OIDC token digest signing algorithm definitions. */
     @Getter
     @AllArgsConstructor
-    public static enum CodeChallengeMethodsSupported {
-        plain(""), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
+    public static enum DigestSignAlgSupported {
+        PLAIN("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
         private final String digestAlgName;
 
-        public static String parseChallengeMethodDigest(String name) {
-            for (CodeChallengeMethodsSupported m : values()) {
+        public static String parseDigest(String name) {
+            for (DigestSignAlgSupported m : values()) {
                 if (StringUtils.equals(m.name(), name)) {
                     return m.getDigestAlgName();
                 }
             }
-            throw new IllegalArgumentException(format("Invalid challenge digest alias name for '%s'", name));
-        }
-    }
-
-    /** V1-OIDC token signing algorithm definitions. */
-    @Getter
-    @AllArgsConstructor
-    public static enum IdTokenDigestSupported {
-        none("none"), S256("SHA-256");
-        private final String digestAlgName;
-
-        public static String parseIdTokenDigest(String name) {
-            for (IdTokenDigestSupported m : values()) {
-                if (StringUtils.equals(m.name(), name)) {
-                    return m.getDigestAlgName();
-                }
-            }
-            throw new IllegalArgumentException(format("Invalid idToken digest alias name for '%s'", name));
+            throw new IllegalArgumentException(format("Invalid digest alg alias name for '%s'", name));
         }
     }
 

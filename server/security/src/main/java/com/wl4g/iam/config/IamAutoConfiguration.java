@@ -59,6 +59,7 @@ import com.wl4g.iam.core.session.mgt.JedisIamSessionDAO;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.iam.crypto.DSASecureCryptService;
 import com.wl4g.iam.crypto.ECCSecureCryptService;
+import com.wl4g.iam.crypto.NoneSecureCryptService;
 import com.wl4g.iam.crypto.RSASecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
@@ -129,6 +130,11 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     @Bean
     public CryptoProperties cryptoProperties() {
         return new CryptoProperties();
+    }
+
+    @Bean
+    public NoneSecureCryptService noneSecureCryptService(JedisLockManager lockManager) {
+        return new NoneSecureCryptService(lockManager);
     }
 
     @Bean

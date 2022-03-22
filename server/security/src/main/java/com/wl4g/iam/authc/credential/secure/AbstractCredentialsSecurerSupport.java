@@ -82,8 +82,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
     /**
      * Secure asymmetric cryptic service.
      */
-    @Autowired
-    protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
+    protected @Autowired GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
     /**
      * I18n message source.
@@ -94,19 +93,16 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
     /**
      * Iam delegate credentials securer. (Extension: optional)
      */
-    @Nullable
-    @Autowired(required = false)
-    protected CredentialsSecurerAdapter delegate;
+    protected @Nullable @Autowired(required = false) CredentialsSecurerAdapter delegate;
 
     protected AbstractCredentialsSecurerSupport(SecureConfig config, IamCacheManager cacheManager) {
-        notNullOf(config, "secureConfig");
+        this.config = notNullOf(config, "secureConfig");
         notNullOf(config.getPrivateSalt(), "privateSalt");
         notNullOf(config.getPreCryptPoolSize(), "cryptSize");
         notNullOf(config.getCryptosExpireMs() > 0, "cryptExpireMs");
         notNullOf(config.getApplyPubkeyExpireMs() > 0, "applyPubKeyExpireMs");
         notNullOf(cacheManager, "cacheManager");
         this.privateSalt = new CodecSource(config.getPrivateSalt());
-        this.config = config;
         this.cacheManager = cacheManager;
     }
 
