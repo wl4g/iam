@@ -15,13 +15,15 @@
  */
 package com.wl4g.iam.sns.handler;
 
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM_SECURITY_SNS;
+import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
+import static java.lang.String.format;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.util.Assert;
 
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
@@ -44,9 +46,9 @@ public class LoginSnsHandler extends AbstractSnsHandler {
     }
 
     @Override
-    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+    public String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
         // Connecting
-        String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+        String authorizingUrl = super.doGetAuthorizingUrl(which, provider, state, connectParams);
 
         // Save connect parameters
         saveOauth2ConnectParameters(provider, state, connectParams);
@@ -58,18 +60,20 @@ public class LoginSnsHandler extends AbstractSnsHandler {
     protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
         super.checkConnectParameters(provider, state, connectParams);
 
-        // Check connect parameters
-        Assert.notEmpty(connectParams, "Connect parameters must not be empty");
+        // Check connect parameters.
+        notEmpty(connectParams, format(
+                "Connect parameters is invalid or expired for state='%s', You can try setting '%s' to increase the timeout.",
+                state, CONF_PREFIX_IAM_SECURITY_SNS.concat(".oauth2ConnectExpireMs")));
 
         // PC-side browsers use agent redirection(QQ,sina)
-        Assert.hasText(connectParams.get(config.getParam().getAgent()),
-                String.format("'%s' must not be empty", config.getParam().getAgent()));
+        // hasText(connectParams.get(config.getParam().getAgent()),
+        // format("Parmam '%s' value is required",
+        // config.getParam().getAgent()));
     }
 
     @Override
     protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
-        // Check 'state'
-        Assert.notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
+        hasText(state, format("State '%s' is invalid or expired", state));
         super.checkCallbackParameters(provider, state, code, connectParams);
     }
 

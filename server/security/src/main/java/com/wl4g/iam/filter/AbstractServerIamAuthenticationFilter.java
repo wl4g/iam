@@ -19,6 +19,7 @@ import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.infra.common.web.WebUtils2.applyQueryURL;
@@ -277,7 +278,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
                 // Handle post custom success.
                 afterAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
-                log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
+                log.info("redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
                 issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
             }
 
@@ -343,10 +344,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         // Redirect the login page directly.
         else {
             try {
-                log.info("Redirect to login: {}", redirect);
+                log.info("redirect to login: {}", redirect);
                 issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
             } catch (IOException e1) {
-                log.error("Redirect to login failed.", e1);
+                log.error("redirect to login failed.", e1);
             }
         }
 
@@ -747,7 +748,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
      * @param response
      */
     private void rememberRedirectInfo(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
-        notNull(redirect, "Redirect info must not be null.");
+        notNullOf(redirect, "redirect");
         // Safety encoding for URL fragment.
         redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
 

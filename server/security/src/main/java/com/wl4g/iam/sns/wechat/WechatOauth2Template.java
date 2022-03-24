@@ -35,17 +35,17 @@ import com.wl4g.iam.sns.wechat.model.WxUserInfo;
 public class WechatOauth2Template
         extends AbstractWechatOauth2Template<WechatSocialProperties, WxAccessToken, WxBasedOpenId, WxUserInfo> {
 
-    final public static String PROVIDER_ID = "wechat";
+    public static final String PROVIDER_ID = "wechat";
 
     /**
      * QRcode getting authorizing code API URL
      */
-    final public static String URI_AUTH_CODE = "https://open.weixin.qq.com/connect/qrconnect#wechat_redirect";
+    public static final String URI_AUTH_CODE = "https://open.weixin.qq.com/connect/qrconnect#wechat_redirect";
 
     /**
      * WeChat open platform getting user information API URL
      */
-    final public static String URI_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
+    public static final String URI_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
 
     public WechatOauth2Template(WechatSocialProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
         super(config, restTemplate, cacheManager);

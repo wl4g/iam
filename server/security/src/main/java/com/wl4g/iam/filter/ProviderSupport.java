@@ -78,11 +78,11 @@ public enum ProviderSupport {
     /**
      * Supported SNS providers.
      */
-    final private static Set<String> supported = new HashSet<>();
+    private static final Set<String> supported = new HashSet<>();
 
-    final private String name;
-    final private String displayNameEn;
-    final private String displayNameZh;
+    private final String name;
+    private final String displayNameEn;
+    private final String displayNameZh;
 
     private ProviderSupport(String name, String displayNameEn, String displayNameZh) {
         this.name = name;
@@ -90,19 +90,19 @@ public enum ProviderSupport {
         this.displayNameZh = displayNameZh;
     }
 
-    final public String getName() {
+    public final String getName() {
         return name;
     }
 
-    final public String getDisplayNameEn() {
+    public final String getDisplayNameEn() {
         return displayNameEn;
     }
 
-    final public String getDisplayNameZh() {
+    public final String getDisplayNameZh() {
         return displayNameZh;
     }
 
-    final public boolean isEqual(String provider) {
+    public final boolean isEqual(String provider) {
         return name().equalsIgnoreCase(String.valueOf(provider));
     }
 
@@ -112,7 +112,7 @@ public enum ProviderSupport {
      * @param provider
      * @throws NoSuchSocialProviderException
      */
-    final public static void checkSupport(String provider) throws NoSuchSocialProviderException {
+    public static final void checkSupport(String provider) throws NoSuchSocialProviderException {
         if (!isSupport(provider)) {
             throw new NoSuchSocialProviderException(String.format("Unsupported SNS service providers:[%s]", provider));
         }
@@ -124,7 +124,7 @@ public enum ProviderSupport {
      * @param provider
      * @return
      */
-    final public static boolean isSupport(String provider) {
+    public final static boolean isSupport(String provider) {
         return supported.contains(provider);
     }
 
@@ -133,7 +133,7 @@ public enum ProviderSupport {
      *
      * @param providerId
      */
-    final static void addSupport(String providerId) {
+    static final void addSupport(String providerId) {
         supported.add(providerId);
     }
 

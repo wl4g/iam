@@ -15,6 +15,11 @@
  */
 package com.wl4g.iam.sns.handler;
 
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_AFTER_CALLBACK_AGENT;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
+import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.IllegalAuthorizer;
+import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.InvalidAuthorizer;
+import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -28,14 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.Assert;
 
-import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_AFTER_CALLBACK_AGENT;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
-import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.IllegalAuthorizer;
-import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.InvalidAuthorizer;
-
 import com.google.common.base.Splitter;
-import com.wl4g.infra.common.web.WebUtils2;
+import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
@@ -43,13 +42,14 @@ import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.core.authc.SecondaryAuthenticationException;
-import com.wl4g.iam.common.model.SecondaryAuthcValidateModel;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.config.AbstractIamProperties.Which;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.iam.sns.support.Oauth2OpenId;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.web.WebUtils2;
 
 /**
  * Secondary authentication SNS handler
@@ -71,9 +71,9 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
     }
 
     @Override
-    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+    public String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
         // Connecting
-        String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+        String authorizingUrl = super.doGetAuthorizingUrl(which, provider, state, connectParams);
 
         // Save connect parameters
         saveOauth2ConnectParameters(provider, state, connectParams);
@@ -99,8 +99,9 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
         // Check 'agent'
         String agentKey = config.getParam().getAgent();
         String agentValue = connectParams.get(agentKey);
-        Assert.hasText(agentValue, String.format("'%s' must not be empty", agentKey));
-        Assert.state(WebUtils2.isTrue(agentValue), String.format("Parameter %s current supports only enabled mode", agentKey));
+        // hasText(agentValue, format("Parmam '%s' value is required",
+        // agentKey));
+        Assert2.state(WebUtils2.isTrue(agentValue), format("Param %s current supports only enabled mode", agentKey));
 
         // Check 'funcId'
         Assert.hasText(connectParams.get(config.getParam().getFuncId()),
@@ -117,7 +118,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    protected String doHandleOAuth2Callback(
+    protected String doGetAuthInfo(
             String provider,
             String code,
             OAuth2ApiBinding connect,

@@ -17,6 +17,8 @@ package com.wl4g.iam.sns.support;
 
 import java.io.Serializable;
 
+import org.springframework.http.ResponseEntity;
+
 /**
  * {@link AssertionOAuth2Result}
  * 
@@ -29,9 +31,9 @@ public interface AssertionOAuth2Result extends Serializable {
     /**
      * Used to assert the correctness of oauth2 authorization information.
      * 
-     * @param <R>
+     * @param resp
      * @return
      */
-    <R extends AssertionOAuth2Result> R validate();
+    Object validate(ResponseEntity<String> resp);
 
 }

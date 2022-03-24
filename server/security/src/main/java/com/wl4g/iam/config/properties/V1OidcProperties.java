@@ -19,7 +19,6 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.getFieldValues;
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -28,11 +27,14 @@ import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.DigestSignAlgSupported;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * IAM V1-OIDC configuration properties
@@ -42,160 +44,102 @@ import com.wl4g.iam.common.constant.V1OidcIAMConstants.DigestSignAlgSupported;
  * @since v1.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
+@Getter
+@Setter
+@ToString
 public class V1OidcProperties implements Serializable {
     private static final long serialVersionUID = -2694422471852860689L;
 
-    private String wwwRealmName = "IAM OIDC Realm";
+    private String defaultBasicRealmName = "IAM OIDC Realm";
+    private String defaultJwksAlgName = "RS256";
+    private String defaultJwksJsonResource = "classpath*:/credentials/oidc/jwks.json";
 
-    private String jwsAlgorithmName = "RS256";
+    // Generic OpenID Connect Configuration
 
-    private String jwksJsonResource = "classpath*:/credentials/oidc/jwks.json";
+    private boolean defaultStandardFlowEnabled = true;
+    private boolean defaultImplicitFlowEnabled = false;
+    private boolean defaultDirectAccessGrantsEnabled = false;
 
-    private String idTokenDigestName = "S256";
+    // Fine Grain OpenID Connect Configuration
 
-    private List<String> idTokenAlgSupported = new ArrayList<String>() {
-        private static final long serialVersionUID = 1L;
-        {
-            addAll(asList(DigestSignAlgSupported.values()).stream().map(m -> m.name()).collect(toList()));
-        }
-    };
+    private String defaultAccessTokenAlgName = "S256";
+    private int defaultAccessTokenExpirationSeconds = 3600;
+    private int defaultRefreshTokenExpirationSeconds = 3600 * 24;
 
-    private List<String> codeChallengeMethodsSupported = new ArrayList<String>() {
-        private static final long serialVersionUID = 1L;
-        {
-            addAll(asList(DigestSignAlgSupported.values()).stream().map(m -> m.name()).collect(toList()));
-        }
-    };
+    private String defaultIdTokenAlgName = "S256";
+    private List<String> defaultIdTokenAlgSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(
+            toList());
 
-    /**
-     * OIDC access token expiration seconds.
-     */
-    private int accessTokenExpirationSeconds = 3600;
-
-    /**
-     * OIDC refresh token expiration seconds.
-     */
-    private int refreshTokenExpirationSeconds = 3600 * 24;
-
-    /**
-     * OIDC authorization code expiration seconds.
-     */
-    private int codeExpirationSeconds = 10;
+    private List<String> defaultCodeChallengeMethodsSupported = asList(SignAlgorithmSupported.values()).stream()
+            .map(m -> m.name())
+            .collect(toList());
+    private int defaultCodeExpirationSeconds = 10;
 
     /**
      * OIDC service documentation URI.
      */
     private String serviceDocumentation = "https://oidc.iam.wl4g.com/connect/service_documentation.html";
 
-    public String getWwwRealmName() {
-        return wwwRealmName;
-    }
-
-    public void setWwwRealmName(String wwwRealmName) {
-        this.wwwRealmName = wwwRealmName;
-    }
-
-    public String getJwsAlgorithmName() {
-        return jwsAlgorithmName;
-    }
-
-    public void setJwsAlgorithmName(String jwsAlgorithmName) {
+    public void setDefaultJwksAlgName(String jwksAlgName) {
         List<JWSAlgorithm> algorithms = safeList(
                 getFieldValues(JWSAlgorithm.class, new int[] { Modifier.PRIVATE }, new String[] { "serialVersionUID" }));
-        isTrue(algorithms.stream().map(alg -> alg.getName()).anyMatch(alg -> equalsIgnoreCase(alg, jwsAlgorithmName)),
-                format("Invalid jws digest alg '%s', The supported algorithms are: %s", jwsAlgorithmName, algorithms.toString()));
-        this.jwsAlgorithmName = jwsAlgorithmName;
+        isTrue(algorithms.stream().map(alg -> alg.getName()).anyMatch(alg -> equalsIgnoreCase(alg, jwksAlgName)),
+                format("Invalid jwks alg is '%s', but supported are: %s", jwksAlgName, algorithms.toString()));
+        this.defaultJwksAlgName = jwksAlgName;
     }
 
-    public String getJwksJsonResource() {
-        return jwksJsonResource;
+    public void setDefaultAccessTokenAlgName(String defaultAccessTokenAlgName) {
+        hasTextOf(defaultAccessTokenAlgName, "defaultAccessTokenAlgName");
+        List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(toList());
+        isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, defaultAccessTokenAlgName)),
+                format("Invalid access token alg is '%s', but supported are: %s", defaultAccessTokenAlgName, definitionAlgNames));
+        this.defaultAccessTokenAlgName = defaultAccessTokenAlgName;
     }
 
-    public void setJwksJsonResource(String jwksJsonResource) {
-        this.jwksJsonResource = jwksJsonResource;
+    public void setDefaultIdTokenAlgName(String defaultIdTokenAlgName) {
+        hasTextOf(defaultIdTokenAlgName, "defaultIdTokenAlgName");
+        List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(toList());
+        isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, defaultIdTokenAlgName)),
+                format("Invalid id token alg is '%s', but supported are: %s", defaultIdTokenAlgName, definitionAlgNames));
+        this.defaultIdTokenAlgName = defaultIdTokenAlgName;
     }
 
-    public String getIdTokenDigestName() {
-        return idTokenDigestName;
-    }
-
-    public void setIdTokenDigestName(String idTokenDigestName) {
-        hasTextOf(idTokenDigestName, "idTokenDigestName");
-        List<String> definitionAlgNames = asList(DigestSignAlgSupported.values()).stream().map(d -> d.name()).collect(toList());
-        isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, idTokenDigestName)),
-                format("Invalid idToken digest alg '%s', The supported digests are: %s", idTokenDigestName, definitionAlgNames));
-        this.idTokenDigestName = idTokenDigestName;
-    }
-
-    public List<String> getIdTokenAlgSupported() {
-        return idTokenAlgSupported;
-    }
-
-    public void setIdTokenAlgSupported(List<String> idTokenAlgSupported) {
-        List<String> definitionAlgNames = asList(DigestSignAlgSupported.values()).stream().map(d -> d.name()).collect(toList());
+    public void setDefaultIdTokenAlgSupported(List<String> idTokenAlgSupported) {
+        List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(toList());
         for (String m : safeList(idTokenAlgSupported)) {
             if (!definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, m))) {
-                throw new IllegalArgumentException(format(
-                        "Invalid idToken supported digest algs '%s', The supported digests alg are: %s", m, definitionAlgNames));
+                throw new IllegalArgumentException(
+                        format("Invalid id token algs supported is '%s', but total supported are: %s", m, definitionAlgNames));
             }
         }
-        this.idTokenAlgSupported = idTokenAlgSupported;
+        this.defaultIdTokenAlgSupported = idTokenAlgSupported;
     }
 
-    public List<String> getCodeChallengeMethodsSupported() {
-        return codeChallengeMethodsSupported;
+    public void setDefaultAccessTokenExpirationSeconds(int accessTokenExpirationSeconds) {
+        isTrue(accessTokenExpirationSeconds > 0, "defaultAccessTokenExpirationSeconds must >0");
+        this.defaultAccessTokenExpirationSeconds = accessTokenExpirationSeconds;
     }
 
-    public void setCodeChallengeMethodsSupported(List<String> codeChallengeMethodsSupported) {
-        notEmpty(codeChallengeMethodsSupported, "codeChallengeMethodsSupported");
-        List<String> definitionAlgNames = asList(DigestSignAlgSupported.values()).stream().map(d -> d.name()).collect(toList());
+    public void setDefaultRefreshTokenExpirationSeconds(int refreshTokenExpirationSeconds) {
+        isTrue(refreshTokenExpirationSeconds > 0, "defaultRefreshTokenExpirationSeconds must >0");
+        this.defaultRefreshTokenExpirationSeconds = refreshTokenExpirationSeconds;
+    }
+
+    public void setDefaultCodeChallengeMethodsSupported(List<String> codeChallengeMethodsSupported) {
+        notEmpty(codeChallengeMethodsSupported, "defaultCodeChallengeMethodsSupported");
+        List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(toList());
         for (String m : safeList(codeChallengeMethodsSupported)) {
             if (!definitionAlgNames.stream().anyMatch(d -> d.equalsIgnoreCase(m))) {
-                throw new IllegalArgumentException(format(
-                        "Invalid codeCallengeMethods digest for '%s', The supported digests alg are: %s", m, definitionAlgNames));
+                throw new IllegalArgumentException(
+                        format("Invalid codeCallenge methods is '%s', but supported are: %s", m, definitionAlgNames));
             }
         }
-        this.codeChallengeMethodsSupported = codeChallengeMethodsSupported;
+        this.defaultCodeChallengeMethodsSupported = codeChallengeMethodsSupported;
     }
 
-    public int getAccessTokenExpirationSeconds() {
-        return accessTokenExpirationSeconds;
-    }
-
-    public void setAccessTokenExpirationSeconds(int accessTokenExpirationSeconds) {
-        isTrue(accessTokenExpirationSeconds > 0, "accessTokenExpirationSeconds must >0");
-        this.accessTokenExpirationSeconds = accessTokenExpirationSeconds;
-    }
-
-    public int getRefreshTokenExpirationSeconds() {
-        return refreshTokenExpirationSeconds;
-    }
-
-    public void setRefreshTokenExpirationSeconds(int refreshTokenExpirationSeconds) {
-        isTrue(refreshTokenExpirationSeconds > 0, "refreshTokenExpirationSeconds must >0");
-        this.refreshTokenExpirationSeconds = refreshTokenExpirationSeconds;
-    }
-
-    public int getCodeExpirationSeconds() {
-        return codeExpirationSeconds;
-    }
-
-    public void setCodeExpirationSeconds(int codeExpirationSeconds) {
-        isTrue(codeExpirationSeconds > 0, "codeExpirationSeconds must >0");
-        this.codeExpirationSeconds = codeExpirationSeconds;
-    }
-
-    public String getServiceDocumentation() {
-        return serviceDocumentation;
-    }
-
-    public void setService_documentation(String serviceDocumentation) {
-        this.serviceDocumentation = serviceDocumentation;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+    public void setDefaultCodeExpirationSeconds(int codeExpirationSeconds) {
+        isTrue(codeExpirationSeconds > 0, "defaultCodeExpirationSeconds must >0");
+        this.defaultCodeExpirationSeconds = codeExpirationSeconds;
     }
 
 }

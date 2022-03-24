@@ -71,12 +71,10 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
             RedirectInfo redirectInfo,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        String callbackId = getCleanParam(request, PARAM_SNS_CALLBACK_ID);
-        hasTextOf(callbackId, PARAM_SNS_CALLBACK_ID);
-
+        String callbackId = hasTextOf(getCleanParam(request, PARAM_SNS_CALLBACK_ID), PARAM_SNS_CALLBACK_ID);
         String callbackKey = AbstractSnsHandler.getOAuth2CallbackKey(callbackId);
         try {
-            // Get SNS OAuth2 callback info,
+            // from sns oauth2 callback authorized info,
             SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
                     .get(new CacheKey(callbackKey, SocialAuthorizeInfo.class));
 

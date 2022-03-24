@@ -31,4 +31,9 @@ public class GithubAuthenticationFilter extends Oauth2SnsAuthenticationFilter<Gi
         return URI_BASE_MAPPING + ProviderSupport.GITHUB.getName();
     }
 
+    @Override
+    protected boolean enabled() {
+        return true;
+    }
+
 }

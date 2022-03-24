@@ -92,15 +92,15 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     /** V1-OIDC token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";
 
-    /** V1-OIDC token digest signing algorithm definitions. */
+    /** V1-OIDC token signing algorithm definitions. */
     @Getter
     @AllArgsConstructor
-    public static enum DigestSignAlgSupported {
+    public static enum SignAlgorithmSupported {
         PLAIN("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
         private final String digestAlgName;
 
         public static String parseDigest(String name) {
-            for (DigestSignAlgSupported m : values()) {
+            for (SignAlgorithmSupported m : values()) {
                 if (StringUtils.equals(m.name(), name)) {
                     return m.getDigestAlgName();
                 }

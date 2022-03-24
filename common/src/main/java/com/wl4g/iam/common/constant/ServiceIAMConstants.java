@@ -31,4 +31,8 @@ public abstract class ServiceIAMConstants extends IAMConstants {
 
     public static final String CONF_PREFIX_IAM_SERVICE = CONF_PREFIX_IAM + ".service";
 
+    public static final String KEY_IAM_RPC_PRINCIPAL_ID = "currentIamPrincipalId";
+    public static final String KEY_IAM_RPC_PRINCIPAL_USER = "currentIamPrincipalUser";
+    public static final String KEY_IAM_RPC_PRINCIPAL = "currentIamPrincipal";
+
 }

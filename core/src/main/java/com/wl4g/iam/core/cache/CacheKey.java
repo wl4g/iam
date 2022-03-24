@@ -54,10 +54,8 @@ public class CacheKey implements Serializable {
     }
 
     public CacheKey(Serializable key, Class<?> valueClass) {
-        notNull(key, "'key' must not be null");
-        notNull(valueClass, "'valueClass' must not be null");
-        this.key = getRealTypeKeyToString(key);
-        this.valueClass = valueClass;
+        this.key = getRealTypeKeyToString(notNullOf(key, "key"));
+        this.valueClass = notNullOf(valueClass, "valueClass");
     }
 
     public CacheKey(Serializable key, long expireMs) {
@@ -65,8 +63,7 @@ public class CacheKey implements Serializable {
     }
 
     public CacheKey(Serializable key, int expireSec) {
-        notNull(key, "'key' must not be null");
-        this.key = getRealTypeKeyToString(key);
+        this.key = getRealTypeKeyToString(notNullOf(key, "key"));
         this.expire = expireSec;
     }
 

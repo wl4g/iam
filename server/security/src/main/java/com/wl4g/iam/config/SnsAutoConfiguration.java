@@ -15,15 +15,18 @@
  */
 package com.wl4g.iam.config;
 
-import org.apache.shiro.cache.CacheManager;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
-
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM_SECURITY_SNS;
 
 import java.util.List;
+
+import org.apache.shiro.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.iam.annotation.SnsController;
 import com.wl4g.iam.config.properties.IamProperties;
@@ -35,6 +38,7 @@ import com.wl4g.iam.core.config.AbstractIamConfiguration;
 import com.wl4g.iam.sns.DefaultOAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
+import com.wl4g.iam.sns.github.GithubOauth2Template;
 import com.wl4g.iam.sns.handler.BindingSnsHandler;
 import com.wl4g.iam.sns.handler.ClientAuthcSnsHandler;
 import com.wl4g.iam.sns.handler.DelegateSnsHandler;
@@ -43,7 +47,7 @@ import com.wl4g.iam.sns.handler.SecondaryAuthcSnsHandler;
 import com.wl4g.iam.sns.handler.SnsHandler;
 import com.wl4g.iam.sns.handler.UnBindingSnsHandler;
 import com.wl4g.iam.sns.qq.QQOauth2Template;
-import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
+import com.wl4g.iam.sns.web.GenericOauth2SnsController;
 import com.wl4g.iam.sns.wechat.WechatMpOauth2Template;
 import com.wl4g.iam.sns.wechat.WechatOauth2Template;
 import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
@@ -60,27 +64,43 @@ import com.wl4g.iam.sns.wechat.api.WechatMpApiOperator;
 public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_SECURITY_SNS)
     public SnsProperties snsProperties() {
         return new SnsProperties();
     }
 
+    //
     // Social provider oauth2 template's
     //
 
     @Bean
-    public QQOauth2Template qqOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+    public GithubOauth2Template githubOauth2Template(
+            SnsProperties config,
+            @Qualifier(BEAN_IAM_OKHTTP3_REST_TEMPLATE) RestTemplate restTemplate,
+            CacheManager cacheManager) {
+        return new GithubOauth2Template(config.getGithub(), restTemplate, cacheManager);
+    }
+
+    @Bean
+    public QQOauth2Template qqOauth2Template(
+            SnsProperties config,
+            @Qualifier(BEAN_IAM_OKHTTP3_REST_TEMPLATE) RestTemplate restTemplate,
+            CacheManager cacheManager) {
         return new QQOauth2Template(config.getQq(), restTemplate, cacheManager);
     }
 
     @Bean
-    public WechatOauth2Template wechatOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+    public WechatOauth2Template wechatOauth2Template(
+            SnsProperties config,
+            @Qualifier(BEAN_IAM_OKHTTP3_REST_TEMPLATE) RestTemplate restTemplate,
+            CacheManager cacheManager) {
         return new WechatOauth2Template(config.getWechat(), restTemplate, cacheManager);
     }
 
     @Bean
     public WechatMpOauth2Template wechatMpOauth2Template(
             SnsProperties config,
-            RestTemplate restTemplate,
+            @Qualifier(BEAN_IAM_OKHTTP3_REST_TEMPLATE) RestTemplate restTemplate,
             CacheManager cacheManager) {
         return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
     }
@@ -156,11 +176,11 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
     //
 
     @Bean
-    public DefaultOauth2SnsController defaultOauth2SnsController(
+    public GenericOauth2SnsController genericOauth2SnsController(
             IamProperties config,
             SnsProperties snsConfig,
             DelegateSnsHandler delegate) {
-        return new DefaultOauth2SnsController(config, snsConfig, delegate);
+        return new GenericOauth2SnsController(config, snsConfig, delegate);
     }
 
     @Bean

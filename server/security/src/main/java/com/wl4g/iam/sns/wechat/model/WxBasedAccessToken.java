@@ -20,118 +20,118 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.iam.core.exception.SnsApiBindingException;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
 
 public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessToken {
-	private static final long serialVersionUID = 6525294825751214763L;
+    private static final long serialVersionUID = 6525294825751214763L;
 
-	@JsonProperty("access_token")
-	private String accessToken;
+    @JsonProperty("access_token")
+    private String accessToken;
 
-	@JsonProperty("expires_in")
-	private Long expiresIn;
+    @JsonProperty("expires_in")
+    private Long expiresIn;
 
-	@JsonProperty("refresh_token")
-	private String refreshToken;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
-	@JsonProperty("openid")
-	private String openId;
+    @JsonProperty("openid")
+    private String openId;
 
-	@JsonProperty("scope")
-	private String scope;
+    @JsonProperty("scope")
+    private String scope;
 
-	@JsonProperty("unionid")
-	private String unionId;
+    @JsonProperty("unionid")
+    private String unionId;
 
-	public WxBasedAccessToken() {
-		super();
-	}
+    public WxBasedAccessToken() {
+        super();
+    }
 
-	public WxBasedAccessToken(String accessToken, Long expiresIn, String refreshToken) {
-		this.setAccessToken(accessToken);
-		this.setExpiresIn(expiresIn);
-		this.setRefreshToken(refreshToken);
-	}
+    public WxBasedAccessToken(String accessToken, Long expiresIn, String refreshToken) {
+        this.setAccessToken(accessToken);
+        this.setExpiresIn(expiresIn);
+        this.setRefreshToken(refreshToken);
+    }
 
-	@Override
-	public String accessToken() {
-		return getAccessToken();
-	}
+    @Override
+    public String accessToken() {
+        return getAccessToken();
+    }
 
-	public String getAccessToken() {
-		return accessToken;
-	}
+    public String getAccessToken() {
+        return accessToken;
+    }
 
-	public void setAccessToken(String accessToken) {
-		// Assert.notNull(accessToken, "'accessToken' must not be null");
-		this.accessToken = accessToken;
-	}
+    public void setAccessToken(String accessToken) {
+        // Assert.notNull(accessToken, "'accessToken' must not be null");
+        this.accessToken = accessToken;
+    }
 
-	public Long getExpiresIn() {
-		return expiresIn;
-	}
+    public Long getExpiresIn() {
+        return expiresIn;
+    }
 
-	public void setExpiresIn(Long expiresIn) {
-		// Assert.notNull(expiresIn, "'expiresIn' must not be null");
-		this.expiresIn = expiresIn;
-	}
+    public void setExpiresIn(Long expiresIn) {
+        // Assert.notNull(expiresIn, "'expiresIn' must not be null");
+        this.expiresIn = expiresIn;
+    }
 
-	public String getRefreshToken() {
-		return refreshToken;
-	}
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
-	public void setRefreshToken(String refreshToken) {
-		// Assert.notNull(refreshToken, "'refreshToken' must not be null");
-		this.refreshToken = refreshToken;
-	}
+    public void setRefreshToken(String refreshToken) {
+        // Assert.notNull(refreshToken, "'refreshToken' must not be null");
+        this.refreshToken = refreshToken;
+    }
 
-	public String getOpenId() {
-		return openId;
-	}
+    public String getOpenId() {
+        return openId;
+    }
 
-	public void setOpenId(String openid) {
-		this.openId = openid;
-	}
+    public void setOpenId(String openid) {
+        this.openId = openid;
+    }
 
-	public String getUnionId() {
-		return unionId;
-	}
+    public String getUnionId() {
+        return unionId;
+    }
 
-	public void setUnionId(String unionId) {
-		this.unionId = unionId;
-	}
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
+    }
 
-	public String getScope() {
-		return scope;
-	}
+    public String getScope() {
+        return scope;
+    }
 
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public WxBasedAccessToken build(String message) {
-		WxBasedAccessToken at = parseJSON(message, getClass());
-		BeanUtils.copyProperties(at, this);
-		return this;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public WxBasedAccessToken build(String message) {
+        WxBasedAccessToken at = parseJSON(message, getClass());
+        BeanUtils.copyProperties(at, this);
+        return this;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public WxBasedAccessToken validate() {
-		if (getErrcode() != DEFAULT_WX_OK) {
-			throw new SnsApiBindingException(format("[Assertion failed] - WeChat accessToken of %s", toString()));
-		}
-		return this;
-	}
+    @Override
+    public WxBasedAccessToken validate(ResponseEntity<String> resp) {
+        if (getErrcode() != DEFAULT_WX_OK) {
+            throw new SnsApiBindingException(format("[Assertion failed] - WeChat accessToken of %s", toString()));
+        }
+        return this;
+    }
 
 }

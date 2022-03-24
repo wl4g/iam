@@ -78,17 +78,16 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
     final protected IamCache imgCache;
 
     public JigsawImageManager(CaptchaProperties config, IamCacheManager cacheManager, JedisLockManager lockManager) {
-        notNull(config, "captchaProperties");
         notNullOf(cacheManager, "cacheManager");
         notNullOf(lockManager, "lockManager");
-        this.config = config;
+        this.config = notNullOf(config, "captchaProperties");
         this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_JIGSAW_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
         this.imgCache = cacheManager.getIamCache(CACHE_PREFIX_IAM_VERIFY_JIGSAW_IMG);
     }
 
     @Override
     public void run(ApplicationArguments arg0) throws Exception {
-        initJigsawImagesPool();
+        initJigsawImagesBuffer();
     }
 
     /**
@@ -127,7 +126,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
         if (isNull(img)) { // Expired?
             try {
                 if (lock.tryLock(DEFAULT_JIGSAW_INIT_TIMEOUTMS / 2, TimeUnit.MILLISECONDS)) {
-                    initJigsawImagesPool();
+                    initJigsawImagesBuffer();
                 }
             } catch (Exception e) {
                 wrapAndThrow(e);
@@ -152,18 +151,14 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
     }
 
     /**
-     * Initializing JIGSAW image buffer cache.
+     * Initializing JIGSAW image buffer to cache.
      * 
      * @throws Exception
      */
-    private synchronized void initJigsawImagesPool() throws IOException {
+    private synchronized void initJigsawImagesBuffer() throws IOException {
         log.info("Initializing jigsaw images buffer...");
 
-        if (isBlank(config.getJigsaw().getSourceDir())) {
-            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources(DEFAULT_JIGSAW_SOURCE_CLASSPATH);
-            storageJigsawImages(resources);
-        } else {
+        if (!isBlank(config.getJigsaw().getSourceDir())) {
             File srcDir = new File(config.getJigsaw().getSourceDir());
             state((srcDir.canRead() && srcDir.exists()),
                     format("Failed to initialize jigsaw images, please check the path: %s is correct and has read permission",
@@ -172,18 +167,21 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
             File[] files = srcDir.listFiles(f -> !startsWith(f.getName(), "."));
             state((files != null && files.length > 0),
                     format("Failed to initialize jigsaw images, path: %s material is empty", srcDir.getAbsolutePath()));
-            storageJigsawImages(files);
+            makeJigsawImageBuffer(files);
+        } else { // Fallback use default images material.
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource[] resources = resolver.getResources(DEFAULT_JIGSAW_SOURCE_CLASSPATH);
+            makeJigsawImageBuffer(resources);
         }
-
     }
 
     /**
-     * Parse load & storage put buffer image to cache.
+     * Make and storage buffer images put to cache.
      * 
      * @param sources
      * @throws IOException
      */
-    private void storageJigsawImages(Object[] sources) throws IOException {
+    private void makeJigsawImageBuffer(Object[] sources) throws IOException {
         // Statistic use material.
         Set<Integer> indexs = new HashSet<>();
 

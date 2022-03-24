@@ -21,7 +21,6 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_RC
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT;
-import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
@@ -31,11 +30,9 @@ import static org.springframework.util.Assert.hasText;
 
 import java.util.Map;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.filter.ServerInternalAuthenticationFilter;
-import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
+import com.wl4g.iam.sns.web.GenericOauth2SnsController;
 
 /**
  * IAM server properties
@@ -45,7 +42,6 @@ import com.wl4g.iam.sns.web.DefaultOauth2SnsController;
  * @date 2019年1月4日
  * @since
  */
-@ConfigurationProperties(prefix = CONF_PREFIX_IAM)
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
 
     private static final long serialVersionUID = -5858422822181237865L;
@@ -211,7 +207,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
     /**
      * Adds build-in requires filter chains to IAM server. </br>
-     * For example: {@link DefaultOauth2SnsController#connect} </br>
+     * For example: {@link GenericOauth2SnsController#connect} </br>
      */
     @Override
     protected void applyBuildinRequiredFilterChains(Map<String, String> chains) {

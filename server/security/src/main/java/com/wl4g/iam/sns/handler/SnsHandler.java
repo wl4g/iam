@@ -33,12 +33,6 @@ import com.wl4g.iam.sns.CallbackResult;
 public interface SnsHandler {
 
     /**
-     * Request connects to a social network (requesting oauth2 authorization)
-     * parameters binding session key name
-     */
-    final public static String KEY_SNS_CONNECT_PARAMS = "connect_params_";
-
-    /**
      * Handling which(action) type
      *
      * @return
@@ -54,7 +48,7 @@ public interface SnsHandler {
      * @param connectParams
      * @return
      */
-    String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams);
+    String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams);
 
     /**
      * SNS authorizing callback
@@ -66,6 +60,12 @@ public interface SnsHandler {
      * @param request
      * @return
      */
-    CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request);
+    CallbackResult doCallback(Which which, String provider, String state, String code, HttpServletRequest request);
+
+    /**
+     * Request connects to a social network (requesting oauth2 authorization)
+     * parameters binding session key name
+     */
+    public static final String KEY_SNS_CONNECT_PARAMS = "connect_params_";
 
 }

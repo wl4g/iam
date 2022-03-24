@@ -15,6 +15,10 @@
  */
 package com.wl4g.iam.captcha.config;
 
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM_SECURITY_CAPTCHA;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,10 +28,19 @@ import com.wl4g.iam.captcha.verify.GifSecurityVerifier;
 import com.wl4g.iam.captcha.verify.JigsawSecurityVerifier;
 import com.wl4g.iam.core.cache.IamCacheManager;
 
+/**
+ * {@link CaptchaAutoConfiguration}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2019-03-24 v1.0.0
+ * @since v1.0.0
+ */
 @Configuration
+@ConditionalOnProperty(name = CONF_PREFIX_IAM_SECURITY_CAPTCHA + ".enabled", matchIfMissing = true)
 public class CaptchaAutoConfiguration {
 
     @Bean
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_SECURITY_CAPTCHA)
     public CaptchaProperties captchaProperties() {
         return new CaptchaProperties();
     }

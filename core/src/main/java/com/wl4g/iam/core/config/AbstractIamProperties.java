@@ -15,12 +15,14 @@
  */
 package com.wl4g.iam.core.config;
 
+import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
-import static com.wl4g.iam.core.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
@@ -30,6 +32,8 @@ import static org.springframework.util.ReflectionUtils.getAllDeclaredMethods;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -42,11 +46,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
+import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.infra.common.collection.CollectionUtils2;
 import com.wl4g.infra.common.collection.UniqueList;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.iam.core.web.servlet.IamCookie;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * IAM abstract configuration properties.
@@ -55,10 +63,13 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
  * @version v1.0.0 2018-09-22
  * @since
  */
+@Getter
+@Setter
+@ToString
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
-    final private static long serialVersionUID = -5858422822181237865L;
+    private static final long serialVersionUID = -5858422822181237865L;
 
-    final protected SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
     /**
      * Spring boot environment.
@@ -97,6 +108,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     private WebSecurityProperties security = new WebSecurityProperties();
 
     /**
+     * HTTP client configuration properties.
+     */
+    private HttpClientProperties http = new HttpClientProperties();
+
+    /**
      * Application name. e.g. http://host:port/{serviceName}/shiro-cas
      */
     private String serviceName;
@@ -125,46 +141,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
      */
     protected abstract String getUnauthorizedUri();
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public Map<String, String> getFilterChain() {
-        return filterChain;
-    }
-
-    public void setFilterChain(Map<String, String> filterChain) {
-        this.filterChain = filterChain;
-    }
-
-    public CacheProperties getCache() {
-        return cache;
-    }
-
-    public void setCache(CacheProperties cache) {
-        this.cache = cache;
-    }
-
-    public CookieProperties getCookie() {
-        return cookie;
-    }
-
-    public void setCookie(CookieProperties cookie) {
-        this.cookie = cookie;
-    }
-
-    public SessionProperties getSession() {
-        return session;
-    }
-
-    public void setSession(SessionProperties session) {
-        this.session = session;
-    }
-
     /**
      * IAM parameters configuration properties.
      *
@@ -173,22 +149,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     public abstract P getParam();
 
     public abstract void setParam(P param);
-
-    public CipherProperties getCipher() {
-        return cipher;
-    }
-
-    public void setCipher(CipherProperties cipher) {
-        this.cipher = cipher;
-    }
-
-    public WebSecurityProperties getSecurity() {
-        return security;
-    }
-
-    public void setSecurity(WebSecurityProperties webSecurity) {
-        this.security = webSecurity;
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -847,6 +807,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
      * @version 2020年6月20日 v1.0.0
      * @see
      */
+    @Getter
+    @Setter
+    @ToString
     public static class WebSecurityProperties implements Serializable {
         private static final long serialVersionUID = -5701992202115239835L;
 
@@ -861,15 +824,48 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
                 add("production");
             }
         };
+    }
 
-        public List<String> getHstsOnProfilesActive() {
-            return hstsOnProfilesActive;
+    /**
+     * IAM HTTP client configuration properties.
+     */
+    @Getter
+    @Setter
+    @ToString
+    public static class HttpClientProperties implements Serializable {
+        private static final long serialVersionUID = -7274589405956650664L;
+        /** Max Idle time of connections */
+        private int maxIdleConnections = 200;
+        /** The keep alive default is 5 minutes. */
+        private long keepAliveDuration = 5;
+        /** The connect timeout default is 10 seconds. */
+        private long connectTimeout = 3 * 1000L;
+        /** The read timeout default is 10 seconds. */
+        private long readTimeout = 6 * 1000L;
+        /** The write timeout default is 10 seconds. */
+        private long writeTimeout = 6 * 1000L;
+    }
+
+    /**
+     * IAM HTTP proxy.
+     */
+    @Getter
+    @Setter
+    @ToString
+    public static final class IamHttpProxy {
+        private boolean enabled = false;
+        private String type = "http";
+        private String address;
+        private int port;
+
+        public final Proxy toProxy() {
+            for (Proxy.Type t : Proxy.Type.values()) {
+                if (eqIgnCase(t.name(), type)) {
+                    return new Proxy(t, InetSocketAddress.createUnresolved(address, port));
+                }
+            }
+            throw new IllegalArgumentException(format("Unsupported proxy type '%s'", type));
         }
-
-        public void setHstsOnProfilesActive(List<String> hstsProfilesActive) {
-            this.hstsOnProfilesActive = hstsProfilesActive;
-        }
-
     }
 
     /**

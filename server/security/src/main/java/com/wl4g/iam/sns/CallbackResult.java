@@ -18,6 +18,8 @@ package com.wl4g.iam.sns;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import lombok.Getter;
+
 /**
  * {@link CallbackResult}
  * 
@@ -25,29 +27,25 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version 2020年2月7日 v1.0.0
  * @see
  */
+@Getter
 public class CallbackResult {
 
     /**
-     * OAuth2 callback refreshUrl
+     * Oauth2 callback refresh_uri
      */
-    final private String refreshUrl;
+    private final String refreshUri;
 
-    public CallbackResult(String refreshUrl) {
-        hasTextOf(refreshUrl, "SNS oauth2 refreshUrl");
-        this.refreshUrl = refreshUrl;
+    public CallbackResult(String refreshUri) {
+        this.refreshUri = hasTextOf(refreshUri, "refreshUri");
     }
 
-    public boolean hasRefreshUrl() {
-        return !isBlank(getRefreshUrl());
-    }
-
-    public String getRefreshUrl() {
-        return refreshUrl;
+    public boolean hasRefreshUri() {
+        return !isBlank(getRefreshUri());
     }
 
     @Override
     public String toString() {
-        return refreshUrl;
+        return refreshUri;
     }
 
 }

@@ -15,13 +15,16 @@
  */
 package com.wl4g.iam.common.bean;
 
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.util.Assert;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -58,18 +61,17 @@ public class SocialAuthorizeInfo implements Serializable {
         super();
     }
 
-    public SocialAuthorizeInfo(String provider, String openId) {
+    public SocialAuthorizeInfo(@NotBlank String provider, @Nullable String openId) {
         this(provider, openId, null);
     }
 
-    public SocialAuthorizeInfo(String provider, String openId, String unionId) {
+    public SocialAuthorizeInfo(@NotBlank String provider, @Nullable String openId, @Nullable String unionId) {
         this(provider, openId, unionId, null);
     }
 
-    public SocialAuthorizeInfo(String provider, String openId, String unionId, Map<String, Object> userProfile) {
-        Assert.notNull(provider, "'provider' must not be null");
-        Assert.notNull(openId, "'openId' must not be null");
-        this.provider = provider;
+    public SocialAuthorizeInfo(@NotBlank String provider, @Nullable String openId, @Nullable String unionId,
+            @Nullable Map<String, Object> userProfile) {
+        this.provider = notNullOf(provider, "provider");
         this.openId = openId;
         this.unionId = unionId;
         if (!CollectionUtils.isEmpty(userProfile)) {

@@ -18,6 +18,7 @@ package com.wl4g.iam.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
+import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
@@ -119,6 +121,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(IamProperties.class)
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM)
     public IamProperties iamProperties() {
         return new IamProperties();
     }

@@ -19,16 +19,16 @@
  */
 package com.wl4g.iam.common.utils;
 
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL_USER;
 import static com.wl4g.infra.common.bridge.RpcContextHolderBridges.hasRpcContextHolderClass;
 import static com.wl4g.infra.common.bridge.RpcContextHolderBridges.invokeGet;
 import static com.wl4g.infra.common.bridge.RpcContextHolderBridges.invokeGetRef;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 
-import com.wl4g.infra.common.bridge.IamSecurityHolderBridges;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
+import com.wl4g.infra.common.bridge.IamSecurityHolderBridges;
 
 /**
  * {@link RpcContextIamSecurityUtils}
@@ -44,7 +44,7 @@ public abstract class RpcContextIamSecurityUtils {
         if (hasRpcContextHolderClass()) { // Distributed(Cluster)
             // @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
             // @see:com.wl4g.infra.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
-            return (IamPrincipal) invokeGetRef(false, CURRENT_IAM_PRINCIPAL, SimpleIamPrincipal.class);
+            return (IamPrincipal) invokeGetRef(false, KEY_IAM_RPC_PRINCIPAL, SimpleIamPrincipal.class);
         }
         // Standalone
         return (IamPrincipal) IamSecurityHolderBridges.invokeGetPrincipalInfo();
@@ -54,7 +54,7 @@ public abstract class RpcContextIamSecurityUtils {
         if (hasRpcContextHolderClass()) { // Distributed(Cluster)
             // @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
             // @see:com.wl4g.infra.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
-            return (String) invokeGet(false, CURRENT_IAM_PRINCIPAL_ID, String.class);
+            return (String) invokeGet(false, KEY_IAM_RPC_PRINCIPAL_ID, String.class);
         }
         // Standalone
         return currentIamPrincipal().getPrincipalId();
@@ -64,7 +64,7 @@ public abstract class RpcContextIamSecurityUtils {
         if (hasRpcContextHolderClass()) { // Distributed(Cluster)
             // @see:com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration.RpcContextSecurityHandlerInterceptor#preHandle
             // @see:com.wl4g.infra.integration.feign.core.context.internal.ProviderFeignContextInterceptor#preHandle
-            return (String) invokeGet(false, CURRENT_IAM_PRINCIPAL_USER, String.class);
+            return (String) invokeGet(false, KEY_IAM_RPC_PRINCIPAL_USER, String.class);
         }
         // Standalone
         return currentIamPrincipal().getPrincipal();

@@ -63,14 +63,14 @@ public class DelegateSnsHandler implements SnsHandler {
     }
 
     @Override
-    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+    public String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
         state = isBlank(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-        return getSnsHandler(which).doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+        return getSnsHandler(which).doGetAuthorizingUrl(which, provider, state, connectParams);
     }
 
     @Override
-    public CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request) {
-        return getSnsHandler(which).doOAuth2Callback(which, provider, state, code, request);
+    public CallbackResult doCallback(Which which, String provider, String state, String code, HttpServletRequest request) {
+        return getSnsHandler(which).doCallback(which, provider, state, code, request);
     }
 
     @Override

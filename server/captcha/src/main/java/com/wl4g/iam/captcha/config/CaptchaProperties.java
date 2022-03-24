@@ -16,32 +16,26 @@
 package com.wl4g.iam.captcha.config;
 
 import java.util.Properties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".captcha")
+/**
+ * {@link CaptchaProperties}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2019-03-23 v1.0.0
+ * @since v1.0.0
+ */
+@Getter
+@Setter
+@ToString
 public class CaptchaProperties {
 
     private KaptchaProperties kaptcha = new KaptchaProperties();
-
+    private GifProperties gif = new GifProperties();
     private JigsawProperties jigsaw = new JigsawProperties();
-
-    public KaptchaProperties getKaptcha() {
-        return kaptcha;
-    }
-
-    public void setKaptcha(KaptchaProperties kaptcha) {
-        this.kaptcha = kaptcha;
-    }
-
-    public JigsawProperties getJigsaw() {
-        return jigsaw;
-    }
-
-    public void setJigsaw(JigsawProperties jigsaw) {
-        this.jigsaw = jigsaw;
-    }
 
     /**
      * Kaptcha configuration properties
@@ -50,46 +44,57 @@ public class CaptchaProperties {
      * @version v1.0 2019-09-02
      * @since
      */
+    @Getter
+    @Setter
+    @ToString
     public static class KaptchaProperties {
         private Properties properties = new Properties();
 
         public KaptchaProperties() {
             // Default kaptcha settings
-            this.getProperties().put("kaptcha.border", "no");
-            this.getProperties().put("kaptcha.border.color", "red");
-            this.getProperties().put("kaptcha.border.thickness", "5");
-            this.getProperties().put("kaptcha.image.width", "150");
-            this.getProperties().put("kaptcha.image.height", "50");
+            getProperties().put("kaptcha.border", "no");
+            getProperties().put("kaptcha.border.color", "red");
+            getProperties().put("kaptcha.border.thickness", "5");
+            getProperties().put("kaptcha.image.width", "150");
+            getProperties().put("kaptcha.image.height", "50");
             // 0,0,205 black
-            this.getProperties().put("kaptcha.noise.color", "0,0,205");
+            getProperties().put("kaptcha.noise.color", "0,0,205");
             // 255,250,205
-            this.getProperties().put("kaptcha.background.clear.from", "178,223,238");
-            this.getProperties().put("kaptcha.background.clear.to", "240,255,240");
-            this.getProperties().put("kaptcha.textproducer.font.names", "微软雅黑");
-            this.getProperties().put("kaptcha.textproducer.font.size", "30");
+            getProperties().put("kaptcha.background.clear.from", "178,223,238");
+            getProperties().put("kaptcha.background.clear.to", "240,255,240");
+            getProperties().put("kaptcha.textproducer.font.names", "微软雅黑");
+            getProperties().put("kaptcha.textproducer.font.size", "30");
             // 255,110,180
-            this.getProperties().put("kaptcha.textproducer.font.color", "72,118,255");
-            this.getProperties().put("kaptcha.textproducer.char.space", "3");
-            this.getProperties().put("kaptcha.textproducer.char.string", "ABCDEFGHJKMNQRSTUVWXYZ123456789");
-            this.getProperties().put("kaptcha.textproducer.char.length", "5");
-        }
-
-        public Properties getProperties() {
-            return properties;
-        }
-
-        public void setProperties(Properties properties) {
-            this.properties = properties;
+            getProperties().put("kaptcha.textproducer.font.color", "72,118,255");
+            getProperties().put("kaptcha.textproducer.char.space", "3");
+            getProperties().put("kaptcha.textproducer.char.string", "ABCDEFGHJKMNQRSTUVWXYZ123456789");
+            getProperties().put("kaptcha.textproducer.char.length", "5");
         }
     }
 
     /**
-     * Jigsaw configuration.
+     * Gif configuration properties.
      * 
      * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019-09-02
      * @since
      */
+    @Getter
+    @Setter
+    @ToString
+    public static class GifProperties {
+    }
+
+    /**
+     * Jigsaw configuration properties.
+     * 
+     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @version v1.0 2019-09-02
+     * @since
+     */
+    @Getter
+    @Setter
+    @ToString
     public static class JigsawProperties {
 
         /** Jigsaw image cache pool size. */
@@ -103,39 +108,6 @@ public class CaptchaProperties {
 
         /** Analyze verification of pixels allowing X-offset. */
         private int allowOffsetX = 4;
-
-        public int getPoolImgSize() {
-            return poolImgSize;
-        }
-
-        public void setPoolImgSize(int poolSize) {
-            this.poolImgSize = poolSize;
-        }
-
-        public int getPoolImgExpireSec() {
-            return poolImgExpireSec;
-        }
-
-        public void setPoolImgExpireSec(int poolExpireMs) {
-            this.poolImgExpireSec = poolExpireMs;
-        }
-
-        public String getSourceDir() {
-            return sourceDir;
-        }
-
-        public void setSourceDir(String sourceDir) {
-            this.sourceDir = sourceDir;
-        }
-
-        public int getAllowOffsetX() {
-            return allowOffsetX;
-        }
-
-        public void setAllowOffsetX(int allowOffsetX) {
-            this.allowOffsetX = allowOffsetX;
-        }
-
     }
 
 }

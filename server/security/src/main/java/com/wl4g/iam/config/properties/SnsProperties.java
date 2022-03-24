@@ -15,13 +15,15 @@
  */
 package com.wl4g.iam.config.properties;
 
-import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.infra.common.lang.StringUtils2.startsWithIgnoreCase;
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.wl4g.iam.core.config.AbstractIamProperties.IamHttpProxy;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Social networking services configuration
@@ -30,13 +32,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version v1.0 2019年1月8日
  * @since
  */
-@ConfigurationProperties(prefix = CONF_PREFIX_IAM + ".sns")
+@Getter
+@Setter
+@ToString
 public class SnsProperties {
 
     /**
-     * Number of SNS oauth2 milliseconds of oauth2 connect processing expiration
+     * Number of SNS milliseconds of oauth2 connect callback expiration. </br>
+     * 
+     * Notice: e.g connecting to github can be slow, it is recommended to set a
+     * longer setting.
      */
-    private long oauth2ConnectExpireMs = 60_1000L;
+    private long oauth2ConnectExpireMs = 120_000L;
 
     private DingtalkSocialProperties dingtalk = new DingtalkSocialProperties();
     private LinkedinSocialProperties linkedin = new LinkedinSocialProperties();
@@ -48,91 +55,6 @@ public class SnsProperties {
     private WechatSocialProperties wechat = new WechatSocialProperties();
     private WechatMpSocialProperties wechatMp = new WechatMpSocialProperties();
 
-    public long getOauth2ConnectExpireMs() {
-        return oauth2ConnectExpireMs;
-    }
-
-    public void setOauth2ConnectExpireMs(long connectExpireMs) {
-        this.oauth2ConnectExpireMs = connectExpireMs;
-    }
-
-    public DingtalkSocialProperties getDingtalk() {
-        return dingtalk;
-    }
-
-    public void setDingtalk(DingtalkSocialProperties dingtalk) {
-        this.dingtalk = dingtalk;
-    }
-
-    public LinkedinSocialProperties getLinkedin() {
-        return linkedin;
-    }
-
-    public void setLinkedin(LinkedinSocialProperties linkedin) {
-        this.linkedin = linkedin;
-    }
-
-    public TwitterSocialProperties getTwitter() {
-        return twitter;
-    }
-
-    public void setTwitter(TwitterSocialProperties twitter) {
-        this.twitter = twitter;
-    }
-
-    public GithubSocialProperties getGithub() {
-        return github;
-    }
-
-    public void setGithub(GithubSocialProperties github) {
-        this.github = github;
-    }
-
-    public GoogleSocialProperties getGoogle() {
-        return google;
-    }
-
-    public void setGoogle(GoogleSocialProperties google) {
-        this.google = google;
-    }
-
-    public FacebookSocialProperties getFacebook() {
-        return facebook;
-    }
-
-    public void setFacebook(FacebookSocialProperties facebook) {
-        this.facebook = facebook;
-    }
-
-    public QQSocialProperties getQq() {
-        return qq;
-    }
-
-    public void setQq(QQSocialProperties qq) {
-        this.qq = qq;
-    }
-
-    public WechatSocialProperties getWechat() {
-        return wechat;
-    }
-
-    public void setWechat(WechatSocialProperties wechat) {
-        this.wechat = wechat;
-    }
-
-    public WechatMpSocialProperties getWechatMp() {
-        return wechatMp;
-    }
-
-    public void setWechatMp(WechatMpSocialProperties wechatMp) {
-        this.wechatMp = wechatMp;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-    }
-
     /**
      * Abstract socical networking services platform configuration properties
      *
@@ -140,35 +62,14 @@ public class SnsProperties {
      * @version v1.0 2019年2月17日
      * @since
      */
+    @Getter
+    @Setter
+    @ToString
     public static abstract class AbstractSocialProperties {
         private String appId;
         private String appSecret;
         private String redirectUrl;
-
-        public String getAppId() {
-            return appId;
-        }
-
-        public void setAppId(String appId) {
-            this.appId = appId;
-        }
-
-        public String getAppSecret() {
-            return appSecret;
-        }
-
-        public void setAppSecret(String appSecret) {
-            this.appSecret = appSecret;
-        }
-
-        public String getRedirectUrl() {
-            return redirectUrl;
-        }
-
-        public void setRedirectUrl(String redirectUrl) {
-            this.redirectUrl = redirectUrl;
-        }
-
+        private IamHttpProxy proxy = new IamHttpProxy();
     }
 
     /**
@@ -255,6 +156,9 @@ public class SnsProperties {
      * @version v1.0 2019年2月17日
      * @since
      */
+    @Getter
+    @Setter
+    @ToString
     public static class WechatSocialProperties extends AbstractSocialProperties {
 
         /**
@@ -263,10 +167,6 @@ public class SnsProperties {
          * See:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=2f2444cf6d55676b11a5de1b8b348ba202dbba8c&lang=zh_CN
          */
         private String href;
-
-        public String getHref() {
-            return href;
-        }
 
         public void setHref(String href) {
             if (!isBlank(href)) {

@@ -38,6 +38,7 @@ public enum OAuth2GrantType {
     /**
      * Password mode (Pass user name, password, get token directly)
      */
+    @Deprecated
     PASSWORD,
 
     /**
@@ -55,7 +56,12 @@ public enum OAuth2GrantType {
     /**
      * Refresh access_token
      */
-    REFRESH_TOKEN;
+    REFRESH_TOKEN,
+
+    /**
+     * @since oauth2.1
+     */
+    DEVICE_CODE;
 
     private boolean isDefault = false;
 

@@ -15,9 +15,23 @@
  */
 package com.wl4g.iam.common.subject;
 
-import org.springframework.util.Assert;
-
-import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_HOST_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_PARENT_SESSIONID_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_REMEMBERME_NAME;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -26,8 +40,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -36,23 +50,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_HOST_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_DATA_CIPHER_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_PARENT_SESSIONID_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_REMEMBERME_NAME;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SNS_AUTHORIZED_INFO;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.String.valueOf;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
 
 /**
  * IAM principal account information.
@@ -728,9 +726,8 @@ public interface IamPrincipal extends Principal, Serializable {
          *            May be empty, Unionid is possible only when WeChat or
          *            Facebook public platforms
          */
-        public SnsAuthorizingParameter(String provider, String openId, String unionId) {
-            Assert.notNull(provider, "'provider' must not be null");
-            Assert.notNull(openId, "'openId' must not be null");
+        public SnsAuthorizingParameter(@NotBlank String provider, @Nullable String openId, @Nullable String unionId) {
+            notNullOf(provider, "provider");
             this.provider = provider;
             this.openId = openId;
             this.unionId = unionId;

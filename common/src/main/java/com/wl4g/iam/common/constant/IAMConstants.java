@@ -28,6 +28,8 @@ import com.wl4g.infra.core.constant.BaseConstants;
 public abstract class IAMConstants extends BaseConstants {
 
     public static final String CONF_PREFIX_IAM = "spring.iam";
+    public static final String CONF_PREFIX_IAM_SECURITY_SNS = CONF_PREFIX_IAM + ".sns";
+    public static final String CONF_PREFIX_IAM_SECURITY_CAPTCHA = CONF_PREFIX_IAM + ".captcha";
 
     public static final String CACHE_PREFIX_IAM = ":iam:";
 

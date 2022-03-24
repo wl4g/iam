@@ -50,16 +50,14 @@ import redis.clients.jedis.params.SetParams;
  * @since
  */
 public class JedisIamCache implements IamCache {
-    final protected SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-    private String name;
-    private JedisClient jedisClient;
+    private final String name;
+    private final JedisClient jedisClient;
 
     public JedisIamCache(String name, JedisClient jedisClient) {
-        notNull(name, "'name' must not be null");
-        notNull(jedisClient, "'jedisClient' must not be null");
-        this.name = name;
-        this.jedisClient = jedisClient;
+        this.name = notNullOf(name, "cacheName");
+        this.jedisClient = notNullOf(jedisClient, "jedisClient");
     }
 
     @Override

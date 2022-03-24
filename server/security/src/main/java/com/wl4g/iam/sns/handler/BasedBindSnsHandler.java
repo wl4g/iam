@@ -15,7 +15,11 @@
  */
 package com.wl4g.iam.sns.handler;
 
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notEmpty;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
+import static java.lang.String.format;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,9 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cglib.beans.BeanMap;
-import org.springframework.util.Assert;
 
-import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
@@ -37,6 +39,7 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.iam.sns.support.Oauth2OpenId;
 import com.wl4g.iam.sns.support.Oauth2UserProfile;
+import com.wl4g.infra.common.web.WebUtils2;
 
 /**
  * Abstract based binding or UnBinding SNS handler
@@ -53,9 +56,9 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
     }
 
     @Override
-    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+    public String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
         // Connecting
-        String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
+        String authorizingUrl = super.doGetAuthorizingUrl(which, provider, state, connectParams);
 
         // Save connect parameters
         saveOauth2ConnectParameters(provider, state, connectParams);
@@ -68,19 +71,20 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
         super.checkConnectParameters(provider, state, connectParams);
 
         // Check connect parameters
-        Assert.notEmpty(connectParams, "Connect parameters must not be empty");
+        notEmptyOf(connectParams, "connectParams");
 
         // Check principal
-        String principalKey = config.getParam().getPrincipalName();
-        Assert.hasText(connectParams.get(principalKey), String.format("'%s' must not be empty", principalKey));
+        String principalName = config.getParam().getPrincipalName();
+        hasText(connectParams.get(principalName), format("Param '%s' value is required", principalName));
 
         // PC-side browsers use agent redirection(QQ,sina)
-        Assert.hasText(connectParams.get(config.getParam().getAgent()),
-                String.format("'%s' must not be empty", config.getParam().getAgent()));
+        // hasText(connectParams.get(config.getParam().getAgent()),
+        // format("Param '%s' value is required",
+        // config.getParam().getAgent()));
 
         // Check refreshUrl
         String refreshUrl = connectParams.get(config.getParam().getRefreshUrl());
-        Assert.hasText(refreshUrl, String.format("'%s' must not be empty", config.getParam().getRefreshUrl()));
+        hasText(refreshUrl, String.format("'%s' must not be empty", config.getParam().getRefreshUrl()));
         try {
             new URI(refreshUrl);
         } catch (URISyntaxException e) {
@@ -91,13 +95,13 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
     @Override
     protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
         // Check 'state'
-        Assert.notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
+        notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
         super.checkCallbackParameters(provider, state, code, connectParams);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    protected String doHandleOAuth2Callback(
+    protected String doGetAuthInfo(
             String provider,
             String code,
             OAuth2ApiBinding connect,

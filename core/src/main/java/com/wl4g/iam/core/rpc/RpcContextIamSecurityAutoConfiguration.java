@@ -19,11 +19,11 @@
  */
 package com.wl4g.iam.core.rpc;
 
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL_ID;
+import static com.wl4g.iam.common.constant.ServiceIAMConstants.KEY_IAM_RPC_PRINCIPAL_USER;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_ID;
-import static com.wl4g.iam.common.constant.RpcContextIAMConstants.CURRENT_IAM_PRINCIPAL_USER;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,10 +36,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.wl4g.infra.common.bridge.RpcContextHolderBridges;
-import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.utils.IamSecurityHolder;
+import com.wl4g.infra.common.bridge.RpcContextHolderBridges;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * {@link RpcContextIamSecurityAutoConfiguration}
@@ -90,11 +90,11 @@ public class RpcContextIamSecurityAutoConfiguration {
                     if (subject.isAuthenticated()) {
                         IamPrincipal currentPrincipal = IamSecurityHolder.getPrincipalInfo();
 
-                        RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
-                        RpcContextHolderBridges.invokeSet(false, CURRENT_IAM_PRINCIPAL_USER, currentPrincipal.getName());
+                        RpcContextHolderBridges.invokeSet(false, KEY_IAM_RPC_PRINCIPAL_ID, currentPrincipal.getPrincipalId());
+                        RpcContextHolderBridges.invokeSet(false, KEY_IAM_RPC_PRINCIPAL_USER, currentPrincipal.getName());
 
                         // Set to reference type for performance optimization.
-                        RpcContextHolderBridges.invokeSetRef(false, CURRENT_IAM_PRINCIPAL, currentPrincipal);
+                        RpcContextHolderBridges.invokeSetRef(false, KEY_IAM_RPC_PRINCIPAL, currentPrincipal);
                     }
                 } catch (UnavailableSecurityManagerException e) {
                     // It may be a request that does not carry a session, such

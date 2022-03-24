@@ -35,14 +35,14 @@ import com.wl4g.iam.sns.qq.model.QQUserInfo;
  */
 public class QQOauth2Template extends GenericOAuth2ApiBinding<QQSocialProperties, QQAccessToken, QQOpenId, QQUserInfo> {
 
-    final public static String PROVIDER_ID = "qq";
+    public static final String PROVIDER_ID = "qq";
     /**
      * Old: https://graph.qq.com/oauth2.0/authorize
      */
-    final public static String URI_AUTH_CODE = "https://graph.qq.com/oauth2.0/show";
-    final public static String URI_ACCESS_TOKEN = "https://graph.qq.com/oauth2.0/token";
-    final public static String URI_OPEN_ID = "https://graph.qq.com/oauth2.0/me";
-    final public static String URI_USER_INFO = "https://graph.qq.com/user/get_user_info";
+    public static final String URI_AUTH_CODE = "https://graph.qq.com/oauth2.0/show";
+    public static final String URI_ACCESS_TOKEN = "https://graph.qq.com/oauth2.0/token";
+    public static final String URI_OPEN_ID = "https://graph.qq.com/oauth2.0/me";
+    public static final String URI_USER_INFO = "https://graph.qq.com/user/get_user_info";
 
     public QQOauth2Template(QQSocialProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
         super(config, restTemplate, cacheManager);

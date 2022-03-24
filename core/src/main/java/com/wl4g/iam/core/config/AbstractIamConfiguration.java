@@ -16,18 +16,32 @@
 package com.wl4g.iam.core.config;
 
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.util.Collections.singletonList;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
 
+import java.io.IOException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Filter;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -37,6 +51,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -44,12 +59,9 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.infra.common.eventbus.EventBusSupport;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
-import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
-import com.wl4g.infra.support.cache.jedis.JedisClientFactoryBean;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.annotation.FastCasController;
 import com.wl4g.iam.core.annotation.IamFilter;
@@ -75,6 +87,15 @@ import com.wl4g.iam.core.session.mgt.JedisIamSessionDAO;
 import com.wl4g.iam.core.session.mgt.support.IamUidSessionIdGenerator;
 import com.wl4g.iam.core.web.IamErrorConfigurer;
 import com.wl4g.iam.core.web.servlet.IamCookie;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
+import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
+import com.wl4g.infra.support.cache.jedis.JedisClientFactoryBean;
+
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
 
 /**
  * Abstract IAM common based configuration.
@@ -404,6 +425,79 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     public IamErrorConfigurer iamErrorConfigurer(ErrorHandlerProperties config) {
         return new IamErrorConfigurer(config);
     }
+
+    // ==============================
+    // REST T E M P L A T E _ C O N F I G's.
+    // ==============================
+
+    @Bean(BEAN_IAM_OKHTTP3_POOL)
+    public ConnectionPool iamOkHttp3ConnectionPool(AbstractIamProperties<?> config) {
+        return new ConnectionPool(config.getHttp().getMaxIdleConnections(), config.getHttp().getKeepAliveDuration(), MINUTES);
+    }
+
+    @Bean(BEAN_IAM_OKHTTP3_PROXY_SELECTOR)
+    public IamDynamicProxySelector iamOkHttp3ProxySelector() {
+        // see:okhttp3.internal.proxy.NullProxySelector
+        return new IamDynamicProxySelector();
+    }
+
+    @Bean(BEAN_IAM_OKHTTP3_CLIENT)
+    public OkHttpClient iamOkHttp3Client(
+            AbstractIamProperties<?> config,
+            @Qualifier(BEAN_IAM_OKHTTP3_POOL) ConnectionPool pool,
+            @Qualifier(BEAN_IAM_OKHTTP3_PROXY_SELECTOR) IamDynamicProxySelector proxySelector) {
+        return new OkHttpClient().newBuilder()
+                .connectionPool(pool)
+                .connectTimeout(config.getHttp().getConnectTimeout(), MILLISECONDS)
+                .readTimeout(config.getHttp().getReadTimeout(), MILLISECONDS)
+                .writeTimeout(config.getHttp().getWriteTimeout(), MILLISECONDS)
+                .proxySelector(proxySelector)
+                .build();
+    }
+
+    @Bean(BEAN_IAM_OKHTTP3_CLIENT_FACTORY)
+    public OkHttp3ClientHttpRequestFactory iamOkHttp3ClientHttpRequestFactory(
+            @Qualifier(BEAN_IAM_OKHTTP3_CLIENT) OkHttpClient client) {
+        return new OkHttp3ClientHttpRequestFactory(client);
+    }
+
+    @Bean(BEAN_IAM_OKHTTP3_REST_TEMPLATE)
+    public RestTemplate iamOkhttp3RestTemplate(
+            @Qualifier(BEAN_IAM_OKHTTP3_CLIENT_FACTORY) OkHttp3ClientHttpRequestFactory factory) {
+        return new RestTemplate(factory);
+    }
+
+    public static class IamDynamicProxySelector extends ProxySelector {
+        private SmartLogger log = getLogger(getClass());
+
+        private final Map<String, Proxy> selectProxyMap = new ConcurrentHashMap<>(16);
+
+        public void register(@NotNull URI uri, @NotNull Proxy proxy) {
+            if (nonNull(selectProxyMap.putIfAbsent(toSelectKey(notNullOf(uri, "uri")), notNullOf(proxy, "proxy")))) {
+                throw new IllegalArgumentException(format("Register already select proxy for '%'=>'%s'", uri, proxy));
+            }
+        }
+
+        @Override
+        public List<Proxy> select(URI uri) {
+            return singletonList(selectProxyMap.getOrDefault(toSelectKey(uri), Proxy.NO_PROXY));
+        }
+
+        @Override
+        public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+            log.warn("called:connectFailed ::: uri='{}', address='{}', cause='{}'", uri, sa, ioe.getLocalizedMessage());
+        }
+
+        private String toSelectKey(URI uri) {
+            return uri.getScheme().concat(uri.getHost()).concat(valueOf(uri.getPort()));
+        }
+    }
+
+    private static final String BEAN_IAM_OKHTTP3_POOL = "iamOkhttp3ConnectionPool";
+    private static final String BEAN_IAM_OKHTTP3_CLIENT = "iamOkhttp3Client";
+    private static final String BEAN_IAM_OKHTTP3_CLIENT_FACTORY = "iamOkHttp3ClientHttpRequestFactory";
+    public static final String BEAN_IAM_OKHTTP3_PROXY_SELECTOR = "iamOkhttp3ProxySelector";
+    public static final String BEAN_IAM_OKHTTP3_REST_TEMPLATE = "iamOkhttp3RestTemplate";
 
     //
     // Build-in security protection filter order-precedence definitions.

@@ -14,36 +14,36 @@ spring:
   infra:
     core.web:
       embedded-webapps:
-        enabled: true # Default false
+        enabled: true ## Default by false
         base-uri: /view
         webapp-location: classpath*:/default-webapps
-  iam: # IAM server configuration.
+  iam:
     cors:
-      enabled: true # Default: true
-      # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
+      enabled: true ## Default by true
+      ## Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
       rules:
         '[/**]':
           allows-methods: [GET,HEAD,POST,OPTIONS]
           allows-headers: [X-Iam-*]
-          # Note: Some latest browsers, such as chrome 80.x+, only support sharing with the sub domain of the top-level domain name CORS.
-          # You can also manually turn off the chrome switch(@see https://chromestatus.com/features/5088147346030592), visit chrome://flags
-          # and search for samesite, find the options [SameSite by default cookies] and [Cookies without SameSite must be secure] set 
-          # to disabled and restart chrome, but this is not recommended! For more solutions, please refer to: ideas like JWT/CAS/Oauth2 are extended.
-          #   Fortunately, iam-jssdk solves this problem.The solution is mainly through the interface token, thereby breaking the limit of cookies,
-          # and it is also very safe due to the use of a private encryption mechanism. However, the cost for such a perfect solution That is, each
-          # front end has a little intrusion transformation, that is: each request needs to manually set the current token. For more information 
-          # about iam-jssdk, please refer to: /default-webapps/sdk/{version}/src/js/IAM.js
+          ## Note: Some latest browsers, such as chrome 80.x+, only support sharing with the sub domain of the top-level domain name CORS.
+          ## You can also manually turn off the chrome switch(@see https://chromestatus.com/features/5088147346030592), visit chrome://flags
+          ## and search for samesite, find the options [SameSite by default cookies] and [Cookies without SameSite must be secure] set 
+          ## to disabled and restart chrome, but this is not recommended! For more solutions, please refer to: ideas like JWT/CAS/Oauth2 are extended.
+          ##   Fortunately, iam-jssdk solves this problem.The solution is mainly through the interface token, thereby breaking the limit of cookies,
+          ## and it is also very safe due to the use of a private encryption mechanism. However, the cost for such a perfect solution That is, each
+          ## front end has a little intrusion transformation, that is: each request needs to manually set the current token. For more information 
+          ## about iam-jssdk, please refer to: /default-webapps/sdk/{version}/src/js/IAM.js
           allow-credentials: true
           ##allows-origins:
             #- '*'
     xsrf:
-      enabled: true # Default: false
+      enabled: true ## Default by false
       #exclude-valid-uri-patterns: 
     replay:
-      enabled: true # Default: false
+      enabled: true ## Default by false
       #exclude-valid-uri-patterns: 
     xss:
-      enabled: true # Default: true
+      enabled: true ## Default by true
       expression: execution(* com.wl4g.iam.core.*.*Controller.*(..)) or
                   execution(* com.wl4g.iam.sns.*.*Controller.*(..)) or
                   execution(* com.wl4g.iam.web.*.*Controller.*(..))
@@ -58,7 +58,7 @@ spring:
      #success-endpoint: ${spring.application.name}@http://localhost:18080/${spring.application.name}/view/index.html
     filter-chain:
       '[/public/**]': anon
-    param: # Must be consistent with the client, otherwise authentication will never succeed.
+    param: ## Must be consistent with the client, otherwise authentication will never succeed.
       sid: __sid
     matcher:
       fail-fast-match-max-attempts: 10
@@ -72,34 +72,97 @@ spring:
       fail-fast-sms-delay: 90000
       sms-expire-ms: 300000
     cipher:
-      enable-data-cipher: true # Default by true
+      enable-data-cipher: true ## Default by true
     session:
-      enable-access-token-validity: true # Default: true
-      global-session-timeout: 7200_000 # Default: 1800_000ms
-      session-validation-interval: 360_000 # Default: 360_000ms
+      enable-access-token-validity: true ## Default by true
+      global-session-timeout: 1800_000 ## Default by 1800_000ms
+      session-validation-interval: 360_000 ## Default by 360_000ms
     cookie:
       name: _TGC
     security:
       hsts-on-profiles-active: [pro,prod,production]
+    http: ## IAM http client configuration. (e.g fastcas request to validate, sns connect to github/wechat/google etc)
+      max-idle-connections: 200
+      keep-alive-duration: 5
+      connect-timeout: 3000
+      read-timeout: 6000
+      write-timeout: 6000
     risk:
       check-request-ip-same-login: true
     acl:
-      secure: false # Turn off protection will trust any same intranet IP.
+      secure: false ## Turn off protection will trust any same intranet IP.
       allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
       denyIpRange: ${IAM_ACL_DENY}
     captcha:
-      #kaptcha:
-      #gif:
+      enabled: true ## Default by true
+      kaptcha:
+        properties:
+          kaptcha.border: no
+          kaptcha.border.color: red
+          kaptcha.border.thickness: 5
+          kaptcha.image.width: 150
+          kaptcha.image.height: 50
+          kaptcha.noise.color: '0,0,205'
+          kaptcha.background.clear.from: '178,223,238'
+          kaptcha.background.clear.to: '240,255,240'
+          kaptcha.textproducer.font.names: '微软雅黑'
+          kaptcha.textproducer.font.size: 30
+          kaptcha.textproducer.font.color: '72,118,255'
+          kaptcha.textproducer.char.space: 3
+          kaptcha.textproducer.char.string: 'ABCDEFGHJKMNQRSTUVWXYZ123456789'
+          kaptcha.textproducer.char.length: 5
+      gif: {}
       jigsaw:
         pool-size: 64
-    v1-oidc: # see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
-      www-realm-name: 'IAM OIDC Realm'
-      jws-algorithm-name: RS256
-      jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
-      id-token-digest-name: S256
-      id-token-alg-supported: ["PLAIN", "S256"]
-      code-challenge-methods-supported: ["PLAIN", "S256"]
-      access-token-expiration-seconds: 3600
-      refresh-token-expiration-seconds: 86400
-      code-expiration-seconds: 10
+        pool-img-expire-sec: 1800
+        allow-offset-x: 4
+        #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+    sns:
+      ## oauth2 connect expiration. (e.g connecting to github can be slow, it is recommended to set a longer setting)
+      oauth2-connect-expire-ms: 120_000
+      #github:
+      #  proxy:
+      #    enabled: true
+      #    type: http
+      #    address: 127.0.0.1
+      #    port: 8118
+      #  app-id: yourappid
+      #  app-secret: yoursecret
+      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechatmp/callback
+      #wechat-mp:
+      #  app-id: yourappid
+      #  app-secret: yoursecret
+      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechatmp/callback
+      #wechat:
+      #  app-id: yourappid
+      #  app-secret: yoursecret
+      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechat/callback
+      #  href: https://iam.example.com/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+      #qq:
+      #  app-id: yourappid
+      #  app-secret: yoursecret
+      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/qq/callback
+    v1-oidc: ## see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
+      default-basic-realm-name: 'IAM OIDC Realm'
+      default-jwks-alg-name: RS256
+      default-jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
+      ## Generic OpenID Connect Configuration.
+      ## This enables standard Openid connect redirect based authentication with authorization code. In terms of 
+      ## Openid connect or Oauth2 specifications, this enable support of 'Authorization Code Flow' for this client.
+      default-standard-flow-enabled: true
+      ## This enables standard Openid connect redirect based authentication without authorization code. In terms of 
+      ## Openid connect or Oauth2 specifications, this enable support of 'Implicit Flow' for this client.
+      default-implicit-flow-enabled: false
+      ## This enables support for DirectAccess Grants, which means that client has access to username/password of 
+      ## userand exchange it directly with IAM server for access_token. In terms of Oauth2 specification, this enable 
+      ## support of 'Resource Owner Password Credentials Grant' for this client.
+      default-direct-access-grants-enabled: false
+      ## Fine Grain OpenID Connect Configuration.
+      default-access-token-alg-name: S256
+      default-access-token-expiration-seconds: 3600
+      default-refresh-token-expiration-seconds: 86400
+      default-id-token-alg-name: S256
+      default-id-token-alg-supported: ["PLAIN", "S256"]
+      default-code-challenge-methods-supported: ["PLAIN", "S256"]
+      default-code-expiration-seconds: 10
       service-documentation: 'https://oidc.iam.wl4g.com/connect/service_documentation.html'

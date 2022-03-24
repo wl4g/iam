@@ -51,7 +51,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
         jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
-                config.getV1Oidc().getAccessTokenExpirationSeconds());
+                config.getV1Oidc().getDefaultAccessTokenExpirationSeconds());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putRefreshToken(String refreshToken, String accessTokenInfo) {
         jedisService.set(buildRefreshTokenKey(refreshToken), accessTokenInfo,
-                config.getV1Oidc().getRefreshTokenExpirationSeconds());
+                config.getV1Oidc().getDefaultRefreshTokenExpirationSeconds());
     }
 
     @Override
@@ -73,18 +73,17 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
         jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
-                config.getV1Oidc().getCodeExpirationSeconds());
+                config.getV1Oidc().getDefaultCodeExpirationSeconds());
     }
 
     @Override
     public V1OidcUserClaims getV1OidcUser(String loginName) {
         // for test
-        // IamPrincipal principal = new
-        // com.wl4g.iam.common.subject.SimpleIamPrincipal("1", "root",
-        // "cd446a729ea1d31d712be2ff9c1401d87beb14a811ceb7a61b3a66a4d34177f8",
-        // "a3e0b320c73020aa81ebf87bd8611bf1", "", "",
-        // null);
-        IamPrincipal principal = configurer.getIamUserDetail(new SimpleParameter(loginName));
+        IamPrincipal principal = new com.wl4g.iam.common.subject.SimpleIamPrincipal("1", "root",
+                "cd446a729ea1d31d712be2ff9c1401d87beb14a811ceb7a61b3a66a4d34177f8", "a3e0b320c73020aa81ebf87bd8611bf1", "", "",
+                null);
+        // IamPrincipal principal = configurer.getIamUserDetail(new
+        // SimpleParameter(loginName));
         return V1OidcUserClaims.builder()
                 .iamPrincipal(principal)
                 .sub(principal.principalId())

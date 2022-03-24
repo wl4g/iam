@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.sns.handler;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.nonNull;
 
@@ -34,6 +35,7 @@ import com.wl4g.infra.common.web.WebUtils2;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
@@ -75,27 +77,27 @@ import com.wl4g.iam.sns.support.Oauth2UserProfile;
  */
 public abstract class AbstractSnsHandler implements SnsHandler {
 
-    final protected Logger log = getLogger(getClass());
+    protected final Logger log = getLogger(getClass());
 
     /**
      * IAM server properties configuration
      */
-    final protected IamProperties config;
+    protected final IamProperties config;
 
     /**
      * SNS properties configuration
      */
-    final protected SnsProperties snsConfig;
+    protected final SnsProperties snsConfig;
 
     /**
      * IAM Social connection factory
      */
-    final protected OAuth2ApiBindingFactory factory;
+    protected final OAuth2ApiBindingFactory factory;
 
     /**
      * IAM security context handler
      */
-    final protected ServerSecurityConfigurer configurer;
+    protected final ServerSecurityConfigurer configurer;
 
     /**
      * Enhanced cache manager.
@@ -111,19 +113,15 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
     public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
             ServerSecurityConfigurer configurer) {
-        notNull(config, "'config' must not be null");
-        notNull(snsConfig, "'snsConfig' must not be null");
-        notNull(connectFactory, "'connectFactory' must not be null");
-        notNull(configurer, "'configurer' must not be null");
-        this.config = config;
-        this.snsConfig = snsConfig;
-        this.factory = connectFactory;
-        this.configurer = configurer;
+        this.config = notNullOf(config, "config");
+        this.snsConfig = notNullOf(snsConfig, "snsConfig");
+        this.factory = notNullOf(connectFactory, "connectFactory");
+        this.configurer = notNullOf(configurer, "configurer");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+    public String doGetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
         // Check parameters
         checkConnectParameters(provider, state, connectParams);
 
@@ -141,7 +139,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request) {
+    public CallbackResult doCallback(Which which, String provider, String state, String code, HttpServletRequest request) {
         try {
             // Connect parameters
             Map<String, String> connectParams = getOauth2ConnectParameters(state, request);
@@ -153,12 +151,11 @@ public abstract class AbstractSnsHandler implements SnsHandler {
             OAuth2ApiBinding api = factory.getApiBinding(provider);
 
             // Do callback
-            String result = doHandleOAuth2Callback(provider, code, api, connectParams, request);
+            String result = doGetAuthInfo(provider, code, api, connectParams, request);
 
             // Build response message
             String msg = postCallbackResponse(provider, result, connectParams, request);
 
-            // Wrap response
             return new CallbackResult(decorateCallbackRefreshUrl(msg, connectParams, request));
         } finally {
             cleanup(state);
@@ -217,25 +214,25 @@ public abstract class AbstractSnsHandler implements SnsHandler {
      */
     protected void saveOauth2ConnectParameters(String provider, String state, Map<String, String> connectParams) {
         // Basic parameters
-        Map<String, String> connectParamsAll = new HashMap<>();
-        connectParamsAll.put(PARAM_SNS_PRIVIDER, provider);
-        connectParamsAll.put(config.getParam().getWhich(), connectParams.remove(config.getParam().getWhich()));
-        connectParamsAll.put(config.getParam().getState(), connectParams.remove(config.getParam().getState()));
+        Map<String, String> totalConnectParams = new HashMap<>();
+        totalConnectParams.put(PARAM_SNS_PRIVIDER, provider);
+        totalConnectParams.put(config.getParam().getWhich(), connectParams.remove(config.getParam().getWhich()));
+        totalConnectParams.put(config.getParam().getState(), connectParams.remove(config.getParam().getState()));
 
-        // Extended parameters
+        // Check override parameters
         if (connectParams != null && !connectParams.isEmpty()) {
             connectParams.forEach((key, value) -> {
                 hasText(key, "Empty parameter names are not allowed.");
-                hasText(value, String.format("No empty parameter allowed, name '%s'", key));
-                if (null != connectParamsAll.putIfAbsent(key, value)) {
-                    throw new IllegalStateException(String.format("Extended parameter '%s' is not supported.", key));
+                hasText(value, format("No empty parameter allowed, name '%s'", key));
+                if (nonNull(totalConnectParams.putIfAbsent(key, value))) {
+                    throw new IllegalStateException(String.format("Override parameter '%s' is not supported.", key));
                 }
             });
         }
 
         // Save to cache
-        cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
-                .put(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, snsConfig.getOauth2ConnectExpireMs()), connectParamsAll);
+        cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH).put(
+                new CacheKey(KEY_SNS_CONNECT_PARAMS.concat(state), snsConfig.getOauth2ConnectExpireMs()), totalConnectParams);
     }
 
     /**
@@ -247,31 +244,24 @@ public abstract class AbstractSnsHandler implements SnsHandler {
     @SuppressWarnings({ "unchecked" })
     protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
         return (Map<String, String>) cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH)
-                .get(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, HashMap.class));
+                .get(new CacheKey(KEY_SNS_CONNECT_PARAMS.concat(state), HashMap.class));
     }
 
-    /**
-     * After SNS callback handling.<br/>
-     *
-     * @param provider
-     * @param code
-     * @param api
-     * @param connectParams
-     * @param request
-     * @return
-     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected String doHandleOAuth2Callback(
+    protected String doGetAuthInfo(
             String provider,
             String code,
             OAuth2ApiBinding api,
             Map<String, String> connectParams,
             HttpServletRequest request) {
-        // Access token
+
+        // Gets access_token
         Oauth2AccessToken at = api.getAccessToken(code);
-        // User openId
+
+        // Gets user openId
         Oauth2OpenId openId = api.getUserOpenId(at);
-        // User info
+
+        // Gets user info
         Map<String, Object> userProfile = emptyMap();
         try {
             Oauth2UserProfile profile = api.getUserInfo(at.accessToken(), openId.openId());
@@ -281,11 +271,9 @@ public abstract class AbstractSnsHandler implements SnsHandler {
                     at.accessToken(), openId.openId(), getRootCausesString(e));
         }
 
-        /*
-         * Caching social callback user openId information.(Applicable only to
-         * which=login/client_auth)<br/>
-         * See:xx.realm.Oauth2SnsAuthorizingRealm#doAuthenticationInfo()
-         */
+        // Caching social callback user openId information.(Applicable only to
+        // which=login|client_auth),
+        // see:Oauth2SnsAuthorizingRealm#doAuthenticationInfo()
         SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), userProfile);
         String callbackId = generateCallbackId();
         cacheManager.getIamCache(CACHE_PREFIX_IAM_SNSAUTH).put(new CacheKey(getOAuth2CallbackKey(callbackId), 30), authInfo);

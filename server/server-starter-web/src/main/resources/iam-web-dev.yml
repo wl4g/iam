@@ -30,18 +30,23 @@ spring:
             - http://127.0.0.1:18080
             - '*'
     login-uri: http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/login.html
-    #login-uri: http://wl4g.debug/#/login # See: https://github.com/wl4g/dopaas-devops-view
+    #login-uri: http://${IAM_ZONE:wl4g.debug}/#/login ## see:https://github.com/wl4g/dopaas-iam-view
     unauthorized-uri: http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/403.html
     success-endpoint: ${spring.application.name}@http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/index.html
     acl:
       secure: false # Turn off protection will trust any same intranet IP.
       allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
       denyIpRange: ${IAM_ACL_DENY}
-    captcha:
-      #jigsaw:
-        #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
-    sns: # SNS configuration.
-      oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+    sns:
+      github:
+        # github app
+        app-id: Iv1.093af94c4d285092
+        app-secret: c314563631cf6e828fc0a5dd70c166a7f071d892
+        # github oauth2 app
+        #app-id: 25645bba7f7dd168fba2
+        #app-secret: c4d4bb852aed0815d7144b75bd8c24636194bf62
+        #redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+        redirect-url: http://iam.wl4g.debug${server.servlet.contextPath}/sns/github/callback
       wechat-mp:
         app-id: yourappid
         app-secret: yoursecret
@@ -49,8 +54,8 @@ spring:
       wechat:
         app-id: yourappid
         app-secret: yoursecret
-        redirect-url: http://iam.wl4g.com${server.servlet.contextPath}/sns/wechat/callback
-        href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+        redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
+        href: https://iam.${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
       qq:
         app-id: 101542056
         app-secret: 46b2ba9fa24c2b973abc64ec898db3b4

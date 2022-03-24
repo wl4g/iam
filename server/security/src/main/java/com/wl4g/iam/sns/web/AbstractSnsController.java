@@ -40,44 +40,44 @@ public abstract class AbstractSnsController extends BaseController {
     /**
      * Oauth2 connect parameters 'code'
      */
-    final public static String PARAM_SNS_CODE = "code";
+    public static final String PARAM_SNS_CODE = "code";
 
     /**
      * SNS connect parameters 'provider'
      */
-    final public static String PARAM_SNS_PRIVIDER = "provider";
+    public static final String PARAM_SNS_PRIVIDER = "provider";
 
     /**
      * ID key name of social network callback information cache
      */
-    final public static String PARAM_SNS_CALLBACK_ID = "callbackId";
+    public static final String PARAM_SNS_CALLBACK_ID = "callbackId";
 
     /**
      * Key name of parameter caching after social network callback
      * (openId/unionId, etc.)
      */
-    final public static String KEY_SNS_CALLBACK_PARAMS = "callback_params_";
+    public static final String KEY_SNS_CALLBACK_PARAMS = "callback_params_";
 
     /**
      * Callback agent handles intermediate pages html (writing data redirected
      * after callback to parent dom).
      */
-    final public static String TEMPLATE_CALLBACK_AGENT = "<!DOCTYPE html><html><head><script type=\"text/javascript\">function setParent(parent,data){try{console.debug(\"Binding to parent body...\");var parentBody=parent.document.getElementsByTagName(\"body\")[0];for(var key in data){parentBody.setAttribute(key,data[key])}}catch(err){console.warn(\"The use of parent objects is not supported\")}try{console.debug(\"Post message parent...\");parent.postMessage(JSON.stringify(data),\"*\")}catch(err){console.warn(\"Window post message to parent error\")}}var data=JSON.parse(\"%s\");var doc=document;if(self!=top){console.debug(\"If it's an iframe page\");setParent(window.parent,data)}else if(window.opener){console.debug(\"If it's a subform page\");setParent(window.opener,data);window.close()}else{console.debug(\"Single window home page, no handling\")}</script></head><body>Please wait,handling...</body></html>";
+    public static final String TEMPLATE_CALLBACK_AGENT = "<!DOCTYPE html><html><head><script type=\"text/javascript\">function setParent(parent,data){try{console.debug(\"Binding to parent body...\");var parentBody=parent.document.getElementsByTagName(\"body\")[0];for(var key in data){parentBody.setAttribute(key,data[key])}}catch(err){console.warn(\"The use of parent objects is not supported\")}try{console.debug(\"Post message parent...\");parent.postMessage(JSON.stringify(data),\"*\")}catch(err){console.warn(\"Window post message to parent error\")}}var data=JSON.parse(\"%s\");var doc=document;if(self!=top){console.debug(\"If it's an iframe page\");setParent(window.parent,data)}else if(window.opener){console.debug(\"If it's a subform page\");setParent(window.opener,data);window.close()}else{console.debug(\"Single window home page, no handling\")}</script></head><body>Please wait,handling...</body></html>";
 
     /**
      * IAM server properties configuration
      */
-    final protected IamProperties config;
+    protected final IamProperties config;
 
     /**
      * SNS properties configuration
      */
-    final protected SnsProperties snsConfig;
+    protected final SnsProperties snsConfig;
 
     /**
      * Delegate SNS handler
      */
-    final protected DelegateSnsHandler delegate;
+    protected final DelegateSnsHandler delegate;
 
     /**
      * Delegate message source.
