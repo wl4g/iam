@@ -23,8 +23,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.iam.core.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.Oauth2BindingSnsException;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
+import com.wl4g.iam.sns.wechat.WechatOauth2Template;
 
 public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessToken {
     private static final long serialVersionUID = 6525294825751214763L;
@@ -129,7 +130,8 @@ public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessT
     @Override
     public WxBasedAccessToken validate(ResponseEntity<String> resp) {
         if (getErrcode() != DEFAULT_WX_OK) {
-            throw new SnsApiBindingException(format("[Assertion failed] - WeChat accessToken of %s", toString()));
+            throw new Oauth2BindingSnsException(WechatOauth2Template.PROVIDER_ID,
+                    format("[Assertion failed] - WeChat accessToken of %s", toString()));
         }
         return this;
     }

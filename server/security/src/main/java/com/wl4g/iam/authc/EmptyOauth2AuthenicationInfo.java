@@ -34,12 +34,12 @@ public class EmptyOauth2AuthenicationInfo implements IamAuthenticationInfo {
     /**
      * Default only instance
      */
-    final public static EmptyOauth2AuthenicationInfo EMPTY = new EmptyOauth2AuthenicationInfo();
+    public static final EmptyOauth2AuthenicationInfo EMPTY = new EmptyOauth2AuthenicationInfo();
 
     /**
      * Empty principal collection
      */
-    final private static PrincipalCollection emptyPrincipalCollection = new SimplePrincipalMap();
+    private static final PrincipalCollection emptyPrincipalCollection = new SimplePrincipalMap();
 
     @Override
     public PrincipalCollection getPrincipals() {

@@ -29,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.config.properties.SnsProperties;
-import com.wl4g.iam.sns.exception.InvalidAccessTokenException;
+import com.wl4g.iam.core.exception.InvalidOauth2AccessTokenException;
 import com.wl4g.iam.sns.wechat.api.model.WxmpAccessToken;
 import com.wl4g.iam.sns.wechat.api.model.WxmpBase;
 import com.wl4g.iam.sns.wechat.api.model.menu.WxmpMenu;
@@ -100,9 +100,9 @@ public class WechatMpApiOperator implements InitializingBean {
 	 * @param appSecret
 	 *            WechatMp app secret key
 	 * @return
-	 * @throws InvalidAccessTokenException
+	 * @throws InvalidOauth2AccessTokenException
 	 */
-	public WxmpAccessToken getWxmpAccessToken(String appId, String appSecret) throws InvalidAccessTokenException {
+	public WxmpAccessToken getWxmpAccessToken(String appId, String appSecret) throws InvalidOauth2AccessTokenException {
 		ResponseEntity<WxmpAccessToken> resp = restTemplate.getForEntity(DEFAULT_ACCESSTOKEN_URI, WxmpAccessToken.class,
 				new HashMap<String, String>() {
 					private static final long serialVersionUID = 1L;
@@ -119,7 +119,7 @@ public class WechatMpApiOperator implements InitializingBean {
 			}
 		}
 
-		throw new InvalidAccessTokenException("wechatmp", resp.toString());
+		throw new InvalidOauth2AccessTokenException("wechatmp", resp.toString());
 	}
 
 	/**

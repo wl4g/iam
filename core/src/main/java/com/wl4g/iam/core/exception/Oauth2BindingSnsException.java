@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.exception;
 
-public class SnsApiBindingException extends IamException {
+public class Oauth2BindingSnsException extends SnsException {
     static final long serialVersionUID = -7034833390745766939L;
 
     /**
@@ -23,8 +23,8 @@ public class SnsApiBindingException extends IamException {
      * message. The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public SnsApiBindingException() {
-        super();
+    public Oauth2BindingSnsException(String provider) {
+        this(provider, null, null);
     }
 
     /**
@@ -36,8 +36,8 @@ public class SnsApiBindingException extends IamException {
      *            the detail message. The detail message is saved for later
      *            retrieval by the {@link #getMessage()} method.
      */
-    public SnsApiBindingException(String message) {
-        super(message);
+    public Oauth2BindingSnsException(String provider, String message) {
+        super(provider, message);
     }
 
     /**
@@ -57,8 +57,8 @@ public class SnsApiBindingException extends IamException {
      *            unknown.)
      * @since 1.4
      */
-    public SnsApiBindingException(String message, Throwable cause) {
-        super(message, cause);
+    public Oauth2BindingSnsException(String provider, String message, Throwable cause) {
+        super(provider, message, cause);
     }
 
     /**
@@ -75,7 +75,8 @@ public class SnsApiBindingException extends IamException {
      *            unknown.)
      * @since 1.4
      */
-    public SnsApiBindingException(Throwable cause) {
-        super(cause);
+    public Oauth2BindingSnsException(String provider, Throwable cause) {
+        super(provider, cause);
     }
+
 }

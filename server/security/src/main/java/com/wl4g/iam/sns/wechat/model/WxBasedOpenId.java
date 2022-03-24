@@ -20,8 +20,9 @@ import static java.lang.String.format;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.iam.core.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.Oauth2BindingSnsException;
 import com.wl4g.iam.sns.support.Oauth2OpenId;
+import com.wl4g.iam.sns.wechat.WechatOauth2Template;
 
 public class WxBasedOpenId extends WxBasedResponse implements Oauth2OpenId {
     private static final long serialVersionUID = 7684131680589315985L;
@@ -76,7 +77,8 @@ public class WxBasedOpenId extends WxBasedResponse implements Oauth2OpenId {
     @Override
     public WxBasedOpenId validate(ResponseEntity<String> resp) {
         if (getErrcode() != DEFAULT_WX_OK) {
-            throw new SnsApiBindingException(format("[Assertion failed] - WeChat openid of %s", toString()));
+            throw new Oauth2BindingSnsException(WechatOauth2Template.PROVIDER_ID,
+                    format("[Assertion failed] - WeChat openid of %s", toString()));
         }
         return this;
     }

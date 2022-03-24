@@ -268,11 +268,13 @@ public class SimpleIamPrincipal implements IamPrincipal {
      */
     @Override
     public final IamPrincipal validate() throws IllegalArgumentException {
-        hasText(getPrincipalId(), "Authenticate principalId can't empty");
-        hasText(getPrincipal(), "Authenticate principal name can't empty");
-        // hasText(getRoles(), "Authenticate roles can't empty");
-        // notNull(getOrganization(), "Authenticate organization can't empty");
-        // hasText(getPermissions(), "Authenticate permissions can't empty");
+        hasText(getPrincipalId(), "Could not authentication principalId be empty");
+        hasText(getPrincipal(), "Could not authentication principal be empty");
+        // hasText(getRoles(), "Could not authentication principal be empty");
+        // notNull(getOrganization(), "Could not authentication principal be
+        // empty");
+        // hasText(getPermissions(), "Could not authentication principal be
+        // empty");
         return this;
     }
 

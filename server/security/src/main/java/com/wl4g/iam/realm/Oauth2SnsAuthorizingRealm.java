@@ -25,7 +25,6 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.iam.authc.EmptyOauth2AuthenicationInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationInfo;
 import com.wl4g.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.iam.authc.credential.IamBasedMatcher;
@@ -33,6 +32,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsAuthorizingParameter;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.exception.Oauth2Exception;
 import com.wl4g.iam.filter.ProviderSupport;
 import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 
@@ -74,16 +74,17 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
          */
         Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
                 token.getSocial().getUnionId());
-        IamPrincipal pinfo = configurer.getIamUserDetail(parameter);
-        log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(pinfo), toJSONString(parameter));
+        IamPrincipal info = configurer.getIamUserDetail(parameter);
+        log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(info), toJSONString(parameter));
 
-        if (nonNull(pinfo) && !isBlank(pinfo.getPrincipal())) {
+        if (nonNull(info) && !isBlank(info.getPrincipal())) {
             // Sets authentication attributes.(roles/permissions/rememberMe/...)
-            PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
-            return new Oauth2SnsAuthenticationInfo(pinfo, principals, getName());
+            PrincipalCollection principals = createPermitPrincipalCollection(info);
+            return new Oauth2SnsAuthenticationInfo(info, principals, getName());
         }
 
-        return EmptyOauth2AuthenicationInfo.EMPTY;
+        // return EmptyOauth2AuthenicationInfo.EMPTY;
+        throw new Oauth2Exception(bundle.getMessage("Oauth2AuthorizingBoundMatcher.unbindReject"));
     }
 
     /**

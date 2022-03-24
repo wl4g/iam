@@ -21,8 +21,9 @@ import static java.lang.String.format;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.iam.core.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.Oauth2BindingSnsException;
 import com.wl4g.iam.sns.support.Oauth2UserProfile;
+import com.wl4g.iam.sns.wechat.WechatOauth2Template;
 
 public class WxBasedUserInfo extends WxBasedResponse implements Oauth2UserProfile {
     private static final long serialVersionUID = 843944424065492261L;
@@ -135,7 +136,8 @@ public class WxBasedUserInfo extends WxBasedResponse implements Oauth2UserProfil
     @Override
     public WxBasedUserInfo validate(ResponseEntity<String> resp) {
         if (getErrcode() != DEFAULT_WX_OK) {
-            throw new SnsApiBindingException(format("[Assertion failed] - WeChat userinfo of %s", toString()));
+            throw new Oauth2BindingSnsException(WechatOauth2Template.PROVIDER_ID,
+                    format("[Assertion failed] - WeChat userinfo of %s", toString()));
         }
         return this;
     }

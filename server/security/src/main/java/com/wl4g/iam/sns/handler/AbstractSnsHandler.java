@@ -58,7 +58,7 @@ import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.config.AbstractIamProperties.Which;
-import com.wl4g.iam.core.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.Oauth2BindingSnsException;
 import com.wl4g.iam.filter.ProviderSupport;
 import com.wl4g.iam.sns.CallbackResult;
 import com.wl4g.iam.sns.OAuth2ApiBinding;
@@ -266,8 +266,8 @@ public abstract class AbstractSnsHandler implements SnsHandler {
         try {
             Oauth2UserProfile profile = api.getUserInfo(at.accessToken(), openId.openId());
             userProfile = BeanMap.create(profile);
-        } catch (SnsApiBindingException e) { // Ignore?
-            log.warn("Could't get OAuth2 userInfo, provider: %s, accessToken: %s, openId: %s, caused by: %s", provider,
+        } catch (Oauth2BindingSnsException e) { // Ignore?
+            log.warn("Could't get oauth2 user info, provider: %s, accessToken: %s, openId: %s, caused by: %s", provider,
                     at.accessToken(), openId.openId(), getRootCausesString(e));
         }
 

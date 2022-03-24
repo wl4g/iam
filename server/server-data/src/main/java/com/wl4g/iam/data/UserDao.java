@@ -69,7 +69,7 @@ public interface UserDao {
 
     @RequestMapping(method = GET, value = "/selectByUnionIdOrOpenId")
     User selectByUnionIdOrOpenId(
-            @RequestParam("unionId") @Param("unionId") String unionId,
-            @RequestParam("openId") @Param("openId") String openId);
+            @RequestParam(name = "unionId", required = false) @Param("unionId") String unionId,
+            @RequestParam(name = "openId", required = false) @Param("openId") String openId);
 
 }

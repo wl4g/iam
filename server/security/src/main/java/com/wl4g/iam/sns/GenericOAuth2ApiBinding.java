@@ -50,7 +50,7 @@ import com.google.common.base.Charsets;
 import com.wl4g.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.iam.core.cache.IamCache;
 import com.wl4g.iam.core.config.AbstractIamConfiguration.IamDynamicProxySelector;
-import com.wl4g.iam.core.exception.SnsApiBindingException;
+import com.wl4g.iam.core.exception.Oauth2BindingSnsException;
 import com.wl4g.iam.sns.support.OAuth2GrantType;
 import com.wl4g.iam.sns.support.OAuth2ResponseType;
 import com.wl4g.iam.sns.support.Oauth2AccessToken;
@@ -207,7 +207,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
             return (T) ((Oauth2AccessToken) createResponseMessage(1)).build(accessTokenStr).validate(resp);
         }
 
-        throw new SnsApiBindingException(format("Failed to receiving OAuth2 accessToken of - %s", resp));
+        throw new Oauth2BindingSnsException(providerId(), format("Failed to receiving oauth2 accessToken of - %s", resp));
     }
 
     @SuppressWarnings("unchecked")
@@ -237,7 +237,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
             return (O) ((Oauth2OpenId) createResponseMessage(2)).build(openIdStr).validate(resp);
         }
 
-        throw new SnsApiBindingException(format("Failed to receiving OAuth2 openid of - %s", resp));
+        throw new Oauth2BindingSnsException(providerId(), format("Failed to receiving oauth2 openid of - %s", resp));
     }
 
     @SuppressWarnings("unchecked")
@@ -274,7 +274,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
             return (U) ((Oauth2UserProfile) createResponseMessage(3)).build(body).validate(resp);
         }
 
-        throw new SnsApiBindingException(format("Failed to receiving OAuth2 userinfo of - %s", resp));
+        throw new Oauth2BindingSnsException(providerId(), format("Failed to receiving oauth2 userinfo of - %s", resp));
     }
 
     //

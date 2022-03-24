@@ -22,7 +22,6 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SN
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -34,6 +33,10 @@ import com.wl4g.iam.core.config.AbstractIamProperties;
 import com.wl4g.iam.filter.ServerInternalAuthenticationFilter;
 import com.wl4g.iam.sns.web.GenericOauth2SnsController;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * IAM server properties
  *
@@ -42,6 +45,9 @@ import com.wl4g.iam.sns.web.GenericOauth2SnsController;
  * @date 2019年1月4日
  * @since
  */
+@Getter
+@Setter
+@ToString
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
 
     private static final long serialVersionUID = -5858422822181237865L;
@@ -76,6 +82,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
     private String unauthorizedUri = DEFAULT_VIEW_403_URI;
 
     /**
+     * (SNS)Binding page URI
+     */
+    private String bindingUri = DEFAULT_VIEW_BINDING_URI;
+
+    /**
      * Matcher configuration properties.
      */
     private MatcherProperties matcher = new MatcherProperties();
@@ -100,10 +111,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
      */
     private V1OidcProperties v1Oidc = new V1OidcProperties();
 
-    public String getLoginUri() {
-        return loginUri;
-    }
-
     public void setLoginUri(String loginUri) {
         this.loginUri = cleanURI(loginUri);
     }
@@ -112,10 +119,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
         hasText(successEndpoint, "Success endpoint must not be empty.");
         this.successService = successEndpoint.split("@")[0];
         this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
-    }
-
-    public String getSuccessService() {
-        return successService;
     }
 
     /**
@@ -137,55 +140,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
     @Override
     public String getUnauthorizedUri() {
         return unauthorizedUri;
-    }
-
-    public void setUnauthorizedUri(String unauthorizedUri) {
-        this.unauthorizedUri = unauthorizedUri;
-    }
-
-    public MatcherProperties getMatcher() {
-        return matcher;
-    }
-
-    public void setMatcher(MatcherProperties matcher) {
-        this.matcher = matcher;
-    }
-
-    public TicketProperties getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(TicketProperties ticket) {
-        this.ticket = ticket;
-    }
-
-    public ServerParamProperties getParam() {
-        return this.param;
-    }
-
-    public void setParam(ServerParamProperties param) {
-        this.param = param;
-    }
-
-    public ApiProperties getApi() {
-        return api;
-    }
-
-    public void setApi(ApiProperties api) {
-        this.api = api;
-    }
-
-    public V1OidcProperties getV1Oidc() {
-        return v1Oidc;
-    }
-
-    public void setV1Oidc(V1OidcProperties v1Oidc) {
-        this.v1Oidc = v1Oidc;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
     }
 
     @Override

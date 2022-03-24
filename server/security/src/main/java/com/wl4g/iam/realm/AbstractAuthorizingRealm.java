@@ -15,6 +15,21 @@
  */
 package com.wl4g.iam.realm;
 
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_ACCOUNT_INFO;
+import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.bindKVParameters;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.KEY_REQ_AUTH_PARAMS;
+import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.KEY_REQ_AUTH_REDIRECT;
+import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.Validator;
@@ -28,16 +43,6 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-
-import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.iam.common.constant.FastCasIAMConstants.*;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
-import static com.wl4g.iam.filter.AbstractServerIamAuthenticationFilter.*;
-import static java.lang.String.format;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.iam.authc.ServerIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
@@ -148,7 +153,8 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
             validator.validate(itoken);
 
             IamAuthenticationInfo info = doAuthenticationInfo((T) itoken);
-            notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+            notNull(info, "Could not authentication info be empty. see:o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+            notNull(info.getIamPrincipal(), "Could not authentication info iamPrincipal be empty.");
 
             /**
              * [Extension]: Save authenticate info, For example, for online
@@ -165,7 +171,6 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
         } catch (Throwable e) {
             throw new AuthenticationException(e);
         }
-
     }
 
     /**

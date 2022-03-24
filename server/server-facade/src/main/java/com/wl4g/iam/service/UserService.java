@@ -69,6 +69,8 @@ public interface UserService {
     User findByUserName(@RequestParam("userName") String userName);
 
     @RequestMapping(value = "/findByUnionIdOrOpenId", method = POST)
-    User findByUnionIdOrOpenId(@RequestParam("unionId") String unionId, @RequestParam("openId") String openId);
+    User findByUnionIdOrOpenId(
+            @RequestParam(name = "unionId", required = false) String unionId,
+            @RequestParam(name = "openId", required = false) String openId);
 
 }

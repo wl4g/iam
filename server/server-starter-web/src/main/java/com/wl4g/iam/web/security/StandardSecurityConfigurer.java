@@ -198,12 +198,12 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
                             o.getAreaId()))
                     .collect(toList());
 
-            IamPrincipal iamPrincipal = new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
+            IamPrincipal principal = new SimpleIamPrincipal(valueOf(user.getId()), user.getUserName(), user.getPassword(),
                     user.getPubSalt(), getRoles(user.getUserName()), getPermissions(user.getUserName()),
                     new PrincipalOrganization(oInfo));
-            iamPrincipal.attributes().save(LOGIN_USERINFO, user);
+            principal.attributes().save(LOGIN_USERINFO, user);
 
-            return iamPrincipal;
+            return principal;
         }
         return null;
     }

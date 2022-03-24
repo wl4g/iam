@@ -252,11 +252,11 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
                     afterAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), resp.asMap());
 
                     String logged = toJSONString(resp);
-                    log.info("Response to success - {}", logged);
+                    log.info("resp: to success - {}", logged);
 
                     writeJson(toHttp(response), logged);
                 } catch (IOException e) {
-                    log.error("Login success response json error", e);
+                    log.error("resp:error to login success", e);
                 }
             } else { // Redirection page?
                 /*
@@ -278,7 +278,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
                 // Handle post custom success.
                 afterAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
-                log.info("redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
+                log.info("redirect: to '{}', param:{}", redirect.getRedirectUrl(), fullParams);
                 issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
             }
 
@@ -303,8 +303,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
             ServletResponse response) {
         IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-        Throwable exroot = getRootCause(ae);
-        String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
+        Throwable rootex = getRootCause(ae);
+        String errmsg = nonNull(rootex) ? rootex.getMessage() : null;
         String tip = format("Failed to authentication of token: %s", token);
         if (WebUtils2.isStacktraceRequest(request)) {
             log.error(tip, ae);
@@ -334,20 +334,20 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         if (isJSONResponse(request)) {
             try {
                 RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, errmsg);
-                String failed = toJSONString(resp);
-                log.info("Resp unauth: {}", failed);
-                writeJson(toHttp(response), failed);
+                String failjson = toJSONString(resp);
+                log.info("resp: to login - '{}'", failjson);
+                writeJson(toHttp(response), failjson);
             } catch (IOException e) {
-                log.error("Error resp unauth", e);
+                log.error("resp:failed to login", e);
             }
         }
         // Redirect the login page directly.
         else {
             try {
-                log.info("redirect to login: {}", redirect);
+                log.info("redirect: to login - {}", redirect);
                 issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
             } catch (IOException e1) {
-                log.error("redirect to login failed.", e1);
+                log.error("redirect:failed to redirect login", e1);
             }
         }
 

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.sns.exception;
+package com.wl4g.iam.core.exception;
 
 /**
- * {@link InvalidAccessTokenException}
+ * {@link InvalidOauth2AccessTokenException}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-07
  * @since
  */
-public class InvalidAccessTokenException extends SnsException {
+public class InvalidOauth2AccessTokenException extends SnsException {
     static final long serialVersionUID = -7031113411745766939L;
 
     /**
@@ -30,7 +30,7 @@ public class InvalidAccessTokenException extends SnsException {
      * message. The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public InvalidAccessTokenException(String provider) {
+    public InvalidOauth2AccessTokenException(String provider) {
         super(provider);
     }
 
@@ -43,7 +43,7 @@ public class InvalidAccessTokenException extends SnsException {
      *            the detail message. The detail message is saved for later
      *            retrieval by the {@link #getMessage()} method.
      */
-    public InvalidAccessTokenException(String provider, String message) {
+    public InvalidOauth2AccessTokenException(String provider, String message) {
         super(provider, message);
     }
 
@@ -64,7 +64,7 @@ public class InvalidAccessTokenException extends SnsException {
      *            unknown.)
      * @since 1.4
      */
-    public InvalidAccessTokenException(String provider, String message, Throwable cause) {
+    public InvalidOauth2AccessTokenException(String provider, String message, Throwable cause) {
         super(provider, message, cause);
     }
 
@@ -82,7 +82,7 @@ public class InvalidAccessTokenException extends SnsException {
      *            unknown.)
      * @since 1.4
      */
-    public InvalidAccessTokenException(String provider, Throwable cause) {
+    public InvalidOauth2AccessTokenException(String provider, Throwable cause) {
         super(provider, cause);
     }
 

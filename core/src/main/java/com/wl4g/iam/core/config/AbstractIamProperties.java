@@ -135,7 +135,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     protected abstract String getSuccessUri();
 
     /**
-     * Unauthorized(403) URI.
+     * Unauthorized(403) page URI.
      *
      * @return
      */
@@ -1020,13 +1020,18 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     final public static String DEFAULT_VIEW_BASE_URI = "/view";
 
     /**
-     * Default view index URI.
+     * Default view index page URI.
      */
-    final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
+    public static final String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
 
     /**
-     * Default view 403 URI.
+     * Default view 403 page URI.
      */
-    final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
+    public static final String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
+
+    /**
+     * Default view binding page URI.
+     */
+    public static final String DEFAULT_VIEW_BINDING_URI = DEFAULT_VIEW_BASE_URI + "/binding.html";
 
 }

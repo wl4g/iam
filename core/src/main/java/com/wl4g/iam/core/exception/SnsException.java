@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.sns.exception;
+package com.wl4g.iam.core.exception;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-
-import com.wl4g.iam.core.exception.IamException;
 
 /**
  * {@link SnsException}
@@ -26,7 +24,7 @@ import com.wl4g.iam.core.exception.IamException;
  * @version v1.0 2020-08-07
  * @since
  */
-public class SnsException extends IamException {
+public class SnsException extends Oauth2Exception {
     static final long serialVersionUID = -7034833311745766939L;
 
     private final String provider;

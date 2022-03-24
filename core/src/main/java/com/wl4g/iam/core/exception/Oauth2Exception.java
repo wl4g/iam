@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.exception;
 
-public class IamException extends RuntimeException {
+public class Oauth2Exception extends IamException {
     static final long serialVersionUID = -7034833390745766939L;
 
     /**
@@ -23,7 +23,7 @@ public class IamException extends RuntimeException {
      * message. The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public IamException() {
+    public Oauth2Exception() {
         super();
     }
 
@@ -36,7 +36,7 @@ public class IamException extends RuntimeException {
      *            the detail message. The detail message is saved for later
      *            retrieval by the {@link #getMessage()} method.
      */
-    public IamException(String message) {
+    public Oauth2Exception(String message) {
         super(message);
     }
 
@@ -57,7 +57,7 @@ public class IamException extends RuntimeException {
      *            unknown.)
      * @since 1.4
      */
-    public IamException(String message, Throwable cause) {
+    public Oauth2Exception(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -75,7 +75,7 @@ public class IamException extends RuntimeException {
      *            unknown.)
      * @since 1.4
      */
-    public IamException(Throwable cause) {
+    public Oauth2Exception(Throwable cause) {
         super(cause);
     }
 
@@ -86,12 +86,8 @@ public class IamException extends RuntimeException {
      * @param cause
      * @param dumpStackTrace
      */
-    public IamException(String message, Throwable cause, boolean dumpStackTrace) {
-        this(message, cause, false, dumpStackTrace);
-    }
-
-    protected IamException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public Oauth2Exception(String message, Throwable cause, boolean dumpStackTrace) {
+        super(message, cause, false, dumpStackTrace);
     }
 
 }
