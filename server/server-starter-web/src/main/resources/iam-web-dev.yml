@@ -39,12 +39,14 @@ spring:
       denyIpRange: ${IAM_ACL_DENY}
     sns:
       github:
+        proxy:
+          enabled: true
         # github app
-        app-id: Iv1.093af94c4d285092
-        app-secret: c314563631cf6e828fc0a5dd70c166a7f071d892
+        app-id: Iv1.093af94c4d28509a
+        app-secret: c314563631cf6e828fc0a5dd70c166a7f071d89e
         # github oauth2 app
-        #app-id: 25645bba7f7dd168fba2
-        #app-secret: c4d4bb852aed0815d7144b75bd8c24636194bf62
+        #app-id: 25645bba7f7dd168fba1
+        #app-secret: c4d4bb852aed0815d7144b75bd8c24636194bf6b
         #redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
         redirect-url: http://iam.wl4g.debug${server.servlet.contextPath}/sns/github/callback
       wechat-mp:

@@ -10,3 +10,4 @@
 
 # #### Environment(IAM Facade SpringBoot-Feign Configuration) configuration. ####
 #
+provider.serviceId.iam-facade: iam-data:18082

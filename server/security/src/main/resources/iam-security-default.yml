@@ -122,23 +122,38 @@ spring:
       oauth2-connect-expire-ms: 120_000
       #github:
       #  proxy:
-      #    enabled: true
+      #    enabled: false ## Default by false, Optional(http|socks|direct)
+      #    type: http ## Default by http
+      #    address: 127.0.0.1 ## Default by 127.0.0.1
+      #    port: 8118 ## Default by 8118
+      #  app-id: yourappid
+      #  app-secret: yoursecret
+      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechatmp/callback
+      #wechat-mp:
+      #  proxy:
+      #    enabled: false
       #    type: http
       #    address: 127.0.0.1
       #    port: 8118
       #  app-id: yourappid
       #  app-secret: yoursecret
       #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechatmp/callback
-      #wechat-mp:
-      #  app-id: yourappid
-      #  app-secret: yoursecret
-      #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechatmp/callback
       #wechat:
+      #  proxy:
+      #    enabled: false
+      #    type: http
+      #    address: 127.0.0.1
+      #    port: 8118
       #  app-id: yourappid
       #  app-secret: yoursecret
       #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/wechat/callback
       #  href: https://iam.example.com/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
       #qq:
+      #  proxy:
+      #    enabled: false
+      #    type: http
+      #    address: 127.0.0.1
+      #    port: 8118
       #  app-id: yourappid
       #  app-secret: yoursecret
       #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/qq/callback

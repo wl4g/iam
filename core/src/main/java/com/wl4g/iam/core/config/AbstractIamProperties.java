@@ -855,8 +855,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     public static final class IamHttpProxy {
         private boolean enabled = false;
         private String type = "http";
-        private String address;
-        private int port;
+        private String address = "127.0.0.1";
+        private int port = 8118;
 
         public final Proxy toProxy() {
             for (Proxy.Type t : Proxy.Type.values()) {
