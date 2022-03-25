@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.annotations.Beta;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -62,6 +64,11 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE = "authorization_code";
     public static final String KEY_IAM_OIDC_GRANT_IMPLICIT = "implicit";
     public static final String KEY_IAM_OIDC_GRANT_REFRESH_TOKEN = "refresh_token";
+    @Deprecated
+    public static final String KEY_IAM_OIDC_GRANT_PASSWORD = "password";
+    public static final String KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS = "client_credentials";
+    @Beta
+    public static final String KEY_IAM_OIDC_GRANT_DEVICE_CODE = "device_code";
 
     /** V1-OIDC subject definitions. */
     public static final String KEY_IAM_OIDC_SUBJECT_PUBLIC = "public";
@@ -71,23 +78,22 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE = "code";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN = "id_token";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN = "token";
+    public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_CODE + " "
+            + KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN;
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " "
             + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " "
             + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
-    public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_CODE + " "
-            + KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN;
+
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN = KEY_IAM_OIDC_RESPONSE_TYPE_CODE + " "
             + KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN + " " + KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
 
     /**
-     * Notice: There is no separate 'token' response type.
-     * 
      * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationExamples
      */
     public static final List<String> KEY_IAM_OIDC_RESPONSE_TYPE_ALL = asList(KEY_IAM_OIDC_RESPONSE_TYPE_CODE,
-            KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN,
-            KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN);
+            KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_TOKEN,
+            KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN);
 
     /** V1-OIDC token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";

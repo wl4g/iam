@@ -14,14 +14,14 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_role_user
+		from iam_role_user
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectRoleIdByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">
 		select
 		role_id
-		from sys_role_user
+		from iam_role_user
 		where
 		user_id = #{userId,jdbcType=BIGINT}
 	</select>
@@ -29,17 +29,17 @@
 
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_role_user
+		delete from iam_role_user
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByUserId" parameterType="java.lang.Long">
-		delete from sys_role_user
+		delete from iam_role_user
 		where user_id = #{userId,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.RoleUser">
-		insert into sys_role_user (id, user_id, role_id,
+		insert into iam_role_user (id, user_id, role_id,
 		create_by, create_date)
 		values
 		(#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT},
@@ -48,7 +48,7 @@
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.RoleUser" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into sys_role_user
+		insert into iam_role_user
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -85,7 +85,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.RoleUser">
-		update sys_role_user
+		update iam_role_user
 		<set>
 			<if test="userId != null">
 				user_id = #{userId,jdbcType=BIGINT},
@@ -103,7 +103,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.RoleUser">
-		update sys_role_user
+		update iam_role_user
 		set user_id = #{userId,jdbcType=BIGINT},
 		role_id =
 		#{roleId,jdbcType=BIGINT},

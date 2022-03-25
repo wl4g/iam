@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.ClusterConfig;
+import com.wl4g.iam.common.bean.FastCasClient;
 
 import java.util.List;
 
 /**
- * {@link ClusterConfigDao}
+ * {@link FastCasClientDao}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-0520
@@ -36,40 +36,40 @@ import java.util.List;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-data:iam-data}")
-@RequestMapping("/clusterConfig-dao")
-public interface ClusterConfigDao {
+@RequestMapping("/fastCasConfig-dao")
+public interface FastCasClientDao {
 
     @RequestMapping(value = "/deleteByPrimaryKey", method = { POST })
     int deleteByPrimaryKey(@RequestParam("id") Long id);
 
     @RequestMapping(value = "/insert", method = { POST })
-    int insert(@RequestBody ClusterConfig record);
+    int insert(@RequestBody FastCasClient record);
 
     @RequestMapping(value = "/insertSelective", method = { POST })
-    int insertSelective(@RequestBody ClusterConfig record);
+    int insertSelective(@RequestBody FastCasClient record);
 
     @RequestMapping(value = "/selectByPrimaryKey", method = GET)
-    ClusterConfig selectByPrimaryKey(@RequestParam("id") Long id);
+    FastCasClient selectByPrimaryKey(@RequestParam("id") Long id);
 
     @RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
-    int updateByPrimaryKeySelective(@RequestBody ClusterConfig record);
+    int updateByPrimaryKeySelective(@RequestBody FastCasClient record);
 
     @RequestMapping(value = "/updateByPrimaryKey", method = { POST })
-    int updateByPrimaryKey(@RequestBody ClusterConfig record);
+    int updateByPrimaryKey(@RequestBody FastCasClient record);
 
     @RequestMapping(value = "/selectByAppNames", method = GET)
-    List<ClusterConfig> selectByAppNames(
+    List<FastCasClient> selectByAppNames(
             @RequestParam(name = "appNames", required = false) @Param("appNames") String[] appNames,
             @RequestParam(name = "envType", required = false) @Param("envType") String envType,
             @RequestParam(name = "type", required = false) @Param("type") String type);
 
     @RequestMapping(value = "/getByAppName", method = GET)
-    ClusterConfig getByAppName(
+    FastCasClient getByAppName(
             @RequestParam(name = "appName", required = false) @Param("appName") String appName,
             @RequestParam(name = "envType", required = false) @Param("envType") String envType,
             @RequestParam(name = "type", required = false) @Param("type") String type);
 
     @RequestMapping(value = "/getIamServer", method = GET)
-    List<ClusterConfig> getIamServer();
+    List<FastCasClient> getIamServer();
 
 }

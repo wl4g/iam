@@ -27,15 +27,15 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_role
+		from iam_role
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectWithRoot" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_r" />
-		from sys_role r
-		left join sys_organization_role gr on r.id=gr.role_id
+		from iam_role r
+		left join iam_organization_role gr on r.id=gr.role_id
 		where r.del_flag!=1
 		<if test="groupIds != null and groupIds.size() > 0">
 			and gr.organization_id in
@@ -54,34 +54,34 @@
 	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List_r" />
-		from sys_role r
-		left join sys_role_user ru on r.id=ru.role_id
+		from iam_role r
+		left join iam_role_user ru on r.id=ru.role_id
 		where r.del_flag!=1 and ru.user_id = #{userId,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List_r" />
-		from sys_role r
-		left join sys_organization_role gr on r.id=gr.role_id
+		from iam_role r
+		left join iam_organization_role gr on r.id=gr.role_id
 		where r.del_flag!=1 and gr.organization_id = #{groupId,jdbcType=BIGINT}
 	</select>
 
 	<select id="countRoleUsers" resultType="java.lang.Integer" parameterType="java.lang.Long">
 		select
 		count(1)
-		from sys_role_user ru
-		left join sys_role r on r.id=ru.role_id and r.del_flag != 1
-		left join sys_user u on u.id=ru.user_id and u.del_flag != 1
+		from iam_role_user ru
+		left join iam_role r on r.id=ru.role_id and r.del_flag != 1
+		left join iam_user u on u.id=ru.user_id and u.del_flag != 1
 		where ru.role_id = #{roleId,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByGroupIdsAndUserId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_r" />
-		from sys_role r
-		left join sys_role_user ru on r.id=ru.role_id
-		left join sys_organization_role gr on r.id=gr.role_id
+		from iam_role r
+		left join iam_role_user ru on r.id=ru.role_id
+		left join iam_organization_role gr on r.id=gr.role_id
 		where r.del_flag!=1
 		<if test="groupIds != null and groupIds.size() > 0">
 			and gr.organization_id in
@@ -103,12 +103,12 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_r" />
-		from sys_role r
-		left join sys_organization_role gr on r.id=gr.role_id
+		from iam_role r
+		left join iam_organization_role gr on r.id=gr.role_id
 		where r.del_flag!=1
 
 		<if test="groupIds != null and groupIds.size() > 0">
-			and exists (select 1 from sys_organization_role gr where r.id=gr.role_id
+			and exists (select 1 from iam_organization_role gr where r.id=gr.role_id
 			and gr.organization_id in
 			<foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
 				#{groupId}
@@ -127,11 +127,11 @@
 
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_role
+		delete from iam_role
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.Role">
-		insert into sys_role (id, role_code, name_zh,
+		insert into iam_role (id, role_code, name_zh,
 		type, enable, status,
 		create_by,
 		create_date, update_by,
@@ -145,7 +145,7 @@
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.Role" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into sys_role
+		insert into iam_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -218,7 +218,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.Role">
-		update sys_role
+		update iam_role
 		<set>
 			<if test="roleCode != null">
 				role_code = #{roleCode,jdbcType=VARCHAR},
@@ -254,7 +254,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.Role">
-		update sys_role
+		update iam_role
 		set role_code = #{roleCode,jdbcType=VARCHAR},
 		name_zh = #{nameZh,jdbcType=VARCHAR},
 		type = #{type,jdbcType=INTEGER},

@@ -15,9 +15,9 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.iam.common.bean.ClusterConfig;
-import com.wl4g.iam.data.ClusterConfigDao;
-import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.common.bean.FastCasClient;
+import com.wl4g.iam.data.FastCasClientDao;
+import com.wl4g.iam.service.FastCasClientService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link ClusterConfigServiceImpl}
+ * {@link FastCasClientServiceImpl}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -38,35 +38,35 @@ import java.util.Map;
 @org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "clusterConfigService")
 // @org.springframework.web.bind.annotation.RestController
-public class ClusterConfigServiceImpl implements ClusterConfigService {
+public class FastCasClientServiceImpl implements FastCasClientService {
 
     @Autowired
-    private ClusterConfigDao clusterConfigDao;
+    private FastCasClientDao clientConfigDao;
 
     @Override
     public Map<String, Object> loadInit(String envType) {
-        List<ClusterConfig> list = clusterConfigDao.selectByAppNames(null, envType, null);
+        List<FastCasClient> list = clientConfigDao.selectByAppNames(null, envType, null);
         Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
         Map<String, Object> map = new HashMap<>();
-        for (ClusterConfig entryAddress : list) {
+        for (FastCasClient entryAddress : list) {
             map.put(entryAddress.getAppName(), entryAddress);
         }
         return map;
     }
 
     @Override
-    public ClusterConfig getClusterConfig(Long clusterConfigId) {
-        return clusterConfigDao.selectByPrimaryKey(clusterConfigId);
+    public FastCasClient getFastCasClient(Long clusterConfigId) {
+        return clientConfigDao.selectByPrimaryKey(clusterConfigId);
     }
 
     @Override
-    public List<ClusterConfig> findByAppNames(String[] appNames, String envType, String type) {
-        return clusterConfigDao.selectByAppNames(appNames, envType, type);
+    public List<FastCasClient> findByAppNames(String[] appNames, String envType, String type) {
+        return clientConfigDao.selectByAppNames(appNames, envType, type);
     }
 
     @Override
-    public List<ClusterConfig> findOfIamServers() {
-        return clusterConfigDao.getIamServer();
+    public List<FastCasClient> findOfIamServers() {
+        return clientConfigDao.getIamServer();
     }
 
 }

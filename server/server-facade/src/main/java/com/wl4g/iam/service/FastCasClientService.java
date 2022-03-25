@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.ClusterConfig;
+import com.wl4g.iam.common.bean.FastCasClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * {@link ClusterConfigService}
+ * {@link FastCasClientService}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -35,23 +35,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0.0
  * @see
  */
-@FeignConsumer("${provider.serviceId.iam-facade:clusterConfig-service}")
-@RequestMapping("/clusterConfig-service")
-public interface ClusterConfigService {
+@FeignConsumer("${provider.serviceId.iam-facade:clientConfig-service}")
+@RequestMapping("/fastCasClient-service")
+public interface FastCasClientService {
 
     @RequestMapping(value = "/loadInit", method = GET)
     Map<String, Object> loadInit(@RequestParam(value = "envType", required = false) String envType);
 
-    @RequestMapping(value = "/getClusterConfig", method = GET)
-    ClusterConfig getClusterConfig(@RequestParam("clusterConfigId") Long clusterConfigId);
+    @RequestMapping(value = "/getFastCasClient", method = GET)
+    FastCasClient getFastCasClient(@RequestParam("clusterConfigId") Long clusterConfigId);
 
     @RequestMapping(value = "/getByAppNames", method = POST)
-    List<ClusterConfig> findByAppNames(
+    List<FastCasClient> findByAppNames(
             @RequestParam(value = "appNames", required = false) String[] appNames,
             @RequestParam(value = "envType", required = false) String envType,
             @RequestParam(value = "type", required = false) String type);
 
     @RequestMapping(value = "/findOfIamServers", method = GET)
-    List<ClusterConfig> findOfIamServers();
+    List<FastCasClient> findOfIamServers();
 
 }

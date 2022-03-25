@@ -14,43 +14,43 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_organization_role
+		from iam_organization_role
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectGroupIdByRoleId" resultType="java.lang.Long" parameterType="java.lang.Long">
 		select
 		gr.organization_id
-		from sys_organization_role gr
-		left join sys_organization g on g.id = gr.organization_id
+		from iam_organization_role gr
+		left join iam_organization g on g.id = gr.organization_id
 		where gr.role_id = #{roleId,jdbcType=BIGINT} and g.del_flag != 1
 	</select>
 
 	<select id="selectRoleIdsByGroupId" resultType="java.lang.Long" parameterType="java.lang.Long">
 		select
 		role_id
-		from sys_organization_role
+		from iam_organization_role
 		where
 		organization_id = #{groupId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_organization_role
+		delete from iam_organization_role
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByRoleId" parameterType="java.lang.Long">
-		delete from sys_organization_role
+		delete from iam_organization_role
 		where role_id = #{roleId,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByGroupId" parameterType="java.lang.Long">
-		delete from sys_organization_role
+		delete from iam_organization_role
 		where organization_id = #{groupId,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
-		insert into sys_organization_role (id, organization_id, role_id,
+		insert into iam_organization_role (id, organization_id, role_id,
 		create_by, create_date)
 		values
 		(#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT},
@@ -59,7 +59,7 @@
 	</insert>
 
 	<insert id="insertBatch" parameterType="com.wl4g.iam.data.model.OrganizationRoleList">
-		insert into sys_organization_role (id, organization_id, role_id,create_by, create_date)
+		insert into iam_organization_role (id, organization_id, role_id,create_by, create_date)
 		VALUES
 		<foreach collection="groupRoles" item="groupRole" separator=",">
 			(#{groupRole.id,jdbcType=BIGINT},
@@ -72,7 +72,7 @@
 
 	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.OrganizationRole" useGeneratedKeys="true"
 			keyProperty="id">
-		insert into sys_organization_role
+		insert into iam_organization_role
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -109,7 +109,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
-		update sys_organization_role
+		update iam_organization_role
 		<set>
 			<if test="groupId != null">
 				organization_id = #{groupId,jdbcType=BIGINT},
@@ -127,7 +127,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.OrganizationRole">
-		update sys_organization_role
+		update iam_organization_role
 		set organization_id = #{groupId,jdbcType=BIGINT},
 		role_id =
 		#{roleId,jdbcType=BIGINT},

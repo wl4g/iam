@@ -105,4 +105,5 @@ public class V1OidcUserClaims {
         private String postal_code;
         private String country;
     }
+
 }

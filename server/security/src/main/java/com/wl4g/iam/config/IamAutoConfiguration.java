@@ -103,7 +103,7 @@ import com.wl4g.iam.verify.SimpleImageSecurityVerifier;
 import com.wl4g.iam.verify.SmsSecurityVerifier;
 import com.wl4g.iam.verify.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.iam.verify.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.iam.web.fastcas.FastCasServerAuthenticatingController;
+import com.wl4g.iam.web.fastcas.FastCasServerAuthingController;
 
 /**
  * IAM server auto configuration.
@@ -595,8 +595,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
     // ==============================
 
     @Bean
-    public FastCasServerAuthenticatingController centralAuthenticatingController() {
-        return new FastCasServerAuthenticatingController();
+    public FastCasServerAuthingController centralAuthenticatingController() {
+        return new FastCasServerAuthingController();
     }
 
     @Bean

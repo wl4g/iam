@@ -54,7 +54,7 @@ import com.wl4g.iam.web.BaseIamController;
  * @since
  */
 @FastCasController
-public class FastCasServerAuthenticatingController extends BaseIamController implements AuthenticatingController {
+public class FastCasServerAuthingController extends BaseIamController implements AuthenticatingController {
 
     @PostMapping(URI_IAM_SERVER_VALIDATE)
     @ResponseBody

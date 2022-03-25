@@ -24,7 +24,7 @@ import com.wl4g.infra.core.bean.BaseBean;
  * @version v1.0 2019年11月7日
  * @since
  */
-public class ClusterConfig extends BaseBean {
+public class FastCasClient extends BaseBean {
     private static final long serialVersionUID = -7546448616357790576L;
     private String appName;
     private Integer type;
@@ -33,10 +33,10 @@ public class ClusterConfig extends BaseBean {
     private String extranetBaseUri;
     private String intranetBaseUri;
 
-    public ClusterConfig() {
+    public FastCasClient() {
     }
 
-    public ClusterConfig(String appName, String viewExtranetBaseUri) {
+    public FastCasClient(String appName, String viewExtranetBaseUri) {
         this.appName = appName;
         this.viewExtranetBaseUri = viewExtranetBaseUri;
     }

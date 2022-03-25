@@ -10,7 +10,6 @@
 		<result column="user_type" property="userType" jdbcType="INTEGER" />
 		<result column="pub_salt" property="pubSalt" jdbcType="VARCHAR" />
 		<result column="enable" property="enable" jdbcType="INTEGER" />
-		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="email" property="email" jdbcType="VARCHAR" />
 		<result column="phone" property="phone" jdbcType="VARCHAR" />
 		<result column="wechat_open_id" property="wechatOpenId" jdbcType="VARCHAR" />
@@ -22,6 +21,7 @@
 		<result column="alipay_id" property="alipayId" jdbcType="VARCHAR" />
 		<result column="github_id" property="githubId" jdbcType="VARCHAR" />
 		<result column="aws_id" property="awsId" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="create_by" property="createBy" jdbcType="BIGINT" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -46,7 +46,8 @@
 		u.phone,
 		u.wechat_open_id,
 		u.wechat_union_id, u.facebook_id, u.google_id, u.twitter_id, u.linkedin_id,
-		u.alipay_id, u.github_id,
+		u.alipay_id,
+		u.github_id,
 		u.aws_id, u.remark,
 		u.create_by, u.create_date, u.update_by, u.update_date,
 		u.del_flag
@@ -55,21 +56,21 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_user
+		from iam_user
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
-		from sys_user
+		from iam_user
 		where del_flag!=1 and user_name = #{userName,jdbcType=VARCHAR}
 	</select>
 
 	<select id="selectByUnionIdOrOpenId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from sys_user
+		from iam_user
 		where del_flag!=1 and (wechat_union_id = #{unionId,jdbcType=VARCHAR} or wechat_open_id =
 		#{openId,jdbcType=VARCHAR})
 	</select>
@@ -77,10 +78,11 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_u" />
-		from sys_user u
-		left join sys_role_user ru on u.id=ru.user_id
-		left join sys_role_user ru2 on ru2.role_id=ru.role_id
-		where u.del_flag!=1 and u.user_name!='root'
+		from iam_user u
+		left join iam_role_user ru on u.id=ru.user_id
+		left join iam_role_user ru2 on ru2.role_id=ru.role_id
+		where
+		u.del_flag!=1 and u.user_name!='root'
 		<if test="userId != null">
 			AND ru2.user_id=#{userId}
 		</if>
@@ -97,11 +99,11 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_user
+		delete from iam_user
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.User">
-		insert into sys_user (id, user_name,
+		insert into iam_user (id, user_name,
 		name_en,name_zh, password, user_type, pub_salt,
 		enable,
 		status,
@@ -119,7 +121,8 @@
 		#{nameEn,jdbcType=VARCHAR}, #{nameZh,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
 		#{userType,jdbcType=INTEGER},#{pubSalt,jdbcType=VARCHAR},
 		#{enable,jdbcType=INTEGER},
-		#{status,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER},
+		#{email,jdbcType=VARCHAR},
 		#{phone,jdbcType=VARCHAR}, #{wechatOpenId,jdbcType=VARCHAR},
 		#{wechatUnionId,jdbcType=VARCHAR},
 		#{facebookId,jdbcType=VARCHAR}, #{googleId,jdbcType=VARCHAR}, #{twitterId,jdbcType=VARCHAR},
@@ -131,9 +134,8 @@
 		#{updateDate,jdbcType=TIMESTAMP},
 		#{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.User" useGeneratedKeys="true"
-		keyProperty="id">
-		insert into sys_user
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.User" useGeneratedKeys="true" keyProperty="id">
+		insert into iam_user
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -296,7 +298,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.User">
-		update sys_user
+		update iam_user
 		<set>
 			<if test="userName != null">
 				user_name = #{userName,jdbcType=VARCHAR},
@@ -378,32 +380,32 @@
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.User">
-		update sys_user
+		update iam_user
 		set user_name = #{userName,jdbcType=VARCHAR},
-			name_en = #{nameEn,jdbcType=VARCHAR},
-			name_zh = #{nameZh,jdbcType=VARCHAR},
-			password = #{password,jdbcType=VARCHAR},
-			pub_salt = #{pubSalt,jdbcType=VARCHAR},
-			user_type = #{userType,jdbcType=INTEGER},
-			enable = #{enable,jdbcType=INTEGER},
-			status = #{status,jdbcType=INTEGER},
-			email = #{email,jdbcType=VARCHAR},
-			phone = #{phone,jdbcType=VARCHAR},
-			wechat_open_id = #{wechatOpenId,jdbcType=VARCHAR},
-			wechat_union_id = #{wechatUnionId,jdbcType=VARCHAR},
-			facebook_id = #{facebookId,jdbcType=VARCHAR},
-			google_id = #{googleId,jdbcType=VARCHAR},
-			twitter_id = #{twitterId,jdbcType=VARCHAR},
-			linkedin_id = #{linkedinId,jdbcType=VARCHAR},
-			alipay_id = #{alipayId,jdbcType=VARCHAR},
-			github_id = #{githubId,jdbcType=VARCHAR},
-			aws_id = #{awsId,jdbcType=VARCHAR},
-			remark = #{remark,jdbcType=VARCHAR},
-			create_by = #{createBy,jdbcType=BIGINT},
-			create_date = #{createDate,jdbcType=TIMESTAMP},
-			update_by = #{updateBy,jdbcType=BIGINT},
-			update_date = #{updateDate,jdbcType=TIMESTAMP},
-			del_flag = #{delFlag,jdbcType=INTEGER}
+		name_en = #{nameEn,jdbcType=VARCHAR},
+		name_zh = #{nameZh,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		pub_salt = #{pubSalt,jdbcType=VARCHAR},
+		user_type = #{userType,jdbcType=INTEGER},
+		enable = #{enable,jdbcType=INTEGER},
+		status = #{status,jdbcType=INTEGER},
+		email = #{email,jdbcType=VARCHAR},
+		phone = #{phone,jdbcType=VARCHAR},
+		wechat_open_id = #{wechatOpenId,jdbcType=VARCHAR},
+		wechat_union_id = #{wechatUnionId,jdbcType=VARCHAR},
+		facebook_id = #{facebookId,jdbcType=VARCHAR},
+		google_id = #{googleId,jdbcType=VARCHAR},
+		twitter_id = #{twitterId,jdbcType=VARCHAR},
+		linkedin_id = #{linkedinId,jdbcType=VARCHAR},
+		alipay_id = #{alipayId,jdbcType=VARCHAR},
+		github_id = #{githubId,jdbcType=VARCHAR},
+		aws_id = #{awsId,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_by = #{updateBy,jdbcType=BIGINT},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		del_flag = #{delFlag,jdbcType=INTEGER}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 </mapper>

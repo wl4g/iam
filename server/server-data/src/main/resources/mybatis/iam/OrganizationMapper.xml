@@ -31,7 +31,7 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_organization
+		from iam_organization
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
@@ -39,19 +39,19 @@
 		select
 		<include refid="Base_Column_List_g" />
 		,p.organization_code parent_code
-		from sys_organization g
-		left join sys_organization p on g.parent_id=p.id
+		from iam_organization g
+		left join iam_organization p on g.parent_id=p.id
 		where g.del_flag!=1
 	</select>
 
 	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		o.*,p.organization_code parent_code
-		from sys_organization o
-		inner join sys_organization_role oro on oro.organization_id=o.id
-		inner join sys_role_user ru on ru.role_id=oro.role_id
-		inner join sys_role r on r.id=oro.role_id
-		left join sys_organization p on o.parent_id=p.id
+		from iam_organization o
+		inner join iam_organization_role oro on oro.organization_id=o.id
+		inner join iam_role_user ru on ru.role_id=oro.role_id
+		inner join iam_role r on r.id=oro.role_id
+		left join iam_organization p on o.parent_id=p.id
 		where o.del_flag!=1 and r.del_flag!=1
 		and ru.user_id = #{userId,jdbcType=BIGINT}
 	</select>
@@ -59,8 +59,8 @@
 	<select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List_g" />
-		from sys_organization g
-		inner join sys_organization_role gr on g.id = gr.organization_id
+		from iam_organization g
+		inner join iam_organization_role gr on g.id = gr.organization_id
 		where g.del_flag!=1 and gr.role_id =
 		#{roleId,jdbcType=BIGINT}
 	</select>
@@ -68,24 +68,24 @@
 	<select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_organization
+		from iam_organization
 		where del_flag!=1 and parent_id = #{parentId,jdbcType=BIGINT}
 	</select>
 
 	<select id="countRoleByOrganizationId" resultType="java.lang.Integer" parameterType="java.util.Map">
-		select count(1) from sys_organization_role where organization_id in
+		select count(1) from iam_organization_role where organization_id in
 		<foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
 			#{id}
 		</foreach>
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_organization
+		delete from iam_organization
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.Organization">
-		insert into sys_organization (id, name_en,organization_code, name_zh,
+		insert into iam_organization (id, name_en,organization_code, name_zh,
 		type,
 		parent_id,
 		enable,
@@ -105,7 +105,7 @@
 
 	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.Organization" useGeneratedKeys="true"
 			keyProperty="id">
-		insert into sys_organization
+		insert into iam_organization
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -196,7 +196,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.Organization">
-		update sys_organization
+		update iam_organization
 		<set>
 			<if test="nameEn != null">
 				name_en = #{nameEn,jdbcType=VARCHAR},
@@ -241,7 +241,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.Organization">
-		update sys_organization
+		update iam_organization
 		set name_en = #{nameEn,jdbcType=VARCHAR},
 		organization_code =
 		#{organizationCode,jdbcType=VARCHAR},

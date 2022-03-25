@@ -17,7 +17,7 @@ package com.wl4g.iam.web;
 
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.service.FastCasClientService;
 import com.wl4g.iam.web.security.IamHelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {@link ClusterConfigController}
+ * {@link FastCasClientController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -35,11 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/clusterConfig")
-public class ClusterConfigController extends BaseController {
+public class FastCasClientController extends BaseController {
 
     // @com.alibaba.dubbo.config.annotation.Reference
     @Autowired
-    private ClusterConfigService clusterConfigService;
+    private FastCasClientService clientConfigService;
 
     @Autowired
     private IamHelper iamHelper;
@@ -52,7 +52,7 @@ public class ClusterConfigController extends BaseController {
     @RequestMapping(value = "/loadInit")
     public RespBase<?> loadInit() {
         RespBase<Object> resp = RespBase.create();
-        resp.setData(clusterConfigService.loadInit(iamHelper.getApplicationActiveEnvironmentType()));
+        resp.setData(clientConfigService.loadInit(iamHelper.getApplicationActiveEnvironmentType()));
         return resp;
     }
 

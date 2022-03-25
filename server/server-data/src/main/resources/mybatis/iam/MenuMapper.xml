@@ -36,21 +36,21 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_menu
+		from iam_menu
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_menu
+		from iam_menu
 		where del_flag!=1 and parent_id = #{parentId,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectWithRoot" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_m" />
-		from sys_menu m
+		from iam_menu m
 		where m.del_flag!=1
 		order by m.sort
 	</select>
@@ -58,9 +58,9 @@
 	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_m" />
-		from sys_menu m
-		left join sys_role_menu rm on rm.menu_id=m.id
-		left join sys_role_user ru on rm.role_id=ru.role_id
+		from iam_menu m
+		left join iam_role_menu rm on rm.menu_id=m.id
+		left join iam_role_user ru on rm.role_id=ru.role_id
 		where
 		m.del_flag!=1
 		<if test="userId != null">
@@ -71,17 +71,17 @@
 	<select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List_m" />
-		from sys_role_menu rm
-		inner join sys_menu m on rm.menu_id = m.id
+		from iam_role_menu rm
+		inner join iam_menu m on rm.menu_id = m.id
 		where rm.role_id = #{roleId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_menu
+		delete from iam_menu
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.iam.common.bean.Menu">
-		insert into sys_menu (id, name_en, name_zh,
+		insert into iam_menu (id, name_en, name_zh,
 		type, level, status,
 		parent_id,
 		permission,
@@ -100,7 +100,7 @@
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.Menu" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into sys_menu
+		insert into iam_menu
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -221,7 +221,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.Menu">
-		update sys_menu
+		update iam_menu
 		<set>
 			<if test="nameEn != null">
 				name_en = #{nameEn,jdbcType=VARCHAR},
@@ -281,7 +281,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.Menu">
-		update sys_menu
+		update iam_menu
 		set name_en = #{nameEn,jdbcType=VARCHAR},
 		name_zh =
 		#{nameZh,jdbcType=VARCHAR},

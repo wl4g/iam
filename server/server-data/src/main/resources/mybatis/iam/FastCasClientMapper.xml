@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.iam.data.ClusterConfigDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.ClusterConfig">
+<mapper namespace="com.wl4g.iam.data.FastCasClientDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.FastCasClient">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="app_name" property="appName" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="INTEGER" />
@@ -19,42 +19,47 @@
 	<sql id="Base_Column_List">
 		id, app_name, type, env_type, view_extranet_base_uri, extranet_base_uri,
 		intranet_base_uri, remark,
-		create_by, create_date, update_by, update_date, del_flag
+		create_by,
+		create_date, update_by, update_date, del_flag
 	</sql>
 	<sql id="Base_Column_List_a">
 		a.id, a.app_name, a.type, a.env_type, a.view_extranet_base_uri, a.extranet_base_uri,
-		a.intranet_base_uri, a.remark, a.create_by, a.create_date, a.update_by, a.update_date, a.del_flag
+		a.intranet_base_uri,
+		a.remark, a.create_by, a.create_date, a.update_by, a.update_date, a.del_flag
 	</sql>
 
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from sys_cluster_config
+		from iam_fastcas_client
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from sys_cluster_config
+		delete from iam_fastcas_client
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
-		insert into sys_cluster_config (id, app_name,
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+		insert into iam_fastcas_client (id, app_name,
 		type, env_type,
 		view_extranet_base_uri,
 		extranet_base_uri, intranet_base_uri, remark,
 		create_by, create_date, update_by,
-		update_date, del_flag)
+		update_date,
+		del_flag)
 		values (#{id,jdbcType=BIGINT}, #{appName,jdbcType=VARCHAR},
 		#{type,jdbcType=INTEGER},
-		#{envType,jdbcType=VARCHAR}, #{viewExtranetBaseUri,jdbcType=VARCHAR},
+		#{envType,jdbcType=VARCHAR},
+		#{viewExtranetBaseUri,jdbcType=VARCHAR},
 		#{extranetBaseUri,jdbcType=VARCHAR},
-		#{intranetBaseUri,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{intranetBaseUri,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
 		#{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
 		#{updateBy,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.ClusterConfig" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.FastCasClient" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into sys_cluster_config
+		insert into iam_fastcas_client
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -138,8 +143,8 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
-		update sys_cluster_config
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+		update iam_fastcas_client
 		<set>
 			<if test="appName != null">
 				app_name = #{appName,jdbcType=VARCHAR},
@@ -180,20 +185,24 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.ClusterConfig">
-		update sys_cluster_config
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+		update iam_fastcas_client
 		app_name = #{appName,jdbcType=VARCHAR},
-		type = #{type,jdbcType=INTEGER},
+		type =
+		#{type,jdbcType=INTEGER},
 		env_type = #{envType,jdbcType=VARCHAR},
-		view_extranet_base_uri = #{viewExtranetBaseUri,jdbcType=VARCHAR},
+		view_extranet_base_uri =
+		#{viewExtranetBaseUri,jdbcType=VARCHAR},
 		extranet_base_uri = #{extranetBaseUri,jdbcType=VARCHAR},
-		intranet_base_uri = #{intranetBaseUri,jdbcType=VARCHAR},
+		intranet_base_uri =
+		#{intranetBaseUri,jdbcType=VARCHAR},
 		remark = #{remark,jdbcType=VARCHAR},
 		create_by =
 		#{createBy,jdbcType=VARCHAR},
 		create_date = #{createDate,jdbcType=TIMESTAMP},
 		update_by = #{updateBy,jdbcType=VARCHAR},
-		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		update_date =
+		#{updateDate,jdbcType=TIMESTAMP},
 		del_flag = #{delFlag,jdbcType=INTEGER}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
@@ -202,7 +211,7 @@
 		SELECT
 		<include refid="Base_Column_List_a" />
 		FROM
-		sys_cluster_config a
+		iam_fastcas_client a
 		where a.app_name = #{appName,jdbcType=VARCHAR}
 		<if test="envType != null and envType != ''">
 			and a.env_type = #{envType,jdbcType=VARCHAR}
@@ -218,7 +227,7 @@
 		SELECT
 		<include refid="Base_Column_List_a" />
 		FROM
-		sys_cluster_config a
+		iam_fastcas_client a
 		where a.type = 1
 	</select>
 
@@ -227,7 +236,7 @@
 		SELECT
 		<include refid="Base_Column_List_a" />
 		FROM
-		sys_cluster_config a
+		iam_fastcas_client a
 		<where>
 			<if test="appNames != null and appNames.length > 0">
 				a.app_name in

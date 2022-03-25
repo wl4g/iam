@@ -37,9 +37,9 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.utils.bean.BeanMapConvert;
 import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.iam.common.bean.ClusterConfig;
+import com.wl4g.iam.common.bean.FastCasClient;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
-import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.service.FastCasClientService;
 import com.wl4g.iam.web.model.SessionDestroyClientModel;
 import com.wl4g.iam.web.model.SessionQueryClientModel;
 
@@ -57,7 +57,7 @@ import com.wl4g.iam.web.model.SessionQueryClientModel;
 public class ManagmentV2ApiController extends BaseController {
 
     // @com.alibaba.dubbo.config.annotation.Reference
-    private @Autowired ClusterConfigService clusterConfigService;
+    private @Autowired FastCasClientService clusterConfigService;
     private @Autowired RestTemplate restTemplate;
 
     /**
@@ -87,7 +87,7 @@ public class ManagmentV2ApiController extends BaseController {
         log.info("Gets remote sessions <= {} ...", query);
 
         // Get remote IAM base URI.
-        ClusterConfig config = clusterConfigService.getClusterConfig(query.getId());
+        FastCasClient config = clusterConfigService.getFastCasClient(query.getId());
         String url = buildRemoteApiURL(config.getExtranetBaseUri());
         url += "?".concat(new BeanMapConvert(query).toUriParmaters());
         log.info("Request get remote sessions of clusterConfigId: {}, URL: {}", query.getId(), url);
@@ -115,7 +115,7 @@ public class ManagmentV2ApiController extends BaseController {
         log.info("Destroy remote sessions. <= {}", destroy);
 
         // Get cluster configuration.
-        ClusterConfig config = clusterConfigService.getClusterConfig(destroy.getId());
+        FastCasClient config = clusterConfigService.getFastCasClient(destroy.getId());
         notNull(config, String.format("", destroy.getId()));
 
         HttpHeaders headers = new HttpHeaders();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.web.oidc;
+package com.wl4g.iam.web.oidc.v1;
 
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_AT_HASH;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EMAIL;
@@ -26,7 +26,10 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIM
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_SUB;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_DISPLAY_PAGE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_DEVICE_CODE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_IMPLICIT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_PASSWORD;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_REFRESH_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_ALL;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_CODE;
@@ -46,30 +49,22 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported.parseDigest;
-import static com.wl4g.infra.common.codec.Encodes.urlDecode;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -78,7 +73,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -111,7 +105,7 @@ import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
-import com.wl4g.iam.web.BaseIamController;
+import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
 import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.infra.common.collection.CollectionUtils2;
 import com.wl4g.infra.common.resource.StreamResource;
@@ -126,7 +120,7 @@ import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
  * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
 @V1OidcServerController
-public class V1OidcServerAuthenticatingController extends BaseIamController {
+public class V1OidcServerAuthingController extends BasedOidcServerAuthingController {
 
     private final SecureRandom random = new SecureRandom();
 
@@ -193,7 +187,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                 .response_types_supported(KEY_IAM_OIDC_RESPONSE_TYPE_ALL)
                 // OPTIONAL
                 .grant_types_supported(asList(KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_IMPLICIT,
-                        KEY_IAM_OIDC_GRANT_REFRESH_TOKEN))
+                        KEY_IAM_OIDC_GRANT_REFRESH_TOKEN, KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS, KEY_IAM_OIDC_GRANT_DEVICE_CODE))
                 // REQUIRED
                 .subject_types_supported(singletonList(KEY_IAM_OIDC_SUBJECT_PUBLIC))
                 // REQUIRED
@@ -387,6 +381,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
      * </pre>
      * </p>
      */
+    @SuppressWarnings("deprecation")
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> token(
@@ -395,6 +390,7 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
             @RequestParam String redirect_uri,
             @RequestParam(required = false) String refresh_token,
             @RequestParam(required = false) String client_id,
+            @RequestParam(required = false) String client_secret,
             @RequestParam(required = false) String code_verifier,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
@@ -472,6 +468,15 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     .scope(codeInfo.getScope())
                     .build();
             return ResponseEntity.ok(accessToken);
+        case KEY_IAM_OIDC_GRANT_PASSWORD: // password
+            // TODO
+            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        case KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS: // client_credentials
+            // TODO
+            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        case KEY_IAM_OIDC_GRANT_DEVICE_CODE: // device_code
+            // TODO
+            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
         default:
             return wrapErrorRFC6749("invalid_request", "unknown");
         }
@@ -562,9 +567,9 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         }
         Set<String> scopes = toSpaceSeparatedParams(accessTokenInfo.getScope());
         V1OidcUserClaims user = accessTokenInfo.getUser();
-        V1OidcUserClaims scopedUser = V1OidcUserClaims.builder().sub(user.getSub()).build();
+        V1OidcUserClaims oidcUser = V1OidcUserClaims.builder().sub(user.getSub()).build();
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_PROFILE)) {
-            scopedUser = scopedUser.withName(user.getName())
+            oidcUser = oidcUser.withName(user.getName())
                     .withGiven_name(user.getGiven_name())
                     .withFamily_name(user.getFamily_name())
                     .withNickname(user.getNickname())
@@ -575,16 +580,16 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
                     .withUpdated_at(user.getUpdated_at());
         }
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_EMAIL)) {
-            scopedUser = scopedUser.withEmail(user.getEmail()).withEmail_verified(user.getEmail_verified());
+            oidcUser = oidcUser.withEmail(user.getEmail()).withEmail_verified(user.getEmail_verified());
         }
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_ADDRESS)) {
-            scopedUser = scopedUser.withAddress(user.getAddress());
+            oidcUser = oidcUser.withAddress(user.getAddress());
         }
         if (scopes.contains(KEY_IAM_OIDC_SCOPE_PHONE)) {
-            scopedUser = scopedUser.withPhone_number(user.getPhone_number())
+            oidcUser = oidcUser.withPhone_number(user.getPhone_number())
                     .withPhone_number_verified(user.getPhone_number_verified());
         }
-        return ResponseEntity.ok().body(scopedUser);
+        return ResponseEntity.ok().body(oidcUser);
     }
 
     private String createAuthorizationCode(
@@ -690,48 +695,6 @@ public class V1OidcServerAuthenticatingController extends BaseIamController {
         // sign the JWT token
         jwt.sign(signer);
         return jwt.serialize();
-    }
-
-    private byte[] doDigestHash(String digestAlgName, String plaintext) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance(digestAlgName);
-        digest.reset();
-        digest.update(plaintext.getBytes(StandardCharsets.UTF_8));
-        return digest.digest();
-    }
-
-    private String toDetermineAccessToken(String authorizationHeader, String accessTokenParameter) {
-        if (!isBlank(accessTokenParameter)) {
-            return accessTokenParameter;
-        } else if (startsWith(authorizationHeader, KEY_IAM_OIDC_TOKEN_TYPE_BEARER.concat(" "))) {
-            return authorizationHeader.substring(KEY_IAM_OIDC_TOKEN_TYPE_BEARER.length() + 1);
-        }
-        return null;
-    }
-
-    private Set<String> toSpaceSeparatedParams(String param) {
-        if (isBlank(param)) {
-            return emptySet();
-        }
-        return new HashSet<>(asList(urlDecode(param).split(" ")));
-    }
-
-    private ResponseEntity<String> wrapUnauthentication() {
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.TEXT_HTML);
-        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getV1Oidc().getDefaultBasicRealmName()));
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
-                "<html><body><h1>401 Unauthorized</h1>IAM V1 OIDC server</body></html>");
-    }
-
-    /**
-     * https://datatracker.ietf.org/doc/html/rfc6749
-     */
-    private ResponseEntity<?> wrapErrorRFC6749(String error, String error_description) {
-        log.warn("Wrap rfc6749 error={} error_description={}", error, error_description);
-        Map<String, String> map = new LinkedHashMap<>();
-        map.put("error", error);
-        map.put("error_description", error_description);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
 }

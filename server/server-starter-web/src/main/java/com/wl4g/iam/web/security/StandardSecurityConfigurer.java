@@ -16,7 +16,7 @@
 package com.wl4g.iam.web.security;
 
 import com.wl4g.iam.common.bean.ApplicationInfo;
-import com.wl4g.iam.common.bean.ClusterConfig;
+import com.wl4g.iam.common.bean.FastCasClient;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
@@ -29,7 +29,7 @@ import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
-import com.wl4g.iam.service.ClusterConfigService;
+import com.wl4g.iam.service.FastCasClientService;
 import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
@@ -81,7 +81,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
     @Autowired
     private transient OrganizationService organService;
     @Autowired
-    private transient ClusterConfigService clusterConfigService;
+    private transient FastCasClientService clusterConfigService;
 
     @Autowired
     private IamHelper iamHelper;
@@ -125,9 +125,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
             appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
             appInfos.add(appInfo);
         } else { // Formal environment.
-            List<ClusterConfig> ccs = clusterConfigService.findByAppNames(appNames,
+            List<FastCasClient> ccs = clusterConfigService.findByAppNames(appNames,
                     iamHelper.getApplicationActiveEnvironmentType(), null);
-            for (ClusterConfig cc : ccs) {
+            for (FastCasClient cc : ccs) {
                 ApplicationInfo app = new ApplicationInfo();
                 app.setAppName(cc.getAppName());
                 app.setExtranetBaseUri(cc.getExtranetBaseUri());

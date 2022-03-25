@@ -18,6 +18,8 @@ package com.wl4g.iam.common.bean;
 import com.wl4g.infra.core.bean.BaseBean;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
@@ -32,6 +34,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
+@SuperBuilder
 public class User extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
 
@@ -39,9 +43,8 @@ public class User extends BaseBean implements Serializable {
     private String nameEn;
     private String nameZh;
     private String password;
-    private String pubSalt; // public salt
+    private String pubSalt;
     private Integer userType;
-    private Integer status;
     private String email;
     private String phone;
     private String wechatOpenId;
@@ -53,8 +56,11 @@ public class User extends BaseBean implements Serializable {
     private String alipayId;
     private String githubId;
     private String awsId;
+    private Integer status;
 
-    // --- Temporary. ---
+    //
+    // --- Temporary fields. ---
+    //
 
     private List<Long> roleIds;
     private String roleStrs;
