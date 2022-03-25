@@ -37,7 +37,7 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.utils.bean.BeanMapConvert;
 import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.iam.common.bean.FastCasClient;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.service.FastCasClientService;
 import com.wl4g.iam.web.model.SessionDestroyClientModel;
@@ -87,7 +87,7 @@ public class ManagmentV2ApiController extends BaseController {
         log.info("Gets remote sessions <= {} ...", query);
 
         // Get remote IAM base URI.
-        FastCasClient config = clusterConfigService.getFastCasClient(query.getId());
+        FastCasClientInfo config = clusterConfigService.getFastCasClientInfo(query.getId());
         String url = buildRemoteApiURL(config.getExtranetBaseUri());
         url += "?".concat(new BeanMapConvert(query).toUriParmaters());
         log.info("Request get remote sessions of clusterConfigId: {}, URL: {}", query.getId(), url);
@@ -115,7 +115,7 @@ public class ManagmentV2ApiController extends BaseController {
         log.info("Destroy remote sessions. <= {}", destroy);
 
         // Get cluster configuration.
-        FastCasClient config = clusterConfigService.getFastCasClient(destroy.getId());
+        FastCasClientInfo config = clusterConfigService.getFastCasClientInfo(destroy.getId());
         notNull(config, String.format("", destroy.getId()));
 
         HttpHeaders headers = new HttpHeaders();

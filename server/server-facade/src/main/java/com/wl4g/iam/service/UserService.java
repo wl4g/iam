@@ -65,12 +65,10 @@ public interface UserService {
     @RequestMapping(value = "/detail", method = GET)
     User detail(@RequestParam("userId") Long userId);
 
-    @RequestMapping(value = "/findByUserName", method = GET)
-    User findByUserName(@RequestParam("userName") String userName);
+    @RequestMapping(value = "/findBySubject", method = GET)
+    User findBySubject(@RequestParam("subject") String subject);
 
-    @RequestMapping(value = "/findByUnionIdOrOpenId", method = POST)
-    User findByUnionIdOrOpenId(
-            @RequestParam(name = "unionId", required = false) String unionId,
-            @RequestParam(name = "openId", required = false) String openId);
+    @RequestMapping(value = "/findBySelective", method = POST)
+    User findBySelective(@RequestBody User user);
 
 }

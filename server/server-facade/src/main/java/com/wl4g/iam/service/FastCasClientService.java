@@ -16,7 +16,7 @@
 package com.wl4g.iam.service;
 
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.FastCasClient;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,16 +42,16 @@ public interface FastCasClientService {
     @RequestMapping(value = "/loadInit", method = GET)
     Map<String, Object> loadInit(@RequestParam(value = "envType", required = false) String envType);
 
-    @RequestMapping(value = "/getFastCasClient", method = GET)
-    FastCasClient getFastCasClient(@RequestParam("clusterConfigId") Long clusterConfigId);
+    @RequestMapping(value = "/getFastCasClientInfo", method = GET)
+    FastCasClientInfo getFastCasClientInfo(@RequestParam("clusterConfigId") Long clusterConfigId);
 
     @RequestMapping(value = "/getByAppNames", method = POST)
-    List<FastCasClient> findByAppNames(
+    List<FastCasClientInfo> findByAppNames(
             @RequestParam(value = "appNames", required = false) String[] appNames,
             @RequestParam(value = "envType", required = false) String envType,
             @RequestParam(value = "type", required = false) String type);
 
     @RequestMapping(value = "/findOfIamServers", method = GET)
-    List<FastCasClient> findOfIamServers();
+    List<FastCasClientInfo> findOfIamServers();
 
 }

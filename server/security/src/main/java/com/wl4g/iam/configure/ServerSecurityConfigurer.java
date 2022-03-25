@@ -16,7 +16,7 @@
 package com.wl4g.iam.configure;
 
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
@@ -47,7 +47,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
      *            application name
      * @return aplication information
      */
-    ApplicationInfo getApplicationInfo(String appName);
+    FastCasClientInfo getFastCasClientInfo(String appName);
 
     /**
      * Find application information list by names
@@ -56,7 +56,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
      *            application names
      * @return aplication information
      */
-    List<ApplicationInfo> findApplicationInfo(String... appNames);
+    List<FastCasClientInfo> findFastCasClientInfo(String... appNames);
 
     /**
      * Gets authenticating user account details information based on loginId

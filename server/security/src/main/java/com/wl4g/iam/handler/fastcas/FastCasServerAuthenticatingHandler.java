@@ -70,7 +70,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
-import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.constant.FastCasIAMConstants;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Attributes;
@@ -119,7 +119,7 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
             }
 
             // Get application.
-            ApplicationInfo app = configurer.getApplicationInfo(appName);
+            FastCasClientInfo app = configurer.getFastCasClientInfo(appName);
             if (Objects.isNull(app)) {
                 throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
             }
@@ -288,7 +288,7 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
             // Cleanup this(Solve the dead cycle).
             appNames.remove(config.getServiceName());
 
-            List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
+            List<FastCasClientInfo> apps = configurer.findFastCasClientInfo(appNames.toArray(new String[] {}));
             if (!isEmpty(apps)) {
                 // logout all
                 logoutAllMark = handleLogoutSessionsAll(subject, info, apps);
@@ -400,13 +400,13 @@ public class FastCasServerAuthenticatingHandler extends AbstractAuthenticatingHa
      * @param apps
      * @return
      */
-    private boolean handleLogoutSessionsAll(Subject subject, GrantCredentialsInfo info, List<ApplicationInfo> apps) {
+    private boolean handleLogoutSessionsAll(Subject subject, GrantCredentialsInfo info, List<FastCasClientInfo> apps) {
         boolean logoutAllMark = true; // Represents all logout mark.
 
         /*
          * Notification all logged-in applications to logout
          */
-        for (ApplicationInfo app : apps) {
+        for (FastCasClientInfo app : apps) {
             hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' is required", app.getAppName());
 
             // Gets grantTicket by appName

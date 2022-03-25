@@ -64,12 +64,10 @@ public interface UserDao {
             @RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh,
             @RequestParam(value = "roleId", required = false) @Param("roleId") Long roleId);
 
-    @RequestMapping(method = GET, value = "/selectByUserName")
-    User selectByUserName(@RequestParam("userName") String userName);
+    @RequestMapping(method = GET, value = "/selectBySubject")
+    User selectBySubject(@RequestParam("subject") String subject);
 
-    @RequestMapping(method = GET, value = "/selectByUnionIdOrOpenId")
-    User selectByUnionIdOrOpenId(
-            @RequestParam(name = "unionId", required = false) @Param("unionId") String unionId,
-            @RequestParam(name = "openId", required = false) @Param("openId") String openId);
+    @RequestMapping(method = GET, value = "/selectBySelective")
+    User selectBySelective(@RequestBody User user);
 
 }

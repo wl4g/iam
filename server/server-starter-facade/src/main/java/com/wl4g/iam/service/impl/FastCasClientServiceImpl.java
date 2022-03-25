@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.iam.common.bean.FastCasClient;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.data.FastCasClientDao;
 import com.wl4g.iam.service.FastCasClientService;
 
@@ -41,32 +41,32 @@ import java.util.Map;
 public class FastCasClientServiceImpl implements FastCasClientService {
 
     @Autowired
-    private FastCasClientDao clientConfigDao;
+    private FastCasClientDao fastCasClientDao;
 
     @Override
     public Map<String, Object> loadInit(String envType) {
-        List<FastCasClient> list = clientConfigDao.selectByAppNames(null, envType, null);
+        List<FastCasClientInfo> list = fastCasClientDao.selectByAppNames(null, envType, null);
         Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'sys_cluster_config'");
         Map<String, Object> map = new HashMap<>();
-        for (FastCasClient entryAddress : list) {
+        for (FastCasClientInfo entryAddress : list) {
             map.put(entryAddress.getAppName(), entryAddress);
         }
         return map;
     }
 
     @Override
-    public FastCasClient getFastCasClient(Long clusterConfigId) {
-        return clientConfigDao.selectByPrimaryKey(clusterConfigId);
+    public FastCasClientInfo getFastCasClientInfo(Long clusterConfigId) {
+        return fastCasClientDao.selectByPrimaryKey(clusterConfigId);
     }
 
     @Override
-    public List<FastCasClient> findByAppNames(String[] appNames, String envType, String type) {
-        return clientConfigDao.selectByAppNames(appNames, envType, type);
+    public List<FastCasClientInfo> findByAppNames(String[] appNames, String envType, String type) {
+        return fastCasClientDao.selectByAppNames(appNames, envType, type);
     }
 
     @Override
-    public List<FastCasClient> findOfIamServers() {
-        return clientConfigDao.getIamServer();
+    public List<FastCasClientInfo> findOfIamServers() {
+        return fastCasClientDao.getIamServer();
     }
 
 }

@@ -25,7 +25,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.core.exception.BindingConstraintsException;
@@ -57,10 +57,10 @@ public interface StandardSecurityConfigurerFeignAdapter extends ServerSecurityCo
 	}
 
 	@Override
-	ApplicationInfo getApplicationInfo(String appName);
+	FastCasClientInfo getFastCasClientInfo(String appName);
 
 	@Override
-	List<ApplicationInfo> findApplicationInfo(String... appNames);
+	List<FastCasClientInfo> findFastCasClientInfo(String... appNames);
 
 	@Override
 	IamPrincipal getIamUserDetail(Parameter parameter);

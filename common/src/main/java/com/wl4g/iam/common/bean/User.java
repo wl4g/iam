@@ -22,6 +22,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,9 +40,15 @@ import java.util.List;
 public class User extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
 
-    private String userName;
-    private String nameEn;
-    private String nameZh;
+    private String subject;
+    private String given_name;
+    private String family_name;
+    private String nickname;
+    private String preferred_username;
+    private String gender;
+    private String locale;
+    private Date birthdate;
+    private String picture;
     private String password;
     private String pubSalt;
     private Integer userType;
@@ -69,8 +76,8 @@ public class User extends BaseBean implements Serializable {
     public User() {
     }
 
-    public User(String userName) {
-        this.userName = userName;
+    public User(String subject) {
+        this.subject = subject;
     }
 
 }

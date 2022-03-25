@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.iam.common.bean.FastCasClient;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 
 import java.util.List;
 
 /**
- * {@link FastCasClientDao}
+ * {@link FastCasClientInfoDao}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-0520
@@ -43,33 +43,33 @@ public interface FastCasClientDao {
     int deleteByPrimaryKey(@RequestParam("id") Long id);
 
     @RequestMapping(value = "/insert", method = { POST })
-    int insert(@RequestBody FastCasClient record);
+    int insert(@RequestBody FastCasClientInfo record);
 
     @RequestMapping(value = "/insertSelective", method = { POST })
-    int insertSelective(@RequestBody FastCasClient record);
+    int insertSelective(@RequestBody FastCasClientInfo record);
 
     @RequestMapping(value = "/selectByPrimaryKey", method = GET)
-    FastCasClient selectByPrimaryKey(@RequestParam("id") Long id);
+    FastCasClientInfo selectByPrimaryKey(@RequestParam("id") Long id);
 
     @RequestMapping(value = "/updateByPrimaryKeySelective", method = { POST })
-    int updateByPrimaryKeySelective(@RequestBody FastCasClient record);
+    int updateByPrimaryKeySelective(@RequestBody FastCasClientInfo record);
 
     @RequestMapping(value = "/updateByPrimaryKey", method = { POST })
-    int updateByPrimaryKey(@RequestBody FastCasClient record);
+    int updateByPrimaryKey(@RequestBody FastCasClientInfo record);
 
     @RequestMapping(value = "/selectByAppNames", method = GET)
-    List<FastCasClient> selectByAppNames(
+    List<FastCasClientInfo> selectByAppNames(
             @RequestParam(name = "appNames", required = false) @Param("appNames") String[] appNames,
             @RequestParam(name = "envType", required = false) @Param("envType") String envType,
             @RequestParam(name = "type", required = false) @Param("type") String type);
 
     @RequestMapping(value = "/getByAppName", method = GET)
-    FastCasClient getByAppName(
+    FastCasClientInfo getByAppName(
             @RequestParam(name = "appName", required = false) @Param("appName") String appName,
             @RequestParam(name = "envType", required = false) @Param("envType") String envType,
             @RequestParam(name = "type", required = false) @Param("type") String type);
 
     @RequestMapping(value = "/getIamServer", method = GET)
-    List<FastCasClient> getIamServer();
+    List<FastCasClientInfo> getIamServer();
 
 }

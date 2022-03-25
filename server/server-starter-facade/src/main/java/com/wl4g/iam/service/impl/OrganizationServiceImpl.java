@@ -64,7 +64,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Set<Organization> getUserOrganizations(User user) {
         List<Organization> orgs = null;
-        if (DEFAULT_SUPER_USER.equals(user.getUserName())) {
+        if (DEFAULT_SUPER_USER.equals(user.getSubject())) {
             orgs = organizationDao.selectByRoot();
         } else {
             orgs = organizationDao.selectByUserId(user.getId());

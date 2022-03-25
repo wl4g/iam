@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.iam.data.FastCasClientDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.FastCasClient">
+<mapper namespace="com.wl4g.iam.data.FastCasClientInfoDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.FastCasClientInfo">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="app_name" property="appName" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="INTEGER" />
@@ -38,7 +38,7 @@
 		delete from iam_fastcas_client
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+	<insert id="insert" parameterType="com.wl4g.iam.common.bean.FastCasClientInfo">
 		insert into iam_fastcas_client (id, app_name,
 		type, env_type,
 		view_extranet_base_uri,
@@ -57,7 +57,7 @@
 		#{updateBy,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.FastCasClient" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.FastCasClientInfo" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into iam_fastcas_client
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -143,7 +143,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.FastCasClientInfo">
 		update iam_fastcas_client
 		<set>
 			<if test="appName != null">
@@ -185,7 +185,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.FastCasClient">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.FastCasClientInfo">
 		update iam_fastcas_client
 		app_name = #{appName,jdbcType=VARCHAR},
 		type =

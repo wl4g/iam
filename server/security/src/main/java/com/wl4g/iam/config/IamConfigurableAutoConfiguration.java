@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
@@ -85,12 +85,12 @@ public class IamConfigurableAutoConfiguration {
         }
 
         @Override
-        public ApplicationInfo getApplicationInfo(String applicationName) {
+        public FastCasClientInfo getFastCasClientInfo(String applicationName) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
+        public List<FastCasClientInfo> findFastCasClientInfo(String... applicationNames) {
             throw new UnsupportedOperationException();
         }
 

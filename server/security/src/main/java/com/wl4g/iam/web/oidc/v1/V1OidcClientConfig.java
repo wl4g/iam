@@ -16,6 +16,7 @@
 package com.wl4g.iam.web.oidc.v1;
 
 import com.wl4g.iam.config.properties.V1OidcProperties;
+import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
 
 /**
  * {@link V1OidcClientConfig}
@@ -26,5 +27,11 @@ import com.wl4g.iam.config.properties.V1OidcProperties;
  */
 public class V1OidcClientConfig extends V1OidcProperties {
     private static final long serialVersionUID = 4776976002803043619L;
+
+    public V1OidcClientConfig createInstance(V1OidcProperties defaultConfig) {
+        V1OidcClientConfig that = new V1OidcClientConfig();
+        BeanCopierUtils.mapper(defaultConfig, that);
+        return that;
+    }
 
 }

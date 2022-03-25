@@ -96,8 +96,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void insert(User user) {
-        User user1 = userDao.selectByUserName(user.getUserName());
-        Assert.isTrue(user1 == null, user.getUserName() + " is exist");
+        User user1 = userDao.selectBySubject(user.getSubject());
+        Assert.isTrue(user1 == null, user.getSubject() + " is exist");
         user.preInsert();
         user.setId(SnowflakeIdGenerator.getDefault().nextId());
         userDao.insertSelective(user);
@@ -159,13 +159,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUserName(String userName) {
-        return userDao.selectByUserName(userName);
+    public User findBySubject(String userName) {
+        return userDao.selectBySubject(userName);
     }
 
     @Override
-    public User findByUnionIdOrOpenId(String unionId, String openId) {
-        return userDao.selectByUnionIdOrOpenId(unionId, openId);
+    public User findBySelective(User user) {
+        return userDao.selectBySelective(user);
     }
 
     private void getMenusByParentId(Long parentId, Set<Menu> menuSet) {

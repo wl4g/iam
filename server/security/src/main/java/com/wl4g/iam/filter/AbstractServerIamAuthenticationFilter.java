@@ -92,7 +92,7 @@ import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
-import com.wl4g.iam.common.bean.ApplicationInfo;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
@@ -408,7 +408,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
         // Check & use default redirectUrl.
         if (!isBlank(redirect.getFromAppName())) {
-            ApplicationInfo appInfo = configurer.getApplicationInfo(redirect.getFromAppName());
+            FastCasClientInfo appInfo = configurer.getFastCasClientInfo(redirect.getFromAppName());
             notNull(appInfo, IllegalRequestException.class, "Invalid redirected application '%s'", redirect.getFromAppName());
             if (isBlank(redirect.getRedirectUrl())) {
                 // Use default redirectUrl

@@ -89,7 +89,7 @@ public class UserController extends BaseController {
 
         if (isNotBlank(user.getPassword())) { // update-passwd
             // TODO Dynamic choose algorithm!!! Default use RSA
-            CredentialsToken crToken = new CredentialsToken(user.getUserName(), user.getPassword(), CryptKind.RSA);
+            CredentialsToken crToken = new CredentialsToken(user.getSubject(), user.getPassword(), CryptKind.RSA);
             CodecSource publicSalt = new CodecSource(RandomUtils.nextBytes(16));
             String sign = securer.signature(crToken, publicSalt);
             user.setPassword(sign); // ciphertext
@@ -100,7 +100,7 @@ public class UserController extends BaseController {
         userService.save(user);
 
         // Update the password, need to logout the user
-        sessionDAO.removeAccessSession(user.getUserName());
+        sessionDAO.removeAccessSession(user.getSubject());
 
         return resp;
     }
