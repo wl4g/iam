@@ -129,4 +129,6 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_CLAIMS_NONCE = "nonce";
     public static final String KEY_IAM_OIDC_CLAIMS_AT_HASH = "at_hash";
 
+    /** Default JWK configuration resources. */
+    public static final String URI_IAM_OIDC_JWK_DEFAULT_RESOURCE = "classpath*:/credentials/oidc/jwks.json";
 }

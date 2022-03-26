@@ -15,13 +15,12 @@
  */
 package com.wl4g.iam.config;
 
-import com.wl4g.iam.common.bean.FastCasClientInfo;
-import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
-import com.wl4g.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.iam.core.exception.BindingConstraintsException;
-import com.wl4g.iam.core.exception.IamException;
+import static java.lang.String.format;
+
+import java.util.List;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -30,12 +29,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import static java.lang.String.format;
-
-import java.util.List;
+import com.wl4g.iam.common.bean.FastCasClientInfo;
+import com.wl4g.iam.common.bean.SocialConnectInfo;
+import com.wl4g.iam.common.bean.oidc.OidcClient;
+import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
+import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.exception.BindingConstraintsException;
+import com.wl4g.iam.core.exception.IamException;
 
 /**
  * Based context configurable auto configuration.
@@ -124,6 +125,11 @@ public class IamConfigurableAutoConfiguration {
             throw new IamException(format(
                     "\n\n=>\tWhen relying on IAM security module as a service, it is necessary to implements the '%s' interface!\n",
                     ServerSecurityConfigurer.class.getName()));
+        }
+
+        @Override
+        public OidcClient loadOidcClient(String clientId) {
+            throw new UnsupportedOperationException();
         }
 
     }

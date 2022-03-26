@@ -39,10 +39,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class V1AccessTokenInfo {
     private V1OidcUserClaims user;
+    private String clientId;
     private String accessToken;
     private String refreshToken;
     private Date expiration;
     private String scope;
-    private String clientId;
     private String iss;
 }

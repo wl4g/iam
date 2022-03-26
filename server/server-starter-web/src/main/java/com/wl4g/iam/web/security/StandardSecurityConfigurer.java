@@ -19,6 +19,7 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeSet;
 import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
@@ -44,6 +45,7 @@ import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
@@ -52,8 +54,11 @@ import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
 import com.wl4g.iam.common.subject.IamPrincipal.SnsParameter;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.iam.core.exception.OidcException;
 import com.wl4g.iam.service.FastCasClientService;
 import com.wl4g.iam.service.MenuService;
+import com.wl4g.iam.service.OidcClientService;
+import com.wl4g.iam.service.OidcMapperService;
 import com.wl4g.iam.service.OrganizationService;
 import com.wl4g.iam.service.RoleService;
 import com.wl4g.iam.service.UserService;
@@ -78,6 +83,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
     private @Autowired transient MenuService menuService;
     private @Autowired transient OrganizationService organService;
     private @Autowired transient FastCasClientService fastCasClientService;
+    private @Autowired transient OidcClientService oidcClientService;
+    private @Autowired transient OidcMapperService oidcMapperService;
     private @Autowired transient IamHelper iamHelper;
 
     @Override
@@ -246,6 +253,21 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public OidcClient loadOidcClient(String clientId) {
+        List<OidcClient> clients = oidcClientService.findList(
+                OidcClient.builder().clientId(clientId).envType(iamHelper.getApplicationActiveEnvironmentType()).build());
+        if (isEmpty(clients)) {
+            throw new OidcException(format("No found OIDC client configuration by clientId='%s'", clientId));
+        } else if (clients.size() > 1) {
+            throw new IllegalStateException(
+                    format("Data check error, too many OIDC client configurations was got by clientId='%s'", clientId));
+        }
+        OidcClient client = clients.get(0);
+        client.setMappers(oidcMapperService.findByClientId(clientId));
+        return client;
     }
 
 }

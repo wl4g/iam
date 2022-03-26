@@ -102,14 +102,10 @@ import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
-import com.wl4g.iam.config.properties.IamProperties;
-import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
 import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.infra.common.collection.CollectionUtils2;
-import com.wl4g.infra.common.resource.StreamResource;
-import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
  * IAM V1-OIDC authentication controller.
@@ -124,7 +120,6 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
     private final SecureRandom random = new SecureRandom();
 
-    private @Autowired IamProperties config;
     private @Autowired V1OidcAuthenticatingHandler oidcHandler;
 
     private JWSSigner signer;
@@ -134,25 +129,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     @PostConstruct
     public void init() throws IOException, ParseException, JOSEException {
         log.info("Initializing OIDC JWK ...");
-
-        ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver(
-                Thread.currentThread().getContextClassLoader());
-        Set<StreamResource> resources = resolver.getResources(config.getV1Oidc().getDefaultJwksJsonResource());
-        if (resources.isEmpty()) {
-            throw new IamException(format("Not found jwks resource: %s", config.getV1Oidc().getDefaultJwksJsonResource()));
-        }
-        StreamResource jwksRes = resources.iterator().next();
-        if (resources.size() > 1) {
-            log.warn(format("[WARNNING] Found multi jwks resources %s by %s, Using the first one by default %s", resources,
-                    config.getV1Oidc().getDefaultJwksJsonResource(), jwksRes));
-        }
-        JWKSet jwkSet = JWKSet.load(jwksRes.getInputStream());
-        JWK key = jwkSet.getKeys().get(0);
-        this.signer = new RSASSASigner((RSAKey) key);
-        this.pubJWKSet = jwkSet.toPublicJWKSet();
-        this.jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse(config.getV1Oidc().getDefaultJwksAlgName()))
-                .keyID(key.getKeyID())
-                .build();
+        // TODO remove, use from DB config
+        JWK jwk = V1OidcClientConfig.DEFAULT_JWKSET.getKeys().get(0);
+        this.signer = new RSASSASigner((RSAKey) jwk);
+        this.pubJWKSet = V1OidcClientConfig.DEFAULT_JWKSET.toPublicJWKSet();
+        this.jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse("S256")).keyID(jwk.getKeyID()).build();
     }
 
     /**
@@ -166,20 +147,20 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     public ResponseEntity<?> metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
         log.info("called:metadata '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
 
-        String urlPrefix = uriBuilder.replacePath(null).build().encode().toUriString();
+        String prefix = uriBuilder.replacePath(null).build().encode().toUriString();
         // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
         // https://tools.ietf.org/html/rfc8414#section-2
         V1MetadataEndpointModel metadata = V1MetadataEndpointModel.builder()
-                .issuer(urlPrefix.concat("/")) // REQUIRED
+                .issuer(prefix.concat("/")) // REQUIRED
                 // REQUIRED
-                .authorization_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_AUTHORIZE))
+                .authorization_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_AUTHORIZE))
                 // REQUIRED
-                .token_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_TOKEN))
+                .token_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_TOKEN))
                 // RECOMMENDED
-                .userinfo_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO))
+                .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO))
                 // REQUIRED
-                .jwks_uri(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_JWKS))
-                .introspection_endpoint(urlPrefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
+                .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_JWKS))
+                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
                 // REQUIRED
                 .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL,
                         KEY_IAM_OIDC_SCOPE_ADDRESS, KEY_IAM_OIDC_SCOPE_PHONE))
@@ -191,14 +172,14 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 // REQUIRED
                 .subject_types_supported(singletonList(KEY_IAM_OIDC_SUBJECT_PUBLIC))
                 // REQUIRED
-                .id_token_signing_alg_values_supported(config.getV1Oidc().getDefaultIdTokenAlgSupported())
+                .id_token_signing_alg_values_supported(null)
                 .claims_supported(asList(KEY_IAM_OIDC_CLAIMS_SUB, KEY_IAM_OIDC_CLAIMS_ISS, KEY_IAM_OIDC_CLAIMS_NAME,
                         KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
                         KEY_IAM_OIDC_CLAIMS_EMAIL))
                 .display_values_supported(asList(KEY_IAM_OIDC_DISPLAY_PAGE))
                 .service_documentation(config.getV1Oidc().getServiceDocumentation())
                 // PKCE support advertised
-                .code_challenge_methods_supported(config.getV1Oidc().getDefaultCodeChallengeMethodsSupported())
+                .code_challenge_methods_supported(null)
                 .build();
         return ResponseEntity.ok().body(metadata);
     }
@@ -270,10 +251,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
                     // Check challenge method supported.
                     if (!isBlank(code_challenge_method)
-                            && !config.getV1Oidc().getDefaultCodeChallengeMethodsSupported().contains(code_challenge_method)) {
+                            && !oidcHandler.loadClientConfig(client_id).getCodeChallengeMethodsSupported().contains(
+                                    code_challenge_method)) {
                         return wrapErrorRFC6749("unsupported_code_challenge_method",
                                 format("code_challenge_method must contains is '%s'",
-                                        config.getV1Oidc().getDefaultCodeChallengeMethodsSupported()));
+                                        oidcHandler.loadClientConfig(client_id).getCodeChallengeMethodsSupported()));
                     }
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
                             iss, scope, nonce);
@@ -444,7 +426,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     .refresh_token(accessTokenInfo.getRefreshToken())
                     .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                     .scope(codeInfo.getScope())
-                    .expires_in(config.getV1Oidc().getDefaultAccessTokenExpirationSeconds())
+                    .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
                     .id_token(id_token)
                     .build();
             return ResponseEntity.ok(accessToken);
@@ -464,7 +446,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     .access_token(accessTokenInfo.getAccessToken())
                     .refresh_token(accessTokenInfo.getRefreshToken())
                     .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                    .expires_in(config.getV1Oidc().getDefaultAccessTokenExpirationSeconds())
+                    .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
                     .scope(codeInfo.getScope())
                     .build();
             return ResponseEntity.ok(accessToken);
@@ -615,9 +597,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
     private V1AccessTokenInfo createAccessTokenInfo(String iss, V1OidcUserClaims user, String client_id, String scope)
             throws JOSEException {
+        // load config for client.
+        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+
         // Create JWT claims
-        Date expiration = new Date(
-                System.currentTimeMillis() + config.getV1Oidc().getDefaultAccessTokenExpirationSeconds() * 1000L);
+        Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .subject(user.getSub())
@@ -647,15 +631,17 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .build();
 
         oidcHandler.putAccessToken(access_token, accessTokenInfo);
-        oidcHandler.putRefreshToken(refresh_token, access_token);
+        oidcHandler.putRefreshToken(refresh_token, accessTokenInfo);
         return accessTokenInfo;
     }
 
     private String createRefreshToken(String access_token, String iss, V1OidcUserClaims user, String client_id, String scope)
             throws JOSEException {
+        // load config for client.
+        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+
         // create JWT claims
-        Date expiration = new Date(
-                System.currentTimeMillis() + config.getV1Oidc().getDefaultAccessTokenExpirationSeconds() * 1000L);
+        Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .subject(user.getSub())
@@ -675,8 +661,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
     private String createIdToken(String iss, V1OidcUserClaims user, String client_id, String nonce)
             throws NoSuchAlgorithmException, JOSEException {
+        // load config for client.
+        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+
         // compute at_hash
-        byte[] hashBytes = doDigestHash(parseDigest(config.getV1Oidc().getDefaultIdTokenAlgName()), user.getSub());
+        byte[] hashBytes = doDigestHash(parseDigest(clientConfig.getIdTokenSignAlg()), user.getSub());
         byte[] hashBytesLeftHalf = Arrays.copyOf(hashBytes, hashBytes.length / 2);
         Base64URL encodedHash = Base64URL.encode(hashBytesLeftHalf);
         // create JWT claims
@@ -684,8 +673,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .issuer(iss)
                 .audience(client_id)
                 .issueTime(new Date())
-                .expirationTime(
-                        new Date(currentTimeMillis() + config.getV1Oidc().getDefaultAccessTokenExpirationSeconds() * 1000L))
+                .expirationTime(new Date(currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L))
                 .jwtID(UUID.randomUUID().toString())
                 .claim(KEY_IAM_OIDC_CLAIMS_NONCE, nonce)
                 .claim(KEY_IAM_OIDC_CLAIMS_AT_HASH, encodedHash)

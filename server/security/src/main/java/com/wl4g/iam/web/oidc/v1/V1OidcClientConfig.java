@@ -15,11 +15,40 @@
  */
 package com.wl4g.iam.web.oidc.v1;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_JWK_DEFAULT_RESOURCE;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Set;
+
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.config.properties.V1OidcProperties;
+import com.wl4g.iam.config.properties.V1OidcProperties.DefaultProtocolProperties;
+import com.wl4g.iam.core.exception.IamException;
+import com.wl4g.iam.core.exception.OidcException;
+import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthenticatingHandler;
+import com.wl4g.infra.common.resource.StreamResource;
+import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -34,15 +63,91 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @ToString
-@SuperBuilder
-@NoArgsConstructor
-public class V1OidcClientConfig extends V1OidcProperties {
+public class V1OidcClientConfig extends DefaultProtocolProperties {
     private static final long serialVersionUID = 4776976002803043619L;
 
-    public V1OidcClientConfig createInstance(V1OidcProperties defaultConfig) {
-        V1OidcClientConfig that = new V1OidcClientConfig();
-        BeanCopierUtils.mapper(defaultConfig, that);
+    private final String clientId;
+    private String clientName;
+
+    private List<OidcClient.ClientSecretInfo> clientSecrets;
+    private JWKConfig jwkConfig;
+
+    private String clientType;
+
+    private List<String> validRedirectUris;
+    private String adminUri;
+    private String logoUri;
+    private String policyUri;
+    private String termsUri;
+    private List<String> validWebOriginUris;
+
+    private boolean backchannelLogoutEnabled;
+    private String backchannelLogoutUri;
+
+    private boolean codeChallengeEnabled;
+
+    public static V1OidcClientConfig newInstance(String clientId, V1OidcProperties config) {
+        V1OidcClientConfig that = new V1OidcClientConfig(clientId);
+        BeanCopierUtils.mapper(config.getDefaultProtocolProperties(), that);
+        try {
+            that.initJWKConfig();
+        } catch (JOSEException e) {
+            throw new OidcException(format("Failed to init jwks for clientId='%s'", clientId), e);
+        }
         return that;
     }
+
+    private V1OidcClientConfig(String clientId) {
+        this.clientId = hasTextOf(clientId, "clientId");
+    }
+
+    private void initJWKConfig() throws JOSEException {
+        // TODO use from DB config
+        JWKSet jwkSet = DEFAULT_JWKSET;
+        JWK key = jwkSet.getKeys().get(0);
+        JWSSigner signer = new RSASSASigner((RSAKey) key);
+        JWKSet pubJWKSet = jwkSet.toPublicJWKSet();
+        JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse(getJwksSignAlg())).keyID(key.getKeyID()).build();
+        this.jwkConfig = new JWKConfig(signer, pubJWKSet, jwsHeader);
+    }
+
+    private static final JWKSet loadJWKSetDefault0() {
+        ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver(
+                Thread.currentThread().getContextClassLoader());
+        Set<StreamResource> resources;
+        try {
+            resources = resolver.getResources(URI_IAM_OIDC_JWK_DEFAULT_RESOURCE);
+        } catch (IOException e1) {
+            throw new IllegalStateException("Failed to load default JWKS resources.", e1);
+        }
+        if (isEmpty(resources)) {
+            throw new IamException(format("Not found default JWKS resources: %s", URI_IAM_OIDC_JWK_DEFAULT_RESOURCE));
+        }
+        StreamResource res = resources.iterator().next();
+        if (resources.size() > 1) {
+            getLogger(DefaultV1OidcAuthenticatingHandler.class)
+                    .warn(format("[WARNNING] Found multi jwks resources %s by %s, Using the first one by default %s", resources,
+                            URI_IAM_OIDC_JWK_DEFAULT_RESOURCE, res));
+        }
+        try (InputStream in = res.getInputStream()) {
+            JWKSet jwkset = JWKSet.load(in);
+            // TODO Deep safety processes.
+            return new JWKSet(unmodifiableList(jwkset.getKeys()), unmodifiableMap(jwkset.getAdditionalMembers()));
+        } catch (IOException | ParseException e) {
+            throw new IllegalStateException("Failed to load default JWKS resources.", e);
+        }
+    }
+
+    @Getter
+    @ToString
+    @SuperBuilder
+    @AllArgsConstructor
+    public static final class JWKConfig {
+        private final JWSSigner signer;
+        private final JWKSet pubJWKSet;
+        private final JWSHeader jwsHeader;
+    }
+
+    public static final JWKSet DEFAULT_JWKSET = loadJWKSetDefault0();
 
 }

@@ -18,6 +18,7 @@ package com.wl4g.iam.handler.oidc.v1;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
+import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
 
 /**
  * {@link V1OidcAuthenticatingHandler}
@@ -28,11 +29,13 @@ import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
  */
 public interface V1OidcAuthenticatingHandler {
 
+    V1OidcClientConfig loadClientConfig(String clientId);
+
     void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo);
 
     V1AccessTokenInfo loadAccessToken(String accessToken);
 
-    void putRefreshToken(String refreshToken, String accessToken);
+    void putRefreshToken(String refreshToken, V1AccessTokenInfo accessToken);
 
     String loadRefreshToken(String refreshToken);
 

@@ -158,26 +158,34 @@ spring:
       #  app-secret: yoursecret
       #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/qq/callback
     v1-oidc: ## see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
-      default-basic-realm-name: 'IAM OIDC Realm'
-      default-jwks-alg-name: RS256
-      default-jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
-      ## Generic OpenID Connect Configuration.
-      ## This enables standard Openid connect redirect based authentication with authorization code. In terms of 
-      ## Openid connect or Oauth2 specifications, this enable support of 'Authorization Code Flow' for this client.
-      default-standard-flow-enabled: true
-      ## This enables standard Openid connect redirect based authentication without authorization code. In terms of 
-      ## Openid connect or Oauth2 specifications, this enable support of 'Implicit Flow' for this client.
-      default-implicit-flow-enabled: false
-      ## This enables support for DirectAccess Grants, which means that client has access to username/password of 
-      ## userand exchange it directly with IAM server for access_token. In terms of Oauth2 specification, this enable 
-      ## support of 'Resource Owner Password Credentials Grant' for this client.
-      default-direct-access-grants-enabled: false
-      ## Fine Grain OpenID Connect Configuration.
-      default-access-token-alg-name: S256
-      default-access-token-expiration-seconds: 3600
-      default-refresh-token-expiration-seconds: 86400
-      default-id-token-alg-name: S256
-      default-id-token-alg-supported: ["PLAIN", "S256"]
-      default-code-challenge-methods-supported: ["PLAIN", "S256"]
-      default-code-expiration-seconds: 10
       service-documentation: 'https://oidc.iam.wl4g.com/connect/service_documentation.html'
+      default-protocol-properties:
+        basic-realm-name: 'IAM OIDC Realm'
+        registration-token: 'abcdefgh'
+        jwks-sign-alg: RS256
+        jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
+        ## Generic OpenID Connect Configuration.
+        ## This enables standard Openid connect redirect based authentication with authorization code. In terms of 
+        ## Openid connect or Oauth2 specifications, this enable support of 'Authorization Code Flow' for this client.
+        standard-flow-enabled: true
+        ## This enables standard Openid connect redirect based authentication without authorization code. In terms of 
+        ## Openid connect or Oauth2 specifications, this enable support of 'Implicit Flow' for this client.
+        implicit-flow-enabled: false
+        ## This enables support for DirectAccess Grants, which means that client has access to username/password of 
+        ## userand exchange it directly with IAM server for access_token. In terms of Oauth2 specification, this enable 
+        ## support of 'Resource Owner Password Credentials Grant' for this client.
+        direct-access-grants-enabled: false
+        oauth2-device-code-enabled: false
+        ## Fine Grain OpenID Connect Configuration.
+        access-token-sign-alg: S256
+        access-token-expiration-seconds: 3600
+        use-refresh-tokenE-eabled: true
+        use-refresh-token-for-client-credentials-grant-enabled: true
+        refresh-token-expiration-seconds: 86400
+        id-token-sign-alg: S256
+        id-token-alg-supported: ["PLAIN", "S256"]
+        # TODO
+        #id-token-encrypt-key-mgt-alg: 
+        #id-token-encrypt-content-alg: 
+        code-challenge-methods-supported: ["PLAIN", "S256"]
+        code-challenge-expiration-seconds: 10

@@ -15,16 +15,17 @@
  */
 package com.wl4g.iam.configure;
 
+import java.util.List;
+
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
+import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.core.authc.IamAuthenticationToken;
 import com.wl4g.iam.core.configure.SecurityConfigurer;
 import com.wl4g.iam.core.exception.BindingConstraintsException;
-
-import java.util.List;
 
 /**
  * IAM server security context handler
@@ -131,5 +132,11 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
      * @throws BindingConstraintsException
      */
     void unbindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException;
+
+    //
+    // O I D C _ M E T H O D
+    //
+
+    OidcClient loadOidcClient(String clientId);
 
 }

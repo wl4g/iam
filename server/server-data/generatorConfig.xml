@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<classPathEntry location="/home/wanglsir/.m2/repository/mysql/mysql-connector-java/8.0.24/mysql-connector-java-8.0.24.jar" />
+	<context id="context1" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<property name="suppressDate" value="true" />
+			<!-- add comments -->
+			<property name="addRemarkComments" value="true" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/dopaas_iam?characterEncoding=utf-8&amp;useSSL=false" password="123456" userId="iam">
+		</jdbcConnection>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		<!-- 生成Entity的包名和位置 -->
+		<javaModelGenerator targetPackage="com.wl4g.iam.common.bean.oidc" targetProject="src/main/java">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- 生成MAPPER文件的包名和位置 -->
+		<sqlMapGenerator targetPackage="resources.mybatis.iam.oidc" targetProject="src/main">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		<!-- 生成DAO的包名和位置 -->
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.iam.data" targetProject="src/main/java">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- domainObjectName:实体类名 -->
+		<table tableName="iam_oidc_client" domainObjectName="OidcClient" enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<!-- <columnOverride column="deploy_dockerfile_content" javaType="java.lang.String" jdbcType="VARCHAR" /> -->
+		</table>
+		<table tableName="iam_oidc_mapper" domainObjectName="OidcMapper" enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+	</context>
+</generatorConfiguration>

@@ -72,9 +72,9 @@ public class UserServiceImpl implements UserService {
 
         List<User> list = null;
         if (DEFAULT_SUPER_USER.equals(principalName)) {
-            list = userDao.list(null, userName, displayName, roleId);
+            list = userDao.list(null, userName, displayName, displayName, roleId);
         } else {
-            list = userDao.list(parseLongOrNull(principalId), userName, displayName, roleId);
+            list = userDao.list(parseLongOrNull(principalId), userName, displayName, displayName, roleId);
         }
         for (User user : list) {
             List<Organization> groups = groupDao.selectByUserId(user.getId());

@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.iam.data.OidcClientDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.oidc.OidcClient">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="client_secrets_json" jdbcType="VARCHAR" property="clientSecretsJson" />
+    <result column="registration_token" jdbcType="VARCHAR" property="registrationToken" />
+    <result column="jwks_uri" jdbcType="VARCHAR" property="jwksUri" />
+    <result column="jwks_json" jdbcType="VARCHAR" property="jwksJson" />
+    <result column="client_name" jdbcType="VARCHAR" property="clientName" />
+    <result column="client_type" jdbcType="VARCHAR" property="clientType" />
+    <result column="env_type" jdbcType="VARCHAR" property="envType" />
+    <result column="enable" jdbcType="INTEGER" property="enable" />
+    <result column="standard_flow_enabled" jdbcType="INTEGER" property="standardFlowEnabled" />
+    <result column="Implicit_flow_enabled" jdbcType="INTEGER" property="implicitFlowEnabled" />
+    <result column="direct_access_grants_enabled" jdbcType="INTEGER" property="directAccessGrantsEnabled" />
+    <result column="oauth2_device_code_enabled" jdbcType="INTEGER" property="oauth2DeviceCodeEnabled" />
+    <result column="valid_redirect_uris_json" jdbcType="VARCHAR" property="validRedirectUrisJson" />
+    <result column="admin_uri" jdbcType="VARCHAR" property="adminUri" />
+    <result column="logo_uri" jdbcType="VARCHAR" property="logoUri" />
+    <result column="policy_uri" jdbcType="VARCHAR" property="policyUri" />
+    <result column="terms_uri" jdbcType="VARCHAR" property="termsUri" />
+    <result column="valid_web_origin_uris_json" jdbcType="VARCHAR" property="validWebOriginUrisJson" />
+    <result column="backchannel_logout_enabled" jdbcType="INTEGER" property="backchannelLogoutEnabled" />
+    <result column="backchannel_logout_uri" jdbcType="VARCHAR" property="backchannelLogoutUri" />
+    <result column="access_token_sign_alg" jdbcType="VARCHAR" property="accessTokenSignAlg" />
+    <result column="id_token_sign_alg" jdbcType="VARCHAR" property="idTokenSignAlg" />
+    <result column="id_token_encrypt_key_mgt_alg" jdbcType="VARCHAR" property="idTokenEncryptKeyMgtAlg" />
+    <result column="id_token_encrypt_content_alg" jdbcType="VARCHAR" property="idTokenEncryptContentAlg" />
+    <result column="code_challenge_enabled" jdbcType="INTEGER" property="codeChallengeEnabled" />
+    <result column="code_challenge_expiration_sec" jdbcType="INTEGER" property="codeChallengeExpirationSec" />
+    <result column="use_refresh_token_enabled" jdbcType="INTEGER" property="useRefreshTokenEnabled" />
+    <result column="use_refresh_token_for_client_credentials_grant_enabled" jdbcType="INTEGER" property="useRefreshTokenForClientCredentialsGrantEnabled" />
+    <result column="access_token_expiration_sec" jdbcType="INTEGER" property="accessTokenExpirationSec" />
+    <result column="refresh_token_expiration_sec" jdbcType="INTEGER" property="refreshTokenExpirationSec" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, client_id, client_secrets_json, registration_token, jwks_uri, jwks_json, client_name, 
+    client_type, env_type, enabled, standard_flow_enabled, Implicit_flow_enabled, direct_access_grants_enabled, 
+    oauth2_device_code_enabled, valid_redirect_uris_json, admin_uri, logo_uri, policy_uri, 
+    terms_uri, valid_web_origin_uris_json, backchannel_logout_enabled, backchannel_logout_uri, 
+    access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, id_token_encrypt_content_alg, 
+    code_challenge_enabled, code_challenge_expiration_sec, use_refresh_token_enabled, use_refresh_token_for_client_credentials_grant_enabled, 
+    access_token_expiration_sec, refresh_token_expiration_sec, remark, create_by, create_date, 
+    update_by, update_date, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from iam_oidc_client
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectBySelective" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from iam_oidc_client
+    <where>
+      <if test="clientId != null">
+        AND client_id =  #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSecretsJson != null">
+        AND client_secrets_json =  #{clientSecretsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationToken != null">
+        AND registration_token =  #{registrationToken,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksUri != null">
+        AND jwks_uri =  #{jwksUri,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksJson != null">
+        AND jwks_json =  #{jwksJson,jdbcType=VARCHAR},
+      </if>
+      <if test="clientName != null">
+        AND client_name =  #{clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null">
+        AND client_type =  #{clientType,jdbcType=VARCHAR},
+      </if>
+      <if test="envType != null">
+        AND env_type =  #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        AND enable =  #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="standardFlowEnabled != null">
+        AND standard_flow_enabled =  #{standardFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="implicitFlowEnabled != null">
+        AND Implicit_flow_enabled =  #{implicitFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="directAccessGrantsEnabled != null">
+        AND direct_access_grants_enabled =  #{directAccessGrantsEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="oauth2DeviceCodeEnabled != null">
+        AND oauth2_device_code_enabled =  #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="validRedirectUrisJson != null">
+        AND valid_redirect_uris_json =  #{validRedirectUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="adminUri != null">
+        AND admin_uri =  #{adminUri,jdbcType=VARCHAR},
+      </if>
+      <if test="logoUri != null">
+        AND logo_uri =  #{logoUri,jdbcType=VARCHAR},
+      </if>
+      <if test="policyUri != null">
+        AND policy_uri =  #{policyUri,jdbcType=VARCHAR},
+      </if>
+      <if test="termsUri != null">
+        AND terms_uri =  #{termsUri,jdbcType=VARCHAR},
+      </if>
+      <if test="validWebOriginUrisJson != null">
+        AND valid_web_origin_uris_json =  #{validWebOriginUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="backchannelLogoutEnabled != null">
+        AND backchannel_logout_enabled =  #{backchannelLogoutEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="backchannelLogoutUri != null">
+        AND backchannel_logout_uri =  #{backchannelLogoutUri,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTokenSignAlg != null">
+        AND access_token_sign_alg =  #{accessTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenSignAlg != null">
+        AND id_token_sign_alg =  #{idTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptKeyMgtAlg != null">
+        AND id_token_encrypt_key_mgt_alg =  #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptContentAlg != null">
+        AND id_token_encrypt_content_alg =  #{idTokenEncryptContentAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="codeChallengeEnabled != null">
+        AND code_challenge_enabled =  #{codeChallengeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="codeChallengeExpirationSec != null">
+        AND code_challenge_expiration_sec =  #{codeChallengeExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenEnabled != null">
+        AND use_refresh_token_enabled =  #{useRefreshTokenEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
+        AND use_refresh_token_for_client_credentials_grant_enabled =  #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="accessTokenExpirationSec != null">
+        AND access_token_expiration_sec =  #{accessTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="refreshTokenExpirationSec != null">
+        AND refresh_token_expiration_sec =  #{refreshTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        AND remark =  #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        AND create_by =  #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        AND create_date =  #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        AND update_by =  #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        AND update_date =  #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        AND del_flag =  #{delFlag,jdbcType=INTEGER},
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from iam_oidc_client
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+    insert into iam_oidc_client (id, client_id, client_secrets_json, 
+      registration_token, jwks_uri, jwks_json, 
+      client_name, client_type, env_type, 
+      enabled, standard_flow_enabled, Implicit_flow_enabled, 
+      direct_access_grants_enabled, oauth2_device_code_enabled, 
+      valid_redirect_uris_json, admin_uri, logo_uri, 
+      policy_uri, terms_uri, valid_web_origin_uris_json, 
+      backchannel_logout_enabled, backchannel_logout_uri, 
+      access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, 
+      id_token_encrypt_content_alg, code_challenge_enabled, 
+      code_challenge_expiration_sec, use_refresh_token_enabled, 
+      use_refresh_token_for_client_credentials_grant_enabled, access_token_expiration_sec, 
+      refresh_token_expiration_sec, remark, create_by, 
+      create_date, update_by, update_date, 
+      del_flag)
+    values (#{id,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{clientSecretsJson,jdbcType=VARCHAR}, 
+      #{registrationToken,jdbcType=VARCHAR}, #{jwksUri,jdbcType=VARCHAR}, #{jwksJson,jdbcType=VARCHAR}, 
+      #{clientName,jdbcType=VARCHAR}, #{clientType,jdbcType=VARCHAR}, #{envType,jdbcType=VARCHAR}, 
+      #{enable,jdbcType=INTEGER}, #{standardFlowEnabled,jdbcType=INTEGER}, #{implicitFlowEnabled,jdbcType=INTEGER}, 
+      #{directAccessGrantsEnabled,jdbcType=INTEGER}, #{oauth2DeviceCodeEnabled,jdbcType=INTEGER}, 
+      #{validRedirectUrisJson,jdbcType=VARCHAR}, #{adminUri,jdbcType=VARCHAR}, #{logoUri,jdbcType=VARCHAR}, 
+      #{policyUri,jdbcType=VARCHAR}, #{termsUri,jdbcType=VARCHAR}, #{validWebOriginUrisJson,jdbcType=VARCHAR}, 
+      #{backchannelLogoutEnabled,jdbcType=INTEGER}, #{backchannelLogoutUri,jdbcType=VARCHAR}, 
+      #{accessTokenSignAlg,jdbcType=VARCHAR}, #{idTokenSignAlg,jdbcType=VARCHAR}, #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR}, 
+      #{idTokenEncryptContentAlg,jdbcType=VARCHAR}, #{codeChallengeEnabled,jdbcType=INTEGER}, 
+      #{useRefreshTokenEnabled,jdbcType=INTEGER}, 
+      #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER}, #{accessTokenExpirationSec,jdbcType=INTEGER}, 
+      #{refreshTokenExpirationSec,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+    insert into iam_oidc_client
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="clientId != null">
+        client_id,
+      </if>
+      <if test="clientSecretsJson != null">
+        client_secrets_json,
+      </if>
+      <if test="registrationToken != null">
+        registration_token,
+      </if>
+      <if test="jwksUri != null">
+        jwks_uri,
+      </if>
+      <if test="jwksJson != null">
+        jwks_json,
+      </if>
+      <if test="clientName != null">
+        client_name,
+      </if>
+      <if test="clientType != null">
+        client_type,
+      </if>
+      <if test="envType != null">
+        env_type,
+      </if>
+      <if test="enable != null">
+        enabled,
+      </if>
+      <if test="standardFlowEnabled != null">
+        standard_flow_enabled,
+      </if>
+      <if test="implicitFlowEnabled != null">
+        Implicit_flow_enabled,
+      </if>
+      <if test="directAccessGrantsEnabled != null">
+        direct_access_grants_enabled,
+      </if>
+      <if test="oauth2DeviceCodeEnabled != null">
+        oauth2_device_code_enabled,
+      </if>
+      <if test="validRedirectUrisJson != null">
+        valid_redirect_uris_json,
+      </if>
+      <if test="adminUri != null">
+        admin_uri,
+      </if>
+      <if test="logoUri != null">
+        logo_uri,
+      </if>
+      <if test="policyUri != null">
+        policy_uri,
+      </if>
+      <if test="termsUri != null">
+        terms_uri,
+      </if>
+      <if test="validWebOriginUrisJson != null">
+        valid_web_origin_uris_json,
+      </if>
+      <if test="backchannelLogoutEnabled != null">
+        backchannel_logout_enabled,
+      </if>
+      <if test="backchannelLogoutUri != null">
+        backchannel_logout_uri,
+      </if>
+      <if test="accessTokenSignAlg != null">
+        access_token_sign_alg,
+      </if>
+      <if test="idTokenSignAlg != null">
+        id_token_sign_alg,
+      </if>
+      <if test="idTokenEncryptKeyMgtAlg != null">
+        id_token_encrypt_key_mgt_alg,
+      </if>
+      <if test="idTokenEncryptContentAlg != null">
+        id_token_encrypt_content_alg,
+      </if>
+      <if test="codeChallengeEnabled != null">
+        code_challenge_enabled,
+      </if>
+      <if test="codeChallengeExpirationSec != null">
+        code_challenge_expiration_sec,
+      </if>
+      <if test="useRefreshTokenEnabled != null">
+        use_refresh_token_enabled,
+      </if>
+      <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
+        use_refresh_token_for_client_credentials_grant_enabled,
+      </if>
+      <if test="accessTokenExpirationSec != null">
+        access_token_expiration_sec,
+      </if>
+      <if test="refreshTokenExpirationSec != null">
+        refresh_token_expiration_sec,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="clientId != null">
+        #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSecretsJson != null">
+        #{clientSecretsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationToken != null">
+        #{registrationToken,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksUri != null">
+        #{jwksUri,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksJson != null">
+        #{jwksJson,jdbcType=VARCHAR},
+      </if>
+      <if test="clientName != null">
+        #{clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null">
+        #{clientType,jdbcType=VARCHAR},
+      </if>
+      <if test="envType != null">
+        #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="standardFlowEnabled != null">
+        #{standardFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="implicitFlowEnabled != null">
+        #{implicitFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="directAccessGrantsEnabled != null">
+        #{directAccessGrantsEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="oauth2DeviceCodeEnabled != null">
+        #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="validRedirectUrisJson != null">
+        #{validRedirectUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="adminUri != null">
+        #{adminUri,jdbcType=VARCHAR},
+      </if>
+      <if test="logoUri != null">
+        #{logoUri,jdbcType=VARCHAR},
+      </if>
+      <if test="policyUri != null">
+        #{policyUri,jdbcType=VARCHAR},
+      </if>
+      <if test="termsUri != null">
+        #{termsUri,jdbcType=VARCHAR},
+      </if>
+      <if test="validWebOriginUrisJson != null">
+        #{validWebOriginUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="backchannelLogoutEnabled != null">
+        #{backchannelLogoutEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="backchannelLogoutUri != null">
+        #{backchannelLogoutUri,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTokenSignAlg != null">
+        #{accessTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenSignAlg != null">
+        #{idTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptKeyMgtAlg != null">
+        #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptContentAlg != null">
+        #{idTokenEncryptContentAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="codeChallengeEnabled != null">
+        #{codeChallengeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenEnabled != null">
+        #{useRefreshTokenEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
+        #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="accessTokenExpirationSec != null">
+        #{accessTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="refreshTokenExpirationSec != null">
+        #{refreshTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+    update iam_oidc_client
+    <set>
+      <if test="clientId != null">
+        client_id = #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSecretsJson != null">
+        client_secrets_json = #{clientSecretsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationToken != null">
+        registration_token = #{registrationToken,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksUri != null">
+        jwks_uri = #{jwksUri,jdbcType=VARCHAR},
+      </if>
+      <if test="jwksJson != null">
+        jwks_json = #{jwksJson,jdbcType=VARCHAR},
+      </if>
+      <if test="clientName != null">
+        client_name = #{clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null">
+        client_type = #{clientType,jdbcType=VARCHAR},
+      </if>
+      <if test="envType != null">
+        env_type = #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="standardFlowEnabled != null">
+        standard_flow_enabled = #{standardFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="implicitFlowEnabled != null">
+        Implicit_flow_enabled = #{implicitFlowEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="directAccessGrantsEnabled != null">
+        direct_access_grants_enabled = #{directAccessGrantsEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="oauth2DeviceCodeEnabled != null">
+        oauth2_device_code_enabled = #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="validRedirectUrisJson != null">
+        valid_redirect_uris_json = #{validRedirectUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="adminUri != null">
+        admin_uri = #{adminUri,jdbcType=VARCHAR},
+      </if>
+      <if test="logoUri != null">
+        logo_uri = #{logoUri,jdbcType=VARCHAR},
+      </if>
+      <if test="policyUri != null">
+        policy_uri = #{policyUri,jdbcType=VARCHAR},
+      </if>
+      <if test="termsUri != null">
+        terms_uri = #{termsUri,jdbcType=VARCHAR},
+      </if>
+      <if test="validWebOriginUrisJson != null">
+        valid_web_origin_uris_json = #{validWebOriginUrisJson,jdbcType=VARCHAR},
+      </if>
+      <if test="backchannelLogoutEnabled != null">
+        backchannel_logout_enabled = #{backchannelLogoutEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="backchannelLogoutUri != null">
+        backchannel_logout_uri = #{backchannelLogoutUri,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTokenSignAlg != null">
+        access_token_sign_alg = #{accessTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenSignAlg != null">
+        id_token_sign_alg = #{idTokenSignAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptKeyMgtAlg != null">
+        id_token_encrypt_key_mgt_alg = #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="idTokenEncryptContentAlg != null">
+        id_token_encrypt_content_alg = #{idTokenEncryptContentAlg,jdbcType=VARCHAR},
+      </if>
+      <if test="codeChallengeEnabled != null">
+        code_challenge_enabled = #{codeChallengeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="codeChallengeExpirationSec != null">
+        code_challenge_expiration_sec = #{codeChallengeExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenEnabled != null">
+        use_refresh_token_enabled = #{useRefreshTokenEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
+        use_refresh_token_for_client_credentials_grant_enabled = #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="accessTokenExpirationSec != null">
+        access_token_expiration_sec = #{accessTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="refreshTokenExpirationSec != null">
+        refresh_token_expiration_sec = #{refreshTokenExpirationSec,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+    update iam_oidc_client
+    set client_id = #{clientId,jdbcType=VARCHAR},
+      client_secrets_json = #{clientSecretsJson,jdbcType=VARCHAR},
+      registration_token = #{registrationToken,jdbcType=VARCHAR},
+      jwks_uri = #{jwksUri,jdbcType=VARCHAR},
+      jwks_json = #{jwksJson,jdbcType=VARCHAR},
+      client_name = #{clientName,jdbcType=VARCHAR},
+      client_type = #{clientType,jdbcType=VARCHAR},
+      env_type = #{envType,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      standard_flow_enabled = #{standardFlowEnabled,jdbcType=INTEGER},
+      Implicit_flow_enabled = #{implicitFlowEnabled,jdbcType=INTEGER},
+      direct_access_grants_enabled = #{directAccessGrantsEnabled,jdbcType=INTEGER},
+      oauth2_device_code_enabled = #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      valid_redirect_uris_json = #{validRedirectUrisJson,jdbcType=VARCHAR},
+      admin_uri = #{adminUri,jdbcType=VARCHAR},
+      logo_uri = #{logoUri,jdbcType=VARCHAR},
+      policy_uri = #{policyUri,jdbcType=VARCHAR},
+      terms_uri = #{termsUri,jdbcType=VARCHAR},
+      valid_web_origin_uris_json = #{validWebOriginUrisJson,jdbcType=VARCHAR},
+      backchannel_logout_enabled = #{backchannelLogoutEnabled,jdbcType=INTEGER},
+      backchannel_logout_uri = #{backchannelLogoutUri,jdbcType=VARCHAR},
+      access_token_sign_alg = #{accessTokenSignAlg,jdbcType=VARCHAR},
+      id_token_sign_alg = #{idTokenSignAlg,jdbcType=VARCHAR},
+      id_token_encrypt_key_mgt_alg = #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR},
+      id_token_encrypt_content_alg = #{idTokenEncryptContentAlg,jdbcType=VARCHAR},
+      code_challenge_enabled = #{codeChallengeEnabled,jdbcType=INTEGER},
+      code_challenge_expiration_sec = #{codeChallengeExpirationSec,jdbcType=INTEGER},
+      use_refresh_token_enabled = #{useRefreshTokenEnabled,jdbcType=INTEGER},
+      use_refresh_token_for_client_credentials_grant_enabled = #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      access_token_expiration_sec = #{accessTokenExpirationSec,jdbcType=INTEGER},
+      refresh_token_expiration_sec = #{refreshTokenExpirationSec,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

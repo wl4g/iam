@@ -15,24 +15,38 @@
  */
 package com.wl4g.iam.handler.oidc.v1;
 
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.StringUtils2.isTrue;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseArrayString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.bean.User;
+import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.handler.AbstractAuthenticatingHandler;
+import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
 import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 
@@ -45,13 +59,80 @@ import com.wl4g.infra.support.cache.jedis.JedisService;
  */
 public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHandler implements V1OidcAuthenticatingHandler {
 
-    private @Autowired IamCredentialsSecurer securer;
-    private @Autowired JedisService jedisService;
+    protected final Cache<String, V1OidcClientConfig> clientConfigCache;
+
+    protected @Autowired IamCredentialsSecurer securer;
+    protected @Autowired JedisService jedisService;
+
+    public DefaultV1OidcAuthenticatingHandler(IamProperties config) {
+        this.clientConfigCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+    }
+
+    @Override
+    public V1OidcClientConfig loadClientConfig(String clientId) {
+        hasTextOf(clientId, "clientId");
+
+        V1OidcClientConfig clientConfig = clientConfigCache.asMap().get(clientId);
+        if (isNull(clientConfig)) {
+            synchronized (clientId) {
+                clientConfig = clientConfigCache.asMap().get(clientId);
+                if (isNull(clientConfig)) {
+                    // New client config.
+                    clientConfig = V1OidcClientConfig.newInstance(clientId, config.getV1Oidc());
+                    clientConfigCache.put(clientId, clientConfig);
+
+                    // Load client config from DB.
+                    OidcClient client = configurer.loadOidcClient(clientId);
+
+                    // Overwrite merge to client config.
+                    // clientConfig.setBasicRealmName("");
+                    clientConfig.setRegistrationToken(client.getRegistrationToken());
+                    // TODO
+                    clientConfig.setJwksAlgName(null);
+
+                    clientConfig.setStandardFlowEnabled(isTrue(valueOf(client.getStandardFlowEnabled())));
+                    clientConfig.setImplicitFlowEnabled(isTrue(valueOf(client.getImplicitFlowEnabled())));
+                    clientConfig.setDirectAccessGrantsEnabled(isTrue(valueOf(client.getDirectAccessGrantsEnabled())));
+                    clientConfig.setOauth2DeviceCodeEnabled(isTrue(valueOf(client.getOauth2DeviceCodeEnabled())));
+
+                    clientConfig.setAccessTokenSignAlg(client.getAccessTokenSignAlg());
+                    clientConfig.setAccessTokenExpirationSeconds(client.getAccessTokenExpirationSec());
+
+                    clientConfig.setRefreshTokenExpirationSeconds(client.getRefreshTokenExpirationSec());
+                    clientConfig.setUseRefreshTokenEnabled(isTrue(valueOf(client.getUseRefreshTokenEnabled())));
+                    clientConfig.setUseRefreshTokenForClientCredentialsGrantEnabled(
+                            isTrue(valueOf(client.getUseRefreshTokenForClientCredentialsGrantEnabled())));
+
+                    clientConfig.setIdTokenSignAlg(client.getIdTokenSignAlg());
+                    // TODO
+                    // clientConfig.setIdTokenAlgSupported(null);
+
+                    clientConfig.setCodeChallengeEnabled(isTrue(valueOf(client.getCodeChallengeEnabled())));
+                    clientConfig.setCodeChallengeExpirationSeconds(client.getCodeChallengeExpirationSec());
+
+                    clientConfig.setClientName(client.getClientName());
+                    clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), oidcClientSecretTypeRef));
+                    clientConfig.setClientType(client.getClientType());
+                    clientConfig.setValidRedirectUris(parseArrayString(client.getValidRedirectUrisJson()));
+                    clientConfig.setAdminUri(client.getAdminUri());
+                    clientConfig.setLogoUri(client.getLogoUri());
+                    clientConfig.setPolicyUri(client.getPolicyUri());
+                    clientConfig.setTermsUri(client.getTermsUri());
+                    clientConfig.setValidWebOriginUris(parseArrayString(client.getValidWebOriginUrisJson()));
+
+                    clientConfig.setBackchannelLogoutEnabled(isTrue(valueOf(client.getBackchannelLogoutEnabled())));
+                    clientConfig.setBackchannelLogoutUri(client.getBackchannelLogoutUri());
+                }
+            }
+        }
+
+        return clientConfig;
+    }
 
     @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
         jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
-                config.getV1Oidc().getDefaultAccessTokenExpirationSeconds());
+                loadClientConfig(accessTokenInfo.getClientId()).getAccessTokenExpirationSeconds());
     }
 
     @Override
@@ -60,9 +141,9 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     }
 
     @Override
-    public void putRefreshToken(String refreshToken, String accessTokenInfo) {
-        jedisService.set(buildRefreshTokenKey(refreshToken), accessTokenInfo,
-                config.getV1Oidc().getDefaultRefreshTokenExpirationSeconds());
+    public void putRefreshToken(String refreshToken, V1AccessTokenInfo accessTokenInfo) {
+        jedisService.set(buildRefreshTokenKey(refreshToken), accessTokenInfo.getAccessToken(),
+                loadClientConfig(accessTokenInfo.getClientId()).getRefreshTokenExpirationSeconds());
     }
 
     @Override
@@ -73,7 +154,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     @Override
     public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
         jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
-                config.getV1Oidc().getDefaultCodeExpirationSeconds());
+                loadClientConfig(authorizationCodeInfo.getClient_id()).getCodeChallengeExpirationSeconds());
     }
 
     @Override
@@ -147,5 +228,8 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     private String buildAuthorizationCodeKey(String authorizationCode) {
         return V1OidcIAMConstants.CACHE_OIDC_AUTHCODE_PREFIX.concat(new CodecSource(authorizationCode).toHex());
     }
+
+    private static final TypeReference<List<OidcClient.ClientSecretInfo>> oidcClientSecretTypeRef = new TypeReference<List<OidcClient.ClientSecretInfo>>() {
+    };
 
 }
