@@ -168,7 +168,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
                     .withRoles(findRoles(user.getSubject()))
                     .withPermissions(findPermissions(user.getSubject()))
                     .withOrganization(new PrincipalOrganization(orgs));
-            principal.attributes().save(KEY_ORIGINAL_USER, user);
+            principal.attributes().setUser(user);
             return principal;
         }
         return null;
@@ -247,7 +247,5 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
         }
         return sb.toString();
     }
-
-    public static final String KEY_ORIGINAL_USER = StandardSecurityConfigurer.class.getSimpleName().concat(".originalUser");
 
 }

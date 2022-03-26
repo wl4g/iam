@@ -41,14 +41,17 @@ public class User extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
 
     private String subject;
+    private String name;
     private String given_name;
     private String family_name;
+    private String middleName;
     private String nickname;
     private String preferred_username;
     private String gender;
     private String locale;
     private Date birthdate;
     private String picture;
+    private String zoneinfo;
     private String password;
     private String pubSalt;
     private Integer userType;

@@ -12,8 +12,7 @@
 #
 spring:
   cloud:
-    # see: https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
-    gateway: 
+    gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
       routes:
         - id: openapiV2-service
           #uri: http://openapi.wl4gsafecloudcs.com
@@ -34,6 +33,25 @@ spring:
                 redis-rate-limiter.burstCapacity: 1
                 # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
                 key-resolver: '#{@hostKeyResolver}'
+        - id: portal
+          uri: https://www.baidu.com
+          predicates:
+            - Path=/**
+          filters:
+            #- TokenRelay
+            - TokenRelayRefresh
+            - RemoveRequestHeader=Cookie, Set-Cookie
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://iam.wl4g.com/realms/iam
+        registration:
+          keycloak:
+            client-id: portal
+            client-secret: a12463984c2f46bdb83d9b1313f3378d
 
 # Logging configuration.
 logging:
@@ -67,7 +85,7 @@ server:
   servlet:
     contextPath: /
   #address: 0.0.0.0
-  port: 14085
+  port: 28085
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

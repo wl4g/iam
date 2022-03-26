@@ -18,6 +18,12 @@ package com.wl4g.iam.web.oidc.v1;
 import com.wl4g.iam.config.properties.V1OidcProperties;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
 /**
  * {@link V1OidcClientConfig}
  * 
@@ -25,6 +31,11 @@ import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
  * @version 2022-03-25 v3.0.0
  * @since v3.0.0
  */
+@Getter
+@Setter
+@ToString
+@SuperBuilder
+@NoArgsConstructor
 public class V1OidcClientConfig extends V1OidcProperties {
     private static final long serialVersionUID = 4776976002803043619L;
 

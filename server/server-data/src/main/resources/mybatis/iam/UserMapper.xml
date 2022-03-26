@@ -4,14 +4,17 @@
 	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.User">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="subject" property="subject" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="given_name" property="givenName" jdbcType="VARCHAR" />
 		<result column="family_name" property="familyName" jdbcType="VARCHAR" />
+		<result column="middle_name" property="middleName" jdbcType="VARCHAR" />
 		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
 		<result column="preferred_username" property="preferredUsername" jdbcType="VARCHAR" />
 		<result column="gender" property="gender" jdbcType="VARCHAR" />
 		<result column="locale" property="locale" jdbcType="VARCHAR" />
 		<result column="birthdate" property="birthdate" jdbcType="TIMESTAMP" />
 		<result column="picture" property="picture" jdbcType="VARCHAR" />
+		<result column="zoneinfo" property="zoneinfo" jdbcType="VARCHAR" />
 		<result column="password" property="password" jdbcType="VARCHAR" />
 		<result column="pub_salt" property="pubSalt" jdbcType="VARCHAR" />
 		<result column="user_type" property="userType" jdbcType="INTEGER" />
@@ -37,7 +40,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id, subject, given_name, family_name, nickname, preferred_username, gender, locale, birthdate, picture,
+		id, subject, name, given_name, family_name, middle_name, nickname, preferred_username, gender, locale, birthdate, picture, zoneinfo,
 		password, user_type,
 		pub_salt, enable, status, email,
 		phone, wechat_open_id,
@@ -52,8 +55,8 @@
 	</sql>
 
 	<sql id="Base_Column_List_u">
-		u.id, u.subject, u.given_name, u.family_name, u.nickname, u.preferred_username, u.gender, u.locale, u.birthdate,
-		u.picture,
+		u.id, u.subject, u.name, u.given_name, u.family_name, u.middle_name, u.nickname, u.preferred_username, u.gender, u.locale, u.birthdate,
+		u.picture, u.zoneinfo,
 		u.password, u.user_type, u.pub_salt, u.enable, u.status, u.email,
 		u.phone,
 		u.wechat_open_id,
@@ -66,7 +69,8 @@
 		u.aws_id, u.remark,
 		u.create_by,
 		u.create_date,
-		u.update_by, u.update_date,
+		u.update_by,
+		u.update_date,
 		u.del_flag
 	</sql>
 
@@ -95,11 +99,17 @@
 			<if test="subject != null">
 				AND subject = #{subject,jdbcType=VARCHAR},
 			</if>
+			<if test="name != null">
+				AND name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%'),
+			</if>
 			<if test="givenName != null">
 				AND given_name LIKE CONCAT('%',#{given_name,jdbcType=VARCHAR},'%'),
 			</if>
 			<if test="familyName != null">
 				AND family_name = #{family_name,jdbcType=VARCHAR},
+			</if>
+			<if test="middleName != null">
+				AND middle_name = #{middleName,jdbcType=VARCHAR},
 			</if>
 			<if test="nickname != null">
 				AND nickname = #{nickname,jdbcType=VARCHAR},
@@ -118,6 +128,9 @@
 			</if>
 			<if test="picture != null">
 				AND picture = #{picture,jdbcType=VARCHAR},
+			</if>
+			<if test="zoneinfo != null">
+				AND zoneinfo = #{zoneinfo,jdbcType=VARCHAR},
 			</if>
 			<if test="password != null">
 				AND password = #{password,jdbcType=VARCHAR},
@@ -187,6 +200,9 @@
 			<if test="subject != null and subject !='' ">
 				AND u.subject LIKE CONCAT('%','${subject}','%')
 			</if>
+			<if test="name != null and name !='' ">
+				AND u.name LIKE CONCAT('%','${name}','%')
+			</if>
 			<if test="givenName != null and givenName !='' ">
 				AND u.given_name LIKE CONCAT('%','${givenName}','%')
 			</if>
@@ -205,14 +221,17 @@
 		INSERT INTO iam_user (
 		id,
 		subject,
+		name,
 		given_name,
 		family_name,
+		middle_name,
 		nickname,
 		preferred_username,
 		gender,
 		locale,
 		birthdate,
 		picture,
+		zoneinfo,
 		password,
 		pub_salt,
 		user_type,
@@ -240,12 +259,14 @@
 		#{subject,jdbcType=VARCHAR},
 		#{given_name,jdbcType=VARCHAR},
 		#{family_name,jdbcType=VARCHAR},
+		#{middleName,jdbcType=VARCHAR},
 		#{nickname,jdbcType=VARCHAR},
 		#{preferred_username,jdbcType=VARCHAR},
 		#{gender,jdbcType=VARCHAR},
 		#{locale,jdbcType=VARCHAR},
 		#{birthdate,jdbcType=TIMESTAMP},
 		#{picture,jdbcType=VARCHAR},
+		#{zoneinfo,jdbcType=VARCHAR},
 		#{password,jdbcType=VARCHAR},
 		#{pubSalt,jdbcType=VARCHAR},
 		#{userType,jdbcType=INTEGER},
@@ -279,11 +300,17 @@
 			<if test="subject != null">
 				subject,
 			</if>
+			<if test="name != null">
+				name,
+			</if>
 			<if test="givenName != null">
 				given_name,
 			</if>
 			<if test="familyName != null">
 				family_name,
+			</if>
+			<if test="middleName != null">
+				middle_name,
 			</if>
 			<if test="nickname != null">
 				nickname,
@@ -302,6 +329,9 @@
 			</if>
 			<if test="picture != null">
 				picture,
+			</if>
+			<if test="zoneinfo != null">
+				zoneinfo,
 			</if>
 			<if test="password != null">
 				password,
@@ -377,11 +407,17 @@
 			<if test="subject != null">
 				#{subject,jdbcType=VARCHAR},
 			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
 			<if test="givenName != null">
 				#{given_name,jdbcType=VARCHAR},
 			</if>
 			<if test="familyName != null">
 				#{family_name,jdbcType=VARCHAR},
+			</if>
+			<if test="middleName != null">
+				#{middleName,jdbcType=VARCHAR},
 			</if>
 			<if test="nickname != null">
 				#{nickname,jdbcType=VARCHAR},
@@ -400,6 +436,9 @@
 			</if>
 			<if test="picture != null">
 				#{picture,jdbcType=VARCHAR},
+			</if>
+			<if test="zoneinfo != null">
+				#{zoneinfo,jdbcType=VARCHAR},
 			</if>
 			<if test="password != null">
 				#{password,jdbcType=VARCHAR},
@@ -475,11 +514,17 @@
 			<if test="subject != null">
 				subject = #{subject,jdbcType=VARCHAR},
 			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
 			<if test="givenName != null">
 				given_name = #{given_name,jdbcType=VARCHAR},
 			</if>
 			<if test="familyName != null">
 				family_name = #{family_name,jdbcType=VARCHAR},
+			</if>
+			<if test="middleName != null">
+				middle_name = #{middleName,jdbcType=VARCHAR},
 			</if>
 			<if test="nickname != null">
 				nickname = #{nickname,jdbcType=VARCHAR},
@@ -498,6 +543,9 @@
 			</if>
 			<if test="picture != null">
 				picture = #{picture,jdbcType=VARCHAR},
+			</if>
+			<if test="zoneinfo != null">
+				zoneinfo = #{zoneinfo,jdbcType=VARCHAR},
 			</if>
 			<if test="password != null">
 				password = #{password,jdbcType=VARCHAR},
@@ -575,14 +623,17 @@
 		UPDATE iam_user
 		<set>
 			subject = #{subject,jdbcType=VARCHAR},
+			name = #{name,jdbcType=VARCHAR},
 			given_name = #{given_name,jdbcType=VARCHAR},
 			family_name = #{family_name,jdbcType=VARCHAR},
+			middle_name = #{middleName,jdbcType=VARCHAR},
 			nickname = #{nickname,jdbcType=VARCHAR},
 			preferred_username = #{preferred_username,jdbcType=VARCHAR},
 			gender = #{gender,jdbcType=VARCHAR},
 			locale = #{locale,jdbcType=VARCHAR},
 			birthdate = #{birthdate,jdbcType=TIMESTAMP},
 			picture = #{picture,jdbcType=VARCHAR},
+			zoneinfo = #{zoneinfo,jdbcType=VARCHAR},
 			password =
 			#{password,jdbcType=VARCHAR},
 			pub_salt = #{pubSalt,jdbcType=VARCHAR},

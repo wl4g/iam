@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.common.model.oidc.v1;
 
+import java.util.Date;
+
 import com.wl4g.iam.common.subject.IamPrincipal;
 
 import lombok.AllArgsConstructor;
@@ -68,7 +70,7 @@ import lombok.experimental.Wither;
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1OidcUserClaims {
-    private IamPrincipal iamPrincipal;
+    private IamPrincipal principal;
     // profile
     private String sub; // like is user_id
     private String name;
@@ -76,10 +78,12 @@ public class V1OidcUserClaims {
     private String family_name;
     private String nickname;
     private String preferred_username;
-    private String picture;
-    private String birthdate;
+    private String gender;
     private String locale;
-    private String updated_at;
+    private Date birthdate;
+    private String picture;
+    private String zoneinfo;
+    private Date updated_at;
     // independent scoped attributes info
     private String email;
     private Boolean email_verified;

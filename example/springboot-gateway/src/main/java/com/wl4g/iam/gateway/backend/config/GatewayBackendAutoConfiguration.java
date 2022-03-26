@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.constant;
+package com.wl4g.iam.gateway.backend.config;
 
-import com.wl4g.infra.core.constant.BaseConstants;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Based IAM configuration constants.
+ * {@link GatewayBackendAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-11-17
- * @sine v1.0
- * @see
+ * @version 2022-03-25 v3.0.0
+ * @since v3.0.0
  */
-public abstract class IAMConstants extends BaseConstants {
-
-    public static final String CONF_PREFIX_IAM = "spring.iam";
-    public static final String CONF_PREFIX_IAM_SECURITY_SNS = CONF_PREFIX_IAM + ".sns";
-    public static final String CONF_PREFIX_IAM_SECURITY_CAPTCHA = CONF_PREFIX_IAM + ".captcha";
-
-    public static final String CACHE_PREFIX_IAM = ":iam:";
-
-    public static final String KEY_IAM_SUBJECT_USER = "subjectUserInfo";
+@Configuration
+public class GatewayBackendAutoConfiguration {
 
 }

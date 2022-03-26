@@ -11,7 +11,7 @@
 # #### Gateway server bootstrap configuration. ####
 #
 spring:
-  application.name: gateway-server
+  application.name: iam-gateway
   profiles:
     include: common,support,util
     active: dev

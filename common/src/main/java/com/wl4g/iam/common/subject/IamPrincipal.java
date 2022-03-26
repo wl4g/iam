@@ -22,6 +22,7 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_LANG_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_PARENT_SESSIONID_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.iam.common.constant.IAMConstants.KEY_IAM_SUBJECT_USER;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
@@ -51,6 +52,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
+import com.wl4g.iam.common.bean.User;
 
 /**
  * IAM principal account information.
@@ -356,6 +358,24 @@ public interface IamPrincipal extends Principal, Serializable {
          */
         public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
             return save(KEY_SNS_AUTHORIZED_INFO, info);
+        }
+
+        /**
+         * Gets {@link User}
+         * 
+         * @return
+         */
+        public User getUser() {
+            return get(KEY_IAM_SUBJECT_USER, User.class);
+        }
+
+        /**
+         * Sets {@link User}
+         * 
+         * @return
+         */
+        public Attributes setUser(User user) {
+            return save(KEY_IAM_SUBJECT_USER, user);
         }
 
         /**

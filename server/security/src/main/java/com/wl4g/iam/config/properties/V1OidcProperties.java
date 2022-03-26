@@ -35,6 +35,7 @@ import com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 /**
  * IAM V1-OIDC configuration properties
@@ -47,38 +48,57 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@SuperBuilder
 public class V1OidcProperties implements Serializable {
     private static final long serialVersionUID = -2694422471852860689L;
 
-    private String defaultBasicRealmName = "IAM OIDC Realm";
-    private String defaultJwksAlgName = "RS256";
-    private String defaultJwksJsonResource = "classpath*:/credentials/oidc/jwks.json";
+    private String defaultBasicRealmName;
+    private String defaultJwksAlgName;
+    private String defaultJwksJsonResource;
 
     // Generic OpenID Connect Configuration
 
-    private boolean defaultStandardFlowEnabled = true;
-    private boolean defaultImplicitFlowEnabled = false;
-    private boolean defaultDirectAccessGrantsEnabled = false;
+    private boolean defaultStandardFlowEnabled;
+    private boolean defaultImplicitFlowEnabled;
+    private boolean defaultDirectAccessGrantsEnabled;
 
     // Fine Grain OpenID Connect Configuration
 
-    private String defaultAccessTokenAlgName = "S256";
-    private int defaultAccessTokenExpirationSeconds = 3600;
-    private int defaultRefreshTokenExpirationSeconds = 3600 * 24;
+    private String defaultAccessTokenAlgName;
+    private int defaultAccessTokenExpirationSeconds;
+    private int defaultRefreshTokenExpirationSeconds;
 
-    private String defaultIdTokenAlgName = "S256";
-    private List<String> defaultIdTokenAlgSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(
-            toList());
+    private String defaultIdTokenAlgName;
+    private List<String> defaultIdTokenAlgSupported;
 
-    private List<String> defaultCodeChallengeMethodsSupported = asList(SignAlgorithmSupported.values()).stream()
-            .map(m -> m.name())
-            .collect(toList());
-    private int defaultCodeExpirationSeconds = 10;
+    private List<String> defaultCodeChallengeMethodsSupported;
+    private int defaultCodeExpirationSeconds;
 
     /**
      * OIDC service documentation URI.
      */
-    private String serviceDocumentation = "https://oidc.iam.wl4g.com/connect/service_documentation.html";
+    private String serviceDocumentation;
+
+    public V1OidcProperties() {
+        this.defaultBasicRealmName = "IAM OIDC Realm";
+        this.defaultJwksAlgName = "RS256";
+        this.defaultJwksJsonResource = "classpath*:/credentials/oidc/jwks.json";
+        // Generic OpenID Connect Configuration
+        this.defaultStandardFlowEnabled = true;
+        this.defaultImplicitFlowEnabled = false;
+        this.defaultDirectAccessGrantsEnabled = false;
+        // Fine Grain OpenID Connect Configuration
+        this.defaultAccessTokenAlgName = "S256";
+        this.defaultAccessTokenExpirationSeconds = 3600;
+        this.defaultRefreshTokenExpirationSeconds = 3600 * 24;
+        this.defaultIdTokenAlgName = "S256";
+        this.defaultIdTokenAlgSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(toList());
+        this.defaultCodeChallengeMethodsSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(
+                toList());
+        this.defaultCodeExpirationSeconds = 10;
+        // OIDC service documentation URI.
+        this.serviceDocumentation = "https://oidc.iam.wl4g.com/connect/service_documentation.html";
+    }
 
     public void setDefaultJwksAlgName(String jwksAlgName) {
         List<JWSAlgorithm> algorithms = safeList(

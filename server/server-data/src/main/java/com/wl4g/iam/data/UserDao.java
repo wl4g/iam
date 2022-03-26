@@ -60,8 +60,9 @@ public interface UserDao {
     @RequestMapping(method = GET, value = "/list")
     List<User> list(
             @RequestParam(value = "userId", required = false) @Param("userId") Long userId,
-            @RequestParam(value = "userName", required = false) @Param("userName") String userName,
-            @RequestParam(value = "nameZh", required = false) @Param("nameZh") String nameZh,
+            @RequestParam(value = "subject", required = false) @Param("subject") String subject,
+            @RequestParam(value = "name", required = false) @Param("name") String name,
+            @RequestParam(value = "givenName", required = false) @Param("givenName") String givenName,
             @RequestParam(value = "roleId", required = false) @Param("roleId") Long roleId);
 
     @RequestMapping(method = GET, value = "/selectBySubject")

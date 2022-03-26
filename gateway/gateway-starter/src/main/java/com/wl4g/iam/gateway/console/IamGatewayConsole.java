@@ -1,22 +1,23 @@
 package com.wl4g.iam.gateway.console;
 
-import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.iam.gateway.console.args.UpdatingRefreshDelayArgument;
-import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
-import com.wl4g.iam.gateway.route.config.RouteProperties;
-import com.wl4g.iam.gateway.route.repository.AbstractRouteRepository;
-import com.wl4g.shell.common.annotation.ShellMethod;
-import com.wl4g.shell.core.handler.SimpleShellContext;
-import com.wl4g.shell.springboot.annotation.ShellComponent;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.route.RouteDefinition;
-import reactor.core.publisher.Flux;
-
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+
+import com.wl4g.iam.gateway.console.args.UpdatingRefreshDelayArgument;
+import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
+import com.wl4g.iam.gateway.route.config.RouteProperties;
+import com.wl4g.iam.gateway.route.repository.AbstractRouteRepository;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.shell.common.annotation.ShellMethod;
+import com.wl4g.shell.core.handler.SimpleShellContext;
+import com.wl4g.shell.springboot.annotation.ShellComponent;
+
+import reactor.core.publisher.Flux;
 
 /**
  * {@link IamGatewayConsole}

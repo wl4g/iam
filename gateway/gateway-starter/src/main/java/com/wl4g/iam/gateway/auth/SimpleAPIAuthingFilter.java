@@ -1,4 +1,4 @@
-package com.wl4g.iam.gateway.authc;
+package com.wl4g.iam.gateway.auth;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
@@ -40,14 +40,14 @@ import com.wl4g.infra.common.web.rest.RespBase;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link SimpleAPIAuthenticatingFilter}
+ * {@link OidcAuthingFilter}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2020-07-04
  * @since
  */
-public class SimpleAPIAuthenticatingFilter implements GlobalFilter, Ordered {
+public class SimpleAPIAuthingFilter implements GlobalFilter, Ordered {
     protected final SmartLogger log = getLogger(getClass());
 
     @Override

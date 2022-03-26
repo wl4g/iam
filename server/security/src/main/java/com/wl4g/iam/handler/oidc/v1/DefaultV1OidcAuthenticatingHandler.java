@@ -24,12 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.common.subject.IamPrincipal.SimpleParameter;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.handler.AbstractAuthenticatingHandler;
@@ -78,38 +78,33 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
 
     @Override
     public V1OidcUserClaims getV1OidcUser(String loginName) {
-        // for test
-        IamPrincipal principal = new com.wl4g.iam.common.subject.SimpleIamPrincipal("1", "root",
-                "cd446a729ea1d31d712be2ff9c1401d87beb14a811ceb7a61b3a66a4d34177f8", "a3e0b320c73020aa81ebf87bd8611bf1", "", "",
-                null);
-        // IamPrincipal principal = configurer.getIamUserDetail(new
-        // SimpleParameter(loginName));
+        IamPrincipal principal = configurer.getIamUserDetail(new IamPrincipal.SimpleParameter(loginName));
+        User user = principal.attributes().getUser();
         return V1OidcUserClaims.builder()
-                .iamPrincipal(principal)
-                .sub(principal.principalId())
-                // TODO
-                .name(principal.getName())
-                .given_name(principal.getName())
-                .family_name(principal.getName())
-                .nickname(principal.getName())
-                .preferred_username(principal.getName())
-                // TODO
-                .picture("")
-                .locale("")
-                .updated_at("")
-                .email("")
+                .principal(principal)
+                .sub(user.getSubject())
+                .name(user.getName())
+                .given_name(user.getGiven_name())
+                .family_name(user.getFamily_name())
+                .nickname(user.getNickname())
+                .preferred_username(user.getPreferred_username())
+                .locale(user.getLocale())
+                .picture(user.getPicture())
+                .zoneinfo(user.getZoneinfo())
+                .updated_at(user.getUpdateDate())
+                .email(user.getEmail())
                 .email_verified(false)
-                .phone_number("")
+                .phone_number(user.getPhone())
                 .phone_number_verified(false)
                 .build();
     }
 
     @Override
-    public boolean validate(V1OidcUserClaims user, String password) {
-        if (isNull(user)) {
+    public boolean validate(V1OidcUserClaims claims, String password) {
+        if (isNull(claims)) {
             return false;
         }
-        CredentialsToken crToken = new CredentialsToken(user.getIamPrincipal().principal(), password, CryptKind.NONE, true);
+        CredentialsToken crToken = new CredentialsToken(claims.getPrincipal().principal(), password, CryptKind.NONE, true);
         return securer.validate(crToken, new IamAuthenticationInfo() {
             private static final long serialVersionUID = 1L;
 
@@ -121,17 +116,17 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
 
             @Override
             public Object getCredentials() {
-                return user.getIamPrincipal().getStoredCredentials();
+                return claims.getPrincipal().getStoredCredentials();
             }
 
             @Override
             public @NotNull IamPrincipal getIamPrincipal() {
-                return user.getIamPrincipal();
+                return claims.getPrincipal();
             }
 
             @Override
             public @NotNull CodecSource getPublicSalt() {
-                return CodecSource.fromHex(user.getIamPrincipal().getPublicSalt());
+                return CodecSource.fromHex(claims.getPrincipal().getPublicSalt());
             }
         });
     }

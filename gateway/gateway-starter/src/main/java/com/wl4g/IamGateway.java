@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 //@EnableIamClient
-//@EnableScmClient
+//@EnableUcmClient
 @EnableShellServer
 @SpringBootApplication
 public class IamGateway {
