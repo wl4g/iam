@@ -32,7 +32,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSignAlgorithm;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -124,7 +124,7 @@ public class V1OidcProperties implements Serializable {
             this.accessTokenExpirationSeconds = 3600;
 
             this.idTokenSignAlg = "S256";
-            this.idTokenAlgSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(toList());
+            this.idTokenAlgSupported = asList(StandardSignAlgorithm.values()).stream().map(m -> m.name()).collect(toList());
             // TODO
             // this.idTokenEncryptKeyMgtAlg = "";
             // this.idTokenEncryptContentAlg = "";
@@ -135,7 +135,7 @@ public class V1OidcProperties implements Serializable {
             this.refreshTokenExpirationSeconds = 3600 * 24;
 
             // Advanced Settings
-            this.codeChallengeMethodsSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(
+            this.codeChallengeMethodsSupported = asList(StandardSignAlgorithm.values()).stream().map(m -> m.name()).collect(
                     toList());
             this.codeChallengeExpirationSeconds = 10;
 
@@ -153,7 +153,7 @@ public class V1OidcProperties implements Serializable {
 
         public void setAccessTokenSignAlg(String accessTokenAlgName) {
             hasTextOf(accessTokenAlgName, "accessTokenSignAlg");
-            List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(
+            List<String> definitionAlgNames = asList(StandardSignAlgorithm.values()).stream().map(d -> d.name()).collect(
                     toList());
             isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, accessTokenAlgName)),
                     format("Invalid access token alg is '%s', but supported are: %s", accessTokenAlgName, definitionAlgNames));
@@ -162,7 +162,7 @@ public class V1OidcProperties implements Serializable {
 
         public void setIdTokenSignAlg(String idTokenSignAlg) {
             hasTextOf(idTokenSignAlg, "idTokenSignAlg");
-            List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(
+            List<String> definitionAlgNames = asList(StandardSignAlgorithm.values()).stream().map(d -> d.name()).collect(
                     toList());
             isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, idTokenSignAlg)),
                     format("Invalid id token sign alg is '%s', but supported are: %s", idTokenSignAlg, definitionAlgNames));
@@ -170,7 +170,7 @@ public class V1OidcProperties implements Serializable {
         }
 
         public void setIdTokenAlgSupported(List<String> idTokenAlgSupported) {
-            List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(
+            List<String> definitionAlgNames = asList(StandardSignAlgorithm.values()).stream().map(d -> d.name()).collect(
                     toList());
             for (String m : safeList(idTokenAlgSupported)) {
                 if (!definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, m))) {
@@ -193,7 +193,7 @@ public class V1OidcProperties implements Serializable {
 
         public void setCodeChallengeMethodsSupported(List<String> codeChallengeMethodsSupported) {
             notEmpty(codeChallengeMethodsSupported, "codeChallengeMethodsSupported");
-            List<String> definitionAlgNames = asList(SignAlgorithmSupported.values()).stream().map(d -> d.name()).collect(
+            List<String> definitionAlgNames = asList(StandardSignAlgorithm.values()).stream().map(d -> d.name()).collect(
                     toList());
             for (String m : safeList(codeChallengeMethodsSupported)) {
                 if (!definitionAlgNames.stream().anyMatch(d -> d.equalsIgnoreCase(m))) {

@@ -15,47 +15,19 @@
  */
 package com.wl4g.iam.web.oidc.v1;
 
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_AT_HASH;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EMAIL;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_FAMILY_NAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_GIVEN_NAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_ISS;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_NAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_NONCE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_SUB;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_DISPLAY_PAGE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_DEVICE_CODE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_IMPLICIT;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_PASSWORD;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_GRANT_REFRESH_TOKEN;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_ALL;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_CODE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_ADDRESS;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_EMAIL;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_OPENID;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_PHONE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SCOPE_PROFILE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SUBJECT_PUBLIC;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EXT_NONCE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_AUTHORIZE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECTION;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CERTS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECTION;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_METADATA;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported.parseDigest;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.IOException;
@@ -95,7 +67,14 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcServerController;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.SignAlgorithmSupported;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardDisplay;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScopeType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSignAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSubjectType;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
@@ -104,8 +83,6 @@ import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
-import com.wl4g.infra.common.annotation.Reserved;
-import com.wl4g.infra.common.collection.CollectionUtils2;
 
 /**
  * IAM V1-OIDC authentication controller.
@@ -162,21 +139,17 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_CERTS))
                 .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
                 // REQUIRED
-                .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL,
-                        KEY_IAM_OIDC_SCOPE_ADDRESS, KEY_IAM_OIDC_SCOPE_PHONE))
+                .scopes_supported(StandardScopeType.getNames())
                 // REQUIRED
-                .response_types_supported(KEY_IAM_OIDC_RESPONSE_TYPE_ALL)
+                .response_types_supported(StandardResponseType.getNames())
                 // OPTIONAL
-                .grant_types_supported(asList(KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_IMPLICIT,
-                        KEY_IAM_OIDC_GRANT_REFRESH_TOKEN, KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS, KEY_IAM_OIDC_GRANT_DEVICE_CODE))
+                .grant_types_supported(StandardGrantType.getNames())
                 // REQUIRED
-                .subject_types_supported(singletonList(KEY_IAM_OIDC_SUBJECT_PUBLIC))
+                .subject_types_supported(StandardSubjectType.getNames())
                 // REQUIRED
                 .id_token_signing_alg_values_supported(null)
-                .claims_supported(asList(KEY_IAM_OIDC_CLAIMS_SUB, KEY_IAM_OIDC_CLAIMS_ISS, KEY_IAM_OIDC_CLAIMS_NAME,
-                        KEY_IAM_OIDC_CLAIMS_FAMILY_NAME, KEY_IAM_OIDC_CLAIMS_GIVEN_NAME, KEY_IAM_OIDC_CLAIMS_PREFERRED_USERNAME,
-                        KEY_IAM_OIDC_CLAIMS_EMAIL))
-                .display_values_supported(asList(KEY_IAM_OIDC_DISPLAY_PAGE))
+                .claims_supported(StandardClaims.getNames())
+                .display_values_supported(StandardDisplay.getNames())
                 .service_documentation(config.getV1Oidc().getServiceDocumentation())
                 // PKCE support advertised
                 .code_challenge_methods_supported(null)
@@ -201,6 +174,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
      * For the description of parameter "code_challenge", see: <a href=
      * "https://blog.csdn.net/weixin_34415923/article/details/89691037">https://blog.csdn.net/weixin_34415923/article/details/89691037</a>
      * 
+     * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
      * @see https://openid.net/specs/openid-connect-core-1_0.html#codeExample
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_AUTHORIZE, method = RequestMethod.GET)
@@ -211,9 +185,16 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             @RequestParam String scope,
             @RequestParam String state,
             @RequestParam(required = false) String nonce,
+            @RequestParam(required = false) String display,
+            @RequestParam(required = false) String prompt,
+            @RequestParam(required = false) String max_age,
+            @RequestParam(required = false) String ui_locales,
+            @RequestParam(required = false) String id_token_hint,
+            @RequestParam(required = false) String login_hint,
+            @RequestParam(required = false) String acr_values,
+            @RequestParam(required = false) String response_mode,
             @RequestParam(required = false) String code_challenge,
             @RequestParam(required = false) String code_challenge_method,
-            @RequestParam(required = false) @Reserved String response_mode,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
@@ -235,9 +216,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 log.info("Password {} for user {} is correct.", password, username);
 
                 String iss = uriBuilder.replacePath("/").build().encode().toUriString();
-                Set<String> responseType = toSpaceSeparatedParams(response_type);
-                // Check hybrid flow response type
-                if (!CollectionUtils2.isSubCollection(responseType, KEY_IAM_OIDC_RESPONSE_TYPE_ALL)) {
+
+                // Check response_type valid
+                if (!StandardResponseType.isValid(response_type)) {
                     String url = format("%s#error=unsupported_response_type", redirect_uri);
                     return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
                 }
@@ -247,11 +228,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 fragmentUri.queryParam("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
                 fragmentUri.queryParam("state", urlEncode(state));
 
-                boolean checkRespType = false;
                 // Authorization code flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) {
-                    checkRespType = true;
+                if (StandardResponseType.containsBy(response_type, StandardResponseType.code)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
                     // Check challenge method supported.
                     if (!isBlank(code_challenge_method)
@@ -267,26 +246,23 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 }
                 // Implicit flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
-                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN)) {
-                    checkRespType = true;
+                if (StandardResponseType.containsBy(response_type, StandardResponseType.token)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
                     V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(iss, user, client_id, scope);
                     fragmentUri.queryParam("access_token", accessTokenInfo.getAccessToken());
                 }
-                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN)) {
-                    checkRespType = true;
+                if (StandardResponseType.containsBy(response_type, StandardResponseType.id_token)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
                     String id_token = createIdToken(iss, user, client_id, nonce);
                     fragmentUri.queryParam("id_token", id_token);
                 }
 
-                if (checkRespType) {
-                    String location = redirect_uri.concat("#").concat(fragmentUri.build().toString());
-                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
-                } else {
-                    String location = redirect_uri.concat("#").concat("error=unsupported_response_type");
-                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
-                }
+                // The protocol specifications stipulates that the response
+                // redirection parameters are spliced into the fragment parts,
+                // which can ensure maximum security, because the parameters of
+                // the fragment are not sent to the client application.
+                String location = redirect_uri.concat("#").concat(fragmentUri.build().toString());
+                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
             } else {
                 log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
                         response_type, client_id, redirect_uri);
@@ -396,9 +372,10 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
                 req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
-        if (!equalsAny(grant_type, KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_REFRESH_TOKEN)) {
-            return wrapErrorRFC6749("unsupported_grant_type", format("grant_type must is '%s' or '%s'",
-                    KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE, KEY_IAM_OIDC_GRANT_REFRESH_TOKEN));
+        StandardGrantType grantType = V1OidcIAMConstants.StandardGrantType.safeOf(grant_type);
+        if (isNull(grantType)) {
+            return wrapErrorRFC6749("unsupported_grant_type",
+                    format("grant_type must be one of '%s'", V1OidcIAMConstants.StandardGrantType.getNames()));
         }
         V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
         if (isNull(codeInfo)) {
@@ -411,20 +388,20 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         // load OIDC client configuration.
         V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
 
-        // (:oauth2)Verify code challenge
+        // (oauth2)Verify code challenge
         if (!isBlank(codeInfo.getCodeChallenge())) {
             // check PKCE
             if (isBlank(code_verifier)) {
                 return wrapErrorRFC6749("invalid_request", "code_verifier missing");
             }
-            if (SignAlgorithmSupported.PLAIN.name().equals(codeInfo.getCodeChallengeMethod())) {
+            if (StandardSignAlgorithm.PLAIN.name().equals(codeInfo.getCodeChallengeMethod())) {
                 if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
                     log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
                     return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
                 }
             } else {
                 String hashedVerifier = Base64URL
-                        .encode(doDigestHash(parseDigest(codeInfo.getCodeChallengeMethod()), code_verifier))
+                        .encode(doDigestHash(StandardSignAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
                         .toString();
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
@@ -435,19 +412,19 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             }
         }
 
-        // response access token
-        switch (grant_type) {
-        case KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE: // (:oidc)authorization_code
+        // response tokens
+        switch (grantType) {
+        case authorization_code: // oauth2+v1oidc
             return doTokenWithAuthorizationCode(client_id, clientConfig, codeInfo);
-        case KEY_IAM_OIDC_GRANT_IMPLICIT: // (:oidc)implicit
+        case implicit: // oauth2+v1oidc
             return doTokenWithImplicit(clientConfig);
-        case KEY_IAM_OIDC_GRANT_REFRESH_TOKEN: // (:oauth2)refresh_token
+        case refresh_token: // oauth2
             return doTokenWithRefreshToken(client_id, refresh_token, clientConfig, codeInfo);
-        case KEY_IAM_OIDC_GRANT_PASSWORD: // (:oauth2)password
+        case password: // oauth2
             return doTokenWithPassword(clientConfig);
-        case KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS: // (:oauth2)client_credentials
+        case client_credentials: // oauth2
             return doTokenWithClientCredentials(clientConfig);
-        case KEY_IAM_OIDC_GRANT_DEVICE_CODE: // (:oauth2)device_code
+        case device_code: // oauth2
             return doTokenWithDeviceCode(clientConfig);
         default:
             return wrapErrorRFC6749("invalid_request", "grant_type not valid");
@@ -534,30 +511,32 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
         String accessToken = toDetermineAccessToken(auth, access_token);
         V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(accessToken);
-        if (accessTokenInfo == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid is access token.");
+        if (isNull(accessTokenInfo)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("access_token is not valid");
         }
         Set<String> scopes = toSpaceSeparatedParams(accessTokenInfo.getScope());
         V1OidcUserClaims user = accessTokenInfo.getUser();
         V1OidcUserClaims oidcUser = V1OidcUserClaims.builder().sub(user.getSub()).build();
-        if (scopes.contains(KEY_IAM_OIDC_SCOPE_PROFILE)) {
+        if (scopes.contains(StandardScopeType.profile.name())) {
             oidcUser = oidcUser.withName(user.getName())
                     .withGiven_name(user.getGiven_name())
                     .withFamily_name(user.getFamily_name())
                     .withNickname(user.getNickname())
                     .withPreferred_username(user.getPreferred_username())
-                    .withPicture(user.getPicture())
-                    .withBirthdate(user.getBirthdate())
+                    .withGender(user.getGender())
                     .withLocale(user.getLocale())
+                    .withBirthdate(user.getBirthdate())
+                    .withPicture(user.getPicture())
+                    .withZoneinfo(user.getZoneinfo())
                     .withUpdated_at(user.getUpdated_at());
         }
-        if (scopes.contains(KEY_IAM_OIDC_SCOPE_EMAIL)) {
+        if (scopes.contains(StandardScopeType.email.name())) {
             oidcUser = oidcUser.withEmail(user.getEmail()).withEmail_verified(user.getEmail_verified());
         }
-        if (scopes.contains(KEY_IAM_OIDC_SCOPE_ADDRESS)) {
+        if (scopes.contains(StandardScopeType.address.name())) {
             oidcUser = oidcUser.withAddress(user.getAddress());
         }
-        if (scopes.contains(KEY_IAM_OIDC_SCOPE_PHONE)) {
+        if (scopes.contains(StandardScopeType.phone.name())) {
             oidcUser = oidcUser.withPhone_number(user.getPhone_number())
                     .withPhone_number_verified(user.getPhone_number_verified());
         }
@@ -729,7 +708,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
 
         // compute at_hash
-        byte[] hashBytes = doDigestHash(parseDigest(clientConfig.getIdTokenSignAlg()), user.getSub());
+        byte[] hashBytes = doDigestHash(StandardSignAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
         byte[] hashBytesLeftHalf = Arrays.copyOf(hashBytes, hashBytes.length / 2);
         Base64URL encodedHash = Base64URL.encode(hashBytesLeftHalf);
         // create JWT claims
@@ -739,8 +718,8 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .issueTime(new Date())
                 .expirationTime(new Date(currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L))
                 .jwtID(UUID.randomUUID().toString())
-                .claim(KEY_IAM_OIDC_CLAIMS_NONCE, nonce)
-                .claim(KEY_IAM_OIDC_CLAIMS_AT_HASH, encodedHash)
+                .claim(KEY_IAM_OIDC_CLAIMS_EXT_NONCE, nonce)
+                .claim(KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH, encodedHash)
                 .build();
         // create JWT token
         SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
