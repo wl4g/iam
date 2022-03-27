@@ -76,8 +76,8 @@ public class V1OidcProperties implements Serializable {
         // Generic OpenID Connect Configuration
         private String jwksSignAlg;
 
-        private String basicRealmName;
         private String loginTheme;
+        private String basicRealmName;
 
         private boolean standardFlowEnabled;
         private boolean implicitFlowEnabled;

@@ -32,40 +32,40 @@
     from iam_oidc_mapper
     <where>
       <if test="name != null">
-        AND name = #{name,jdbcType=VARCHAR},
+        AND name = #{name,jdbcType=VARCHAR}
       </if>
       <if test="mapperType != null">
-        AND mapper_type = #{mapperType,jdbcType=VARCHAR},
+        AND mapper_type = #{mapperType,jdbcType=VARCHAR}
       </if>
       <if test="addToIdToken != null">
-        AND add_to_id_token = #{addToIdToken,jdbcType=INTEGER},
+        AND add_to_id_token = #{addToIdToken,jdbcType=INTEGER}
       </if>
       <if test="addToAccessToken != null">
-        AND add_to_access_token = #{addToAccessToken,jdbcType=INTEGER},
+        AND add_to_access_token = #{addToAccessToken,jdbcType=INTEGER}
       </if>
       <if test="addUserinfo != null">
-        AND add_userinfo = #{addUserinfo,jdbcType=INTEGER},
+        AND add_userinfo = #{addUserinfo,jdbcType=INTEGER}
       </if>
       <if test="valueJson != null">
-        AND value_json = #{valueJson,jdbcType=VARCHAR},
+        AND value_json = #{valueJson,jdbcType=VARCHAR}
       </if>
       <if test="remark != null">
-        AND remark = #{remark,jdbcType=VARCHAR},
+        AND remark = #{remark,jdbcType=VARCHAR}
       </if>
       <if test="createBy != null">
-        AND create_by = #{createBy,jdbcType=VARCHAR},
+        AND create_by = #{createBy,jdbcType=VARCHAR}
       </if>
       <if test="createDate != null">
-        AND create_date = #{createDate,jdbcType=TIMESTAMP},
+        AND create_date = #{createDate,jdbcType=TIMESTAMP}
       </if>
       <if test="updateBy != null">
-        AND update_by = #{updateBy,jdbcType=VARCHAR},
+        AND update_by = #{updateBy,jdbcType=VARCHAR}
       </if>
       <if test="updateDate != null">
-        AND update_date = #{updateDate,jdbcType=TIMESTAMP},
+        AND update_date = #{updateDate,jdbcType=TIMESTAMP}
       </if>
       <if test="delFlag != null">
-        AND del_flag = #{delFlag,jdbcType=INTEGER},
+        AND del_flag = #{delFlag,jdbcType=INTEGER}
       </if>
     </where>
   </select>

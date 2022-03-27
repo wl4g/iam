@@ -160,10 +160,11 @@ spring:
     v1-oidc: ## see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
       service-documentation: 'https://oidc.iam.wl4g.com/connect/service_documentation.html'
       default-protocol-properties:
-        basic-realm-name: 'IAM OIDC Realm'
         registration-token: 'abcdefgh'
         jwks-sign-alg: RS256
         jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
+        login-theme: BASIC
+        basic-realm-name: 'IAM OIDC Basic Realm'
         ## Generic OpenID Connect Configuration.
         ## This enables standard Openid connect redirect based authentication with authorization code. In terms of 
         ## Openid connect or Oauth2 specifications, this enable support of 'Authorization Code Flow' for this client.

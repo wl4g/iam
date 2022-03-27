@@ -64,118 +64,118 @@
     from iam_oidc_client
     <where>
       <if test="clientId != null">
-        AND client_id =  #{clientId,jdbcType=VARCHAR},
+        AND client_id =  #{clientId,jdbcType=VARCHAR}
       </if>
       <if test="clientSecretsJson != null">
-        AND client_secrets_json =  #{clientSecretsJson,jdbcType=VARCHAR},
+        AND client_secrets_json =  #{clientSecretsJson,jdbcType=VARCHAR}
       </if>
       <if test="registrationToken != null">
-        AND registration_token =  #{registrationToken,jdbcType=VARCHAR},
+        AND registration_token =  #{registrationToken,jdbcType=VARCHAR}
       </if>
       <if test="jwksUri != null">
-        AND jwks_uri =  #{jwksUri,jdbcType=VARCHAR},
+        AND jwks_uri =  #{jwksUri,jdbcType=VARCHAR}
       </if>
       <if test="jwksJson != null">
-        AND jwks_json =  #{jwksJson,jdbcType=VARCHAR},
+        AND jwks_json =  #{jwksJson,jdbcType=VARCHAR}
       </if>
       <if test="clientName != null">
-        AND client_name =  #{clientName,jdbcType=VARCHAR},
+        AND client_name =  #{clientName,jdbcType=VARCHAR}
       </if>
       <if test="clientType != null">
-        AND client_type =  #{clientType,jdbcType=VARCHAR},
+        AND client_type =  #{clientType,jdbcType=VARCHAR}
       </if>
       <if test="envType != null">
-        AND env_type =  #{envType,jdbcType=VARCHAR},
+        AND env_type =  #{envType,jdbcType=VARCHAR}
       </if>
       <if test="loginTheme != null">
-        AND login_theme =  #{"loginTheme != null",jdbcType=VARCHAR},
+        AND login_theme =  #{"loginTheme != null",jdbcType=VARCHAR}
       </if>
       <if test="enable != null">
-        AND enable =  #{enable,jdbcType=INTEGER},
+        AND enable =  #{enable,jdbcType=INTEGER}
       </if>
       <if test="standardFlowEnabled != null">
-        AND standard_flow_enabled =  #{standardFlowEnabled,jdbcType=INTEGER},
+        AND standard_flow_enabled =  #{standardFlowEnabled,jdbcType=INTEGER}
       </if>
       <if test="implicitFlowEnabled != null">
-        AND Implicit_flow_enabled =  #{implicitFlowEnabled,jdbcType=INTEGER},
+        AND Implicit_flow_enabled =  #{implicitFlowEnabled,jdbcType=INTEGER}
       </if>
       <if test="directAccessGrantsEnabled != null">
-        AND direct_access_grants_enabled =  #{directAccessGrantsEnabled,jdbcType=INTEGER},
+        AND direct_access_grants_enabled =  #{directAccessGrantsEnabled,jdbcType=INTEGER}
       </if>
       <if test="oauth2DeviceCodeEnabled != null">
-        AND oauth2_device_code_enabled =  #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+        AND oauth2_device_code_enabled =  #{oauth2DeviceCodeEnabled,jdbcType=INTEGER}
       </if>
       <if test="validRedirectUrisJson != null">
-        AND valid_redirect_uris_json =  #{validRedirectUrisJson,jdbcType=VARCHAR},
+        AND valid_redirect_uris_json =  #{validRedirectUrisJson,jdbcType=VARCHAR}
       </if>
       <if test="adminUri != null">
-        AND admin_uri =  #{adminUri,jdbcType=VARCHAR},
+        AND admin_uri =  #{adminUri,jdbcType=VARCHAR}
       </if>
       <if test="logoUri != null">
-        AND logo_uri =  #{logoUri,jdbcType=VARCHAR},
+        AND logo_uri =  #{logoUri,jdbcType=VARCHAR}
       </if>
       <if test="policyUri != null">
-        AND policy_uri =  #{policyUri,jdbcType=VARCHAR},
+        AND policy_uri =  #{policyUri,jdbcType=VARCHAR}
       </if>
       <if test="termsUri != null">
-        AND terms_uri =  #{termsUri,jdbcType=VARCHAR},
+        AND terms_uri =  #{termsUri,jdbcType=VARCHAR}
       </if>
       <if test="validWebOriginUrisJson != null">
-        AND valid_web_origin_uris_json =  #{validWebOriginUrisJson,jdbcType=VARCHAR},
+        AND valid_web_origin_uris_json =  #{validWebOriginUrisJson,jdbcType=VARCHAR}
       </if>
       <if test="backchannelLogoutEnabled != null">
-        AND backchannel_logout_enabled =  #{backchannelLogoutEnabled,jdbcType=INTEGER},
+        AND backchannel_logout_enabled =  #{backchannelLogoutEnabled,jdbcType=INTEGER}
       </if>
       <if test="backchannelLogoutUri != null">
-        AND backchannel_logout_uri =  #{backchannelLogoutUri,jdbcType=VARCHAR},
+        AND backchannel_logout_uri =  #{backchannelLogoutUri,jdbcType=VARCHAR}
       </if>
       <if test="accessTokenSignAlg != null">
-        AND access_token_sign_alg =  #{accessTokenSignAlg,jdbcType=VARCHAR},
+        AND access_token_sign_alg =  #{accessTokenSignAlg,jdbcType=VARCHAR}
       </if>
       <if test="idTokenSignAlg != null">
-        AND id_token_sign_alg =  #{idTokenSignAlg,jdbcType=VARCHAR},
+        AND id_token_sign_alg =  #{idTokenSignAlg,jdbcType=VARCHAR}
       </if>
       <if test="idTokenEncryptKeyMgtAlg != null">
-        AND id_token_encrypt_key_mgt_alg =  #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR},
+        AND id_token_encrypt_key_mgt_alg =  #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR}
       </if>
       <if test="idTokenEncryptContentAlg != null">
-        AND id_token_encrypt_content_alg =  #{idTokenEncryptContentAlg,jdbcType=VARCHAR},
+        AND id_token_encrypt_content_alg =  #{idTokenEncryptContentAlg,jdbcType=VARCHAR}
       </if>
       <if test="codeChallengeEnabled != null">
-        AND code_challenge_enabled =  #{codeChallengeEnabled,jdbcType=INTEGER},
+        AND code_challenge_enabled =  #{codeChallengeEnabled,jdbcType=INTEGER}
       </if>
       <if test="codeChallengeExpirationSec != null">
-        AND code_challenge_expiration_sec =  #{codeChallengeExpirationSec,jdbcType=INTEGER},
+        AND code_challenge_expiration_sec =  #{codeChallengeExpirationSec,jdbcType=INTEGER}
       </if>
       <if test="useRefreshTokenEnabled != null">
-        AND use_refresh_token_enabled =  #{useRefreshTokenEnabled,jdbcType=INTEGER},
+        AND use_refresh_token_enabled =  #{useRefreshTokenEnabled,jdbcType=INTEGER}
       </if>
       <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
-        AND use_refresh_token_for_client_credentials_grant_enabled =  #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+        AND use_refresh_token_for_client_credentials_grant_enabled =  #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER}
       </if>
       <if test="accessTokenExpirationSec != null">
-        AND access_token_expiration_sec =  #{accessTokenExpirationSec,jdbcType=INTEGER},
+        AND access_token_expiration_sec =  #{accessTokenExpirationSec,jdbcType=INTEGER}
       </if>
       <if test="refreshTokenExpirationSec != null">
-        AND refresh_token_expiration_sec =  #{refreshTokenExpirationSec,jdbcType=INTEGER},
+        AND refresh_token_expiration_sec =  #{refreshTokenExpirationSec,jdbcType=INTEGER}
       </if>
       <if test="remark != null">
-        AND remark =  #{remark,jdbcType=VARCHAR},
+        AND remark =  #{remark,jdbcType=VARCHAR}
       </if>
       <if test="createBy != null">
-        AND create_by =  #{createBy,jdbcType=VARCHAR},
+        AND create_by =  #{createBy,jdbcType=VARCHAR}
       </if>
       <if test="createDate != null">
-        AND create_date =  #{createDate,jdbcType=TIMESTAMP},
+        AND create_date =  #{createDate,jdbcType=TIMESTAMP}
       </if>
       <if test="updateBy != null">
-        AND update_by =  #{updateBy,jdbcType=VARCHAR},
+        AND update_by =  #{updateBy,jdbcType=VARCHAR}
       </if>
       <if test="updateDate != null">
-        AND update_date =  #{updateDate,jdbcType=TIMESTAMP},
+        AND update_date =  #{updateDate,jdbcType=TIMESTAMP}
       </if>
       <if test="delFlag != null">
-        AND del_flag =  #{delFlag,jdbcType=INTEGER},
+        AND del_flag =  #{delFlag,jdbcType=INTEGER}
       </if>
     </where>
   </select>
