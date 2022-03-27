@@ -37,30 +37,35 @@ import lombok.Getter;
  */
 public abstract class V1OidcIAMConstants extends IAMConstants {
 
-    /** V1-OIDC endpoint URIs definitions. */
+    /** endpoint URIs definitions. */
     public static final String URI_IAM_OIDC_ENDPOINT = "/oidc/v1";
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
     public static final String URI_IAM_OIDC_ENDPOINT_METADATA = "/.well-known/openid-configuration";
-    public static final String URI_IAM_OIDC_ENDPOINT_JWKS = "/jwks";
+    public static final String URI_IAM_OIDC_ENDPOINT_CERTS = "/certs";
     public static final String URI_IAM_OIDC_ENDPOINT_TOKEN = "/token";
     public static final String URI_IAM_OIDC_ENDPOINT_INTROSPECTION = "/introspect";
     public static final String URI_IAM_OIDC_ENDPOINT_AUTHORIZE = "/authorize";
     public static final String URI_IAM_OIDC_ENDPOINT_USERINFO = "/userinfo";
 
-    /** V1-OIDC cache key definitions. */
+    /** cache key definitions. */
     public static final String CACHE_OIDC_PREFIX = CONF_PREFIX_IAM + "oidc:";
     public static final String CACHE_OIDC_ACCESSTOKEN_PREFIX = CACHE_OIDC_PREFIX + "ak:";
     public static final String CACHE_OIDC_REFRESHTOKEN_PREFIX = CACHE_OIDC_PREFIX + "rk:";
     public static final String CACHE_OIDC_AUTHCODE_PREFIX = CACHE_OIDC_PREFIX + "code:";
 
-    /** V1-OIDC scope definitions. */
+    /** login theme definitions. */
+    public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC = "BASIC";
+    public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT = "IAM OIDC Basic Realm";
+    public static final String KEY_IAM_OIDC_LOGIN_THEMEM_IAM = "IAM";
+
+    /** scope definitions. */
     public static final String KEY_IAM_OIDC_SCOPE_OPENID = "openid";
     public static final String KEY_IAM_OIDC_SCOPE_PROFILE = "profile";
     public static final String KEY_IAM_OIDC_SCOPE_EMAIL = "email";
     public static final String KEY_IAM_OIDC_SCOPE_ADDRESS = "address";
     public static final String KEY_IAM_OIDC_SCOPE_PHONE = "phone";
 
-    /** V1-OIDC grant definitions. */
+    /** grant definitions. */
     public static final String KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE = "authorization_code";
     public static final String KEY_IAM_OIDC_GRANT_IMPLICIT = "implicit";
     public static final String KEY_IAM_OIDC_GRANT_REFRESH_TOKEN = "refresh_token";
@@ -70,11 +75,11 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     @Beta
     public static final String KEY_IAM_OIDC_GRANT_DEVICE_CODE = "device_code";
 
-    /** V1-OIDC subject definitions. */
+    /** subject definitions. */
     public static final String KEY_IAM_OIDC_SUBJECT_PUBLIC = "public";
     public static final String KEY_IAM_OIDC_SUBJECT_PAIRWISE = "pairwise";
 
-    /** V1-OIDC response type definitions. */
+    /** response type definitions. */
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_CODE = "code";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN = "id_token";
     public static final String KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN = "token";
@@ -95,10 +100,10 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_TOKEN,
             KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN_TOKEN, KEY_IAM_OIDC_RESPONSE_TYPE_CODE_IDTOKEN_TOKEN);
 
-    /** V1-OIDC token type definitions. */
+    /** token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";
 
-    /** V1-OIDC token signing algorithm definitions. */
+    /** token signing algorithm definitions. */
     @Getter
     @AllArgsConstructor
     public static enum SignAlgorithmSupported {
@@ -115,10 +120,10 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         }
     }
 
-    /** V1-OIDC display definitions. */
+    /** display definitions. */
     public static final String KEY_IAM_OIDC_DISPLAY_PAGE = "page";
 
-    /** V1-OIDC claims definitions. */
+    /** claims definitions. */
     public static final String KEY_IAM_OIDC_CLAIMS_SUB = "sub";
     public static final String KEY_IAM_OIDC_CLAIMS_ISS = "iss";
     public static final String KEY_IAM_OIDC_CLAIMS_NAME = "name";

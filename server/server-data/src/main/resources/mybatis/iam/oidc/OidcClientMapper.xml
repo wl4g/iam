@@ -11,6 +11,7 @@
     <result column="client_name" jdbcType="VARCHAR" property="clientName" />
     <result column="client_type" jdbcType="VARCHAR" property="clientType" />
     <result column="env_type" jdbcType="VARCHAR" property="envType" />
+    <result column="login_theme" jdbcType="VARCHAR" property="loginTheme" />
     <result column="enable" jdbcType="INTEGER" property="enable" />
     <result column="standard_flow_enabled" jdbcType="INTEGER" property="standardFlowEnabled" />
     <result column="Implicit_flow_enabled" jdbcType="INTEGER" property="implicitFlowEnabled" />
@@ -43,7 +44,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, client_id, client_secrets_json, registration_token, jwks_uri, jwks_json, client_name, 
-    client_type, env_type, enabled, standard_flow_enabled, Implicit_flow_enabled, direct_access_grants_enabled, 
+    client_type, env_type, login_theme, enabled, standard_flow_enabled, Implicit_flow_enabled, direct_access_grants_enabled, 
     oauth2_device_code_enabled, valid_redirect_uris_json, admin_uri, logo_uri, policy_uri, 
     terms_uri, valid_web_origin_uris_json, backchannel_logout_enabled, backchannel_logout_uri, 
     access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, id_token_encrypt_content_alg, 
@@ -85,6 +86,9 @@
       </if>
       <if test="envType != null">
         AND env_type =  #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTheme != null">
+        AND login_theme =  #{"loginTheme != null",jdbcType=VARCHAR},
       </if>
       <if test="enable != null">
         AND enable =  #{enable,jdbcType=INTEGER},
@@ -182,7 +186,7 @@
   <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
     insert into iam_oidc_client (id, client_id, client_secrets_json, 
       registration_token, jwks_uri, jwks_json, 
-      client_name, client_type, env_type, 
+      client_name, client_type, env_type, login_theme, 
       enabled, standard_flow_enabled, Implicit_flow_enabled, 
       direct_access_grants_enabled, oauth2_device_code_enabled, 
       valid_redirect_uris_json, admin_uri, logo_uri, 
@@ -240,6 +244,9 @@
       </if>
       <if test="envType != null">
         env_type,
+      </if>
+      <if test="loginTheme != null">
+        login_theme,
       </if>
       <if test="enable != null">
         enabled,
@@ -470,6 +477,9 @@
       <if test="envType != null">
         env_type = #{envType,jdbcType=VARCHAR},
       </if>
+      <if test="loginTheme != null">
+        login_theme = #{loginTheme,jdbcType=VARCHAR},
+      </if>
       <if test="enable != null">
         enable = #{enable,jdbcType=INTEGER},
       </if>
@@ -570,6 +580,7 @@
       client_name = #{clientName,jdbcType=VARCHAR},
       client_type = #{clientType,jdbcType=VARCHAR},
       env_type = #{envType,jdbcType=VARCHAR},
+      login_theme = #{loginTheme,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
       standard_flow_enabled = #{standardFlowEnabled,jdbcType=INTEGER},
       Implicit_flow_enabled = #{implicitFlowEnabled,jdbcType=INTEGER},

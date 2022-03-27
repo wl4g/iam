@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.config.properties;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notEmpty;
@@ -71,11 +73,11 @@ public class V1OidcProperties implements Serializable {
     public static class DefaultProtocolProperties implements Serializable {
         private static final long serialVersionUID = 4776976112803043619L;
 
-        private String basicRealmName;
-        private String registrationToken;
+        // Generic OpenID Connect Configuration
         private String jwksSignAlg;
 
-        // Generic OpenID Connect Configuration
+        private String basicRealmName;
+        private String loginTheme;
 
         private boolean standardFlowEnabled;
         private boolean implicitFlowEnabled;
@@ -87,24 +89,32 @@ public class V1OidcProperties implements Serializable {
         private String accessTokenSignAlg;
         private int accessTokenExpirationSeconds;
 
-        private int refreshTokenExpirationSeconds;
-        private boolean useRefreshTokenEnabled;
-        private boolean useRefreshTokenForClientCredentialsGrantEnabled;
-
         private String idTokenSignAlg;
         private List<String> idTokenAlgSupported;
         private String idTokenEncryptKeyMgtAlg;
         private String idTokenEncryptContentAlg;
 
+        // OpenID Connect Compatibility Modes
+
+        private boolean useRefreshTokenEnabled;
+        private int refreshTokenExpirationSeconds;
+        private boolean useRefreshTokenForClientCredentialsGrantEnabled;
+
+        // Advanced Settings
+
         private List<String> codeChallengeMethodsSupported;
         private int codeChallengeExpirationSeconds;
 
+        // Credentials Information
+
+        private String registrationToken;
+
         public DefaultProtocolProperties() {
-            this.basicRealmName = "IAM OIDC Realm";
-            this.registrationToken = null;
+            // Generic OpenID Connect Configuration
+            this.basicRealmName = KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
+            this.loginTheme = KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
             this.jwksSignAlg = "RS256";
 
-            // Generic OpenID Connect Configuration
             this.standardFlowEnabled = true;
             this.implicitFlowEnabled = false;
             this.directAccessGrantsEnabled = false;
@@ -112,7 +122,6 @@ public class V1OidcProperties implements Serializable {
             // Fine Grain OpenID Connect Configuration
             this.accessTokenSignAlg = "S256";
             this.accessTokenExpirationSeconds = 3600;
-            this.refreshTokenExpirationSeconds = 3600 * 24;
 
             this.idTokenSignAlg = "S256";
             this.idTokenAlgSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(toList());
@@ -120,9 +129,18 @@ public class V1OidcProperties implements Serializable {
             // this.idTokenEncryptKeyMgtAlg = "";
             // this.idTokenEncryptContentAlg = "";
 
+            // OpenID Connect Compatibility Modes
+            this.useRefreshTokenEnabled = false;
+            this.useRefreshTokenForClientCredentialsGrantEnabled = false;
+            this.refreshTokenExpirationSeconds = 3600 * 24;
+
+            // Advanced Settings
             this.codeChallengeMethodsSupported = asList(SignAlgorithmSupported.values()).stream().map(m -> m.name()).collect(
                     toList());
             this.codeChallengeExpirationSeconds = 10;
+
+            // Credentials Information
+            this.registrationToken = null;
         }
 
         public void setJwksAlgName(String jwksSignAlg) {

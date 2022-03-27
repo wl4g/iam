@@ -44,7 +44,7 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_SUBJE
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_AUTHORIZE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECTION;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_JWKS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CERTS;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_METADATA;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
@@ -159,7 +159,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 // RECOMMENDED
                 .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO))
                 // REQUIRED
-                .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_JWKS))
+                .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_CERTS))
                 .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
                 // REQUIRED
                 .scopes_supported(asList(KEY_IAM_OIDC_SCOPE_OPENID, KEY_IAM_OIDC_SCOPE_PROFILE, KEY_IAM_OIDC_SCOPE_EMAIL,
@@ -188,10 +188,10 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
      * Provides JSON Web Key Set containing the public part of the key used to
      * sign ID tokens.
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_JWKS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CERTS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
-    public ResponseEntity<?> jwks(HttpServletRequest req) {
-        log.info("called:jwks '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_JWKS, req.getRemoteHost());
+    public ResponseEntity<?> certs(HttpServletRequest req) {
+        log.info("called:certs '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_CERTS, req.getRemoteHost());
         return ResponseEntity.ok().body(pubJWKSet.toString());
     }
 
@@ -246,8 +246,12 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 UriComponentsBuilder fragmentUri = UriComponentsBuilder.newInstance();
                 fragmentUri.queryParam("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
                 fragmentUri.queryParam("state", urlEncode(state));
+
+                boolean checkRespType = false;
+                // Authorization code flow
+                // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
                 if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_CODE)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
+                    checkRespType = true;
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
                     // Check challenge method supported.
                     if (!isBlank(code_challenge_method)
@@ -261,19 +265,28 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                             iss, scope, nonce);
                     fragmentUri.queryParam("code", code);
                 }
-                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
-                    String id_token = createIdToken(iss, user, client_id, nonce);
-                    fragmentUri.queryParam("id_token", id_token);
-                }
+                // Implicit flow
+                // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
                 if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_TOKEN)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
+                    checkRespType = true;
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
                     V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(iss, user, client_id, scope);
                     fragmentUri.queryParam("access_token", accessTokenInfo.getAccessToken());
                 }
-                String location = redirect_uri.concat("#").concat(fragmentUri.build().toString());
-                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+                if (responseType.contains(KEY_IAM_OIDC_RESPONSE_TYPE_IDTOKEN)) {
+                    checkRespType = true;
+                    // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
+                    String id_token = createIdToken(iss, user, client_id, nonce);
+                    fragmentUri.queryParam("id_token", id_token);
+                }
+
+                if (checkRespType) {
+                    String location = redirect_uri.concat("#").concat(fragmentUri.build().toString());
+                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+                } else {
+                    String location = redirect_uri.concat("#").concat("error=unsupported_response_type");
+                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+                }
             } else {
                 log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
                         response_type, client_id, redirect_uri);
@@ -362,6 +375,8 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
      *  }
      * </pre>
      * </p>
+     * 
+     * @throws Exception
      */
     @SuppressWarnings("deprecation")
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -376,7 +391,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             @RequestParam(required = false) String code_verifier,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
-            HttpServletRequest req) throws NoSuchAlgorithmException, JOSEException {
+            HttpServletRequest req) throws Exception {
 
         log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
                 req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
@@ -392,6 +407,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         if (!StringUtils.equals(redirect_uri, codeInfo.getRedirect_uri())) {
             return wrapErrorRFC6749("invalid_request", "redirect_uri not valid");
         }
+
+        // load OIDC client configuration.
+        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+
+        // (:oauth2)Verify code challenge
         if (!isBlank(codeInfo.getCodeChallenge())) {
             // check PKCE
             if (isBlank(code_verifier)) {
@@ -417,50 +437,20 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
         // response access token
         switch (grant_type) {
-        case KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE: // authorization_code
-            V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(),
-                    codeInfo.getClient_id(), codeInfo.getScope());
-            String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce());
-            V1AccessToken accessToken = V1AccessToken.builder()
-                    .access_token(accessTokenInfo.getAccessToken())
-                    .refresh_token(accessTokenInfo.getRefreshToken())
-                    .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                    .scope(codeInfo.getScope())
-                    .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
-                    .id_token(id_token)
-                    .build();
-            return ResponseEntity.ok(accessToken);
-        case KEY_IAM_OIDC_GRANT_REFRESH_TOKEN: // refresh_token
-            if (isBlank(refresh_token)) {
-                return wrapErrorRFC6749("invalid_request", "refresh_token not missing");
-            }
-            // Check refresh_token valid?
-            String lastAccessToken = oidcHandler.loadRefreshToken(refresh_token);
-            if (isBlank(lastAccessToken)) {
-                return wrapErrorRFC6749("invalid_request", "refresh_token not invalid");
-            }
-            // New generate access_token
-            accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
-                    codeInfo.getScope());
-            accessToken = V1AccessToken.builder()
-                    .access_token(accessTokenInfo.getAccessToken())
-                    .refresh_token(accessTokenInfo.getRefreshToken())
-                    .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                    .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
-                    .scope(codeInfo.getScope())
-                    .build();
-            return ResponseEntity.ok(accessToken);
-        case KEY_IAM_OIDC_GRANT_PASSWORD: // password
-            // TODO
-            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
-        case KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS: // client_credentials
-            // TODO
-            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
-        case KEY_IAM_OIDC_GRANT_DEVICE_CODE: // device_code
-            // TODO
-            return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        case KEY_IAM_OIDC_GRANT_AUTHORIZATION_CODE: // (:oidc)authorization_code
+            return doTokenWithAuthorizationCode(client_id, clientConfig, codeInfo);
+        case KEY_IAM_OIDC_GRANT_IMPLICIT: // (:oidc)implicit
+            return doTokenWithImplicit(clientConfig);
+        case KEY_IAM_OIDC_GRANT_REFRESH_TOKEN: // (:oauth2)refresh_token
+            return doTokenWithRefreshToken(client_id, refresh_token, clientConfig, codeInfo);
+        case KEY_IAM_OIDC_GRANT_PASSWORD: // (:oauth2)password
+            return doTokenWithPassword(clientConfig);
+        case KEY_IAM_OIDC_GRANT_CLIENT_CREDENTIALS: // (:oauth2)client_credentials
+            return doTokenWithClientCredentials(clientConfig);
+        case KEY_IAM_OIDC_GRANT_DEVICE_CODE: // (:oauth2)device_code
+            return doTokenWithDeviceCode(clientConfig);
         default:
-            return wrapErrorRFC6749("invalid_request", "unknown");
+            return wrapErrorRFC6749("invalid_request", "grant_type not valid");
         }
     }
 
@@ -572,6 +562,80 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     .withPhone_number_verified(user.getPhone_number_verified());
         }
         return ResponseEntity.ok().body(oidcUser);
+    }
+
+    private ResponseEntity<?> doTokenWithAuthorizationCode(
+            String client_id,
+            V1OidcClientConfig clientConfig,
+            V1AuthorizationCodeInfo codeInfo) throws Exception {
+        if (!clientConfig.isStandardFlowEnabled()) {
+            return wrapErrorRFC6749("invalid_request", "disabled standard authorization code grant");
+        }
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+                codeInfo.getScope());
+        String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce());
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(accessTokenInfo.getAccessToken())
+                .refresh_token(accessTokenInfo.getRefreshToken())
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .scope(codeInfo.getScope())
+                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .id_token(id_token)
+                .build();
+        return ResponseEntity.ok(accessToken);
+    }
+
+    private ResponseEntity<?> doTokenWithImplicit(V1OidcClientConfig clientConfig) throws Exception {
+        if (!clientConfig.isImplicitFlowEnabled()) {
+            return wrapErrorRFC6749("invalid_request", "disabled implicit credentials grant");
+        }
+        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+    }
+
+    private ResponseEntity<?> doTokenWithRefreshToken(
+            String client_id,
+            String refresh_token,
+            V1OidcClientConfig clientConfig,
+            V1AuthorizationCodeInfo codeInfo) throws Exception {
+        if (!clientConfig.isUseRefreshTokenEnabled()) {
+            return wrapErrorRFC6749("invalid_request", "disabled refresh token grant");
+        }
+        if (isBlank(refresh_token)) {
+            return wrapErrorRFC6749("invalid_request", "refresh_token not missing");
+        }
+        // Check refresh_token valid?
+        String lastAccessToken = oidcHandler.loadRefreshToken(refresh_token);
+        if (isBlank(lastAccessToken)) {
+            return wrapErrorRFC6749("invalid_request", "refresh_token not invalid");
+        }
+        // New generate access_token
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
+                codeInfo.getScope());
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(accessTokenInfo.getAccessToken())
+                .refresh_token(accessTokenInfo.getRefreshToken())
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .scope(codeInfo.getScope())
+                .build();
+        return ResponseEntity.ok(accessToken);
+    }
+
+    private ResponseEntity<?> doTokenWithPassword(V1OidcClientConfig clientConfig) throws Exception {
+        if (!clientConfig.isDirectAccessGrantsEnabled()) {
+            return wrapErrorRFC6749("invalid_request", "disabled password credentials grant");
+        }
+        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+    }
+
+    private ResponseEntity<?> doTokenWithClientCredentials(V1OidcClientConfig clientConfig) throws Exception {
+        // TODO
+        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+    }
+
+    private ResponseEntity<?> doTokenWithDeviceCode(V1OidcClientConfig clientConfig) throws Exception {
+        // TODO
+        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
     }
 
     private String createAuthorizationCode(

@@ -42,15 +42,10 @@ public class OidcClient extends BaseBean {
     private static final long serialVersionUID = -4498270305726992089L;
 
     private String clientId;
-    private String clientSecretsJson;
-
-    private String registrationToken;
-    private String jwksUri;
-    private String jwksJson;
     private String clientName;
     private String clientType;
-
     private String envType;
+    private String loginTheme;
 
     // Generic OpenID Connect Configuration
 
@@ -91,19 +86,30 @@ public class OidcClient extends BaseBean {
     private String backchannelLogoutUri;
 
     // Fine Grain OpenID Connect Configuration
+
     private String accessTokenSignAlg;
+    private Integer accessTokenExpirationSec;
     private String idTokenSignAlg;
     private String idTokenEncryptKeyMgtAlg;
     private String idTokenEncryptContentAlg;
 
+    // OpenID Connect Compatibility Modes
+
+    private Integer useRefreshTokenEnabled;
+    private Integer refreshTokenExpirationSec;
+    private Integer useRefreshTokenForClientCredentialsGrantEnabled;
+
+    // Advanced Settings
+
     private Integer codeChallengeEnabled;
     private int codeChallengeExpirationSec;
 
-    private Integer useRefreshTokenEnabled;
-    private Integer useRefreshTokenForClientCredentialsGrantEnabled;
+    // Credentials Information
 
-    private Integer accessTokenExpirationSec;
-    private Integer refreshTokenExpirationSec;
+    private String clientSecretsJson;
+    private String registrationToken;
+    private String jwksUri;
+    private String jwksJson;
 
     //
     // TMP fields.

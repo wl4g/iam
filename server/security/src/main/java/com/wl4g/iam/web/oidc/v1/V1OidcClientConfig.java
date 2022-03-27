@@ -66,12 +66,10 @@ import lombok.experimental.SuperBuilder;
 public class V1OidcClientConfig extends DefaultProtocolProperties {
     private static final long serialVersionUID = 4776976002803043619L;
 
+    // Generic OpenID Connect Configuration
+
     private final String clientId;
     private String clientName;
-
-    private List<OidcClient.ClientSecretInfo> clientSecrets;
-    private JWKConfig jwkConfig;
-
     private String clientType;
 
     private List<String> validRedirectUris;
@@ -84,7 +82,14 @@ public class V1OidcClientConfig extends DefaultProtocolProperties {
     private boolean backchannelLogoutEnabled;
     private String backchannelLogoutUri;
 
+    // Advanced Settings
+
     private boolean codeChallengeEnabled;
+
+    // Credentials Information
+
+    private List<OidcClient.ClientSecretInfo> clientSecrets;
+    private JWKConfig jwkConfig;
 
     public static V1OidcClientConfig newInstance(String clientId, V1OidcProperties config) {
         V1OidcClientConfig that = new V1OidcClientConfig(clientId);

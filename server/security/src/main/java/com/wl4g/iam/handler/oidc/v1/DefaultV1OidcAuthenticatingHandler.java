@@ -77,29 +77,46 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
             synchronized (clientId) {
                 clientConfig = clientConfigCache.asMap().get(clientId);
                 if (isNull(clientConfig)) {
-                    // New client config.
+                    // New Configuration.
                     clientConfig = V1OidcClientConfig.newInstance(clientId, config.getV1Oidc());
                     clientConfigCache.put(clientId, clientConfig);
 
-                    // Load client config from DB.
+                    // Load Configuration from DB.
                     OidcClient client = configurer.loadOidcClient(clientId);
 
-                    // Overwrite merge to client config.
+                    //
+                    // Overwrite Merge to OIDC client Configuration
+                    //
+                    // Generic OpenID Connect Configuration
                     // clientConfig.setBasicRealmName("");
-                    clientConfig.setRegistrationToken(client.getRegistrationToken());
                     // TODO
                     clientConfig.setJwksAlgName(null);
-
+                    clientConfig.setClientName(client.getClientName());
+                    clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), oidcClientSecretTypeRef));
+                    clientConfig.setClientType(client.getClientType());
+                    // flow
                     clientConfig.setStandardFlowEnabled(isTrue(valueOf(client.getStandardFlowEnabled())));
                     clientConfig.setImplicitFlowEnabled(isTrue(valueOf(client.getImplicitFlowEnabled())));
                     clientConfig.setDirectAccessGrantsEnabled(isTrue(valueOf(client.getDirectAccessGrantsEnabled())));
                     clientConfig.setOauth2DeviceCodeEnabled(isTrue(valueOf(client.getOauth2DeviceCodeEnabled())));
+                    // redirect
+                    clientConfig.setValidRedirectUris(parseArrayString(client.getValidRedirectUrisJson()));
+                    clientConfig.setAdminUri(client.getAdminUri());
+                    clientConfig.setLogoUri(client.getLogoUri());
+                    clientConfig.setPolicyUri(client.getPolicyUri());
+                    clientConfig.setTermsUri(client.getTermsUri());
+                    clientConfig.setValidWebOriginUris(parseArrayString(client.getValidWebOriginUrisJson()));
+                    // logout
+                    clientConfig.setBackchannelLogoutEnabled(isTrue(valueOf(client.getBackchannelLogoutEnabled())));
+                    clientConfig.setBackchannelLogoutUri(client.getBackchannelLogoutUri());
 
+                    // Fine Grain OpenID Connect Configuration
                     clientConfig.setAccessTokenSignAlg(client.getAccessTokenSignAlg());
                     clientConfig.setAccessTokenExpirationSeconds(client.getAccessTokenExpirationSec());
 
-                    clientConfig.setRefreshTokenExpirationSeconds(client.getRefreshTokenExpirationSec());
+                    // OpenID Connect Compatibility Modes
                     clientConfig.setUseRefreshTokenEnabled(isTrue(valueOf(client.getUseRefreshTokenEnabled())));
+                    clientConfig.setRefreshTokenExpirationSeconds(client.getRefreshTokenExpirationSec());
                     clientConfig.setUseRefreshTokenForClientCredentialsGrantEnabled(
                             isTrue(valueOf(client.getUseRefreshTokenForClientCredentialsGrantEnabled())));
 
@@ -107,21 +124,12 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
                     // TODO
                     // clientConfig.setIdTokenAlgSupported(null);
 
+                    // Advanced Settings
                     clientConfig.setCodeChallengeEnabled(isTrue(valueOf(client.getCodeChallengeEnabled())));
                     clientConfig.setCodeChallengeExpirationSeconds(client.getCodeChallengeExpirationSec());
 
-                    clientConfig.setClientName(client.getClientName());
-                    clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), oidcClientSecretTypeRef));
-                    clientConfig.setClientType(client.getClientType());
-                    clientConfig.setValidRedirectUris(parseArrayString(client.getValidRedirectUrisJson()));
-                    clientConfig.setAdminUri(client.getAdminUri());
-                    clientConfig.setLogoUri(client.getLogoUri());
-                    clientConfig.setPolicyUri(client.getPolicyUri());
-                    clientConfig.setTermsUri(client.getTermsUri());
-                    clientConfig.setValidWebOriginUris(parseArrayString(client.getValidWebOriginUrisJson()));
-
-                    clientConfig.setBackchannelLogoutEnabled(isTrue(valueOf(client.getBackchannelLogoutEnabled())));
-                    clientConfig.setBackchannelLogoutUri(client.getBackchannelLogoutUri());
+                    // Credentials Information
+                    clientConfig.setRegistrationToken(client.getRegistrationToken());
                 }
             }
         }
