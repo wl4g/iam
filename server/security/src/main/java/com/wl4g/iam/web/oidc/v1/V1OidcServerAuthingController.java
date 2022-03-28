@@ -37,6 +37,8 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -71,6 +73,7 @@ import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardDisplay;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScopeType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSignAlgorithm;
@@ -170,12 +173,178 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
     /**
      * Provides authorization endpoint. </br>
-     * </br>
-     * For the description of parameter "code_challenge", see: <a href=
-     * "https://blog.csdn.net/weixin_34415923/article/details/89691037">https://blog.csdn.net/weixin_34415923/article/details/89691037</a>
+     * Authorization request docs see to:
+     * https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
      * 
-     * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
-     * @see https://openid.net/specs/openid-connect-core-1_0.html#codeExample
+     * @param client_id
+     *            REQUIRED. Registered client application ID. OAuth 2.0 Client
+     *            Identifier valid at the Authorization Server.
+     * @param redirect_uri
+     *            REQUIRED. Redirection URI to which the response will be sent.
+     *            This URI MUST exactly match one of the Redirection URI values
+     *            for the Client pre-registered at the OpenID Provider, with the
+     *            matching performed as described in Section 6.2.1 of [RFC3986]
+     *            (Simple String Comparison). When using this flow, the
+     *            Redirection URI SHOULD use the https scheme; however, it MAY
+     *            use the http scheme, provided that the Client Type is
+     *            confidential, as defined in Section 2.1 of OAuth 2.0, and
+     *            provided the OP allows the use of http Redirection URIs in
+     *            this case. The Redirection URI MAY use an alternate scheme,
+     *            such as one that is intended to identify a callback into a
+     *            native application. </br>
+     * @param response_type
+     *            REQUIRED. OAuth 2.0 Response Type value that determines the
+     *            authorization processing flow to be used, including what
+     *            parameters are returned from the endpoints used. When using
+     *            the Authorization Code Flow, this value is code.. see to:
+     *            https://openid.net/specs/openid-connect-core-1_0.html#codeExample
+     *            </br>
+     * @param scope
+     *            REQUIRED. OpenID Connect requests MUST contain the openid
+     *            scope value. If the openid scope value is not present, the
+     *            behavior is entirely unspecified. Other scope values MAY be
+     *            present. Scope values used that are not understood by an
+     *            implementation SHOULD be ignored. See Sections 5.4 and 11 for
+     *            additional scope values defined by this specification. </br>
+     * @param state
+     *            RECOMMENDED. Opaque value used to maintain state between the
+     *            request and the callback. Typically, Cross-Site Request
+     *            Forgery (CSRF, XSRF) mitigation is done by cryptographically
+     *            binding the value of this parameter with a browser cookie.
+     *            </br>
+     * @param nonce
+     *            OPTIONAL. String value used to associate a Client session with
+     *            an ID Token, and to mitigate replay attacks. The value is
+     *            passed through unmodified from the Authentication Request to
+     *            the ID Token. Sufficient entropy MUST be present in the nonce
+     *            values used to prevent attackers from guessing values. For
+     *            implementation notes, see Section 15.5.2. </br>
+     * @param display
+     *            OPTIONAL. ASCII string value that specifies how the
+     *            Authorization Server displays the authentication and consent
+     *            user interface pages to the End-User. The defined values are:
+     *            <b>page</b> The Authorization Server SHOULD display the
+     *            authentication and consent UI consistent with a full User
+     *            Agent page view. If the display parameter is not specified,
+     *            this is the default display mode. </br>
+     *            <b>popup</b> The Authorization Server SHOULD display the
+     *            authentication and consent UI consistent with a popup User
+     *            Agent window. The popup User Agent window should be of an
+     *            appropriate size for a login-focused dialog and should not
+     *            obscure the entire window that it is popping up over. </br>
+     *            <b>touch</b> The Authorization Server SHOULD display the
+     *            authentication and consent UI consistent with a device that
+     *            leverages a touch interface. </br>
+     *            <b>wap</b> The Authorization Server SHOULD display the
+     *            authentication and consent UI consistent with a "feature
+     *            phone" type display. </br>
+     * @param prompt
+     *            OPTIONAL. Space delimited, case sensitive list of ASCII string
+     *            values that specifies whether the Authorization Server prompts
+     *            the End-User for reauthentication and consent. The defined
+     *            values are: </br>
+     *            <b>none</b> The Authorization Server MUST NOT display any
+     *            authentication or consent user interface pages. An error is
+     *            returned if an End-User is not already authenticated or the
+     *            Client does not have pre-configured consent for the requested
+     *            Claims or does not fulfill other conditions for processing the
+     *            request. The error code will typically be login_required,
+     *            interaction_required, or another code defined in Section
+     *            3.1.2.6. This can be used as a method to check for existing
+     *            authentication and/or consent. </br>
+     *            <b>login</b> The Authorization Server SHOULD prompt the
+     *            End-User for reauthentication. If it cannot reauthenticate the
+     *            End-User, it MUST return an error, typically login_required.
+     *            </br>
+     *            <b>consent The Authorization Server SHOULD prompt the End-User
+     *            for consent before returning information to the Client. If it
+     *            cannot obtain consent, it MUST return an error, typically
+     *            consent_required. </br>
+     *            <b>select_account</b> The Authorization Server SHOULD prompt
+     *            the End-User to select a user account. This enables an
+     *            End-User who has multiple accounts at the Authorization Server
+     *            to select amongst the multiple accounts that they might have
+     *            current sessions for. If it cannot obtain an account selection
+     *            choice made by the End-User, it MUST return an error,
+     *            typically account_selection_required. </br>
+     * @param max_age
+     *            OPTIONAL. Maximum Authentication Age. Specifies the allowable
+     *            elapsed time in seconds since the last time the End-User was
+     *            actively authenticated by the OP. If the elapsed time is
+     *            greater than this value, the OP MUST attempt to actively
+     *            re-authenticate the End-User. (The max_age request parameter
+     *            corresponds to the OpenID 2.0 PAPE [OpenID.PAPE] max_auth_age
+     *            request parameter.) When max_age is used, the ID Token
+     *            returned MUST include an auth_time Claim Value. </br>
+     * @param ui_locales
+     *            OPTIONAL. End-User's preferred languages and scripts for the
+     *            user interface, represented as a space-separated list of BCP47
+     *            [RFC5646] language tag values, ordered by preference. For
+     *            instance, the value "fr-CA fr en" represents a preference for
+     *            French as spoken in Canada, then French (without a region
+     *            designation), followed by English (without a region
+     *            designation). An error SHOULD NOT result if some or all of the
+     *            requested locales are not supported by the OpenID Provider.
+     *            </br>
+     * @param id_token_hint
+     *            OPTIONAL. ID Token previously issued by the Authorization
+     *            Server being passed as a hint about the End-User's current or
+     *            past authenticated session with the Client. If the End-User
+     *            identified by the ID Token is logged in or is logged in by the
+     *            request, then the Authorization Server returns a positive
+     *            response; otherwise, it SHOULD return an error, such as
+     *            login_required. When possible, an id_token_hint SHOULD be
+     *            present when prompt=none is used and an invalid_request error
+     *            MAY be returned if it is not; however, the server SHOULD
+     *            respond successfully when possible, even if it is not present.
+     *            The Authorization Server need not be listed as an audience of
+     *            the ID Token when it is used as an id_token_hint value. If the
+     *            ID Token received by the RP from the OP is encrypted, to use
+     *            it as an id_token_hint, the Client MUST decrypt the signed ID
+     *            Token contained within the encrypted ID Token. The Client MAY
+     *            re-encrypt the signed ID token to the Authentication Server
+     *            using a key that enables the server to decrypt the ID Token,
+     *            and use the re-encrypted ID token as the id_token_hint value.
+     *            </br>
+     * @param login_hint
+     *            OPTIONAL. Hint to the Authorization Server about the login
+     *            identifier the End-User might use to log in (if necessary).
+     *            This hint can be used by an RP if it first asks the End-User
+     *            for their e-mail address (or other identifier) and then wants
+     *            to pass that value as a hint to the discovered authorization
+     *            service. It is RECOMMENDED that the hint value match the value
+     *            used for discovery. This value MAY also be a phone number in
+     *            the format specified for the phone_number Claim. The use of
+     *            this parameter is left to the OP's discretion. </br>
+     * @param acr_values
+     *            OPTIONAL. Requested Authentication Context Class Reference
+     *            values. Space-separated string that specifies the acr values
+     *            that the Authorization Server is being requested to use for
+     *            processing this Authentication Request, with the values
+     *            appearing in order of preference. The Authentication Context
+     *            Class satisfied by the authentication performed is returned as
+     *            the acr Claim Value, as specified in Section 2. The acr Claim
+     *            is requested as a Voluntary Claim by this parameter. </br>
+     * @param response_mode
+     *            OPTIONAL. Informs the Authorization Server of the mechanism to
+     *            be used for returning parameters from the Authorization
+     *            Endpoint. This use of this parameter is NOT RECOMMENDED when
+     *            the Response Mode that would be requested is the default mode
+     *            specified for the Response Type. see to
+     *            https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#rfc.references1
+     *            </br>
+     * @param code_challenge
+     *            Oauth2 security challenge code docs see to:
+     *            https://blog.csdn.net/weixin_34415923/article/details/89691037
+     *            </br>
+     * @param code_challenge_method
+     *            Challenge code algorithm. </br>
+     * @param auth
+     * @param uriBuilder
+     * @param req
+     * @return
+     * @throws JOSEException
+     * @throws NoSuchAlgorithmException
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_AUTHORIZE, method = RequestMethod.GET)
     public ResponseEntity<?> authorize(
@@ -224,13 +393,15 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 }
 
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
-                UriComponentsBuilder fragmentUri = UriComponentsBuilder.newInstance();
-                fragmentUri.queryParam("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
-                fragmentUri.queryParam("state", urlEncode(state));
+                Map<String, String> redirectParams = new HashMap<>(8);
+                // fragmentUri.queryParam("token_type",KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
+                // fragmentUri.queryParam("state", urlEncode(state));
+                redirectParams.put("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
+                redirectParams.put("state", urlEncode(state));
 
                 // Authorization code flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-                if (StandardResponseType.containsBy(response_type, StandardResponseType.code)) {
+                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.code)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
                     // Check challenge method supported.
                     if (!isBlank(code_challenge_method)
@@ -242,27 +413,43 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     }
                     String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
                             iss, scope, nonce);
-                    fragmentUri.queryParam("code", code);
+                    // fragmentUri.queryParam("code", code);
+                    redirectParams.put("code", code);
                 }
                 // Implicit flow
                 // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
-                if (StandardResponseType.containsBy(response_type, StandardResponseType.token)) {
+                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.token)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
                     V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(iss, user, client_id, scope);
-                    fragmentUri.queryParam("access_token", accessTokenInfo.getAccessToken());
+                    // fragmentUri.queryParam("access_token",accessTokenInfo.getAccessToken());
+                    redirectParams.put("access_token", accessTokenInfo.getAccessToken());
                 }
-                if (StandardResponseType.containsBy(response_type, StandardResponseType.id_token)) {
+                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.id_token)) {
                     // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
                     String id_token = createIdToken(iss, user, client_id, nonce);
-                    fragmentUri.queryParam("id_token", id_token);
+                    // fragmentUri.queryParam("id_token", id_token);
+                    redirectParams.put("id_token", id_token);
                 }
 
-                // The protocol specifications stipulates that the response
-                // redirection parameters are spliced into the fragment parts,
-                // which can ensure maximum security, because the parameters of
-                // the fragment are not sent to the client application.
-                String location = redirect_uri.concat("#").concat(fragmentUri.build().toString());
-                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+                // OPTIONAL. Informs the Authorization Server of the mechanism
+                // to be used for returning parameters from the Authorization
+                // Endpoint. This use of this parameter is NOT RECOMMENDED when
+                // the Response Mode that would be requested is the default mode
+                // specified for the Response Type.
+                if (StandardResponseMode.safeOf(response_mode) == StandardResponseMode.form_post) {
+                    return wrapResponseFromPost("", state, redirectParams.get("code"), redirectParams.get("id_token"),
+                            redirectParams.get("access_token"));
+                } else {
+                    // The protocol specifications stipulates that the response
+                    // redirection parameters are spliced into the fragment
+                    // parts, which can ensure maximum security, because the
+                    // parameters of the fragment are not sent to the client
+                    // application.
+                    UriComponentsBuilder fragmentUri = UriComponentsBuilder.newInstance();
+                    redirectParams.forEach((key, value) -> fragmentUri.queryParam(key, value));
+                    String location = redirect_uri.concat("#").concat(fragmentUri.build().toString().substring(1));
+                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+                }
             } else {
                 log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
                         response_type, client_id, redirect_uri);
@@ -521,6 +708,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             oidcUser = oidcUser.withName(user.getName())
                     .withGiven_name(user.getGiven_name())
                     .withFamily_name(user.getFamily_name())
+                    .withMiddleName(user.getMiddleName())
                     .withNickname(user.getNickname())
                     .withPreferred_username(user.getPreferred_username())
                     .withGender(user.getGender())

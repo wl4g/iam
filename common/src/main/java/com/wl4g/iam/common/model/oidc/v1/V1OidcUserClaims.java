@@ -76,6 +76,7 @@ public class V1OidcUserClaims {
     private String name;
     private String given_name;
     private String family_name;
+    private String middleName;
     private String nickname;
     private String preferred_username;
     private String gender;

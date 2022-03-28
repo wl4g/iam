@@ -28,8 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.annotations.Beta;
 import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.resource.ResourceUtils2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -67,6 +70,24 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC = "BASIC";
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT = "IAM OIDC Basic Realm";
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_IAM = "IAM";
+
+    /** token signing algorithm definitions. */
+    @Getter
+    @AllArgsConstructor
+    public static enum StandardSignAlgorithm {
+        PLAIN("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
+
+        private final String digestAlgName;
+
+        public static String of(String name) {
+            for (StandardSignAlgorithm v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v.getDigestAlgName();
+                }
+            }
+            throw new IllegalArgumentException(format("Invalid digest alg alias name for '%s'", name));
+        }
+    }
 
     /**
      * scope definitions.
@@ -216,6 +237,66 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     }
 
     /**
+     * response type definitions. </br>
+     * https://openid.net/specs/openid-connect-core-1_0.html#Authentication
+     * </br>
+     * https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationExamples
+     * </br>
+     * 
+     * <pre>
+     *    code                 Authorization Code Flow
+     *    id_token             Implicit Flow
+     *    id_token token       Implicit Flow
+     *    code id_token        Hybrid Flow
+     *    code token           Hybrid Flow
+     *    code id_token token  Hybrid Flow
+     * </pre>
+     */
+    @Getter
+    public static enum StandardResponseType {
+        code("code"), id_token("id_token"), token("token"), code_id_token("code", "id_token"), code_token("code",
+                "token"), id_token_token("id_token", "token"), code_id_token_token("code", "token", "id_token");
+
+        private final List<String> values;
+
+        private StandardResponseType(String... values) {
+            this.values = asList(values);
+        }
+
+        public static List<String> getNames() {
+            return asList(StandardResponseType.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+        }
+
+        public static boolean isValid(String response_type) {
+            Set<String> responseType = toSpaceParams(response_type);
+            return CollectionUtils2.isSubCollection(responseType, code_id_token_token.getValues());
+        }
+
+        public static StandardResponseType of(String response_type) {
+            Set<String> responseTypes = toSpaceParams(response_type);
+            for (StandardResponseType v : values()) {
+                if (responseTypes.stream()
+                        .allMatch(responseType -> v.getValues().stream().anyMatch(t -> t.equalsIgnoreCase(responseType)))) {
+                    return v;
+                }
+            }
+            throw new IllegalArgumentException(format("unsupported response_type for '%s'", response_type));
+        }
+
+        /**
+         * Check the cross collection of a single type.
+         */
+        public static boolean containtsInSingle(String response_type, final StandardResponseType responseType) {
+            if (responseType.getValues().size() != 1) {
+                throw new IllegalArgumentException(
+                        format("Only single-type matching patterns are supported. '%s'", responseType));
+            }
+            StandardResponseType _responseType = StandardResponseType.of(response_type);
+            return _responseType.getValues().stream().anyMatch(t1 -> responseType.getValues().get(0).equalsIgnoreCase(t1));
+        }
+    }
+
+    /**
      * subject definitions.
      */
     @Getter
@@ -263,83 +344,6 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
                 return result;
             }
             throw new IllegalArgumentException(format("unsupported subject type for '%s'", name));
-        }
-    }
-
-    /**
-     * response type definitions. </br>
-     * https://openid.net/specs/openid-connect-core-1_0.html#Authentication
-     * </br>
-     * https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationExamples
-     * </br>
-     * 
-     * <pre>
-     *    code                 Authorization Code Flow
-     *    id_token             Implicit Flow
-     *    id_token token       Implicit Flow
-     *    code id_token        Hybrid Flow
-     *    code token           Hybrid Flow
-     *    code id_token token  Hybrid Flow
-     * </pre>
-     */
-    @Getter
-    public static enum StandardResponseType {
-        code("code"), id_token("id_token"), token("token"), code_id_token("code", "id_token"), code_token("code",
-                "token"), id_token_token("id_token", "token"), code_id_token_token("code", "token", "id_token");
-
-        private final List<String> values;
-
-        private StandardResponseType(String... values) {
-            this.values = asList(values);
-        }
-
-        public static List<String> getNames() {
-            return asList(StandardResponseType.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
-        }
-
-        public static boolean isValid(String response_type) {
-            Set<String> responseType = toSpaceSeparatedParams(response_type);
-            return CollectionUtils2.isSubCollection(responseType, code_id_token_token.getValues());
-        }
-
-        public static StandardResponseType of(String response_type) {
-            Set<String> responseTypes = toSpaceSeparatedParams(response_type);
-            for (StandardResponseType v : values()) {
-                if (responseTypes.stream()
-                        .allMatch(responseType -> v.getValues().stream().anyMatch(t -> t.equalsIgnoreCase(responseType)))) {
-                    return v;
-                }
-            }
-            throw new IllegalArgumentException(format("unsupported response_type for '%s'", response_type));
-        }
-
-        public static boolean containsBy(String response_type, StandardResponseType responseType) {
-            StandardResponseType _responseType = StandardResponseType.of(response_type);
-            return _responseType.getValues().stream().allMatch(
-                    t1 -> responseType.getValues().stream().anyMatch(t2 -> t2.equalsIgnoreCase(t1)));
-        }
-
-        public static Set<String> toSpaceSeparatedParams(String param) {
-            return isBlank(param) ? emptySet() : new HashSet<>(asList(urlDecode(param).split(" ")));
-        }
-
-    }
-
-    /** token signing algorithm definitions. */
-    @Getter
-    @AllArgsConstructor
-    public static enum StandardSignAlgorithm {
-        PLAIN("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
-
-        private final String digestAlgName;
-
-        public static String of(String name) {
-            for (StandardSignAlgorithm v : values()) {
-                if (eqIgnCase(v.name(), name)) {
-                    return v.getDigestAlgName();
-                }
-            }
-            throw new IllegalArgumentException(format("Invalid digest alg alias name for '%s'", name));
         }
     }
 
@@ -397,6 +401,38 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     }
 
     /**
+     * response mode definitions. </br>
+     */
+    @Getter
+    public static enum StandardResponseMode {
+        form_post;
+
+        public static List<String> getNames() {
+            return asList(StandardResponseMode.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+        }
+
+        public static StandardResponseMode safeOf(String name) {
+            for (StandardResponseMode v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        public static StandardResponseMode of(String name) {
+            StandardResponseMode result = safeOf(name);
+            if (nonNull(result)) {
+                return result;
+            }
+            throw new IllegalArgumentException(format("unsupported response_mode for '%s'", name));
+        }
+    }
+
+    public static final String TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML = ResourceUtils2
+            .getResourceString(V1OidcIAMConstants.class, "response_mode_from_post_html.tpl");
+
+    /**
      * claims definitions.
      * <p>
      * https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
@@ -449,4 +485,9 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** Default JWK configuration resources. */
     public static final String URI_IAM_OIDC_JWK_DEFAULT_RESOURCE = "classpath*:/credentials/oidc/jwks.json";
+
+    public static Set<String> toSpaceParams(String param) {
+        return isBlank(param) ? emptySet() : new HashSet<>(asList(StringUtils.split(urlDecode(param), " ")));
+    }
+
 }

@@ -16,12 +16,15 @@
 package com.wl4g.iam.web.oidc;
 
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML;
 import static com.wl4g.infra.common.codec.Encodes.urlDecode;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -31,6 +34,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -69,6 +75,21 @@ public abstract class BasedOidcServerAuthingController extends BaseIamController
 
     protected Set<String> toSpaceSeparatedParams(String param) {
         return isBlank(param) ? emptySet() : new HashSet<>(asList(urlDecode(param).split(" ")));
+    }
+
+    protected ResponseEntity<String> wrapResponseFromPost(
+            @NotBlank String actionUrl,
+            @Nullable String state,
+            @Nullable String code,
+            @Nullable String id_token,
+            @Nullable String access_token) {
+        hasTextOf(actionUrl, "actionUrl");
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.TEXT_HTML);
+        String fromPostHtml = format(TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML, trimToEmpty(actionUrl), trimToEmpty(state),
+                trimToEmpty(code), trimToEmpty(id_token), trimToEmpty(access_token));
+        return ResponseEntity.status(HttpStatus.OK).headers(responseHeaders).body(fromPostHtml);
     }
 
     protected ResponseEntity<String> wrapUnauthentication() {
