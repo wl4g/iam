@@ -39,18 +39,22 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class V1MetadataEndpointModel {
     private String issuer; // REQUIRED
+    private String jwks_uri; // REQUIRED
     private String authorization_endpoint; // REQUIRED
     // Unless only the Implicit-Flow is used.
     private String token_endpoint; // REQUIRED
     private String userinfo_endpoint; // RECOMMENDED
-    private String jwks_uri; // REQUIRED
-    private String introspection_endpoint;
+    private String introspection_endpoint; // OPTIONAL
+    private String registration_endpoint; // RECOMMENDED
+    private String check_session_iframe; // OPTIONAL
+    private String end_session_endpoint; // OPTIONAL
     private List<String> scopes_supported; // RECOMMENDED
     private List<String> response_types_supported; // REQUIRED
     private List<String> grant_types_supported; // OPTIONAL
     private List<String> subject_types_supported; // REQUIRED
     private List<String> id_token_signing_alg_values_supported; // REQUIRED
     private List<String> claims_supported; // REQUIRED
+    private List<String> claim_types_supported; // OPTIONAL
     private List<String> display_values_supported; // OPTIONAL
     private String service_documentation; // OPTIONAL
     // PKCE support advertised

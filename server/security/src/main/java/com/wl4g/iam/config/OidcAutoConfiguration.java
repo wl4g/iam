@@ -15,7 +15,9 @@
  */
 package com.wl4g.iam.config;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_PREFIX;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_PREFIX;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +26,9 @@ import org.springframework.context.annotation.Configuration;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthingHandler;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
-import com.wl4g.iam.web.oidc.v1.V1OidcAuthingController;
+import com.wl4g.iam.web.oidc.v1.V1OidcCoreAuthingController;
+import com.wl4g.iam.web.oidc.v1.V1OidcDiscoveryAuthingController;
+import com.wl4g.iam.web.oidc.v1.V1OidcRegistrationAuthingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
 /**
@@ -40,18 +44,47 @@ import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
-    public V1OidcAuthingController v1OidcAuthingController() {
-        return new V1OidcAuthingController();
-    }
-
-    @Bean
-    public Object v1OidcAuthingControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_PREFIX, com.wl4g.iam.annotation.V1OidcController.class);
-    }
-
-    @Bean
     public V1OidcAuthingHandler defaultV1OidcAuthingHandler(IamProperties config) {
         return new DefaultV1OidcAuthingHandler(config);
+    }
+
+    // V1 OIDC Core.
+
+    @Bean
+    public V1OidcCoreAuthingController v1OidcCoreAuthingController() {
+        return new V1OidcCoreAuthingController();
+    }
+
+    @Bean
+    public Object v1OidcCoreAuthingControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_CORE_PREFIX,
+                com.wl4g.iam.annotation.V1OidcCoreController.class);
+    }
+
+    // V1 OIDC Discovery.
+
+    @Bean
+    public V1OidcDiscoveryAuthingController v1OidcDiscoveryAuthingController() {
+        return new V1OidcDiscoveryAuthingController();
+    }
+
+    @Bean
+    public Object v1OidcDiscoveryAuthingControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_PREFIX,
+                com.wl4g.iam.annotation.V1OidcDiscoveryController.class);
+    }
+
+    // V1 OIDC Dynamic Registration.
+
+    @Bean
+    public V1OidcRegistrationAuthingController v1OidcRegistrationAuthingController() {
+        return new V1OidcRegistrationAuthingController();
+    }
+
+    @Bean
+    public Object v1OidcRegistrationAuthingControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX,
+                com.wl4g.iam.annotation.V1OidcRegistrationController.class);
     }
 
 }

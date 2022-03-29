@@ -52,10 +52,13 @@
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.properties</include>
+					<include>**/*.factories</include>
+					<include>**/*.yaml</include>
+					<include>**/*.yml</include>
 					<include>**/*.json</include>
+					<include>**/*.conf</include>
 					<include>**/*.sql</include>
 					<include>**/*.txt</include>
-					<include>**/*.conf</include>
 				</includes>
 				<excludes>
 					<exclude>**/*.java</exclude>
@@ -65,10 +68,21 @@
 				<filtering>false</filtering>
 				<directory>src/main/resources</directory>
 				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.factories</include>
+					<include>**/*.yaml</include>
+					<include>**/*.yml</include>
 					<include>**/*.json</include>
+					<include>**/*.conf</include>
 					<include>**/*.sql</include>
 					<include>**/*.txt</include>
-					<include>**/*.conf</include>
+					<include>**/*.html</include>
+					<include>**/*.css</include>
+					<include>**/*.js</include>
+					<include>**/*.ico</include>
+					<include>**/*.gif</include>
+					<include>**/*.jpg</include>
+					<include>**/*.png</include>
 				</includes>
 			</resource>
 		</resources>

@@ -18,20 +18,17 @@ package com.wl4g.iam.web.oidc.v1;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIMS_EXT_NONCE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_AUTHORIZE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CERTS;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECTION;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_METADATA;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -59,21 +56,16 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.wl4g.iam.annotation.V1OidcController;
+import com.wl4g.iam.annotation.V1OidcCoreController;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.JWSAlgorithmType;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardDisplay;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSubjectType;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
-import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
@@ -86,67 +78,19 @@ import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
  * @since v3.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
-@V1OidcController
-public class V1OidcAuthingController extends BasedOidcAuthingController {
+@V1OidcCoreController
+public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
     private @Autowired V1OidcAuthingHandler oidcAuthingHandler;
-
-    /**
-     * Provides OIDC metadata. See the spec at
-     * 
-     * @see https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery
-     * @see https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse
-     */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_METADATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin
-    public ResponseEntity<?> metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
-        log.info("called:metadata '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
-
-        String prefix = uriBuilder.replacePath(trimToEmpty(getCurrentNamespaceLocal().get())).build().encode().toUriString();
-        // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
-        // https://tools.ietf.org/html/rfc8414#section-2
-        V1MetadataEndpointModel metadata = V1MetadataEndpointModel.builder()
-                // REQUIRED
-                .issuer(prefix)
-                // REQUIRED
-                .authorization_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_AUTHORIZE))
-                // REQUIRED
-                .token_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_TOKEN))
-                // RECOMMENDED
-                .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO))
-                // REQUIRED
-                .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_CERTS))
-                // RECOMMENDED
-                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
-                // REQUIRED
-                .scopes_supported(StandardScope.getNames())
-                // REQUIRED
-                .response_types_supported(StandardResponseType.getNames())
-                // OPTIONAL
-                .grant_types_supported(StandardGrantType.getNames())
-                // REQUIRED
-                .subject_types_supported(StandardSubjectType.getNames())
-                // REQUIRED
-                .id_token_signing_alg_values_supported(JWSAlgorithmType.getNames())
-                // REQUIRED
-                .claims_supported(StandardClaims.getNames())
-                .display_values_supported(StandardDisplay.getNames())
-                // OPTIONAL
-                .service_documentation(config.getV1Oidc().getServiceDocumentation())
-                // PKCE support advertised
-                .code_challenge_methods_supported(asList(CodeChallengeAlgorithm.S256.name()))
-                .build();
-        return ResponseEntity.ok().body(metadata);
-    }
 
     /**
      * Provides JSON Web Key Set containing the public part of the key used to
      * sign ID tokens.
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CERTS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_CERTS, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> certs(HttpServletRequest req) {
-        log.info("called:certs '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_CERTS, req.getRemoteHost());
+        log.info("called:certs '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_CORE_CERTS, req.getRemoteHost());
         return ResponseEntity.ok().body(loadJWKConfig().getPubJWKSet().toString());
     }
 
@@ -334,7 +278,7 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
      * @throws JOSEException
      * @throws NoSuchAlgorithmException
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_AUTHORIZE, method = RequestMethod.GET)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE, method = RequestMethod.GET)
     public ResponseEntity<?> authorize(
             @RequestParam String client_id,
             @RequestParam String redirect_uri,
@@ -357,7 +301,7 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
             HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
 
         log.info("called:authorize '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}",
-                URI_IAM_OIDC_ENDPOINT_AUTHORIZE, req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
+                URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE, req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
 
         if (isBlank(auth)) {
             log.info("User and password not provided. scope={} response_type={} client_id={} redirect_uri={}", scope,
@@ -551,7 +495,7 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
      * @throws Exception
      */
     @SuppressWarnings("deprecation")
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_TOKEN, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> token(
             @RequestParam String grant_type,
@@ -566,8 +510,8 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws Exception {
 
-        log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
-                req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
+        log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}",
+                URI_IAM_OIDC_ENDPOINT_CORE_TOKEN, req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
         StandardGrantType grantType = StandardGrantType.safeOf(grant_type);
         if (isNull(grantType)) {
@@ -600,13 +544,13 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
     /**
      * Provides information about a supplied access token.
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_INTROSPECTION, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> introspection(
             @RequestHeader("Authorization") String auth,
             @RequestParam String token,
             HttpServletRequest req) {
 
-        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECTION,
+        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT,
                 req.getRemoteHost(), token, auth);
 
         String access_token = toDetermineAccessToken(auth, token);
@@ -665,14 +609,14 @@ public class V1OidcAuthingController extends BasedOidcAuthingController {
      * </hr>
      * </br>
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_USERINFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_USERINFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(allowedHeaders = { "Authorization", "Content-Type" })
     public ResponseEntity<?> userinfo(
             @RequestHeader("Authorization") String auth,
             @RequestParam(required = false) String access_token,
             HttpServletRequest req) {
 
-        log.info("called:userinfo '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_USERINFO,
+        log.info("called:userinfo '{}' from '{}' bearerToken={}, access_token={}", URI_IAM_OIDC_ENDPOINT_CORE_USERINFO,
                 req.getRemoteHost(), auth, access_token);
 
         String accessToken = toDetermineAccessToken(auth, access_token);

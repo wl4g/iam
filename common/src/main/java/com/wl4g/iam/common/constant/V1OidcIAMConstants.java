@@ -53,13 +53,26 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/oidc/v1";
     public static final String URI_IAM_OIDC_ENDPOINT_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
             + "}";
+
+    // OpenID Connect Core.
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_PREFIX = URI_IAM_OIDC_ENDPOINT_PREFIX + "/connect";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_CERTS = "/certs";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_TOKEN = "/token";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE = "/authorize";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_USERINFO = "/userinfo";
+    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT = "/introspect";
+    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_CHECK_SESSION_IFRAME = "/check_session";
+    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_END_SESSION_ENDPOINT = "/end_session";
+
+    // OpenID Connect Discovery.
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
-    public static final String URI_IAM_OIDC_ENDPOINT_METADATA = "/.well-known/openid-configuration";
-    public static final String URI_IAM_OIDC_ENDPOINT_CERTS = "/certs";
-    public static final String URI_IAM_OIDC_ENDPOINT_TOKEN = "/token";
-    public static final String URI_IAM_OIDC_ENDPOINT_INTROSPECTION = "/introspect";
-    public static final String URI_IAM_OIDC_ENDPOINT_AUTHORIZE = "/authorize";
-    public static final String URI_IAM_OIDC_ENDPOINT_USERINFO = "/userinfo";
+    public static final String URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA = URI_IAM_OIDC_ENDPOINT_PREFIX
+            + "/.well-known/openid-configuration";
+
+    // OpenID Connect Dynamic Registration.
+    public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX = URI_IAM_OIDC_ENDPOINT_PREFIX
+            + "/clients-registrations";
+    public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION = "/registration";
 
     /** token type definitions. */
     public static final String KEY_IAM_OIDC_TOKEN_TYPE_BEARER = "Bearer";
@@ -79,9 +92,12 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     @Getter
     @AllArgsConstructor
     public static enum CodeChallengeAlgorithm {
-        plain("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
-
+        plain("none"), S256("SHA-256")/* , S384("SHA-384"), S512("SHA-512") */;
         private final String digestAlgName;
+
+        public static List<String> getNames() {
+            return asList(CodeChallengeAlgorithm.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
+        }
 
         public static String of(String name) {
             for (CodeChallengeAlgorithm v : values()) {
@@ -578,6 +594,35 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             return asList(StandardClaims.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
         }
 
+    }
+
+    /**
+     * claims type definitions. </br>
+     * https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
+     */
+    @Getter
+    public static enum StandardClaimType {
+        normal/* , aggregated, distributed */;
+        public static List<String> getNames() {
+            return asList(StandardDisplay.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+        }
+
+        public static StandardClaimType safeOf(String name) {
+            for (StandardClaimType v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        public static StandardClaimType of(String name) {
+            StandardClaimType result = safeOf(name);
+            if (nonNull(result)) {
+                return result;
+            }
+            throw new IllegalArgumentException(format("unsupported claim type for '%s'", name));
+        }
     }
 
     public static final String KEY_IAM_OIDC_CLAIMS_EXT_NONCE = "nonce";
