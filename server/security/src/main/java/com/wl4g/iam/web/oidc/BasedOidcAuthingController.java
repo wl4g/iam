@@ -17,6 +17,8 @@ package com.wl4g.iam.web.oidc;
 
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_NS_DEFAULT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_NS_NAME;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -32,14 +34,20 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.wl4g.iam.web.BaseIamController;
+
+import lombok.Getter;
 
 /**
  * Based OIDC IAM authentication controller.
@@ -49,9 +57,20 @@ import com.wl4g.iam.web.BaseIamController;
  * @since v3.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html
  */
-public abstract class BasedOidcServerAuthingController extends BaseIamController {
+@Getter
+public abstract class BasedOidcAuthingController extends BaseIamController {
 
-    protected final SecureRandom random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
+    private final AntPathMatcher matcher = new AntPathMatcher("/");
+    private final InheritableThreadLocal<String> currentNamespaceLocal = new InheritableThreadLocal<>();
+
+    @ModelAttribute
+    public void prepare(@PathVariable(name = URI_IAM_OIDC_ENDPOINT_NS_NAME) String namespace, HttpServletRequest req)
+            throws Exception {
+        namespace = isBlank(namespace) ? URI_IAM_OIDC_ENDPOINT_NS_DEFAULT : namespace;
+        log.info("called:prepare oidc namespace for '{}' from '{}'", namespace, req.getRemoteHost());
+        getCurrentNamespaceLocal().set(namespace);
+    }
 
     protected byte[] doDigestHash(String digestAlgName, String plaintext) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(digestAlgName);

@@ -15,15 +15,16 @@
  */
 package com.wl4g.iam.config;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_PREFIX;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthingHandler;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
-import com.wl4g.iam.web.oidc.v1.V1OidcServerAuthingController;
+import com.wl4g.iam.web.oidc.v1.V1OidcAuthingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
 /**
@@ -39,18 +40,17 @@ import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
-    public V1OidcServerAuthingController v1OidcServerAuthingController() {
-        return new V1OidcServerAuthingController();
+    public V1OidcAuthingController v1OidcAuthingController() {
+        return new V1OidcAuthingController();
     }
 
     @Bean
-    public Object v1OidcServerAuthenticatingControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT,
-                com.wl4g.iam.annotation.V1OidcServerController.class);
+    public Object v1OidcAuthingControllerPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_PREFIX, com.wl4g.iam.annotation.V1OidcController.class);
     }
 
     @Bean
-    public V1OidcAuthingHandler defaultV1OidcAuthenticatingHandler(IamProperties config) {
+    public V1OidcAuthingHandler defaultV1OidcAuthingHandler(IamProperties config) {
         return new DefaultV1OidcAuthingHandler(config);
     }
 

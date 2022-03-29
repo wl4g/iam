@@ -23,13 +23,13 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from iam_oidc_mapper
+    from iam_oidc_client_mapper
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectBySelective" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from iam_oidc_mapper
+    from iam_oidc_client_mapper
     <where>
       <if test="name != null">
         AND name = #{name,jdbcType=VARCHAR}
@@ -73,19 +73,19 @@
     SELECT 
         m.* 
     FROM iam_oidc_client c
-    LEFT JOIN iam_oidc_mapper_ref r ON r.client_id = c.id
-    LEFT JOIN iam_oidc_mapper m ON r.mapper_id = m.id 
+    LEFT JOIN iam_oidc_client_mapper_ref r ON r.client_id = c.id
+    LEFT JOIN iam_oidc_client_mapper m ON r.mapper_id = m.id 
     <where>
         AND c.client_id = #{clientId,jdbcType=VARCHAR},
         AND c.del_flag = 0
     </where>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from iam_oidc_mapper
+    delete from iam_oidc_client_mapper
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
-    insert into iam_oidc_mapper (id, name, mapper_type, 
+    insert into iam_oidc_client_mapper (id, name, mapper_type, 
       add_to_id_token, add_to_access_token, add_userinfo, 
       value_json, remark, create_by, 
       create_date, update_by, update_date, 
@@ -97,7 +97,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
-    insert into iam_oidc_mapper
+    insert into iam_oidc_client_mapper
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -182,7 +182,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
-    update iam_oidc_mapper
+    update iam_oidc_client_mapper
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -224,7 +224,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
-    update iam_oidc_mapper
+    update iam_oidc_client_mapper
     set name = #{name,jdbcType=VARCHAR},
       mapper_type = #{mapperType,jdbcType=VARCHAR},
       add_to_id_token = #{addToIdToken,jdbcType=INTEGER},

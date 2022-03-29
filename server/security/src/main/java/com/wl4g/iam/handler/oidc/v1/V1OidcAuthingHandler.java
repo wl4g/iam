@@ -15,6 +15,9 @@
  */
 package com.wl4g.iam.handler.oidc.v1;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
@@ -29,23 +32,29 @@ import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
  */
 public interface V1OidcAuthingHandler {
 
-    V1OidcClientConfig loadClientConfig(String clientId);
+    V1OidcClientConfig.JWKConfig loadJWKConfig(@NotBlank String namespace);
 
-    void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo);
+    void clearJWKConfigCache(@Nullable String namespace);
 
-    V1AccessTokenInfo loadAccessToken(String accessToken);
+    V1OidcClientConfig loadClientConfig(@NotBlank String clientId);
 
-    void putRefreshToken(String refreshToken, V1AccessTokenInfo accessToken);
+    void clearClientConfigCache();
 
-    V1AccessTokenInfo loadRefreshToken(String refreshToken, boolean remove);
+    void putAccessToken(@NotBlank String accessToken, V1AccessTokenInfo accessTokenInfo);
 
-    void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
+    V1AccessTokenInfo loadAccessToken(@NotBlank String accessToken);
 
-    V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode);
+    void putRefreshToken(@NotBlank String refreshToken, V1AccessTokenInfo accessToken);
 
-    V1OidcUserClaims getV1OidcUserClaimsByUser(String loginName);
+    V1AccessTokenInfo loadRefreshToken(@NotBlank String refreshToken, boolean remove);
 
-    V1OidcUserClaims getV1OidcUserClaimsByClientId(String clientId);
+    void putAuthorizationCode(@NotBlank String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
+
+    V1AuthorizationCodeInfo loadAuthorizationCode(@NotBlank String authorizationCode);
+
+    V1OidcUserClaims getV1OidcUserClaimsByUser(@NotBlank String username);
+
+    V1OidcUserClaims getV1OidcUserClaimsByClientId(@NotBlank String clientId);
 
     boolean validate(V1OidcUserClaims user, String password);
 

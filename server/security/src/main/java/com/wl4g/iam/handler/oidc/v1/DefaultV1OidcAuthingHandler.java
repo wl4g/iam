@@ -15,24 +15,35 @@
  */
 package com.wl4g.iam.handler.oidc.v1;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_NS_DEFAULT;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.StringUtils2.isTrue;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseArrayString;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.bean.User;
@@ -44,9 +55,11 @@ import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.config.properties.IamProperties;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
+import com.wl4g.iam.core.exception.OidcException;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.handler.AbstractAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
+import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig.JWKConfig;
 import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 
@@ -59,13 +72,57 @@ import com.wl4g.infra.support.cache.jedis.JedisService;
  */
 public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler implements V1OidcAuthingHandler {
 
+    protected final Cache<String, V1OidcClientConfig.JWKConfig> jwkConfigCache;
     protected final Cache<String, V1OidcClientConfig> clientConfigCache;
 
     protected @Autowired IamCredentialsSecurer securer;
     protected @Autowired JedisService jedisService;
 
     public DefaultV1OidcAuthingHandler(IamProperties config) {
+        this.jwkConfigCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES).build();
         this.clientConfigCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+    }
+
+    @Override
+    public JWKConfig loadJWKConfig(String namespace) {
+        hasTextOf(namespace, "namespace");
+
+        V1OidcClientConfig.JWKConfig jwkConfig = jwkConfigCache.asMap().get(namespace);
+        if (isNull(jwkConfig)) {
+            synchronized (namespace) {
+                jwkConfig = jwkConfigCache.asMap().get(namespace);
+                if (isNull(jwkConfig)) {
+                    try {
+                        // Use default JWKS.
+                        if (StringUtils.equals(namespace, URI_IAM_OIDC_ENDPOINT_NS_DEFAULT)) {
+                            jwkConfig = V1OidcClientConfig.loadJWKConfigDefault();
+                        } else { // New generate JWKS.
+                            // TODO
+                            JWKSet jwkSet = new JWKSet();
+                            JWK key = jwkSet.getKeys().get(0);
+                            JWSSigner signer = new RSASSASigner((RSAKey) key);
+                            JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse("//TODO")).keyID(key.getKeyID())
+                                    .build();
+                            jwkConfig = new JWKConfig(signer, jwkSet.toPublicJWKSet(), jwsHeader);
+                        }
+                        jwkConfigCache.put(namespace, jwkConfig);
+                    } catch (Exception e) {
+                        throw new OidcException(format("Failed to load JWKS configuration"), e);
+                    }
+                }
+            }
+        }
+
+        return jwkConfig;
+    }
+
+    @Override
+    public void clearJWKConfigCache(String namespace) {
+        if (!isBlank(namespace)) {
+            jwkConfigCache.asMap().remove(namespace);
+        } else {
+            jwkConfigCache.cleanUp();
+        }
     }
 
     @Override
@@ -139,24 +196,33 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
     }
 
     @Override
+    public void clearClientConfigCache() {
+        clientConfigCache.cleanUp();
+    }
+
+    @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
+        hasTextOf(accessToken, "accessToken");
         jedisService.setObjectAsJson(buildAccessTokenKey(accessToken), accessTokenInfo,
                 loadClientConfig(accessTokenInfo.getClientId()).getAccessTokenExpirationSeconds());
     }
 
     @Override
     public V1AccessTokenInfo loadAccessToken(String accessToken) {
+        hasTextOf(accessToken, "accessToken");
         return jedisService.getObjectAsJson(buildAccessTokenKey(accessToken), V1AccessTokenInfo.class);
     }
 
     @Override
     public void putRefreshToken(String refreshToken, V1AccessTokenInfo accessTokenInfo) {
+        hasTextOf(refreshToken, "refreshToken");
         jedisService.set(buildRefreshTokenKey(refreshToken), accessTokenInfo.getAccessToken(),
                 loadClientConfig(accessTokenInfo.getClientId()).getRefreshTokenExpirationSeconds());
     }
 
     @Override
     public V1AccessTokenInfo loadRefreshToken(String refreshToken, boolean remove) {
+        hasTextOf(refreshToken, "refreshToken");
         String key = buildRefreshTokenKey(refreshToken);
         try {
             return jedisService.getObjectAsJson(key, V1AccessTokenInfo.class);
@@ -169,13 +235,16 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
 
     @Override
     public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
+        hasTextOf(authorizationCode, "authorizationCode");
         jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
                 loadClientConfig(authorizationCodeInfo.getClientId()).getCodeChallengeExpirationSeconds());
     }
 
     @Override
-    public V1OidcUserClaims getV1OidcUserClaimsByUser(String loginName) {
-        IamPrincipal principal = configurer.getIamUserDetail(new IamPrincipal.SimpleParameter(loginName));
+    public V1OidcUserClaims getV1OidcUserClaimsByUser(String username) {
+        hasTextOf(username, "username");
+
+        IamPrincipal principal = configurer.getIamUserDetail(new IamPrincipal.SimpleParameter(username));
         User user = principal.attributes().getUser();
         return V1OidcUserClaims.builder()
                 .principal(principal)
@@ -197,7 +266,8 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
     }
 
     @Override
-    public V1OidcUserClaims getV1OidcUserClaimsByClientId(String loginName) {
+    public V1OidcUserClaims getV1OidcUserClaimsByClientId(String cilentId) {
+        hasTextOf(cilentId, "cilentId");
         // TODO
         return null;
     }

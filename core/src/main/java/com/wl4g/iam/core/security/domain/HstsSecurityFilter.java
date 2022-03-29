@@ -65,10 +65,12 @@ public class HstsSecurityFilter extends OncePerRequestFilter {
         // HTTP Strict-Transport-Security:
         String active = environment.getRequiredProperty("spring.profiles.active");
         Optional<String> opt = safeList(config.getSecurity().getHstsOnProfilesActive()).stream()
-                .filter(a -> equalsIgnoreCase(a, active)).findAny();
+                .filter(a -> equalsIgnoreCase(a, active))
+                .findAny();
         this.enableHstsOnProfilesActive = opt.isPresent();
     }
 
+    // see:https://owasp.org/www-project-secure-headers/#hsts
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

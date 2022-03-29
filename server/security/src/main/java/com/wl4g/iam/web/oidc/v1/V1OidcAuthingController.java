@@ -28,18 +28,16 @@ import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
@@ -48,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -59,24 +56,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.wl4g.iam.annotation.V1OidcServerController;
+import com.wl4g.iam.annotation.V1OidcController;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.JWSAlgorithmType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardDisplay;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSignAlgorithm;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSubjectType;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
@@ -85,7 +76,7 @@ import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
-import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
+import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
 
 /**
  * IAM V1-OIDC authentication controller.
@@ -95,26 +86,10 @@ import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
  * @since v3.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
-@V1OidcServerController
-public class V1OidcServerAuthingController extends BasedOidcServerAuthingController {
-
-    private final SecureRandom random = new SecureRandom();
-    private final AntPathMatcher matcher = new AntPathMatcher("/");
+@V1OidcController
+public class V1OidcAuthingController extends BasedOidcAuthingController {
 
     private @Autowired V1OidcAuthingHandler oidcAuthingHandler;
-    private JWSSigner signer;
-    private JWKSet pubJWKSet;
-    private JWSHeader jwsHeader;
-
-    @PostConstruct
-    public void init() throws IOException, ParseException, JOSEException {
-        log.info("Initializing OIDC JWK ...");
-        // TODO remove, use from DB config
-        JWK jwk = V1OidcClientConfig.DEFAULT_JWKSET.getKeys().get(0);
-        this.signer = new RSASSASigner((RSAKey) jwk);
-        this.pubJWKSet = V1OidcClientConfig.DEFAULT_JWKSET.toPublicJWKSet();
-        this.jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse("S256")).keyID(jwk.getKeyID()).build();
-    }
 
     /**
      * Provides OIDC metadata. See the spec at
@@ -127,11 +102,12 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     public ResponseEntity<?> metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
         log.info("called:metadata '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_METADATA, req.getRemoteHost());
 
-        String prefix = uriBuilder.replacePath(null).build().encode().toUriString();
+        String prefix = uriBuilder.replacePath(trimToEmpty(getCurrentNamespaceLocal().get())).build().encode().toUriString();
         // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
         // https://tools.ietf.org/html/rfc8414#section-2
         V1MetadataEndpointModel metadata = V1MetadataEndpointModel.builder()
-                .issuer(prefix.concat("/")) // REQUIRED
+                // REQUIRED
+                .issuer(prefix)
                 // REQUIRED
                 .authorization_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_AUTHORIZE))
                 // REQUIRED
@@ -140,6 +116,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_USERINFO))
                 // REQUIRED
                 .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_CERTS))
+                // RECOMMENDED
                 .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
                 // REQUIRED
                 .scopes_supported(StandardScope.getNames())
@@ -150,12 +127,14 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 // REQUIRED
                 .subject_types_supported(StandardSubjectType.getNames())
                 // REQUIRED
-                .id_token_signing_alg_values_supported(null)
+                .id_token_signing_alg_values_supported(JWSAlgorithmType.getNames())
+                // REQUIRED
                 .claims_supported(StandardClaims.getNames())
                 .display_values_supported(StandardDisplay.getNames())
+                // OPTIONAL
                 .service_documentation(config.getV1Oidc().getServiceDocumentation())
                 // PKCE support advertised
-                .code_challenge_methods_supported(null)
+                .code_challenge_methods_supported(asList(CodeChallengeAlgorithm.S256.name()))
                 .build();
         return ResponseEntity.ok().body(metadata);
     }
@@ -168,7 +147,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     @CrossOrigin
     public ResponseEntity<?> certs(HttpServletRequest req) {
         log.info("called:certs '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_CERTS, req.getRemoteHost());
-        return ResponseEntity.ok().body(pubJWKSet.toString());
+        return ResponseEntity.ok().body(loadJWKConfig().getPubJWKSet().toString());
     }
 
     /**
@@ -402,7 +381,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
         // Check redirect_uri valid.
         boolean matched = safeList(clientConfig.getValidWebOriginUris()).stream()
-                .anyMatch(u -> matcher.matchStart(u, redirect_uri));
+                .anyMatch(u -> getMatcher().matchStart(u, redirect_uri));
         if (!matched) {
             String url = format("%s#error=unsupported_redirect_uri", redirect_uri);
             return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
@@ -754,14 +733,14 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             if (isBlank(code_verifier)) {
                 return wrapErrorRfc6749("invalid_request", "The code_verifier missing");
             }
-            if (StandardSignAlgorithm.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
+            if (CodeChallengeAlgorithm.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
                 if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
                     log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
                     return wrapErrorRfc6749("invalid_request", "The code_verifier not correct");
                 }
             } else {
                 String hashedVerifier = Base64URL
-                        .encode(doDigestHash(StandardSignAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
+                        .encode(doDigestHash(CodeChallengeAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
                         .toString();
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
@@ -865,11 +844,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String iss,
             UriComponentsBuilder uriBuilder) throws Exception {
 
-        // Check scope
+        // Check request scope.
         // The value passed for the scope parameter in this request should be
         // the resource identifier (application ID URI) of the resource you
         // want, affixed with the .default suffix. For the IAM example, the
-        // value is https://iam.example.com/.default.
+        // value is https://iam.example.com/.default
         if (!StringUtils.equals(scope, getDefaultClientCredentialsScope(uriBuilder))) {
             return wrapErrorRfc6749("invalid_request", "The scope is not valid");
         }
@@ -914,7 +893,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String scope,
             String nonce) {
         byte[] bytes = new byte[16];
-        random.nextBytes(bytes);
+        getRandom().nextBytes(bytes);
         String code = Base64URL.encode(bytes).toString();
 
         V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code, client_id, redirect_uri, user, iss, scope, nonce,
@@ -944,9 +923,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .claim("scope", scope)
                 .build();
         // Create JWT token
-        SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
+        SignedJWT jwt = new SignedJWT(loadJWKConfig().getJwsHeader(), jwtClaimsSet);
         // Sign the JWT token
-        jwt.sign(signer);
+        jwt.sign(loadJWKConfig().getSigner());
         String access_token = jwt.serialize();
 
         // Generate refresh token.
@@ -988,9 +967,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .claim("access_token", access_token)
                 .build();
         // create JWT token
-        SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
+        SignedJWT jwt = new SignedJWT(loadJWKConfig().getJwsHeader(), jwtClaimsSet);
         // sign the JWT token
-        jwt.sign(signer);
+        jwt.sign(loadJWKConfig().getSigner());
         return jwt.serialize();
     }
 
@@ -1002,7 +981,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String nonce) throws NoSuchAlgorithmException, JOSEException {
 
         // compute at_hash
-        byte[] hashed = doDigestHash(StandardSignAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
+        byte[] hashed = doDigestHash(CodeChallengeAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
         byte[] hashedLeftHalf = Arrays.copyOf(hashed, hashed.length / 2);
         Base64URL encodedHash = Base64URL.encode(hashedLeftHalf);
         // create JWT claims
@@ -1016,9 +995,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .claim(KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH, encodedHash)
                 .build();
         // create JWT token
-        SignedJWT jwt = new SignedJWT(jwsHeader, jwtClaimsSet);
+        SignedJWT jwt = new SignedJWT(loadJWKConfig().getJwsHeader(), jwtClaimsSet);
         // sign the JWT token
-        jwt.sign(signer);
+        jwt.sign(loadJWKConfig().getSigner());
         return jwt.serialize();
     }
 
@@ -1027,8 +1006,11 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     }
 
     private String getDefaultClientCredentialsScope(UriComponentsBuilder uriBuilder) {
-        String issueUri = getIssueUri(uriBuilder);
-        return issueUri.concat("/.default");
+        return getIssueUri(uriBuilder).concat(".default");
+    }
+
+    private V1OidcClientConfig.JWKConfig loadJWKConfig() {
+        return oidcAuthingHandler.loadJWKConfig(getCurrentNamespaceLocal().get());
     }
 
 }

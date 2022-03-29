@@ -48,7 +48,11 @@ import lombok.Getter;
 public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** endpoint URIs definitions. */
-    public static final String URI_IAM_OIDC_ENDPOINT = "/oidc/v1";
+    public static final String URI_IAM_OIDC_ENDPOINT_NS_NAME = "namespace"; // tenant
+    public static final String URI_IAM_OIDC_ENDPOINT_NS_DEFAULT = "default";
+    public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/oidc/v1";
+    public static final String URI_IAM_OIDC_ENDPOINT_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
+            + "}";
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
     public static final String URI_IAM_OIDC_ENDPOINT_METADATA = "/.well-known/openid-configuration";
     public static final String URI_IAM_OIDC_ENDPOINT_CERTS = "/certs";
@@ -71,21 +75,32 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT = "IAM OIDC Basic Realm";
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_IAM = "IAM";
 
-    /** token signing algorithm definitions. */
+    /** Code challenge algorithm definitions. */
     @Getter
     @AllArgsConstructor
-    public static enum StandardSignAlgorithm {
+    public static enum CodeChallengeAlgorithm {
         plain("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
 
         private final String digestAlgName;
 
         public static String of(String name) {
-            for (StandardSignAlgorithm v : values()) {
+            for (CodeChallengeAlgorithm v : values()) {
                 if (eqIgnCase(v.name(), name)) {
                     return v.getDigestAlgName();
                 }
             }
             throw new IllegalArgumentException(format("Invalid digest alg alias name for '%s'", name));
+        }
+    }
+
+    /**
+     * JWS algorithm definitions. see to: {@link com.nimbusds.jose.JWSAlgorithm}
+     */
+    @Getter
+    public static enum JWSAlgorithmType {
+        HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, EdDSA;
+        public static List<String> getNames() {
+            return asList(JWSAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
         }
     }
 

@@ -88,31 +88,27 @@ public class V1OidcClientConfig extends DefaultProtocolProperties {
     // Credentials Information
 
     private List<OidcClient.ClientSecretInfo> clientSecrets;
-    private JWKConfig jwkConfig;
-
-    public static V1OidcClientConfig newInstance(String clientId, V1OidcProperties config) {
-        V1OidcClientConfig that = new V1OidcClientConfig(clientId);
-        BeanCopierUtils.mapper(config.getDefaultProtocolProperties(), that);
-        try {
-            that.initJWKConfig();
-        } catch (JOSEException e) {
-            throw new OidcException(format("Failed to init jwks for clientId='%s'", clientId), e);
-        }
-        return that;
-    }
 
     private V1OidcClientConfig(String clientId) {
         this.clientId = hasTextOf(clientId, "clientId");
     }
 
-    private void initJWKConfig() throws JOSEException {
-        // TODO use from DB config
-        JWKSet jwkSet = DEFAULT_JWKSET;
-        JWK key = jwkSet.getKeys().get(0);
-        JWSSigner signer = new RSASSASigner((RSAKey) key);
-        JWKSet pubJWKSet = jwkSet.toPublicJWKSet();
-        JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse(getJwksSignAlg())).keyID(key.getKeyID()).build();
-        this.jwkConfig = new JWKConfig(signer, pubJWKSet, jwsHeader);
+    public static V1OidcClientConfig newInstance(String clientId, V1OidcProperties config) {
+        V1OidcClientConfig that = new V1OidcClientConfig(clientId);
+        BeanCopierUtils.mapper(config.getDefaultProtocolProperties(), that);
+        return that;
+    }
+
+    public static JWKConfig loadJWKConfigDefault() throws JOSEException {
+        try {
+            JWKSet jwkSet = DEFAULT_JWKSET;
+            JWK key = jwkSet.getKeys().get(0);
+            JWSSigner signer = new RSASSASigner((RSAKey) key);
+            JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse("//TODO")).keyID(key.getKeyID()).build();
+            return new JWKConfig(signer, jwkSet.toPublicJWKSet(), jwsHeader);
+        } catch (Exception e) {
+            throw new OidcException("Failed to init default namespace jwks.", e);
+        }
     }
 
     private static final JWKSet loadJWKSetDefault0() {
