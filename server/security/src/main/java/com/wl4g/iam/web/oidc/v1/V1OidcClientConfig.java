@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.web.oidc.v1;
 
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_JWK_DEFAULT_RESOURCE;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
@@ -154,5 +153,8 @@ public class V1OidcClientConfig extends DefaultProtocolProperties {
     }
 
     public static final JWKSet DEFAULT_JWKSET = loadJWKSetDefault0();
+
+    /** Default JWK configuration resources. */
+    public static final String URI_IAM_OIDC_JWK_DEFAULT_RESOURCE = "classpath:/credentials/oidc/jwks-default.json";
 
 }

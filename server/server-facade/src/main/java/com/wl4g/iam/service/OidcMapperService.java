@@ -44,6 +44,7 @@ public interface OidcMapperService {
     @RequestMapping(value = "/findList", method = POST)
     List<OidcMapper> findList(@RequestBody OidcMapper record);
 
+    @RequestMapping(value = "/findByClientId", method = GET)
     List<OidcMapper> findByClientId(@RequestParam("clientId") String clientId);
 
     @PostMapping("/save")

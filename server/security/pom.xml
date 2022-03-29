@@ -48,21 +48,28 @@
 	<build>
 		<resources>
 			<resource>
+				<filtering>false</filtering>
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.properties</include>
+					<include>**/*.json</include>
+					<include>**/*.sql</include>
+					<include>**/*.txt</include>
+					<include>**/*.conf</include>
 				</includes>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
-				<filtering>false</filtering>
 			</resource>
 			<resource>
+				<filtering>false</filtering>
 				<directory>src/main/resources</directory>
 				<includes>
-					<include>**/*.*</include>
+					<include>**/*.json</include>
+					<include>**/*.sql</include>
+					<include>**/*.txt</include>
+					<include>**/*.conf</include>
 				</includes>
-				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>
@@ -153,8 +160,7 @@
 			<id>minify</id>
 			<build>
 				<plugins>
-					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html For example: mvn -U clean install -DskipTests 
-						-Pminify -->
+					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html For example: mvn -U clean install -DskipTests -Pminify -->
 					<plugin>
 						<groupId>com.samaxes.maven</groupId>
 						<artifactId>minify-maven-plugin</artifactId>

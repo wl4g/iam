@@ -420,7 +420,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             return wrapUnauthentication();
         }
         log.info("Password {} for user {} is correct.", password, username);
-        String iss = getIss(uriBuilder);
+        String iss = getIssueUri(uriBuilder);
 
         // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
         MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
@@ -595,7 +595,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             return wrapErrorRfc6749("unsupported_grant_type",
                     format("The grant_type must be one of '%s'", StandardGrantType.getNames()));
         }
-        String iss = getIss(uriBuilder);
+        String iss = getIssueUri(uriBuilder);
 
         // load OIDC client configuration.
         V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
@@ -610,7 +610,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         case password: // oauth2
             return doTokenWithPassword(clientConfig, client_id, client_secret, redirect_uri, scope, auth, iss);
         case client_credentials: // oauth2
-            return doTokenWithClientCredentials(clientConfig, client_id, client_secret, redirect_uri, scope, iss);
+            return doTokenWithClientCredentials(clientConfig, client_id, client_secret, redirect_uri, scope, iss, uriBuilder);
         case device_code: // oauth2
             return doTokenWithDeviceCode(clientConfig);
         default:
@@ -862,18 +862,17 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String client_secret,
             String redirect_uri,
             String scope,
-            String iss) throws Exception {
+            String iss,
+            UriComponentsBuilder uriBuilder) throws Exception {
 
         // Check scope
         // The value passed for the scope parameter in this request should be
         // the resource identifier (application ID URI) of the resource you
         // want, affixed with the .default suffix. For the IAM example, the
         // value is https://iam.example.com/.default.
-
-        // StandardScope _scope = StandardScope.safeOf(scope);
-        // if (_scope) {
-        // return wrapErrorRfc6749("invalid_request", "The scope is not valid");
-        // }
+        if (!StringUtils.equals(scope, getDefaultClientCredentialsScope(uriBuilder))) {
+            return wrapErrorRfc6749("invalid_request", "The scope is not valid");
+        }
 
         // TODO use hashing?
         // Verify client credentials.
@@ -1023,7 +1022,13 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         return jwt.serialize();
     }
 
-    private String getIss(UriComponentsBuilder uriBuilder) {
+    private String getIssueUri(UriComponentsBuilder uriBuilder) {
         return uriBuilder.replacePath("/").build().encode().toUriString();
     }
+
+    private String getDefaultClientCredentialsScope(UriComponentsBuilder uriBuilder) {
+        String issueUri = getIssueUri(uriBuilder);
+        return issueUri.concat("/.default");
+    }
+
 }
