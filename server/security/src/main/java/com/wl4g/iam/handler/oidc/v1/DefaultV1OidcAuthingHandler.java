@@ -51,20 +51,20 @@ import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 
 /**
- * {@link DefaultV1OidcAuthenticatingHandler}
+ * {@link DefaultV1OidcAuthingHandler}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
  */
-public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHandler implements V1OidcAuthenticatingHandler {
+public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler implements V1OidcAuthingHandler {
 
     protected final Cache<String, V1OidcClientConfig> clientConfigCache;
 
     protected @Autowired IamCredentialsSecurer securer;
     protected @Autowired JedisService jedisService;
 
-    public DefaultV1OidcAuthenticatingHandler(IamProperties config) {
+    public DefaultV1OidcAuthingHandler(IamProperties config) {
         this.clientConfigCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
     }
 

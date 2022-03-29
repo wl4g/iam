@@ -42,7 +42,7 @@ import com.wl4g.iam.config.properties.V1OidcProperties;
 import com.wl4g.iam.config.properties.V1OidcProperties.DefaultProtocolProperties;
 import com.wl4g.iam.core.exception.IamException;
 import com.wl4g.iam.core.exception.OidcException;
-import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthingHandler;
 import com.wl4g.infra.common.resource.StreamResource;
 import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
@@ -130,7 +130,7 @@ public class V1OidcClientConfig extends DefaultProtocolProperties {
         }
         StreamResource res = resources.iterator().next();
         if (resources.size() > 1) {
-            getLogger(DefaultV1OidcAuthenticatingHandler.class)
+            getLogger(DefaultV1OidcAuthingHandler.class)
                     .warn(format("[WARNNING] Found multi jwks resources %s by %s, Using the first one by default %s", resources,
                             URI_IAM_OIDC_JWK_DEFAULT_RESOURCE, res));
         }

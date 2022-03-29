@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.config.properties.IamProperties;
-import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthenticatingHandler;
-import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthingHandler;
+import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
 import com.wl4g.iam.web.oidc.v1.V1OidcServerAuthingController;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 
@@ -50,8 +50,8 @@ public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
     }
 
     @Bean
-    public V1OidcAuthenticatingHandler defaultV1OidcAuthenticatingHandler(IamProperties config) {
-        return new DefaultV1OidcAuthenticatingHandler(config);
+    public V1OidcAuthingHandler defaultV1OidcAuthenticatingHandler(IamProperties config) {
+        return new DefaultV1OidcAuthingHandler(config);
     }
 
 }

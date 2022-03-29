@@ -48,6 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -83,7 +84,7 @@ import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1MetadataEndpointModel;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
-import com.wl4g.iam.handler.oidc.v1.V1OidcAuthenticatingHandler;
+import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
 
 /**
@@ -98,9 +99,9 @@ import com.wl4g.iam.web.oidc.BasedOidcServerAuthingController;
 public class V1OidcServerAuthingController extends BasedOidcServerAuthingController {
 
     private final SecureRandom random = new SecureRandom();
+    private final AntPathMatcher matcher = new AntPathMatcher("/");
 
-    private @Autowired V1OidcAuthenticatingHandler oidcHandler;
-
+    private @Autowired V1OidcAuthingHandler oidcAuthingHandler;
     private JWSSigner signer;
     private JWKSet pubJWKSet;
     private JWSHeader jwsHeader;
@@ -384,32 +385,42 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     response_type, client_id, redirect_uri);
             return wrapUnauthentication();
         }
+
+        // Check response_type valid.
+        if (!StandardResponseType.isValid(response_type)) {
+            String url = format("%s#error=unsupported_response_type", redirect_uri);
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
+        }
+
+        // Load configuration.
+        V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
+
         // Check the if openid existing. (oauth2 does not required)
-        if (!StandardScope.openid.containsIn(scope)) {
+        if (clientConfig.isMustOpenidScopeEnabled() && !StandardScope.openid.containsIn(scope)) {
             return wrapErrorRfc6749("invalid_request", "The oidc v1 specification requires that scope must contain openid");
         }
 
+        // Check redirect_uri valid.
+        boolean matched = safeList(clientConfig.getValidWebOriginUris()).stream()
+                .anyMatch(u -> matcher.matchStart(u, redirect_uri));
+        if (!matched) {
+            String url = format("%s#error=unsupported_redirect_uri", redirect_uri);
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
+        }
+
+        // Verify credentials.
         String[] creds = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":", 2);
         String username = creds[0];
         String password = creds[1];
-        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByUser(username);
+        V1OidcUserClaims user = oidcAuthingHandler.getV1OidcUserClaimsByUser(username);
         // if (!username.equals("root")) { // for test
-        if (oidcHandler.validate(user, password)) {
+        if (oidcAuthingHandler.validate(user, password)) {
             log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
                     response_type, client_id, redirect_uri);
             return wrapUnauthentication();
         }
         log.info("Password {} for user {} is correct.", password, username);
         String iss = getIss(uriBuilder);
-
-        // Load configuration.
-        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
-
-        // Check response_type valid
-        if (clientConfig.isMustOpenidScopeEnabled() && !StandardResponseType.isValid(response_type)) {
-            String url = format("%s#error=unsupported_response_type", redirect_uri);
-            return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
-        }
 
         // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
         MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
@@ -587,7 +598,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         String iss = getIss(uriBuilder);
 
         // load OIDC client configuration.
-        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+        V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
 
         // response tokens
         switch (grantType) {
@@ -620,7 +631,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 req.getRemoteHost(), token, auth);
 
         String access_token = toDetermineAccessToken(auth, token);
-        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(access_token);
+        V1AccessTokenInfo accessTokenInfo = oidcAuthingHandler.loadAccessToken(access_token);
         if (isNull(accessTokenInfo)) {
             log.error("No found accessToken info by '{}'", token);
             return ResponseEntity.ok().body(V1IntrospectionAccessToken.builder().active(true).build());
@@ -686,7 +697,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 req.getRemoteHost(), auth, access_token);
 
         String accessToken = toDetermineAccessToken(auth, access_token);
-        V1AccessTokenInfo accessTokenInfo = oidcHandler.loadAccessToken(accessToken);
+        V1AccessTokenInfo accessTokenInfo = oidcAuthingHandler.loadAccessToken(accessToken);
         if (isNull(accessTokenInfo)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("access_token is not valid");
         }
@@ -729,7 +740,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             return wrapErrorRfc6749("invalid_request", "disabled standard authorization code grant");
         }
 
-        V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
+        V1AuthorizationCodeInfo codeInfo = oidcAuthingHandler.loadAuthorizationCode(code);
         if (isNull(codeInfo)) {
             return wrapErrorRfc6749("invalid_grant", "code not valid");
         }
@@ -770,7 +781,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .refresh_token(accessTokenInfo.getRefreshToken())
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                 .scope(codeInfo.getScope())
-                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .expires_in(oidcAuthingHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
                 .id_token(id_token)
                 .build();
         return ResponseEntity.ok(accessToken);
@@ -788,7 +799,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             return wrapErrorRfc6749("invalid_request", "The refresh_token missing");
         }
         // Check refresh_token valid?
-        V1AccessTokenInfo lastAccessTokenInfo = oidcHandler.loadRefreshToken(refresh_token, true);
+        V1AccessTokenInfo lastAccessTokenInfo = oidcAuthingHandler.loadRefreshToken(refresh_token, true);
         if (isNull(lastAccessTokenInfo)) {
             return wrapErrorRfc6749("invalid_request", "The refresh_token not valid");
         }
@@ -802,7 +813,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .access_token(accessTokenInfo.getAccessToken())
                 .refresh_token(accessTokenInfo.getRefreshToken())
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .expires_in(oidcAuthingHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
                 .scope(lastAccessTokenInfo.getScope())
                 .build();
         return ResponseEntity.ok(accessToken);
@@ -825,8 +836,8 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         String[] creds = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":", 2);
         String username = creds[0];
         String password = creds[1];
-        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByUser(username);
-        if (!oidcHandler.validate(user, password)) {
+        V1OidcUserClaims user = oidcAuthingHandler.getV1OidcUserClaimsByUser(username);
+        if (!oidcAuthingHandler.validate(user, password)) {
             return wrapUnauthentication();
         }
 
@@ -836,7 +847,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .access_token(accessTokenInfo.getAccessToken())
                 .refresh_token(accessTokenInfo.getRefreshToken())
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .expires_in(oidcAuthingHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
                 .scope(scope)
                 .build();
         return ResponseEntity.ok(accessToken);
@@ -854,14 +865,18 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String iss) throws Exception {
 
         // Check scope
-        // TODO
+        // The value passed for the scope parameter in this request should be
+        // the resource identifier (application ID URI) of the resource you
+        // want, affixed with the .default suffix. For the IAM example, the
+        // value is https://iam.example.com/.default.
+
         // StandardScope _scope = StandardScope.safeOf(scope);
         // if (_scope) {
         // return wrapErrorRfc6749("invalid_request", "The scope is not valid");
         // }
 
-        // TODO use hashing???
-        // Validation client credentials.
+        // TODO use hashing?
+        // Verify client credentials.
         boolean certificated = safeList(clientConfig.getClientSecrets()).stream()
                 .anyMatch(s -> StringUtils.equals(s.getSecret(), client_secret));
         if (!certificated) {
@@ -869,17 +884,19 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         }
 
         // Load user claims by client_id.
-        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByClientId(client_id);
+        V1OidcUserClaims user = oidcAuthingHandler.getV1OidcUserClaimsByClientId(client_id);
 
-        // New access_token.
+        // New access token.
         V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
         V1AccessToken accessToken = V1AccessToken.builder()
                 .access_token(accessTokenInfo.getAccessToken())
-                .refresh_token(accessTokenInfo.getRefreshToken())
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                 .expires_in(clientConfig.getAccessTokenExpirationSeconds())
                 .scope(scope)
                 .build();
+        if (clientConfig.isUseRefreshTokenForClientCredentialsGrantEnabled()) {
+            accessToken.setRefresh_token(accessTokenInfo.getRefreshToken());
+        }
         return ResponseEntity.ok(accessToken);
     }
 
@@ -903,7 +920,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
 
         V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code, client_id, redirect_uri, user, iss, scope, nonce,
                 code_challenge, code_challenge_method);
-        oidcHandler.putAuthorizationCode(code, codeInfo);
+        oidcAuthingHandler.putAuthorizationCode(code, codeInfo);
 
         log.info("issuing authorization code={}, codeInfo={}", code, codeInfo);
         return code;
@@ -921,7 +938,6 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
-                .subject(user.getSub())
                 .audience(client_id)
                 .issueTime(new Date())
                 .expirationTime(expiration)
@@ -948,8 +964,8 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .iss(iss)
                 .build();
 
-        oidcHandler.putAccessToken(access_token, accessTokenInfo);
-        oidcHandler.putRefreshToken(refresh_token, accessTokenInfo);
+        oidcAuthingHandler.putAccessToken(access_token, accessTokenInfo);
+        oidcAuthingHandler.putRefreshToken(refresh_token, accessTokenInfo);
         return accessTokenInfo;
     }
 
@@ -965,7 +981,6 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
-                .subject(user.getSub())
                 .audience(client_id)
                 .issueTime(new Date())
                 .expirationTime(expiration)
@@ -988,9 +1003,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             String nonce) throws NoSuchAlgorithmException, JOSEException {
 
         // compute at_hash
-        byte[] hashBytes = doDigestHash(StandardSignAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
-        byte[] hashBytesLeftHalf = Arrays.copyOf(hashBytes, hashBytes.length / 2);
-        Base64URL encodedHash = Base64URL.encode(hashBytesLeftHalf);
+        byte[] hashed = doDigestHash(StandardSignAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
+        byte[] hashedLeftHalf = Arrays.copyOf(hashed, hashed.length / 2);
+        Base64URL encodedHash = Base64URL.encode(hashedLeftHalf);
         // create JWT claims
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
