@@ -66,8 +66,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     // OpenID Connect Discovery.
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
-    public static final String URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA = URI_IAM_OIDC_ENDPOINT_PREFIX
-            + "/.well-known/openid-configuration";
+    public static final String URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA = "/.well-known/openid-configuration";
 
     // OpenID Connect Dynamic Registration.
     public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX = URI_IAM_OIDC_ENDPOINT_PREFIX

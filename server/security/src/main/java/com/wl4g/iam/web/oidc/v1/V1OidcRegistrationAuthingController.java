@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.wl4g.iam.annotation.V1OidcDiscoveryController;
+import com.wl4g.iam.annotation.V1OidcRegistrationController;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
 
@@ -38,7 +38,7 @@ import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
  * @version 2022-03-18 v1.0.0
  * @since v3.0.0
  */
-@V1OidcDiscoveryController
+@V1OidcRegistrationController
 public class V1OidcRegistrationAuthingController extends BasedOidcAuthingController {
 
     @SuppressWarnings("unused")
@@ -52,7 +52,7 @@ public class V1OidcRegistrationAuthingController extends BasedOidcAuthingControl
     public ResponseEntity<?> registration(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
         log.info("called:registration '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_REGISTRATION, req.getRemoteHost());
         // TODO
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().body("Not yes implemented");
     }
 
 }
