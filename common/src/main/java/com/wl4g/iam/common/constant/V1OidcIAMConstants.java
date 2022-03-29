@@ -24,7 +24,7 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -75,7 +75,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     @Getter
     @AllArgsConstructor
     public static enum StandardSignAlgorithm {
-        PLAIN("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
+        plain("none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
 
         private final String digestAlgName;
 
@@ -93,21 +93,21 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      * scope definitions.
      */
     @Getter
-    public static enum StandardScopeType {
+    public static enum StandardScope {
         openid(true), profile, email, address, phone;
         private final boolean isDefault;
 
-        private StandardScopeType() {
+        private StandardScope() {
             this.isDefault = false;
         }
 
-        private StandardScopeType(boolean isDefault) {
+        private StandardScope(boolean isDefault) {
             this.isDefault = isDefault;
         }
 
-        public static StandardScopeType getDefault() {
-            StandardScopeType defaultValue = null;
-            for (StandardScopeType v : values()) {
+        public static StandardScope getDefault() {
+            StandardScope defaultValue = null;
+            for (StandardScope v : values()) {
                 if (v.isDefault) {
                     if (defaultValue != null) {
                         throw new IllegalStateException("There can only be one default value");
@@ -119,11 +119,11 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         }
 
         public static List<String> getNames() {
-            return asList(StandardScopeType.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+            return asList(StandardScope.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
         }
 
-        public static StandardScopeType safeOf(String name) {
-            for (StandardScopeType v : values()) {
+        public static StandardScope safeOf(String name) {
+            for (StandardScope v : values()) {
                 if (eqIgnCase(v.name(), name)) {
                     return v;
                 }
@@ -131,12 +131,21 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             return null;
         }
 
-        public static StandardScopeType of(String name) {
-            StandardScopeType result = safeOf(name);
+        public static StandardScope of(String name) {
+            StandardScope result = safeOf(name);
             if (nonNull(result)) {
                 return result;
             }
             throw new IllegalArgumentException(format("unsupported scope for '%s'", name));
+        }
+
+        /**
+         * Check if the this enumerated value is a subset of {@link scopeString}
+         * to values.
+         */
+        public boolean containsIn(String scope) {
+            Set<String> _scope = safeDecodeToParams(scope);
+            return _scope.stream().anyMatch(s -> eqIgnCase(s, name()));
         }
     }
 
@@ -145,6 +154,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      * typically referred to as "Client-side" and "Server-side". Use of implicit
      * grant is discouraged unless there is no other option available.
      */
+    @Getter
     public static enum StandardGrantType {
 
         /**
@@ -157,6 +167,16 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
          * running in browsers, such as JS, Flash)
          */
         implicit,
+
+        /**
+         * Refresh access_token
+         */
+        refresh_token,
+
+        /**
+         * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
+         */
+        behalf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
 
         /**
          * Password mode (Pass user name, password, get token directly)
@@ -178,22 +198,26 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         client_credentials,
 
         /**
-         * Refresh access_token
-         */
-        refresh_token,
-
-        /**
          * @since oauth2.1
          */
         @Beta
         device_code;
 
-        private boolean isDefault = false;
+        private final String value;
+        private final boolean isDefault;
 
         private StandardGrantType() {
+            this.value = name();
+            this.isDefault = false;
+        }
+
+        private StandardGrantType(String value) {
+            this.value = value;
+            this.isDefault = false;
         }
 
         private StandardGrantType(boolean isDefault) {
+            this.value = name();
             this.isDefault = isDefault;
         }
 
@@ -251,6 +275,19 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      *    code token           Hybrid Flow
      *    code id_token token  Hybrid Flow
      * </pre>
+     * 
+     * </br>
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-implicit-grant-flow#prefer-the-auth-code-flow
+     * </br>
+     * </br>
+     * Notice: With the plans for third party cookies to be removed from
+     * browsers, the implicit grant flow is no longer a suitable authentication
+     * method. The silent SSO features of the implicit flow do not work without
+     * third party cookies, causing applications to break when they attempt to
+     * get a new token. We strongly recommend that all new applications use the
+     * authorization code flow that now supports single page apps in place of
+     * the implicit flow, and that existing single page apps begin migrating to
+     * the authorization code flow as well.
      */
     @Getter
     public static enum StandardResponseType {
@@ -263,37 +300,114 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             this.values = asList(values);
         }
 
+        /**
+         * Check if the this enumerated collection of values is a subset of
+         * {@link response_type} to values.
+         */
+        public boolean containsIn(String response_type) {
+            StandardResponseType _responseType = StandardResponseType.of(response_type);
+            return getValues().stream().allMatch(t1 -> _responseType.getValues().stream().anyMatch(t2 -> eqIgnCase(t1, t2)));
+        }
+
         public static List<String> getNames() {
             return asList(StandardResponseType.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
         }
 
-        public static boolean isValid(String response_type) {
-            Set<String> responseType = toSpaceParams(response_type);
-            return CollectionUtils2.isSubCollection(responseType, code_id_token_token.getValues());
-        }
-
-        public static StandardResponseType of(String response_type) {
-            Set<String> responseTypes = toSpaceParams(response_type);
+        public static StandardResponseType safeOf(String response_type) {
+            Set<String> responseTypes = safeDecodeToParams(response_type);
             for (StandardResponseType v : values()) {
                 if (responseTypes.stream()
                         .allMatch(responseType -> v.getValues().stream().anyMatch(t -> t.equalsIgnoreCase(responseType)))) {
                     return v;
                 }
             }
+            return null;
+        }
+
+        public static StandardResponseType of(String response_type) {
+            StandardResponseType responseType = safeOf(response_type);
+            if (nonNull(responseType)) {
+                return responseType;
+            }
             throw new IllegalArgumentException(format("unsupported response_type for '%s'", response_type));
         }
 
-        /**
-         * Check the cross collection of a single type.
-         */
-        public static boolean containtsInSingle(String response_type, final StandardResponseType responseType) {
-            if (responseType.getValues().size() != 1) {
-                throw new IllegalArgumentException(
-                        format("Only single-type matching patterns are supported. '%s'", responseType));
-            }
-            StandardResponseType _responseType = StandardResponseType.of(response_type);
-            return _responseType.getValues().stream().anyMatch(t1 -> responseType.getValues().get(0).equalsIgnoreCase(t1));
+        public static boolean isValid(String response_type) {
+            Set<String> responseType = safeDecodeToParams(response_type);
+            return CollectionUtils2.isSubCollection(responseType, code_id_token_token.getValues());
         }
+
+        public static boolean isAuthorizationCodeFlow(StandardResponseType responseType) {
+            return responseType == code;
+        }
+
+        public static boolean isImplicitFlow(StandardResponseType responseType) {
+            return responseType == id_token || responseType == id_token_token;
+        }
+
+        public static boolean isHybridFlow(StandardResponseType responseType) {
+            return responseType == code_id_token || responseType == code_token || responseType == code_id_token_token;
+        }
+    }
+
+    /**
+     * response mode definitions. </br>
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+     * 
+     * <pre>
+     * RECOMMENDED. Specifies how the identity platform should return the requested token to your app. Supported values:
+     *  - query: Default when requesting an access token. Provides the code as a query string parameter on your redirect URI. 
+     *     The query parameter is not supported when requesting an ID token by using the implicit flow.
+     *  - fragment: Default when requesting an ID token by using the implicit flow. Also supported if requesting only a code.
+     *  - form_post: Executes a POST containing the code to your redirect URI. Supported when requesting a code.
+     * </pre>
+     */
+    @Getter
+    public static enum StandardResponseMode {
+        /**
+         * Default
+         */
+        query, fragment, form_post;
+
+        public static List<String> getNames() {
+            return asList(StandardResponseMode.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+        }
+
+        public static StandardResponseMode safeOf(String name) {
+            for (StandardResponseMode v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        public static StandardResponseMode of(String name) {
+            StandardResponseMode result = safeOf(name);
+            if (nonNull(result)) {
+                return result;
+            }
+            throw new IllegalArgumentException(format("unsupported response_mode for '%s'", name));
+        }
+    }
+
+    /**
+     * prompt definitions. </br>
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+     * 
+     * <pre>
+     * OPTIONAL. Indicates the type of user interaction that is required. Valid values are login, none, consent, and select_account. Supported values:
+     *  - prompt=login forces the user to enter their credentials on that request, negating single-sign on.
+     *  - prompt=none is the opposite. It ensures that the user isn't presented with any interactive prompt. If the request can't be 
+     *       completed silently by using single-sign on, the Microsoft identity platform returns an interaction_required error.
+     *  - prompt=consent triggers the OAuth consent dialog after the user signs in, asking the user to grant permissions to the app.
+     *  - prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in 
+     *       session or any remembered account or an option to choose to use a different account altogether.
+     * </pre>
+     */
+    @Getter
+    public static enum StandardPrompt {
+        login, none, consent, select_account;
     }
 
     /**
@@ -400,35 +514,6 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         }
     }
 
-    /**
-     * response mode definitions. </br>
-     */
-    @Getter
-    public static enum StandardResponseMode {
-        form_post;
-
-        public static List<String> getNames() {
-            return asList(StandardResponseMode.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
-        }
-
-        public static StandardResponseMode safeOf(String name) {
-            for (StandardResponseMode v : values()) {
-                if (eqIgnCase(v.name(), name)) {
-                    return v;
-                }
-            }
-            return null;
-        }
-
-        public static StandardResponseMode of(String name) {
-            StandardResponseMode result = safeOf(name);
-            if (nonNull(result)) {
-                return result;
-            }
-            throw new IllegalArgumentException(format("unsupported response_mode for '%s'", name));
-        }
-    }
-
     public static final String TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML = ResourceUtils2
             .getResourceString(V1OidcIAMConstants.class, "response_mode_from_post_html.tpl");
 
@@ -486,8 +571,11 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     /** Default JWK configuration resources. */
     public static final String URI_IAM_OIDC_JWK_DEFAULT_RESOURCE = "classpath*:/credentials/oidc/jwks.json";
 
-    public static Set<String> toSpaceParams(String param) {
-        return isBlank(param) ? emptySet() : new HashSet<>(asList(StringUtils.split(urlDecode(param), " ")));
+    /**
+     * Safely decode string parameters into a collection separated by spaces.
+     */
+    public static Set<String> safeDecodeToParams(String paramString) {
+        return isBlank(paramString) ? emptySet() : new LinkedHashSet<>(asList(StringUtils.split(urlDecode(paramString), " ")));
     }
 
 }

@@ -25,6 +25,7 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_USERINFO;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -35,21 +36,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,13 +69,12 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcServerController;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardDisplay;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScopeType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSignAlgorithm;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardSubjectType;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
@@ -142,7 +141,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                 .jwks_uri(prefix.concat(URI_IAM_OIDC_ENDPOINT_CERTS))
                 .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECTION))
                 // REQUIRED
-                .scopes_supported(StandardScopeType.getNames())
+                .scopes_supported(StandardScope.getNames())
                 // REQUIRED
                 .response_types_supported(StandardResponseType.getNames())
                 // OPTIONAL
@@ -334,11 +333,20 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
      *            https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#rfc.references1
      *            </br>
      * @param code_challenge
-     *            Oauth2 security challenge code docs see to:
+     *            Used to secure authorization code grants by using Proof Key
+     *            for Code Exchange (PKCE). Required if code_challenge_method is
+     *            included. For more information, see the PKCE RFC. This
+     *            parameter is now recommended for all application types, both
+     *            public and confidential clients. see to:
      *            https://blog.csdn.net/weixin_34415923/article/details/89691037
      *            </br>
      * @param code_challenge_method
-     *            Challenge code algorithm. </br>
+     *            The method used to encode the code_verifier for the
+     *            code_challenge parameter. This SHOULD be S256, but the spec
+     *            allows the use of plain if the client can't support SHA256. If
+     *            excluded, code_challenge is assumed to be plaintext if
+     *            code_challenge is included. The Microsoft identity platform
+     *            supports both plain and S256. </br>
      * @param auth
      * @param uriBuilder
      * @param req
@@ -363,7 +371,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             @RequestParam(required = false) String acr_values,
             @RequestParam(required = false) String response_mode,
             @RequestParam(required = false) String code_challenge,
-            @RequestParam(required = false) String code_challenge_method,
+            @RequestParam(required = false, defaultValue = "plain") String code_challenge_method,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
             HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
@@ -375,86 +383,97 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             log.info("User and password not provided. scope={} response_type={} client_id={} redirect_uri={}", scope,
                     response_type, client_id, redirect_uri);
             return wrapUnauthentication();
-        } else {
-            String[] creds = new String(Base64.getDecoder().decode(auth.split(" ")[1])).split(":", 2);
-            String username = creds[0];
-            String password = creds[1];
-            V1OidcUserClaims user = oidcHandler.getV1OidcUser(username);
-            if (username.equals("root")) { // for test
-                // if (oidcHandler.validate(user, password)) {
-                log.info("Password {} for user {} is correct.", password, username);
+        }
+        // Check the if openid existing. (oauth2 does not required)
+        if (!StandardScope.openid.containsIn(scope)) {
+            return wrapErrorRfc6749("invalid_request", "The oidc v1 specification requires that scope must contain openid");
+        }
 
-                String iss = uriBuilder.replacePath("/").build().encode().toUriString();
+        String[] creds = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":", 2);
+        String username = creds[0];
+        String password = creds[1];
+        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByUser(username);
+        // if (!username.equals("root")) { // for test
+        if (oidcHandler.validate(user, password)) {
+            log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
+                    response_type, client_id, redirect_uri);
+            return wrapUnauthentication();
+        }
+        log.info("Password {} for user {} is correct.", password, username);
+        String iss = getIss(uriBuilder);
 
-                // Check response_type valid
-                if (!StandardResponseType.isValid(response_type)) {
-                    String url = format("%s#error=unsupported_response_type", redirect_uri);
-                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
-                }
+        // Load configuration.
+        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
 
-                // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
-                Map<String, String> redirectParams = new HashMap<>(8);
-                // fragmentUri.queryParam("token_type",KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
-                // fragmentUri.queryParam("state", urlEncode(state));
-                redirectParams.put("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
-                redirectParams.put("state", urlEncode(state));
+        // Check response_type valid
+        if (clientConfig.isMustOpenidScopeEnabled() && !StandardResponseType.isValid(response_type)) {
+            String url = format("%s#error=unsupported_response_type", redirect_uri);
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
+        }
 
-                // Authorization code flow
-                // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.code)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
-                    // Check challenge method supported.
-                    if (!isBlank(code_challenge_method)
-                            && !oidcHandler.loadClientConfig(client_id).getCodeChallengeMethodsSupported().contains(
-                                    code_challenge_method)) {
-                        return wrapErrorRFC6749("unsupported_code_challenge_method",
-                                format("code_challenge_method must contains is '%s'",
-                                        oidcHandler.loadClientConfig(client_id).getCodeChallengeMethodsSupported()));
-                    }
-                    String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user,
-                            iss, scope, nonce);
-                    // fragmentUri.queryParam("code", code);
-                    redirectParams.put("code", code);
-                }
-                // Implicit flow
-                // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
-                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.token)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
-                    V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(iss, user, client_id, scope);
-                    // fragmentUri.queryParam("access_token",accessTokenInfo.getAccessToken());
-                    redirectParams.put("access_token", accessTokenInfo.getAccessToken());
-                }
-                if (StandardResponseType.containtsInSingle(response_type, StandardResponseType.id_token)) {
-                    // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
-                    String id_token = createIdToken(iss, user, client_id, nonce);
-                    // fragmentUri.queryParam("id_token", id_token);
-                    redirectParams.put("id_token", id_token);
-                }
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
+        MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
+        redirectParams.add("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
+        redirectParams.add("state", urlEncode(state));
 
-                // OPTIONAL. Informs the Authorization Server of the mechanism
-                // to be used for returning parameters from the Authorization
-                // Endpoint. This use of this parameter is NOT RECOMMENDED when
-                // the Response Mode that would be requested is the default mode
-                // specified for the Response Type.
-                if (StandardResponseMode.safeOf(response_mode) == StandardResponseMode.form_post) {
-                    return wrapResponseFromPost("", state, redirectParams.get("code"), redirectParams.get("id_token"),
-                            redirectParams.get("access_token"));
-                } else {
-                    // The protocol specifications stipulates that the response
-                    // redirection parameters are spliced into the fragment
-                    // parts, which can ensure maximum security, because the
-                    // parameters of the fragment are not sent to the client
-                    // application.
-                    UriComponentsBuilder fragmentUri = UriComponentsBuilder.newInstance();
-                    redirectParams.forEach((key, value) -> fragmentUri.queryParam(key, value));
-                    String location = redirect_uri.concat("#").concat(fragmentUri.build().toString().substring(1));
-                    return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
-                }
-            } else {
-                log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
-                        response_type, client_id, redirect_uri);
-                return wrapUnauthentication();
+        // Authorization code flow
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
+        if (StandardResponseType.code.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
+            // Check challenge method supported.
+            if (!isBlank(code_challenge_method)
+                    && !clientConfig.getCodeChallengeMethodsSupported().contains(code_challenge_method)) {
+                return wrapErrorRfc6749("unsupported_code_challenge_method",
+                        format("code_challenge_method must contains is '%s'", clientConfig.getCodeChallengeMethodsSupported()));
             }
+            String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user, iss,
+                    scope, nonce);
+            redirectParams.add("code", code);
+        }
+        // Implicit flow, [#mark1]
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
+        if (StandardResponseType.id_token.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
+            String id_token = createIdToken(clientConfig, iss, user, client_id, nonce);
+            redirectParams.add("id_token", id_token);
+        }
+        if (StandardResponseType.token.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
+            V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
+            redirectParams.add("access_token", accessTokenInfo.getAccessToken());
+        }
+
+        // OPTIONAL. Informs the Authorization Server of the mechanism
+        // to be used for returning parameters from the Authorization
+        // Endpoint. This use of this parameter is NOT RECOMMENDED when
+        // the Response Mode that would be requested is the default mode
+        // specified for the Response Type.
+        // see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+        StandardResponseType responseType = StandardResponseType.of(response_type);
+        StandardResponseMode responseMode = StandardResponseMode.safeOf(response_mode);
+        if (responseMode == StandardResponseMode.form_post && StandardResponseType.isAuthorizationCodeFlow(responseType)) {
+            return wrapResponseFromPost(redirect_uri, state, redirectParams.getFirst("code"), redirectParams.getFirst("id_token"),
+                    redirectParams.getFirst("access_token"));
+        } else {
+            String paramUri = UriComponentsBuilder.newInstance().queryParams(redirectParams).build().toUriString().substring(1);
+            if (StandardResponseType.isImplicitFlow(responseType)) { // [#mark2]
+                // Implicit flow are not allowed to use query.
+                responseMode = (responseMode == StandardResponseMode.query) ? StandardResponseMode.fragment : responseMode;
+                // The default for implicit flow is fragment.
+                responseMode = isNull(responseMode) ? StandardResponseMode.fragment : responseMode;
+            }
+            if (responseMode == StandardResponseMode.fragment) {
+                // The protocol specifications stipulates that the response
+                // redirection parameters are spliced into the fragment
+                // parts, which can ensure maximum security, because the
+                // parameters of the fragment are not sent to the client
+                // application.
+                String location = redirect_uri.concat("#").concat(paramUri);
+                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+            }
+            // others are according handled to query.
+            String location = redirect_uri.concat("?").concat(paramUri);
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
         }
     }
 
@@ -551,6 +570,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
             @RequestParam(required = false) String refresh_token,
             @RequestParam(required = false) String client_id,
             @RequestParam(required = false) String client_secret,
+            @RequestParam(required = false) String scope,
             @RequestParam(required = false) String code_verifier,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
@@ -559,62 +579,31 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         log.info("called:token '{}' from '{}', grant_type={} code={} redirect_uri={} client_id={}", URI_IAM_OIDC_ENDPOINT_TOKEN,
                 req.getRemoteHost(), grant_type, code, redirect_uri, client_id);
 
-        StandardGrantType grantType = V1OidcIAMConstants.StandardGrantType.safeOf(grant_type);
+        StandardGrantType grantType = StandardGrantType.safeOf(grant_type);
         if (isNull(grantType)) {
-            return wrapErrorRFC6749("unsupported_grant_type",
-                    format("grant_type must be one of '%s'", V1OidcIAMConstants.StandardGrantType.getNames()));
+            return wrapErrorRfc6749("unsupported_grant_type",
+                    format("The grant_type must be one of '%s'", StandardGrantType.getNames()));
         }
-        V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
-        if (isNull(codeInfo)) {
-            return wrapErrorRFC6749("invalid_grant", "code not valid");
-        }
-        if (!StringUtils.equals(redirect_uri, codeInfo.getRedirect_uri())) {
-            return wrapErrorRFC6749("invalid_request", "redirect_uri not valid");
-        }
+        String iss = getIss(uriBuilder);
 
         // load OIDC client configuration.
         V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
 
-        // (oauth2)Verify code challenge
-        if (!isBlank(codeInfo.getCodeChallenge())) {
-            // check PKCE
-            if (isBlank(code_verifier)) {
-                return wrapErrorRFC6749("invalid_request", "code_verifier missing");
-            }
-            if (StandardSignAlgorithm.PLAIN.name().equals(codeInfo.getCodeChallengeMethod())) {
-                if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
-                    log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
-                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
-                }
-            } else {
-                String hashedVerifier = Base64URL
-                        .encode(doDigestHash(StandardSignAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
-                        .toString();
-                if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
-                    log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
-                            hashedVerifier, codeInfo.getCodeChallenge());
-                    return wrapErrorRFC6749("invalid_request", "code_verifier not correct");
-                }
-                log.debug("code_verifier OK");
-            }
-        }
-
         // response tokens
         switch (grantType) {
-        case authorization_code: // oauth2+v1oidc
-            return doTokenWithAuthorizationCode(client_id, clientConfig, codeInfo);
-        case implicit: // oauth2+v1oidc
-            return doTokenWithImplicit(clientConfig);
+        case authorization_code: // oauth2+v1-oidc
+            return doTokenWithAuthorizationCode(clientConfig, client_id, redirect_uri, code, code_verifier);
+        // case implicit: // oauth2+v1-oidc, see:[#mark1,#mark2]
         case refresh_token: // oauth2
-            return doTokenWithRefreshToken(client_id, refresh_token, clientConfig, codeInfo);
+            return doTokenWithRefreshToken(clientConfig, client_id, redirect_uri, refresh_token);
         case password: // oauth2
-            return doTokenWithPassword(clientConfig);
+            return doTokenWithPassword(clientConfig, client_id, client_secret, redirect_uri, scope, auth, iss);
         case client_credentials: // oauth2
-            return doTokenWithClientCredentials(clientConfig);
+            return doTokenWithClientCredentials(clientConfig, client_id, client_secret, redirect_uri, scope, iss);
         case device_code: // oauth2
             return doTokenWithDeviceCode(clientConfig);
         default:
-            return wrapErrorRFC6749("invalid_request", "grant_type not valid");
+            return wrapErrorRfc6749("invalid_request", "grant_type not valid");
         }
     }
 
@@ -701,10 +690,9 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         if (isNull(accessTokenInfo)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("access_token is not valid");
         }
-        Set<String> scopes = toSpaceSeparatedParams(accessTokenInfo.getScope());
         V1OidcUserClaims user = accessTokenInfo.getUser();
         V1OidcUserClaims oidcUser = V1OidcUserClaims.builder().sub(user.getSub()).build();
-        if (scopes.contains(StandardScopeType.profile.name())) {
+        if (StandardScope.profile.containsIn(accessTokenInfo.getScope())) {
             oidcUser = oidcUser.withName(user.getName())
                     .withGiven_name(user.getGiven_name())
                     .withFamily_name(user.getFamily_name())
@@ -718,13 +706,13 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
                     .withZoneinfo(user.getZoneinfo())
                     .withUpdated_at(user.getUpdated_at());
         }
-        if (scopes.contains(StandardScopeType.email.name())) {
+        if (StandardScope.email.containsIn(accessTokenInfo.getScope())) {
             oidcUser = oidcUser.withEmail(user.getEmail()).withEmail_verified(user.getEmail_verified());
         }
-        if (scopes.contains(StandardScopeType.address.name())) {
+        if (StandardScope.address.containsIn(accessTokenInfo.getScope())) {
             oidcUser = oidcUser.withAddress(user.getAddress());
         }
-        if (scopes.contains(StandardScopeType.phone.name())) {
+        if (StandardScope.phone.containsIn(accessTokenInfo.getScope())) {
             oidcUser = oidcUser.withPhone_number(user.getPhone_number())
                     .withPhone_number_verified(user.getPhone_number_verified());
         }
@@ -732,15 +720,51 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
     }
 
     private ResponseEntity<?> doTokenWithAuthorizationCode(
-            String client_id,
             V1OidcClientConfig clientConfig,
-            V1AuthorizationCodeInfo codeInfo) throws Exception {
+            String client_id,
+            String redirect_uri,
+            String code,
+            String code_verifier) throws Exception {
         if (!clientConfig.isStandardFlowEnabled()) {
-            return wrapErrorRFC6749("invalid_request", "disabled standard authorization code grant");
+            return wrapErrorRfc6749("invalid_request", "disabled standard authorization code grant");
         }
-        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
-                codeInfo.getScope());
-        String id_token = createIdToken(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(), codeInfo.getNonce());
+
+        V1AuthorizationCodeInfo codeInfo = oidcHandler.loadAuthorizationCode(code);
+        if (isNull(codeInfo)) {
+            return wrapErrorRfc6749("invalid_grant", "code not valid");
+        }
+        if (!StringUtils.equals(redirect_uri, codeInfo.getRedirectUri())) {
+            return wrapErrorRfc6749("invalid_request", "The redirect_uri not valid");
+        }
+
+        // (oauth2)Verify code challenge
+        if (!isBlank(codeInfo.getCodeChallenge())) {
+            // check PKCE
+            if (isBlank(code_verifier)) {
+                return wrapErrorRfc6749("invalid_request", "The code_verifier missing");
+            }
+            if (StandardSignAlgorithm.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
+                if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
+                    log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
+                    return wrapErrorRfc6749("invalid_request", "The code_verifier not correct");
+                }
+            } else {
+                String hashedVerifier = Base64URL
+                        .encode(doDigestHash(StandardSignAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
+                        .toString();
+                if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
+                    log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
+                            hashedVerifier, codeInfo.getCodeChallenge());
+                    return wrapErrorRfc6749("invalid_request", "The code_verifier not correct");
+                }
+                log.debug("code_verifier OK");
+            }
+        }
+
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, codeInfo.getIss(), codeInfo.getUser(),
+                codeInfo.getClientId(), codeInfo.getRedirectUri(), codeInfo.getScope());
+        String id_token = createIdToken(clientConfig, codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClientId(),
+                codeInfo.getNonce());
         V1AccessToken accessToken = V1AccessToken.builder()
                 .access_token(accessTokenInfo.getAccessToken())
                 .refresh_token(accessTokenInfo.getRefreshToken())
@@ -752,57 +776,116 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         return ResponseEntity.ok(accessToken);
     }
 
-    private ResponseEntity<?> doTokenWithImplicit(V1OidcClientConfig clientConfig) throws Exception {
-        if (!clientConfig.isImplicitFlowEnabled()) {
-            return wrapErrorRFC6749("invalid_request", "disabled implicit credentials grant");
-        }
-        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
-    }
-
     private ResponseEntity<?> doTokenWithRefreshToken(
-            String client_id,
-            String refresh_token,
             V1OidcClientConfig clientConfig,
-            V1AuthorizationCodeInfo codeInfo) throws Exception {
+            String client_id,
+            String redirect_uri,
+            String refresh_token) throws Exception {
         if (!clientConfig.isUseRefreshTokenEnabled()) {
-            return wrapErrorRFC6749("invalid_request", "disabled refresh token grant");
+            return wrapErrorRfc6749("invalid_request", "The refresh token grant disabled.");
         }
         if (isBlank(refresh_token)) {
-            return wrapErrorRFC6749("invalid_request", "refresh_token not missing");
+            return wrapErrorRfc6749("invalid_request", "The refresh_token missing");
         }
         // Check refresh_token valid?
-        String lastAccessToken = oidcHandler.loadRefreshToken(refresh_token);
-        if (isBlank(lastAccessToken)) {
-            return wrapErrorRFC6749("invalid_request", "refresh_token not invalid");
+        V1AccessTokenInfo lastAccessTokenInfo = oidcHandler.loadRefreshToken(refresh_token, true);
+        if (isNull(lastAccessTokenInfo)) {
+            return wrapErrorRfc6749("invalid_request", "The refresh_token not valid");
         }
-        // New generate access_token
-        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(codeInfo.getIss(), codeInfo.getUser(), codeInfo.getClient_id(),
-                codeInfo.getScope());
+        if (!StringUtils.equals(redirect_uri, lastAccessTokenInfo.getRedirectUri())) {
+            return wrapErrorRfc6749("invalid_request", "The redirect_uri not valid");
+        }
+        // New access_token
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, lastAccessTokenInfo.getIss(),
+                lastAccessTokenInfo.getUser(), lastAccessTokenInfo.getClientId(), redirect_uri, lastAccessTokenInfo.getScope());
         V1AccessToken accessToken = V1AccessToken.builder()
                 .access_token(accessTokenInfo.getAccessToken())
                 .refresh_token(accessTokenInfo.getRefreshToken())
                 .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
                 .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
-                .scope(codeInfo.getScope())
+                .scope(lastAccessTokenInfo.getScope())
                 .build();
         return ResponseEntity.ok(accessToken);
     }
 
-    private ResponseEntity<?> doTokenWithPassword(V1OidcClientConfig clientConfig) throws Exception {
+    /**
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth-ropc
+     */
+    private ResponseEntity<?> doTokenWithPassword(
+            V1OidcClientConfig clientConfig,
+            String client_id,
+            String client_secret,
+            String redirect_uri,
+            String scope,
+            String auth,
+            String iss) throws Exception {
         if (!clientConfig.isDirectAccessGrantsEnabled()) {
-            return wrapErrorRFC6749("invalid_request", "disabled password credentials grant");
+            return wrapErrorRfc6749("invalid_request", "The password credential grant has been disabled");
         }
-        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        String[] creds = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":", 2);
+        String username = creds[0];
+        String password = creds[1];
+        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByUser(username);
+        if (!oidcHandler.validate(user, password)) {
+            return wrapUnauthentication();
+        }
+
+        // New access_token
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(accessTokenInfo.getAccessToken())
+                .refresh_token(accessTokenInfo.getRefreshToken())
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .expires_in(oidcHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .scope(scope)
+                .build();
+        return ResponseEntity.ok(accessToken);
     }
 
-    private ResponseEntity<?> doTokenWithClientCredentials(V1OidcClientConfig clientConfig) throws Exception {
+    /**
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow
+     */
+    private ResponseEntity<?> doTokenWithClientCredentials(
+            V1OidcClientConfig clientConfig,
+            String client_id,
+            String client_secret,
+            String redirect_uri,
+            String scope,
+            String iss) throws Exception {
+
+        // Check scope
         // TODO
-        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        // StandardScope _scope = StandardScope.safeOf(scope);
+        // if (_scope) {
+        // return wrapErrorRfc6749("invalid_request", "The scope is not valid");
+        // }
+
+        // TODO use hashing???
+        // Validation client credentials.
+        boolean certificated = safeList(clientConfig.getClientSecrets()).stream()
+                .anyMatch(s -> StringUtils.equals(s.getSecret(), client_secret));
+        if (!certificated) {
+            return wrapErrorRfc6749("invalid_request", "The client_secret is not valid");
+        }
+
+        // Load user claims by client_id.
+        V1OidcUserClaims user = oidcHandler.getV1OidcUserClaimsByClientId(client_id);
+
+        // New access_token.
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(accessTokenInfo.getAccessToken())
+                .refresh_token(accessTokenInfo.getRefreshToken())
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .expires_in(clientConfig.getAccessTokenExpirationSeconds())
+                .scope(scope)
+                .build();
+        return ResponseEntity.ok(accessToken);
     }
 
     private ResponseEntity<?> doTokenWithDeviceCode(V1OidcClientConfig clientConfig) throws Exception {
         // TODO
-        return wrapErrorRFC6749("invalid_request", "Not yet implemented");
+        return wrapErrorRfc6749("invalid_request", "not yet implemented");
     }
 
     private String createAuthorizationCode(
@@ -818,18 +901,21 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         random.nextBytes(bytes);
         String code = Base64URL.encode(bytes).toString();
 
-        V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code_challenge, code_challenge_method, code, client_id,
-                redirect_uri, user, iss, scope, nonce);
+        V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code, client_id, redirect_uri, user, iss, scope, nonce,
+                code_challenge, code_challenge_method);
         oidcHandler.putAuthorizationCode(code, codeInfo);
 
-        log.info("Issuing authorization code={}, code info={}", code, codeInfo);
+        log.info("issuing authorization code={}, codeInfo={}", code, codeInfo);
         return code;
     }
 
-    private V1AccessTokenInfo createAccessTokenInfo(String iss, V1OidcUserClaims user, String client_id, String scope)
-            throws JOSEException {
-        // load config for client.
-        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+    private V1AccessTokenInfo createAccessTokenInfo(
+            V1OidcClientConfig clientConfig,
+            String iss,
+            V1OidcUserClaims user,
+            String client_id,
+            String redirect_uri,
+            String scope) throws JOSEException {
 
         // Create JWT claims
         Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
@@ -849,15 +935,16 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         String access_token = jwt.serialize();
 
         // Generate refresh token.
-        String refresh_token = createRefreshToken(access_token, iss, user, client_id, scope);
+        String refresh_token = createRefreshToken(clientConfig, access_token, iss, user, client_id, scope);
 
         V1AccessTokenInfo accessTokenInfo = V1AccessTokenInfo.builder()
                 .user(user)
+                .clientId(client_id)
+                .redirectUri(redirect_uri)
                 .accessToken(access_token)
                 .refreshToken(refresh_token)
                 .expiration(expiration)
                 .scope(scope)
-                .clientId(client_id)
                 .iss(iss)
                 .build();
 
@@ -866,10 +953,13 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         return accessTokenInfo;
     }
 
-    private String createRefreshToken(String access_token, String iss, V1OidcUserClaims user, String client_id, String scope)
-            throws JOSEException {
-        // load config for client.
-        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+    private String createRefreshToken(
+            V1OidcClientConfig clientConfig,
+            String access_token,
+            String iss,
+            V1OidcUserClaims user,
+            String client_id,
+            String scope) throws JOSEException {
 
         // create JWT claims
         Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
@@ -890,10 +980,12 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         return jwt.serialize();
     }
 
-    private String createIdToken(String iss, V1OidcUserClaims user, String client_id, String nonce)
-            throws NoSuchAlgorithmException, JOSEException {
-        // load config for client.
-        V1OidcClientConfig clientConfig = oidcHandler.loadClientConfig(client_id);
+    private String createIdToken(
+            V1OidcClientConfig clientConfig,
+            String iss,
+            V1OidcUserClaims user,
+            String client_id,
+            String nonce) throws NoSuchAlgorithmException, JOSEException {
 
         // compute at_hash
         byte[] hashBytes = doDigestHash(StandardSignAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
@@ -916,4 +1008,7 @@ public class V1OidcServerAuthingController extends BasedOidcServerAuthingControl
         return jwt.serialize();
     }
 
+    private String getIss(UriComponentsBuilder uriBuilder) {
+        return uriBuilder.replacePath("/").build().encode().toUriString();
+    }
 }

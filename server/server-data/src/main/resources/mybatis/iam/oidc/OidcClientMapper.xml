@@ -33,6 +33,7 @@
     <result column="code_challenge_expiration_sec" jdbcType="INTEGER" property="codeChallengeExpirationSec" />
     <result column="use_refresh_token_enabled" jdbcType="INTEGER" property="useRefreshTokenEnabled" />
     <result column="use_refresh_token_for_client_credentials_grant_enabled" jdbcType="INTEGER" property="useRefreshTokenForClientCredentialsGrantEnabled" />
+    <result column="must_openid_scope_enabled" jdbcType="INTEGER" property="mustOpenidScopeEnabled" />
     <result column="access_token_expiration_sec" jdbcType="INTEGER" property="accessTokenExpirationSec" />
     <result column="refresh_token_expiration_sec" jdbcType="INTEGER" property="refreshTokenExpirationSec" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -49,7 +50,7 @@
     terms_uri, valid_web_origin_uris_json, backchannel_logout_enabled, backchannel_logout_uri, 
     access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, id_token_encrypt_content_alg, 
     code_challenge_enabled, code_challenge_expiration_sec, use_refresh_token_enabled, use_refresh_token_for_client_credentials_grant_enabled, 
-    access_token_expiration_sec, refresh_token_expiration_sec, remark, create_by, create_date, 
+    must_openid_scope_enabled, access_token_expiration_sec, refresh_token_expiration_sec, remark, create_by, create_date, 
     update_by, update_date, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -153,6 +154,9 @@
       <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
         AND use_refresh_token_for_client_credentials_grant_enabled =  #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER}
       </if>
+      <if test="mustOpenidScopeEnabled != null">
+        AND must_openid_scope_enabled =  #{mustOpenidScopeEnabled,jdbcType=INTEGER}
+      </if>
       <if test="accessTokenExpirationSec != null">
         AND access_token_expiration_sec =  #{accessTokenExpirationSec,jdbcType=INTEGER}
       </if>
@@ -195,7 +199,8 @@
       access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, 
       id_token_encrypt_content_alg, code_challenge_enabled, 
       code_challenge_expiration_sec, use_refresh_token_enabled, 
-      use_refresh_token_for_client_credentials_grant_enabled, access_token_expiration_sec, 
+      use_refresh_token_for_client_credentials_grant_enabled,
+      must_openid_scope_enabled, access_token_expiration_sec, 
       refresh_token_expiration_sec, remark, create_by, 
       create_date, update_by, update_date, 
       del_flag)
@@ -210,7 +215,9 @@
       #{accessTokenSignAlg,jdbcType=VARCHAR}, #{idTokenSignAlg,jdbcType=VARCHAR}, #{idTokenEncryptKeyMgtAlg,jdbcType=VARCHAR}, 
       #{idTokenEncryptContentAlg,jdbcType=VARCHAR}, #{codeChallengeEnabled,jdbcType=INTEGER}, 
       #{useRefreshTokenEnabled,jdbcType=INTEGER}, 
-      #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER}, #{accessTokenExpirationSec,jdbcType=INTEGER}, 
+      #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      #{mustOpenidScopeEnabled,jdbcType=INTEGER},
+      #{accessTokenExpirationSec,jdbcType=INTEGER}, 
       #{refreshTokenExpirationSec,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
@@ -310,6 +317,9 @@
       </if>
       <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
         use_refresh_token_for_client_credentials_grant_enabled,
+      </if>
+      <if test="mustOpenidScopeEnabled != null">
+        must_openid_scope_enabled,
       </if>
       <if test="accessTokenExpirationSec != null">
         access_token_expiration_sec,
@@ -423,6 +433,9 @@
       </if>
       <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
         #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="mustOpenidScopeEnabled != null">
+        #{mustOpenidScopeEnabled,jdbcType=INTEGER},
       </if>
       <if test="accessTokenExpirationSec != null">
         #{accessTokenExpirationSec,jdbcType=INTEGER},
@@ -543,6 +556,9 @@
       <if test="useRefreshTokenForClientCredentialsGrantEnabled != null">
         use_refresh_token_for_client_credentials_grant_enabled = #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
       </if>
+      <if test="mustOpenidScopeEnabled != null">
+        must_openid_scope_enabled = #{mustOpenidScopeEnabled,jdbcType=INTEGER},
+      </if>
       <if test="accessTokenExpirationSec != null">
         access_token_expiration_sec = #{accessTokenExpirationSec,jdbcType=INTEGER},
       </if>
@@ -602,6 +618,7 @@
       code_challenge_expiration_sec = #{codeChallengeExpirationSec,jdbcType=INTEGER},
       use_refresh_token_enabled = #{useRefreshTokenEnabled,jdbcType=INTEGER},
       use_refresh_token_for_client_credentials_grant_enabled = #{useRefreshTokenForClientCredentialsGrantEnabled,jdbcType=INTEGER},
+      must_openid_scope_enabled = #{mustOpenidScopeEnabled,jdbcType=INTEGER},
       access_token_expiration_sec = #{accessTokenExpirationSec,jdbcType=INTEGER},
       refresh_token_expiration_sec = #{refreshTokenExpirationSec,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},

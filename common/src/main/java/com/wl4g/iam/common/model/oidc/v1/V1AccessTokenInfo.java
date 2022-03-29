@@ -40,6 +40,7 @@ import lombok.experimental.SuperBuilder;
 public class V1AccessTokenInfo {
     private V1OidcUserClaims user;
     private String clientId;
+    private String redirectUri;
     private String accessToken;
     private String refreshToken;
     private Date expiration;

@@ -17,10 +17,9 @@ package com.wl4g.iam.util;
 
 import static java.lang.System.out;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -35,13 +34,11 @@ public class UriComponentsBuilderTests {
     @Test
     public void testBuildWithMapParams() {
         // String redirect_uri = "https://www.google.com";
-        Map<String, String> redirectParams = new HashMap<>(8);
-        redirectParams.put("state", "sdagfhsdgsfaf");
-        redirectParams.put("access_token", "23tfgjdgfdgffffffff");
-        UriComponentsBuilder fragmentUri = UriComponentsBuilder.newInstance();
-        redirectParams.forEach((key, value) -> fragmentUri.queryParam(key, value));
-        out.println(fragmentUri.build().toString().substring(1));
+        MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
+        redirectParams.add("state", "sdagfhsdgsfaf");
+        redirectParams.add("access_token", "23tfgjdgfdgffffffff");
 
+        out.println(UriComponentsBuilder.newInstance().queryParams(redirectParams).build().toUriString().substring(1));
     }
 
 }

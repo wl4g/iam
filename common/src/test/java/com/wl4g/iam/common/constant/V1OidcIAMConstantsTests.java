@@ -20,6 +20,7 @@ import static java.lang.System.out;
 import org.junit.Test;
 
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
 
 /**
  * {@link V1OidcIAMConstantsTests}
@@ -71,9 +72,25 @@ public class V1OidcIAMConstantsTests {
     }
 
     @Test
-    public void testResponseTypeContainsBy_id_token_code__code() {
+    public void testResponseType_code_containsIn_id_token_code() {
         String response_type = "id_token code";
-        boolean result = StandardResponseType.containtsInSingle(response_type, StandardResponseType.code);
+        boolean result = StandardResponseType.code.containsIn(response_type);
+        out.println(result);
+        assert result; // expect is True
+    }
+
+    @Test
+    public void testResponseType_code_id_token_containsIn_code_id_token() {
+        String response_type = "id_token code";
+        boolean result = StandardResponseType.code_id_token.containsIn(response_type);
+        out.println(result);
+        assert result; // expect is True
+    }
+
+    @Test
+    public void testScopeType_openid_containsIn_openid_profile_email() {
+        String scope = "openid%20profile%20email%20phone%20address";
+        boolean result = StandardScope.openid.containsIn(scope);
         out.println(result);
         assert result; // expect is True
     }

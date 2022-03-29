@@ -95,10 +95,10 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
                     clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), oidcClientSecretTypeRef));
                     clientConfig.setClientType(client.getClientType());
                     // flow
-                    clientConfig.setStandardFlowEnabled(isTrue(valueOf(client.getStandardFlowEnabled())));
-                    clientConfig.setImplicitFlowEnabled(isTrue(valueOf(client.getImplicitFlowEnabled())));
-                    clientConfig.setDirectAccessGrantsEnabled(isTrue(valueOf(client.getDirectAccessGrantsEnabled())));
-                    clientConfig.setOauth2DeviceCodeEnabled(isTrue(valueOf(client.getOauth2DeviceCodeEnabled())));
+                    clientConfig.setStandardFlowEnabled(isTrue(valueOf(client.getStandardFlowEnabled()), true));
+                    clientConfig.setImplicitFlowEnabled(isTrue(valueOf(client.getImplicitFlowEnabled()), false));
+                    clientConfig.setDirectAccessGrantsEnabled(isTrue(valueOf(client.getDirectAccessGrantsEnabled()), true));
+                    clientConfig.setOauth2DeviceCodeEnabled(isTrue(valueOf(client.getOauth2DeviceCodeEnabled()), false));
                     // redirect
                     clientConfig.setValidRedirectUris(parseArrayString(client.getValidRedirectUrisJson()));
                     clientConfig.setAdminUri(client.getAdminUri());
@@ -107,7 +107,7 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
                     clientConfig.setTermsUri(client.getTermsUri());
                     clientConfig.setValidWebOriginUris(parseArrayString(client.getValidWebOriginUrisJson()));
                     // logout
-                    clientConfig.setBackchannelLogoutEnabled(isTrue(valueOf(client.getBackchannelLogoutEnabled())));
+                    clientConfig.setBackchannelLogoutEnabled(isTrue(valueOf(client.getBackchannelLogoutEnabled()), true));
                     clientConfig.setBackchannelLogoutUri(client.getBackchannelLogoutUri());
 
                     // Fine Grain OpenID Connect Configuration
@@ -115,17 +115,18 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
                     clientConfig.setAccessTokenExpirationSeconds(client.getAccessTokenExpirationSec());
 
                     // OpenID Connect Compatibility Modes
-                    clientConfig.setUseRefreshTokenEnabled(isTrue(valueOf(client.getUseRefreshTokenEnabled())));
+                    clientConfig.setUseRefreshTokenEnabled(isTrue(valueOf(client.getUseRefreshTokenEnabled()), true));
                     clientConfig.setRefreshTokenExpirationSeconds(client.getRefreshTokenExpirationSec());
                     clientConfig.setUseRefreshTokenForClientCredentialsGrantEnabled(
-                            isTrue(valueOf(client.getUseRefreshTokenForClientCredentialsGrantEnabled())));
+                            isTrue(valueOf(client.getUseRefreshTokenForClientCredentialsGrantEnabled()), false));
+                    clientConfig.setMustOpenidScopeEnabled(isTrue(valueOf(client.getMustOpenidScopeEnabled()), true));
 
                     clientConfig.setIdTokenSignAlg(client.getIdTokenSignAlg());
                     // TODO
                     // clientConfig.setIdTokenAlgSupported(null);
 
                     // Advanced Settings
-                    clientConfig.setCodeChallengeEnabled(isTrue(valueOf(client.getCodeChallengeEnabled())));
+                    clientConfig.setCodeChallengeEnabled(isTrue(valueOf(client.getCodeChallengeEnabled()), false));
                     clientConfig.setCodeChallengeExpirationSeconds(client.getCodeChallengeExpirationSec());
 
                     // Credentials Information
@@ -155,18 +156,25 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
     }
 
     @Override
-    public String loadRefreshToken(String accessToken) {
-        return jedisService.get(buildRefreshTokenKey(accessToken));
+    public V1AccessTokenInfo loadRefreshToken(String refreshToken, boolean remove) {
+        String key = buildRefreshTokenKey(refreshToken);
+        try {
+            return jedisService.getObjectAsJson(key, V1AccessTokenInfo.class);
+        } finally {
+            if (remove) {
+                jedisService.del(key);
+            }
+        }
     }
 
     @Override
     public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
         jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
-                loadClientConfig(authorizationCodeInfo.getClient_id()).getCodeChallengeExpirationSeconds());
+                loadClientConfig(authorizationCodeInfo.getClientId()).getCodeChallengeExpirationSeconds());
     }
 
     @Override
-    public V1OidcUserClaims getV1OidcUser(String loginName) {
+    public V1OidcUserClaims getV1OidcUserClaimsByUser(String loginName) {
         IamPrincipal principal = configurer.getIamUserDetail(new IamPrincipal.SimpleParameter(loginName));
         User user = principal.attributes().getUser();
         return V1OidcUserClaims.builder()
@@ -186,6 +194,12 @@ public class DefaultV1OidcAuthenticatingHandler extends AbstractAuthenticatingHa
                 .phone_number(user.getPhone())
                 .phone_number_verified(false)
                 .build();
+    }
+
+    @Override
+    public V1OidcUserClaims getV1OidcUserClaimsByClientId(String loginName) {
+        // TODO
+        return null;
     }
 
     @Override

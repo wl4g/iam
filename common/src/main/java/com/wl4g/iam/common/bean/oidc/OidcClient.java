@@ -98,6 +98,7 @@ public class OidcClient extends BaseBean {
     private Integer useRefreshTokenEnabled;
     private Integer refreshTokenExpirationSec;
     private Integer useRefreshTokenForClientCredentialsGrantEnabled;
+    private Integer mustOpenidScopeEnabled;
 
     // Advanced Settings
 

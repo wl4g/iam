@@ -17,12 +17,10 @@ package com.wl4g.iam.web.oidc;
 
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.TPL_IAM_OIDC_RESPONSE_MODE_FROM_POST_HTML;
-import static com.wl4g.infra.common.codec.Encodes.urlDecode;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replaceAll;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -30,10 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
@@ -73,10 +69,6 @@ public abstract class BasedOidcServerAuthingController extends BaseIamController
         return null;
     }
 
-    protected Set<String> toSpaceSeparatedParams(String param) {
-        return isBlank(param) ? emptySet() : new HashSet<>(asList(urlDecode(param).split(" ")));
-    }
-
     protected ResponseEntity<String> wrapResponseFromPost(
             @NotBlank String actionUrl,
             @Nullable String state,
@@ -104,12 +96,12 @@ public abstract class BasedOidcServerAuthingController extends BaseIamController
     /**
      * https://datatracker.ietf.org/doc/html/rfc6749
      */
-    protected ResponseEntity<?> wrapErrorRFC6749(String error, String error_description) {
-        log.warn("Wrap rfc6749 error={} error_description={}", error, error_description);
+    protected ResponseEntity<?> wrapErrorRfc6749(String error, String error_description) {
+        log.warn("wrap rfc6749 response. error={} error_description={}", error, error_description);
         Map<String, String> map = new LinkedHashMap<>();
         map.put("error", error);
-        map.put("error_description", error_description);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        map.put("error_description", replaceAll(error_description, " ", "+"));
+        return ResponseEntity.badRequest().body(map);
     }
 
 }

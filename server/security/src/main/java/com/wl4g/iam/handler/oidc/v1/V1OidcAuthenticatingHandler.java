@@ -37,13 +37,15 @@ public interface V1OidcAuthenticatingHandler {
 
     void putRefreshToken(String refreshToken, V1AccessTokenInfo accessToken);
 
-    String loadRefreshToken(String refreshToken);
+    V1AccessTokenInfo loadRefreshToken(String refreshToken, boolean remove);
 
     void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
 
     V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode);
 
-    V1OidcUserClaims getV1OidcUser(String loginName);
+    V1OidcUserClaims getV1OidcUserClaimsByUser(String loginName);
+
+    V1OidcUserClaims getV1OidcUserClaimsByClientId(String clientId);
 
     boolean validate(V1OidcUserClaims user, String password);
 

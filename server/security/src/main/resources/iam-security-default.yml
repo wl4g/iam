@@ -181,7 +181,11 @@ spring:
         access-token-sign-alg: S256
         access-token-expiration-seconds: 3600
         use-refresh-tokenE-eabled: true
-        use-refresh-token-for-client-credentials-grant-enabled: true
+        # If this is on, a refresh token willbe created and added to the token response if the client credentials grant is
+        # used the Oauth 2.0 RFC6749 Section4.4.3 states that a refresh token should not be generated when client credentials
+        # grant is used If this is off then no refresh token will be generated and the associateduser session will be removed.
+        use-refresh-token-for-client-credentials-grant-enabled: false
+        must-openid-scope-enabled: true
         refresh-token-expiration-seconds: 86400
         id-token-sign-alg: S256
         id-token-alg-supported: ["PLAIN", "S256"]

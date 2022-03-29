@@ -98,7 +98,17 @@ public class V1OidcProperties implements Serializable {
 
         private boolean useRefreshTokenEnabled;
         private int refreshTokenExpirationSeconds;
+
+        /**
+         * If this is on, a refresh token willbe created and added to the token
+         * response if the client credentials grant is used the Oauth 2.0
+         * RFC6749 Section4.4.3 states that a refresh token should not be
+         * generated when client credentials grant is used If this is off then
+         * no refresh token will be generated and the associateduser session
+         * will be removed.
+         */
         private boolean useRefreshTokenForClientCredentialsGrantEnabled;
+        private boolean mustOpenidScopeEnabled;
 
         // Advanced Settings
 
@@ -110,7 +120,9 @@ public class V1OidcProperties implements Serializable {
         private String registrationToken;
 
         public DefaultProtocolProperties() {
+            //
             // Generic OpenID Connect Configuration
+            //
             this.basicRealmName = KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
             this.loginTheme = KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
             this.jwksSignAlg = "RS256";
@@ -119,7 +131,9 @@ public class V1OidcProperties implements Serializable {
             this.implicitFlowEnabled = false;
             this.directAccessGrantsEnabled = false;
 
+            //
             // Fine Grain OpenID Connect Configuration
+            //
             this.accessTokenSignAlg = "S256";
             this.accessTokenExpirationSeconds = 3600;
 
@@ -129,12 +143,17 @@ public class V1OidcProperties implements Serializable {
             // this.idTokenEncryptKeyMgtAlg = "";
             // this.idTokenEncryptContentAlg = "";
 
+            //
             // OpenID Connect Compatibility Modes
+            //
             this.useRefreshTokenEnabled = false;
             this.useRefreshTokenForClientCredentialsGrantEnabled = false;
             this.refreshTokenExpirationSeconds = 3600 * 24;
+            this.mustOpenidScopeEnabled = true;
 
+            //
             // Advanced Settings
+            //
             this.codeChallengeMethodsSupported = asList(StandardSignAlgorithm.values()).stream().map(m -> m.name()).collect(
                     toList());
             this.codeChallengeExpirationSeconds = 10;

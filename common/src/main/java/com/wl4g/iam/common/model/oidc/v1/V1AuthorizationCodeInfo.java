@@ -36,13 +36,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class V1AuthorizationCodeInfo {
-    private String codeChallenge;
-    private String codeChallengeMethod;
+    private String clientId;
     private String code;
-    private String client_id;
-    private String redirect_uri;
+    private String redirectUri;
     private V1OidcUserClaims user;
     private String iss;
     private String scope;
     private String nonce;
+    private String codeChallenge;
+    private String codeChallengeMethod;
 }

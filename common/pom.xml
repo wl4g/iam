@@ -40,21 +40,25 @@
 	<build>
 		<resources>
 			<resource>
+				<filtering>false</filtering>
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.properties</include>
+					<include>**/*.txt</include>
+					<include>**/*.tpl</include>
+					<include>**/*.sql</include>
+					<include>**/*.html</include>
 				</includes>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
-				<filtering>false</filtering>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
 				<includes>
 					<include>**/*.*</include>
 				</includes>
-				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>
