@@ -36,7 +36,7 @@ import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
  * @since v3.0.0
  */
 @FeignConsumer("${provider.serviceId.iam-data:iam-data}")
-@RequestMapping("/oidc-client-dao")
+@RequestMapping("/oidc-mapper-dao")
 public interface OidcMapperDao {
 
     @RequestMapping(method = GET, value = "/deleteByPrimaryKey")

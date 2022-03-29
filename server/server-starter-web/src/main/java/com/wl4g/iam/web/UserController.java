@@ -45,14 +45,10 @@ import com.wl4g.iam.service.UserService;
 public class UserController extends BaseController {
 
     // @com.alibaba.dubbo.config.annotation.Reference
-    @Autowired
-    private UserService userService;
+    private @Autowired UserService userService;
 
-    @Autowired
-    private IamSessionDAO sessionDAO;
-
-    @Autowired
-    private CredentialsSecurer securer;
+    private @Autowired IamSessionDAO sessionDAO;
+    private @Autowired CredentialsSecurer securer;
 
     @RequestMapping(value = "/list")
     @RequiresPermissions(value = { "iam:user" })
