@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.iam.common.bean.oidc.OidcMapper;
+import com.wl4g.iam.common.bean.OidcMapper;
 import com.wl4g.iam.service.OidcMapperService;
 import com.wl4g.infra.common.web.rest.RespBase;
 

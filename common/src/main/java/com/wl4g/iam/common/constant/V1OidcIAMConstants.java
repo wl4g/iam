@@ -34,7 +34,6 @@ import com.google.common.annotations.Beta;
 import com.wl4g.infra.common.collection.CollectionUtils2;
 import com.wl4g.infra.common.resource.ResourceUtils2;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -48,7 +47,7 @@ import lombok.Getter;
 public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** endpoint URIs definitions. */
-    public static final String URI_IAM_OIDC_ENDPOINT_NS_NAME = "namespace"; // tenant
+    public static final String URI_IAM_OIDC_ENDPOINT_NS_NAME = "realm"; // realm/namespace/tenant
     public static final String URI_IAM_OIDC_ENDPOINT_NS_DEFAULT = "default";
     public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/v1-oidc";
     public static final String URI_IAM_OIDC_ENDPOINT_ROOT_NS = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
@@ -90,24 +89,94 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT = "IAM OIDC Basic Realm";
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_IAM = "IAM";
 
-    /** Code challenge algorithm definitions. */
+    /** Code challenge digest algorithm definitions. */
     @Getter
-    @AllArgsConstructor
-    public static enum CodeChallengeAlgorithm {
-        plain("none"), S256("SHA-256")/* , S384("SHA-384"), S512("SHA-512") */;
-        private final String digestAlgName;
+    public static enum ChallengeAlgorithmType {
+        plain(true, "none"), S256("SHA-256"), S384("SHA-384"), S512("SHA-512");
+
+        private final boolean isDefault;
+        private final String algName;
+
+        private ChallengeAlgorithmType(String algName) {
+            this(false, algName);
+        }
+
+        private ChallengeAlgorithmType(boolean isDefault, String algName) {
+            this.isDefault = isDefault;
+            this.algName = algName;
+        }
+
+        public static ChallengeAlgorithmType getDefault() {
+            ChallengeAlgorithmType defaultValue = null;
+            for (ChallengeAlgorithmType v : values()) {
+                if (v.isDefault) {
+                    if (defaultValue != null) {
+                        throw new IllegalStateException("There can only be one default value");
+                    }
+                    defaultValue = v;
+                }
+            }
+            return defaultValue;
+        }
 
         public static List<String> getNames() {
-            return asList(CodeChallengeAlgorithm.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
+            return asList(ChallengeAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
         }
 
         public static String of(String name) {
-            for (CodeChallengeAlgorithm v : values()) {
+            for (ChallengeAlgorithmType v : values()) {
                 if (eqIgnCase(v.name(), name)) {
-                    return v.getDigestAlgName();
+                    return v.getAlgName();
                 }
             }
-            throw new IllegalArgumentException(format("Invalid digest alg alias name for '%s'", name));
+            throw new IllegalArgumentException(format("Invalid challenge digest alg alias name for '%s'", name));
+        }
+    }
+
+    /**
+     * Token(access token/refresh token/id token) signature digest algorithm
+     * definitions.
+     */
+    @Getter
+    public static enum TokenSignAlgorithmType {
+        S256(true, "SHA-256"), S384("SHA-384"), S512("SHA-512");
+
+        private final boolean isDefault;
+        private final String algName;
+
+        private TokenSignAlgorithmType(String algName) {
+            this(false, algName);
+        }
+
+        private TokenSignAlgorithmType(boolean isDefault, String algName) {
+            this.isDefault = isDefault;
+            this.algName = algName;
+        }
+
+        public static TokenSignAlgorithmType getDefault() {
+            TokenSignAlgorithmType defaultValue = null;
+            for (TokenSignAlgorithmType v : values()) {
+                if (v.isDefault) {
+                    if (defaultValue != null) {
+                        throw new IllegalStateException("There can only be one default value");
+                    }
+                    defaultValue = v;
+                }
+            }
+            return defaultValue;
+        }
+
+        public static List<String> getNames() {
+            return asList(TokenSignAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
+        }
+
+        public static String of(String name) {
+            for (TokenSignAlgorithmType v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v.getAlgName();
+                }
+            }
+            throw new IllegalArgumentException(format("Invalid token signature digest alg alias name for '%s'", name));
         }
     }
 
@@ -116,7 +185,31 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      */
     @Getter
     public static enum JWSAlgorithmType {
-        HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, EdDSA;
+        HS256, HS384, HS512, RS256(true), RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, EdDSA;
+
+        private final boolean isDefault;
+
+        private JWSAlgorithmType() {
+            this.isDefault = false;
+        }
+
+        private JWSAlgorithmType(boolean isDefault) {
+            this.isDefault = isDefault;
+        }
+
+        public static JWSAlgorithmType getDefault() {
+            JWSAlgorithmType defaultValue = null;
+            for (JWSAlgorithmType v : values()) {
+                if (v.isDefault) {
+                    if (defaultValue != null) {
+                        throw new IllegalStateException("There can only be one default value");
+                    }
+                    defaultValue = v;
+                }
+            }
+            return defaultValue;
+        }
+
         public static List<String> getNames() {
             return asList(JWSAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
         }

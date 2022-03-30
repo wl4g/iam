@@ -25,57 +25,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.iam.common.bean.OidcClient;
-import com.wl4g.iam.service.OidcClientService;
+import com.wl4g.iam.common.bean.RealmBean;
+import com.wl4g.iam.service.RealmService;
 import com.wl4g.infra.common.web.rest.RespBase;
 
 /**
- * {@link OidcClientController}
+ * {@link RealmController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-26 v3.0.0
  * @since v3.0.0
  */
 @RestController
-@RequestMapping("/oidc-client")
-public class OidcClientController {
+@RequestMapping("/realm")
+public class RealmController {
 
     // @com.alibaba.dubbo.config.annotation.Reference
     @Autowired
-    private OidcClientService oidcClientService;
+    private RealmService realmService;
 
     @RequestMapping(value = "/list")
-    public RespBase<?> findList(OidcClient record) {
+    public RespBase<?> findList(RealmBean record) {
         RespBase<Object> resp = RespBase.create();
 
-        List<OidcClient> oidcClients = oidcClientService.findList(record);
-        notEmpty(oidcClients, "no found oidcClient");
-        resp.setData(oidcClients);
+        List<RealmBean> realms = realmService.findList(record);
+        notEmpty(realms, "No found realm");
+        resp.setData(realms);
 
         return resp;
     }
 
     @RequestMapping(value = "/save")
-    @RequiresPermissions(value = { "iam:oidc:client" })
-    public RespBase<?> save(@RequestBody OidcClient oidcClient) {
+    @RequiresPermissions(value = { "iam:realm" })
+    public RespBase<?> save(@RequestBody RealmBean oidcClient) {
         RespBase<Object> resp = RespBase.create();
-        oidcClientService.save(oidcClient);
+        realmService.save(oidcClient);
         return resp;
     }
 
     @RequestMapping(value = "/del")
-    @RequiresPermissions(value = { "iam:oidc:client" })
+    @RequiresPermissions(value = { "iam:realm" })
     public RespBase<?> del(Long id) {
         RespBase<Object> resp = RespBase.create();
-        oidcClientService.del(id);
+        realmService.del(id);
         return resp;
     }
 
     @RequestMapping(value = "/detail")
-    @RequiresPermissions(value = { "iam:oidc:client" })
+    @RequiresPermissions(value = { "iam:realm" })
     public RespBase<?> detail(Long id) {
         RespBase<Object> resp = RespBase.create();
-        OidcClient oidcClient = oidcClientService.detail(id);
+        RealmBean oidcClient = realmService.detail(id);
         resp.setData(oidcClient);
         return resp;
     }

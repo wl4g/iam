@@ -1,4 +1,4 @@
-package com.wl4g.iam.common.bean.oidc;
+package com.wl4g.iam.common.bean;
 
 import com.wl4g.infra.core.bean.BaseBean;
 

@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.iam.common.bean.OidcMapper;
+import com.wl4g.iam.common.bean.RealmBean;
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 
 /**
- * {@link OidcMapperService}
+ * {@link RealmService}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -38,22 +38,19 @@ import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
  * @see
  */
 @FeignConsumer("${provider.serviceId.iam-facade}")
-@RequestMapping("/oidc-mapper-service")
-public interface OidcMapperService {
+@RequestMapping("/realm-service")
+public interface RealmService {
 
     @RequestMapping(value = "/findList", method = POST)
-    List<OidcMapper> findList(@RequestBody OidcMapper record);
-
-    @RequestMapping(value = "/findByClientId", method = GET)
-    List<OidcMapper> findByClientId(@RequestParam("clientId") String clientId);
+    List<RealmBean> findList(@RequestBody RealmBean record);
 
     @PostMapping("/save")
-    void save(@RequestBody OidcMapper record);
+    void save(@RequestBody RealmBean record);
 
     @RequestMapping(value = "/del", method = POST)
     void del(@RequestParam("id") Long id);
 
     @RequestMapping(value = "/detail", method = GET)
-    OidcMapper detail(@RequestParam("id") Long id);
+    RealmBean detail(@RequestParam("id") Long id);
 
 }

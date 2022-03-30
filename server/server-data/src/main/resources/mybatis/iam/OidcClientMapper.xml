@@ -3,6 +3,7 @@
 <mapper namespace="com.wl4g.iam.data.OidcClientDao">
   <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.oidc.OidcClient">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="realm_id" jdbcType="BIGINT" property="realmId" />
     <result column="client_id" jdbcType="VARCHAR" property="clientId" />
     <result column="client_secrets_json" jdbcType="VARCHAR" property="clientSecretsJson" />
     <result column="registration_token" jdbcType="VARCHAR" property="registrationToken" />
@@ -17,6 +18,7 @@
     <result column="Implicit_flow_enabled" jdbcType="INTEGER" property="implicitFlowEnabled" />
     <result column="direct_access_grants_enabled" jdbcType="INTEGER" property="directAccessGrantsEnabled" />
     <result column="oauth2_device_code_enabled" jdbcType="INTEGER" property="oauth2DeviceCodeEnabled" />
+    <result column="device_code_expiration_sec" jdbcType="INTEGER" property="deviceCodeExpirationSec" />
     <result column="valid_redirect_uris_json" jdbcType="VARCHAR" property="validRedirectUrisJson" />
     <result column="admin_uri" jdbcType="VARCHAR" property="adminUri" />
     <result column="logo_uri" jdbcType="VARCHAR" property="logoUri" />
@@ -44,9 +46,9 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, client_id, client_secrets_json, registration_token, jwks_uri, jwks_json, client_name, 
+    id, realm_id, client_id, client_secrets_json, registration_token, jwks_uri, jwks_json, client_name, 
     client_type, env_type, login_theme, enabled, standard_flow_enabled, Implicit_flow_enabled, direct_access_grants_enabled, 
-    oauth2_device_code_enabled, valid_redirect_uris_json, admin_uri, logo_uri, policy_uri, 
+    oauth2_device_code_enabled, device_code_expiration_sec, valid_redirect_uris_json, admin_uri, logo_uri, policy_uri, 
     terms_uri, valid_web_origin_uris_json, backchannel_logout_enabled, backchannel_logout_uri, 
     access_token_sign_alg, id_token_sign_alg, id_token_encrypt_key_mgt_alg, id_token_encrypt_content_alg, 
     code_challenge_enabled, code_challenge_expiration_sec, use_refresh_token_enabled, use_refresh_token_for_client_credentials_grant_enabled, 
@@ -64,6 +66,9 @@
     <include refid="Base_Column_List" />
     from iam_oidc_client
     <where>
+      <if test="realmId != null">
+        AND realm_id =  #{realmId,jdbcType=BIGINT}
+      </if>
       <if test="clientId != null">
         AND client_id =  #{clientId,jdbcType=VARCHAR}
       </if>
@@ -105,6 +110,9 @@
       </if>
       <if test="oauth2DeviceCodeEnabled != null">
         AND oauth2_device_code_enabled =  #{oauth2DeviceCodeEnabled,jdbcType=INTEGER}
+      </if>
+      <if test="deviceCodeExpirationSec != null">
+        AND device_code_expiration_sec =  #{deviceCodeExpirationSec,jdbcType=INTEGER}
       </if>
       <if test="validRedirectUrisJson != null">
         AND valid_redirect_uris_json =  #{validRedirectUrisJson,jdbcType=VARCHAR}
@@ -188,11 +196,11 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
-    insert into iam_oidc_client (id, client_id, client_secrets_json, 
+    insert into iam_oidc_client (id, realm_id, client_id, client_secrets_json, 
       registration_token, jwks_uri, jwks_json, 
       client_name, client_type, env_type, login_theme, 
       enabled, standard_flow_enabled, Implicit_flow_enabled, 
-      direct_access_grants_enabled, oauth2_device_code_enabled, 
+      direct_access_grants_enabled, oauth2_device_code_enabled, device_code_expiration_sec 
       valid_redirect_uris_json, admin_uri, logo_uri, 
       policy_uri, terms_uri, valid_web_origin_uris_json, 
       backchannel_logout_enabled, backchannel_logout_uri, 
@@ -204,7 +212,7 @@
       refresh_token_expiration_sec, remark, create_by, 
       create_date, update_by, update_date, 
       del_flag)
-    values (#{id,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{clientSecretsJson,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{realmId,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{clientSecretsJson,jdbcType=VARCHAR}, 
       #{registrationToken,jdbcType=VARCHAR}, #{jwksUri,jdbcType=VARCHAR}, #{jwksJson,jdbcType=VARCHAR}, 
       #{clientName,jdbcType=VARCHAR}, #{clientType,jdbcType=VARCHAR}, #{envType,jdbcType=VARCHAR}, 
       #{enable,jdbcType=INTEGER}, #{standardFlowEnabled,jdbcType=INTEGER}, #{implicitFlowEnabled,jdbcType=INTEGER}, 
@@ -227,6 +235,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="realmId != null">
+        realm_id,
       </if>
       <if test="clientId != null">
         client_id,
@@ -269,6 +280,9 @@
       </if>
       <if test="oauth2DeviceCodeEnabled != null">
         oauth2_device_code_enabled,
+      </if>
+      <if test="deviceCodeExpirationSec != null">
+        device_code_expiration_sec,
       </if>
       <if test="validRedirectUrisJson != null">
         valid_redirect_uris_json,
@@ -350,6 +364,9 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="realmId != null">
+        #{realmId,jdbcType=BIGINT},
+      </if>
       <if test="clientId != null">
         #{clientId,jdbcType=VARCHAR},
       </if>
@@ -388,6 +405,9 @@
       </if>
       <if test="oauth2DeviceCodeEnabled != null">
         #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="deviceCodeExpirationSec != null">
+        #{deviceCodeExpirationSec,jdbcType=INTEGER},
       </if>
       <if test="validRedirectUrisJson != null">
         #{validRedirectUrisJson,jdbcType=VARCHAR},
@@ -466,6 +486,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
     update iam_oidc_client
     <set>
+      <if test="realmId != null">
+        realm_id = #{realmId,jdbcType=BIGINT},
+      </if>
       <if test="clientId != null">
         client_id = #{clientId,jdbcType=VARCHAR},
       </if>
@@ -507,6 +530,9 @@
       </if>
       <if test="oauth2DeviceCodeEnabled != null">
         oauth2_device_code_enabled = #{oauth2DeviceCodeEnabled,jdbcType=INTEGER},
+      </if>
+      <if test="deviceCodeExpirationSec != null">
+        device_code_expiration_sec = #{deviceCodeExpirationSec,jdbcType=INTEGER},
       </if>
       <if test="validRedirectUrisJson != null">
         valid_redirect_uris_json = #{validRedirectUrisJson,jdbcType=VARCHAR},
@@ -588,7 +614,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
     update iam_oidc_client
-    set client_id = #{clientId,jdbcType=VARCHAR},
+    set 
+      realm_id = #{realmId,jdbcType=BIGINT},
+      client_id = #{clientId,jdbcType=VARCHAR},
       client_secrets_json = #{clientSecretsJson,jdbcType=VARCHAR},
       registration_token = #{registrationToken,jdbcType=VARCHAR},
       jwks_uri = #{jwksUri,jdbcType=VARCHAR},

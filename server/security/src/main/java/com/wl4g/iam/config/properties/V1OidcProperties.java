@@ -19,7 +19,6 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_LOGIN
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.getFieldValues;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -32,8 +31,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.JWSAlgorithmType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.TokenSignAlgorithmType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -55,16 +54,23 @@ import lombok.experimental.SuperBuilder;
 public class V1OidcProperties implements Serializable {
     private static final long serialVersionUID = -2694422471852860689L;
 
-    /**
-     * OIDC service documentation URI.
-     */
-    private String serviceDocumentation;
-
+    private String defaultJwksSignAlg; // Default ns(tenant) jwks sign alg
+    private String defaultBasicRealmName; // Default ns(tenant) basic realm name
+    private String serviceDocumentation; // Provide service documentation URI
     private DefaultProtocolProperties defaultProtocolProperties;
 
     public V1OidcProperties() {
-        // OIDC service documentation URI.
+        this.defaultJwksSignAlg = JWSAlgorithmType.getDefault().name();
+        this.defaultBasicRealmName = KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
         this.serviceDocumentation = "https://oidc.iam.wl4g.com/connect/service_documentation.html";
+    }
+
+    public void setDefaultJwksAlgName(String defaultJwksSignAlg) {
+        List<JWSAlgorithm> algs = safeList(
+                getFieldValues(JWSAlgorithm.class, new int[] { Modifier.PRIVATE }, new String[] { "serialVersionUID" }));
+        isTrue(algs.stream().map(alg -> alg.getName()).anyMatch(alg -> equalsIgnoreCase(alg, defaultJwksSignAlg)),
+                format("Invalid jwks alg is '%s', but supported are: %s", defaultJwksSignAlg, algs.toString()));
+        this.defaultJwksSignAlg = defaultJwksSignAlg;
     }
 
     @Getter
@@ -75,11 +81,7 @@ public class V1OidcProperties implements Serializable {
         private static final long serialVersionUID = 4776976112803043619L;
 
         // Generic OpenID Connect Configuration
-        private String jwksSignAlg;
-
         private String loginTheme;
-        private String basicRealmName;
-
         private boolean standardFlowEnabled;
         private boolean implicitFlowEnabled;
         private boolean directAccessGrantsEnabled;
@@ -92,7 +94,6 @@ public class V1OidcProperties implements Serializable {
         private int accessTokenExpirationSeconds;
 
         private String idTokenSignAlg;
-        private List<String> idTokenAlgSupported;
         private String idTokenEncryptKeyMgtAlg;
         private String idTokenEncryptContentAlg;
 
@@ -114,7 +115,6 @@ public class V1OidcProperties implements Serializable {
 
         // Advanced Settings
 
-        private List<String> codeChallengeMethodsSupported;
         private int codeChallengeExpirationSeconds;
 
         // Credentials Information
@@ -122,85 +122,48 @@ public class V1OidcProperties implements Serializable {
         private String registrationToken;
 
         public DefaultProtocolProperties() {
-            //
             // Generic OpenID Connect Configuration
             //
-            this.basicRealmName = KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
             this.loginTheme = KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
-            this.jwksSignAlg = JWSAlgorithmType.RS256.name();
-
             this.standardFlowEnabled = true;
             this.implicitFlowEnabled = false;
             this.directAccessGrantsEnabled = false;
+            // E.g:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code#device-authorization-request
             this.deviceCodeExpirationSeconds = 15 * 60;
 
-            //
             // Fine Grain OpenID Connect Configuration
             //
-            this.accessTokenSignAlg = "S256";
-            this.accessTokenExpirationSeconds = 3600;
+            this.accessTokenSignAlg = TokenSignAlgorithmType.getDefault().name();
+            this.accessTokenExpirationSeconds = 60 * 60;
 
-            this.idTokenSignAlg = "S256";
-            this.idTokenAlgSupported = asList(CodeChallengeAlgorithm.values()).stream().map(m -> m.name()).collect(toList());
+            this.idTokenSignAlg = TokenSignAlgorithmType.getDefault().name();
             // TODO
             // this.idTokenEncryptKeyMgtAlg = "";
             // this.idTokenEncryptContentAlg = "";
 
-            //
             // OpenID Connect Compatibility Modes
             //
             this.useRefreshTokenEnabled = false;
             this.useRefreshTokenForClientCredentialsGrantEnabled = false;
-            this.refreshTokenExpirationSeconds = 3600 * 24;
+            this.refreshTokenExpirationSeconds = 60 * 60 * 24;
             this.mustOpenidScopeEnabled = true;
 
-            //
             // Advanced Settings
             //
-            this.codeChallengeMethodsSupported = asList(CodeChallengeAlgorithm.values()).stream().map(m -> m.name()).collect(
-                    toList());
             this.codeChallengeExpirationSeconds = 10;
 
             // Credentials Information
+            //
             this.registrationToken = null;
-        }
-
-        public void setJwksAlgName(String jwksSignAlg) {
-            List<JWSAlgorithm> algorithms = safeList(
-                    getFieldValues(JWSAlgorithm.class, new int[] { Modifier.PRIVATE }, new String[] { "serialVersionUID" }));
-            isTrue(algorithms.stream().map(alg -> alg.getName()).anyMatch(alg -> equalsIgnoreCase(alg, jwksSignAlg)),
-                    format("Invalid jwks alg is '%s', but supported are: %s", jwksSignAlg, algorithms.toString()));
-            this.jwksSignAlg = jwksSignAlg;
         }
 
         public void setAccessTokenSignAlg(String accessTokenAlgName) {
             hasTextOf(accessTokenAlgName, "accessTokenSignAlg");
-            List<String> definitionAlgNames = asList(CodeChallengeAlgorithm.values()).stream().map(d -> d.name()).collect(
+            List<String> definitionAlgNames = asList(TokenSignAlgorithmType.values()).stream().map(d -> d.name()).collect(
                     toList());
             isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, accessTokenAlgName)),
                     format("Invalid access token alg is '%s', but supported are: %s", accessTokenAlgName, definitionAlgNames));
             this.accessTokenSignAlg = accessTokenAlgName;
-        }
-
-        public void setIdTokenSignAlg(String idTokenSignAlg) {
-            hasTextOf(idTokenSignAlg, "idTokenSignAlg");
-            List<String> definitionAlgNames = asList(CodeChallengeAlgorithm.values()).stream().map(d -> d.name()).collect(
-                    toList());
-            isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, idTokenSignAlg)),
-                    format("Invalid id token sign alg is '%s', but supported are: %s", idTokenSignAlg, definitionAlgNames));
-            this.idTokenSignAlg = idTokenSignAlg;
-        }
-
-        public void setIdTokenAlgSupported(List<String> idTokenAlgSupported) {
-            List<String> definitionAlgNames = asList(CodeChallengeAlgorithm.values()).stream().map(d -> d.name()).collect(
-                    toList());
-            for (String m : safeList(idTokenAlgSupported)) {
-                if (!definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, m))) {
-                    throw new IllegalArgumentException(format(
-                            "Invalid id token algs supported is '%s', but total supported are: %s", m, definitionAlgNames));
-                }
-            }
-            this.idTokenAlgSupported = idTokenAlgSupported;
         }
 
         public void setAccessTokenExpirationSeconds(int accessTokenExpirationSeconds) {
@@ -213,17 +176,13 @@ public class V1OidcProperties implements Serializable {
             this.refreshTokenExpirationSeconds = refreshTokenExpirationSeconds;
         }
 
-        public void setCodeChallengeMethodsSupported(List<String> codeChallengeMethodsSupported) {
-            notEmpty(codeChallengeMethodsSupported, "codeChallengeMethodsSupported");
-            List<String> definitionAlgNames = asList(CodeChallengeAlgorithm.values()).stream().map(d -> d.name()).collect(
+        public void setIdTokenSignAlg(String idTokenSignAlg) {
+            hasTextOf(idTokenSignAlg, "idTokenSignAlg");
+            List<String> definitionAlgNames = asList(TokenSignAlgorithmType.values()).stream().map(d -> d.name()).collect(
                     toList());
-            for (String m : safeList(codeChallengeMethodsSupported)) {
-                if (!definitionAlgNames.stream().anyMatch(d -> d.equalsIgnoreCase(m))) {
-                    throw new IllegalArgumentException(
-                            format("Invalid codeCallenge methods is '%s', but supported are: %s", m, definitionAlgNames));
-                }
-            }
-            this.codeChallengeMethodsSupported = codeChallengeMethodsSupported;
+            isTrue(definitionAlgNames.stream().anyMatch(d -> equalsIgnoreCase(d, idTokenSignAlg)),
+                    format("Invalid id token sign alg is '%s', but supported are: %s", idTokenSignAlg, definitionAlgNames));
+            this.idTokenSignAlg = idTokenSignAlg;
         }
 
         public void setCodeChallengeExpirationSeconds(int codeChallengeExpirationSeconds) {

@@ -15,22 +15,28 @@
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
-		<javaModelGenerator targetPackage="com.wl4g.iam.common.bean.oidc" targetProject="src/main/java">
+		<javaModelGenerator targetPackage="com.wl4g.iam.common.bean" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
-		<sqlMapGenerator targetPackage="resources.mybatis.iam.oidc" targetProject="src/main">
+		<sqlMapGenerator targetPackage="resources.mybatis.iam" targetProject="src/main">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.iam.data" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
+
 		<!-- see:https://mybatis.org/generator/configreference/table.html -->
-		<table tableName="iam_oidc_client" domainObjectName="OidcClient" enableCountByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-			<!-- <columnOverride column="client_id" javaType="java.lang.String" jdbcType="VARCHAR" /> -->
-		</table>
-		<table tableName="iam_oidc_mapper" domainObjectName="OidcMapper" enableCountByExample="false" enableUpdateByExample="false"
+		<!-- <table tableName="iam_oidc_client" domainObjectName="OidcClient" enableCountByExample="false" enableUpdateByExample="false" -->
+		<!-- enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"> -->
+		<!-- <columnOverride column="client_id" javaType="java.lang.String" jdbcType="VARCHAR" /> -->
+		<!-- </table> -->
+
+		<!-- <table tableName="iam_oidc_mapper" domainObjectName="OidcMapper" enableCountByExample="false" enableUpdateByExample="false" -->
+		<!-- enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"> -->
+		<!-- </table> -->
+
+		<table tableName="iam_realm" domainObjectName="RealmBean" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 	</context>

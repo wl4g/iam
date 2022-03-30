@@ -23,11 +23,13 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
- * {@link V1IntrospectionAccessToken}
+ * {@link V1Introspection}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
+ * @see https://datatracker.ietf.org/doc/html/rfc7662#section-2.2
+ * @see https://datatracker.ietf.org/doc/html/rfc7519
  */
 @Getter
 @Setter
@@ -35,13 +37,27 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class V1IntrospectionAccessToken {
+public class V1Introspection {
+    private String iss; // (Issuer) Claim
+    private String sub; // (Subject) Claim
     private Boolean active;
     private String scope;
     private String client_id;
     private String username;
     private String token_type;
-    private Long exp;
-    private String sub;
-    private String iss;
+
+    /**
+     * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4
+     */
+    private Long exp; // (Expiration Time) Claim
+
+    /**
+     * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6
+     */
+    private Long iat; // (Issued At) Claim
+
+    /**
+     * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
+     */
+    private Long nbf; // (Not Before) Claim
 }

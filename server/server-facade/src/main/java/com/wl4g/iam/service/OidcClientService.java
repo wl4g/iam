@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.iam.common.bean.oidc.OidcClient;
+import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 
 /**
@@ -40,6 +40,9 @@ import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 @FeignConsumer("${provider.serviceId.iam-facade}")
 @RequestMapping("/oidc-client-service")
 public interface OidcClientService {
+
+    // @RequestMapping(value = "/loadOidcClient", method = POST)
+    // OidcClient loadOidcClient(@RequestBody OidcClient record);
 
     @RequestMapping(value = "/findList", method = POST)
     List<OidcClient> findList(@RequestBody OidcClient record);

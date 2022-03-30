@@ -20,7 +20,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import com.wl4g.iam.common.bean.oidc.OidcClient;
+import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.iam.data.OidcClientDao;
 import com.wl4g.iam.service.OidcClientService;
 import com.wl4g.infra.core.bean.BaseBean;
@@ -38,6 +38,11 @@ import com.wl4g.infra.core.bean.BaseBean;
 public class OidcClientServiceImpl implements OidcClientService {
 
     private @Autowired OidcClientDao oidClientDao;
+
+    // @Override
+    // public OidcClient loadOidcClient(OidcClient record) {
+    // return oidClientDao.selectForClient(record);
+    // }
 
     @Override
     public List<OidcClient> findList(OidcClient record) {

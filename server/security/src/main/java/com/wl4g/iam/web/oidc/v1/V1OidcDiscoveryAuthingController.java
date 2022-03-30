@@ -15,15 +15,15 @@
  */
 package com.wl4g.iam.web.oidc.v1;
 
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CHECK_SESSION_IFRAME;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CHECK_SESSION_IFRAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_END_SESSION;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_END_SESSION;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_REGISTRATION;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_ROOT;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,7 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.wl4g.iam.annotation.V1OidcDiscoveryController;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.ChallengeAlgorithmType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.JWSAlgorithmType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaimType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardClaims;
@@ -130,8 +129,8 @@ public class V1OidcDiscoveryAuthingController extends BasedOidcAuthingController
                 .display_values_supported(StandardDisplay.getNames())
                 // OPTIONAL
                 .service_documentation(config.getV1Oidc().getServiceDocumentation())
-                // PKCE support advertised
-                .code_challenge_methods_supported(CodeChallengeAlgorithm.getNames())
+                // RECOMMENDED PKCE support advertised
+                .code_challenge_methods_supported(ChallengeAlgorithmType.getNames())
                 .build();
         return ResponseEntity.ok().body(metadata);
     }

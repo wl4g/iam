@@ -51,8 +51,9 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.iam.common.bean.OidcClient;
+import com.wl4g.iam.common.bean.RealmBean;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1DeviceCodeInfo;
@@ -91,28 +92,31 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
     // JWK configuration.
 
     @Override
-    public JWKConfig loadJWKConfig(String namespace) {
-        hasTextOf(namespace, "namespace");
+    public JWKConfig loadJWKConfig(String realmName) {
+        hasTextOf(realmName, "realm");
 
-        V1OidcClientConfig.JWKConfig jwkConfig = jwkConfigCache.asMap().get(namespace);
+        V1OidcClientConfig.JWKConfig jwkConfig = jwkConfigCache.asMap().get(realmName);
         if (isNull(jwkConfig)) {
-            synchronized (namespace) {
-                jwkConfig = jwkConfigCache.asMap().get(namespace);
+            synchronized (realmName) {
+                jwkConfig = jwkConfigCache.asMap().get(realmName);
                 if (isNull(jwkConfig)) {
                     try {
                         // Use default JWKS.
-                        if (StringUtils.equals(namespace, URI_IAM_OIDC_ENDPOINT_NS_DEFAULT)) {
+                        if (StringUtils.equals(realmName, URI_IAM_OIDC_ENDPOINT_NS_DEFAULT)) {
                             jwkConfig = V1OidcClientConfig.loadJWKConfigDefault();
-                        } else { // New generate JWKS.
-                            // TODO
-                            JWKSet jwkSet = new JWKSet();
+                        }
+                        // New generate JWKS.
+                        else {
+                            RealmBean realm = configurer.loadRealm(null, realmName);
+                            JWKSet jwkSet = parseJSON(realm.getJwksJson(), JWKSet.class);
                             JWK key = jwkSet.getKeys().get(0);
                             JWSSigner signer = new RSASSASigner((RSAKey) key);
                             JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.parse("//TODO")).keyID(key.getKeyID())
                                     .build();
                             jwkConfig = new JWKConfig(signer, jwkSet.toPublicJWKSet(), jwsHeader);
+                            // TODO
                         }
-                        jwkConfigCache.put(namespace, jwkConfig);
+                        jwkConfigCache.put(realmName, jwkConfig);
                     } catch (Exception e) {
                         throw new OidcException(format("Failed to load JWKS configuration"), e);
                     }
@@ -124,9 +128,9 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
     }
 
     @Override
-    public void clearJWKConfigCache(String namespace) {
-        if (!isBlank(namespace)) {
-            jwkConfigCache.asMap().remove(namespace);
+    public void clearJWKConfigCache(String realmName) {
+        if (!isBlank(realmName)) {
+            jwkConfigCache.asMap().remove(realmName);
         } else {
             jwkConfigCache.cleanUp();
         }
@@ -152,17 +156,16 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
                     // Overwrite Merge to OIDC client Configuration
                     //
                     // Generic OpenID Connect Configuration
-                    // clientConfig.setBasicRealmName("");
-                    // TODO
-                    clientConfig.setJwksAlgName(null);
+                    clientConfig.setLoginTheme(client.getLoginTheme());
                     clientConfig.setClientName(client.getClientName());
-                    clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), oidcClientSecretTypeRef));
+                    clientConfig.setClientSecrets(parseJSON(client.getClientSecretsJson(), defaultClientSecretTypeRef));
                     clientConfig.setClientType(client.getClientType());
                     // flow
                     clientConfig.setStandardFlowEnabled(isTrue(valueOf(client.getStandardFlowEnabled()), true));
                     clientConfig.setImplicitFlowEnabled(isTrue(valueOf(client.getImplicitFlowEnabled()), false));
                     clientConfig.setDirectAccessGrantsEnabled(isTrue(valueOf(client.getDirectAccessGrantsEnabled()), true));
                     clientConfig.setOauth2DeviceCodeEnabled(isTrue(valueOf(client.getOauth2DeviceCodeEnabled()), false));
+                    clientConfig.setDeviceCodeExpirationSeconds(client.getDeviceCodeExpirationSec());
                     // redirect
                     clientConfig.setValidRedirectUris(parseArrayString(client.getValidRedirectUrisJson()));
                     clientConfig.setAdminUri(client.getAdminUri());
@@ -186,8 +189,6 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
                     clientConfig.setMustOpenidScopeEnabled(isTrue(valueOf(client.getMustOpenidScopeEnabled()), true));
 
                     clientConfig.setIdTokenSignAlg(client.getIdTokenSignAlg());
-                    // TODO
-                    // clientConfig.setIdTokenAlgSupported(null);
 
                     // Advanced Settings
                     clientConfig.setCodeChallengeEnabled(isTrue(valueOf(client.getCodeChallengeEnabled()), false));
@@ -364,7 +365,7 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
         return CACHE_OIDC_DEVICECODE_PREFIX.concat(new CodecSource(deviceCode).toHex());
     }
 
-    private static final TypeReference<List<OidcClient.ClientSecretInfo>> oidcClientSecretTypeRef = new TypeReference<List<OidcClient.ClientSecretInfo>>() {
+    private static final TypeReference<List<OidcClient.ClientSecretInfo>> defaultClientSecretTypeRef = new TypeReference<List<OidcClient.ClientSecretInfo>>() {
     };
 
 }

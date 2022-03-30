@@ -20,37 +20,32 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import com.wl4g.iam.common.bean.OidcMapper;
-import com.wl4g.iam.data.OidcMapperDao;
-import com.wl4g.iam.service.OidcMapperService;
+import com.wl4g.iam.common.bean.RealmBean;
+import com.wl4g.iam.data.RealmBeanDao;
+import com.wl4g.iam.service.RealmService;
 import com.wl4g.infra.core.bean.BaseBean;
 
 /**
- * {@link OidcMapperServiceImpl}
+ * {@link RealmServiceImpl}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-26 v3.0.0
  * @since v3.0.0
  */
 @org.springframework.stereotype.Service
-// @com.alibaba.dubbo.config.annotation.Service(group = "oidcClientService")
+// @com.alibaba.dubbo.config.annotation.Service(group = "realmService")
 // @org.springframework.web.bind.annotation.RestController
-public class OidcMapperServiceImpl implements OidcMapperService {
+public class RealmServiceImpl implements RealmService {
 
-    private @Autowired OidcMapperDao oidcMapperDao;
+    private @Autowired RealmBeanDao realmDao;
 
     @Override
-    public List<OidcMapper> findList(OidcMapper record) {
-        return oidcMapperDao.selectBySelective(record);
+    public List<RealmBean> findList(RealmBean record) {
+        return realmDao.selectBySelective(record);
     }
 
     @Override
-    public List<OidcMapper> findByClientId(String clientId) {
-        return oidcMapperDao.selectByClientId(clientId);
-    }
-
-    @Override
-    public void save(OidcMapper record) {
+    public void save(RealmBean record) {
         if (record.getId() != null) {
             update(record);
         } else {
@@ -61,25 +56,23 @@ public class OidcMapperServiceImpl implements OidcMapperService {
     @Override
     public void del(Long id) {
         Assert.notNull(id, "id is null");
-        OidcMapper record = new OidcMapper();
-        record.setId(id);
-        record.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        oidcMapperDao.updateByPrimaryKeySelective(record);
+        RealmBean record = RealmBean.builder().id(id).delFlag(BaseBean.DEL_FLAG_DELETE).build();
+        realmDao.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public OidcMapper detail(Long id) {
-        return oidcMapperDao.selectByPrimaryKey(id);
+    public RealmBean detail(Long id) {
+        return realmDao.selectByPrimaryKey(id);
     }
 
-    private void insert(OidcMapper record) {
+    private void insert(RealmBean record) {
         record.preInsert();
-        oidcMapperDao.insertSelective(record);
+        realmDao.insertSelective(record);
     }
 
-    private void update(OidcMapper record) {
+    private void update(RealmBean record) {
         record.preUpdate();
-        oidcMapperDao.updateByPrimaryKeySelective(record);
+        realmDao.updateByPrimaryKeySelective(record);
     }
 
 }

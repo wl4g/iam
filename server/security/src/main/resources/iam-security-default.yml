@@ -158,13 +158,14 @@ spring:
       #  app-secret: yoursecret
       #  redirect-url: https://iam.example.com${server.servlet.contextPath}/sns/qq/callback
     v1-oidc: ## see:https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
+      default-jwks-sign-alg: RS256
+      default-basic-realm-name: 'IAM OIDC Basic Realm'
       service-documentation: 'https://oidc.iam.wl4g.com/connect/service_documentation.html'
       default-protocol-properties:
         registration-token: 'abcdefgh'
         jwks-sign-alg: RS256
         jwks-json-resource: classpath*:/credentials/oidc/jwks-default.json
         login-theme: BASIC
-        basic-realm-name: 'IAM OIDC Basic Realm'
         ## Generic OpenID Connect Configuration.
         ## This enables standard Openid connect redirect based authentication with authorization code. In terms of 
         ## Openid connect or Oauth2 specifications, this enable support of 'Authorization Code Flow' for this client.
@@ -189,9 +190,7 @@ spring:
         must-openid-scope-enabled: true
         refresh-token-expiration-seconds: 86400
         id-token-sign-alg: S256
-        id-token-alg-supported: ["PLAIN", "S256"]
         # TODO
         #id-token-encrypt-key-mgt-alg: 
         #id-token-encrypt-content-alg: 
-        code-challenge-methods-supported: ["PLAIN", "S256"]
         code-challenge-expiration-seconds: 10

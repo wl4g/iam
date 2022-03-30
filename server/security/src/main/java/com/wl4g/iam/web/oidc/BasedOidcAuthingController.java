@@ -106,8 +106,7 @@ public abstract class BasedOidcAuthingController extends BaseIamController {
     protected ResponseEntity<String> wrapUnauthentication() {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.TEXT_HTML);
-        responseHeaders.add("WWW-Authenticate",
-                format("Basic realm=\"{}\"", config.getV1Oidc().getDefaultProtocolProperties().getBasicRealmName()));
+        responseHeaders.add("WWW-Authenticate", format("Basic realm=\"{}\"", config.getV1Oidc().getDefaultBasicRealmName()));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(responseHeaders).body(
                 "<html><body><h1>401 Unauthorized</h1>IAM V1 OIDC server</body></html>");
     }

@@ -20,16 +20,18 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_CLAIM
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.KEY_IAM_OIDC_TOKEN_TYPE_BEARER;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -58,20 +60,22 @@ import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcCoreController;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.ChallengeAlgorithmType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.TokenSignAlgorithmType;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1DeviceCode;
 import com.wl4g.iam.common.model.oidc.v1.V1DeviceCodeInfo;
-import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
+import com.wl4g.iam.common.model.oidc.v1.V1Introspection;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
 import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
+import com.wl4g.infra.common.lang.FastTimeClock;
 
 /**
  * IAM V1-OIDC authentication controller.
@@ -320,6 +324,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         // Load configuration.
         V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
+        if (isNull(clientConfig)) {
+            return wrapErrorRfc6749("invalid_client", "The client_id is no vaild");
+        }
 
         // Check the if openid existing. (oauth2 does not required)
         if (clientConfig.isMustOpenidScopeEnabled() && !StandardScope.openid.containsIn(scope)) {
@@ -361,13 +368,12 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         if (StandardResponseType.code.containsIn(response_type)) {
             // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
             // Check challenge method supported.
-            if (!isBlank(code_challenge_method)
-                    && !clientConfig.getCodeChallengeMethodsSupported().contains(code_challenge_method)) {
+            if (!isBlank(code_challenge_method) && !ChallengeAlgorithmType.getNames().contains(code_challenge_method)) {
                 return wrapErrorRfc6749("unsupported_code_challenge_method",
-                        format("code_challenge_method must contains is '%s'", clientConfig.getCodeChallengeMethodsSupported()));
+                        format("code_challenge_method must contains is '%s'", ChallengeAlgorithmType.getNames()));
             }
-            String code = createAuthorizationCode(code_challenge, code_challenge_method, client_id, redirect_uri, user, iss,
-                    scope, nonce);
+            String code = createAuthorizationCode(client_id, redirect_uri, user, iss, scope, code_challenge,
+                    code_challenge_method, nonce);
             redirectParams.add("code", code);
         }
         // Implicit flow, [#mark1]
@@ -419,7 +425,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     }
 
     /**
-     * e.g to
+     * Provides device code endpoint. e.g to
      * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE, method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -438,6 +444,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         // load configuration.
         V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
+        if (isNull(clientConfig)) {
+            return wrapErrorRfc6749("invalid_client", "The client_id is no vaild");
+        }
 
         V1DeviceCode deviceCode = V1DeviceCode.builder()
                 .device_code("")
@@ -571,6 +580,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         // load configuration.
         V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
+        if (isNull(clientConfig)) {
+            return wrapErrorRfc6749("invalid_request", "The client_id is no vaild");
+        }
 
         // response tokens
         switch (grantType) {
@@ -591,7 +603,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     }
 
     /**
-     * Provides information about a supplied access token.
+     * Provides information about a supplied access token. </br>
+     * </br>
+     * E.g: https://developer.okta.com/docs/reference/api/oidc/#introspect
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> introspect(
@@ -606,20 +620,23 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         V1AccessTokenInfo accessTokenInfo = oidcAuthingHandler.loadAccessToken(access_token);
         if (isNull(accessTokenInfo)) {
             log.error("No found accessToken info by '{}'", token);
-            return ResponseEntity.ok().body(V1IntrospectionAccessToken.builder().active(true).build());
+            return ResponseEntity.ok().body(V1Introspection.builder().active(false).build());
         } else {
-            log.info("Found token for user {}, releasing scopes: {}", accessTokenInfo.getUser().getSub(),
-                    accessTokenInfo.getScope());
-            // https://tools.ietf.org/html/rfc7662#section-2.2 for all claims
-            V1IntrospectionAccessToken accessToken = V1IntrospectionAccessToken.builder()
+            log.info("Found token for sub='{}', scope='{}'", accessTokenInfo.getUser().getSub(), accessTokenInfo.getScope());
+            // https://tools.ietf.org/html/rfc7662#section-2.2
+            V1Introspection accessToken = V1Introspection.builder()
+                    .iss(accessTokenInfo.getIss())
+                    .sub(accessTokenInfo.getUser().getSub())
                     .active(true)
                     .scope(accessTokenInfo.getScope())
                     .client_id(accessTokenInfo.getClientId())
                     .username(accessTokenInfo.getUser().getSub())
                     .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
-                    .exp(accessTokenInfo.getExpiration().toInstant().toEpochMilli())
-                    .sub(accessTokenInfo.getUser().getSub())
-                    .iss(accessTokenInfo.getIss())
+                    .exp(MILLISECONDS.toSeconds(accessTokenInfo.getExpirationAt().getTime()))
+                    .iat(MILLISECONDS.toSeconds(accessTokenInfo.getCreateAt()))
+                    // Subtract clock skew by default.
+                    // see:https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
+                    .nbf(MILLISECONDS.toSeconds(accessTokenInfo.getExpirationAt().getTime() - 60000))
                     .build();
             return ResponseEntity.ok().body(accessToken);
         }
@@ -726,14 +743,14 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             if (isBlank(code_verifier)) {
                 return wrapErrorRfc6749("invalid_request", "The code_verifier missing");
             }
-            if (CodeChallengeAlgorithm.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
+            if (ChallengeAlgorithmType.plain.name().equals(codeInfo.getCodeChallengeMethod())) {
                 if (!codeInfo.getCodeChallenge().equals(code_verifier)) {
                     log.warn("code_verifier {} does not match code_challenge {}", code_verifier, codeInfo.getCodeChallenge());
                     return wrapErrorRfc6749("invalid_request", "The code_verifier not correct");
                 }
             } else {
                 String hashedVerifier = Base64URL
-                        .encode(doDigestHash(CodeChallengeAlgorithm.of(codeInfo.getCodeChallengeMethod()), code_verifier))
+                        .encode(doDigestHash(ChallengeAlgorithmType.of(codeInfo.getCodeChallengeMethod()), code_verifier))
                         .toString();
                 if (!codeInfo.getCodeChallenge().equals(hashedVerifier)) {
                     log.warn("code_verifier {} hashed using S256 to {} does not match code_challenge {}", code_verifier,
@@ -850,13 +867,17 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         if (!StringUtils.equals(scope, getDefaultClientCredentialsScope(uriBuilder))) {
             return wrapErrorRfc6749("invalid_scope", "The scope is not valid");
         }
+        // Check client secrets.
+        if (isEmpty(clientConfig.getClientSecrets())) {
+            return wrapErrorRfc6749("invalid_client", "No client credentials found");
+        }
 
-        // TODO use hashing?
         // Verify client credentials.
+        // TODO use hashing match?
         boolean certificated = safeList(clientConfig.getClientSecrets()).stream()
                 .anyMatch(s -> StringUtils.equals(s.getSecret(), client_secret));
         if (!certificated) {
-            return wrapErrorRfc6749("invalid_request", "The client_secret is not valid");
+            return wrapErrorRfc6749("invalid_client", "The client_secret is not valid");
         }
 
         // Load user claims by client_id.
@@ -919,13 +940,13 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     }
 
     private String createAuthorizationCode(
-            String code_challenge,
-            String code_challenge_method,
             String client_id,
             String redirect_uri,
             V1OidcUserClaims user,
             String iss,
             String scope,
+            String code_challenge,
+            String code_challenge_method,
             String nonce) {
         byte[] bytes = new byte[16];
         getRandom().nextBytes(bytes);
@@ -957,7 +978,8 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             String scope) throws JOSEException {
 
         // Create JWT claims
-        Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
+        long now = FastTimeClock.currentTimeMillis();
+        Date expiration = new Date(now + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .audience(client_id)
@@ -977,13 +999,14 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         V1AccessTokenInfo accessTokenInfo = V1AccessTokenInfo.builder()
                 .user(user)
+                .iss(iss)
                 .clientId(client_id)
                 .redirectUri(redirect_uri)
+                .scope(scope)
                 .accessToken(access_token)
                 .refreshToken(refresh_token)
-                .expiration(expiration)
-                .scope(scope)
-                .iss(iss)
+                .createAt(now)
+                .expirationAt(expiration)
                 .build();
 
         oidcAuthingHandler.putAccessToken(access_token, accessTokenInfo);
@@ -1000,7 +1023,8 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             String scope) throws JOSEException {
 
         // create JWT claims
-        Date expiration = new Date(System.currentTimeMillis() + clientConfig.getAccessTokenExpirationSeconds() * 1000L);
+        long now = FastTimeClock.currentTimeMillis();
+        Date expiration = new Date(now + clientConfig.getRefreshTokenExpirationSeconds() * 1000L);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().subject(user.getSub())
                 .issuer(iss)
                 .audience(client_id)
@@ -1025,7 +1049,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             String nonce) throws NoSuchAlgorithmException, JOSEException {
 
         // compute at_hash
-        byte[] hashed = doDigestHash(CodeChallengeAlgorithm.of(clientConfig.getIdTokenSignAlg()), user.getSub());
+        byte[] hashed = doDigestHash(TokenSignAlgorithmType.of(clientConfig.getIdTokenSignAlg()), user.getSub());
         byte[] hashedLeftHalf = Arrays.copyOf(hashed, hashed.length / 2);
         Base64URL encodedHash = Base64URL.encode(hashedLeftHalf);
         // create JWT claims

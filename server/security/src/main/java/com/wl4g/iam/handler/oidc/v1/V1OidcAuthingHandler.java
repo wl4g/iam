@@ -35,9 +35,20 @@ public interface V1OidcAuthingHandler {
 
     // JWK configuration.
 
-    V1OidcClientConfig.JWKConfig loadJWKConfig(@NotBlank String namespace);
+    /**
+     * Load JWK configuration for realm name (namespace/tenant)
+     * 
+     * @param realmName
+     * @return
+     */
+    V1OidcClientConfig.JWKConfig loadJWKConfig(@NotBlank String realmName);
 
-    void clearJWKConfigCache(@Nullable String namespace);
+    /**
+     * Clean up JWK configuration for realm name (namespace/tenant)
+     * 
+     * @param realmName
+     */
+    void clearJWKConfigCache(@Nullable String realmName);
 
     // OIDC client configuration.
 

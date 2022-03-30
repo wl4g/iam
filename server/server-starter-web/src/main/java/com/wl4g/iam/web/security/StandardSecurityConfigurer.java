@@ -18,6 +18,7 @@ package com.wl4g.iam.web.security;
 import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeSet;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -41,11 +42,12 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.Menu;
+import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.iam.common.bean.Organization;
+import com.wl4g.iam.common.bean.RealmBean;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.bean.User;
-import com.wl4g.iam.common.bean.oidc.OidcClient;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
@@ -60,6 +62,7 @@ import com.wl4g.iam.service.MenuService;
 import com.wl4g.iam.service.OidcClientService;
 import com.wl4g.iam.service.OidcMapperService;
 import com.wl4g.iam.service.OrganizationService;
+import com.wl4g.iam.service.RealmService;
 import com.wl4g.iam.service.RoleService;
 import com.wl4g.iam.service.UserService;
 
@@ -83,6 +86,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
     private @Autowired transient MenuService menuService;
     private @Autowired transient OrganizationService organService;
     private @Autowired transient FastCasClientService fastCasClientService;
+    private @Autowired transient RealmService realmService;
     private @Autowired transient OidcClientService oidcClientService;
     private @Autowired transient OidcMapperService oidcMapperService;
     private @Autowired transient IamHelper iamHelper;
@@ -256,7 +260,22 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
     }
 
     @Override
+    public RealmBean loadRealm(Long realmId, String realmName) {
+        List<RealmBean> realms = realmService.findList(RealmBean.builder().id(realmId).name(realmName).build());
+        if (isEmpty(realms)) {
+            throw new OidcException(format("No found realm configuration by realmId='%s' or realmName='%s'", realmId, realmName));
+        } else if (realms.size() > 1) {
+            throw new IllegalStateException(
+                    format("Data check error, too many realm configurations was got by realmId='%s' or realmName='%s'", realmId,
+                            realmName));
+        }
+        return realms.get(0);
+    }
+
+    @Override
     public OidcClient loadOidcClient(String clientId) {
+        hasTextOf(clientId, "clientId");
+
         List<OidcClient> clients = oidcClientService.findList(
                 OidcClient.builder().clientId(clientId).envType(iamHelper.getApplicationActiveEnvironmentType()).build());
         if (isEmpty(clients)) {
@@ -266,6 +285,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
                     format("Data check error, too many OIDC client configurations was got by clientId='%s'", clientId));
         }
         OidcClient client = clients.get(0);
+        client.setRealm(loadRealm(client.getRealmId(), null));
         client.setMappers(oidcMapperService.findByClientId(clientId));
         return client;
     }

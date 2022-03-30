@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
-import com.wl4g.iam.common.bean.oidc.OidcClient;
+import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;

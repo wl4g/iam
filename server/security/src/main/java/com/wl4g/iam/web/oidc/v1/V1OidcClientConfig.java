@@ -36,7 +36,7 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.wl4g.iam.common.bean.oidc.OidcClient;
+import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.iam.config.properties.V1OidcProperties;
 import com.wl4g.iam.config.properties.V1OidcProperties.DefaultProtocolProperties;
 import com.wl4g.iam.core.exception.IamException;

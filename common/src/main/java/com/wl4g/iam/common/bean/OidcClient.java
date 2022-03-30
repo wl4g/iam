@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.bean.oidc;
+package com.wl4g.iam.common.bean;
 
 import java.util.Date;
 import java.util.List;
@@ -41,6 +41,7 @@ import lombok.experimental.SuperBuilder;
 public class OidcClient extends BaseBean {
     private static final long serialVersionUID = -4498270305726992089L;
 
+    private Long realmId;
     private String clientId;
     private String clientName;
     private String clientType;
@@ -75,6 +76,7 @@ public class OidcClient extends BaseBean {
      * This enables oauth2 device code supported.
      */
     private Integer oauth2DeviceCodeEnabled;
+    private Integer deviceCodeExpirationSec;
 
     private String validRedirectUrisJson;
     private String adminUri;
@@ -116,6 +118,7 @@ public class OidcClient extends BaseBean {
     // TMP fields.
     //
 
+    private RealmBean realm;
     private List<OidcMapper> mappers;
 
     @Getter
