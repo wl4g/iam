@@ -33,6 +33,7 @@ import java.util.List;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.CodeChallengeAlgorithm;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.JWSAlgorithmType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -83,6 +84,7 @@ public class V1OidcProperties implements Serializable {
         private boolean implicitFlowEnabled;
         private boolean directAccessGrantsEnabled;
         private boolean oauth2DeviceCodeEnabled;
+        private int deviceCodeExpirationSeconds;
 
         // Fine Grain OpenID Connect Configuration
 
@@ -125,11 +127,12 @@ public class V1OidcProperties implements Serializable {
             //
             this.basicRealmName = KEY_IAM_OIDC_LOGIN_THEMEM_BASIC_REALM_DEFAULT;
             this.loginTheme = KEY_IAM_OIDC_LOGIN_THEMEM_IAM;
-            this.jwksSignAlg = "RS256";
+            this.jwksSignAlg = JWSAlgorithmType.RS256.name();
 
             this.standardFlowEnabled = true;
             this.implicitFlowEnabled = false;
             this.directAccessGrantsEnabled = false;
+            this.deviceCodeExpirationSeconds = 15 * 60;
 
             //
             // Fine Grain OpenID Connect Configuration

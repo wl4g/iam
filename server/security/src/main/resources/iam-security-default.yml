@@ -177,6 +177,7 @@ spring:
         ## support of 'Resource Owner Password Credentials Grant' for this client.
         direct-access-grants-enabled: false
         oauth2-device-code-enabled: false
+        device-code-expiration-seconds: 900
         ## Fine Grain OpenID Connect Configuration.
         access-token-sign-alg: S256
         access-token-expiration-seconds: 3600

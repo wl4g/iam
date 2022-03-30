@@ -20,6 +20,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import com.wl4g.iam.common.model.oidc.v1.V1DeviceCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
 
@@ -32,25 +33,43 @@ import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
  */
 public interface V1OidcAuthingHandler {
 
+    // JWK configuration.
+
     V1OidcClientConfig.JWKConfig loadJWKConfig(@NotBlank String namespace);
 
     void clearJWKConfigCache(@Nullable String namespace);
+
+    // OIDC client configuration.
 
     V1OidcClientConfig loadClientConfig(@NotBlank String clientId);
 
     void clearClientConfigCache();
 
+    // Authorization code.
+
+    void putAuthorizationCode(@NotBlank String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
+
+    V1AuthorizationCodeInfo loadAuthorizationCode(@NotBlank String authorizationCode);
+
+    // Access token.
+
     void putAccessToken(@NotBlank String accessToken, V1AccessTokenInfo accessTokenInfo);
 
     V1AccessTokenInfo loadAccessToken(@NotBlank String accessToken);
+
+    // Refresh token.
 
     void putRefreshToken(@NotBlank String refreshToken, V1AccessTokenInfo accessToken);
 
     V1AccessTokenInfo loadRefreshToken(@NotBlank String refreshToken, boolean remove);
 
-    void putAuthorizationCode(@NotBlank String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo);
+    // Device code.
 
-    V1AuthorizationCodeInfo loadAuthorizationCode(@NotBlank String authorizationCode);
+    V1DeviceCodeInfo loadDeviceCode(@NotBlank String deviceCode, boolean remove);
+
+    void putDeviceCode(@NotBlank String deviceCode, V1DeviceCodeInfo deviceCodeInfo);
+
+    // User claims.
 
     V1OidcUserClaims getV1OidcUserClaimsByUser(@NotBlank String username);
 

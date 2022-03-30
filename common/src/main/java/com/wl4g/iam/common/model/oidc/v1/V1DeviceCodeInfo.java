@@ -23,7 +23,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
- * {@link V1AuthorizationCodeInfo}
+ * {@link V1DeviceCodeInfo}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
@@ -35,14 +35,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class V1AuthorizationCodeInfo {
-    private V1OidcUserClaims user;
+public class V1DeviceCodeInfo {
+    private V1DeviceCode deviceCode;
     private String clientId;
-    private String code;
-    private String redirectUri;
-    private String iss;
     private String scope;
-    private String nonce;
-    private String codeChallenge;
-    private String codeChallengeMethod;
+    private String iss;
 }

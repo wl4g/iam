@@ -15,6 +15,10 @@
  */
 package com.wl4g.iam.handler.oidc.v1;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.CACHE_OIDC_ACCESSTOKEN_PREFIX;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.CACHE_OIDC_AUTHCODE_PREFIX;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.CACHE_OIDC_DEVICECODE_PREFIX;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.CACHE_OIDC_REFRESHTOKEN_PREFIX;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_NS_DEFAULT;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.StringUtils2.isTrue;
@@ -28,6 +32,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,9 +53,9 @@ import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.common.bean.oidc.OidcClient;
-import com.wl4g.iam.common.constant.V1OidcIAMConstants;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import com.wl4g.iam.common.model.oidc.v1.V1DeviceCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.config.properties.IamProperties;
@@ -82,6 +87,8 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
         this.jwkConfigCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES).build();
         this.clientConfigCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
     }
+
+    // JWK configuration.
 
     @Override
     public JWKConfig loadJWKConfig(String namespace) {
@@ -200,6 +207,30 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
         clientConfigCache.cleanUp();
     }
 
+    // OIDC client configuration.
+
+    @Override
+    public V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode) {
+        return jedisService.getObjectAsJson(buildAuthorizationCodeKey(authorizationCode), V1AuthorizationCodeInfo.class);
+    }
+
+    @Override
+    public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
+        hasTextOf(authorizationCode, "authorizationCode");
+        // TODO add authorizationCodeExpiration, not eq
+        // codeChallengeExpirationSeconds
+        jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
+                loadClientConfig(authorizationCodeInfo.getClientId()).getCodeChallengeExpirationSeconds());
+    }
+
+    // Access token.
+
+    @Override
+    public V1AccessTokenInfo loadAccessToken(String accessToken) {
+        hasTextOf(accessToken, "accessToken");
+        return jedisService.getObjectAsJson(buildAccessTokenKey(accessToken), V1AccessTokenInfo.class);
+    }
+
     @Override
     public void putAccessToken(String accessToken, V1AccessTokenInfo accessTokenInfo) {
         hasTextOf(accessToken, "accessToken");
@@ -207,11 +238,7 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
                 loadClientConfig(accessTokenInfo.getClientId()).getAccessTokenExpirationSeconds());
     }
 
-    @Override
-    public V1AccessTokenInfo loadAccessToken(String accessToken) {
-        hasTextOf(accessToken, "accessToken");
-        return jedisService.getObjectAsJson(buildAccessTokenKey(accessToken), V1AccessTokenInfo.class);
-    }
+    // Refresh token.
 
     @Override
     public void putRefreshToken(String refreshToken, V1AccessTokenInfo accessTokenInfo) {
@@ -233,12 +260,29 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
         }
     }
 
+    // Device code.
+
     @Override
-    public void putAuthorizationCode(String authorizationCode, V1AuthorizationCodeInfo authorizationCodeInfo) {
-        hasTextOf(authorizationCode, "authorizationCode");
-        jedisService.setObjectAsJson(buildAuthorizationCodeKey(authorizationCode), authorizationCodeInfo,
-                loadClientConfig(authorizationCodeInfo.getClientId()).getCodeChallengeExpirationSeconds());
+    public V1DeviceCodeInfo loadDeviceCode(@NotBlank String deviceCode, boolean remove) {
+        hasTextOf(deviceCode, "deviceCode");
+        String key = buildDeviceCodeKey(deviceCode);
+        try {
+            return jedisService.getObjectAsJson(key, V1DeviceCodeInfo.class);
+        } finally {
+            if (remove) {
+                jedisService.del(key);
+            }
+        }
     }
+
+    @Override
+    public void putDeviceCode(@NotBlank String deviceCode, V1DeviceCodeInfo deviceCodeInfo) {
+        hasTextOf(deviceCode, "deviceCode");
+        jedisService.setObjectAsJson(buildRefreshTokenKey(deviceCode), deviceCodeInfo,
+                deviceCodeInfo.getDeviceCode().getExpires_in());
+    }
+
+    // User claims.
 
     @Override
     public V1OidcUserClaims getV1OidcUserClaimsByUser(String username) {
@@ -304,21 +348,20 @@ public class DefaultV1OidcAuthingHandler extends AbstractAuthenticatingHandler i
         });
     }
 
-    @Override
-    public V1AuthorizationCodeInfo loadAuthorizationCode(String authorizationCode) {
-        return jedisService.getObjectAsJson(buildAuthorizationCodeKey(authorizationCode), V1AuthorizationCodeInfo.class);
+    private String buildAuthorizationCodeKey(String authorizationCode) {
+        return CACHE_OIDC_AUTHCODE_PREFIX.concat(new CodecSource(authorizationCode).toHex());
     }
 
     private String buildAccessTokenKey(String accessToken) {
-        return V1OidcIAMConstants.CACHE_OIDC_ACCESSTOKEN_PREFIX.concat(new CodecSource(accessToken).toHex());
+        return CACHE_OIDC_ACCESSTOKEN_PREFIX.concat(new CodecSource(accessToken).toHex());
     }
 
     private String buildRefreshTokenKey(String refreshToken) {
-        return V1OidcIAMConstants.CACHE_OIDC_REFRESHTOKEN_PREFIX.concat(new CodecSource(refreshToken).toHex());
+        return CACHE_OIDC_REFRESHTOKEN_PREFIX.concat(new CodecSource(refreshToken).toHex());
     }
 
-    private String buildAuthorizationCodeKey(String authorizationCode) {
-        return V1OidcIAMConstants.CACHE_OIDC_AUTHCODE_PREFIX.concat(new CodecSource(authorizationCode).toHex());
+    private String buildDeviceCodeKey(String deviceCode) {
+        return CACHE_OIDC_DEVICECODE_PREFIX.concat(new CodecSource(deviceCode).toHex());
     }
 
     private static final TypeReference<List<OidcClient.ClientSecretInfo>> oidcClientSecretTypeRef = new TypeReference<List<OidcClient.ClientSecretInfo>>() {

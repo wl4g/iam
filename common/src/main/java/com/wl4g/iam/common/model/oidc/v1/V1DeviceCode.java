@@ -23,7 +23,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
- * {@link V1AuthorizationCodeInfo}
+ * {@link V1DeviceCode} e.g to
+ * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code#device-authorization-response
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
@@ -35,14 +36,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class V1AuthorizationCodeInfo {
-    private V1OidcUserClaims user;
-    private String clientId;
-    private String code;
-    private String redirectUri;
-    private String iss;
-    private String scope;
-    private String nonce;
-    private String codeChallenge;
-    private String codeChallengeMethod;
+public class V1DeviceCode {
+    private String device_code;
+    private String user_code;
+    private String verification_uri;
+    private Integer expires_in;
+    private Integer interval;
+    private String message;
 }

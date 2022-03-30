@@ -15,20 +15,24 @@
  */
 package com.wl4g.iam.web.oidc.v1;
 
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CHECK_SESSION_IFRAME;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_END_SESSION;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_REGISTRATION;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_ROOT;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,24 +62,33 @@ import com.wl4g.iam.web.oidc.BasedOidcAuthingController;
  * @since v3.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html#AuthResponseValidation
  */
+@SuppressWarnings("unused")
 @V1OidcDiscoveryController
 public class V1OidcDiscoveryAuthingController extends BasedOidcAuthingController {
 
-    @SuppressWarnings("unused")
-    private @Autowired V1OidcAuthingHandler oidcAuthingHandler;
+    @Autowired
+    private V1OidcAuthingHandler oidcAuthingHandler;
+
+    @Value("${server.servlet.context-path:/}")
+    private String contextPath;
 
     /**
      * Provides OIDC metadata. See the spec at
      * 
      * @see https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery
      * @see https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationResponse
+     * @see https://login.microsoftonline.com/common/.well-known/openid-configuration
      */
     @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> metadata(UriComponentsBuilder uriBuilder, HttpServletRequest req) {
         log.info("called:metadata '{}' from '{}'", URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA, req.getRemoteHost());
 
-        String prefix = uriBuilder.replacePath(trimToEmpty(getCurrentNamespaceLocal().get())).build().encode().toUriString();
+        String prefix = uriBuilder.replacePath(
+                contextPath.concat(URI_IAM_OIDC_ENDPOINT_ROOT).concat("/").concat(trimToEmpty(getCurrentNamespaceLocal().get())))
+                .build()
+                .encode()
+                .toUriString();
         // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
         // https://tools.ietf.org/html/rfc8414#section-2
         V1MetadataEndpointModel metadata = V1MetadataEndpointModel.builder()
@@ -89,12 +102,14 @@ public class V1OidcDiscoveryAuthingController extends BasedOidcAuthingController
                 .token_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_TOKEN))
                 // RECOMMENDED
                 .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_USERINFO))
+                // OPTIONAL
+                .device_authorization_endpoint(URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE)
                 // RECOMMENDED
-                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECT))
+                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT))
                 // OPTIONAL
-                .check_session_iframe(prefix.concat(URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME))
+                .check_session_iframe(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_CHECK_SESSION_IFRAME))
                 // OPTIONAL
-                .end_session_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT))
+                .end_session_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_END_SESSION))
                 // RECOMMENDED
                 .registration_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_REGISTRATION))
                 // REQUIRED

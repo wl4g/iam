@@ -50,7 +50,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     /** endpoint URIs definitions. */
     public static final String URI_IAM_OIDC_ENDPOINT_NS_NAME = "namespace"; // tenant
     public static final String URI_IAM_OIDC_ENDPOINT_NS_DEFAULT = "default";
-    public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/oidc/v1";
+    public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/v1-oidc";
     public static final String URI_IAM_OIDC_ENDPOINT_ROOT_NS = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
             + "}";
 
@@ -60,9 +60,10 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_TOKEN = "/token";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE = "/authorize";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_USERINFO = "/userinfo";
-    public static final String URI_IAM_OIDC_ENDPOINT_INTROSPECT = "/introspect";
-    public static final String URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME = "/check_session";
-    public static final String URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT = "/end_session";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE = "/devicecode";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT = "/introspect";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_CHECK_SESSION_IFRAME = "/auth_status_iframe.html";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_END_SESSION = "/logout";
 
     // OpenID Connect Discovery.
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
@@ -79,9 +80,10 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /** cache key definitions. */
     public static final String CACHE_OIDC_PREFIX = CONF_PREFIX_IAM + "oidc:";
+    public static final String CACHE_OIDC_AUTHCODE_PREFIX = CACHE_OIDC_PREFIX + "code:";
     public static final String CACHE_OIDC_ACCESSTOKEN_PREFIX = CACHE_OIDC_PREFIX + "ak:";
     public static final String CACHE_OIDC_REFRESHTOKEN_PREFIX = CACHE_OIDC_PREFIX + "rk:";
-    public static final String CACHE_OIDC_AUTHCODE_PREFIX = CACHE_OIDC_PREFIX + "code:";
+    public static final String CACHE_OIDC_DEVICECODE_PREFIX = CACHE_OIDC_PREFIX + "devicecode:";
 
     /** login theme definitions. */
     public static final String KEY_IAM_OIDC_LOGIN_THEMEM_BASIC = "BASIC";
@@ -153,23 +155,6 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             return asList(StandardScope.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
         }
 
-        public static StandardScope safeOf(String name) {
-            for (StandardScope v : values()) {
-                if (eqIgnCase(v.name(), name)) {
-                    return v;
-                }
-            }
-            return null;
-        }
-
-        public static StandardScope of(String name) {
-            StandardScope result = safeOf(name);
-            if (nonNull(result)) {
-                return result;
-            }
-            throw new IllegalArgumentException(format("unsupported scope for '%s'", name));
-        }
-
         /**
          * Check if the this enumerated value is a subset of {@link scopeString}
          * to values.
@@ -177,6 +162,11 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         public boolean containsIn(String scope) {
             Set<String> _scope = safeDecodeToParams(scope);
             return _scope.stream().anyMatch(s -> eqIgnCase(s, name()));
+        }
+
+        public static boolean isValid(String scope) {
+            Set<String> _scope = safeDecodeToParams(scope);
+            return CollectionUtils2.isSubCollection(_scope, getNames());
         }
     }
 
@@ -205,7 +195,8 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         refresh_token,
 
         /**
-         * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
+         * e.g to
+         * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow
          */
         behalf("urn:ietf:params:oauth:grant-type:jwt-bearer"),
 
@@ -229,10 +220,23 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
         client_credentials,
 
         /**
+         * Like the scan login polling implementation. </br>
+         * </br>
+         * for example: </br>
+         * </br>
+         * 
+         * https://developers.google.com/identity/protocols/oauth2/limited-input-device
+         * </br>
+         * </br>
+         * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code#device-authorization-response
+         * </br>
+         * </br>
+         * https://www.oauth.com/playground/device-code.html </br>
+         * 
          * @since oauth2.1
          */
         @Beta
-        device_code;
+        device_code("urn:ietf:params:oauth:grant-type:device_code");
 
         private final String value;
         private final boolean isDefault;
@@ -308,7 +312,8 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      * </pre>
      * 
      * </br>
-     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-implicit-grant-flow#prefer-the-auth-code-flow
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-implicit-grant-flow#prefer-the-auth-code-flow
      * </br>
      * </br>
      * Notice: With the plans for third party cookies to be removed from
@@ -383,7 +388,8 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /**
      * response mode definitions. </br>
-     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
      * 
      * <pre>
      * RECOMMENDED. Specifies how the identity platform should return the requested token to your app. Supported values:
@@ -424,7 +430,8 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /**
      * prompt definitions. </br>
-     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
      * 
      * <pre>
      * OPTIONAL. Indicates the type of user interaction that is required. Valid values are login, none, consent, and select_account. Supported values:
@@ -579,22 +586,21 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      * </p>
      */
     public static enum StandardClaims {
-
         /**
          * like is user_id
          */
         sub, name, given_name, family_name, nickname, preferred_username, gender, locale, birthdate, picture, zoneinfo, updated_at,
-
         /**
          * independent scoped attributes info
          */
         email, email_verified, address, phone_number, phone_number_verified;
-
         public static List<String> getNames() {
             return asList(StandardClaims.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
         }
-
     }
+
+    public static final String KEY_IAM_OIDC_CLAIMS_EXT_NONCE = "nonce";
+    public static final String KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH = "at_hash";
 
     /**
      * claims type definitions. </br>
@@ -624,9 +630,6 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             throw new IllegalArgumentException(format("unsupported claim type for '%s'", name));
         }
     }
-
-    public static final String KEY_IAM_OIDC_CLAIMS_EXT_NONCE = "nonce";
-    public static final String KEY_IAM_OIDC_CLAIMS_EXT_AT_HASH = "at_hash";
 
     /**
      * Safely decode string parameters into a collection separated by spaces.

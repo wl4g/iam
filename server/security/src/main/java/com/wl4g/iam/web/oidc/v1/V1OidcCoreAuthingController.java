@@ -22,7 +22,8 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
@@ -65,6 +66,8 @@ import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1AccessTokenInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1AuthorizationCodeInfo;
+import com.wl4g.iam.common.model.oidc.v1.V1DeviceCode;
+import com.wl4g.iam.common.model.oidc.v1.V1DeviceCodeInfo;
 import com.wl4g.iam.common.model.oidc.v1.V1IntrospectionAccessToken;
 import com.wl4g.iam.common.model.oidc.v1.V1OidcUserClaims;
 import com.wl4g.iam.handler.oidc.v1.V1OidcAuthingHandler;
@@ -322,6 +325,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         if (clientConfig.isMustOpenidScopeEnabled() && !StandardScope.openid.containsIn(scope)) {
             return wrapErrorRfc6749("invalid_scope", "The oidc v1 specs requires that scope must contain openid");
         }
+        if (isNull(StandardScope.isValid(scope))) {
+            return wrapErrorRfc6749("invalid_scope", "The scope is no vaild");
+        }
 
         // Check redirect_uri valid.
         boolean matched = safeList(clientConfig.getValidWebOriginUris()).stream()
@@ -343,7 +349,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             return wrapUnauthentication();
         }
         log.info("Password {} for user {} is correct.", password, username);
-        String iss = getIssueUri(uriBuilder);
+        String iss = getIss(uriBuilder);
 
         // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
         MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
@@ -382,6 +388,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         // Endpoint. This use of this parameter is NOT RECOMMENDED when
         // the Response Mode that would be requested is the default mode
         // specified for the Response Type.
+        // e.g to
         // see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
         StandardResponseType responseType = StandardResponseType.of(response_type);
         StandardResponseMode responseMode = StandardResponseMode.safeOf(response_mode);
@@ -409,6 +416,47 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             String location = redirect_uri.concat("?").concat(paramUri);
             return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
         }
+    }
+
+    /**
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code
+     */
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE, method = RequestMethod.POST, produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<?> deviceCode(
+            @RequestParam String client_id,
+            @RequestParam String scope,
+            UriComponentsBuilder uriBuilder,
+            HttpServletRequest req) {
+        log.info("called:deviceCode '{}' from '{}', client_id={}, scope={} ", URI_IAM_OIDC_ENDPOINT_CORE_DEVICECODE,
+                req.getRemoteHost(), client_id, scope);
+
+        // Check the scope.
+        if (isNull(StandardScope.isValid(scope))) {
+            return wrapErrorRfc6749("invalid_scope", "The scope is no vaild");
+        }
+
+        // load configuration.
+        V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
+
+        V1DeviceCode deviceCode = V1DeviceCode.builder()
+                .device_code("")
+                .user_code("")
+                .verification_uri("")
+                .interval(5)
+                .expires_in(clientConfig.getDeviceCodeExpirationSeconds())
+                .message("ok")
+                .build();
+        V1DeviceCodeInfo codeInfo = V1DeviceCodeInfo.builder()
+                .deviceCode(deviceCode)
+                .clientId(client_id)
+                .scope(scope)
+                .iss(getIss(uriBuilder))
+                .build();
+        oidcAuthingHandler.putDeviceCode(deviceCode.getDevice_code(), codeInfo);
+
+        log.info("issuing device code={}, codeInfo={}", deviceCode, codeInfo);
+        return ResponseEntity.ok(deviceCode);
     }
 
     /**
@@ -501,10 +549,11 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             @RequestParam String grant_type,
             @RequestParam String code,
             @RequestParam String redirect_uri,
-            @RequestParam(required = false) String refresh_token,
             @RequestParam(required = false) String client_id,
             @RequestParam(required = false) String client_secret,
+            @RequestParam(required = false) String refresh_token,
             @RequestParam(required = false) String scope,
+            @RequestParam(required = false) String device_code,
             @RequestParam(required = false) String code_verifier,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
@@ -516,11 +565,11 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         StandardGrantType grantType = StandardGrantType.safeOf(grant_type);
         if (isNull(grantType)) {
             return wrapErrorRfc6749("unsupported_grant_type",
-                    format("The grant_type must be one of '%s'", StandardGrantType.getNames()));
+                    format("The grant_type is not valid, must be one of '%s'", StandardGrantType.getNames()));
         }
-        String iss = getIssueUri(uriBuilder);
+        String iss = getIss(uriBuilder);
 
-        // load OIDC client configuration.
+        // load configuration.
         V1OidcClientConfig clientConfig = oidcAuthingHandler.loadClientConfig(client_id);
 
         // response tokens
@@ -535,7 +584,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         case client_credentials: // oauth2
             return doTokenWithClientCredentials(clientConfig, client_id, client_secret, redirect_uri, scope, iss, uriBuilder);
         case device_code: // oauth2
-            return doTokenWithDeviceCode(clientConfig);
+            return doTokenWithDeviceCode(clientConfig, grant_type, client_id, client_secret, device_code, iss);
         default:
             return wrapErrorRfc6749("invalid_request", "grant_type not valid");
         }
@@ -544,14 +593,14 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     /**
      * Provides information about a supplied access token.
      */
-    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> introspection(
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> introspect(
             @RequestHeader("Authorization") String auth,
             @RequestParam String token,
             HttpServletRequest req) {
 
-        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECT, req.getRemoteHost(),
-                token, auth);
+        log.info("called:introspect '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_CORE_INTROSPECT,
+                req.getRemoteHost(), token, auth);
 
         String access_token = toDetermineAccessToken(auth, token);
         V1AccessTokenInfo accessTokenInfo = oidcAuthingHandler.loadAccessToken(access_token);
@@ -715,20 +764,23 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             String client_id,
             String redirect_uri,
             String refresh_token) throws Exception {
+
         if (!clientConfig.isUseRefreshTokenEnabled()) {
             return wrapErrorRfc6749("invalid_request", "The refresh token grant disabled.");
         }
         if (isBlank(refresh_token)) {
             return wrapErrorRfc6749("invalid_request", "The refresh_token missing");
         }
-        // Check refresh_token valid?
+        // Check refresh_token valid
         V1AccessTokenInfo lastAccessTokenInfo = oidcAuthingHandler.loadRefreshToken(refresh_token, true);
         if (isNull(lastAccessTokenInfo)) {
             return wrapErrorRfc6749("invalid_request", "The refresh_token not valid");
         }
+        // Check redirect_uri valid
         if (!StringUtils.equals(redirect_uri, lastAccessTokenInfo.getRedirectUri())) {
             return wrapErrorRfc6749("invalid_request", "The redirect_uri not valid");
         }
+
         // New access_token
         V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, lastAccessTokenInfo.getIss(),
                 lastAccessTokenInfo.getUser(), lastAccessTokenInfo.getClientId(), redirect_uri, lastAccessTokenInfo.getScope());
@@ -743,7 +795,8 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     }
 
     /**
-     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth-ropc
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth-ropc
      */
     private ResponseEntity<?> doTokenWithPassword(
             V1OidcClientConfig clientConfig,
@@ -777,7 +830,8 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     }
 
     /**
-     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow
+     * e.g to
+     * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow
      */
     private ResponseEntity<?> doTokenWithClientCredentials(
             V1OidcClientConfig clientConfig,
@@ -822,9 +876,46 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         return ResponseEntity.ok(accessToken);
     }
 
-    private ResponseEntity<?> doTokenWithDeviceCode(V1OidcClientConfig clientConfig) throws Exception {
-        // TODO
-        return wrapErrorRfc6749("invalid_request", "not yet implemented");
+    /**
+     * Like the scan login polling implementation. </br>
+     * </br>
+     * for example: </br>
+     * </br>
+     * 
+     * https://developers.google.com/identity/protocols/oauth2/limited-input-device
+     * </br>
+     * </br>
+     * https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-device-code#device-authorization-response
+     * </br>
+     * </br>
+     * https://www.oauth.com/playground/device-code.html </br>
+     * 
+     * @since oauth2.1
+     */
+    private ResponseEntity<?> doTokenWithDeviceCode(
+            V1OidcClientConfig clientConfig,
+            String grant_type,
+            String client_id,
+            String client_secret,
+            String device_code,
+            String iss) throws Exception {
+
+        V1DeviceCodeInfo codeInfo = oidcAuthingHandler.loadDeviceCode(device_code, true);
+        if (isNull(codeInfo)) {
+            return wrapErrorRfc6749("invalid_request", "The device_code is not valid or expired");
+        }
+
+        // New access_token
+        V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, null, client_id, "", codeInfo.getScope());
+        V1AccessToken accessToken = V1AccessToken.builder()
+                .access_token(accessTokenInfo.getAccessToken())
+                .refresh_token(accessTokenInfo.getRefreshToken())
+                .token_type(KEY_IAM_OIDC_TOKEN_TYPE_BEARER)
+                .expires_in(oidcAuthingHandler.loadClientConfig(client_id).getAccessTokenExpirationSeconds())
+                .scope(codeInfo.getScope())
+                .build();
+
+        return ResponseEntity.ok(accessToken);
     }
 
     private String createAuthorizationCode(
@@ -840,8 +931,17 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         getRandom().nextBytes(bytes);
         String code = Base64URL.encode(bytes).toString();
 
-        V1AuthorizationCodeInfo codeInfo = new V1AuthorizationCodeInfo(code, client_id, redirect_uri, user, iss, scope, nonce,
-                code_challenge, code_challenge_method);
+        V1AuthorizationCodeInfo codeInfo = V1AuthorizationCodeInfo.builder()
+                .user(user)
+                .code(code)
+                .clientId(client_id)
+                .redirectUri(redirect_uri)
+                .iss(iss)
+                .scope(scope)
+                .nonce(nonce)
+                .codeChallenge(code_challenge)
+                .codeChallengeMethod(code_challenge_method)
+                .build();
         oidcAuthingHandler.putAuthorizationCode(code, codeInfo);
 
         log.info("issuing authorization code={}, codeInfo={}", code, codeInfo);
@@ -945,12 +1045,12 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         return jwt.serialize();
     }
 
-    private String getIssueUri(UriComponentsBuilder uriBuilder) {
+    private String getIss(UriComponentsBuilder uriBuilder) {
         return uriBuilder.replacePath("/").build().encode().toUriString();
     }
 
     private String getDefaultClientCredentialsScope(UriComponentsBuilder uriBuilder) {
-        return getIssueUri(uriBuilder).concat(".default");
+        return getIss(uriBuilder).concat(".default");
     }
 
     private V1OidcClientConfig.JWKConfig loadJWKConfig() {

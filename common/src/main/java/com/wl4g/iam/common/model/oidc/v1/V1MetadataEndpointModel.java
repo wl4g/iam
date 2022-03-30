@@ -44,6 +44,7 @@ public class V1MetadataEndpointModel {
     // Unless only the Implicit-Flow is used.
     private String token_endpoint; // REQUIRED
     private String userinfo_endpoint; // RECOMMENDED
+    private String device_authorization_endpoint; // OPTIONAL
     private String introspection_endpoint; // OPTIONAL
     private String registration_endpoint; // RECOMMENDED
     private String check_session_iframe; // OPTIONAL
