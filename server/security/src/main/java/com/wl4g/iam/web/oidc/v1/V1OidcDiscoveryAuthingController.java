@@ -21,9 +21,9 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_REGISTRATION;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_MTLS_ENDPOINT_CHECK_SESSION_IFRAME;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_MTLS_ENDPOINT_END_SESSION_ENDPOINT;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECT;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,11 +90,11 @@ public class V1OidcDiscoveryAuthingController extends BasedOidcAuthingController
                 // RECOMMENDED
                 .userinfo_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_CORE_USERINFO))
                 // RECOMMENDED
-                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT))
+                .introspection_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_INTROSPECT))
                 // OPTIONAL
-                .check_session_iframe(prefix.concat(URI_IAM_OIDC_MTLS_ENDPOINT_CHECK_SESSION_IFRAME))
+                .check_session_iframe(prefix.concat(URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME))
                 // OPTIONAL
-                .end_session_endpoint(prefix.concat(URI_IAM_OIDC_MTLS_ENDPOINT_END_SESSION_ENDPOINT))
+                .end_session_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT))
                 // RECOMMENDED
                 .registration_endpoint(prefix.concat(URI_IAM_OIDC_ENDPOINT_REGISTRATION))
                 // REQUIRED

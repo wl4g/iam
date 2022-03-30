@@ -51,25 +51,26 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
     public static final String URI_IAM_OIDC_ENDPOINT_NS_NAME = "namespace"; // tenant
     public static final String URI_IAM_OIDC_ENDPOINT_NS_DEFAULT = "default";
     public static final String URI_IAM_OIDC_ENDPOINT_ROOT = "/oidc/v1";
-    public static final String URI_IAM_OIDC_ENDPOINT_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
+    public static final String URI_IAM_OIDC_ENDPOINT_ROOT_NS = URI_IAM_OIDC_ENDPOINT_ROOT + "/{" + URI_IAM_OIDC_ENDPOINT_NS_NAME
             + "}";
 
     // OpenID Connect Core.
-    public static final String URI_IAM_OIDC_ENDPOINT_CORE_PREFIX = URI_IAM_OIDC_ENDPOINT_PREFIX + "/connect";
+    public static final String URI_IAM_OIDC_ENDPOINT_CORE_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT_NS + "/connect";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_CERTS = "/certs";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_TOKEN = "/token";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE = "/authorize";
     public static final String URI_IAM_OIDC_ENDPOINT_CORE_USERINFO = "/userinfo";
-    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT = "/introspect";
-    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_CHECK_SESSION_IFRAME = "/check_session";
-    public static final String URI_IAM_OIDC_MTLS_ENDPOINT_END_SESSION_ENDPOINT = "/end_session";
+    public static final String URI_IAM_OIDC_ENDPOINT_INTROSPECT = "/introspect";
+    public static final String URI_IAM_OIDC_ENDPOINT_CHECK_SESSION_IFRAME = "/check_session";
+    public static final String URI_IAM_OIDC_ENDPOINT_END_SESSION_ENDPOINT = "/end_session";
 
     // OpenID Connect Discovery.
     // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
+    public static final String URI_IAM_OIDC_ENDPOINT_DISCOVERY_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT_NS;
     public static final String URI_IAM_OIDC_ENDPOINT_DISCOVERY_METADATA = "/.well-known/openid-configuration";
 
     // OpenID Connect Dynamic Registration.
-    public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX = URI_IAM_OIDC_ENDPOINT_PREFIX
+    public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX = URI_IAM_OIDC_ENDPOINT_ROOT_NS
             + "/clients-registrations";
     public static final String URI_IAM_OIDC_ENDPOINT_REGISTRATION = "/registration";
 

@@ -16,7 +16,7 @@
 package com.wl4g.iam.config;
 
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_PREFIX;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_PREFIX;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_DISCOVERY_PREFIX;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_REGISTRATION_PREFIX;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -70,7 +70,7 @@ public class OidcAutoConfiguration extends PrefixHandlerMappingSupport {
 
     @Bean
     public Object v1OidcDiscoveryAuthingControllerPrefixHandlerMapping() {
-        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_PREFIX,
+        return super.newPrefixHandlerMapping(URI_IAM_OIDC_ENDPOINT_DISCOVERY_PREFIX,
                 com.wl4g.iam.annotation.V1OidcDiscoveryController.class);
     }
 

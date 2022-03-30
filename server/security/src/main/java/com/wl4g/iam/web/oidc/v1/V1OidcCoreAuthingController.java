@@ -22,7 +22,7 @@ import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPO
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_CERTS;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_TOKEN;
 import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_CORE_USERINFO;
-import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT;
+import static com.wl4g.iam.common.constant.V1OidcIAMConstants.URI_IAM_OIDC_ENDPOINT_INTROSPECT;
 import static com.wl4g.infra.common.codec.Encodes.urlEncode;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
@@ -320,7 +320,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         // Check the if openid existing. (oauth2 does not required)
         if (clientConfig.isMustOpenidScopeEnabled() && !StandardScope.openid.containsIn(scope)) {
-            return wrapErrorRfc6749("invalid_request", "The oidc v1 specification requires that scope must contain openid");
+            return wrapErrorRfc6749("invalid_scope", "The oidc v1 specs requires that scope must contain openid");
         }
 
         // Check redirect_uri valid.
@@ -544,14 +544,14 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
     /**
      * Provides information about a supplied access token.
      */
-    @RequestMapping(value = URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_IAM_OIDC_ENDPOINT_INTROSPECT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> introspection(
             @RequestHeader("Authorization") String auth,
             @RequestParam String token,
             HttpServletRequest req) {
 
-        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_MTLS_ENDPOINT_INTROSPECT,
-                req.getRemoteHost(), token, auth);
+        log.info("called:introspection '{}' from '{}', token={}, auth={} ", URI_IAM_OIDC_ENDPOINT_INTROSPECT, req.getRemoteHost(),
+                token, auth);
 
         String access_token = toDetermineAccessToken(auth, token);
         V1AccessTokenInfo accessTokenInfo = oidcAuthingHandler.loadAccessToken(access_token);
@@ -665,7 +665,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
 
         V1AuthorizationCodeInfo codeInfo = oidcAuthingHandler.loadAuthorizationCode(code);
         if (isNull(codeInfo)) {
-            return wrapErrorRfc6749("invalid_grant", "code not valid");
+            return wrapErrorRfc6749("invalid_grant", "The code not valid");
         }
         if (!StringUtils.equals(redirect_uri, codeInfo.getRedirectUri())) {
             return wrapErrorRfc6749("invalid_request", "The redirect_uri not valid");
@@ -794,7 +794,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         // want, affixed with the .default suffix. For the IAM example, the
         // value is https://iam.example.com/.default
         if (!StringUtils.equals(scope, getDefaultClientCredentialsScope(uriBuilder))) {
-            return wrapErrorRfc6749("invalid_request", "The scope is not valid");
+            return wrapErrorRfc6749("invalid_scope", "The scope is not valid");
         }
 
         // TODO use hashing?
