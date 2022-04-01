@@ -1,3 +1,4 @@
+package com.wl4g.iam.gateway.auth;
 //package com.wl4g.iam.gateway.auth;
 //
 //import java.time.Duration;
@@ -30,12 +31,12 @@
 // * @version 2022-03-25 v3.0.0
 // * @since v3.0.0
 // */
-//public class TokenRelayRefreshGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+//public class TokenRelayRefreshGatewayFilter extends AbstractGatewayFilterFactory<Object> {
 //
 //    private static final Duration accessTokenExpiresSkew = Duration.ofSeconds(3);
 //    private final ReactiveOAuth2AuthorizedClientManager oauth2ClientManager;
 //
-//    public TokenRelayRefreshGatewayFilterFactory(ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
+//    public TokenRelayRefreshGatewayFilter(ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
 //            ReactiveClientRegistrationRepository clientRegistrationRepository) {
 //        super(Object.class);
 //        this.oauth2ClientManager = createDefaultAuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);

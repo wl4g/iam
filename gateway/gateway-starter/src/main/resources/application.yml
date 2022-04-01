@@ -38,6 +38,7 @@ spring:
           predicates:
             - Path=/alimarket/v1/**
           filters:
+            - SimpleTokenAuthFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1

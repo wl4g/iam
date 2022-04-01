@@ -15,13 +15,12 @@
  */
 package com.wl4g.iam.gateway.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 //import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 //import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 
-import com.wl4g.iam.gateway.auth.SimpleAPIAuthingFilter;
+import com.wl4g.iam.gateway.auth.AuthingAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.LoadbalanceAutoConfiguration;
@@ -37,22 +36,7 @@ import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
  */
 @Configuration
 @Import({ RouteAutoConfiguration.class, RateLimiterAutoConfiguration.class, LoadbalanceAutoConfiguration.class,
-        ConsoleAutoConfiguration.class })
+        AuthingAutoConfiguration.class, ConsoleAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
-
-    @Bean
-    public SimpleAPIAuthingFilter simpleAPIAuthingFilter() {
-        return new SimpleAPIAuthingFilter();
-    }
-
-    // @Bean
-    // public TokenRelayRefreshGatewayFilterFactory
-    // tokenRelayRefreshGatewayFilterFactory(
-    // ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
-    // ReactiveClientRegistrationRepository clientRegistrationRepository) {
-    // return new
-    // TokenRelayRefreshGatewayFilterFactory(authorizedClientRepository,
-    // clientRegistrationRepository);
-    // }
 
 }

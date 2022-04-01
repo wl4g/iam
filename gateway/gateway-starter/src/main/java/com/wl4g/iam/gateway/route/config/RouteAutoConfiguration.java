@@ -26,10 +26,12 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.route.StartedRoutesRefresher;
 import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
+//import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory;
+//import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory.IgnoreGatewayFilter;
 import com.wl4g.iam.gateway.route.repository.RedisRouteDefinitionRepository;
 
 /**
- * {@link RouteAutoConfiguration}
+ * {@link AuthingAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-13 v1.0.0
@@ -73,13 +75,16 @@ public class RouteAutoConfiguration {
                          */
                         // .before(ZonedDateTime.of(2020,7,8,9,0,0,0,
                         // ZoneId.systemDefault()))
-                        .after(ZonedDateTime.of(2020, 7, 8, 14, 0, 0, 0, ZoneId.systemDefault())).and()
+                        .after(ZonedDateTime.of(2020, 7, 8, 14, 0, 0, 0, ZoneId.systemDefault()))
+                        .and()
 
                         // cookie断言-- 名称匹配且值符合正则表达式
-                        .cookie("token", "[a-zA-Z]+").and()
+                        .cookie("token", "[a-zA-Z]+")
+                        .and()
 
                         // head断言
-                        .header("session").and()
+                        .header("session")
+                        .and()
 
                         // host断言??
                         // .host("**.somehost.org").and()
@@ -89,18 +94,20 @@ public class RouteAutoConfiguration {
                         // .method(HttpMethod.GET, HttpMethod.POST).and()
 
                         // query断言
-                        .query("name").and()
+                        .query("name")
+                        .and()
 
                         // remote address 断言
-                        .remoteAddr("10.0.0.113", "127.0.0.1", "localhost").and()
+                        .remoteAddr("10.0.0.113", "127.0.0.1", "localhost")
+                        .and()
 
                         // 路径
                         .path("/**")
                         // .path("/gateway-example/test/hello")
 
                         // 过滤
-                        .filters(f -> f.addRequestHeader("token", "World").addRequestParameter("age", "18")
-                                .addResponseHeader("myResponseheader", "myResponseheader"))
+                        .filters(f -> f.addRequestHeader("token", "World").addRequestParameter("age", "18").addResponseHeader(
+                                "myResponseheader", "myResponseheader"))
 
                         // 目标
                         .uri("http://localhost:14086"))
