@@ -22,6 +22,7 @@ spring:
             - Path=/v2/**
             #- Weight=v2-energy-openapi-service,5
           filters:
+            - SimpleTokenAuthFilter
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
@@ -38,7 +39,6 @@ spring:
           predicates:
             - Path=/alimarket/v1/**
           filters:
-            - SimpleTokenAuthFilter
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1
