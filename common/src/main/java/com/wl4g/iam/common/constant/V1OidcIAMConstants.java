@@ -123,6 +123,15 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
             return asList(ChallengeAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
         }
 
+        public static ChallengeAlgorithmType safeOf(String name) {
+            for (ChallengeAlgorithmType v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
         public static String of(String name) {
             for (ChallengeAlgorithmType v : values()) {
                 if (eqIgnCase(v.name(), name)) {
@@ -168,6 +177,15 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
         public static List<String> getNames() {
             return asList(TokenSignAlgorithmType.values()).stream().map(v -> v.name().toUpperCase()).collect(toList());
+        }
+
+        public static TokenSignAlgorithmType safeOf(String name) {
+            for (TokenSignAlgorithmType v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
         }
 
         public static String of(String name) {
@@ -523,7 +541,7 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
 
     /**
      * prompt definitions. </br>
-     * e.g to
+     * E.g to
      * see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
      * 
      * <pre>
@@ -535,10 +553,62 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
      *  - prompt=select_account interrupts single sign-on providing account selection experience listing all the accounts either in 
      *       session or any remembered account or an option to choose to use a different account altogether.
      * </pre>
+     * 
+     * E.g to
+     * see:https://developer.okta.com/docs/reference/api/oidc/#request-parameters
      */
     @Getter
     public static enum StandardPrompt {
-        login, none, consent, select_account;
+        none(true), login, consent, select_account;
+
+        private final boolean isDefault;
+
+        private StandardPrompt() {
+            this.isDefault = false;
+        }
+
+        private StandardPrompt(boolean isDefault) {
+            this.isDefault = isDefault;
+        }
+
+        public boolean isDefault() {
+            return isDefault;
+        }
+
+        public static StandardPrompt getDefault() {
+            StandardPrompt defaultValue = null;
+            for (StandardPrompt v : values()) {
+                if (v.isDefault()) {
+                    if (defaultValue != null) {
+                        throw new IllegalStateException("There can only be one default value");
+                    }
+                    defaultValue = v;
+                }
+            }
+            return defaultValue;
+        }
+
+        public static List<String> getNames() {
+            return asList(StandardPrompt.values()).stream().map(v -> v.name().toLowerCase()).collect(toList());
+        }
+
+        public static StandardPrompt safeOf(String name) {
+            for (StandardPrompt v : values()) {
+                if (eqIgnCase(v.name(), name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        public static StandardPrompt of(String name) {
+            StandardPrompt result = safeOf(name);
+            if (nonNull(result)) {
+                return result;
+            }
+            throw new IllegalArgumentException(format("unsupported prompt for '%s'", name));
+        }
+
     }
 
     /**

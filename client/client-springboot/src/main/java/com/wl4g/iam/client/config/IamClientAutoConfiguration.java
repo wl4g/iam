@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.infra.core.kit.access.IPAccessControl;
-import com.wl4g.infra.core.web.error.CompositeErrorConfigurer;
+import com.wl4g.infra.core.web.error.handler.CompositeSmartErrorHandler;
 import com.wl4g.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
 import com.wl4g.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;
 import com.wl4g.iam.client.configure.NoOpClientSecurityConfigurer;
@@ -119,16 +119,16 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean(BEAN_AUTH_FILTER)
     public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter(
-            CompositeErrorConfigurer errorConfigurer,
+            CompositeSmartErrorHandler errorHandler,
             ClientSecurityConfigurer context,
             ClientSecurityCoprocessor coprocessor,
             JedisIamCacheManager cacheManager) {
-        return new AuthenticatorAuthenticationFilter(errorConfigurer, context, coprocessor, cacheManager);
+        return new AuthenticatorAuthenticationFilter(errorHandler, context, coprocessor, cacheManager);
     }
 
     @Bean(BEAN_ROOT_FILTER)
     public ROOTAuthenticationFilter rootAuthenticationFilter(
-            CompositeErrorConfigurer errorConfigurer,
+            CompositeSmartErrorHandler errorConfigurer,
             ClientSecurityConfigurer context,
             ClientSecurityCoprocessor coprocessor,
             JedisIamCacheManager cacheManager) {
@@ -145,7 +145,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
     @Bean
     public LogoutAuthenticationFilter logoutAuthenticationFilter(
-            CompositeErrorConfigurer errorConfigurer,
+            CompositeSmartErrorHandler errorConfigurer,
             ClientSecurityConfigurer context,
             ClientSecurityCoprocessor coprocessor,
             JedisIamCacheManager cacheManager,

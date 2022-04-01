@@ -30,14 +30,17 @@
 		<!-- <table tableName="iam_oidc_client" domainObjectName="OidcClient" enableCountByExample="false" enableUpdateByExample="false" -->
 		<!-- enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"> -->
 		<!-- <columnOverride column="client_id" javaType="java.lang.String" jdbcType="VARCHAR" /> -->
+		<!-- <property name="useActualColumnNames" value="false" /> -->
 		<!-- </table> -->
 
 		<!-- <table tableName="iam_oidc_mapper" domainObjectName="OidcMapper" enableCountByExample="false" enableUpdateByExample="false" -->
 		<!-- enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"> -->
+		<!-- <property name="useActualColumnNames" value="false" /> -->
 		<!-- </table> -->
 
 		<table tableName="iam_realm" domainObjectName="RealmBean" enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
 		</table>
 	</context>
 </generatorConfiguration>

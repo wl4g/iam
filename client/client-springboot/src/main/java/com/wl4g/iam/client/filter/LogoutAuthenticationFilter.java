@@ -27,7 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.error.ErrorConfigurer;
+import com.wl4g.infra.core.web.error.handler.AbstractSmartErrorHandler;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.iam.client.configure.ClientSecurityCoprocessor;
@@ -73,9 +73,9 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 
     final protected RestTemplate restTemplate;
 
-    public LogoutAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer context,
+    public LogoutAuthenticationFilter(AbstractSmartErrorHandler errorHandler, ClientSecurityConfigurer context,
             ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager, RestTemplate restTemplate) {
-        super(errorConfigurer, context, coprocessor, cacheManager);
+        super(errorHandler, context, coprocessor, cacheManager);
         this.restTemplate = notNullOf(restTemplate, "restTemplate");
     }
 

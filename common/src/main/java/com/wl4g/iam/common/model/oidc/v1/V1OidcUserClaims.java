@@ -24,8 +24,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
-import lombok.experimental.Wither;
 
 /**
  * {@link V1MetadataEndpointModel} </br>
@@ -65,7 +65,7 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @ToString
-@Wither
+@With
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -98,7 +98,7 @@ public class V1OidcUserClaims {
     @Getter
     @Setter
     @ToString
-    @Wither
+    @With
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor

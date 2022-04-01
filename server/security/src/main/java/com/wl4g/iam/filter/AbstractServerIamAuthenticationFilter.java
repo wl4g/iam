@@ -160,7 +160,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         /*
-         * The request path must be /login/general or /login/sms, etc. Just
+         * The request path must be e.g /auth/general or /auth/sms, etc. Just
          * return to false directly, that is, let it execute
          * this#onAccessDenied()
          */

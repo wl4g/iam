@@ -85,7 +85,7 @@ import com.wl4g.iam.core.security.mitm.CipherRequestWrapperFactory;
 import com.wl4g.iam.core.session.mgt.IamSessionFactory;
 import com.wl4g.iam.core.session.mgt.JedisIamSessionDAO;
 import com.wl4g.iam.core.session.mgt.support.IamUidSessionIdGenerator;
-import com.wl4g.iam.core.web.IamErrorConfigurer;
+import com.wl4g.iam.core.web.error.IamSmartErrorHandler;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -422,8 +422,8 @@ public abstract class AbstractIamConfiguration extends PrefixHandlerMappingSuppo
     // ==============================
 
     @Bean
-    public IamErrorConfigurer iamErrorConfigurer(ErrorHandlerProperties config) {
-        return new IamErrorConfigurer(config);
+    public IamSmartErrorHandler iamSmartErrorHandler(ErrorHandlerProperties config) {
+        return new IamSmartErrorHandler(config);
     }
 
     // ==============================

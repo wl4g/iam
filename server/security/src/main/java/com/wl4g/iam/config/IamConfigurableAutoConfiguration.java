@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.bean.SocialConnectInfo;
 import com.wl4g.iam.common.bean.OidcClient;
+import com.wl4g.iam.common.bean.RealmBean;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipal.Parameter;
 import com.wl4g.iam.configure.ServerSecurityConfigurer;
@@ -125,6 +126,11 @@ public class IamConfigurableAutoConfiguration {
             throw new IamException(format(
                     "\n\n=>\tWhen relying on IAM security module as a service, it is necessary to implements the '%s' interface!\n",
                     ServerSecurityConfigurer.class.getName()));
+        }
+
+        @Override
+        public RealmBean loadRealm(Long realmId, String realmName) {
+            throw new UnsupportedOperationException();
         }
 
         @Override

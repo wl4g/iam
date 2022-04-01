@@ -14,13 +14,13 @@ spring:
   cloud:
     gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
       routes:
-        - id: openapiV2-service
+        - id: v2-energy-openapi-service
           #uri: http://openapi.wl4gsafecloudcs.com
           uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
           predicates:
-            #- Path=/openapi/v2/**
+            - Path=/openapi/v2/**
             - Path=/v2/**
-            #- Weight=openapiV2-service,5
+            #- Weight=v2-energy-openapi-service,5
           filters:
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
@@ -33,21 +33,31 @@ spring:
                 redis-rate-limiter.burstCapacity: 1
                 # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
                 key-resolver: '#{@hostKeyResolver}'
-        - id: portal
-          uri: https://www.baidu.com
+        - id: v1-alimarketing-openapi-service
+          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
           predicates:
-            - Path=/**
+            - Path=/alimarket/v1/**
           filters:
-            #- TokenRelay
-            - TokenRelayRefresh
-            - RemoveRequestHeader=Cookie, Set-Cookie
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+                key-resolver: '#{@hostKeyResolver}'
+        #- id: portal
+        #  uri: https://www.baidu.com
+        #  predicates:
+        #    - Path=/**
+        #  filters:
+        #    #- TokenRelay
+        #    - TokenRelayRefresh
+        #    - RemoveRequestHeader=Cookie, Set-Cookie
 
   security:
     oauth2:
       client:
         provider:
           keycloak:
-            issuer-uri: http://iam.wl4g.com/realms/iam
+            issuer-uri: https://iam.wl4g.com/realms/master
         registration:
           keycloak:
             client-id: portal

@@ -74,7 +74,7 @@ import org.apache.shiro.web.servlet.Cookie;
 
 import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.error.ErrorConfigurer;
+import com.wl4g.infra.core.web.error.handler.AbstractSmartErrorHandler;
 import com.wl4g.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.client.config.IamClientProperties;
@@ -113,7 +113,7 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
 public abstract class AbstractClientIamAuthenticationFilter<T extends AuthenticationToken>
         extends BasedRiskIamAuthenticationFilter<IamClientProperties> {
 
-    protected final ErrorConfigurer errorConfigurer;
+    protected final AbstractSmartErrorHandler errorConfigurer;
 
     /**
      * Client security context handler.
@@ -135,7 +135,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
      */
     protected final Cumulator failedCumulator;
 
-    public AbstractClientIamAuthenticationFilter(ErrorConfigurer errorConfigurer, ClientSecurityConfigurer configurer,
+    public AbstractClientIamAuthenticationFilter(AbstractSmartErrorHandler errorConfigurer, ClientSecurityConfigurer configurer,
             ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
         this.errorConfigurer = notNullOf(errorConfigurer, "errorConfigurer");
         this.configurer = notNullOf(configurer, "clientSecurityConfigurer");

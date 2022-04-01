@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.core.web;
+package com.wl4g.iam.core.web.error;
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import com.wl4g.infra.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
-import com.wl4g.infra.core.web.error.ErrorConfigurer;
+import com.wl4g.infra.core.web.error.handler.AbstractSmartErrorHandler;
 
 import static com.wl4g.infra.common.lang.Exceptions.*;
 import static com.wl4g.infra.common.web.rest.RespBase.RetCode.*;
@@ -37,9 +37,9 @@ import static com.wl4g.infra.common.web.rest.RespBase.RetCode.*;
  * @since
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
-public class IamErrorConfigurer extends ErrorConfigurer {
+public class IamSmartErrorHandler extends AbstractSmartErrorHandler {
 
-    public IamErrorConfigurer(ErrorHandlerProperties config) {
+    public IamSmartErrorHandler(ErrorHandlerProperties config) {
         super(config);
     }
 
@@ -57,8 +57,7 @@ public class IamErrorConfigurer extends ErrorConfigurer {
         else if (th instanceof UnknownSessionException) {
             return BAD_PARAMS.getErrcode();
         }
-
-        // Using next chain configuring.
+        // next error handler
         return null;
     }
 
@@ -71,8 +70,7 @@ public class IamErrorConfigurer extends ErrorConfigurer {
             // return getRootCausesString(ex);
             return getMessage(th);
         }
-
-        // Using next chain configuring.
+        // next error handler
         return null;
     }
 

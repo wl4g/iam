@@ -48,18 +48,18 @@
 			<artifactId>dopaas-shell-springboot</artifactId>
 		</dependency>
 		<!-- Spring Security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.boot</groupId> -->
+		<!-- <artifactId>spring-boot-starter-security</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-oauth2-client</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-oauth2-jose</artifactId> -->
+		<!-- </dependency> -->
 		<!-- Spring Data Redis -->
 		<!-- TODO: Remove redis depends, use UCM -->
 		<dependency>

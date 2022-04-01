@@ -62,6 +62,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.wl4g.iam.annotation.V1OidcCoreController;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.ChallengeAlgorithmType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardGrantType;
+import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardPrompt;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseMode;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardResponseType;
 import com.wl4g.iam.common.constant.V1OidcIAMConstants.StandardScope;
@@ -305,7 +306,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             @RequestParam(required = false, defaultValue = "plain") String code_challenge_method,
             @RequestHeader(name = "Authorization", required = false) String auth,
             UriComponentsBuilder uriBuilder,
-            HttpServletRequest req) throws JOSEException, NoSuchAlgorithmException {
+            HttpServletRequest req) throws Exception {
 
         log.info("called:authorize '{}' from '{}', scope={} response_type={} client_id={} redirect_uri={}",
                 URI_IAM_OIDC_ENDPOINT_CORE_AUTHORIZE, req.getRemoteHost(), scope, response_type, client_id, redirect_uri);
@@ -344,84 +345,40 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
             return ResponseEntity.status(HttpStatus.FOUND).header("Location", url).build();
         }
 
+        StandardPrompt _prompt = StandardPrompt.safeOf(prompt);
+        // Always prompt the user for authentication
+        if (StandardPrompt.login == _prompt) {
+            return wrapUnauthentication();
+        }
+
         // Verify credentials.
         String[] creds = new String(Base64.decodeBase64(auth.split(" ")[1])).split(":", 2);
         String username = creds[0];
         String password = creds[1];
         V1OidcUserClaims user = oidcAuthingHandler.getV1OidcUserClaimsByUser(username);
         // if (!username.equals("root")) { // for test
-        if (oidcAuthingHandler.validate(user, password)) {
-            log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
-                    response_type, client_id, redirect_uri);
-            return wrapUnauthentication();
-        }
-        log.info("Password {} for user {} is correct.", password, username);
-        String iss = getIss(uriBuilder);
+        boolean verified = oidcAuthingHandler.validate(user, password);
+        log.info("Verificating password {} for user {} is {}", password, username, verified);
 
-        // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
-        MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
-        redirectParams.add("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
-        redirectParams.add("state", urlEncode(state));
-
-        // Authorization code flow
-        // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-        if (StandardResponseType.code.containsIn(response_type)) {
-            // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
-            // Check challenge method supported.
-            if (!isBlank(code_challenge_method) && !ChallengeAlgorithmType.getNames().contains(code_challenge_method)) {
-                return wrapErrorRfc6749("unsupported_code_challenge_method",
-                        format("code_challenge_method must contains is '%s'", ChallengeAlgorithmType.getNames()));
+        // Render authorization page based on authentication status.
+        // see:https://developer.okta.com/docs/reference/api/oidc/#request-parameters
+        if (StandardPrompt.none == _prompt) {
+            if (!verified) {
+                log.info("Wrong user and password combination. scope={} response_type={} client_id={} redirect_uri={}", scope,
+                        response_type, client_id, redirect_uri);
+                return wrapUnauthentication();
             }
-            String code = createAuthorizationCode(client_id, redirect_uri, user, iss, scope, code_challenge,
-                    code_challenge_method, nonce);
-            redirectParams.add("code", code);
-        }
-        // Implicit flow, [#mark1]
-        // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
-        if (StandardResponseType.id_token.containsIn(response_type)) {
-            // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
-            String id_token = createIdToken(clientConfig, iss, user, client_id, nonce);
-            redirectParams.add("id_token", id_token);
-        }
-        if (StandardResponseType.token.containsIn(response_type)) {
-            // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
-            V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
-            redirectParams.add("access_token", accessTokenInfo.getAccessToken());
+        } else if (StandardPrompt.consent == _prompt) {
+            if (!verified) {
+                // TODO
+            }
+        } else if (StandardPrompt.select_account == _prompt) {
+            // TODO
         }
 
-        // OPTIONAL. Informs the Authorization Server of the mechanism
-        // to be used for returning parameters from the Authorization
-        // Endpoint. This use of this parameter is NOT RECOMMENDED when
-        // the Response Mode that would be requested is the default mode
-        // specified for the Response Type.
-        // e.g to
-        // see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
-        StandardResponseType responseType = StandardResponseType.of(response_type);
-        StandardResponseMode responseMode = StandardResponseMode.safeOf(response_mode);
-        if (responseMode == StandardResponseMode.form_post && StandardResponseType.isAuthorizationCodeFlow(responseType)) {
-            return wrapResponseFromPost(redirect_uri, state, redirectParams.getFirst("code"), redirectParams.getFirst("id_token"),
-                    redirectParams.getFirst("access_token"));
-        } else {
-            String paramUri = UriComponentsBuilder.newInstance().queryParams(redirectParams).build().toUriString().substring(1);
-            if (StandardResponseType.isImplicitFlow(responseType)) { // [#mark2]
-                // Implicit flow are not allowed to use query.
-                responseMode = (responseMode == StandardResponseMode.query) ? StandardResponseMode.fragment : responseMode;
-                // The default for implicit flow is fragment.
-                responseMode = isNull(responseMode) ? StandardResponseMode.fragment : responseMode;
-            }
-            if (responseMode == StandardResponseMode.fragment) {
-                // The protocol specifications stipulates that the response
-                // redirection parameters are spliced into the fragment
-                // parts, which can ensure maximum security, because the
-                // parameters of the fragment are not sent to the client
-                // application.
-                String location = redirect_uri.concat("#").concat(paramUri);
-                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
-            }
-            // others are according handled to query.
-            String location = redirect_uri.concat("?").concat(paramUri);
-            return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
-        }
+        return doAuthorizeWithSuccess(clientConfig, user, client_id, redirect_uri, response_type, scope, state, nonce, display,
+                prompt, max_age, ui_locales, id_token_hint, login_hint, acr_values, response_mode, code_challenge,
+                code_challenge_method, auth, uriBuilder, req);
     }
 
     /**
@@ -624,7 +581,7 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
         } else {
             log.info("Found token for sub='{}', scope='{}'", accessTokenInfo.getUser().getSub(), accessTokenInfo.getScope());
             // https://tools.ietf.org/html/rfc7662#section-2.2
-            V1Introspection accessToken = V1Introspection.builder()
+            V1Introspection introspect = V1Introspection.builder()
                     .iss(accessTokenInfo.getIss())
                     .sub(accessTokenInfo.getUser().getSub())
                     .active(true)
@@ -636,9 +593,9 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
                     .iat(MILLISECONDS.toSeconds(accessTokenInfo.getCreateAt()))
                     // Subtract clock skew by default.
                     // see:https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
-                    .nbf(MILLISECONDS.toSeconds(accessTokenInfo.getExpirationAt().getTime() - 60000))
+                    .nbf(MILLISECONDS.toSeconds(accessTokenInfo.getExpirationAt().getTime() - 60_000))
                     .build();
-            return ResponseEntity.ok().body(accessToken);
+            return ResponseEntity.ok().body(introspect);
         }
     }
 
@@ -717,6 +674,103 @@ public class V1OidcCoreAuthingController extends BasedOidcAuthingController {
                     .withPhone_number_verified(user.getPhone_number_verified());
         }
         return ResponseEntity.ok().body(oidcUser);
+    }
+
+    private ResponseEntity<?> doAuthorizeWithSuccess(
+            V1OidcClientConfig clientConfig,
+            V1OidcUserClaims user,
+            String client_id,
+            String redirect_uri,
+            String response_type,
+            String scope,
+            String state,
+            String nonce,
+            String display,
+            String prompt,
+            String max_age,
+            String ui_locales,
+            String id_token_hint,
+            String login_hint,
+            String acr_values,
+            String response_mode,
+            String code_challenge,
+            String code_challenge_method,
+            String auth,
+            UriComponentsBuilder uriBuilder,
+            HttpServletRequest req) throws Exception {
+
+        // Apply challenge default.
+        if (!isBlank(code_challenge) && isBlank(code_challenge_method)) {
+            code_challenge_method = ChallengeAlgorithmType.getDefault().name();
+        }
+
+        // Gets issue.
+        String iss = getIss(uriBuilder);
+
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth
+        MultiValueMap<String, String> redirectParams = new LinkedMultiValueMap<>(8);
+        redirectParams.add("token_type", KEY_IAM_OIDC_TOKEN_TYPE_BEARER);
+        redirectParams.add("state", urlEncode(state));
+
+        // Authorization code flow
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
+        if (StandardResponseType.code.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#codeExample
+            // Check challenge method supported.
+            if (!isBlank(code_challenge_method) && isNull(ChallengeAlgorithmType.safeOf(code_challenge_method))) {
+                return wrapErrorRfc6749("unsupported_code_challenge_method",
+                        format("code_challenge_method must contains is '%s'", ChallengeAlgorithmType.getNames()));
+            }
+            String code = createAuthorizationCode(client_id, redirect_uri, user, iss, scope, code_challenge,
+                    code_challenge_method, nonce);
+            redirectParams.add("code", code);
+        }
+        // Implicit flow, [#mark1]
+        // see:https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth
+        if (StandardResponseType.id_token.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#id_tokenExample
+            String id_token = createIdToken(clientConfig, iss, user, client_id, nonce);
+            redirectParams.add("id_token", id_token);
+        }
+        if (StandardResponseType.token.containsIn(response_type)) {
+            // see:https://openid.net/specs/openid-connect-core-1_0.html#code-tokenExample
+            V1AccessTokenInfo accessTokenInfo = createAccessTokenInfo(clientConfig, iss, user, client_id, redirect_uri, scope);
+            redirectParams.add("access_token", accessTokenInfo.getAccessToken());
+        }
+
+        // OPTIONAL. Informs the Authorization Server of the mechanism
+        // to be used for returning parameters from the Authorization
+        // Endpoint. This use of this parameter is NOT RECOMMENDED when
+        // the Response Mode that would be requested is the default mode
+        // specified for the Response Type.
+        // e.g to
+        // see:https://docs.microsoft.com/zh-cn/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code
+        StandardResponseType responseType = StandardResponseType.of(response_type);
+        StandardResponseMode responseMode = StandardResponseMode.safeOf(response_mode);
+        if (responseMode == StandardResponseMode.form_post && StandardResponseType.isAuthorizationCodeFlow(responseType)) {
+            return wrapResponseFromPost(redirect_uri, state, redirectParams.getFirst("code"), redirectParams.getFirst("id_token"),
+                    redirectParams.getFirst("access_token"));
+        } else {
+            String paramUri = UriComponentsBuilder.newInstance().queryParams(redirectParams).build().toUriString().substring(1);
+            if (StandardResponseType.isImplicitFlow(responseType)) { // [#mark2]
+                // Implicit flow are not allowed to use query.
+                responseMode = (responseMode == StandardResponseMode.query) ? StandardResponseMode.fragment : responseMode;
+                // The default for implicit flow is fragment.
+                responseMode = isNull(responseMode) ? StandardResponseMode.fragment : responseMode;
+            }
+            if (responseMode == StandardResponseMode.fragment) {
+                // The protocol specifications stipulates that the response
+                // redirection parameters are spliced into the fragment
+                // parts, which can ensure maximum security, because the
+                // parameters of the fragment are not sent to the client
+                // application.
+                String location = redirect_uri.concat("#").concat(paramUri);
+                return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+            }
+            // others are according handled to query.
+            String location = redirect_uri.concat("?").concat(paramUri);
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", location).build();
+        }
     }
 
     private ResponseEntity<?> doTokenWithAuthorizationCode(
