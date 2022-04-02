@@ -30,6 +30,7 @@ spring:
                 timestamp-param: timestamp
                 sign-param: signature
                 sign-algorithm: S256
+                sign-hashing-mode: SimpleParamsBytesSorted
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
             #- StripPrefix=1
@@ -48,6 +49,16 @@ spring:
           predicates:
             - Path=/alimarket/v1/**
           filters:
+            - name: SignTokenAuthing
+              args:
+                app-id-param: appId
+                app-secret-param: key
+                timestamp-param: timestamp
+                sign-param: signature
+                sign-algorithm: S256
+                sign-hashing-mode: UriParamsKeySorted
+                sign-hashing-include-params: [appId, timestamp, nonce]
+                sign-hashing-exclude-params: []
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1

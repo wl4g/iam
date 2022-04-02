@@ -21,9 +21,11 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.getenv;
 import static java.security.MessageDigest.isEqual;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -185,7 +187,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
         // Make signature plain text.
-        byte[] signPlainBytes = config.getSignMode().getFunction().apply(
+        byte[] signPlainBytes = config.getSignHashingMode().getFunction().apply(
                 new Object[] { config, storedAppSecret, exchange.getRequest() });
 
         // Hashing signature.
@@ -236,9 +238,20 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         // Signature parameters.
         private String signParam = "sign";
         private SignAlgorithmType signAlgorithm = SignAlgorithmType.S256;
-        private SignModeType signMode = SignModeType.SIMPLE_PARAMS_BYTES_SORTED;
+        private SignHashingModeType signHashingMode = SignHashingModeType.SimpleParamsBytesSorted;
         private List<String> signHashingIncludeParams = new ArrayList<>(4);
         private List<String> signHashingExcludeParams = new ArrayList<>(4);
+        //
+        // Temporary fields.
+        //
+        private transient Boolean isIncludeAll;
+
+        public boolean isIncludeAll() {
+            if (nonNull(isIncludeAll)) {
+                return isIncludeAll;
+            }
+            return (isIncludeAll = safeList(getSignHashingIncludeParams()).stream().anyMatch(n -> eqIgnCase("*", n)));
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -270,10 +283,10 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     }
 
     @Getter
-    public static enum SignModeType {
+    public static enum SignHashingModeType {
 
         @Deprecated
-        SIMPLE_PARAMS_BYTES_SORTED(args -> {
+        SimpleParamsBytesSorted(args -> {
             Config config = (Config) args[0];
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
@@ -293,7 +306,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             return signPlainBytes;
         }),
 
-        URI_PARAMS_KEY_SORTED(args -> {
+        UriParamsKeySorted(args -> {
             Config config = (Config) args[0];
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
@@ -314,14 +327,14 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
         private final Function<Object[], byte[]> function;
 
-        private SignModeType(Function<Object[], byte[]> function) {
+        private SignHashingModeType(Function<Object[], byte[]> function) {
             this.function = function;
         }
 
         private static String[] getHashingParamNames(Config config, Map<String, String> queryParams) {
             String[] hashingParamNames = queryParams.keySet()
                     .stream()
-                    .filter(n -> safeList(config.getSignHashingIncludeParams()).contains(n))
+                    .filter(n -> config.isIncludeAll() || safeList(config.getSignHashingIncludeParams()).contains(n))
                     .filter(n -> !safeList(config.getSignHashingExcludeParams()).contains(n))
                     .collect(toList())
                     .toArray(new String[0]);
