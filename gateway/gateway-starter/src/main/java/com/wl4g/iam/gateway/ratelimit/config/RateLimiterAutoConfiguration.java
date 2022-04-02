@@ -15,9 +15,11 @@
  */
 package com.wl4g.iam.gateway.ratelimit.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
+import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.ratelimit.key.HostKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
 
@@ -29,6 +31,12 @@ import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
  * @since v1.0.0
  */
 public class RateLimiterAutoConfiguration {
+
+    @Bean
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMI)
+    public RateLimiterProperties rateLimiterProperties() {
+        return new RateLimiterProperties();
+    }
 
     @Primary
     @Bean("hostKeyResolver")

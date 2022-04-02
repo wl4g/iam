@@ -24,6 +24,8 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 
+import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 import com.wl4g.iam.gateway.route.StartedRoutesRefresher;
 import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory;
@@ -40,7 +42,7 @@ import com.wl4g.iam.gateway.route.repository.RedisRouteDefinitionRepository;
 public class RouteAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = "gateway")
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_ROUTE)
     public RouteProperties routeProperties() {
         return new RouteProperties();
     }

@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth;
+package com.wl4g.iam.gateway.auth.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.auth.SignTokenAuthingFilter;
 
 /**
  * {@link AuthingAutoConfiguration}
@@ -27,8 +32,16 @@ import org.springframework.context.annotation.Bean;
 public class AuthingAutoConfiguration {
 
     @Bean
-    public GenericTokenAuthingFilter genericTokenAuthingFilter() {
-        return new GenericTokenAuthingFilter();
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_AUTHING)
+    public AuthingProperties authingProperties() {
+        return new AuthingProperties();
+    }
+
+    @Bean
+    public SignTokenAuthingFilter signTokenAuthingFilter(
+            AuthingProperties authingConfig,
+            StringRedisTemplate stringTemplate) {
+        return new SignTokenAuthingFilter(authingConfig, stringTemplate);
     }
 
     // @Bean

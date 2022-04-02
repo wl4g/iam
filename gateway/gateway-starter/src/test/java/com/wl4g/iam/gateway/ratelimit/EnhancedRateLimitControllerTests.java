@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.client.gateway.ratelimit;
+package com.wl4g.iam.gateway.ratelimit;
 
 import static java.lang.String.format;
 
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 /**
- * {@link TestsEnhancedRateLimitController}
+ * {@link EnhancedRateLimitControllerTests}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-12 v1.0.0
@@ -33,7 +33,7 @@ import com.wl4g.infra.common.lang.FastTimeClock;
  */
 @RestController
 @RequestMapping("/test/ratelimit")
-public class TestsEnhancedRateLimitController {
+public class EnhancedRateLimitControllerTests {
 
     @GetMapping("/get")
     public String get(@RequestParam("name") String name) {

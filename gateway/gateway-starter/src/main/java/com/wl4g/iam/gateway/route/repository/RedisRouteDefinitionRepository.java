@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.route.repository;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_GATEWAY_ROUTES;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_ROUTES;
 
 import java.util.stream.Collectors;
 
@@ -46,7 +46,7 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
     @Override
     protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
         return Flux.fromIterable(stringTemplate.opsForHash()
-                .values(CACHE_GATEWAY_ROUTES)
+                .values(CACHE_PREFIX_IAM_GWTEWAY_ROUTES)
                 .stream()
                 .map(routeDefinition -> JacksonUtils.parseJSON(routeDefinition.toString(), RouteDefinition.class))
                 .collect(Collectors.toList()));
@@ -55,7 +55,7 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
     @Override
     public Mono<Void> save(Mono<RouteDefinition> route) {
         return route.flatMap(routeDefinition -> {
-            stringTemplate.opsForHash().put(CACHE_GATEWAY_ROUTES, routeDefinition.getId(),
+            stringTemplate.opsForHash().put(CACHE_PREFIX_IAM_GWTEWAY_ROUTES, routeDefinition.getId(),
                     JacksonUtils.toJSONString(routeDefinition));
             return Mono.empty();
         });
@@ -64,7 +64,7 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
     @Override
     public Mono<Void> delete(Mono<String> routeId) {
         return routeId.flatMap(id -> {
-            stringTemplate.opsForHash().delete(CACHE_GATEWAY_ROUTES, id);
+            stringTemplate.opsForHash().delete(CACHE_PREFIX_IAM_GWTEWAY_ROUTES, id);
             return Mono.empty();
         });
     }

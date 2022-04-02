@@ -23,9 +23,15 @@ spring:
             - Path=/v2/**
             #- Weight=v2-energy-openapi-service,5
           filters:
-            - name: GenericTokenAuthFilter
+            - name: SignTokenAuthing
               args:
-                secretLoadPrefix: IAM_AUTHC_SIGN_APPSECRET_
+                app-id-param: appId
+                app-secret-param: key
+                timestamp-param: timestamp
+                sign-param: signature
+                sign-algorithm: S256
+                sign-hashing-include-params: [appId, timestamp, nonce]
+                sign-hashing-exclude-params: []
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
@@ -55,7 +61,6 @@ spring:
         #    #- TokenRelay
         #    - TokenRelayRefresh
         #    - RemoveRequestHeader=Cookie, Set-Cookie
-
   security:
     oauth2:
       client:
@@ -66,6 +71,18 @@ spring:
           keycloak:
             client-id: portal
             client-secret: a12463984c2f46bdb83d9b1313f3378d
+  iam:
+    gateway:
+      authing:
+        generic-token-authing:
+          secret-load-from: redis
+          secret-load-prefix: IAM_AUTHC_SIGN_APPSECRET_
+          secret-local-cache-seconds: 6 # Default by 6 sec
+          sign-replay-verify-enabled: true # Default by true
+          sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
+      route: {}
+      ratelimit: {}
+      loadbalance: {}
 
 # Logging configuration.
 logging:

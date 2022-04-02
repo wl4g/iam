@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 //import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 //import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 
-import com.wl4g.iam.gateway.auth.AuthingAutoConfiguration;
+import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.LoadbalanceAutoConfiguration;

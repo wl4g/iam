@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.util;
+package com.wl4g.iam.gateway.auth;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * {@link SimpleSignUtil}
+ * {@link GenericSignTests}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-04
  * @since
  */
-public class SimpleSignUtil {
+public class GenericSignTests {
 
     /**
      * Generate IAM open API signature.
@@ -55,12 +55,12 @@ public class SimpleSignUtil {
         signtext.append(timestamp);
         signtext.append(nonce);
 
-        // Ascii sort
+        // ASCII sort
         byte[] signInput = signtext.toString().getBytes("UTF-8");
         Arrays.sort(signInput);
 
         // Signature.
-        return getSha256(new String(signInput, "UTF-8"));
+        return hashing(new String(signInput, "UTF-8"));
     }
 
     /**
@@ -69,7 +69,7 @@ public class SimpleSignUtil {
      * @param len
      * @return
      */
-    public static String genRandomString(int len) {
+    public static String generateNonce(int len) {
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
@@ -82,14 +82,14 @@ public class SimpleSignUtil {
     }
 
     /**
-     * Digesting string with sha256
+     * Digesting hashing with sha256
      * 
      * @param str
      * @return
      * @throws UnsupportedEncodingException
      * @throws NoSuchAlgorithmException
      */
-    public static String getSha256(String str) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public static String hashing(String str) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update(str.getBytes("UTF-8"));
         return byte2Hex(messageDigest.digest());
@@ -118,7 +118,7 @@ public class SimpleSignUtil {
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String appId = "oi554a94bc416e4edd9ff963ed0e9e25e6c10545";
         String appSecret = "5aUpyX5X7wzC8iLgFNJuxqj3xJdNQw8yS";
-        String nonce = genRandomString(16);
+        String nonce = generateNonce(16);
         long now = currentTimeMillis();
 
         String signature = generateSign(appId, appSecret, nonce, now);
