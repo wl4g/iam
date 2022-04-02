@@ -27,17 +27,17 @@ import org.springframework.context.annotation.Bean;
 public class AuthingAutoConfiguration {
 
     @Bean
-    public SimpleTokenAuthingFilter simpleTokenAuthingFilter() {
-        return new SimpleTokenAuthingFilter();
+    public GenericTokenAuthingFilter genericTokenAuthingFilter() {
+        return new GenericTokenAuthingFilter();
     }
 
     // @Bean
-    // public TokenRelayRefreshGatewayFilter
+    // public TokenRelayRefreshFilter
     // tokenRelayRefreshGatewayFilter(
     // ServerOAuth2AuthorizedClientRepository authorizedClientRepository,
     // ReactiveClientRegistrationRepository clientRegistrationRepository) {
     // return new
-    // TokenRelayRefreshGatewayFilterFactory(authorizedClientRepository,
+    // TokenRelayRefreshFilterFactory(authorizedClientRepository,
     // clientRegistrationRepository);
     // }
 

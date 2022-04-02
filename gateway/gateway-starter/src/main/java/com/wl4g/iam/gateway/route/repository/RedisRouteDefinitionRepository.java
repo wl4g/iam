@@ -38,8 +38,7 @@ import reactor.core.publisher.Mono;
  */
 public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
 
-    @Autowired
-    private StringRedisTemplate stringTemplate;
+    private @Autowired StringRedisTemplate stringTemplate;
 
     /**
      * Gets all routing information

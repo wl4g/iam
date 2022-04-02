@@ -12,6 +12,7 @@
 #
 spring:
   cloud:
+    # see:org.springframework.cloud.gateway.config.GatewayProperties
     gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
       routes:
         - id: v2-energy-openapi-service
@@ -22,7 +23,9 @@ spring:
             - Path=/v2/**
             #- Weight=v2-energy-openapi-service,5
           filters:
-            - SimpleTokenAuthFilter
+            - name: GenericTokenAuthFilter
+              args:
+                secretLoadPrefix: IAM_AUTHC_SIGN_APPSECRET_
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
