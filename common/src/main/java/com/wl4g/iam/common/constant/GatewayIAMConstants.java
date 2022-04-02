@@ -16,7 +16,7 @@
 package com.wl4g.iam.common.constant;
 
 /**
- * IAM client for gateway constants.
+ * IAM for gateway constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -26,10 +26,11 @@ package com.wl4g.iam.common.constant;
 public abstract class GatewayIAMConstants extends IAMConstants {
 
     public static final String CONF_PREFIX_IAM_GATEWAY = CONF_PREFIX_IAM + ".gateway";
-    public static final String CONF_PREFIX_IAM_GATEWAY_AUTHING = CONF_PREFIX_IAM_GATEWAY + ".authing";
-    public static final String CONF_PREFIX_IAM_GATEWAY_ROUTE = CONF_PREFIX_IAM_GATEWAY + ".route";
     public static final String CONF_PREFIX_IAM_GATEWAY_RATELIMI = CONF_PREFIX_IAM_GATEWAY + ".ratelimit";
+    public static final String CONF_PREFIX_IAM_GATEWAY_ROUTE = CONF_PREFIX_IAM_GATEWAY + ".route";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOADBANANER = CONF_PREFIX_IAM_GATEWAY + ".loadbalance";
+    public static final String CONF_PREFIX_IAM_GATEWAY_AUTHING = CONF_PREFIX_IAM_GATEWAY + ".authing";
+    public static final String CONF_PREFIX_IAM_GATEWAY_TRACE = CONF_PREFIX_IAM_GATEWAY + ".trace";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY = CACHE_PREFIX_IAM + "gw:";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_ROUTES = CACHE_PREFIX_IAM_GWTEWAY + "routes:";

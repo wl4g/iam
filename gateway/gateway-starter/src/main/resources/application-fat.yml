@@ -13,7 +13,7 @@
 spring:
   redis:
     cluster:
-      nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+      nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.fat:6379,redis.iam.wl4g.fat:6380,redis.iam.wl4g.fat:6381,redis.iam.wl4g.fat:7379,redis.iam.wl4g.fat:7380,redis.iam.wl4g.fat:7381}
     timeout: 10000ms
     password: ${REDIS_PASSWD:zzx!@#$%}
     lettuce:

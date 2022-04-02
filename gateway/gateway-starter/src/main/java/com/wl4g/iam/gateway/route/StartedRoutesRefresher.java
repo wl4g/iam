@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.route;
 
+import static java.lang.String.format;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.actuate.GatewayControllerEndpoint;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
@@ -37,16 +39,12 @@ import reactor.core.publisher.Mono;
 public class StartedRoutesRefresher implements ApplicationListener<RefreshRoutesEvent> {
 
     private final SmartLogger log = SmartLoggerFactory.getLogger(getClass());
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+    private @Autowired ApplicationEventPublisher applicationEventPublisher;
+    private @Autowired ApplicationContext applicationContext;
 
     public Mono<Void> refresh(NotifyType notifyType) {
         if (notifyType != null) {
-            this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(notifyType));
+            applicationEventPublisher.publishEvent(new RefreshRoutesEvent(notifyType));
         }
         return Mono.empty();
     }
@@ -54,8 +52,7 @@ public class StartedRoutesRefresher implements ApplicationListener<RefreshRoutes
     @Override
     public void onApplicationEvent(RefreshRoutesEvent refreshRoutesEvent) {
         try {
-            log.debug(
-                    String.format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
+            log.debug(format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
             if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint
                     || NotifyType.PERMANENT.equals(refreshRoutesEvent.getSource())) {
                 applicationContext.getBean(IRouteCacheRefresh.class).refreshRoutesPermanentToMemery();

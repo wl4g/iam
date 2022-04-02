@@ -1,0 +1,74 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# #### IAM gateway route configuration. ####
+#
+spring:
+  cloud:
+    # see:org.springframework.cloud.gateway.config.GatewayProperties
+    gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+      routes:
+        - id: v2-energy-openapi-service
+          #uri: http://openapi.wl4gsafecloudcs.com
+          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
+          predicates:
+            - Path=/openapi/v2/**
+            - Path=/v2/**
+            #- Weight=v2-energy-openapi-service,5
+          filters:
+            - name: SignTokenAuthing
+              args:
+                app-id-param: appId
+                app-secret-param: key
+                timestamp-param: timestamp
+                sign-param: signature
+                sign-algorithm: S256
+                sign-hashing-mode: SimpleParamsBytesSorted
+                sign-hashing-include-params: [appId, timestamp, nonce]
+                sign-hashing-exclude-params: []
+            #- StripPrefix=1
+            # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
+            # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
+            - name: RequestRateLimiter
+              args:
+                # 令牌桶每秒填充平均速率, 即等价于允许用户每秒处理多少个请求平均数
+                redis-rate-limiter.replenishRate: 1
+                # 令牌桶的容量, 允许在一秒钟内完成的最大请求数
+                redis-rate-limiter.burstCapacity: 1
+                # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
+                key-resolver: '#{@hostKeyResolver}'
+        - id: v1-alimarketing-openapi-service
+          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
+          predicates:
+            - Path=/alimarket/v1/**
+          filters:
+            - name: SignTokenAuthing
+              args:
+                app-id-param: appId
+                app-secret-param: key
+                timestamp-param: timestamp
+                sign-param: signature
+                sign-algorithm: S256
+                sign-hashing-mode: UriParamsKeySorted
+                sign-hashing-include-params: [appId, timestamp, nonce]
+                sign-hashing-exclude-params: []
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+                key-resolver: '#{@hostKeyResolver}'
+        #- id: portal
+        #  uri: https://www.baidu.com
+        #  predicates:
+        #    - Path=/**
+        #  filters:
+        #    #- TokenRelay
+        #    - TokenRelayRefresh
+        #    - RemoveRequestHeader=Cookie, Set-Cookie

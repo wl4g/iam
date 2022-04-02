@@ -15,6 +15,15 @@
  */
 package com.wl4g.iam.gateway.loadbalance.config;
 
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.gateway.config.LoadBalancerProperties;
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
+import org.springframework.context.annotation.Bean;
+
+import com.wl4g.iam.gateway.loadbalance.GrayLoadBalancerClientFilter;
+import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancer;
+import com.wl4g.iam.gateway.loadbalance.rule.VersionGrayLoadBalancer;
+
 /**
  * {@link LoadbalanceAutoConfiguration}
  * 
@@ -23,5 +32,18 @@ package com.wl4g.iam.gateway.loadbalance.config;
  * @since v1.0.0
  */
 public class LoadbalanceAutoConfiguration {
+
+    @Bean
+    public GrayLoadBalancer versionGrayLoadBalancer(DiscoveryClient discoveryClient) {
+        return new VersionGrayLoadBalancer(discoveryClient);
+    }
+
+    @Bean
+    public GrayLoadBalancerClientFilter grayLoadBalancerClientFilter(
+            LoadBalancerClientFactory clientFactory,
+            LoadBalancerProperties properties,
+            GrayLoadBalancer grayLoadBalancer) {
+        return new GrayLoadBalancerClientFilter(clientFactory, properties, grayLoadBalancer);
+    }
 
 }

@@ -28,7 +28,6 @@ import org.springframework.boot.ApplicationRunner;
 
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.core.task.ApplicationTaskRunner;
-import com.wl4g.iam.gateway.exception.CurrentlyInRefreshingException;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 
 /**
@@ -72,7 +71,6 @@ public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerPropertie
     public void restartRefresher() {
         isTrue(future.cancel(false), CurrentlyInRefreshingException.class,
                 "Updating refreshDelayMs failed, because refreshing is currently in progressing");
-
         refreshRouters();
     }
 
@@ -92,7 +90,7 @@ public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerPropertie
 
         this.future = getWorker().scheduleWithFixedDelay(() -> {
             try {
-                log.info("Refreshing routes ... - refreshDelayMs: {}", config.getRefreshDelayMs());
+                log.debug("Refreshing routes ...");
                 refresher.refreshRoutesPermanentToMemery();
             } catch (Exception e) {
                 log.error("Failed to refreshing routes.", e);

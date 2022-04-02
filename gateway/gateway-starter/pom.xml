@@ -15,6 +15,7 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<final.name>iam-web</final.name>
 		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
+		<opentelemetry.version>1.1.0</opentelemetry.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -25,6 +26,45 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- Tracing -->
+			<dependency>
+				<groupId>io.opentelemetry</groupId>
+				<artifactId>opentelemetry-bom</artifactId>
+				<version>${opentelemetry.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- Trying upgrade spring-cloud-gateway-3.1.1 -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework.cloud</groupId> -->
+			<!-- <artifactId>spring-cloud-starter-gateway</artifactId> -->
+			<!-- <version>${spring-cloud-gateway.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework.cloud</groupId> -->
+			<!-- <artifactId>spring-cloud-gateway-server</artifactId> -->
+			<!-- <version>${spring-cloud-gateway.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework.boot</groupId> -->
+			<!-- <artifactId>spring-boot-starter-webflux</artifactId> -->
+			<!-- <version>2.6.3</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework.boot</groupId> -->
+			<!-- <artifactId>spring-boot-starter-reactor-netty</artifactId> -->
+			<!-- <version>2.6.3</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>io.projectreactor.addons</groupId> -->
+			<!-- <artifactId>reactor-extra</artifactId> -->
+			<!-- <version>3.4.6</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>io.projectreactor</groupId> -->
+			<!-- <artifactId>reactor-core</artifactId> -->
+			<!-- <version>3.4.13</version> -->
+			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -96,11 +136,46 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- Webflux bridging servlet filter is requires -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-loadbalancer</artifactId>
+		</dependency>
+		<!-- Webflux bridge for servlet filter -->
 		<!-- <dependency> -->
 		<!-- <groupId>javax.servlet</groupId> -->
 		<!-- <artifactId>javax.servlet-api</artifactId> -->
 		<!-- </dependency> -->
+		<!-- Tracing -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-api</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-sdk</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-exporter-otlp</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-exporter-zipkin</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-semconv</artifactId> -->
+		<!-- <version>1.1.0-alpha</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.grpc</groupId> -->
+		<!-- <artifactId>grpc-protobuf</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.grpc</groupId> -->
+		<!-- <artifactId>grpc-netty-shaded</artifactId> -->
+		<!-- </dependency> -->
+		<!-- Others -->
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>

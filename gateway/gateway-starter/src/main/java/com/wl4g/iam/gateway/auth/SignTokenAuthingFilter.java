@@ -342,8 +342,8 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         }
     }
 
-    // private static final String REQUEST_TIME_BEGIN = "requestTimeBegin";
     public static final String SIGN_TOKEN_AUTH_FILTER = "SignTokenAuthing";
     public static final String SIGN_TOKEN_AUTH_CLIENT = "X-Sign-Token-AppId";
+    // private static final String REQUEST_TIME_BEGIN = "requestTimeBegin";
 
 }

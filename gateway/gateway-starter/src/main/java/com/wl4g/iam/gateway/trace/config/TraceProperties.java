@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.web;
-
-import org.springframework.stereotype.Controller;
+package com.wl4g.iam.gateway.trace.config;
 
 /**
- * {@link ExampleController}
+ * {@link TraceProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2020-09-12
- * @sine v1.0.0
- * @see
+ * @version 2022-04-02 v3.0.0
+ * @since v3.0.0
  */
-@Controller
-public class ExampleController {
+public class TraceProperties {
 
 }

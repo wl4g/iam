@@ -8,80 +8,9 @@
 # limitations under the License.
 #
 
-# #### Gateway server base configuration. ####
+# #### IAM Gateway configuration. ####
 #
 spring:
-  cloud:
-    # see:org.springframework.cloud.gateway.config.GatewayProperties
-    gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
-      routes:
-        - id: v2-energy-openapi-service
-          #uri: http://openapi.wl4gsafecloudcs.com
-          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
-          predicates:
-            - Path=/openapi/v2/**
-            - Path=/v2/**
-            #- Weight=v2-energy-openapi-service,5
-          filters:
-            - name: SignTokenAuthing
-              args:
-                app-id-param: appId
-                app-secret-param: key
-                timestamp-param: timestamp
-                sign-param: signature
-                sign-algorithm: S256
-                sign-hashing-mode: SimpleParamsBytesSorted
-                sign-hashing-include-params: [appId, timestamp, nonce]
-                sign-hashing-exclude-params: []
-            #- StripPrefix=1
-            # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
-            - name: RequestRateLimiter
-              args:
-                # 令牌桶每秒填充平均速率, 即等价于允许用户每秒处理多少个请求平均数
-                redis-rate-limiter.replenishRate: 1
-                # 令牌桶的容量, 允许在一秒钟内完成的最大请求数
-                redis-rate-limiter.burstCapacity: 1
-                # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
-                key-resolver: '#{@hostKeyResolver}'
-        - id: v1-alimarketing-openapi-service
-          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
-          predicates:
-            - Path=/alimarket/v1/**
-          filters:
-            - name: SignTokenAuthing
-              args:
-                app-id-param: appId
-                app-secret-param: key
-                timestamp-param: timestamp
-                sign-param: signature
-                sign-algorithm: S256
-                sign-hashing-mode: UriParamsKeySorted
-                sign-hashing-include-params: [appId, timestamp, nonce]
-                sign-hashing-exclude-params: []
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
-                key-resolver: '#{@hostKeyResolver}'
-        #- id: portal
-        #  uri: https://www.baidu.com
-        #  predicates:
-        #    - Path=/**
-        #  filters:
-        #    #- TokenRelay
-        #    - TokenRelayRefresh
-        #    - RemoveRequestHeader=Cookie, Set-Cookie
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: https://iam.wl4g.com/realms/master
-        registration:
-          keycloak:
-            client-id: portal
-            client-secret: a12463984c2f46bdb83d9b1313f3378d
   iam:
     gateway:
       authing:
@@ -94,48 +23,52 @@ spring:
       route: {}
       ratelimit: {}
       loadbalance: {}
+  # Security configuration.
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: https://iam.wl4g.com/realms/master
+        registration:
+          keycloak:
+            client-id: portal
+            client-secret: a12463984c2f46bdb83d9b1313f3378d
 
 # Logging configuration.
 logging:
   file:
     # see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
     # see:org.springframework.boot.logging.LogFile#toString
-    name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
-    clean-history-on-start: false
-    total-size-cap: 200GB # default to 200GB
-    max-size: 1GB # default to 10MB
-    max-history: 30 # default to 7
+    name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
+    clean-history-on-start: false # By default: false
+    total-size-cap: 200GB # By default: 200GB
+    max-size: 1GB # By default: 500MB
+    max-history: 30 # By default: 7
   pattern:
-    #console: ${logging.pattern.file}
+    #console: ${logging.pattern.file.name}
     #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #dateformat: yyyy-MM-dd HH:mm:ss.SSS
+    #level: '%5p'
+    #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
   root: INFO
   level:
     de.codecentric.boot.admin: INFO
     org:
-      apache: INFO
-      #springframework: INFO
+      springframework: INFO
         #boot.context.config: DEBUG # Print load config
-      springframework:
-        cloud:
-          gateway: TRACE
+      apache: INFO
     feign: DEBUG
     com:
-      wl4g: TRACE
+      wl4g.iam.gateway: INFO
 
-# ### Server configuration. ###
+# ### Server configuration.
 server:
-  servlet:
-    contextPath: /
+  port: 18085
   #address: 0.0.0.0
-  port: 28085
   sessionTimeout: 30
-  tomcat:
-    uri-encoding: UTF-8
-    protocolHeader: x-forwarded-proto
-    remoteIpHeader: x-forwarded-for
-    basedir: /tmp/${spring.application.name}
-    access-log-enabled: false
-    accesslog.directory: logs/
-    backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).
+  servlet:
+    #contextPath: /${spring.application.name}
+    # because spring-cloud-loadbalancer-2.2.6 not support metadata.contextPath
+    contextPath: /
       

@@ -13,7 +13,7 @@
 spring:
   redis:
     cluster:
-      nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+      nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.com:6379,redis.iam.wl4g.com:6380,redis.iam.wl4g.com:6381,redis.iam.wl4g.com:7379,redis.iam.wl4g.com:7380,redis.iam.wl4g.com:7381}
     timeout: 10000ms
     password: ${REDIS_PASSWD:zzx!@#$%}
     lettuce:
