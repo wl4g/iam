@@ -1,3 +1,4 @@
+package com.wl4g.iam.gateway.loadbalance.rule;
 //package com.wl4g.iam.gateway.loadbalance;
 //
 //import com.fasterxml.jackson.core.type.TypeReference;

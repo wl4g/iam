@@ -4,13 +4,13 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 /**
- * {@link GrayLoadBalancer}
+ * {@link GrayLoadBalancerRule}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-03 v3.0.0
  * @since v3.0.0
  */
-public interface GrayLoadBalancer {
+public interface GrayLoadBalancerRule {
 
     ServiceInstance choose(String serviceId, ServerHttpRequest request);
 }

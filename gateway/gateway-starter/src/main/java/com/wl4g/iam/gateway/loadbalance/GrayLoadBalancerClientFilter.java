@@ -35,7 +35,7 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancer;
+import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancerRule;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -52,13 +52,13 @@ public class GrayLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilt
 
     private static final int LOAD_BALANCER_CLIENT_FILTER_ORDER = 10150;
     private final LoadBalancerProperties properties;
-    private final GrayLoadBalancer grayLoadBalancer;
+    private final GrayLoadBalancerRule grayLoadBalancerRule;
 
     public GrayLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties properties,
-            GrayLoadBalancer grayLoadBalancer) {
+            GrayLoadBalancerRule grayLoadBalancerRule) {
         super(clientFactory, properties);
         this.properties = notNullOf(properties, "properties");
-        this.grayLoadBalancer = notNullOf(grayLoadBalancer, "grayLoadBalancer");
+        this.grayLoadBalancerRule = notNullOf(grayLoadBalancerRule, "grayLoadBalancerRule");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class GrayLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilt
 
     private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange) {
         URI uri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
-        ServiceInstance serviceInstance = grayLoadBalancer.choose(uri.getHost(), exchange.getRequest());
+        ServiceInstance serviceInstance = grayLoadBalancerRule.choose(uri.getHost(), exchange.getRequest());
         return Mono.just(new DefaultResponse(serviceInstance));
     }
 

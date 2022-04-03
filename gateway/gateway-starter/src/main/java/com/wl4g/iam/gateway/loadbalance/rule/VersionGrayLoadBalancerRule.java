@@ -12,6 +12,8 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
+import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,9 +26,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor
-public class VersionGrayLoadBalancer implements GrayLoadBalancer {
+public class VersionGrayLoadBalancerRule implements GrayLoadBalancerRule {
 
-    private DiscoveryClient discoveryClient;
+    private final LoadBalancerProperties loadBalancerConfig;
+    private final DiscoveryClient discoveryClient;
 
     @Override
     public ServiceInstance choose(String serviceId, ServerHttpRequest request) {
@@ -38,18 +41,18 @@ public class VersionGrayLoadBalancer implements GrayLoadBalancer {
             throw new NotFoundException("No found instance available for " + serviceId);
         }
 
-        // Get the request version, if not, return an available instance
+        // Gets the request version, if not, return an available instance
         // randomly.
-        String reqVersion = request.getHeaders().getFirst("MY_VERSION"); // TODO
+        String reqVersion = request.getHeaders().getFirst(loadBalancerConfig.getVersionGrayLoadBalanceRequestHeader());
         if (isBlank(reqVersion)) {
             return instances.get(RandomUtils.nextInt(0, instances.size()));
         }
 
-        // Traverse the metadata of the instance, and return this instance if
+        // Traverse the meta-data of the instance, and return this instance if
         // there is a match.
         for (ServiceInstance instance : instances) {
             Map<String, String> metadata = instance.getMetadata();
-            String targetVersion = metadata.get("MY_VERSION"); // TODO
+            String targetVersion = metadata.get(loadBalancerConfig.getVersionGrayLoadBalanceMetadataKey());
             if (reqVersion.equalsIgnoreCase(targetVersion)) {
                 log.debug("gray requst match success :{} {}", reqVersion, instance);
                 return instance;

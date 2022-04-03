@@ -15,14 +15,16 @@
  */
 package com.wl4g.iam.gateway.loadbalance.config;
 
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOADBANANER;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.gateway.config.LoadBalancerProperties;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.loadbalance.GrayLoadBalancerClientFilter;
-import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancer;
-import com.wl4g.iam.gateway.loadbalance.rule.VersionGrayLoadBalancer;
+import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.VersionGrayLoadBalancerRule;
 
 /**
  * {@link LoadbalanceAutoConfiguration}
@@ -34,16 +36,24 @@ import com.wl4g.iam.gateway.loadbalance.rule.VersionGrayLoadBalancer;
 public class LoadbalanceAutoConfiguration {
 
     @Bean
-    public GrayLoadBalancer versionGrayLoadBalancer(DiscoveryClient discoveryClient) {
-        return new VersionGrayLoadBalancer(discoveryClient);
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_LOADBANANER)
+    public com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadBalancerProperties() {
+        return new com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties();
+    }
+
+    @Bean
+    public GrayLoadBalancerRule versionGrayLoadBalancer(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new VersionGrayLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public GrayLoadBalancerClientFilter grayLoadBalancerClientFilter(
             LoadBalancerClientFactory clientFactory,
-            LoadBalancerProperties properties,
-            GrayLoadBalancer grayLoadBalancer) {
-        return new GrayLoadBalancerClientFilter(clientFactory, properties, grayLoadBalancer);
+            org.springframework.cloud.gateway.config.LoadBalancerProperties properties,
+            GrayLoadBalancerRule grayLoadBalancerRule) {
+        return new GrayLoadBalancerClientFilter(clientFactory, properties, grayLoadBalancerRule);
     }
 
 }

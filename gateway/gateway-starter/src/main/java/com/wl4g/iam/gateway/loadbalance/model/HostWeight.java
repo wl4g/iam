@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link HostWeight}
@@ -15,10 +16,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class HostWeight implements Serializable {
-	private static final long serialVersionUID = 8940373806493080114L;
-
-	private String uri;
-	private int weight = 0;
-
+    private static final long serialVersionUID = 8940373806493080114L;
+    private String uri;
+    private int weight = 0;
 }
