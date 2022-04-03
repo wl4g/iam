@@ -20,6 +20,7 @@ spring:
           secret-local-cache-seconds: 6 # Default by 6 sec
           sign-replay-verify-enabled: true # Default by true
           sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
+          add-sign-auth-client-id-header: X-Sign-Auth-AppId
       ratelimit: {}
       route:
         refresh-time-ms: 30000

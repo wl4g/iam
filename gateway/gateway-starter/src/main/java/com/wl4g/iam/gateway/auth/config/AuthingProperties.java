@@ -24,17 +24,25 @@ public class AuthingProperties {
     @Setter
     @ToString
     public static class GenericTokenAuthingProperties {
+
         private SecretLoadFromType secretLoadFrom = SecretLoadFromType.ENV;
         private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTHING_SIGN_TOKEN;
         private long secretLocalCacheSeconds = 6L;
+
         private boolean signReplayVerifyEnabled = true;
         private Long signReplayVerifyLocalCacheSeconds = 15 * 60L;
-        // Skip or ignore authentication in jvm debug mode, often used for rapid
-        // development and testing environments.
+
+        /**
+         * Skip or ignore authentication in JVM debug mode, often used for rapid
+         * development and testing environments.
+         */
         private boolean ignoredAuthingInJvmDebug = false;
-        // Add the current authenticated client ID to the request header,
-        // this will allow the back-end resource services to recognize the
-        // current client ID.
+
+        /**
+         * Add the current authenticated client ID to the request header, this
+         * will allow the back-end resource services to recognize the current
+         * client ID.
+         */
         private String addSignAuthClientIdHeader = DEFAULT_SIGN_AUTH_CLIENT_HEADER;
 
         // Default configuration options.

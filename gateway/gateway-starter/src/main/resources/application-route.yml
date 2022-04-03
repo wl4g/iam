@@ -24,15 +24,19 @@ spring:
           filters:
             - name: SignTokenAuthing
               args:
+                # Note: In some special business platform scenarios, the signature authentication protocol may not define
+                # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
+                # application can only be determined according to the request route ID.
+                app-id-extract-mode: Parameter
+                # Only valid when appId extract mode is parameter.
                 app-id-param: appId
-                app-secret-param: key
-                timestamp-param: timestamp
+                secret-param: key
                 sign-param: signature
                 sign-algorithm: S256
                 sign-hashing-mode: SimpleParamsBytesSortedHashing
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
-                add-sign-auth-client-id-header: X-Sign-Auth-AppId
+                sign-hashing-required-include-params: [appId, timestamp, nonce]
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
@@ -53,15 +57,18 @@ spring:
           filters:
             - name: SignTokenAuthing
               args:
+                # Note: In some special business platform scenarios, the signature authentication protocol may not define
+                # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
+                # application can only be determined according to the request route ID.
+                app-id-extract-mode: RouteId
+                # Only valid when appId extract mode is parameter.
                 app-id-param: appId
-                app-secret-param: key
-                timestamp-param: timestamp
+                secret-param: key
                 sign-param: token
                 sign-algorithm: S256
                 sign-hashing-mode: UriParamsKeySortedHashing
                 sign-hashing-include-params: ['*']
                 sign-hashing-exclude-params: []
-                add-sign-auth-client-id-header: X-Sign-Auth-AppId
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1

@@ -19,17 +19,16 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.cache.CacheBuilder.newBuilder;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
-import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.lang.System.getenv;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.http.HttpStatus.OK;
 import static reactor.core.publisher.Flux.just;
 
 import java.util.ArrayList;
@@ -44,8 +43,11 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
@@ -121,28 +123,35 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 return chain.filter(exchange);
             }
 
-            // Extract required parameters.
-            Map<String, String> queryParams = exchange.getRequest().getQueryParams().toSingleValueMap();
-            String appId = hasText(queryParams.get(config.getAppIdParam()), "%s missing", config.getAppIdParam());
-            String timestamp = hasText(queryParams.get(config.getTimestampParam()), "%s missing", config.getTimestampParam());
-            String sign = hasText(queryParams.get(config.getSignParam()), "%s missing", config.getSignParam());
+            // Gets parameter signature. (required)
+            String sign = null;
+            try {
+                sign = hasText(exchange.getRequest().getQueryParams().getFirst(config.getSignParam()), "%s missing",
+                        config.getSignParam());
+            } catch (IllegalArgumentException e) {
+                log.warn("Bad request missing signature. - {}", exchange.getRequest().getURI());
+                return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
+            }
+            String appId = getRequestAppId(config, exchange);
 
             // Check replay.
             if (signReplayValidityStore.asMap().containsKey(sign)) {
-                log.warn("Illegal signature locked. - sign={}, appId={}, timestamp={}", sign, appId, timestamp);
-                return writeResponse(4023, "illegal_signature", exchange);
+                log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
+                return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
             }
 
             // Verify signature
-            byte[] signBytes = doSignature(config, exchange, appId, timestamp, sign);
             try {
+                byte[] signBytes = doSignature(config, exchange, appId, sign);
                 if (!isEqual(signBytes, Hex.decodeHex(sign.toCharArray()))) {
                     log.warn("Invalid request sign='{}', sign='{}'", new String(sign), signBytes);
-                    return writeResponse(4003, "invalid_signature", exchange);
+                    return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
                 signReplayValidityStore.put(sign, appId);
             } catch (DecoderException e) {
-                return writeResponse(4003, "invalid_signature", exchange);
+                return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
+            } catch (IllegalArgumentException e) {
+                return writeResponse(HttpStatus.BAD_REQUEST, exchange, "invalid_signature - hint '%s'", e.getMessage());
             }
 
             // Add the current authenticated client ID to the request header,
@@ -156,12 +165,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         };
     }
 
-    private byte[] doSignature(
-            SignTokenAuthingFilter.Config config,
-            ServerWebExchange exchange,
-            String appId,
-            String timestamp,
-            String sign) {
+    private byte[] doSignature(SignTokenAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
         // Load stored secret.
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
@@ -177,30 +181,47 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         String loadKey = authingConfig.getSignToken().getSecretLoadPrefix().concat(appId);
         switch (authingConfig.getSignToken().getSecretLoadFrom()) {
         case ENV:
-            return hasTextOf(getenv(loadKey), "storedSecret");
+            String storedSecret = getenv(loadKey);
+            if (isBlank(storedSecret)) {
+                log.warn("No found storedSecret from environment via '{}'", loadKey);
+            }
+            return hasText(storedSecret, "No enables application secret ?");
         case REDIS:
-            String secret = secretCacheStore.asMap().get(loadKey);
-            if (isBlank(secret)) {
+            storedSecret = secretCacheStore.asMap().get(loadKey);
+            if (isBlank(storedSecret)) {
                 synchronized (loadKey) {
-                    secret = secretCacheStore.asMap().get(loadKey);
-                    if (isBlank(secret)) {
-                        secret = stringTemplate.opsForValue().get(loadKey);
-                        secretCacheStore.asMap().put(loadKey, secret);
-                        return secret.getBytes(UTF_8);
+                    storedSecret = secretCacheStore.asMap().get(loadKey);
+                    if (isBlank(storedSecret)) {
+                        storedSecret = stringTemplate.opsForValue().get(loadKey);
+                        if (isBlank(storedSecret)) {
+                            log.warn("No found storedSecret from environment via '{}'", loadKey);
+                            throw new IllegalArgumentException(format("No enables application secret ?"));
+                        }
+                        secretCacheStore.asMap().put(loadKey, storedSecret);
+                        return storedSecret.getBytes(UTF_8);
                     }
                 }
             }
-            return secret.getBytes(UTF_8);
+            return storedSecret.getBytes(UTF_8);
         default:
             throw new Error("Shouldn't be here");
         }
     }
 
-    private Mono<Void> writeResponse(int errcode, String errmsg, ServerWebExchange exchange) {
-        RespBase<?> resp = RespBase.create().withCode(errcode).withMessage(errmsg);
+    private String getRequestAppId(SignTokenAuthingFilter.Config config, ServerWebExchange exchange) {
+        // Note: In some special business platform
+        // scenarios, the signature authentication protocol may not define
+        // appId (such as Alibaba Cloud Market SaaS product authentication
+        // API), then the uniqueness of the client application can only be
+        // determined according to the request route ID.
+        return config.getAppIdExtractMode().getFunction().apply(new Object[] { config, exchange });
+    }
+
+    private Mono<Void> writeResponse(HttpStatus status, ServerWebExchange exchange, String fmtMessage, Object... args) {
+        RespBase<?> resp = RespBase.create().withCode(status.value()).withMessage(format(fmtMessage, args));
         ServerHttpResponse response = exchange.getResponse();
         DataBuffer buffer = response.bufferFactory().wrap(resp.asJson().getBytes(UTF_8));
-        response.setStatusCode(OK);
+        response.setStatusCode(status);
         return response.writeWith(just(buffer));
     }
 
@@ -208,18 +229,20 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     @Setter
     @ToString
     public static class Config {
-        // Required parameters.
+        // AppId parameter extract configuration.
+        private AppIdExtractMode appIdExtractMode = AppIdExtractMode.Parameter;
+        // Only valid when appId extract mode is parameter.
         private String appIdParam = "appId";
         // Note: It is only used to concatenate plain-text string salts when
         // hashing signatures. (not required as a request parameter)
-        private String appSecretParam = "appSecret";
-        private String timestampParam = "timestamp";
+        private String secretParam = "appSecret";
         // Signature parameters.
         private String signParam = "sign";
         private SignAlgorithm signAlgorithm = SignAlgorithm.S256;
         private SignHashingMode signHashingMode = SignHashingMode.SimpleParamsBytesSortedHashing;
         private List<String> signHashingIncludeParams = new ArrayList<>(4);
         private List<String> signHashingExcludeParams = new ArrayList<>(4);
+        private List<String> signHashingRequiredIncludeParams = new ArrayList<>(4);
         //
         // Temporary fields.
         //
@@ -230,6 +253,37 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 return isIncludeAll;
             }
             return (isIncludeAll = safeList(getSignHashingIncludeParams()).stream().anyMatch(n -> eqIgnCase("*", n)));
+        }
+    }
+
+    @Getter
+    public static enum AppIdExtractMode {
+
+        Parameter(args -> {
+            Config config = (Config) args[0];
+            ServerWebExchange exchange = (ServerWebExchange) args[1];
+            return hasText(exchange.getRequest().getQueryParams().getFirst(config.getAppIdParam()), "%s missing",
+                    config.getAppIdParam());
+        }),
+
+        /**
+         * In some special business platform scenarios, the signature
+         * authentication protocol may not define appId (such as Alibaba Cloud
+         * Market SaaS product authentication API), then the uniqueness of the
+         * client application can only be determined according to the request
+         * route ID.
+         */
+        @SuppressWarnings("unused")
+        RouteId(args -> {
+            Config config = (Config) args[0];
+            ServerWebExchange exchange = (ServerWebExchange) args[1];
+            return ((Route) exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR)).getId();
+        });
+
+        private final Function<Object[], String> function;
+
+        private AppIdExtractMode(Function<Object[], String> function) {
+            this.function = function;
         }
     }
 
@@ -270,9 +324,9 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
             Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
-            String[] hashingParams = getHashingParamNames(config, queryParams);
+            String[] params = getEffectiveHashingParamNames(config, queryParams);
             StringBuffer signPlaintext = new StringBuffer();
-            for (Object key : hashingParams) {
+            for (Object key : params) {
                 if (!config.getSignParam().equals(key)) {
                     signPlaintext.append(queryParams.get(key));
                 }
@@ -290,17 +344,17 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
             Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
-            String[] hashingParams = getHashingParamNames(config, queryParams);
+            String[] params = getEffectiveHashingParamNames(config, queryParams);
             // ASCII sort by parameters key.
-            Arrays.sort(hashingParams);
+            Arrays.sort(params);
             StringBuffer signPlaintext = new StringBuffer();
-            for (Object key : hashingParams) {
+            for (Object key : params) {
                 if (!config.getSignParam().equals(key)) {
                     signPlaintext.append(key).append("=").append(queryParams.get(key)).append("&");
                 }
             }
             // Add stored secret.
-            signPlaintext.append(config.getAppSecretParam()).append("=").append(storedAppSecret);
+            signPlaintext.append(config.getSecretParam()).append("=").append(storedAppSecret);
             return signPlaintext.toString().getBytes(UTF_8);
         });
 
@@ -310,14 +364,21 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             this.function = function;
         }
 
-        private static String[] getHashingParamNames(Config config, Map<String, String> queryParams) {
-            String[] hashingParamNames = queryParams.keySet()
+        private static String[] getEffectiveHashingParamNames(Config config, Map<String, String> queryParams) {
+            List<String> hashingParamNames = queryParams.keySet()
                     .stream()
                     .filter(n -> config.isIncludeAll() || safeList(config.getSignHashingIncludeParams()).contains(n))
                     .filter(n -> !safeList(config.getSignHashingExcludeParams()).contains(n))
-                    .collect(toList())
-                    .toArray(new String[0]);
-            return hashingParamNames;
+                    .collect(toList());
+
+            // Validation required parameters.
+            boolean allMatch = safeList(config.getSignHashingRequiredIncludeParams()).stream()
+                    .allMatch(p -> hashingParamNames.contains(p));
+            if (!allMatch) {
+                throw new IllegalArgumentException(format("Parameters missing, These parameters are required: %s",
+                        config.getSignHashingRequiredIncludeParams()));
+            }
+            return hashingParamNames.toArray(new String[0]);
         }
     }
 
