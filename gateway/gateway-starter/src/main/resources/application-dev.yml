@@ -20,8 +20,41 @@ spring:
       pool:
         max-active: 10
         max-wait: -1ms
+  cloud:
+    discovery:
+      client:
+        # see:org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient
+        simple: # for testing
+          instances:
+            v1-energy-openapi-service:
+            - instanceId: n2.v1-energy-openapi-service:28092
+              uri: http://127.0.0.1:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v1
+            - instanceId: n3.v1-energy-openapi-service:28092
+              uri: http://localhost:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v1
+            v2-energy-openapi-service:
+            - instanceId: n2.v1-energy-openapi-service:28092
+              uri: http://127.0.0.1:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v2
+            - instanceId: n3.v1-energy-openapi-service:28092
+              uri: http://localhost:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v2
+            v1-alimarket-openapi-service:
+            - instanceId: n2.v1-energy-openapi-service:28092
+              uri: http://127.0.0.1:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v1
+            - instanceId: n3.v1-energy-openapi-service:28092
+              uri: http://localhost:28092
+              metadata:
+                Iam-Gateway-Gray-Version: v1
 
-my-load-balanced-service:
-  ribbon:
-    # listOfServers: http://localhost:14086, http://127.0.0.1:14087
-    NFLoadBalancerRuleClassName: com.wl4g.gateway.server.loadbalance.CustomLoadBalancerRule
+#my-load-balanced-service:
+#  ribbon:
+#    # listOfServers: http://localhost:14086, http://127.0.0.1:14087
+#    NFLoadBalancerRuleClassName: com.wl4g.gateway.server.loadbalance.CustomLoadBalancerRule

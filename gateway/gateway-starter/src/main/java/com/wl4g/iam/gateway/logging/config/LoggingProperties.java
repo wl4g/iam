@@ -37,4 +37,7 @@ public class LoggingProperties {
     private Boolean requiredPrintFlightLogging = null; //
     private boolean preferredPrintFlightLogging = true;
     private String preferredPrintFlightHeaderName = "X-Iam-Gateway-Logging-Enabled";
+    // If the request header is empty, whether to down-grade and then get it
+    // from the request parameters.
+    private boolean fallbackToGetFromQueryParam = true;
 }

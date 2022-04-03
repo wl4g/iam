@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.logging;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.springframework.web.server.ServerWebExchange;
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
-import com.wl4g.infra.common.lang.StringUtils2;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -66,7 +66,12 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         // switch, the default mandatory switch is empty, the preference switch
         // is enabled.
         if (isNull(loggingConfig.getRequiredPrintFlightLogging())) {
-            if (!StringUtils2.isTrue(headers.getFirst(loggingConfig.getPreferredPrintFlightHeaderName()), true)) {
+            String value = headers.getFirst(loggingConfig.getPreferredPrintFlightHeaderName());
+            if (loggingConfig.isFallbackToGetFromQueryParam()) {
+                value = exchange.getRequest().getQueryParams().getFirst(loggingConfig.getPreferredPrintFlightHeaderName());
+            }
+            // As long as this header is present, is enabled.
+            if (isBlank(value)) {
                 return chain.filter(exchange);
             }
         } else if (!loggingConfig.getRequiredPrintFlightLogging()) {

@@ -17,7 +17,7 @@ spring:
       routes:
         - id: v2-energy-openapi-service
           #uri: http://openapi.wl4gsafecloudcs.com
-          uri: ${GATEWAY_OPENAPI_URI:https://www.qq.com}
+          uri: lb://v2-energy-openapi-service
           predicates:
             - Path=/v2/** # Only configured once???
             #- Weight=v2-energy-openapi-service,5
@@ -32,6 +32,7 @@ spring:
                 sign-hashing-mode: SimpleParamsBytesSortedHashing
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
@@ -43,10 +44,12 @@ spring:
                 redis-rate-limiter.burstCapacity: 1
                 # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
                 key-resolver: '#{@hostKeyResolver}'
-        - id: v1-alimarketing-openapi-service
-          uri: ${GATEWAY_OPENAPI_URI:https://www.qq.com}
+            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/v2/(?<segment>.*), /openapi/v2/$\{segment}
+        - id: v1-alimarket-openapi-service
+          uri: lb://v1-alimarket-openapi-service
           predicates:
-            - Path=/alimarketing/v1/**
+            - Path=/alimarket/v1/**
           filters:
             - name: SignTokenAuthing
               args:
@@ -58,11 +61,14 @@ spring:
                 sign-hashing-mode: UriParamsKeySortedHashing
                 sign-hashing-include-params: ['*']
                 sign-hashing-exclude-params: []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
                 key-resolver: '#{@hostKeyResolver}'
+            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
         #- id: portal
         #  uri: https://www.qq.com
         #  predicates:

@@ -48,6 +48,9 @@ public class VersionGrayLoadBalancerRule implements GrayLoadBalancerRule {
         // Gets the request version, if not, return an available instance
         // randomly.
         String reqVersion = request.getHeaders().getFirst(loadBalancerConfig.getVersionGrayLoadBalanceRequestHeader());
+        if (loadBalancerConfig.isFallbackToGetFromQueryParam()) {
+            reqVersion = request.getQueryParams().getFirst(loadBalancerConfig.getVersionGrayLoadBalanceRequestHeader());
+        }
         if (isBlank(reqVersion)) {
             return instances.get(RandomUtils.nextInt(0, instances.size()));
         }

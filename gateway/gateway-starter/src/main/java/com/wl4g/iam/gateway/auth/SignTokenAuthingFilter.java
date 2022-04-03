@@ -117,7 +117,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     @Override
     public GatewayFilter apply(SignTokenAuthingFilter.Config config) {
         return (exchange, chain) -> {
-            if (JvmRuntimeTool.isJvmInDebugging) {
+            if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSignToken().isIgnoredAuthingInJvmDebug()) {
                 return chain.filter(exchange);
             }
 
@@ -145,8 +145,13 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 return writeResponse(4003, "invalid_signature", exchange);
             }
 
-            // Add authenticated information.
-            ServerHttpRequest request = exchange.getRequest().mutate().header(SIGN_TOKEN_AUTH_CLIENT, appId).build();
+            // Add the current authenticated client ID to the request header,
+            // this will allow the back-end resource services to recognize the
+            // current client ID.
+            ServerHttpRequest request = exchange.getRequest()
+                    .mutate()
+                    .header(authingConfig.getSignToken().getAddSignAuthClientIdHeader(), appId)
+                    .build();
             return chain.filter(exchange.mutate().request(request).build());
         };
     }
@@ -317,7 +322,5 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     }
 
     public static final String SIGN_TOKEN_AUTH_FILTER = "SignTokenAuthing";
-    public static final String SIGN_TOKEN_AUTH_CLIENT = "X-Sign-Token-AppId";
-    // private static final String REQUEST_TIME_BEGIN = "requestTimeBegin";
 
 }

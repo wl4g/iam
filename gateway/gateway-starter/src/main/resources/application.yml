@@ -26,6 +26,7 @@ spring:
       loadbalancer:
         version-gray-load-balance-metadata-key: Iam-Gateway-Gray-Version
         version-gray-load-balance-request-header: X-Iam-Gateway-Gray-Version
+        fallback-to-get-from-query-param: true
       trace:
         trace-id-request-header: X-Simple-Trace-Id
       logging:
@@ -35,6 +36,7 @@ spring:
         #required-print-flight-logging: # Options:(null|true|false)
         preferred-print-flight-logging: true
         preferred-print-flight-header-name: 'X-Iam-Gateway-Logging-Enabled'
+        fallback-to-get-from-query-param: true
 
   # Security configuration.
   security:
