@@ -25,7 +25,7 @@ public class AuthingProperties {
     @ToString
     public static class GenericTokenAuthingProperties {
 
-        private SecretLoadFromType secretLoadFrom = SecretLoadFromType.ENV;
+        private SecretLoadStore secretLoadStore = SecretLoadStore.ENV;
         private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTHING_SIGN_TOKEN;
         private long secretLocalCacheSeconds = 6L;
 
@@ -49,7 +49,7 @@ public class AuthingProperties {
         public static final String DEFAULT_SIGN_AUTH_CLIENT_HEADER = "X-Sign-Auth-AppId";
     }
 
-    public static enum SecretLoadFromType {
+    public static enum SecretLoadStore {
         ENV, REDIS;
     }
 

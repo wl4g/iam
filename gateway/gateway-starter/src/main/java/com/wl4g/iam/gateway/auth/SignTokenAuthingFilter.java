@@ -179,13 +179,13 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
     private byte[] loadStoredSecret(SignTokenAuthingFilter.Config config, String appId) {
         String loadKey = authingConfig.getSignToken().getSecretLoadPrefix().concat(appId);
-        switch (authingConfig.getSignToken().getSecretLoadFrom()) {
+        switch (authingConfig.getSignToken().getSecretLoadStore()) {
         case ENV:
             String storedSecret = getenv(loadKey);
             if (isBlank(storedSecret)) {
                 log.warn("No found storedSecret from environment via '{}'", loadKey);
             }
-            return hasText(storedSecret, "No enables application secret ?");
+            return hasText(storedSecret, "No enables application secret?");
         case REDIS:
             storedSecret = secretCacheStore.asMap().get(loadKey);
             if (isBlank(storedSecret)) {
@@ -195,7 +195,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                         storedSecret = stringTemplate.opsForValue().get(loadKey);
                         if (isBlank(storedSecret)) {
                             log.warn("No found storedSecret from environment via '{}'", loadKey);
-                            throw new IllegalArgumentException(format("No enables application secret ?"));
+                            throw new IllegalArgumentException(format("No enables application secret?"));
                         }
                         secretCacheStore.asMap().put(loadKey, storedSecret);
                         return storedSecret.getBytes(UTF_8);
@@ -321,7 +321,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         @Deprecated
         SimpleParamsBytesSortedHashing(args -> {
             Config config = (Config) args[0];
-            String storedAppSecret = (String) args[1];
+            byte[] storedAppSecret = (byte[]) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
             Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
             String[] params = getEffectiveHashingParamNames(config, queryParams);
@@ -341,20 +341,20 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
         UriParamsKeySortedHashing(args -> {
             Config config = (Config) args[0];
-            String storedAppSecret = (String) args[1];
+            byte[] storedAppSecret = (byte[]) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
             Map<String, String> queryParams = request.getQueryParams().toSingleValueMap();
             String[] params = getEffectiveHashingParamNames(config, queryParams);
             // ASCII sort by parameters key.
             Arrays.sort(params);
             StringBuffer signPlaintext = new StringBuffer();
-            for (Object key : params) {
-                if (!config.getSignParam().equals(key)) {
-                    signPlaintext.append(key).append("=").append(queryParams.get(key)).append("&");
+            for (Object name : params) {
+                if (!config.getSignParam().equals(name)) {
+                    signPlaintext.append(name).append("=").append(queryParams.get(name)).append("&");
                 }
             }
             // Add stored secret.
-            signPlaintext.append(config.getSecretParam()).append("=").append(storedAppSecret);
+            signPlaintext.append(config.getSecretParam()).append("=").append(new String(storedAppSecret, UTF_8));
             return signPlaintext.toString().getBytes(UTF_8);
         });
 

@@ -32,7 +32,7 @@ spring:
                 app-id-param: appId
                 secret-param: key
                 sign-param: signature
-                sign-algorithm: S256
+                sign-algorithm: S256 # Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: SimpleParamsBytesSortedHashing
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
@@ -65,7 +65,7 @@ spring:
                 app-id-param: appId
                 secret-param: key
                 sign-param: token
-                sign-algorithm: S256
+                sign-algorithm: MD5 # Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: UriParamsKeySortedHashing
                 sign-hashing-include-params: ['*']
                 sign-hashing-exclude-params: []
