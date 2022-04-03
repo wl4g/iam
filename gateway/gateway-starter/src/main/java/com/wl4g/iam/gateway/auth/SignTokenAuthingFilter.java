@@ -132,7 +132,14 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 log.warn("Bad request missing signature. - {}", exchange.getRequest().getURI());
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
-            String appId = getRequestAppId(config, exchange);
+            // Gets determine parameter appId.
+            String appId = null;
+            try {
+                appId = getRequestAppId(config, exchange);
+            } catch (IllegalArgumentException e) {
+                log.warn("Failed to get appId. - {}", exchange.getRequest().getURI());
+                return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
+            }
 
             // Check replay.
             if (signReplayValidityStore.asMap().containsKey(sign)) {
