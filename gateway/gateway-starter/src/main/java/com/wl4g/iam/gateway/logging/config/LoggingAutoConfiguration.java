@@ -13,15 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace.config;
+package com.wl4g.iam.gateway.logging.config;
+
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOGGING;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+
+import com.wl4g.iam.gateway.logging.LoggingGlobalFilter;
 
 /**
- * {@link LoggingProperties}
+ * {@link LoggingAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-02 v3.0.0
+ * @version 2022-04-03 v3.0.0
  * @since v3.0.0
  */
-public class TraceProperties {
+public class LoggingAutoConfiguration {
+
+    @Bean
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_LOGGING)
+    public LoggingProperties loggingProperties() {
+        return new LoggingProperties();
+    }
+
+    @Bean
+    public LoggingGlobalFilter loggingGlobalFilter() {
+        return new LoggingGlobalFilter();
+    }
 
 }

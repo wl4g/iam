@@ -20,8 +20,9 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_G
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.gateway.trace.LoggingGlobalFilter;
 import com.wl4g.iam.gateway.trace.SimpleTraceGlobalFilter;
+
+;
 
 //import java.util.concurrent.TimeUnit;
 //import com.wl4g.iam.gateway.trace.OpentelemetryGlobalFilter;
@@ -47,11 +48,6 @@ public class TraceAutoConfiguration {
     @Bean
     public SimpleTraceGlobalFilter simpleTraceGlobalFilter() {
         return new SimpleTraceGlobalFilter();
-    }
-
-    @Bean
-    public LoggingGlobalFilter loggingGlobalFilter() {
-        return new LoggingGlobalFilter();
     }
 
     // @Bean

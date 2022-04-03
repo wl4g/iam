@@ -20,9 +20,17 @@ spring:
           secret-local-cache-seconds: 6 # Default by 6 sec
           sign-replay-verify-enabled: true # Default by true
           sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
-      route: {}
       ratelimit: {}
+      route: {}
       loadbalance: {}
+      trace: {}
+      logging:
+        # If the mandatory switch is not set, it is determined whether to enable logging according to
+        # the preference switch, otherwise it is determined whether to enable logging according to the
+        # mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
+        #required-print-flight-logging: # Options:(null|true|false)
+        preferred-print-flight-logging: true
+        preferred-print-flight-header-name: 'X-Iam-Gateway-Logging-Enabled'
   # Security configuration.
   security:
     oauth2:

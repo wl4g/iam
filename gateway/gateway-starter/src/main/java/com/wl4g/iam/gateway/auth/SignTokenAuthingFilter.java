@@ -148,32 +148,6 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             // Add authenticated information.
             ServerHttpRequest request = exchange.getRequest().mutate().header(SIGN_TOKEN_AUTH_CLIENT, appId).build();
             return chain.filter(exchange.mutate().request(request).build());
-
-            // exchange.getAttributes().put(REQUEST_TIME_BEGIN,
-            // System.currentTimeMillis());
-            // log.info("token is " +
-            // exchange.getRequest().getHeaders().get("token"));
-            //
-            // if (exchange.getRequest().getHeaders().containsKey("token")) {
-            // return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-            // Long startTime = exchange.getAttribute(REQUEST_TIME_BEGIN);
-            // if (startTime != null) {
-            // log.info(
-            // exchange.getRequest().getURI().getRawPath() + ": " +
-            // (System.currentTimeMillis() - startTime) + "ms");
-            // }
-            // }));
-            // } else {
-            // byte[] bytes = "{\"status\":429,\"msg\":\"Too Many
-            // Requests\",\"data\":{}}".getBytes(StandardCharsets.UTF_8);
-            // DataBuffer buffer =
-            // exchange.getResponse().bufferFactory().wrap(bytes);
-            // ServerHttpResponse serverHttpResponse = exchange.getResponse();
-            // serverHttpResponse.setStatusCode(HttpStatus.OK);
-            // return exchange.getResponse().writeWith(Flux.just(buffer));
-            // }
-            //
-            // return exchange.getResponse().setComplete();
         };
     }
 
@@ -237,8 +211,8 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         private String timestampParam = "timestamp";
         // Signature parameters.
         private String signParam = "sign";
-        private SignAlgorithmType signAlgorithm = SignAlgorithmType.S256;
-        private SignHashingModeType signHashingMode = SignHashingModeType.SimpleParamsBytesSorted;
+        private SignAlgorithm signAlgorithm = SignAlgorithm.S256;
+        private SignHashingMode signHashingMode = SignHashingMode.SimpleParamsBytesSortedHashing;
         private List<String> signHashingIncludeParams = new ArrayList<>(4);
         private List<String> signHashingExcludeParams = new ArrayList<>(4);
         //
@@ -256,7 +230,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
     @SuppressWarnings("deprecation")
     @Getter
-    public static enum SignAlgorithmType {
+    public static enum SignAlgorithm {
         MD5(input -> Hashing.md5().hashBytes(input[1]).asBytes()),
 
         S1(input -> Hashing.sha1().hashBytes(input[1]).asBytes()),
@@ -277,16 +251,16 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
         private final Function<byte[][], byte[]> function;
 
-        private SignAlgorithmType(Function<byte[][], byte[]> function) {
+        private SignAlgorithm(Function<byte[][], byte[]> function) {
             this.function = function;
         }
     }
 
     @Getter
-    public static enum SignHashingModeType {
+    public static enum SignHashingMode {
 
         @Deprecated
-        SimpleParamsBytesSorted(args -> {
+        SimpleParamsBytesSortedHashing(args -> {
             Config config = (Config) args[0];
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
@@ -306,7 +280,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             return signPlainBytes;
         }),
 
-        UriParamsKeySorted(args -> {
+        UriParamsKeySortedHashing(args -> {
             Config config = (Config) args[0];
             String storedAppSecret = (String) args[1];
             ServerHttpRequest request = (ServerHttpRequest) args[2];
@@ -327,7 +301,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
         private final Function<Object[], byte[]> function;
 
-        private SignHashingModeType(Function<Object[], byte[]> function) {
+        private SignHashingMode(Function<Object[], byte[]> function) {
             this.function = function;
         }
 

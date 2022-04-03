@@ -38,8 +38,10 @@ public class SimpleTraceGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getRequest().mutate().header("traceId", java.util.UUID.randomUUID().toString()).build();
+        exchange.getRequest().mutate().header(SIMPLE_TRACE_ID_HEADER, java.util.UUID.randomUUID().toString()).build();
         return chain.filter(exchange);
     }
+
+    public static final String SIMPLE_TRACE_ID_HEADER = "X-Simple-Trace-Id";
 
 }

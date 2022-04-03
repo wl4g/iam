@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace.config;
+package com.wl4g.iam.gateway.logging.config;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link LoggingProperties}
@@ -22,6 +26,15 @@ package com.wl4g.iam.gateway.trace.config;
  * @version 2022-04-02 v3.0.0
  * @since v3.0.0
  */
-public class TraceProperties {
-
+@Getter
+@Setter
+@ToString
+public class LoggingProperties {
+    // If the mandatory switch is not set, it is determined whether to enable
+    // logging according to the preference switch, otherwise it is determined
+    // whether to enable logging according to the mandatory switch, the default
+    // mandatory switch is empty, the preference switch is enabled.
+    private Boolean requiredPrintFlightLogging = null; //
+    private boolean preferredPrintFlightLogging = true;
+    private String preferredPrintFlightHeaderName = "X-Iam-Gateway-Logging-Enabled";
 }

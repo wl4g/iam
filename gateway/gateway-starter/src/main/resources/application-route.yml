@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### IAM gateway route configuration. ####
+# #### IAM gateway routes configuration. ####
 #
 spring:
   cloud:
@@ -17,10 +17,9 @@ spring:
       routes:
         - id: v2-energy-openapi-service
           #uri: http://openapi.wl4gsafecloudcs.com
-          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
+          uri: ${GATEWAY_OPENAPI_URI:https://www.qq.com}
           predicates:
-            - Path=/openapi/v2/**
-            - Path=/v2/**
+            - Path=/v2/** # Only configured once???
             #- Weight=v2-energy-openapi-service,5
           filters:
             - name: SignTokenAuthing
@@ -30,7 +29,7 @@ spring:
                 timestamp-param: timestamp
                 sign-param: signature
                 sign-algorithm: S256
-                sign-hashing-mode: SimpleParamsBytesSorted
+                sign-hashing-mode: SimpleParamsBytesSortedHashing
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
             #- StripPrefix=1
@@ -45,19 +44,19 @@ spring:
                 # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
                 key-resolver: '#{@hostKeyResolver}'
         - id: v1-alimarketing-openapi-service
-          uri: ${GATEWAY_OPENAPI_URI:https://www.baidu.com}
+          uri: ${GATEWAY_OPENAPI_URI:https://www.qq.com}
           predicates:
-            - Path=/alimarket/v1/**
+            - Path=/alimarketing/v1/**
           filters:
             - name: SignTokenAuthing
               args:
                 app-id-param: appId
                 app-secret-param: key
                 timestamp-param: timestamp
-                sign-param: signature
+                sign-param: token
                 sign-algorithm: S256
-                sign-hashing-mode: UriParamsKeySorted
-                sign-hashing-include-params: [appId, timestamp, nonce]
+                sign-hashing-mode: UriParamsKeySortedHashing
+                sign-hashing-include-params: ['*']
                 sign-hashing-exclude-params: []
             - name: RequestRateLimiter
               args:

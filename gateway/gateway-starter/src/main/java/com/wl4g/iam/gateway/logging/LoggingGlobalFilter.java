@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace;
+package com.wl4g.iam.gateway.logging;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -27,7 +29,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import com.wl4g.iam.gateway.trace.SimpleTraceGlobalFilter;
 import com.wl4g.infra.common.lang.FastTimeClock;
+import com.wl4g.infra.common.lang.StringUtils2;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -42,6 +47,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class LoggingGlobalFilter implements GlobalFilter, Ordered {
 
+    private @Autowired LoggingProperties loggingConfig;
+
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
@@ -49,9 +56,23 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String requestUri = exchange.getRequest().getURI().getRawPath();
-        String traceId = exchange.getRequest().getHeaders().getFirst("traceId");
+        HttpHeaders headers = exchange.getRequest().getHeaders();
 
+        // Check if printing flight logs is enabled.
+        // If the mandatory switch is not set, it is determined whether to
+        // enable logging according to the preference switch, otherwise it is
+        // determined whether to enable logging according to the mandatory
+        // switch, the default mandatory switch is empty, the preference switch
+        // is enabled.
+        if (isNull(loggingConfig.getRequiredPrintFlightLogging())) {
+            if (!StringUtils2.isTrue(headers.getFirst(loggingConfig.getPreferredPrintFlightHeaderName()), true)) {
+                return chain.filter(exchange);
+            }
+        } else if (!loggingConfig.getRequiredPrintFlightLogging()) {
+            return chain.filter(exchange);
+        }
+
+        String traceId = headers.getFirst(SimpleTraceGlobalFilter.SIMPLE_TRACE_ID_HEADER);
         StringBuilder requestLog = new StringBuilder(300);
         List<Object> requestLogArgs = new ArrayList<>(16);
         requestLog.append("\n\n---------- IAM Gateway Request Log Begin  ----------\n");
@@ -59,12 +80,12 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         // /example/foo/bar)
         requestLog.append("{} :: {} {}\n");
         String requestMethod = exchange.getRequest().getMethodValue();
+        String requestUri = exchange.getRequest().getURI().getRawPath();
         requestLogArgs.add(traceId);
         requestLogArgs.add(requestMethod);
         requestLogArgs.add(requestUri);
 
         // Print request headers.
-        HttpHeaders headers = exchange.getRequest().getHeaders();
         headers.forEach((headerName, headerValue) -> {
             requestLog.append("{}: {}\n");
             requestLogArgs.add(headerName);
