@@ -142,7 +142,7 @@
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<mainClass>${bootstrap-classname}</mainClass>
-							<finalName>iam-facade-${project.parent.version}-bin</finalName>
+							<finalName>${final.name}-${project.parent.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
 							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
 							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->

@@ -64,7 +64,7 @@ spring:
                 redis-rate-limiter.burstCapacity: 1
                 key-resolver: '#{@hostKeyResolver}'
         #- id: portal
-        #  uri: https://www.baidu.com
+        #  uri: https://www.qq.com
         #  predicates:
         #    - Path=/**
         #  filters:

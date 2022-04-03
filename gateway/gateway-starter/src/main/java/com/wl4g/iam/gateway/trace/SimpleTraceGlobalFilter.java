@@ -15,10 +15,13 @@
  */
 package com.wl4g.iam.gateway.trace;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
 import reactor.core.publisher.Mono;
 
@@ -31,6 +34,8 @@ import reactor.core.publisher.Mono;
  */
 public class SimpleTraceGlobalFilter implements GlobalFilter, Ordered {
 
+    private @Autowired TraceProperties traceConfig;
+
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
@@ -38,10 +43,11 @@ public class SimpleTraceGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getRequest().mutate().header(SIMPLE_TRACE_ID_HEADER, java.util.UUID.randomUUID().toString()).build();
+        exchange.getRequest()
+                .mutate()
+                .header(traceConfig.getTraceIdRequestHeader(), java.util.UUID.randomUUID().toString())
+                .build();
         return chain.filter(exchange);
     }
-
-    public static final String SIMPLE_TRACE_ID_HEADER = "X-Simple-Trace-Id";
 
 }

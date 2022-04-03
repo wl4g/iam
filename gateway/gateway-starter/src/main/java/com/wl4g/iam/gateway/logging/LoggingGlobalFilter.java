@@ -30,7 +30,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
-import com.wl4g.iam.gateway.trace.SimpleTraceGlobalFilter;
+import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 import com.wl4g.infra.common.lang.StringUtils2;
 
@@ -47,6 +47,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class LoggingGlobalFilter implements GlobalFilter, Ordered {
 
+    private @Autowired TraceProperties traceConfig;
     private @Autowired LoggingProperties loggingConfig;
 
     @Override
@@ -72,7 +73,7 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String traceId = headers.getFirst(SimpleTraceGlobalFilter.SIMPLE_TRACE_ID_HEADER);
+        String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
         StringBuilder requestLog = new StringBuilder(300);
         List<Object> requestLogArgs = new ArrayList<>(16);
         requestLog.append("\n\n---------- IAM Gateway Request Log Begin  ----------\n");

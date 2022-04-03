@@ -32,7 +32,7 @@ import lombok.ToString;
 public class LoadBalancerProperties {
     private String versionGrayLoadBalanceMetadataKey = DEFAULT_VERSION_GRAY_LB_METADATA_KEY;
     private String versionGrayLoadBalanceRequestHeader = DEFAULT_VERSION_GRAY_LB_HEADER;
-
+    // Default definitions.
     public static final String DEFAULT_VERSION_GRAY_LB_METADATA_KEY = "Iam-Gateway-Gray-Version";
     public static final String DEFAULT_VERSION_GRAY_LB_HEADER = "X-".concat(DEFAULT_VERSION_GRAY_LB_METADATA_KEY);
 }

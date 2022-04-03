@@ -21,9 +21,13 @@ spring:
           sign-replay-verify-enabled: true # Default by true
           sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
       ratelimit: {}
-      route: {}
-      loadbalance: {}
-      trace: {}
+      route:
+        refresh-time-ms: 30000
+      loadbalancer:
+        version-gray-load-balance-metadata-key: Iam-Gateway-Gray-Version
+        version-gray-load-balance-request-header: X-Iam-Gateway-Gray-Version
+      trace:
+        trace-id-request-header: X-Simple-Trace-Id
       logging:
         # If the mandatory switch is not set, it is determined whether to enable logging according to
         # the preference switch, otherwise it is determined whether to enable logging according to the
@@ -31,6 +35,7 @@ spring:
         #required-print-flight-logging: # Options:(null|true|false)
         preferred-print-flight-logging: true
         preferred-print-flight-header-name: 'X-Iam-Gateway-Logging-Enabled'
+
   # Security configuration.
   security:
     oauth2:
@@ -42,6 +47,11 @@ spring:
           keycloak:
             client-id: portal
             client-secret: a12463984c2f46bdb83d9b1313f3378d
+
+#eureka:
+#  client:
+#    registerWithEureka: false
+#    fetchRegistry: false
 
 # Logging configuration.
 logging:

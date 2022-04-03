@@ -15,6 +15,12 @@
  */
 package com.wl4g.iam.gateway.trace.config;
 
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * {@link LoggingProperties}
  * 
@@ -22,6 +28,10 @@ package com.wl4g.iam.gateway.trace.config;
  * @version 2022-04-02 v3.0.0
  * @since v3.0.0
  */
+@Getter
+@Setter
+@ToString
 public class TraceProperties {
-
+    public static final String DEFAULT_TRACE_ID_HEADER = "X-Simple-Trace-Id";
+    private String traceIdRequestHeader = DEFAULT_TRACE_ID_HEADER;
 }
