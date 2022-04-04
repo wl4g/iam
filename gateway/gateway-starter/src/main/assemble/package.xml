@@ -35,39 +35,47 @@
 		</fileSet>
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>libs</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
+			<excludes>
+				<exclude>*-sources.jar</exclude>
+				<exclude>*-docker-info.jar</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>.</directory>
+			<outputDirectory>ext-lib</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>.</directory>
+			<outputDirectory>log</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>.</directory>
 			<outputDirectory>site-docs</outputDirectory>
 			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
+				<exclude>*/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
-			<outputDirectory>logs</outputDirectory>
-			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
-			</excludes>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>.</directory>
 			<outputDirectory>src</outputDirectory>
 			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
+				<exclude>*/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>libs</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 			<scope>runtime</scope>
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
