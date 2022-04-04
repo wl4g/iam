@@ -38,7 +38,7 @@ public class SimpleTraceGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return SIMPLE_TRACE_FILTER_ORDER;
     }
 
     @Override
@@ -50,4 +50,5 @@ public class SimpleTraceGlobalFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange);
     }
 
+    public static final int SIMPLE_TRACE_FILTER_ORDER = Ordered.HIGHEST_PRECEDENCE + 10;
 }
