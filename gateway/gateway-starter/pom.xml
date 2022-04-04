@@ -204,6 +204,8 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<!-- issue:https://stackoverflow.com/questions/64699000/javabeanexecutable-hv000254-missing-parameter-metadata-for-java-enum -->
+					<parameters>true</parameters>
 				</configuration>
 			</plugin>
 			<plugin>

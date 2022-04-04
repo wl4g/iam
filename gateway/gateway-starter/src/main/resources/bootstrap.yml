@@ -17,3 +17,5 @@ spring:
     active: dev
   banner:
       location: classpath:banner.txt
+  freemarker:
+    checkTemplateLocation: false

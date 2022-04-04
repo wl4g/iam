@@ -59,6 +59,7 @@ import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.common.web.rest.RespBase;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -137,7 +138,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
             try {
                 appId = getRequestAppId(config, exchange);
             } catch (IllegalArgumentException e) {
-                log.warn("Failed to get appId. - {}", exchange.getRequest().getURI());
+                log.warn("Bad request missing the appId. - {}", exchange.getRequest().getURI());
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
 
@@ -264,6 +265,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     }
 
     @Getter
+    @AllArgsConstructor
     public static enum AppIdExtractMode {
 
         Parameter(args -> {
@@ -288,14 +290,11 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         });
 
         private final Function<Object[], String> function;
-
-        private AppIdExtractMode(Function<Object[], String> function) {
-            this.function = function;
-        }
     }
 
     @SuppressWarnings("deprecation")
     @Getter
+    @AllArgsConstructor
     public static enum SignAlgorithm {
         MD5(input -> Hashing.md5().hashBytes(input[1]).asBytes()),
 
@@ -316,13 +315,10 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         HS512(input -> Hashing.hmacSha512(input[0]).hashBytes(input[1]).asBytes());
 
         private final Function<byte[][], byte[]> function;
-
-        private SignAlgorithm(Function<byte[][], byte[]> function) {
-            this.function = function;
-        }
     }
 
     @Getter
+    @AllArgsConstructor
     public static enum SignHashingMode {
 
         @Deprecated
@@ -366,10 +362,6 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         });
 
         private final Function<Object[], byte[]> function;
-
-        private SignHashingMode(Function<Object[], byte[]> function) {
-            this.function = function;
-        }
 
         private static String[] getEffectiveHashingParamNames(Config config, Map<String, String> queryParams) {
             List<String> hashingParamNames = queryParams.keySet()
