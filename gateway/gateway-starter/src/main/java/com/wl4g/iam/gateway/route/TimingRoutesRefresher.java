@@ -39,11 +39,8 @@ import com.wl4g.iam.gateway.route.config.RouteProperties;
  */
 public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerProperties> implements ApplicationRunner, DisposableBean {
 
-    @Autowired
-    protected RouteProperties config;
-
-    @Autowired
-    protected IRouteCacheRefresh refresher;
+    protected @Autowired RouteProperties config;
+    protected @Autowired IRouteCacheRefresher refresher;
 
     /** Refreshing scheduled future */
     protected ScheduledFuture<?> future;
@@ -74,7 +71,7 @@ public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerPropertie
         refreshRouters();
     }
 
-    public IRouteCacheRefresh getRefresher() {
+    public IRouteCacheRefresher getRefresher() {
         return refresher;
     }
 
@@ -91,7 +88,7 @@ public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerPropertie
         this.future = getWorker().scheduleWithFixedDelay(() -> {
             try {
                 log.debug("Refreshing routes ...");
-                refresher.refreshRoutesPermanentToMemery();
+                refresher.refreshRoutes();
             } catch (Exception e) {
                 log.error("Failed to refreshing routes.", e);
             }

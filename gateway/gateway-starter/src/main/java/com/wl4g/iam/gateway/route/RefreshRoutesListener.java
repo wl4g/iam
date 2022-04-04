@@ -15,51 +15,43 @@
  */
 package com.wl4g.iam.gateway.route;
 
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.actuate.GatewayControllerEndpoint;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.common.log.SmartLoggerFactory;
-
-import reactor.core.publisher.Mono;
 
 /**
- * {@link StartedRoutesRefresher}
+ * {@link RefreshRoutesListener}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-21
  * @since
  */
-public class StartedRoutesRefresher implements ApplicationListener<RefreshRoutesEvent> {
+public class RefreshRoutesListener implements ApplicationListener<RefreshRoutesEvent> {
+    private final SmartLogger log = getLogger(getClass());
 
-    private final SmartLogger log = SmartLoggerFactory.getLogger(getClass());
-    private @Autowired ApplicationEventPublisher applicationEventPublisher;
     private @Autowired ApplicationContext applicationContext;
 
-    public Mono<Void> refresh(NotifyType notifyType) {
-        if (notifyType != null) {
-            applicationEventPublisher.publishEvent(new RefreshRoutesEvent(notifyType));
-        }
-        return Mono.empty();
-    }
-
     @Override
-    public void onApplicationEvent(RefreshRoutesEvent refreshRoutesEvent) {
+    public void onApplicationEvent(RefreshRoutesEvent event) {
         try {
-            log.debug(format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
-            if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint
-                    || NotifyType.PERMANENT.equals(refreshRoutesEvent.getSource())) {
-                applicationContext.getBean(IRouteCacheRefresh.class).refreshRoutesPermanentToMemery();
+            log.info(format("Routes refresh :: %s", event.getSource().toString()));
+            if (event.getSource() instanceof GatewayControllerEndpoint || RefreshType.PERMANENT.equals(event.getSource())) {
+                applicationContext.getBean(IRouteCacheRefresher.class).refreshRoutes();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("", e);
         }
+    }
+
+    public static enum RefreshType {
+        PERMANENT, STATE
     }
 
 }

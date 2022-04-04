@@ -125,10 +125,12 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
+
         return loggingRequest(exchange, chain, headers, traceId, requestMethod, requestUri)
                 .then(Mono.defer(() -> chain.filter(exchange.mutate()
                         .response(loggingResponse(exchange, chain, headers, traceId, requestMethod, requestUri))
                         .build())));
+        // TODO
         // return chain.filter(exchange.mutate()
         // .response(loggingResponse(exchange, chain, headers, traceId,
         // requestMethod, requestUri))
@@ -274,8 +276,7 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
             } else if (log3_10) {
                 requestLog.append(LOG_REQUEST_BEGIN);
                 // Print HTTP URI. (E.g: 997ac7d2-2056-419b-883b-6969aae77e3e ::
-                // GET
-                // /example/foo/bar)
+                // GET /example/foo/bar)
                 requestLog.append("{} :: {} {}\n");
                 requestLogArgs.add(traceId);
                 requestLogArgs.add(requestMethod);
@@ -312,10 +313,10 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
                 // Full print request body.
                 if (log8_10) {
                     requestLog.append(LOG_REQUEST_BODY);
-                    requestLogArgs.add(body);
                     // if (log3_10) {
                     requestLog.append(LOG_REQUEST_END);
                     // }
+                    requestLogArgs.add(body);
                     log.info(requestLog.toString(), requestLogArgs.toArray());
                 }
             } else if (log3_10) {

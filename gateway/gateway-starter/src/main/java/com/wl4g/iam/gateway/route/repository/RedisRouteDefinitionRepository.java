@@ -16,21 +16,20 @@
 package com.wl4g.iam.gateway.route.repository;
 
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_ROUTES;
-
-import java.util.stream.Collectors;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static java.util.stream.Collectors.toList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.wl4g.infra.common.serialize.JacksonUtils;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * REDIS routes information persistence class This class contains route
- * persistence and route refresh of distributed cluster
+ * Redis routes information persistence class This class contains route
+ * persistence and route refresh of distributed cluster.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-21
@@ -40,23 +39,20 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
 
     private @Autowired StringRedisTemplate stringTemplate;
 
-    /**
-     * Gets all routing information
-     */
     @Override
-    protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
+    protected Flux<RouteDefinition> loadPermanentRouteDefinitions() {
         return Flux.fromIterable(stringTemplate.opsForHash()
                 .values(CACHE_PREFIX_IAM_GWTEWAY_ROUTES)
                 .stream()
-                .map(routeDefinition -> JacksonUtils.parseJSON(routeDefinition.toString(), RouteDefinition.class))
-                .collect(Collectors.toList()));
+                .map(routeDefinition -> parseJSON(routeDefinition.toString(), RouteDefinition.class))
+                .collect(toList()));
     }
 
     @Override
     public Mono<Void> save(Mono<RouteDefinition> route) {
         return route.flatMap(routeDefinition -> {
             stringTemplate.opsForHash().put(CACHE_PREFIX_IAM_GWTEWAY_ROUTES, routeDefinition.getId(),
-                    JacksonUtils.toJSONString(routeDefinition));
+                    toJSONString(routeDefinition));
             return Mono.empty();
         });
     }

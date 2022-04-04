@@ -50,12 +50,12 @@ public class IamGatewayConsole {
     public void refresh(SimpleShellContext context) {
         try {
             context.printf("Refreshing configuration ...");
-            refresher.getRefresher().refreshRoutesPermanentToMemery();
+            refresher.getRefresher().refreshRoutes();
         } catch (Exception e) {
             log.error("", e);
         }
 
-        Flux<RouteDefinition> routes = routeRepository.getRouteDefinitionsByMemery();
+        Flux<RouteDefinition> routes = routeRepository.getRouteDefinitions();
 
         // Print result message.
         StringBuilder res = new StringBuilder(100);

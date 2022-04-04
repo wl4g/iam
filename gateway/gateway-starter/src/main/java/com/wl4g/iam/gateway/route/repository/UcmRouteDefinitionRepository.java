@@ -29,7 +29,7 @@ import reactor.core.publisher.Flux;
 public class UcmRouteDefinitionRepository extends AbstractRouteRepository {
 
     @Override
-    protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
+    protected Flux<RouteDefinition> loadPermanentRouteDefinitions() {
         throw new UnsupportedOperationException();
     }
 

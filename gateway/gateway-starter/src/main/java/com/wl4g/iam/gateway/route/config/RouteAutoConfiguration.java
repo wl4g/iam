@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
-import com.wl4g.iam.gateway.route.StartedRoutesRefresher;
+import com.wl4g.iam.gateway.route.RefreshRoutesListener;
 import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory.IgnoreGatewayFilter;
@@ -53,8 +53,8 @@ public class RouteAutoConfiguration {
     }
 
     @Bean
-    public StartedRoutesRefresher startedRoutesRefresher() {
-        return new StartedRoutesRefresher();
+    public RefreshRoutesListener refreshRoutesListener() {
+        return new RefreshRoutesListener();
     }
 
     @Bean

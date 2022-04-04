@@ -11,6 +11,10 @@
 # #### IAM Gateway configuration. ####
 #
 spring:
+  cloud:
+    circuitbreaker:
+      resilience4j:
+        enabled: true
   iam:
     gateway:
       authing:
