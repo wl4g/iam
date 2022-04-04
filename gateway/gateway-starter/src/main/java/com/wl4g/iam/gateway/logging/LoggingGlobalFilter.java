@@ -32,20 +32,30 @@ import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_MARKDOWN;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
+import org.springframework.cloud.gateway.support.BodyInserterContext;
 import org.springframework.cloud.gateway.support.DefaultServerRequest;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -54,6 +64,7 @@ import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -111,95 +122,236 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         if (loggingConfig.getPreferredFlightLogPrintVerboseLevel() <= 0) {
             return chain.filter(exchange);
         }
-
         String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
+        return loggingRequest(exchange, chain, headers, traceId, requestMethod, requestUri)
+                .then(Mono.defer(() -> chain.filter(exchange.mutate()
+                        .response(loggingResponse(exchange, chain, headers, traceId, requestMethod, requestUri))
+                        .build())));
+        // return chain.filter(exchange.mutate()
+        // .response(loggingResponse(exchange, chain, headers, traceId,
+        // requestMethod, requestUri))
+        // .build());
+    }
 
-        boolean log1_2 = isFlightLoglevelRange(1, 2);
-        boolean log3_10 = isFlightLoglevelRange(3, 10);
-        boolean log5_10 = isFlightLoglevelRange(5, 10);
-        boolean log7_8 = isFlightLoglevelRange(7, 8);
-        boolean log9_10 = isFlightLoglevelRange(9, 10);
-        StringBuilder requestLog = new StringBuilder(300);
-        List<Object> requestLogArgs = new ArrayList<>(16);
-        if (log1_2) {
-            requestLog.append("{} {}\n");
-            requestLogArgs.add(requestMethod);
-            requestLogArgs.add(requestUri);
-        } else if (log3_10) {
-            requestLog.append(LOG_REQUEST_BEGIN);
-            // Print HTTP URI. (E.g: 997ac7d2-2056-419b-883b-6969aae77e3e :: GET
-            // /example/foo/bar)
-            requestLog.append("{} :: {} {}\n");
-            requestLogArgs.add(traceId);
-            requestLogArgs.add(requestMethod);
-            requestLogArgs.add(requestUri);
-        }
-        // Print request headers.
-        if (log5_10) {
-            headers.forEach((headerName, headerValue) -> {
-                if (isFlightLoglevelRange(6, 10) || logGenericHttpHeaders.contains(headerName.toLowerCase())) {
-                    requestLog.append("{}: {}\n");
-                    requestLogArgs.add(headerName);
-                    requestLogArgs.add(headerValue.toString());
+    /**
+     * Wraps the HTTP request for body edited. </br>
+     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
+     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
+     * 
+     * @param exchange
+     * @param chain
+     * @param transformer
+     * @return
+     * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
+     */
+    private Mono<Void> decorateRequestBody(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain,
+            Function<? super String, ? extends Mono<? extends String>> transformer) {
+
+        Class<String> inClass = String.class;
+        Class<String> outClass = String.class;
+        // ServerRequest serverRequest = ServerRequest.create(exchange, null);
+        ServerRequest serverRequest = new DefaultServerRequest(exchange);
+        Mono<String> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
+
+        BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
+        HttpHeaders newHeaders = new HttpHeaders();
+        newHeaders.putAll(exchange.getRequest().getHeaders());
+        newHeaders.remove(HttpHeaders.CONTENT_LENGTH);
+
+        CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, newHeaders);
+        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+            @Override
+            public HttpHeaders getHeaders() {
+                long contentLength = newHeaders.getContentLength();
+                HttpHeaders _newHeaders = new HttpHeaders();
+                _newHeaders.putAll(newHeaders);
+                if (contentLength > 0) {
+                    _newHeaders.setContentLength(contentLength);
+                } else {
+                    _newHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
                 }
-            });
-        }
-        // Print request body.
-        if (isPrintBody(request.getHeaders().getContentType())) {
-            // Print only the first part of the request body data.
-            if (log7_8) {
-                // Note: In this way, only the first piece of data can be
-                // obtained when the data packet is too large.
-                // issue:https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html
-                request.getBody().subscribe(dataBuffer -> {
-                    requestLog.append(LOG_REQUEST_BODY);
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    requestLogArgs.add(new String(bytes, StandardCharsets.UTF_8));
-                    // if (log3_10) {
-                    requestLog.append(LOG_REQUEST_END);
-                    // }
-                    log.info(requestLog.toString(), requestLogArgs.toArray());
+                return _newHeaders;
+            }
+
+            @Override
+            public Flux<DataBuffer> getBody() {
+                return outputMessage.getBody();
+            }
+        };
+
+        return bodyInserter.insert(outputMessage, new BodyInserterContext())
+                .then(Mono.defer(() -> chain.filter(exchange.mutate().request(decorator).build())))
+                .onErrorResume((Function<Throwable, Mono<Void>>) ex -> Mono.error(ex));
+    }
+
+    /**
+     * Wraps the HTTP response for body edited. </br>
+     * 
+     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
+     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
+     * 
+     * @param exchange
+     * @param chain
+     * @param transformer
+     * @return
+     * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyResponseBodyGatewayFilterFactory#apply()}
+     */
+    private ServerHttpResponse decorateResponseBody(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain,
+            Function<? super String, ? extends Mono<? extends String>> transformer) {
+        return new ServerHttpResponseDecorator(exchange.getResponse()) {
+            @Override
+            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // Mono<NettyDataBuffer>
+                Class<String> inClass = String.class;
+                Class<String> outClass = String.class;
+
+                String responseContentType = exchange.getAttribute(ServerWebExchangeUtils.ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);
+                HttpHeaders newHeaders = new HttpHeaders();
+                newHeaders.add(HttpHeaders.CONTENT_TYPE, responseContentType);
+
+                ClientResponse clientResponse = ClientResponse.create(exchange.getResponse().getStatusCode())
+                        .headers(headers -> headers.putAll(newHeaders))
+                        .body(Flux.from(body))
+                        .build();
+
+                Mono<String> modifiedBody = clientResponse.bodyToMono(inClass).flatMap(transformer);
+                BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
+                        outClass);
+                CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange,
+                        exchange.getResponse().getHeaders());
+
+                return bodyInserter.insert(outputMessage, new BodyInserterContext()).then(Mono.defer(() -> {
+                    Flux<DataBuffer> messageBody = outputMessage.getBody();
+                    HttpHeaders headers = getDelegate().getHeaders();
+                    if (!headers.containsKey(HttpHeaders.TRANSFER_ENCODING)) {
+                        messageBody = messageBody.doOnNext(data -> headers.setContentLength(data.readableByteCount()));
+                    }
+                    return getDelegate().writeWith(messageBody);
+                }));
+            }
+
+            @Override
+            public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
+                return writeWith(Flux.from(body).flatMapSequential(p -> p));
+            }
+        };
+    }
+
+    /**
+     * Wraps mutated response logging filtering.
+     * 
+     * @param exchange
+     * @param chain
+     * @param traceId
+     * @param requestMethod
+     * @param requestUri
+     * @return
+     */
+    private Mono<Void> loggingRequest(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain,
+            HttpHeaders headers,
+            String traceId,
+            String requestMethod,
+            String requestUri) {
+        boolean log1_2 = isLoglevelRange(1, 2);
+        boolean log3_10 = isLoglevelRange(3, 10);
+        boolean log5_10 = isLoglevelRange(5, 10);
+        boolean log6_10 = isLoglevelRange(6, 10);
+        boolean log8_10 = isLoglevelRange(8, 10);
+        return decorateRequestBody(exchange, chain, body -> {
+            StringBuilder requestLog = new StringBuilder(300);
+            List<Object> requestLogArgs = new ArrayList<>(16);
+            if (log1_2) {
+                requestLog.append("{} {}\n");
+                requestLogArgs.add(requestMethod);
+                requestLogArgs.add(requestUri);
+            } else if (log3_10) {
+                requestLog.append(LOG_REQUEST_BEGIN);
+                // Print HTTP URI. (E.g: 997ac7d2-2056-419b-883b-6969aae77e3e ::
+                // GET
+                // /example/foo/bar)
+                requestLog.append("{} :: {} {}\n");
+                requestLogArgs.add(traceId);
+                requestLogArgs.add(requestMethod);
+                requestLogArgs.add(requestUri);
+            }
+            // Print request headers.
+            if (log5_10) {
+                headers.forEach((headerName, headerValue) -> {
+                    if (log6_10 || logGenericHttpHeaders.contains(headerName.toLowerCase())) {
+                        requestLog.append("{}: {}\n");
+                        requestLogArgs.add(headerName);
+                        requestLogArgs.add(headerValue.toString());
+                    }
                 });
             }
-            // Full print request body.
-            else if (log9_10) {
-                ServerRequest serverRequest = new DefaultServerRequest(exchange);
-                return serverRequest.bodyToMono(String.class).flatMap(body -> {
+            // Print request body.
+            if (hasBody(headers.getContentType())) {
+                // [issue-see]:https://www.codercto.com/a/52970.html
+                // [issue-see]:https://blog.csdn.net/kk380446/article/details/119537443
+                // Note: In this way, only the first piece of data can be
+                // obtained when the data packet is too large.
+                // request.getBody().subscribe(dataBuffer -> {
+                // requestLog.append(LOG_REQUEST_BODY);
+                // byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                // dataBuffer.read(bytes);
+                // DataBufferUtils.release(dataBuffer);
+                // requestLogArgs.add(new String(bytes,
+                // StandardCharsets.UTF_8));
+                // // if (log3_10) {
+                // requestLog.append(LOG_REQUEST_END);
+                // // }
+                // log.info(requestLog.toString(), requestLogArgs.toArray());
+                // });
+                // Full print request body.
+                if (log8_10) {
                     requestLog.append(LOG_REQUEST_BODY);
                     requestLogArgs.add(body);
                     // if (log3_10) {
                     requestLog.append(LOG_REQUEST_END);
                     // }
                     log.info(requestLog.toString(), requestLogArgs.toArray());
-                    return doChainResponse(exchange, chain, traceId, requestMethod, requestUri);
-                });
+                }
+            } else if (log3_10) {
+                requestLog.append(LOG_REQUEST_END);
+                log.info(requestLog.toString(), requestLogArgs.toArray());
             }
-        } else if (log3_10) {
-            requestLog.append(LOG_REQUEST_END);
-            log.info(requestLog.toString(), requestLogArgs.toArray());
-        }
-
-        return doChainResponse(exchange, chain, traceId, requestMethod, requestUri);
+            return Mono.just(body);
+        });
     }
 
-    private Mono<Void> doChainResponse(
+    /**
+     * Wraps mutated response logging filtering.
+     * 
+     * @param exchange
+     * @param chain
+     * @param traceId
+     * @param requestMethod
+     * @param requestUri
+     * @return
+     */
+    private ServerHttpResponse loggingResponse(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
+            HttpHeaders headers,
             String traceId,
             String requestMethod,
             String requestUri) {
-
-        boolean log1_2 = isFlightLoglevelRange(1, 2);
-        boolean log3_10 = isFlightLoglevelRange(3, 10);
-        boolean log6_10 = isFlightLoglevelRange(6, 10);
-        boolean log8_9 = isFlightLoglevelRange(8, 9);
-        boolean log10_10 = isFlightLoglevelRange(10, 10);
-
-        return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+        boolean log1_2 = isLoglevelRange(1, 2);
+        boolean log3_10 = isLoglevelRange(3, 10);
+        boolean log6_10 = isLoglevelRange(6, 10);
+        boolean log8_10 = isLoglevelRange(8, 10);
+        boolean log9_10 = isLoglevelRange(9, 10);
+        return decorateResponseBody(exchange, chain, originalBody -> {
+            // MDC.put("type", "RESPONSE-BODY");
+            // log.info(String.format("[%s], %s", requestId,
+            // originalBody));
             ServerHttpResponse response = exchange.getResponse();
             Long startTime = exchange.getAttribute(KEY_START_TIME);
             long costTime = nonNull(startTime) ? (FastTimeClock.currentTimeMillis() - startTime) : 0L;
@@ -214,7 +366,8 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
                 responseLogArgs.add(costTime + "ms");
             } else if (log3_10) {
                 responseLog.append(LOG_RESPONSE_BEGIN);
-                // Print HTTP URI. (E.g: 997ac7d2-2056-419b-883b-6969aae77e3e ::
+                // Print HTTP URI. (E.g:
+                // 997ac7d2-2056-419b-883b-6969aae77e3e ::
                 // 200 GET /example/foo/bar)
                 responseLog.append("{} :: {} {} {} {}\n");
                 responseLogArgs.add(traceId);
@@ -227,7 +380,7 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
             if (log6_10) {
                 HttpHeaders httpHeaders = response.getHeaders();
                 httpHeaders.forEach((headerName, headerValue) -> {
-                    if (isFlightLoglevelRange(7, 10) || logGenericHttpHeaders.contains(headerName.toLowerCase())) {
+                    if (log8_10 || logGenericHttpHeaders.contains(headerName.toLowerCase())) {
                         responseLog.append("{}: {}\n");
                         responseLogArgs.add(headerName);
                         responseLogArgs.add(headerValue.toString());
@@ -235,25 +388,28 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
                 });
             }
             // Print response body.
-            if (isPrintBody(response.getHeaders().getContentType())) {
-                if (log8_9) { // part-print-request-body
-                    responseLog.append(LOG_RESPONSE_BODY);
-                    // TODO
-                    responseLogArgs.add("");
-                } else if (log10_10) { // full-print-response-body
-                    responseLog.append(LOG_RESPONSE_BODY);
-                    // TODO
-                    responseLogArgs.add("");
-                }
+            if (log9_10 && hasBody(response.getHeaders().getContentType())) {
+                // Full print response body.
+                responseLog.append(LOG_RESPONSE_BODY);
+                responseLogArgs.add(originalBody);
             }
             if (log3_10) {
                 responseLog.append(LOG_RESPONSE_END);
             }
             // Print cost time.
             log.info(responseLog.toString(), responseLogArgs.toArray());
-        }));
+
+            return Mono.just(originalBody);
+        });
     }
 
+    /**
+     * Check if filtering is required and logging logs.
+     * 
+     * @param request
+     * @param headers
+     * @return
+     */
     private boolean isFilterLogging(ServerHttpRequest request, HttpHeaders headers) {
         // If the mandatory switch is not set, it is determined whether to
         // enable logging according to the preference switch, otherwise it is
@@ -271,12 +427,25 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         return loggingConfig.getRequiredFlightLogPrintEnabled();
     }
 
-    private boolean isFlightLoglevelRange(int lower, int upper) {
+    /**
+     * Check if the specified flight log level range is met.
+     * 
+     * @param lower
+     * @param upper
+     * @return
+     */
+    private boolean isLoglevelRange(int lower, int upper) {
         return loggingConfig.getPreferredFlightLogPrintVerboseLevel() >= lower
                 && loggingConfig.getPreferredFlightLogPrintVerboseLevel() <= upper;
     }
 
-    private boolean isPrintBody(MediaType mediaType) {
+    /**
+     * Check if the media type of the request or response has a body.
+     * 
+     * @param mediaType
+     * @return
+     */
+    private boolean hasBody(MediaType mediaType) {
         if (isNull(mediaType)) {
             return false;
         }

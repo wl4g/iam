@@ -66,12 +66,12 @@ public class VersionGrayLoadBalancerRule implements GrayLoadBalancerRule {
     private List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, String reqVersion) {
         // Traverse the meta-data of the instance, and return this instance if
         // there is a match.
-        safeList(instances).stream()
+        List<ServiceInstance> candidates = safeList(instances).stream()
                 .filter(i -> equalsIgnoreCase(
                         safeMap(i.getMetadata()).get(loadBalancerConfig.getVersionGrayLoadBalanceMetadataKey()), reqVersion))
                 .collect(toList());
         log.debug("Choosed candidate gray loadbalance reqVersion: {} -> {}", reqVersion, instances);
-        return null;
+        return candidates;
     }
 
 }

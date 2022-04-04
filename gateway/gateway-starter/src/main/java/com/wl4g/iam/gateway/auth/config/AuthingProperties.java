@@ -25,15 +25,35 @@ public class AuthingProperties {
     @ToString
     public static class GenericTokenAuthingProperties {
 
+        /**
+         * Load signing keys from that type of stored.
+         */
         private SecretLoadStore secretLoadStore = SecretLoadStore.ENV;
+
+        /**
+         * Prefix when loading from signing keys stored.
+         */
         private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTHING_SIGN_TOKEN;
+
+        /**
+         * Local cache expiration time for signing keys.
+         */
         private long secretLocalCacheSeconds = 6L;
 
+        /**
+         * Whether to enable signature replay attack interception.
+         */
         private boolean signReplayVerifyEnabled = true;
+
+        /**
+         * TODO use redis cached signing.</br>
+         * 
+         * Local cache expiration time for blocking replay attacks.
+         */
         private Long signReplayVerifyLocalCacheSeconds = 15 * 60L;
 
         /**
-         * Skip or ignore authentication in JVM debug mode, often used for rapid
+         * Ignore authentication in JVM debug mode, often used for rapid
          * development and testing environments.
          */
         private boolean ignoredAuthingInJvmDebug = false;

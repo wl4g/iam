@@ -17,9 +17,11 @@ spring:
         sign-token:
           secret-load-store: redis
           secret-load-prefix: IAM_AUTHC_SIGN_APPSECRET_
-          secret-local-cache-seconds: 6 # Default by 6 sec
+          secret-local-cache-seconds: 6 # Default by 6sec
           sign-replay-verify-enabled: true # Default by true
           sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
+          # Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
+          ignored-authing-in-jvm-debug: true # Default by false
           add-sign-auth-client-id-header: X-Sign-Auth-AppId
       ratelimit: {}
       route:
@@ -53,6 +55,10 @@ spring:
           keycloak:
             client-id: portal
             client-secret: a12463984c2f46bdb83d9b1313f3378d
+            scope:
+            - email
+            - profile
+            - roles
 
 #eureka:
 #  client:
@@ -78,6 +84,7 @@ logging:
   root: INFO
   level:
     de.codecentric.boot.admin: INFO
+    reactor.netty.http.client: DEBUG
     org:
       springframework: INFO
         #boot.context.config: DEBUG # Print load config

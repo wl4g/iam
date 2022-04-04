@@ -13,7 +13,9 @@
 spring:
   cloud:
     # see:org.springframework.cloud.gateway.config.GatewayProperties
-    gateway: # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    # see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
+    gateway:
       routes:
         - id: v2-energy-openapi-service
           #uri: http://openapi.wl4gsafecloudcs.com
@@ -22,6 +24,8 @@ spring:
             - Path=/v2/** # Only configured once???
             #- Weight=v2-energy-openapi-service,5
           filters:
+            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/v2/(?<segment>.*), /openapi/v2/$\{segment}
             - name: SignTokenAuthing
               args:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
@@ -42,19 +46,28 @@ spring:
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: RequestRateLimiter
               args:
-                # 令牌桶每秒填充平均速率, 即等价于允许用户每秒处理多少个请求平均数
-                redis-rate-limiter.replenishRate: 1
                 # 令牌桶的容量, 允许在一秒钟内完成的最大请求数
                 redis-rate-limiter.burstCapacity: 1
-                # 用于限流的键的解析器的 beanName。使用 SpEL 表达式获取 Bean
+                # 令牌桶每秒填充平均速率, 即等价于允许用户每秒处理多少个请求平均数
+                redis-rate-limiter.replenishRate: 1
                 key-resolver: '#{@hostKeyResolver}'
-            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/v2/(?<segment>.*), /openapi/v2/$\{segment}
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 30ms
+                  maxBackoff: 80ms
+                  factor: 2
+                  basedOnPreviousValue: false
         - id: v1-alimarket-openapi-service
           uri: lb://v1-alimarket-openapi-service
           predicates:
             - Path=/alimarket/v1/**
           filters:
+            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
             - name: SignTokenAuthing
               args:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
@@ -74,8 +87,16 @@ spring:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 1
                 key-resolver: '#{@hostKeyResolver}'
-            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 30ms
+                  maxBackoff: 80ms
+                  factor: 2
+                  basedOnPreviousValue: false
         #- id: portal
         #  uri: https://www.qq.com
         #  predicates:
