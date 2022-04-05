@@ -219,7 +219,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
 
             // Check replay attacks.
             if (config.isSignReplayVerifyEnabled()) {
-                if (obtainBloomFilter(exchange).bloomExist(KEY_BLOOM_FILTER, sign)) {
+                if (obtainBloomFilter(exchange).bloomExist(getBloomKey(exchange), sign)) {
                     log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
                     return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
                 }
@@ -233,7 +233,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
                 if (config.isSignReplayVerifyEnabled()) {
-                    obtainBloomFilter(exchange).bloomAdd(KEY_BLOOM_FILTER, sign);
+                    obtainBloomFilter(exchange).bloomAdd(getBloomKey(exchange), sign);
                 }
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
@@ -255,19 +255,23 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
             if (isNull(bloomFilter)) {
                 synchronized (this) {
                     if (isNull(bloomFilter)) {
-                        String routeId = ((Route) exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR))
-                                .getId();
-                        if (isBlank(routeId)) {
-                            throw new Error(format("Should't be here, cannot to get routeId"));
-                        }
                         // Initial bloom filter.
                         this.bloomFilter = new RedisBloomFilter<String>(redisTemplate, new BloomConfig<>(
                                 (Funnel<String>) (from, into) -> into.putString(from, UTF_8), Integer.MAX_VALUE, 0.01));
-                        this.bloomFilter.bloomExpire(KEY_BLOOM_FILTER, config.getSignReplayVerifyBloomExpireSeconds(), false);
+                        this.bloomFilter.bloomExpire(getBloomKey(exchange), config.getSignReplayVerifyBloomExpireSeconds(),
+                                false);
                     }
                 }
             }
             return bloomFilter;
+        }
+
+        private String getBloomKey(ServerWebExchange exchange) {
+            String routeId = ((Route) exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR)).getId();
+            if (isBlank(routeId)) {
+                throw new Error(format("Should't be here, cannot to get routeId"));
+            }
+            return authingConfig.getSimpleSign().getSignReplayVerifyBloomLoadPrefix().concat(":").concat(routeId);
         }
 
         private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
@@ -449,6 +453,5 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     }
 
     public static final String SIMPLE_SIGN_AUTH_FILTER = "SimpleSignAuthing";
-    public static final String KEY_BLOOM_FILTER = SimpleSignAuthingFilter.class.getSimpleName() + ".BloomFilter";
 
 }

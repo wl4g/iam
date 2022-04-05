@@ -36,6 +36,8 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY = CACHE_PREFIX_IAM + ":gateway";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_ROUTES = CACHE_PREFIX_IAM_GWTEWAY + ":routes";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH = CACHE_PREFIX_IAM_GWTEWAY + ":auth";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIMPLE_SIGN = CACHE_PREFIX_IAM_GWTEWAY_AUTH + ":simple-sign";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET = CACHE_PREFIX_IAM_GWTEWAY_AUTH + ":sign:secret";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM = CACHE_PREFIX_IAM_GWTEWAY_AUTH
+            + ":sign:replay:bloom";
 
 }

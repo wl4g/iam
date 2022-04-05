@@ -1,6 +1,7 @@
 package com.wl4g.iam.gateway.auth.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIMPLE_SIGN;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,7 @@ public class AuthingProperties {
         /**
          * Prefix when loading from signing keys stored.
          */
-        private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIMPLE_SIGN;
+        private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
 
         /**
          * Local cache expiration time for signing keys.
@@ -45,6 +46,12 @@ public class AuthingProperties {
          * development and testing environments.
          */
         private boolean ignoredAuthingInJvmDebug = false;
+
+        /**
+         * Prefix when loading from bloom filter replay keys stored.
+         */
+        private String signReplayVerifyBloomLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
+
     }
 
     public static enum SecretLoadStore {
