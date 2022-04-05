@@ -191,7 +191,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                     // Initial bloom filter.
                     bloomFilter = new RedisBloomFilter<String>(redisTemplate, new BloomConfig<>(
                             (Funnel<String>) (from, into) -> into.putString(from, UTF_8), Integer.MAX_VALUE, 0.01));
-                    bloomFilter.bloomExpire(getBloomKey(exchange), config.getSignReplayVerifyBloomExpireSeconds(), false);
+                    bloomFilter.bloomExpire(getBloomKey(exchange), config.getSignReplayVerifyBloomExpireSeconds());
                     cachedBloomFilters.put(routeId, bloomFilter);
                 }
             }

@@ -17,7 +17,6 @@ package com.wl4g.iam.gateway.util.bloom;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static java.util.Objects.nonNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -134,13 +133,15 @@ public class RedisBloomFilter<T> {
      * 
      * @param key
      * @param value
-     * @param force
      */
-    public void bloomExpire(String key, long expireMs, boolean force) {
-        log.debug("bloomExpiration {}", key);
-        if (force || (nonNull(redisTemplate.getExpire(key)) && redisTemplate.getExpire(key) <= 0)) {
-            redisTemplate.opsForValue().getOperations().expire(key, expireMs, TimeUnit.SECONDS);
+    public void bloomExpire(String key, long expireMs) {
+        log.debug("bloomExpire {}", key);
+        // In order to allow setting the expiration time, the key needs to be
+        // initialized when it does not exist.
+        if (!redisTemplate.hasKey(key)) {
+            redisTemplate.opsForValue().setBit(key, 0, true);
         }
+        redisTemplate.opsForValue().getOperations().expire(key, expireMs, TimeUnit.SECONDS);
     }
 
     /**

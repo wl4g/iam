@@ -27,7 +27,7 @@ spring:
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
       ratelimit: {}
       route:
-        refresh-time-ms: 30000
+        refresh-delay-ms: 30_000
       loadbalancer:
         version-gray-load-balance-metadata-key: Iam-Gateway-Gray-Version
         version-gray-load-balance-request-header: X-Iam-Gateway-Gray-Version
@@ -86,7 +86,7 @@ logging:
   root: INFO
   level:
     de.codecentric.boot.admin: INFO
-    reactor.netty.http.client: DEBUG
+    reactor.netty.http.client: INFO
     org:
       springframework: INFO
         #boot.context.config: DEBUG # Print load config

@@ -14,6 +14,6 @@ import lombok.Setter;
 @Setter
 public class RouteProperties {
 
-    private Long refreshDelayMs = 5_000L;
+    private Long refreshDelayMs = 30_000L;
 
 }
