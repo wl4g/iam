@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
-import com.wl4g.iam.gateway.auth.SignTokenAuthingFilter;
+import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter;
 
 /**
  * {@link AuthingAutoConfiguration}
@@ -38,10 +38,10 @@ public class AuthingAutoConfiguration {
     }
 
     @Bean
-    public SignTokenAuthingFilter signTokenAuthingFilter(
+    public SimpleSignAuthingFilter simpleSignAuthingFilter(
             AuthingProperties authingConfig,
             StringRedisTemplate stringTemplate) {
-        return new SignTokenAuthingFilter(authingConfig, stringTemplate);
+        return new SimpleSignAuthingFilter(authingConfig, stringTemplate);
     }
 
     // @Bean

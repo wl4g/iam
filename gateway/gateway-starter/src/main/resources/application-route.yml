@@ -26,7 +26,7 @@ spring:
           filters:
             # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/v2/(?<segment>.*), /openapi/v2/$\{segment}
-            - name: SignTokenAuthing
+            - name: SimpleSignAuthing
               args:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
                 # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
@@ -68,7 +68,7 @@ spring:
           filters:
             # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
-            - name: SignTokenAuthing
+            - name: SimpleSignAuthing
               args:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
                 # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client

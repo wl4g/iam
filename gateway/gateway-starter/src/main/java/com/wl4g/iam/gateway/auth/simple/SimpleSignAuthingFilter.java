@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth;
+package com.wl4g.iam.gateway.auth.simple;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.cache.CacheBuilder.newBuilder;
@@ -55,6 +55,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.google.common.cache.Cache;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
+import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretLoadStore;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.common.web.rest.RespBase;
@@ -66,13 +67,13 @@ import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IgnoreGlobalFilterFactory}
+ * {@link SimpleSignAuthingFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-01 v3.0.0
  * @since v3.0.0
  */
-public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTokenAuthingFilter.Config> {
+public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {
 
     private final SmartLogger log = getLogger(getClass());
 
@@ -82,8 +83,8 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
     private final Cache<String, String> signReplayValidityStore;
     private final Cache<String, String> secretCacheStore;
 
-    public SignTokenAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate stringTemplate) {
-        super(SignTokenAuthingFilter.Config.class);
+    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate stringTemplate) {
+        super(SimpleSignAuthingFilter.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
         this.stringTemplate = notNullOf(stringTemplate, "stringTemplate");
         this.signReplayValidityStore = newBuilder()
@@ -95,7 +96,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
 
     @Override
     public String name() {
-        return SIGN_TOKEN_AUTH_FILTER;
+        return SIMPLE_SIGN_AUTH_FILTER;
     }
 
     /**
@@ -118,13 +119,13 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
      * see:{@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()}
      */
     @Override
-    public GatewayFilter apply(SignTokenAuthingFilter.Config config) {
+    public GatewayFilter apply(SimpleSignAuthingFilter.Config config) {
         return (exchange, chain) -> {
             if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSignToken().isIgnoredAuthingInJvmDebug()) {
                 return chain.filter(exchange);
             }
 
-            // Gets parameter signature. (required)
+            // Gets request signature.(required)
             String sign = null;
             try {
                 sign = hasText(exchange.getRequest().getQueryParams().getFirst(config.getSignParam()), "%s missing",
@@ -133,7 +134,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 log.warn("Bad request missing signature. - {}", exchange.getRequest().getURI());
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
-            // Gets determine parameter appId.
+            // Determine request appId.
             String appId = null;
             try {
                 appId = getRequestAppId(config, exchange);
@@ -148,7 +149,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                 return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
             }
 
-            // Verify signature
+            // Verify signature.
             try {
                 byte[] signBytes = doSignature(config, exchange, appId, sign);
                 if (!isEqual(signBytes, Hex.decodeHex(sign.toCharArray()))) {
@@ -173,7 +174,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         };
     }
 
-    private byte[] doSignature(SignTokenAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
+    private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
         // Load stored secret.
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
@@ -185,15 +186,15 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
     }
 
-    private byte[] loadStoredSecret(SignTokenAuthingFilter.Config config, String appId) {
+    private byte[] loadStoredSecret(SimpleSignAuthingFilter.Config config, String appId) {
         String loadKey = authingConfig.getSignToken().getSecretLoadPrefix().concat(appId);
         switch (authingConfig.getSignToken().getSecretLoadStore()) {
         case ENV:
             String storedSecret = getenv(loadKey);
             if (isBlank(storedSecret)) {
-                log.warn("No found storedSecret from environment via '{}'", loadKey);
+                log.warn("No found client secret from {} via '{}'", SecretLoadStore.ENV, loadKey);
             }
-            return hasText(storedSecret, "No enables application secret?");
+            return hasText(storedSecret, "No enables client secret?");
         case REDIS:
             storedSecret = secretCacheStore.asMap().get(loadKey);
             if (isBlank(storedSecret)) {
@@ -202,8 +203,8 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
                     if (isBlank(storedSecret)) {
                         storedSecret = stringTemplate.opsForValue().get(loadKey);
                         if (isBlank(storedSecret)) {
-                            log.warn("No found storedSecret from environment via '{}'", loadKey);
-                            throw new IllegalArgumentException(format("No enables application secret?"));
+                            log.warn("No found client secret from {} via '{}'", SecretLoadStore.REDIS, loadKey);
+                            throw new IllegalArgumentException(format("No enables client secret?"));
                         }
                         secretCacheStore.asMap().put(loadKey, storedSecret);
                         return storedSecret.getBytes(UTF_8);
@@ -216,7 +217,7 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         }
     }
 
-    private String getRequestAppId(SignTokenAuthingFilter.Config config, ServerWebExchange exchange) {
+    private String getRequestAppId(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange) {
         // Note: In some special business platform
         // scenarios, the signature authentication protocol may not define
         // appId (such as Alibaba Cloud Market SaaS product authentication
@@ -381,6 +382,6 @@ public class SignTokenAuthingFilter extends AbstractGatewayFilterFactory<SignTok
         }
     }
 
-    public static final String SIGN_TOKEN_AUTH_FILTER = "SignTokenAuthing";
+    public static final String SIMPLE_SIGN_AUTH_FILTER = "SimpleSignAuthing";
 
 }
