@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth;
+package com.wl4g.iam.gateway.auth.simple;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * {@link SimpleSignTests}
+ * {@link SimpleSignUtil}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-04
  * @since
  */
-public class SimpleSignTests {
+public class SimpleSignUtil {
 
     /**
      * Generate IAM open API signature.
@@ -60,6 +60,7 @@ public class SimpleSignTests {
         Arrays.sort(signInput);
 
         // Signature.
+        // Hex.encodeHexString(Hashing.sha256().hashBytes(signInput).asBytes());
         return hashing(new String(signInput, "UTF-8"));
     }
 
@@ -123,7 +124,7 @@ public class SimpleSignTests {
 
         String signature = generateSign(appId, appSecret, nonce, now);
 
-        out.println("New IAM openapi sign info: ");
+        out.println(":: IAM simple sign util ::");
         out.println(format("appId=%s", appId));
         out.println(format("nonce=%s", nonce));
         out.println(format("timestamp=%s", now));

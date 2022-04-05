@@ -13,7 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * {@link org.springframework.cloud.gateway.route.builder.GatewayFilterSpec#circuitBreakeer()}
- */
-package com.wl4g.iam.gateway.circuitbreaker;
+package com.wl4g.iam.gateway.auth;

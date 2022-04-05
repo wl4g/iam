@@ -23,7 +23,6 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
-import static java.lang.System.getenv;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -153,9 +152,9 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
 
             // Verify signature.
             try {
-                byte[] signBytes = doSignature(config, exchange, appId, sign);
-                if (!isEqual(signBytes, Hex.decodeHex(sign.toCharArray()))) {
-                    log.warn("Invalid request sign='{}', sign='{}'", new String(sign), signBytes);
+                byte[] _sign = doSignature(config, exchange, appId);
+                if (!isEqual(_sign, Hex.decodeHex(sign.toCharArray()))) {
+                    log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
                 if (config.isSignReplayVerifyEnabled()) {
@@ -207,7 +206,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         return authingConfig.getSimpleSign().getSignReplayVerifyBloomLoadPrefix().concat(":").concat(routeId);
     }
 
-    private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
+    private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId) {
         // Load stored secret.
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
@@ -223,11 +222,15 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         String loadKey = authingConfig.getSimpleSign().getSecretLoadPrefix().concat(":").concat(appId);
         switch (authingConfig.getSimpleSign().getSecretLoadStore()) {
         case ENV:
-            String storedSecret = getenv(loadKey);
+            String storedSecret = System.getenv(loadKey);
+            // Downgrade acquisition, for example, during integration testing,
+            // process environment variables cannot be modified.
+            storedSecret = isBlank(storedSecret) ? System.getProperty(loadKey) : null;
             if (isBlank(storedSecret)) {
                 log.warn("No found client secret from {} via '{}'", SecretLoadStore.ENV, loadKey);
+                throw new IllegalArgumentException(format("No enables client secret?"));
             }
-            return hasText(storedSecret, "No enables client secret?");
+            return storedSecret.getBytes(UTF_8);
         case REDIS:
             storedSecret = secretCacheStore.asMap().get(loadKey);
             if (isBlank(storedSecret)) {
@@ -300,11 +303,11 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         private Integer signReplayVerifyBloomExpireSeconds = 7 * 24 * 60 * 60;
 
         /*
-         * Signature parameters.
+         * Signature parameters configuration.
          */
         private String signParam = "sign";
         private SignAlgorithm signAlgorithm = SignAlgorithm.S256;
-        private SignHashingMode signHashingMode = SignHashingMode.SimpleParamsBytesSortedHashing;
+        private SignHashingMode signHashingMode = SignHashingMode.UriParamsKeySortedHashing;
         private List<String> signHashingIncludeParams = new ArrayList<>(4);
         private List<String> signHashingExcludeParams = new ArrayList<>(4);
         private List<String> signHashingRequiredIncludeParams = new ArrayList<>(4);
@@ -319,6 +322,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         //
         // Temporary fields.
         //
+        @Setter(lombok.AccessLevel.NONE)
         private transient Boolean isIncludeAll;
 
         public boolean isIncludeAll() {
@@ -400,7 +404,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                 }
             }
             // Add stored secret.
-            signPlaintext.append(storedAppSecret);
+            signPlaintext.append(new String(storedAppSecret, UTF_8));
             // ASCII sort characters.
             byte[] signPlainBytes = signPlaintext.toString().getBytes(UTF_8);
             Arrays.sort(signPlainBytes);

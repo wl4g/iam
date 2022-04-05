@@ -20,14 +20,24 @@ import static java.lang.System.out;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+/**
+ * {@link CircuitbreakerTests}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2022-04-05 v3.0.0
+ * @since v3.0.0
+ */
 @SpringBootTest
+@RunWith(SpringRunner.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureWebTestClient
 public class CircuitbreakerTests {
@@ -45,13 +55,14 @@ public class CircuitbreakerTests {
         i++;
         String tag = "[" + i + "]";
 
-        // 发起web请求
         webClient.get()
                 .uri("/hello/account/" + gen)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectBody(String.class)
                 .consumeWith(result -> out.println(tag + result.getRawStatusCode() + " - " + result.getResponseBody()));
+
         Thread.sleep(1000);
     }
+
 }
