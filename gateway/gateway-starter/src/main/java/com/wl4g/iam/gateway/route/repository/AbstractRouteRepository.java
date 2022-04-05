@@ -29,7 +29,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import com.google.common.collect.Maps;
 import com.wl4g.iam.gateway.route.IRouteCacheRefresher;
-import com.wl4g.iam.gateway.route.RefreshRoutesListener.RefreshType;
+import com.wl4g.iam.gateway.route.RefreshRouteApplicationListener.RefreshType;
 import com.wl4g.infra.common.log.SmartLogger;
 
 import reactor.core.publisher.Flux;

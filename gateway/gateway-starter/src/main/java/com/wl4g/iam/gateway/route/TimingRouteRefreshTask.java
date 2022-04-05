@@ -37,15 +37,16 @@ import com.wl4g.iam.gateway.route.config.RouteProperties;
  * @version 2019年6月2日
  * @since v1.0
  */
-public class TimingRoutesRefresher extends ApplicationTaskRunner<RunnerProperties> implements ApplicationRunner, DisposableBean {
+public class TimingRouteRefreshTask extends ApplicationTaskRunner<RunnerProperties>
+        implements ApplicationRunner, DisposableBean {
 
-    protected @Autowired RouteProperties config;
-    protected @Autowired IRouteCacheRefresher refresher;
+    private @Autowired RouteProperties config;
+    private @Autowired IRouteCacheRefresher refresher;
 
     /** Refreshing scheduled future */
     protected ScheduledFuture<?> future;
 
-    public TimingRoutesRefresher() {
+    public TimingRouteRefreshTask() {
         super(new RunnerProperties().withConcurrency(1));
     }
 

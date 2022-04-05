@@ -138,7 +138,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-loadbalancer</artifactId>
+			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -179,7 +179,20 @@
 		<!-- <groupId>io.grpc</groupId> -->
 		<!-- <artifactId>grpc-netty-shaded</artifactId> -->
 		<!-- </dependency> -->
+		<!-- Nacos configuration -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.alibaba.cloud</groupId> -->
+		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.alibaba.cloud</groupId> -->
+		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId> -->
+		<!-- </dependency> -->
 		<!-- Others -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>

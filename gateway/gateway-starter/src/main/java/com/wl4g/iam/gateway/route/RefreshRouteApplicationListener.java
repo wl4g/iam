@@ -27,13 +27,13 @@ import org.springframework.context.ApplicationListener;
 import com.wl4g.infra.common.log.SmartLogger;
 
 /**
- * {@link RefreshRoutesListener}
+ * {@link RefreshRouteApplicationListener}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-21
  * @since
  */
-public class RefreshRoutesListener implements ApplicationListener<RefreshRoutesEvent> {
+public class RefreshRouteApplicationListener implements ApplicationListener<RefreshRoutesEvent> {
     private final SmartLogger log = getLogger(getClass());
 
     private @Autowired ApplicationContext applicationContext;

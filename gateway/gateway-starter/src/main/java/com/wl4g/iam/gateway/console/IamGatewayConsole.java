@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 
 import com.wl4g.iam.gateway.console.args.UpdatingRefreshDelayArgument;
-import com.wl4g.iam.gateway.route.TimingRoutesRefresher;
+import com.wl4g.iam.gateway.route.TimingRouteRefreshTask;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 import com.wl4g.iam.gateway.route.repository.AbstractRouteRepository;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -38,7 +38,7 @@ public class IamGatewayConsole {
     private AbstractRouteRepository routeRepository;
 
     @Autowired
-    protected TimingRoutesRefresher refresher;
+    protected TimingRouteRefreshTask refresher;
 
     /**
      * Manual refresh gateway configuration all from cache(redis).

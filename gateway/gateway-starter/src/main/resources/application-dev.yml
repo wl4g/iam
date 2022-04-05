@@ -21,6 +21,11 @@ spring:
         max-active: 10
         max-wait: -1ms
   cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        group: DEFAULT_GROUP
     discovery:
       client:
         # see:org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient
