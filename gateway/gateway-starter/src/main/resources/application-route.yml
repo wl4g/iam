@@ -31,16 +31,19 @@ spring:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
                 # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
                 # application can only be determined according to the request route ID.
-                app-id-extract-mode: Parameter
+                app-id-extractor: Parameter
                 # Only valid when appId extract mode is parameter.
                 app-id-param: appId
                 secret-param: key
+                sign-replay-verify-enabled: true # Default by true
+                sign-replay-verify-bloom-expire-seconds: 604800 # Default by 7*24*60*60
                 sign-param: signature
                 sign-algorithm: S256 # Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: SimpleParamsBytesSortedHashing
                 sign-hashing-include-params: [appId, timestamp, nonce]
                 sign-hashing-exclude-params: []
                 sign-hashing-required-include-params: [appId, timestamp, nonce]
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId
             #- StripPrefix=1
             # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
             # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
@@ -73,15 +76,18 @@ spring:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define
                 # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
                 # application can only be determined according to the request route ID.
-                app-id-extract-mode: RouteId
+                app-id-extractor: RouteId
                 # Only valid when appId extract mode is parameter.
                 app-id-param: appId
                 secret-param: key
+                sign-replay-verify-enabled: true # Default by true
+                sign-replay-verify-bloom-expire-seconds: 604800 # Default by 7*24*60*60
                 sign-param: token
                 sign-algorithm: MD5 # Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: UriParamsKeySortedHashing
                 sign-hashing-include-params: ['*']
                 sign-hashing-exclude-params: []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 1

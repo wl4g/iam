@@ -41,32 +41,10 @@ public class AuthingProperties {
         private long secretLocalCacheSeconds = 6L;
 
         /**
-         * Whether to enable signature replay attack interception.
-         */
-        private boolean signReplayVerifyEnabled = true;
-
-        /**
-         * TODO use redis cached signing.</br>
-         * 
-         * Local cache expiration time for blocking replay attacks.
-         */
-        private Long signReplayVerifyLocalCacheSeconds = 15 * 60L;
-
-        /**
          * Ignore authentication in JVM debug mode, often used for rapid
          * development and testing environments.
          */
         private boolean ignoredAuthingInJvmDebug = false;
-
-        /**
-         * Add the current authenticated client ID to the request header, this
-         * will allow the back-end resource services to recognize the current
-         * client ID.
-         */
-        private String addSignAuthClientIdHeader = DEFAULT_SIGN_AUTH_CLIENT_HEADER;
-
-        // Default configuration options.
-        public static final String DEFAULT_SIGN_AUTH_CLIENT_HEADER = "X-Sign-Auth-AppId";
     }
 
     public static enum SecretLoadStore {

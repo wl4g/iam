@@ -22,11 +22,8 @@ spring:
           secret-load-store: redis
           secret-load-prefix: iam:gateway:auth:simple-sign
           secret-local-cache-seconds: 6 # Default by 6sec
-          sign-replay-verify-enabled: true # Default by true
-          sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
           # Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
-          ignored-authing-in-jvm-debug: true # Default by false
-          add-sign-auth-client-id-header: X-Sign-Auth-AppId
+          ignored-authing-in-jvm-debug: false # Default by false
       ratelimit: {}
       route:
         refresh-time-ms: 30000

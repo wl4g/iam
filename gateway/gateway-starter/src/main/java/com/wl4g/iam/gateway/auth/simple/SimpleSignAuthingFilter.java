@@ -25,6 +25,7 @@ import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.System.getenv;
 import static java.security.MessageDigest.isEqual;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +43,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -53,9 +55,12 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.cache.Cache;
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretLoadStore;
+import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
+import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.common.web.rest.RespBase;
@@ -76,20 +81,14 @@ import reactor.core.publisher.Mono;
 public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {
 
     private final SmartLogger log = getLogger(getClass());
-
     private final AuthingProperties authingConfig;
-    private final StringRedisTemplate stringTemplate;
-
-    private final Cache<String, String> signReplayValidityStore;
+    private final StringRedisTemplate redisTemplate;
     private final Cache<String, String> secretCacheStore;
 
-    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate stringTemplate) {
+    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate) {
         super(SimpleSignAuthingFilter.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
-        this.stringTemplate = notNullOf(stringTemplate, "stringTemplate");
-        this.signReplayValidityStore = newBuilder()
-                .expireAfterWrite(authingConfig.getSimpleSign().getSignReplayVerifyLocalCacheSeconds(), SECONDS)
-                .build();
+        this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSimpleSign().getSecretLocalCacheSeconds(), SECONDS)
                 .build();
     }
@@ -120,7 +119,82 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
      */
     @Override
     public GatewayFilter apply(SimpleSignAuthingFilter.Config config) {
-        return (exchange, chain) -> {
+        return new SimpleSignAuthingGatewayFilter(config);
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class Config {
+        public static final String DEFAULT_SIGN_AUTH_CLIENT_HEADER = "X-Sign-Auth-AppId";
+
+        /**
+         * AppId parameter extract configuration.
+         */
+        private AppIdExtractor appIdExtractor = AppIdExtractor.Parameter;
+
+        /**
+         * Only valid when appId extract mode is parameter.
+         */
+        private String appIdParam = "appId";
+
+        /**
+         * Note: It is only used to concatenate plain-text string salts when
+         * hashing signatures. (not required as a request parameter)
+         */
+        private String secretParam = "appSecret";
+
+        /**
+         * Whether to enable signature replay attack interception.
+         */
+        private boolean signReplayVerifyEnabled = true;
+
+        /**
+         * Bloom filter sign cache expiration for replay attacks verification.
+         */
+        private Integer signReplayVerifyBloomExpireSeconds = 7 * 24 * 60 * 60;
+
+        /*
+         * Signature parameters.
+         */
+        private String signParam = "sign";
+        private SignAlgorithm signAlgorithm = SignAlgorithm.S256;
+        private SignHashingMode signHashingMode = SignHashingMode.SimpleParamsBytesSortedHashing;
+        private List<String> signHashingIncludeParams = new ArrayList<>(4);
+        private List<String> signHashingExcludeParams = new ArrayList<>(4);
+        private List<String> signHashingRequiredIncludeParams = new ArrayList<>(4);
+
+        /**
+         * Add the current authenticated client ID to the request header, this
+         * will allow the back-end resource services to recognize the current
+         * client ID.
+         */
+        private String addSignAuthClientIdHeader = DEFAULT_SIGN_AUTH_CLIENT_HEADER;
+
+        //
+        // Temporary fields.
+        //
+        private transient Boolean isIncludeAll;
+
+        public boolean isIncludeAll() {
+            if (nonNull(isIncludeAll)) {
+                return isIncludeAll;
+            }
+            return (isIncludeAll = safeList(getSignHashingIncludeParams()).stream().anyMatch(n -> eqIgnCase("*", n)));
+        }
+
+    }
+
+    class SimpleSignAuthingGatewayFilter implements GatewayFilter {
+        private final SimpleSignAuthingFilter.Config config;
+        private RedisBloomFilter<String> bloomFilter;
+
+        public SimpleSignAuthingGatewayFilter(SimpleSignAuthingFilter.Config config) {
+            this.config = notNullOf(config, "config");
+        }
+
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSimpleSign().isIgnoredAuthingInJvmDebug()) {
                 return chain.filter(exchange);
             }
@@ -143,10 +217,12 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
 
-            // Check replay.
-            if (signReplayValidityStore.asMap().containsKey(sign)) {
-                log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
-                return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
+            // Check replay attacks.
+            if (config.isSignReplayVerifyEnabled()) {
+                if (obtainBloomFilter(exchange).bloomExist(KEY_BLOOM_FILTER, sign)) {
+                    log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
+                    return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
+                }
             }
 
             // Verify signature.
@@ -156,7 +232,9 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                     log.warn("Invalid request sign='{}', sign='{}'", new String(sign), signBytes);
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
-                signReplayValidityStore.put(sign, appId);
+                if (config.isSignReplayVerifyEnabled()) {
+                    obtainBloomFilter(exchange).bloomAdd(KEY_BLOOM_FILTER, sign);
+                }
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
             } catch (IllegalArgumentException e) {
@@ -168,106 +246,94 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
             // current client ID.
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header(authingConfig.getSimpleSign().getAddSignAuthClientIdHeader(), appId)
+                    .header(config.getAddSignAuthClientIdHeader(), appId)
                     .build();
             return chain.filter(exchange.mutate().request(request).build());
-        };
-    }
+        }
 
-    private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
-        // Load stored secret.
-        byte[] storedAppSecret = loadStoredSecret(config, appId);
-
-        // Make signature plain text.
-        byte[] signPlainBytes = config.getSignHashingMode().getFunction().apply(
-                new Object[] { config, storedAppSecret, exchange.getRequest() });
-
-        // Hashing signature.
-        return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
-    }
-
-    private byte[] loadStoredSecret(SimpleSignAuthingFilter.Config config, String appId) {
-        String loadKey = authingConfig.getSimpleSign().getSecretLoadPrefix().concat(appId);
-        switch (authingConfig.getSimpleSign().getSecretLoadStore()) {
-        case ENV:
-            String storedSecret = getenv(loadKey);
-            if (isBlank(storedSecret)) {
-                log.warn("No found client secret from {} via '{}'", SecretLoadStore.ENV, loadKey);
-            }
-            return hasText(storedSecret, "No enables client secret?");
-        case REDIS:
-            storedSecret = secretCacheStore.asMap().get(loadKey);
-            if (isBlank(storedSecret)) {
-                synchronized (loadKey) {
-                    storedSecret = secretCacheStore.asMap().get(loadKey);
-                    if (isBlank(storedSecret)) {
-                        storedSecret = stringTemplate.opsForValue().get(loadKey);
-                        if (isBlank(storedSecret)) {
-                            log.warn("No found client secret from {} via '{}'", SecretLoadStore.REDIS, loadKey);
-                            throw new IllegalArgumentException(format("No enables client secret?"));
+        private RedisBloomFilter<String> obtainBloomFilter(ServerWebExchange exchange) {
+            if (isNull(bloomFilter)) {
+                synchronized (this) {
+                    if (isNull(bloomFilter)) {
+                        String routeId = ((Route) exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR))
+                                .getId();
+                        if (isBlank(routeId)) {
+                            throw new Error(format("Should't be here, cannot to get routeId"));
                         }
-                        secretCacheStore.asMap().put(loadKey, storedSecret);
-                        return storedSecret.getBytes(UTF_8);
+                        // Initial bloom filter.
+                        this.bloomFilter = new RedisBloomFilter<String>(redisTemplate, new BloomConfig<>(
+                                (Funnel<String>) (from, into) -> into.putString(from, UTF_8), Integer.MAX_VALUE, 0.01));
+                        this.bloomFilter.bloomExpire(KEY_BLOOM_FILTER, config.getSignReplayVerifyBloomExpireSeconds(), false);
                     }
                 }
             }
-            return storedSecret.getBytes(UTF_8);
-        default:
-            throw new Error("Shouldn't be here");
+            return bloomFilter;
         }
-    }
 
-    private String getRequestAppId(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange) {
-        // Note: In some special business platform
-        // scenarios, the signature authentication protocol may not define
-        // appId (such as Alibaba Cloud Market SaaS product authentication
-        // API), then the uniqueness of the client application can only be
-        // determined according to the request route ID.
-        return config.getAppIdExtractMode().getFunction().apply(new Object[] { config, exchange });
-    }
+        private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId, String sign) {
+            // Load stored secret.
+            byte[] storedAppSecret = loadStoredSecret(config, appId);
 
-    private Mono<Void> writeResponse(HttpStatus status, ServerWebExchange exchange, String fmtMessage, Object... args) {
-        RespBase<?> resp = RespBase.create().withCode(status.value()).withMessage(format(fmtMessage, args));
-        ServerHttpResponse response = exchange.getResponse();
-        DataBuffer buffer = response.bufferFactory().wrap(resp.asJson().getBytes(UTF_8));
-        response.setStatusCode(status);
-        return response.writeWith(just(buffer));
-    }
+            // Make signature plain text.
+            byte[] signPlainBytes = config.getSignHashingMode().getFunction().apply(
+                    new Object[] { config, storedAppSecret, exchange.getRequest() });
 
-    @Getter
-    @Setter
-    @ToString
-    public static class Config {
-        // AppId parameter extract configuration.
-        private AppIdExtractMode appIdExtractMode = AppIdExtractMode.Parameter;
-        // Only valid when appId extract mode is parameter.
-        private String appIdParam = "appId";
-        // Note: It is only used to concatenate plain-text string salts when
-        // hashing signatures. (not required as a request parameter)
-        private String secretParam = "appSecret";
-        // Signature parameters.
-        private String signParam = "sign";
-        private SignAlgorithm signAlgorithm = SignAlgorithm.S256;
-        private SignHashingMode signHashingMode = SignHashingMode.SimpleParamsBytesSortedHashing;
-        private List<String> signHashingIncludeParams = new ArrayList<>(4);
-        private List<String> signHashingExcludeParams = new ArrayList<>(4);
-        private List<String> signHashingRequiredIncludeParams = new ArrayList<>(4);
-        //
-        // Temporary fields.
-        //
-        private transient Boolean isIncludeAll;
+            // Hashing signature.
+            return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
+        }
 
-        public boolean isIncludeAll() {
-            if (nonNull(isIncludeAll)) {
-                return isIncludeAll;
+        private byte[] loadStoredSecret(SimpleSignAuthingFilter.Config config, String appId) {
+            String loadKey = authingConfig.getSimpleSign().getSecretLoadPrefix().concat(":").concat(appId);
+            switch (authingConfig.getSimpleSign().getSecretLoadStore()) {
+            case ENV:
+                String storedSecret = getenv(loadKey);
+                if (isBlank(storedSecret)) {
+                    log.warn("No found client secret from {} via '{}'", SecretLoadStore.ENV, loadKey);
+                }
+                return hasText(storedSecret, "No enables client secret?");
+            case REDIS:
+                storedSecret = secretCacheStore.asMap().get(loadKey);
+                if (isBlank(storedSecret)) {
+                    synchronized (loadKey) {
+                        storedSecret = secretCacheStore.asMap().get(loadKey);
+                        if (isBlank(storedSecret)) {
+                            storedSecret = redisTemplate.opsForValue().get(loadKey);
+                            if (isBlank(storedSecret)) {
+                                log.warn("No found client secret from {} via '{}'", SecretLoadStore.REDIS, loadKey);
+                                throw new IllegalArgumentException(format("No enables client secret?"));
+                            }
+                            secretCacheStore.asMap().put(loadKey, storedSecret);
+                            return storedSecret.getBytes(UTF_8);
+                        }
+                    }
+                }
+                return storedSecret.getBytes(UTF_8);
+            default:
+                throw new Error("Shouldn't be here");
             }
-            return (isIncludeAll = safeList(getSignHashingIncludeParams()).stream().anyMatch(n -> eqIgnCase("*", n)));
+        }
+
+        private String getRequestAppId(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange) {
+            // Note: In some special business platform
+            // scenarios, the signature authentication protocol may not define
+            // appId (such as Alibaba Cloud Market SaaS product authentication
+            // API), then the uniqueness of the client application can only be
+            // determined according to the request route ID.
+            return config.getAppIdExtractor().getFunction().apply(new Object[] { config, exchange });
+        }
+
+        private Mono<Void> writeResponse(HttpStatus status, ServerWebExchange exchange, String fmtMessage, Object... args) {
+            RespBase<?> resp = RespBase.create().withCode(status.value()).withMessage(format(fmtMessage, args));
+            ServerHttpResponse response = exchange.getResponse();
+            DataBuffer buffer = response.bufferFactory().wrap(resp.asJson().getBytes(UTF_8));
+            response.setStatusCode(status);
+            return response.writeWith(just(buffer));
         }
     }
 
     @Getter
     @AllArgsConstructor
-    public static enum AppIdExtractMode {
+    public static enum AppIdExtractor {
 
         Parameter(args -> {
             Config config = (Config) args[0];
@@ -383,5 +449,6 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     }
 
     public static final String SIMPLE_SIGN_AUTH_FILTER = "SimpleSignAuthing";
+    public static final String KEY_BLOOM_FILTER = SimpleSignAuthingFilter.class.getSimpleName() + ".BloomFilter";
 
 }
