@@ -31,7 +31,7 @@ public abstract class IAMConstants extends BaseConstants {
     public static final String CONF_PREFIX_IAM_SECURITY_SNS = CONF_PREFIX_IAM + ".sns";
     public static final String CONF_PREFIX_IAM_SECURITY_CAPTCHA = CONF_PREFIX_IAM + ".captcha";
 
-    public static final String CACHE_PREFIX_IAM = ":iam:";
+    public static final String CACHE_PREFIX_IAM = "iam";
 
     public static final String KEY_IAM_SUBJECT_USER = "subjectUserInfo";
 

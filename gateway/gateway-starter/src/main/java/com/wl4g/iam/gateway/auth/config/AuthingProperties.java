@@ -1,6 +1,6 @@
 package com.wl4g.iam.gateway.auth.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTHING_SIGN_TOKEN;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIMPLE_SIGN;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,12 +18,12 @@ import lombok.ToString;
 @ToString
 public class AuthingProperties {
 
-    private GenericTokenAuthingProperties signToken = new GenericTokenAuthingProperties();
+    private SimpleSignAuthingProperties simpleSign = new SimpleSignAuthingProperties();
 
     @Getter
     @Setter
     @ToString
-    public static class GenericTokenAuthingProperties {
+    public static class SimpleSignAuthingProperties {
 
         /**
          * Load signing keys from that type of stored.
@@ -33,7 +33,7 @@ public class AuthingProperties {
         /**
          * Prefix when loading from signing keys stored.
          */
-        private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTHING_SIGN_TOKEN;
+        private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIMPLE_SIGN;
 
         /**
          * Local cache expiration time for signing keys.

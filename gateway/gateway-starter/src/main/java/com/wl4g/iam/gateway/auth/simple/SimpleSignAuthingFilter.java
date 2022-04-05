@@ -88,9 +88,9 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
         this.stringTemplate = notNullOf(stringTemplate, "stringTemplate");
         this.signReplayValidityStore = newBuilder()
-                .expireAfterWrite(authingConfig.getSignToken().getSignReplayVerifyLocalCacheSeconds(), SECONDS)
+                .expireAfterWrite(authingConfig.getSimpleSign().getSignReplayVerifyLocalCacheSeconds(), SECONDS)
                 .build();
-        this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSignToken().getSecretLocalCacheSeconds(), SECONDS)
+        this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSimpleSign().getSecretLocalCacheSeconds(), SECONDS)
                 .build();
     }
 
@@ -121,7 +121,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     @Override
     public GatewayFilter apply(SimpleSignAuthingFilter.Config config) {
         return (exchange, chain) -> {
-            if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSignToken().isIgnoredAuthingInJvmDebug()) {
+            if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSimpleSign().isIgnoredAuthingInJvmDebug()) {
                 return chain.filter(exchange);
             }
 
@@ -168,7 +168,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
             // current client ID.
             ServerHttpRequest request = exchange.getRequest()
                     .mutate()
-                    .header(authingConfig.getSignToken().getAddSignAuthClientIdHeader(), appId)
+                    .header(authingConfig.getSimpleSign().getAddSignAuthClientIdHeader(), appId)
                     .build();
             return chain.filter(exchange.mutate().request(request).build());
         };
@@ -187,8 +187,8 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     }
 
     private byte[] loadStoredSecret(SimpleSignAuthingFilter.Config config, String appId) {
-        String loadKey = authingConfig.getSignToken().getSecretLoadPrefix().concat(appId);
-        switch (authingConfig.getSignToken().getSecretLoadStore()) {
+        String loadKey = authingConfig.getSimpleSign().getSecretLoadPrefix().concat(appId);
+        switch (authingConfig.getSimpleSign().getSecretLoadStore()) {
         case ENV:
             String storedSecret = getenv(loadKey);
             if (isBlank(storedSecret)) {

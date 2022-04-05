@@ -18,9 +18,9 @@ spring:
   iam:
     gateway:
       authing:
-        sign-token:
+        simple-sign:
           secret-load-store: redis
-          secret-load-prefix: IAM_AUTHC_SIGN_APPSECRET_
+          secret-load-prefix: iam:gateway:auth:simple-sign
           secret-local-cache-seconds: 6 # Default by 6sec
           sign-replay-verify-enabled: true # Default by true
           sign-replay-verify-local-cache-seconds: 900 # Default by 15*60 sec
