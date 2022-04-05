@@ -126,10 +126,16 @@ public class LoggingGlobalFilter implements GlobalFilter, Ordered {
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
 
-        return loggingRequest(exchange, chain, headers, traceId, requestMethod, requestUri)
-                .then(Mono.defer(() -> chain.filter(exchange.mutate()
-                        .response(loggingResponse(exchange, chain, headers, traceId, requestMethod, requestUri))
-                        .build())));
+        // TODO
+        // return loggingRequest(exchange, chain, headers, traceId,
+        // requestMethod, requestUri)
+        // .then(Mono.defer(() -> chain.filter(exchange.mutate()
+        // .response(loggingResponse(exchange, chain, headers, traceId,
+        // requestMethod, requestUri))
+        // .build())));
+
+        return loggingRequest(exchange, chain, headers, traceId, requestMethod, requestUri);
+
         // TODO
         // return chain.filter(exchange.mutate()
         // .response(loggingResponse(exchange, chain, headers, traceId,

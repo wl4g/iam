@@ -174,7 +174,6 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                     .header(config.getAddSignAuthClientIdHeader(), appId)
                     .build();
             return chain.filter(exchange.mutate().request(request).build());
-
         };
     }
 
