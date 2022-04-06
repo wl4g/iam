@@ -496,6 +496,11 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                 if (!flagSchema && equalsIgnoreCase(request.getURI().getScheme(), match.getMatchHttpHost())) {
                     flagSchema = true;
                 }
+                // Matches HTTP method
+                boolean flagMethod = isBlank(match.getMatchHttpMethod());
+                if (!flagMethod && equalsIgnoreCase(request.getMethod().name(), match.getMatchHttpMethod())) {
+                    flagMethod = true;
+                }
                 // Matches HTTP host
                 boolean flagHost = isBlank(match.getMatchHttpHost());
                 if (!flagHost && equalsIgnoreCase(request.getURI().getHost(), match.getMatchHttpHost())) {
@@ -505,11 +510,6 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                 boolean flagPort = isNull(match.getMatchHttpPort());
                 if (!flagPort && equalsIgnoreCase(request.getURI().getPort() + "", match.getMatchHttpHost())) {
                     flagPort = true;
-                }
-                // Matches HTTP method
-                boolean flagMethod = isBlank(match.getMatchHttpMethod());
-                if (!flagMethod && equalsIgnoreCase(request.getMethod().name(), match.getMatchHttpMethod())) {
-                    flagMethod = true;
                 }
                 // Matches HTTP headers.
                 boolean flagHeader = isNull(match.getMatchHttpHeader());

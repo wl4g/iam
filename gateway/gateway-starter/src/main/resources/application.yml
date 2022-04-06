@@ -41,7 +41,7 @@ spring:
         # The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         verbose-level: 10
         preferred-flight-log-matches:
-        - match-http-schema: 
+        - #match-http-schema: 
           #match-http-host: 
           #match-http-port: 
           match-http-header:

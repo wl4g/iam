@@ -79,18 +79,18 @@ public class LoggingProperties {
         private @Nullable String matchHttpSchema;
 
         /**
-         * (Optional) The value used to match the current request HTTP host.
-         * </br>
-         * for example: example.com
-         */
-        private @Nullable String matchHttpHost;
-
-        /**
          * (Optional)The value used to match the current request HTTP method.
          * </br>
          * for example: POST
          */
         private @Nullable String matchHttpMethod;
+
+        /**
+         * (Optional) The value used to match the current request HTTP host.
+         * </br>
+         * for example: example.com
+         */
+        private @Nullable String matchHttpHost;
 
         /**
          * (Optional)The name used to match the current request HTTP port. </br>
