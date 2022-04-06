@@ -15,9 +15,15 @@
  */
 package com.wl4g.iam.gateway.logging.config;
 
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,42 +54,101 @@ public class LoggingProperties {
     private @Nullable Boolean requiredFlightLogEnabled = null;
 
     /**
-     * Whether to enable the switch for printing flight logs, it only takes
-     * effect when the 'requiredFlightLogEnabled' switch is empty or true.
-     */
-    private boolean preferredFlightLogPrintEnabled = true;
-
-    /**
-     * The matching pattern used to match the current request header or
-     * parameter.
-     */
-    private @NotNull MatchesMode preferredFlightLogMatchesMode = MatchesMode.EQ;
-
-    /**
-     * (Optional) The name used to match the current request header.
-     */
-    private @Nullable String preferredFlightLogMatchesHeader = "X-Iam-Gateway-Log";
-
-    /**
-     * (Optional) The name used to match the current request header.
-     */
-    private @Nullable String preferredFlightLogMatchesQuery = "__iam_gateway_log";
-
-    /**
-     * The value used to match the current request header or query parameter.
-     */
-    private @Nullable String preferredFlightLogMatchesValue = "y";
-
-    /**
      * The output level of flight log printing, similar to
      * {@linkplain https://github.com/kubernetes/kubectl} design value range:
      * 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
      */
     private int preferredFlightLogVerboseLevel = 1;
 
+    /**
+     * Preferred to enable print flight log match group list, multiple match
+     * groups are combined with OR for final result.
+     */
+    private List<PreferredFlightLogMatch> preferredFlightLogMatches = new ArrayList<>();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class PreferredFlightLogMatch {
+
+        /**
+         * (Optional) The value used to match the current request HTTP schema.
+         * </br>
+         * for example: https://
+         */
+        private @Nullable String matchHttpSchema;
+
+        /**
+         * (Optional) The value used to match the current request HTTP host.
+         * </br>
+         * for example: example.com
+         */
+        private @Nullable String matchHttpHost;
+
+        /**
+         * (Optional)The value used to match the current request HTTP method.
+         * </br>
+         * for example: POST
+         */
+        private @Nullable String matchHttpMethod;
+
+        /**
+         * (Optional)The name used to match the current request HTTP port. </br>
+         * for example: 443
+         */
+        private @Nullable Integer matchHttpPort;
+
+        /**
+         * (Optional) The name-value used to match the current request HTTP
+         * header.
+         */
+        private @Nullable MatchPredicate matchHttpHeader = new MatchPredicate(MatchMode.EQ, "X-Iam-Gateway-Log", "y");
+
+        /**
+         * (Optional) The name-value used to match the current request HTTP
+         * query parameter. </br>
+         * for example: __iam_gateway_log
+         */
+        private @Nullable MatchPredicate matchHttpQuery;
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    public static class MatchPredicate {
+
+        /**
+         * The matching mode used to match the current request parameter value.
+         */
+        private @NotNull MatchMode matchMode;
+
+        /**
+         * Object key.
+         */
+        private @NotBlank String key;
+
+        /**
+         * Object value.
+         */
+        private @NotBlank String value;
+
+        public MatchPredicate() {
+            this.matchMode = MatchMode.EQ;
+        }
+
+        public MatchPredicate validate() {
+            notNull(matchMode, "matchMode is required");
+            hasText(key, "key is required");
+            hasText(value, "value is required");
+            return this;
+        }
+    }
+
     @Getter
     @AllArgsConstructor
-    public static enum MatchesMode {
+    public static enum MatchMode {
         EQ((v1, v2) -> StringUtils.equals(v1, v2)),
 
         IGNORECASE_EQ((v1, v2) -> StringUtils.equalsIgnoreCase(v1, v2)),

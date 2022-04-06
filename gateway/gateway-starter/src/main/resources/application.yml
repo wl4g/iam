@@ -35,16 +35,24 @@ spring:
       trace:
         trace-id-request-header: X-Simple-Trace-Id
       logging:
-        # If the mandatory switch is not set, it is determined whether to enable logging according to
-        # the preference switch, otherwise it is determined whether to enable logging according to the
-        # mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
+        # If the mandatory switch is not set, it is determined whether to enable logging according to the preference switch, otherwise it is determined
+        # it is determined whether to enable logging according to the mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
         #required-flight-log-enabled: # Options:(null|true|false)
-        preferred-flight-log-matches-mode: EQ # Options(EQ|IGNORECASE_EQ||PREFIX|IGNORECASE_PREFIX|SUFFIX|IGNORECASE_SUFFIX|INCLUDE|IGNORECASE_INCLUDE)
-        preferred-flight-log-matches-header: 'X-Iam-Gateway-Log-Enabled'
-        preferred-flight-log-matches-query: '__iam_gateway_log_enabled'
-        preferred-flight-log-matches-value: 'y'
         # The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        preferred-flight-log-verbose-level: 10
+        verbose-level: 10
+        preferred-flight-log-matches:
+        - match-http-schema: 
+          #match-http-host: 
+          #match-http-port: 
+          match-http-header:
+            match-mode: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+            key: X-Iam-Gateway-Log
+            value: y
+          #match-http-query:
+          #  match-mode: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+          #  key: __iam_gateway_log
+          #  value: y
+
   # Security configuration.
   security:
     oauth2:

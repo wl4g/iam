@@ -15,10 +15,12 @@
  */
 package com.wl4g.iam.gateway.logging;
 
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
@@ -60,6 +62,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties.PreferredFlightLogMatch;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
@@ -487,16 +490,42 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         // switch, the default mandatory switch is empty, the preference switch
         // is enabled.
         if (isNull(loggingConfig.getRequiredFlightLogEnabled())) {
-            if (!isBlank(loggingConfig.getPreferredFlightLogMatchesHeader())
-                    && loggingConfig.getPreferredFlightLogMatchesMode().getFunction().apply(
-                            trimToEmpty(headers.getFirst(loggingConfig.getPreferredFlightLogMatchesHeader())),
-                            loggingConfig.getPreferredFlightLogMatchesValue())) {
-                return true;
-            } else if (!isBlank(loggingConfig.getPreferredFlightLogMatchesQuery())
-                    && loggingConfig.getPreferredFlightLogMatchesMode().getFunction().apply(
-                            trimToEmpty(request.getQueryParams().getFirst(loggingConfig.getPreferredFlightLogMatchesQuery())),
-                            loggingConfig.getPreferredFlightLogMatchesValue())) {
-                return true;
+            for (PreferredFlightLogMatch match : safeList(loggingConfig.getPreferredFlightLogMatches())) {
+                // Matches HTTP schema
+                boolean flagSchema = isBlank(match.getMatchHttpSchema());
+                if (!flagSchema && equalsIgnoreCase(request.getURI().getScheme(), match.getMatchHttpHost())) {
+                    flagSchema = true;
+                }
+                // Matches HTTP host
+                boolean flagHost = isBlank(match.getMatchHttpHost());
+                if (!flagHost && equalsIgnoreCase(request.getURI().getHost(), match.getMatchHttpHost())) {
+                    flagHost = true;
+                }
+                // Matches HTTP port
+                boolean flagPort = isNull(match.getMatchHttpPort());
+                if (!flagPort && equalsIgnoreCase(request.getURI().getPort() + "", match.getMatchHttpHost())) {
+                    flagPort = true;
+                }
+                // Matches HTTP method
+                boolean flagMethod = isBlank(match.getMatchHttpMethod());
+                if (!flagMethod && equalsIgnoreCase(request.getMethod().name(), match.getMatchHttpMethod())) {
+                    flagMethod = true;
+                }
+                // Matches HTTP headers.
+                boolean flagHeader = isNull(match.getMatchHttpHeader());
+                if (!flagHeader && match.getMatchHttpHeader().getMatchMode().getFunction().apply(
+                        trimToEmpty(headers.getFirst(match.getMatchHttpHeader().getKey())),
+                        match.getMatchHttpHeader().getValue())) {
+                    flagHeader = true;
+                }
+                // Matches HTTP query parameter.
+                boolean flagQuery = isNull(match.getMatchHttpQuery());
+                if (!flagQuery && match.getMatchHttpHeader().getMatchMode().getFunction().apply(
+                        trimToEmpty(request.getQueryParams().getFirst(match.getMatchHttpQuery().getKey())),
+                        match.getMatchHttpQuery().getValue())) {
+                    flagQuery = true;
+                }
+                return flagSchema && flagHost && flagPort && flagMethod && flagHeader && flagQuery;
             }
         }
         return loggingConfig.getRequiredFlightLogEnabled();
