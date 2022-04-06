@@ -73,6 +73,17 @@ import reactor.core.publisher.Mono;
 /**
  * {@link SimpleSignAuthingFilter}
  * 
+ * <p>
+ * Comparison of global filter and gateway filter: </br>
+ * Speaking of their connection, we know that whether it is a global filter or a
+ * gateway filter, they can form a filter chain for interception, and this
+ * filter chain is composed of a List<GatewayFilter> collection, which seems to
+ * be a combination of GatewayFilters, Has nothing to do with GlobalFilter. In
+ * fact, SCG adapts GlobalFilter to GatewayFilter by means of an adapter. We can
+ * see this change in the constructor of
+ * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler}.
+ * </p>
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-01 v3.0.0
  * @since v3.0.0

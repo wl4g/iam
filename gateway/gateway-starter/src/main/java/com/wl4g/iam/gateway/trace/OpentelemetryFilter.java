@@ -1,3 +1,4 @@
+package com.wl4g.iam.gateway.trace;
 ///*
 // * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
 // *
@@ -41,7 +42,7 @@
 // * @version 2022-04-02 v3.0.0
 // * @since v3.0.0
 // */
-//public class OpentelemetryGlobalFilter implements GlobalFilter {
+//public class OpentelemetryFilter implements GlobalFilter {
 //
 //    private OpenTelemetry openTelemetry = null;
 //

@@ -15,13 +15,21 @@
  */
 package com.wl4g.iam.gateway.logging.config;
 
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.isTrueOf;
+import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.split;
+
 import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +45,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoggingProperties {
+public class LoggingProperties implements InitializingBean {
 
     /**
      * If the mandatory switch is not set, it is determined whether to enable
@@ -60,18 +68,17 @@ public class LoggingProperties {
     private @NotNull MatchesMode preferredFlightLogMatchesMode = MatchesMode.EQ;
 
     /**
-     * (Optional) The name used to match the current request header.
+     * If the current request header matches the header name and value, print
+     * flight log is enabled.
      */
     private @Nullable String preferredFlightLogMatchesHeader = "X-Iam-Gateway-Log";
 
     /**
-     * (Optional) The name used to match the current request header.
+     * (Optional) If the current request query parameters matches the parameter
+     * name and value, print flight log is enabled.
      */
     private @Nullable String preferredFlightLogMatchesQuery = "__iam_gateway_log";
 
-    /**
-     * The value used to match the current request header or query parameter.
-     */
     private @Nullable String preferredFlightLogMatchesValue = "y";
 
     /**
@@ -80,6 +87,42 @@ public class LoggingProperties {
      * 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
      */
     private int preferredFlightLogVerboseLevel = 1;
+
+    //
+    // Temporary attributes.
+    //
+    @Setter(AccessLevel.NONE)
+    private String _preferredFlightLogMatchesHeaderName;
+    @Setter(AccessLevel.NONE)
+    private String _preferredFlightLogMatchesHeaderValue;
+    @Setter(AccessLevel.NONE)
+    private String _preferredFlightLogMatchesQueryName;
+    @Setter(AccessLevel.NONE)
+    private String _preferredFlightLogMatchesQueryValue;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Initial matches header.
+        if (!isBlank(getPreferredFlightLogMatchesHeader())) {
+            isTrueOf(contains(getPreferredFlightLogMatchesHeader(), "="), getPreferredFlightLogMatchesHeader());
+            String[] parts1 = split(getPreferredFlightLogMatchesHeader(), "=");
+            this._preferredFlightLogMatchesHeaderName = parts1[0];
+            this._preferredFlightLogMatchesHeaderValue = parts1[1];
+            hasText(_preferredFlightLogMatchesHeaderName,
+                    "invalid_format '_preferredFlightLogMatchesHeader' missing '=' symbol.");
+            hasText(_preferredFlightLogMatchesHeaderValue,
+                    "invalid_format '_preferredFlightLogMatchesHeader' missing '=' symbol.");
+        }
+        // Initial matches query.
+        if (!isBlank(getPreferredFlightLogMatchesHeader())) {
+            isTrueOf(contains(getPreferredFlightLogMatchesHeader(), "="), getPreferredFlightLogMatchesQuery());
+            String[] parts2 = split(getPreferredFlightLogMatchesQuery(), "=");
+            this._preferredFlightLogMatchesQueryName = parts2[0];
+            this._preferredFlightLogMatchesQueryValue = parts2[1];
+            hasText(_preferredFlightLogMatchesQueryName, "invalid_format: 'preferredFlightLogMatchesQuery' missing '=' symbol.");
+            hasText(_preferredFlightLogMatchesQueryValue, "invalid_format: 'preferredFlightLogMatchesQuery' missing '=' symbol.");
+        }
+    }
 
     @Getter
     @AllArgsConstructor

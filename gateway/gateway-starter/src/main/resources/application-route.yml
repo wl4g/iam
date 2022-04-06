@@ -21,11 +21,11 @@ spring:
           #uri: http://openapi.wl4gsafecloudcs.com
           uri: lb://v2-energy-openapi-service
           predicates:
-            - Path=/v2/** # Only configured once???
+            - Path=/openapi/v2/** # Only configured once???
             #- Weight=v2-energy-openapi-service,5
           filters:
             # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/v2/(?<segment>.*), /openapi/v2/$\{segment}
+            #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
             - name: SimpleSignAuthing
               args:
                 # Note: In some special business platform scenarios, the signature authentication protocol may not define

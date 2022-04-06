@@ -23,7 +23,7 @@ spring:
           secret-load-prefix: iam:gateway:auth:sign:secret
           secret-local-cache-seconds: 6 # Default by 6sec
           # Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
-          ignored-authing-in-jvm-debug: false # Default by false
+          ignored-authing-in-jvm-debug: true # Default by false
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
       ratelimit: {}
       route:
@@ -38,14 +38,13 @@ spring:
         # If the mandatory switch is not set, it is determined whether to enable logging according to
         # the preference switch, otherwise it is determined whether to enable logging according to the
         # mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
-        #required-flight-log-print-enabled: # Options:(null|true|false)
-        preferred-flight-log-print-enabled: true
-        preferred-flight-log-enable-header-name: 'X-Iam-Gateway-Log-Enabled'
-        preferred-flight-log-enable-fallback-query-name: '__iam_gateway_log_enabled'
-        preferred-flight-log-enable-matches-value: 'y'
+        #required-flight-log-enabled: # Options:(null|true|false)
+        preferred-flight-log-matches-mode: EQ # Options(EQ|IGNORECASE_EQ||PREFIX|IGNORECASE_PREFIX|SUFFIX|IGNORECASE_SUFFIX|INCLUDE|IGNORECASE_INCLUDE)
+        preferred-flight-log-matches-header: 'X-Iam-Gateway-Log-Enabled'
+        preferred-flight-log-matches-query: '__iam_gateway_log_enabled'
+        preferred-flight-log-matches-value: 'y'
         # The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        preferred-flight-log-print-verbose-level: 10
-
+        preferred-flight-log-verbose-level: 10
   # Security configuration.
   security:
     oauth2:
