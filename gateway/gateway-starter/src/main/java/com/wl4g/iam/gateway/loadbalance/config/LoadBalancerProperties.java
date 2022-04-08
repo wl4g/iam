@@ -15,12 +15,17 @@
  */
 package com.wl4g.iam.gateway.loadbalance.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link LoggingProperties}
+ * {@link LoadBalancerProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-02 v3.0.0
@@ -29,14 +34,24 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoadBalancerProperties {
-    private String versionGrayLoadBalanceMetadataKey = DEFAULT_VERSION_GRAY_LB_METADATA_KEY;
-    private String versionGrayLoadBalanceRequestHeader = DEFAULT_VERSION_GRAY_LB_HEADER;
-    // If the request header is empty, whether to down-grade and then get it
-    // from the request parameters.
-    private boolean fallbackToGetFromQueryParam = true;
+public class LoadBalancerProperties extends org.springframework.cloud.gateway.config.LoadBalancerProperties {
 
-    // Default definitions.
-    public static final String DEFAULT_VERSION_GRAY_LB_METADATA_KEY = "Iam-Gateway-Gray-Version";
-    public static final String DEFAULT_VERSION_GRAY_LB_HEADER = "X-".concat(DEFAULT_VERSION_GRAY_LB_METADATA_KEY);
+    public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-LB-Canary-Label";
+
+    /**
+     * The tag key used to get whether the discovery service satisfies the
+     * canary traffic group.
+     */
+    private String canaryDiscoveryServiceLabelKey = DEFAULT_LB_CANARY_LABEL_KEY;
+
+    /**
+     * Match whether the rule definition for a canary request is satisfied.
+     */
+    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
+
+    /**
+     * SPEL expressions that match canary requests.
+     */
+    private String matchExpression;
+
 }

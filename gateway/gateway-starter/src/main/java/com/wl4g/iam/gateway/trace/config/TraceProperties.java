@@ -32,6 +32,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class TraceProperties {
-    public static final String DEFAULT_TRACE_ID_HEADER = "X-Simple-Trace-Id";
+
+    public static final String DEFAULT_TRACE_ID_HEADER = "X-Iam-Gateway-Trace-Id";
+
+    /**
+     * Tracing request header name.
+     */
     private String traceIdRequestHeader = DEFAULT_TRACE_ID_HEADER;
 }

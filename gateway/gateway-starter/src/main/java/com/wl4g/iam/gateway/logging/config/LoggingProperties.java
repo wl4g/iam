@@ -15,20 +15,13 @@
  */
 package com.wl4g.iam.gateway.logging.config;
 
-import static com.wl4g.infra.common.lang.Assert2.hasText;
-import static com.wl4g.infra.common.lang.Assert2.notNull;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -61,111 +54,13 @@ public class LoggingProperties {
     private int preferredFlightLogVerboseLevel = 1;
 
     /**
-     * Preferred to enable print flight log match group list, multiple match
-     * groups are combined with OR for final result.
+     * Preferred to enable print flight log match rule definitions.
      */
-    private List<PreferredFlightLogMatch> preferredFlightLogMatches = new ArrayList<>();
+    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
 
-    @Getter
-    @Setter
-    @ToString
-    public static class PreferredFlightLogMatch {
-
-        /**
-         * (Optional) The value used to match the current request HTTP schema.
-         * </br>
-         * for example: https://
-         */
-        private @Nullable String matchHttpSchema;
-
-        /**
-         * (Optional)The value used to match the current request HTTP method.
-         * </br>
-         * for example: POST
-         */
-        private @Nullable String matchHttpMethod;
-
-        /**
-         * (Optional) The value used to match the current request HTTP host.
-         * </br>
-         * for example: example.com
-         */
-        private @Nullable String matchHttpHost;
-
-        /**
-         * (Optional)The name used to match the current request HTTP port. </br>
-         * for example: 443
-         */
-        private @Nullable Integer matchHttpPort;
-
-        /**
-         * (Optional) The name-value used to match the current request HTTP
-         * header.
-         */
-        private @Nullable MatchPredicate matchHttpHeader = new MatchPredicate(MatchMode.EQ, "X-Iam-Gateway-Log", "y");
-
-        /**
-         * (Optional) The name-value used to match the current request HTTP
-         * query parameter. </br>
-         * for example: __iam_gateway_log
-         */
-        private @Nullable MatchPredicate matchHttpQuery;
-
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    public static class MatchPredicate {
-
-        /**
-         * The matching mode used to match the current request parameter value.
-         */
-        private @NotNull MatchMode matchMode;
-
-        /**
-         * Object key.
-         */
-        private @NotBlank String key;
-
-        /**
-         * Object value.
-         */
-        private @NotBlank String value;
-
-        public MatchPredicate() {
-            this.matchMode = MatchMode.EQ;
-        }
-
-        public MatchPredicate validate() {
-            notNull(matchMode, "matchMode is required");
-            hasText(key, "key is required");
-            hasText(value, "value is required");
-            return this;
-        }
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static enum MatchMode {
-        EQ((v1, v2) -> StringUtils.equals(v1, v2)),
-
-        IGNORECASE_EQ((v1, v2) -> StringUtils.equalsIgnoreCase(v1, v2)),
-
-        PREFIX((v1, v2) -> StringUtils.startsWith(v1, v2)),
-
-        IGNORECASE_PREFIX((v1, v2) -> StringUtils.endsWithIgnoreCase(v1, v2)),
-
-        SUFFIX((v1, v2) -> StringUtils.endsWith(v1, v2)),
-
-        IGNORECASE_SUFFIX((v1, v2) -> StringUtils.equalsIgnoreCase(v1, v2)),
-
-        INCLUDE((v1, v2) -> StringUtils.contains(v1, v2)),
-
-        IGNORECASE_INCLUDE((v1, v2) -> StringUtils.containsIgnoreCase(v1, v2));
-
-        private final BiFunction<String, String, Boolean> function;
-    }
+    /**
+     * Preferred to enable print flight log match SPEL matchExpression.
+     */
+    private String matchExpression;
 
 }

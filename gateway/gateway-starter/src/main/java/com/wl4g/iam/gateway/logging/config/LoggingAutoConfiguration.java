@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.logging.LoggingFilter;
+import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
 /**
  * {@link LoggingAutoConfiguration}
@@ -38,8 +39,8 @@ public class LoggingAutoConfiguration {
     }
 
     @Bean
-    public LoggingFilter loggingFilter() {
-        return new LoggingFilter();
+    public LoggingFilter loggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+        return new LoggingFilter(traceConfig, loggingConfig);
     }
 
 }

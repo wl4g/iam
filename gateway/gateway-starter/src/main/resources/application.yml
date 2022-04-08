@@ -8,13 +8,64 @@
 # limitations under the License.
 #
 
-# #### IAM Gateway configuration. ####
-#
+## #### IAM Gateway configuration. ####
+##
 spring:
   cloud:
     circuitbreaker:
       resilience4j:
         enabled: true
+    loadbalancer:
+      use404: false # Default by false
+    gateway: # see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+      #globalcors:
+      #  cors-configurations: # Default no set.
+      filter:
+        #secure-headers.disable: # Default no set.
+        secure-headers.referrer-policy: 'no-referrer' # Default by 'no-referrer'
+        secure-headers.strict-transport-security: 'max-age=631138519' # Default by 'max-age=631138519'
+        secure-headers.xss-protection-header: '1 ; mode=block' # Default by '1 ; mode=block'
+        secure-headers.permitted-cross-domain-policies: none # Default by 'none'
+        secure-headers.frame-options: DENY # Default by 'DENY'
+        secure-headers.download-options: noopen # Default by 'noopen'
+        secure-headers.permitted-cross-domain-policies: none # Default by 'none'
+      redis-rate-limiter.include-headers: true # Default by true
+      redis-rate-limiter.burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity # Default by 'X-RateLimit-Burst-Capacity'
+      redis-rate-limiter.remaining-header: X-Iscg-RateLimit-Remaining # Default by 'X-RateLimit-Remaining'
+      redis-rate-limiter.replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate # Default by 'X-RateLimit-Replenish-Rate'
+      redis-rate-limiter.requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens # Default by 'X-RateLimit-Requested-Tokens'
+      httpserver:
+        wiretap: false # Default by false
+      httpclient:
+        compression: false # Default by false
+        connect-timeout: 45s # Default by 45s
+        response-timeout: 60s
+        max-header-size: 65535 # Default no set.
+        pool:
+          name: proxy # Default by proxy
+          metrics: true # Default by false
+        ssl:
+          default-configuration-type: TCP # Default by 'TCP'
+          handshake-timeout: 10000ms # Default by 10000ms
+          close-notify-flush-timeout: 3000ms # Default by 3000ms
+          close-notify-read-timeout: 0 # Default by 0
+          key-store-provider: 
+          #key-store: # Keystore path for Netty HttpClient.
+          #key-store-password: 
+          #key-password: # Default is same as keyStorePassword.
+          #trusted-x509-certificates:
+          use-insecure-trust-manager: true # Default by false
+          wiretap: false # Default by false
+        websocket:
+          proxy-ping: true # Default by true
+          max-frame-payload-length: 65535 # Default no set.
+      metrics:
+        enabled: true # Default by false
+        prefix: iam_gateway # Default by 'spring.cloud.gateway'
+        #tags:
+      actuator:
+        verbose:
+          enabled: true # Default by false
   iam:
     gateway:
       authing:
@@ -29,31 +80,49 @@ spring:
       route:
         refresh-delay-ms: 30_000
       loadbalancer:
-        version-gray-load-balance-metadata-key: Iam-Gateway-Gray-Version
-        version-gray-load-balance-request-header: X-Iam-Gateway-Gray-Version
-        fallback-to-get-from-query-param: true
-      trace:
-        trace-id-request-header: X-Simple-Trace-Id
-      logging:
-        # If the mandatory switch is not set, it is determined whether to enable logging according to the preference switch, otherwise it is determined
-        # it is determined whether to enable logging according to the mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
-        #required-flight-log-enabled: # Options:(null|true|false)
-        # The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        verbose-level: 10
-        preferred-flight-log-matches:
-        - #match-http-schema: 
-          #match-http-host: 
-          #match-http-port: 
-          match-http-header:
-            match-mode: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-            key: X-Iam-Gateway-Log
+        canary-discovery-service-label-key: Iscg-LB-Canary-Label # Default by 'Iam-Gateway-LB-Canary-Label'
+        match-rule-definitions:
+        - name: defaultCanaryOpenRule
+          #method:
+          #schema: 
+          #host: 
+          #port: 
+          #path-pattern:
+          header:
+            symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+            key: X-Iscg-LB-Canary
             value: y
-          #match-http-query:
-          #  match-mode: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+          #query:
+          #  symbol: EQ
+          #  key: __iam_gateway_canary_label
+          #  value: y
+        match-expression: '$rule.test($request)'
+      trace:
+        trace-id-request-header: X-Iscg-Trace-Id # Default by 'X-Iam-Gateway-Trace-Id'
+      logging:
+        ## If the mandatory switch is not set, it is determined whether to enable logging according to the preference switch, otherwise it is determined
+        ## it is determined whether to enable logging according to the mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
+        ##required-flight-log-enabled: # Options:(null|true|false)
+        ## The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
+        verbose-level: 10
+        match-rule-definitions:
+        - name: defaultLogOpenRule
+          #method:
+          #schema:
+          #host: 
+          #port: 
+          #path-pattern:
+          header:
+            symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+            key: X-Iscg-Log
+            value: y
+          #query:
+          #  symbol: EQ
           #  key: __iam_gateway_log
           #  value: y
+        match-expression: '$defaultLogOpenRule.test($request)'
 
-  # Security configuration.
+  ## Security configuration.
   security:
     oauth2:
       client:
@@ -69,12 +138,21 @@ spring:
             - profile
             - roles
 
+management:
+  endpoint:
+    gateway:
+      enabled: true # Default by true
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+
 #eureka:
 #  client:
 #    registerWithEureka: false
 #    fetchRegistry: false
 
-# Logging configuration.
+## Logging configuration.
 logging:
   file:
     # see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
@@ -102,13 +180,31 @@ logging:
     com:
       wl4g.iam.gateway: INFO
 
-# ### Server configuration.
+## Server configuration.
 server:
   port: 18085
-  #address: 0.0.0.0
+  address: 0.0.0.0
   sessionTimeout: 30
   servlet:
-    #contextPath: /${spring.application.name}
-    # because spring-cloud-loadbalancer-2.2.6 not support metadata.contextPath
     contextPath: /
-      
+  compression:
+    enabled: true
+  # see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
+  # see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
+  # see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
+  ssl:
+    enabled: true
+    protocol: TLS # Default by 'TLS'
+    client-auth: NONE # Default no set. Options(NONE|WANT|NEED)
+    #enabled-protocols: []
+    #ciphers: ['ECDHE-RSA-AES128-SHA', 'ECDHE-RSA-AES256-SHA', 'AES128-SHA', 'AES256-SHA', 'DES-CBC3-SHA']
+    #key-password: ${server.ssl.key-store-password}
+    #key-store: 'classpath:credentials/iscg-server.pem' # (iam-spring-cloud-gateway-server.pem)
+    #key-store-password: '123456'
+    #key-store-type: PKCS12 # Default no set. Options(JKS|PKCS12)?
+    #key-store-provider:
+    #trust-store: 'classpath:credentials/iscg-ca.pem'
+    #trust-store-password: '123456'
+    #trust-store-type: PKCS12
+    #trust-store-provider:
+

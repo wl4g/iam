@@ -15,14 +15,11 @@
  */
 package com.wl4g.iam.gateway.logging;
 
-import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
 import static org.springframework.http.MediaType.APPLICATION_CBOR;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -39,7 +36,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
@@ -62,9 +58,10 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
-import com.wl4g.iam.gateway.logging.config.LoggingProperties.PreferredFlightLogMatch;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
+import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -108,8 +105,15 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         }
     });
 
-    private @Autowired TraceProperties traceConfig;
-    private @Autowired LoggingProperties loggingConfig;
+    private final TraceProperties traceConfig;
+    private final LoggingProperties loggingConfig;
+    private final SpelRequestMatcher requestMatcher;
+
+    public LoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+        this.traceConfig = notNullOf(traceConfig, "traceConfig");
+        this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
+        this.requestMatcher = new SpelRequestMatcher(loggingConfig.getMatchRuleDefinitions());
+    }
 
     @Override
     public int getOrder() {
@@ -490,43 +494,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         // switch, the default mandatory switch is empty, the preference switch
         // is enabled.
         if (isNull(loggingConfig.getRequiredFlightLogEnabled())) {
-            for (PreferredFlightLogMatch match : safeList(loggingConfig.getPreferredFlightLogMatches())) {
-                // Matches HTTP schema
-                boolean flagSchema = isBlank(match.getMatchHttpSchema());
-                if (!flagSchema && equalsIgnoreCase(request.getURI().getScheme(), match.getMatchHttpHost())) {
-                    flagSchema = true;
-                }
-                // Matches HTTP method
-                boolean flagMethod = isBlank(match.getMatchHttpMethod());
-                if (!flagMethod && equalsIgnoreCase(request.getMethod().name(), match.getMatchHttpMethod())) {
-                    flagMethod = true;
-                }
-                // Matches HTTP host
-                boolean flagHost = isBlank(match.getMatchHttpHost());
-                if (!flagHost && equalsIgnoreCase(request.getURI().getHost(), match.getMatchHttpHost())) {
-                    flagHost = true;
-                }
-                // Matches HTTP port
-                boolean flagPort = isNull(match.getMatchHttpPort());
-                if (!flagPort && equalsIgnoreCase(request.getURI().getPort() + "", match.getMatchHttpHost())) {
-                    flagPort = true;
-                }
-                // Matches HTTP headers.
-                boolean flagHeader = isNull(match.getMatchHttpHeader());
-                if (!flagHeader && match.getMatchHttpHeader().getMatchMode().getFunction().apply(
-                        trimToEmpty(headers.getFirst(match.getMatchHttpHeader().getKey())),
-                        match.getMatchHttpHeader().getValue())) {
-                    flagHeader = true;
-                }
-                // Matches HTTP query parameter.
-                boolean flagQuery = isNull(match.getMatchHttpQuery());
-                if (!flagQuery && match.getMatchHttpHeader().getMatchMode().getFunction().apply(
-                        trimToEmpty(request.getQueryParams().getFirst(match.getMatchHttpQuery().getKey())),
-                        match.getMatchHttpQuery().getValue())) {
-                    flagQuery = true;
-                }
-                return flagSchema && flagHost && flagPort && flagMethod && flagHeader && flagQuery;
-            }
+            return requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getMatchExpression());
         }
         return loggingConfig.getRequiredFlightLogEnabled();
     }

@@ -20,25 +20,25 @@ import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 import java.net.URI;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools;
 import org.springframework.cloud.client.loadbalancer.Response;
-import org.springframework.cloud.gateway.config.LoadBalancerProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
 import com.wl4g.infra.common.log.SmartLogger;
 
 import reactor.core.publisher.Mono;
@@ -50,17 +50,17 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-03 v3.0.0
  * @since v3.0.0
  */
-public class GrayLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilter {
+public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilter {
 
     private final SmartLogger log = getLogger(getClass());
-    private final LoadBalancerProperties properties;
-    private final GrayLoadBalancerRule grayLoadBalancerRule;
+    private final LoadBalancerProperties loadBalancerConfig;
+    private final CanaryLoadBalancerRule canaryLoadBalancerRule;
 
-    public GrayLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties properties,
-            GrayLoadBalancerRule grayLoadBalancerRule) {
-        super(clientFactory, properties);
-        this.properties = notNullOf(properties, "properties");
-        this.grayLoadBalancerRule = notNullOf(grayLoadBalancerRule, "grayLoadBalancerRule");
+    public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties loadBalancerConfig,
+            CanaryLoadBalancerRule canaryLoadBalancerRule) {
+        super(clientFactory, loadBalancerConfig);
+        this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
+        this.canaryLoadBalancerRule = notNullOf(canaryLoadBalancerRule, "canaryLoadBalancerRule");
     }
 
     @Override
@@ -70,8 +70,8 @@ public class GrayLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilt
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        URI requestUri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
-        String schemePrefix = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR);
+        URI requestUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
+        String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
 
         // Ignore the URi prefix If it does not start with LB, go to the
         // next filter.
@@ -82,26 +82,35 @@ public class GrayLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilt
         // According to the original URL of the gateway. Replace the URI of
         // http://IP:PORT/path
         addOriginalRequestUrl(exchange, requestUri);
-        log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName() + " url before: " + requestUri);
+        if (log.isTraceEnabled()) {
+            log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName() + " url before: " + requestUri);
+        }
 
         return doChoose(exchange).doOnNext(response -> {
             if (!response.hasServer()) {
-                throw NotFoundException.create(properties.isUse404(), "Unable to find instance for " + requestUri.getHost());
+                throw NotFoundException.create(loadBalancerConfig.isUse404(),
+                        "Unable to find instance for " + requestUri.getHost());
             }
             URI uri = exchange.getRequest().getURI();
+
             // if the `lb:<scheme>` mechanism was used, use `<scheme>` as the
             // default, if the loadbalancer doesn't provide one.
             String overrideScheme = !isBlank(schemePrefix) ? requestUri.getScheme() : null;
             DelegatingServiceInstance instance = new DelegatingServiceInstance(response.getServer(), overrideScheme);
-            URI newRequestUri = LoadBalancerUriTools.reconstructURI(instance, uri);
-            log.trace("LoadBalancerClientFilter url chosen: {}", newRequestUri);
-            exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR, newRequestUri);
+
+            URI newRequestUri = reconstructURI(instance, uri);
+
+            if (log.isTraceEnabled()) {
+                log.trace("LoadBalancerClientFilter url chosen: {}", newRequestUri);
+            }
+            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
         }).then(chain.filter(exchange));
     }
 
     private Mono<Response<ServiceInstance>> doChoose(ServerWebExchange exchange) {
-        URI uri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
-        return Mono.just(new DefaultResponse(grayLoadBalancerRule.choose(uri.getHost(), exchange.getRequest())));
+        URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
+        String serviceId = uri.getHost();
+        return Mono.just(new DefaultResponse(canaryLoadBalancerRule.choose(serviceId, exchange.getRequest())));
     }
 
 }

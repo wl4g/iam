@@ -22,9 +22,9 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.gateway.loadbalance.GrayLoadBalancerClientFilter;
-import com.wl4g.iam.gateway.loadbalance.rule.GrayLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.VersionGrayLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter;
+import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.RandomCanaryLoadBalancerRule;
 
 /**
  * {@link LoadbalanceAutoConfiguration}
@@ -42,18 +42,18 @@ public class LoadbalanceAutoConfiguration {
     }
 
     @Bean
-    public GrayLoadBalancerRule versionGrayLoadBalancer(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new VersionGrayLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
+            LoadBalancerClientFactory clientFactory,
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
+            CanaryLoadBalancerRule canaryLoadBalancerRule) {
+        return new CanaryLoadBalancerClientFilter(clientFactory, properties, canaryLoadBalancerRule);
     }
 
     @Bean
-    public GrayLoadBalancerClientFilter grayLoadBalancerClientFilter(
-            LoadBalancerClientFactory clientFactory,
-            org.springframework.cloud.gateway.config.LoadBalancerProperties properties,
-            GrayLoadBalancerRule grayLoadBalancerRule) {
-        return new GrayLoadBalancerClientFilter(clientFactory, properties, grayLoadBalancerRule);
+    public CanaryLoadBalancerRule randomCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new RandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
 }
