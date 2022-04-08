@@ -143,7 +143,7 @@ Usage: ./$(basename $0) [OPTIONS] [arg1] [arg2]
        cert      <commonName> <hosts>    Generate the certificate. (E.g: ./$(basename $0) cert example.io 192.168.88.2,10.88.8.5)
        describe  <certFile>              Print details certificate information. (E.g: ./$(basename $0) describe example.io.pem)
        pem-p12   <certFile>   <keyFile>  Transform PEM certificate to P12(PKCS12) format. (E.g: ./$(basename $0) pem-p12 example.io.pem example.io-key.pem)
-       pem-cer   <certFile>   <keyFile>  Transform PEM certificate to CER format. (E.g: ./$(basename $0) pem-cer example.io.pem)
+       pem-cer   <certFile>              Transform PEM certificate to CER format. (E.g: ./$(basename $0) pem-cer example.io.pem)
        clean                             Clean up the works site(Remove all generated certificates and temporary files). (E.g: ./$(basename $0) clean)
 "
 exit 1

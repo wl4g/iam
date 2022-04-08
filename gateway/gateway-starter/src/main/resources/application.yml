@@ -102,7 +102,7 @@ spring:
             symbol: EQ
             key: __iscg_lb_canary
             value: y
-        match-expression: '$rule.test($request)'
+        match-expression: '#{$rule.test($request)}'
       trace:
         trace-id-request-header: X-Iscg-Trace-Id ## Default by 'X-Iam-Gateway-Trace-Id'
       logging:
@@ -131,7 +131,7 @@ spring:
             symbol: EQ
             key: __iscg_log
             value: y
-        match-expression: '$headerLogOpenRule.or($queryLogOpenRule).test($request)'
+        match-expression: '#{$headerLogOpenRule.or($queryLogOpenRule).test($request)}'
 
   ## Security configuration.
   security:
@@ -205,18 +205,23 @@ server:
   ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
   ## see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
   ## see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
+  ## see:org.springframework.boot.web.embedded.netty.SslServerCustomizer#apply()
   ssl:
     enabled: true
     protocol: TLS ## Default by 'TLS'
-    client-auth: NONE ## Default no set. Options(NONE|WANT|NEED)
-    #enabled-protocols: []
-    #ciphers: ['ECDHE-RSA-AES128-SHA', 'ECDHE-RSA-AES256-SHA', 'AES128-SHA', 'AES256-SHA', 'DES-CBC3-SHA']
-    #key-password: ${server.ssl.key-store-password}
-    #key-store: 'classpath:credentials/iscg-server.pem' # (iam-spring-cloud-gateway-server.pem)
-    #key-store-password: '123456'
-    #key-store-type: PKCS12 ## Default no set. Options(JKS|PKCS12)?
+    client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
+    ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
+    ## issue:https://bugs.openjdk.java.net/browse/JDK-8221218
+    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2'] ## Default no-set. Options(TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
+    ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/CipherSuite.java
+    ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
+    #ciphers: ['TLS_DH_RSA_WITH_AES_128_CBC_SHA', 'TLS_DH_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA256']
+    key-password: ${server.ssl.key-store-password}
+    key-store: 'classpath:cert.d/wl4g.io.p12'
+    key-store-password: '123456'
+    key-store-type: PKCS12 ## Default no-set by JKS. Options(JKS|PKCS12|...)
     #key-store-provider:
-    #trust-store: 'classpath:credentials/iscg-ca.pem'
-    #trust-store-password: '123456'
-    #trust-store-type: PKCS12
+    trust-store: 'classpath:cert.d/ca.p12'
+    trust-store-password: '123456'
+    trust-store-type: PKCS12
     #trust-store-provider:
