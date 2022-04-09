@@ -158,6 +158,10 @@ spring:
             - roles
 
 management:
+  server:
+    port: 18086
+  security:
+    enabled: false
   endpoint:
     gateway:
       enabled: true ## Default by true
