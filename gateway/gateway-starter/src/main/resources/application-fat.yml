@@ -27,30 +27,29 @@ spring:
         simple: # for testing
           instances:
             v1-energy-openapi-service:
-            - instanceId: n2.v1-energy-openapi-service:28092
-              uri: http://127.0.0.1:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v1
-            - instanceId: n3.v1-energy-openapi-service:28092
-              uri: http://localhost:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v1
+              - instanceId: n2.v1-energy-openapi-service:28092
+                uri: http://127.0.0.1:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v1
+              - instanceId: n3.v1-energy-openapi-service:28092
+                uri: http://localhost:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v1
             v2-energy-openapi-service:
-            - instanceId: n2.v1-energy-openapi-service:28092
-              uri: http://127.0.0.1:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v2
-            - instanceId: n3.v1-energy-openapi-service:28092
-              uri: http://localhost:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v2
+              - instanceId: n2.v1-energy-openapi-service:28092
+                uri: http://127.0.0.1:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v2
+              - instanceId: n3.v1-energy-openapi-service:28092
+                uri: http://localhost:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v2
             v1-alimarket-openapi-service:
-            - instanceId: n2.v1-energy-openapi-service:28092
-              uri: http://127.0.0.1:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v1
-            - instanceId: n3.v1-energy-openapi-service:28092
-              uri: http://localhost:28092
-              metadata:
-                Iam-Gateway-Gray-Version: v1
-
+              - instanceId: n2.v1-energy-openapi-service:28092
+                uri: http://127.0.0.1:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v1
+              - instanceId: n3.v1-energy-openapi-service:28092
+                uri: http://localhost:28092
+                metadata:
+                  Iscg-Canary-LB-Label: v1

@@ -7,9 +7,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+#
 ## #### IAM Gateway configuration. ####
-##
+#
 spring:
   cloud:
     circuitbreaker:
@@ -17,9 +17,18 @@ spring:
         enabled: true
     loadbalancer:
       use404: false ## Default by false
-    gateway: ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
-      #globalcors:
+    ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
+    ## see:org.springframework.cloud.gateway.handler.FilteringWebHandler#handle()
+    ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+    gateway:
+      #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
       #  cors-configurations: ## Default no set.
+      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
+      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
+      metrics:
+        enabled: true ## Default no-set.
+        prefix: gateway ## Default by 'gateway'
+      fail-on-route-definition-error: true ## Default by true
       filter:
         secure-headers:
           disable: ## Default no set.
@@ -70,6 +79,7 @@ spring:
       actuator:
         verbose:
           enabled: true ## Default by false
+
   ## IAM gateway configuration.
   iam:
     gateway:
@@ -89,28 +99,28 @@ spring:
       route:
         refresh-delay-ms: 30_000
       loadbalancer:
-        canary-discovery-service-label-key: Iscg-LB-Canary-Label ## Default by 'Iam-Gateway-LB-Canary-Label'
-        match-rule-definitions:
-        - name: headerCanaryLBOpenRule
-          #method:
-          #schema:
-          #host:
-          #port:
-          #path-pattern:
-          #query:
-          #  symbol:
-          #  key:
-          #  value:
-          header:
-            symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-            key: X-Iscg-LB-Canary
-            value: y
-        - name: queryCanaryLBOpenRule
-          query:
-            symbol: EQ
-            key: __iscg_lb_canary
-            value: y
+        canary-discovery-service-label-key: Iscg-Canary-LB-Label ## Default by 'Iam-Gateway-Canary-LB-Label'
         match-expression: '#{$rule.test($request)}'
+        match-rule-definitions:
+          - name: headerCanaryLBOpenRule
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path-pattern:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+            header:
+              symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-LB-Canary
+              value: y
+          - name: queryCanaryLBOpenRule
+            query:
+              symbol: EQ
+              key: __iscg_canary_lb
+              value: y
       trace:
         trace-id-request-header: X-Iscg-Trace-Id ## Default by 'X-Iam-Gateway-Trace-Id'
       logging:
@@ -119,27 +129,27 @@ spring:
         ##required-flight-log-enabled: # Options:(null|true|false)
         ## The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         verbose-level: 10
-        match-rule-definitions:
-        - name: headerLogOpenRule
-          #method:
-          #schema:
-          #host:
-          #port:
-          #path-pattern:
-          #query:
-          #  symbol:
-          #  key:
-          #  value:
-          header:
-            symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-            key: X-Iscg-Log
-            value: y
-        - name: queryLogOpenRule
-          query:
-            symbol: EQ
-            key: __iscg_log
-            value: y
         match-expression: '#{$headerLogOpenRule.or($queryLogOpenRule).test($request)}'
+        match-rule-definitions:
+          - name: headerLogOpenRule
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path-pattern:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+            header:
+              symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Log
+              value: y
+          - name: queryLogOpenRule
+            query:
+              symbol: EQ
+              key: __iscg_log
+              value: y
 
   ## Security configuration.
   security:

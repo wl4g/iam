@@ -12,22 +12,22 @@
 #
 spring:
   cloud:
+    ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
     ## see:org.springframework.cloud.gateway.config.GatewayProperties
     ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
     ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
       filter:
-        ## The default settings. see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
         request-rate-limiter:
           deny-empty-key: true
           empty-key-status-code: UNPROCESSABLE_ENTITY
       routes:
         - id: v2-energy-openapi-service
-          #uri: http://openapi.wl4gsafecloudcs.com
-          uri: lb://v2-energy-openapi-service
+          uri: lb://v2-energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
-            - Path=/openapi/v2/** # Only configured once???
+            - Path=/openapi/v2/**,/v2/**
             #- Weight=v2-energy-openapi-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
@@ -153,10 +153,10 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  firstBackoff: 30ms
-                  maxBackoff: 80ms
+                  first-backoff: 30ms
+                  max-backoff: 80ms
                   factor: 2
-                  basedOnPreviousValue: false
+                  based-on-previous-value: false
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:
