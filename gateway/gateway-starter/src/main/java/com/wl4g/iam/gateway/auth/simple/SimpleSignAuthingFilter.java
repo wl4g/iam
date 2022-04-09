@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static reactor.core.publisher.Flux.just;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -177,14 +179,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "invalid_signature - hint '%s'", e.getMessage());
             }
 
-            // Add the current authenticated client ID to the request header,
-            // this will allow the back-end resource services to recognize the
-            // current client ID.
-            ServerHttpRequest request = exchange.getRequest()
-                    .mutate()
-                    .header(config.getAddSignAuthClientIdHeader(), appId)
-                    .build();
-            return chain.filter(exchange.mutate().request(request).build());
+            return bindSignedToContext(exchange, chain, config, appId);
         };
     }
 
@@ -278,6 +273,24 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         DataBuffer buffer = response.bufferFactory().wrap(resp.asJson().getBytes(UTF_8));
         response.setStatusCode(status);
         return response.writeWith(just(buffer));
+    }
+
+    private Mono<Void> bindSignedToContext(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain,
+            SimpleSignAuthingFilter.Config config,
+            String appId) {
+
+        // Sets the current authenticated client ID to context principal,
+        // For example: for subsequent current limiting based on client ID.
+        // see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+        exchange.mutate().principal(Mono.just(new SimpleSignPrincipal(appId)));
+
+        // Add the current authenticated client ID to the request header,
+        // this will allow the back-end resource services to recognize the
+        // current client ID.
+        ServerHttpRequest request = exchange.getRequest().mutate().header(config.getAddSignAuthClientIdHeader(), appId).build();
+        return chain.filter(exchange.mutate().request(request).build());
     }
 
     @Getter
@@ -457,6 +470,16 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                         config.getSignHashingRequiredIncludeParams()));
             }
             return hashingParamNames.toArray(new String[0]);
+        }
+    }
+
+    @AllArgsConstructor
+    public static class SimpleSignPrincipal implements Principal {
+        private final String appId;
+
+        @Override
+        public String getName() {
+            return appId;
         }
     }
 

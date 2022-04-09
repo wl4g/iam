@@ -77,7 +77,7 @@ function makeCertCsr() {
   local certCommonNameUpper="$(echo $certCommonName | tr -t [a-z] [A-Z)"
   local certHosts="$2"
   local certHostsArr=(${certHosts//,/ })
-  local hostArrStr="\"127.0.0.1\",\"https://127.0.0.1\""
+  local hostArrStr="\"localhost\",\"127.0.0.1\",\"https://localhost\",\"https://127.0.0.1\""
   for host in ${certHostsArr[@]}
   do
     IFS="\:" # Set shell string separators.

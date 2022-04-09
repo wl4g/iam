@@ -36,8 +36,9 @@ public class SslContextTests {
             out.println(version);
         }
         // see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
+        // see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/ProtocolVersion.java
         // out.println(sun.security.ssl.ProtocolVersion.namesOf(new String[] {
-        // "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" }));
+        // "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" }));
     }
 
     @Test

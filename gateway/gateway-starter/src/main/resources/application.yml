@@ -202,17 +202,18 @@ server:
     enabled: true
   http2:
     enabled: false ## Default by false
-  ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
   ## see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
   ## see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
   ## see:org.springframework.boot.web.embedded.netty.SslServerCustomizer#apply()
+  ## see:io.netty.handler.ssl.SslHandler
+  ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
   ssl:
     enabled: true
     protocol: TLS ## Default by 'TLS'
     client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
     ## issue:https://bugs.openjdk.java.net/browse/JDK-8221218
-    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2'] ## Default no-set. Options(TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
+    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2'] ## Default no-set. Options(SSLv3|TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/CipherSuite.java
     ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
     #ciphers: ['TLS_DH_RSA_WITH_AES_128_CBC_SHA', 'TLS_DH_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA256']

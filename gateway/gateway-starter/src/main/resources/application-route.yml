@@ -7,15 +7,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+#
 # #### IAM gateway routes configuration. ####
 #
 spring:
   cloud:
-    # see:org.springframework.cloud.gateway.config.GatewayProperties
-    # see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
-    # see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
-    # see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+    ## see:org.springframework.cloud.gateway.config.GatewayProperties
+    ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
+    ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
       routes:
         - id: v2-energy-openapi-service
@@ -25,36 +25,50 @@ spring:
             - Path=/openapi/v2/** # Only configured once???
             #- Weight=v2-energy-openapi-service,5
           filters:
-            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
+            #- StripPrefix=1
             - name: SimpleSignAuthing
               args:
-                # Note: In some special business platform scenarios, the signature authentication protocol may not define
-                # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
-                # application can only be determined according to the request route ID.
-                app-id-extractor: Parameter # Default by 'Parameter', Options(Parameter|RouteId)
+                ## Note: In some special business platform scenarios, the signature authentication protocol may not define
+                ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
+                ## application can only be determined according to the request route ID.
+                app-id-extractor: Parameter ## Default by 'Parameter', Options(Parameter|RouteId)
                 # Only valid when appId extract mode is parameter.
-                app-id-param: appId # Default by 'appId'
-                #secret-param: appSecret # Default by 'appSecret'
-                sign-replay-verify-enabled: true # Default by true
-                sign-replay-verify-bloom-expire-seconds: 604800 # Default by 7*24*60*60
-                sign-param: signature # Default by 'sign'
-                sign-algorithm: S256 # Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
-                sign-hashing-mode: SimpleParamsBytesSortedHashing # Default by 'UriParamsKeySortedHashing'
-                sign-hashing-include-params: [appId, timestamp, nonce] # Default by []
-                sign-hashing-exclude-params: [] # Default by []
-                sign-hashing-required-include-params: [appId, timestamp, nonce] # Default by []
-                add-sign-auth-client-id-header: X-Sign-Auth-AppId # Default by 'X-Sign-Auth-AppId'
-            #- StripPrefix=1
-            # see: org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            # see: https://blog.csdn.net/songhaifengshuaige/article/details/93372437
+                app-id-param: appId ## Default by 'appId'
+                #secret-param: appSecret ## Default by 'appSecret'
+                sign-replay-verify-enabled: true ## Default by true
+                sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
+                sign-param: signature ## Default by 'sign'
+                sign-algorithm: S256 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
+                sign-hashing-mode: SimpleParamsBytesSortedHashing ## Default by 'UriParamsKeySortedHashing'
+                sign-hashing-include-params: [appId, timestamp, nonce] ## Default by []
+                sign-hashing-exclude-params: [] ## Default by []
+                sign-hashing-required-include-params: [appId, timestamp, nonce] ## Default by []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+            - name: RequestSize
+              args:
+                max-size: 10485760 ## Default by 5MB
+            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
+            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: RequestRateLimiter
               args:
-                # 令牌桶的容量, 允许在一秒钟内完成的最大请求数
-                redis-rate-limiter.burstCapacity: 1
-                # 令牌桶每秒填充平均速率, 即等价于允许用户每秒处理多少个请求平均数
-                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter:
+                  ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
+                  burst-capacity: 1
+                  ## The average rate of token bucket filling per second, which is equivalent to the average number of 
+                  ## requests per second that users are allowed to process.
+                  replenish-rate: 1
                 key-resolver: '#{@hostKeyResolver}'
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter:
+                  burst-capacity: 1
+                  replenish-rate: 1
+                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
+                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+                key-resolver: '#{@principalNameKeyResolver}'
             - name: Retry
               args:
                 retries: 3
@@ -70,30 +84,48 @@ spring:
           predicates:
             - Path=/alimarket/v1/**
           filters:
-            # see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
             - name: SimpleSignAuthing
               args:
-                # Note: In some special business platform scenarios, the signature authentication protocol may not define
-                # appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
-                # application can only be determined according to the request route ID.
-                app-id-extractor: RouteId # Default by 'Parameter', Options(Parameter|RouteId)
-                # Only valid when appId extract mode is parameter.
+                ## Note: In some special business platform scenarios, the signature authentication protocol may not define
+                ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
+                ## application can only be determined according to the request route ID.
+                app-id-extractor: RouteId ## Default by 'Parameter', Options(Parameter|RouteId)
+                ## Only valid when appId extract mode is parameter.
                 app-id-param: appId
-                secret-param: key # Default by 'appSecret'
-                sign-replay-verify-enabled: true # Default by true
-                sign-replay-verify-bloom-expire-seconds: 604800 # Default by 7*24*60*60
-                sign-param: token # Default by 'sign'
-                sign-algorithm: MD5 # Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
-                sign-hashing-mode: UriParamsKeySortedHashing # Default by 'UriParamsKeySortedHashing'
-                sign-hashing-include-params: ['*'] # Default by []
-                sign-hashing-exclude-params: [] # Default by []
-                add-sign-auth-client-id-header: X-Sign-Auth-AppId # Default by 'X-Sign-Auth-AppId'
+                secret-param: key ## Default by 'appSecret'
+                sign-replay-verify-enabled: true ## Default by true
+                sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
+                sign-param: token ## Default by 'sign'
+                sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
+                sign-hashing-mode: UriParamsKeySortedHashing ## Default by 'UriParamsKeySortedHashing'
+                sign-hashing-include-params: ['*'] ## Default by []
+                sign-hashing-exclude-params: [] ## Default by []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+            - name: RequestSize
+              args:
+                max-size: 10485760 ## Default by 5MB
+            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
+            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: RequestRateLimiter
               args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 1
+                redis-rate-limiter:
+                  ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
+                  burst-capacity: 1
+                  ## The average rate of token bucket filling per second, which is equivalent to the average number of 
+                  ## requests per second that users are allowed to process.
+                  replenish-rate: 1
                 key-resolver: '#{@hostKeyResolver}'
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter:
+                  burst-capacity: 1
+                  replenish-rate: 1
+                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
+                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+                key-resolver: '#{@principalNameKeyResolver}'
             - name: Retry
               args:
                 retries: 3
@@ -105,7 +137,7 @@ spring:
                   factor: 2
                   basedOnPreviousValue: false
         #- id: portal
-        #  uri: https://www.qq.com
+        #  uri: https://www.httpbin.org/
         #  predicates:
         #    - Path=/**
         #  filters:
