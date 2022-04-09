@@ -112,6 +112,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+		</dependency>
 		<!-- Spring Cloud Netflix -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.springframework.cloud</groupId> -->
@@ -188,7 +192,7 @@
 		<!-- <groupId>com.alibaba.cloud</groupId> -->
 		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId> -->
 		<!-- </dependency> -->
-		<!-- Others -->
+		<!-- Admin -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -197,13 +201,16 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
+		<!-- Foundation -->
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>
+		<!-- io.netty.handler.ssl.SslContext#defaultProvider -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-tcnative-boringssl-static</artifactId>
+			<!-- <version>2.0.51.Final</version> -->
 		</dependency>
 		<!-- Tests -->
 		<dependency>

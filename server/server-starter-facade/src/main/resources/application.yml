@@ -53,13 +53,12 @@ logging:
       wl4g.iam.service: DEBUG
 
 # ### Server configuration. ###
-server:
+server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   port: 18081
-  #address: 0.0.0.0
-  sessionTimeout: 30
+  address: 0.0.0.0
   servlet:
     #contextPath: /${spring.application.name}
-    # because spring-cloud-loadbalancer-2.2.6 not support metadata.contextPath
+    ## The spring-cloud-loadbalancer-2.2.6 not support metadata.contextPath
     contextPath: /
   tomcat: # see: org.springframework.boot.autoconfigure.web.ServerProperties.Tomcat
     basedir: /tmp/${spring.application.name}

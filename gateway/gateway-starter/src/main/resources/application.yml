@@ -23,11 +23,16 @@ spring:
     gateway:
       #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
       #  cors-configurations: ## Default no set.
+      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
       ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
       ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
       metrics:
         enabled: true ## Default no-set.
-        prefix: gateway ## Default by 'gateway'
+        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
+        tags:
+          application: ${spring.application.name}
+          profiles.include: ${spring.profiles.include}
+          profiles.active: ${spring.profiles.active}
       fail-on-route-definition-error: true ## Default by true
       filter:
         secure-headers:
@@ -69,13 +74,6 @@ spring:
         websocket:
           proxy-ping: true ## Default by true
           max-frame-payload-length: 65535 ## Default no set.
-      metrics:
-        enabled: true ## Default by false
-        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
-        tags:
-          application: ${spring.application.name}
-          profiles.include: ${spring.profiles.include}
-          profiles.active: ${spring.profiles.active}
       actuator:
         verbose:
           enabled: true ## Default by false
@@ -214,24 +212,24 @@ logging:
       wl4g.iam.gateway: INFO
 
 ## Server configuration.
-server:
+server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   port: 18085
   address: 0.0.0.0
-  sessionTimeout: 30
-  servlet:
-    contextPath: /
   compression:
     enabled: true
   http2:
     enabled: false ## Default by false
+  #netty:
+  #  connection-timeout: 
+  ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
   ## see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
   ## see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
   ## see:org.springframework.boot.web.embedded.netty.SslServerCustomizer#apply()
+  ## see:io.netty.handler.ssl.SslContext#defaultProvider()
   ## see:io.netty.handler.ssl.SslHandler
-  ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
-  ## for example: curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/v2/hello?appId=oi554a94bc416e4edd9ff963ed0e9e25e6c10545&nonce=vV5Y0Sf2DCNPnjCB&timestamp=1649477512798&signature=66aeaa14cb229d9f9b54cd71e59f8df4bbd511c039977b9149a25db7ca848065&response_type=json'
+  ## Example: curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/v2/hello?appId=oi554a94bc416e4edd9ff963ed0e9e25e6c10545&nonce=vV5Y0Sf2DCNPnjCB&timestamp=1649477512798&signature=66aeaa14cb229d9f9b54cd71e59f8df4bbd511c039977b9149a25db7ca848065&response_type=json'
   ssl:
-    enabled: false ## Default by false
+    enabled: true ## Default by false
     protocol: TLS ## Default by 'TLS'
     client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
@@ -239,6 +237,7 @@ server:
     enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2'] ## Default no-set. Options(SSLv3|TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/CipherSuite.java
     ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
+    ## issue:https://www.cnblogs.com/wade-luffy/p/6019743.html
     #ciphers: ['TLS_DH_RSA_WITH_AES_128_CBC_SHA', 'TLS_DH_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA256']
     key-password: ${server.ssl.key-store-password}
     key-store: 'classpath:cert.d/wl4g.io.p12'

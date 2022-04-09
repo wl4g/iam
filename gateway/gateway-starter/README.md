@@ -20,7 +20,7 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 
 ## 2. For Testing
 
-- [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html)
+- [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html) , The `-Djavax.net.debug` options are `all|ssl|handshake|warning|...`
 
 ### 2.1 Simple TLS
 
@@ -29,6 +29,7 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 ```bash
 java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NONE
 ```
+
 
 - Clients for `curl` testing
 

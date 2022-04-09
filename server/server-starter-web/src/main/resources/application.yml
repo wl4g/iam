@@ -49,10 +49,9 @@ logging:
       wl4g.iam.web: DEBUG
 
 # ### Server configuration. ###
-server:
+server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   port: 18080
-  #address: 0.0.0.0
-  sessionTimeout: 30
+  address: 0.0.0.0
   servlet:
     contextPath: /${spring.application.name}
   tomcat: # see: org.springframework.boot.autoconfigure.web.ServerProperties.Tomcat
