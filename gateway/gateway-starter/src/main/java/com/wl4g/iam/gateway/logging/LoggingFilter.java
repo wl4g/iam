@@ -117,7 +117,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return LOGGING_FILTER_ORDER;
+        return ORDER_FILTER;
     }
 
     @Override
@@ -528,7 +528,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                 || TEXT_PLAIN.isCompatibleWith(mediaType) || APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType);
     }
 
-    public static final int LOGGING_FILTER_ORDER = Ordered.HIGHEST_PRECEDENCE + 20;
+    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;
     public static final String KEY_START_TIME = LoggingFilter.class.getName() + ".startTime";
 
     public static final String LOG_REQUEST_BEGIN = "\n---------- <IAM Gateway Request Log Begin> ------------\n::: Headers :::\n";

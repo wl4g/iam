@@ -48,6 +48,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -90,7 +91,7 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-01 v3.0.0
  * @since v3.0.0
  */
-public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {
+public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> implements Ordered {
 
     private final SmartLogger log = getLogger(getClass());
     private final AuthingProperties authingConfig;
@@ -106,9 +107,24 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                 .build();
     }
 
+    /**
+     * Note: The simple signature filter should be executed before the
+     * rate-limit filter, Therefore, traffic can be rate-limit to the principal
+     * of authenticated. see:
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory}
+     */
+    @Override
+    public int getOrder() {
+        return ORDER_FILTER;
+    }
+
     @Override
     public String name() {
-        return SIMPLE_SIGN_AUTH_FILTER;
+        return NAME_SIMPLE_SIGN_FILTER;
     }
 
     /**
@@ -483,6 +499,18 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         }
     }
 
-    public static final String SIMPLE_SIGN_AUTH_FILTER = "SimpleSignAuthing";
+    public static final String NAME_SIMPLE_SIGN_FILTER = "SimpleSignAuthing";
+
+    /**
+     * Note: The simple signature filter should be executed before the
+     * rate-limit filter, Therefore, traffic can be rate-limit to the principal
+     * of authenticated. see:
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory}
+     */
+    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 30;
 
 }

@@ -16,6 +16,7 @@
 package com.wl4g.iam.gateway.ratelimit.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
@@ -42,6 +43,11 @@ public class RateLimiterAutoConfiguration {
     @Bean("hostKeyResolver")
     public HostKeyResolver hostKeyResolver() {
         return new HostKeyResolver();
+    }
+
+    @Bean(PrincipalNameKeyResolver.BEAN_NAME)
+    public PrincipalNameKeyResolver principalNameKeyResolver() {
+        return new PrincipalNameKeyResolver();
     }
 
     @Bean("uriKeyResolver")

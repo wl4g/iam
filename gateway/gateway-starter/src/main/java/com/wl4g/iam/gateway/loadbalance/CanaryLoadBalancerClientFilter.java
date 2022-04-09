@@ -34,7 +34,6 @@ import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
-import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
@@ -44,7 +43,12 @@ import com.wl4g.infra.common.log.SmartLogger;
 import reactor.core.publisher.Mono;
 
 /**
- * Grayscale filter
+ * Grayscale Load-Balancer filter. </br>
+ * </br>
+ * 
+ * Note: The retry filter should be executed before the load balancing filter,
+ * so that other back-end servers can be selected when retrying. see to:
+ * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-03 v3.0.0
@@ -63,9 +67,17 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         this.canaryLoadBalancerRule = notNullOf(canaryLoadBalancerRule, "canaryLoadBalancerRule");
     }
 
+    /**
+     * Note: The retry filter should be executed before the load balancing
+     * filter, so that other back-end servers can be selected when retrying.
+     * see:
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory}
+     */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE - 10000;
+        return ORDER_FILTER;
     }
 
     @Override
@@ -113,4 +125,13 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         return Mono.just(new DefaultResponse(canaryLoadBalancerRule.choose(serviceId, exchange.getRequest())));
     }
 
+    /**
+     * Note: The retry filter should be executed before the load balancing
+     * filter, so that other back-end servers can be selected when retrying.
+     * see:
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory}
+     */
+    public static final int ORDER_FILTER = 100;
 }

@@ -15,6 +15,12 @@
  */
 package com.wl4g.iam.gateway.trace;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
+import static java.lang.String.valueOf;
+
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -22,6 +28,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
+import com.wl4g.infra.common.codec.Base58;
 
 import reactor.core.publisher.Mono;
 
@@ -44,20 +51,23 @@ import reactor.core.publisher.Mono;
 public class SimpleTraceFilter implements GlobalFilter, Ordered {
 
     private @Autowired TraceProperties traceConfig;
+    private final AtomicLong counter = new AtomicLong(0);
 
     @Override
     public int getOrder() {
-        return SIMPLE_TRACE_FILTER_ORDER;
+        return ORDER_FILTER;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getRequest()
-                .mutate()
-                .header(traceConfig.getTraceIdRequestHeader(), java.util.UUID.randomUUID().toString())
-                .build();
+        exchange.getRequest().mutate().header(traceConfig.getTraceIdRequestHeader(), generateTraceId()).build();
         return chain.filter(exchange);
     }
 
-    public static final int SIMPLE_TRACE_FILTER_ORDER = Ordered.HIGHEST_PRECEDENCE + 10;
+    public String generateTraceId() {
+        String traceId = valueOf(counter.incrementAndGet()).concat("@").concat(currentTimeMillis() + "");
+        return Base58.encodeBase58(traceId.getBytes(UTF_8)).toLowerCase();
+    }
+
+    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 10;
 }

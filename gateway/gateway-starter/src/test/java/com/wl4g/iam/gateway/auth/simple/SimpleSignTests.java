@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * {@link SimpleSignUtil}
+ * {@link SimpleSignTests}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-04
  * @since
  */
-public class SimpleSignUtil {
+public class SimpleSignTests {
 
     /**
      * Generate IAM open API signature.
@@ -120,15 +120,18 @@ public class SimpleSignUtil {
         String appId = "oi554a94bc416e4edd9ff963ed0e9e25e6c10545";
         String appSecret = "5aUpyX5X7wzC8iLgFNJuxqj3xJdNQw8yS";
         String nonce = generateNonce(16);
-        long now = currentTimeMillis();
+        long timestamp = currentTimeMillis();
+        String signature = generateSign(appId, appSecret, nonce, timestamp);
 
-        String signature = generateSign(appId, appSecret, nonce, now);
-
-        out.println(":: IAM simple sign util ::");
+        out.println("===== :: Generated simple signature :: =====");
         out.println(format("appId=%s", appId));
         out.println(format("nonce=%s", nonce));
-        out.println(format("timestamp=%s", now));
+        out.println(format("timestamp=%s", timestamp));
         out.println(format("signature=%s", signature));
+        out.println();
+        out.println(format(
+                "curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s&response_type=json'",
+                appId, nonce, timestamp, signature));
     }
 
 }
