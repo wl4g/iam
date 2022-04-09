@@ -54,3 +54,25 @@ curl -v \
 'https://localhost:18085/alimarket/v1/hello?response_type=json'
 ```
 
+## 3. Admin API
+
+- [docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api](https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api)
+
+- Routes(for example):
+
+```bash
+curl -v 'http://localhost:18085/actuator/gateway/routes'
+```
+
+- Actuator Metrics(for example):
+
+```bash
+curl -v 'http://localhost:18085/actuator/metrics'
+```
+
+- Prometheus Metrics(for example):
+
+```bash
+curl -v 'http://localhost:18085/actuator/prometheus'
+```
+

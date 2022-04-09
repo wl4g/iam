@@ -30,7 +30,7 @@ spring:
           frame-options: DENY ## Default by 'DENY'
           download-options: noopen ## Default by 'noopen'
       redis-rate-limiter:
-        include-headers: true ## Default by true
+        include-headers: false ## Default by true
         burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
         remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
         replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
@@ -63,7 +63,10 @@ spring:
       metrics:
         enabled: true ## Default by false
         prefix: iam_gateway ## Default by 'spring.cloud.gateway'
-        #tags:
+        tags:
+          application: ${spring.application.name}
+          profiles.include: ${spring.profiles.include}
+          profiles.active: ${spring.profiles.active}
       actuator:
         verbose:
           enabled: true ## Default by false
@@ -161,7 +164,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: gateway
+        include: '*'
 
 #eureka:
 #  client:
@@ -212,8 +215,9 @@ server:
   ## see:org.springframework.boot.web.embedded.netty.SslServerCustomizer#apply()
   ## see:io.netty.handler.ssl.SslHandler
   ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
+  ## for example: curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/v2/hello?appId=oi554a94bc416e4edd9ff963ed0e9e25e6c10545&nonce=vV5Y0Sf2DCNPnjCB&timestamp=1649477512798&signature=66aeaa14cb229d9f9b54cd71e59f8df4bbd511c039977b9149a25db7ca848065&response_type=json'
   ssl:
-    enabled: true
+    enabled: false ## Default by false
     protocol: TLS ## Default by 'TLS'
     client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
