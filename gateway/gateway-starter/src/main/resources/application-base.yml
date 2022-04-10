@@ -1,0 +1,38 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# #### IAM gateway base(default) configuration. ####
+#
+spring:
+  cloud:
+    ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
+    ## see:org.springframework.cloud.gateway.config.GatewayProperties
+    ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
+    ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+    gateway:
+      filter:
+        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+        request-rate-limiter:
+          deny-empty-key: true
+          empty-key-status-code: UNPROCESSABLE_ENTITY
+      routes:
+        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
+        - id: v1-default-fallback
+          uri: lb://v1-default-fallback
+          predicates:
+            - Path=/fallback/**
+          filters:
+            - name: FallbackHeaders
+              args:
+                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
+                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
+                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
+                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'

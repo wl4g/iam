@@ -26,6 +26,11 @@ spring:
         # see:org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient
         simple: # for testing
           instances:
+            v1-fallback-service:
+              - instanceId: n1.v1-fallback-service:8080
+                uri: http://n2.web.wl4gsafecloudcs.com:8080
+                metadata:
+                  Iscg-Canary-LB-Label: v1
             v1-energy-openapi-service:
               - instanceId: n2.v1-energy-openapi-service:28092
                 uri: http://n2.web.wl4gsafecloudcs.com:28092

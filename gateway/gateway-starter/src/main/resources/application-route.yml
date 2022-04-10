@@ -24,18 +24,6 @@ spring:
           deny-empty-key: true
           empty-key-status-code: UNPROCESSABLE_ENTITY
       routes:
-        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
-        - id: v1-default-fallback
-          uri: lb://v1-default-fallback
-          predicates:
-            - Path=/**
-          filters:
-            - name: FallbackHeaders
-              args:
-                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
-                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
-                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
-                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
         - id: v2-energy-openapi-service
           uri: lb://v2-energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
@@ -107,7 +95,7 @@ spring:
             - name: CircuitBreaker
               args:
                 name: defaultCircuitBreaker
-                fallbackUri: forward:/inCaseOfFailureUseThis
+                fallback-uri: forward:/fallback
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
@@ -176,6 +164,13 @@ spring:
                   max-backoff: 80ms
                   factor: 2
                   based-on-previous-value: false
+            - name: CircuitBreaker
+              args:
+                name: defaultCircuitBreaker
+                fallback-uri: forward:/fallback
+                statusCodes:
+                  - 500
+                  - "NOT_FOUND"
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:
