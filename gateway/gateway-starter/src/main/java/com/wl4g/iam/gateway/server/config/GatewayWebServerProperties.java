@@ -16,6 +16,7 @@
 package com.wl4g.iam.gateway.server.config;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 
 import java.io.FileNotFoundException;
@@ -87,17 +88,17 @@ public class GatewayWebServerProperties {
 
         @Getter(AccessLevel.NONE)
         @Setter(AccessLevel.NONE)
-        private transient String[] cachedCheckCNWhitelist;
+        private transient List<String> cachedCheckCNWhitelist;
 
         @Getter(AccessLevel.NONE)
         @Setter(AccessLevel.NONE)
-        private transient CRL[] cachedCheckCrls;
+        private transient List<CRL> cachedCheckCrls;
 
-        public synchronized String[] loadCheckCNWhitelist() throws CertificateException {
+        public synchronized List<String> loadCheckCNWhitelist() throws CertificateException {
             try {
                 if (isNull(cachedCheckCNWhitelist)) {
                     String white = Resources.toString(getCheckCNWhiteFile().getURL(), UTF_8);
-                    this.cachedCheckCNWhitelist = white.split("\\s+");
+                    this.cachedCheckCNWhitelist = asList(white.split("\\s+"));
                 }
                 return cachedCheckCNWhitelist;
             } catch (FileNotFoundException e) {
@@ -107,7 +108,7 @@ public class GatewayWebServerProperties {
             }
         }
 
-        public synchronized CRL[] loadCrls() throws CertificateException {
+        public synchronized List<CRL> loadCrls() throws CertificateException {
             try {
                 if (isNull(cachedCheckCrls)) {
                     this.cachedCheckCrls = KeyStoreUtil.createCRL(getCheckCrlFile().getInputStream());

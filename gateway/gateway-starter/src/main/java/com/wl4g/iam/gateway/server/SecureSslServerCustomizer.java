@@ -24,6 +24,7 @@ import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
@@ -146,17 +147,18 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                             int peerPort = engine.getPeerPort();
                             SSLSession session = engine.getSession();
                             SSLSession handshakeSession = engine.getHandshakeSession();
-                            // String peerHost2=handshakeSession.getPeerHost();
-                            // engine.setNeedClientAuth(true);
+                            if (nonNull(handshakeSession)) {
+                                String peerHost2 = handshakeSession.getPeerHost();
+                            }
 
                             SSLParameters params = new SSLParameters();
                             List<SNIMatcher> matchers = new LinkedList<>();
                             matchers.add(new SNIMatcher(0) {
                                 @Override
                                 public boolean matches(SNIServerName serverName) {
-                                    String serverName0 = new String(serverName.getEncoded());
+                                    String servname = new String(serverName.getEncoded());
                                     return safeList(secureWebServerConfig.getSslVerifier().getSni().getHosts()).stream()
-                                            .anyMatch(h -> StringUtils.equals(h, serverName0));
+                                            .anyMatch(h -> StringUtils.equals(h, servname));
                                 }
                             });
                             params.setSNIMatchers(matchers);
@@ -353,9 +355,9 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 return;
             }
             String ip = null;
-            if (socket != null && socket.isConnected() && socket instanceof SSLSocket) {
+            if (nonNull(socket) && socket.isConnected() && socket instanceof SSLSocket) {
                 InetAddress inetAddress = socket.getInetAddress();
-                if (inetAddress != null) {
+                if (nonNull(inetAddress)) {
                     ip = inetAddress.getHostAddress();
                 }
             }
@@ -369,7 +371,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 return;
             }
             String ip = null;
-            if (engine != null) {
+            if (nonNull(engine)) {
                 SSLSession session = engine.getHandshakeSession();
                 ip = session.getPeerHost();
             }
@@ -417,9 +419,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 } else if (cnValid(cns, ip)) {
                     return;
                 }
-                String errmsg = format("The client IP not matched to certificate. CNs=%s, IP=%s", cns, ip);
-                log.error(errmsg);
-                throw new CertificateException(errmsg);
+                throw new CertificateException(format("Illegal client, IP does not match certificate. CNs=%s, IP=%s", cns, ip));
             }
         }
 
@@ -432,34 +432,29 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
             return false;
         }
 
-        private void checkCNWhite(X509Certificate[] chain) throws CertificateException {
+        private void checkCNWhite(X509Certificate[] certChain) throws CertificateException {
             if (nonNull(config.getSslVerifier().getPeer().getCheckCNWhiteFile())) {
-                String[] cns = config.getSslVerifier().getPeer().loadCheckCNWhitelist();
-                Set<String> certCN = CertificateUtil.getCommonNames(CertificateUtil.findOwner(chain));
+                List<String> cns = config.getSslVerifier().getPeer().loadCheckCNWhitelist();
+                Set<String> certCN = CertificateUtil.getCommonNames(CertificateUtil.findOwner(certChain));
                 for (String cn : cns) {
                     if (cnValid(certCN, cn)) {
                         return;
                     }
                 }
-                log.error("CN does not match white.");
-                throw new CertificateException("CN does not match white.");
+                throw new CertificateException(format("CN does not match white. CNs=%s", cns));
             }
         }
 
-        private void checkCRL(X509Certificate[] chain) throws CertificateException {
+        private void checkCRL(X509Certificate[] certChain) throws CertificateException {
             if (nonNull(config.getSslVerifier().getPeer().getCheckCrlFile())) {
-                CRL[] crls = config.getSslVerifier().getPeer().loadCrls();
-                X509Certificate owner = CertificateUtil.findOwner(chain);
+                List<CRL> crls = config.getSslVerifier().getPeer().loadCrls();
+                X509Certificate owner = CertificateUtil.findOwner(certChain);
                 for (CRL c : crls) {
                     if (c.isRevoked(owner)) {
-                        log.error("certificate revoked");
-                        throw new CertificateException("certificate revoked");
+                        throw new CertificateException(format("Certificates %s has been revoked.", asList(certChain)));
                     }
                 }
             }
-        }
-
-        private static void ignore() {
         }
     }
 

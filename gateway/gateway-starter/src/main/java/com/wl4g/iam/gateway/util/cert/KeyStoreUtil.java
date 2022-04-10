@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.util.cert;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Collection;
+import java.util.List;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -76,13 +79,11 @@ public abstract class KeyStoreUtil {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static CRL[] createCRL(InputStream crlfile) {
+    public static List<CRL> createCRL(InputStream crlfile) {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            Collection c = cf.generateCRLs(crlfile);
-            CRL[] crls = (CRL[]) c.toArray(new CRL[c.size()]);
-            return crls;
+            Collection<? extends CRL> crls = cf.generateCRLs(crlfile);
+            return crls.stream().map(c -> (CRL) c).collect(toList());
         } catch (CertificateException e) {
             throw new IllegalArgumentException("bad cert file.");
         } catch (CRLException e) {
