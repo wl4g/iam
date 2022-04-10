@@ -51,26 +51,36 @@ spring:
         requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
       httpserver:
         wiretap: false ## Default by false
-      httpclient:
+      httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
         compression: false ## Default by false
         connect-timeout: 45 ## Default by 45s
         response-timeout: 60 ## Default by 60s
         max-header-size: 65535 ## Default no set.
+        wiretap: false ## Default by false
+        #proxy:
+        # host:
+        # port:
+        # username:
+        # password:
+        # nonProxyHostsPattern:
         pool:
           name: proxy ## Default by proxy
-          metrics: true ## Default by false
+          #metrics: true ## Default by false
+          #max-idle-time: 
+          #acquire-timeout: 45000 # Default by 45000ms
+          #max-connections: ## Default by: max(availableProcessors(),8)*2)
         ssl:
           default-configuration-type: TCP ## Default by 'TCP'
           handshake-timeout: 10000ms ## Default by 10000ms
           close-notify-flush-timeout: 3000ms ## Default by 3000ms
           close-notify-read-timeout: 0 ## Default by 0
-          key-store-provider: 
-          #key-store: # Keystore path for Netty HttpClient.
-          #key-store-password: 
-          #key-password: ## Default is same as keyStorePassword.
+          #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+          #key-store: ## Keystore path for Netty HttpClient.
+          #key-store-type:
+          #key-store-password:
+          #key-store-provider:
           #trusted-x509-certificates:
           use-insecure-trust-manager: true ## Default by false
-          wiretap: false ## Default by false
         websocket:
           proxy-ping: true ## Default by true
           max-frame-payload-length: 65535 ## Default no set.
@@ -120,7 +130,7 @@ spring:
               key: __iscg_canary_lb
               value: y
       trace:
-        trace-id-request-header: X-Iscg-Trace-Id ## Default by 'X-Iam-Gateway-Trace-Id'
+        trace-id-request-header: X-Iscg-Request-Id ## Default by 'X-Iam-Gateway-Trace-Id'
       logging:
         ## If the mandatory switch is not set, it is determined whether to enable logging according to the preference switch, otherwise it is determined
         ## it is determined whether to enable logging according to the mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
@@ -218,9 +228,10 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   compression:
     enabled: true
   http2:
-    enabled: false ## Default by false
+    enabled: true ## Default by false
   #netty:
   #  connection-timeout: 
+  ## see:https://github.com/netty/netty/issues/832
   ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
   ## see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
   ## see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
@@ -234,9 +245,10 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
     client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
     ## issue:https://bugs.openjdk.java.net/browse/JDK-8221218
-    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2'] ## Default no-set. Options(SSLv3|TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
+    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3'] ## Default no-set. Options(SSLv3|TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/CipherSuite.java
     ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
+    ## see:io.netty.handler.ssl.OpenSslKeyMaterialManager#KEY_TYPES
     ## issue:https://www.cnblogs.com/wade-luffy/p/6019743.html
     #ciphers: ['TLS_DH_RSA_WITH_AES_128_CBC_SHA', 'TLS_DH_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA256']
     key-password: ${server.ssl.key-store-password}

@@ -15,13 +15,8 @@
  */
 package com.wl4g.iam.gateway.config;
 
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-//import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
-//import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
-import org.springframework.core.env.Environment;
 
 import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
@@ -30,8 +25,8 @@ import com.wl4g.iam.gateway.loadbalance.config.LoadbalanceAutoConfiguration;
 import com.wl4g.iam.gateway.logging.config.LoggingAutoConfiguration;
 import com.wl4g.iam.gateway.ratelimit.config.RateLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
+import com.wl4g.iam.gateway.server.config.SecureWebServerAutoConfiguration;
 import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
-import com.wl4g.iam.gateway.web.server.SslNettyWebServerFactoryCustomizer;
 
 /**
  * IAM gateway auto configuration.
@@ -42,16 +37,8 @@ import com.wl4g.iam.gateway.web.server.SslNettyWebServerFactoryCustomizer;
  * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration}
  */
 @Configuration
-@Import({ RateLimiterAutoConfiguration.class, RouteAutoConfiguration.class, LoadbalanceAutoConfiguration.class,
-        AuthingAutoConfiguration.class, TraceAutoConfiguration.class, LoggingAutoConfiguration.class,
-        ConsoleAutoConfiguration.class })
+@Import({ SecureWebServerAutoConfiguration.class, RateLimiterAutoConfiguration.class, RouteAutoConfiguration.class,
+        LoadbalanceAutoConfiguration.class, AuthingAutoConfiguration.class, TraceAutoConfiguration.class,
+        LoggingAutoConfiguration.class, ConsoleAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
-
-    @Bean
-    public SslNettyWebServerFactoryCustomizer sslNettyWebServerFactoryCustomizer(
-            Environment environment,
-            ServerProperties serverProperties) {
-        return new SslNettyWebServerFactoryCustomizer(environment, serverProperties);
-    }
-
 }

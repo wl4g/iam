@@ -13,30 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace.config;
-
-import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+package com.wl4g.iam.gateway.server.config;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link LoggingProperties}
+ * {@link SecureWebServerProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-02 v3.0.0
+ * @version 2022-04-10 v3.0.0
  * @since v3.0.0
  */
 @Getter
 @Setter
 @ToString
-public class TraceProperties {
+public class SecureWebServerProperties {
 
-    /**
-     * Tracing request header name.
-     */
-    private String traceIdRequestHeader = DEFAULT_TRACE_ID_HEADER;
+    private boolean checkPeerEnabled = true;
 
-    public static final String DEFAULT_TRACE_ID_HEADER = "X-Iam-Gateway-Trace-Id";
+    private boolean checkCNHostEnabled;
+
+    private boolean checkCNWhiteEnabled;
+
+    private String checkCNWhiteFile;
+
+    private boolean allowRenegociate;
+
+    private String crl;
+
 }
