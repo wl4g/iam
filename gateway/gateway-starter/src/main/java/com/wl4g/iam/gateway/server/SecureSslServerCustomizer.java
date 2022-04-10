@@ -24,6 +24,7 @@ import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
@@ -87,21 +88,19 @@ import reactor.netty.tcp.SslProvider.Builder;
  * 
  * https://www.saoniuhuo.com/article/detail-374589.html </br>
  * </br>
- * </br>
  * https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
- * </br>
  * </br>
  * https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
  * </br>
- * </br>
+ * 
+ * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
+ * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
+ * see:{@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-09 v3.0.0
  * @since v3.0.0
  * @see https://github.com/netty/netty/issues/8537
- * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}
- * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}
- * @see {@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}
  */
 @SuppressWarnings("unused")
 public class SecureSslServerCustomizer extends SslServerCustomizer {
@@ -119,9 +118,13 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
         try {
             return server.secure((contextSpec) -> {
                 SslContextBuilder contextBuilder = getContextBuilder()
-                        // see:io.netty.handler.ssl.SslContext#newServerContextInternal()
-                        // see:io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()
-                        // see:io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()
+                        /**
+                         * see:{@link io.netty.handler.ssl.SslContext#newServerContextInternal()}￬
+                         * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
+                         * see:{@link io.netty.internal.tcnative.SSLContext#setCertificateCallback()}￬
+                         * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
+                         * see:{@link io.netty.internal.tcnative.SSLContext#setSniHostnameMatcher()}￬
+                         */
                         .sslProvider(io.netty.handler.ssl.SslProvider.OPENSSL_REFCNT);
 
                 SslProvider.DefaultConfigurationSpec spec = contextSpec.sslContext(contextBuilder);
@@ -136,27 +139,28 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                             SSLEngine engine = handler.engine();
 
                             // TODO
-
                             SSLSessionContext sessionContext = engine.getSession().getSessionContext();
 
-                            // refer-to:https://www.saoniuhuo.com/article/detail-374589.html
-                            // refer-to:https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
-                            // refer-to:https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
+                            // see:https://www.saoniuhuo.com/article/detail-374589.html
+                            // see:https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
+                            // see:https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
                             String peerHost = engine.getPeerHost();
                             int peerPort = engine.getPeerPort();
                             SSLSession session = engine.getSession();
                             SSLSession handshakeSession = engine.getHandshakeSession();
-                            // String peerHost2=handshakeSession.getPeerHost();
-                            // engine.setNeedClientAuth(true);
+                            if (nonNull(handshakeSession)) {
+                                String peerHost2 = handshakeSession.getPeerHost();
+                                engine.setNeedClientAuth(true);
+                            }
 
                             SSLParameters params = new SSLParameters();
                             List<SNIMatcher> matchers = new LinkedList<>();
                             matchers.add(new SNIMatcher(0) {
                                 @Override
                                 public boolean matches(SNIServerName serverName) {
-                                    String serverName0 = new String(serverName.getEncoded());
+                                    String servname = new String(serverName.getEncoded());
                                     return safeList(secureWebServerConfig.getSslVerifier().getSni().getHosts()).stream()
-                                            .anyMatch(h -> StringUtils.equals(h, serverName0));
+                                            .anyMatch(h -> StringUtils.equals(h, servname));
                                 }
                             });
                             params.setSNIMatchers(matchers);
@@ -353,9 +357,9 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 return;
             }
             String ip = null;
-            if (socket != null && socket.isConnected() && socket instanceof SSLSocket) {
+            if (nonNull(socket) && socket.isConnected() && socket instanceof SSLSocket) {
                 InetAddress inetAddress = socket.getInetAddress();
-                if (inetAddress != null) {
+                if (nonNull(inetAddress)) {
                     ip = inetAddress.getHostAddress();
                 }
             }
@@ -369,7 +373,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 return;
             }
             String ip = null;
-            if (engine != null) {
+            if (nonNull(engine)) {
                 SSLSession session = engine.getHandshakeSession();
                 ip = session.getPeerHost();
             }
@@ -417,9 +421,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 } else if (cnValid(cns, ip)) {
                     return;
                 }
-                String errmsg = format("The client IP not matched to certificate. CNs=%s, IP=%s", cns, ip);
-                log.error(errmsg);
-                throw new CertificateException(errmsg);
+                throw new CertificateException(format("Illegal client, IP does not match certificate. CNs=%s, IP=%s", cns, ip));
             }
         }
 
@@ -432,34 +434,29 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
             return false;
         }
 
-        private void checkCNWhite(X509Certificate[] chain) throws CertificateException {
+        private void checkCNWhite(X509Certificate[] certChain) throws CertificateException {
             if (nonNull(config.getSslVerifier().getPeer().getCheckCNWhiteFile())) {
-                String[] cns = config.getSslVerifier().getPeer().loadCheckCNWhitelist();
-                Set<String> certCN = CertificateUtil.getCommonNames(CertificateUtil.findOwner(chain));
+                List<String> cns = config.getSslVerifier().getPeer().loadCheckCNWhitelist();
+                Set<String> certCN = CertificateUtil.getCommonNames(CertificateUtil.findOwner(certChain));
                 for (String cn : cns) {
                     if (cnValid(certCN, cn)) {
                         return;
                     }
                 }
-                log.error("CN does not match white.");
-                throw new CertificateException("CN does not match white.");
+                throw new CertificateException(format("CN does not match white. CNs=%s", cns));
             }
         }
 
-        private void checkCRL(X509Certificate[] chain) throws CertificateException {
+        private void checkCRL(X509Certificate[] certChain) throws CertificateException {
             if (nonNull(config.getSslVerifier().getPeer().getCheckCrlFile())) {
-                CRL[] crls = config.getSslVerifier().getPeer().loadCrls();
-                X509Certificate owner = CertificateUtil.findOwner(chain);
+                List<CRL> crls = config.getSslVerifier().getPeer().loadCrls();
+                X509Certificate owner = CertificateUtil.findOwner(certChain);
                 for (CRL c : crls) {
                     if (c.isRevoked(owner)) {
-                        log.error("certificate revoked");
-                        throw new CertificateException("certificate revoked");
+                        throw new CertificateException(format("Certificates %s has been revoked.", asList(certChain)));
                     }
                 }
             }
-        }
-
-        private static void ignore() {
         }
     }
 
