@@ -17,7 +17,6 @@ package com.wl4g.iam.gateway.util.cert;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -78,28 +77,16 @@ public abstract class KeyStoreUtil {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static CRL[] createCRL(String crlfile) {
-        InputStream is = null;
+    public static CRL[] createCRL(InputStream crlfile) {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            is = new FileInputStream(crlfile);
-            Collection c = cf.generateCRLs(is);
+            Collection c = cf.generateCRLs(crlfile);
             CRL[] crls = (CRL[]) c.toArray(new CRL[c.size()]);
             return crls;
         } catch (CertificateException e) {
             throw new IllegalArgumentException("bad cert file.");
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("crl file not found.");
         } catch (CRLException e) {
             throw new IllegalArgumentException("bad crl file.");
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    ignore();
-                }
-            }
         }
     }
 
@@ -122,9 +109,6 @@ public abstract class KeyStoreUtil {
         } catch (Exception e) {
             throw new IllegalArgumentException("Bad trust store." + e.getMessage());
         }
-    }
-
-    private static void ignore() {
     }
 
 }

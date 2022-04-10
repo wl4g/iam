@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.server.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_SECURE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_SERVER;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -25,19 +25,19 @@ import org.springframework.http.client.reactive.ReactorResourceFactory;
 import com.wl4g.iam.gateway.server.SecureNettyReactiveWebServerFactory;
 
 /**
- * {@link SecureWebServerAutoConfiguration}
+ * {@link GatewayWebServerAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-10 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFactoryConfiguration.EmbeddedNetty}
  */
-public class SecureWebServerAutoConfiguration {
+public class GatewayWebServerAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_SECURE)
-    public SecureWebServerProperties secureWebServerProperties() {
-        return new SecureWebServerProperties();
+    @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_SERVER)
+    public GatewayWebServerProperties gatewayWebServerProperties() {
+        return new GatewayWebServerProperties();
     }
 
     /**

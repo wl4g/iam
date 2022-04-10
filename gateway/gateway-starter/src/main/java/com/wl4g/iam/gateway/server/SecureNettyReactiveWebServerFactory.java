@@ -44,7 +44,7 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.wl4g.iam.gateway.server.config.SecureWebServerProperties;
+import com.wl4g.iam.gateway.server.config.GatewayWebServerProperties;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -68,7 +68,7 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
     //
     // ADD feature configuration properties.
     //
-    private @Autowired SecureWebServerProperties secureWebServerProperties;
+    private @Autowired GatewayWebServerProperties gatewayWebServerProperties;
 
     private Set<NettyServerCustomizer> serverCustomizers = new LinkedHashSet<>();
     private List<NettyRouteProvider> routeProviders = new ArrayList<>();
@@ -203,7 +203,7 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
             // [Begin] ADD for custom.
             //
             // TODO secureWebServerConfig for injection
-            SecureSslServerCustomizer sslServerCustomizer = new SecureSslServerCustomizer(secureWebServerProperties, getSsl(),
+            SecureSslServerCustomizer sslServerCustomizer = new SecureSslServerCustomizer(gatewayWebServerProperties, getSsl(),
                     getHttp2(), getSslStoreProvider());
             server = sslServerCustomizer.apply(server);
             //

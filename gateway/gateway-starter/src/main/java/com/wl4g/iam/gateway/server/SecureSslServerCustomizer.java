@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.server;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.findMethod;
@@ -22,6 +24,7 @@ import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import java.io.File;
@@ -66,7 +69,8 @@ import org.springframework.boot.web.server.Http2;
 import org.springframework.boot.web.server.Ssl;
 import org.springframework.boot.web.server.SslStoreProvider;
 
-import com.wl4g.iam.gateway.server.config.SecureWebServerProperties;
+import com.google.common.io.Resources;
+import com.wl4g.iam.gateway.server.config.GatewayWebServerProperties;
 import com.wl4g.iam.gateway.util.cert.CertificateUtil;
 import com.wl4g.iam.gateway.util.cert.KeyStoreUtil;
 
@@ -102,9 +106,9 @@ import reactor.netty.tcp.SslProvider.Builder;
 @SuppressWarnings("unused")
 public class SecureSslServerCustomizer extends SslServerCustomizer {
 
-    private final SecureWebServerProperties secureWebServerConfig;
+    private final GatewayWebServerProperties secureWebServerConfig;
 
-    public SecureSslServerCustomizer(SecureWebServerProperties secureWebServerConfig, Ssl ssl, Http2 http2,
+    public SecureSslServerCustomizer(GatewayWebServerProperties secureWebServerConfig, Ssl ssl, Http2 http2,
             SslStoreProvider sslStoreProvider) {
         super(ssl, http2, sslStoreProvider);
         this.secureWebServerConfig = notNullOf(secureWebServerConfig, "secureWebServerConfig");
@@ -126,34 +130,40 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                     //
                     // [Begin] ADD for SSL subject verifier.
                     //
-                    // see:io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()
-                    builder.handlerConfigurator(handler -> {
-                        SSLEngine engine = handler.engine();
+                    if (secureWebServerConfig.getSslVerifier().getSni().isEnabled()) {
+                        // see:io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()
+                        builder.handlerConfigurator(handler -> {
+                            SSLEngine engine = handler.engine();
 
-                        SSLSessionContext sessionContext = engine.getSession().getSessionContext();
-                        // refer-to:https://www.saoniuhuo.com/article/detail-374589.html
-                        // refer-to:https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
-                        // refer-to:https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
-                        String peerHost = engine.getPeerHost();
-                        int peerPort = engine.getPeerPort();
-                        SSLSession session = engine.getSession();
-                        SSLSession handshakeSession = engine.getHandshakeSession();
-                        // String peerHost2=handshakeSession.getPeerHost();
+                            // TODO
 
-                        // engine.setNeedClientAuth(true);
-                        SSLParameters params = new SSLParameters();
-                        List<SNIMatcher> matchers = new LinkedList<>();
-                        matchers.add(new SNIMatcher(0) {
-                            @Override
-                            public boolean matches(SNIServerName serverName) {
-                                serverName.getEncoded();
-                                return true;
-                            }
+                            SSLSessionContext sessionContext = engine.getSession().getSessionContext();
+
+                            // refer-to:https://www.saoniuhuo.com/article/detail-374589.html
+                            // refer-to:https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
+                            // refer-to:https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
+                            String peerHost = engine.getPeerHost();
+                            int peerPort = engine.getPeerPort();
+                            SSLSession session = engine.getSession();
+                            SSLSession handshakeSession = engine.getHandshakeSession();
+                            // String peerHost2=handshakeSession.getPeerHost();
+                            // engine.setNeedClientAuth(true);
+
+                            SSLParameters params = new SSLParameters();
+                            List<SNIMatcher> matchers = new LinkedList<>();
+                            matchers.add(new SNIMatcher(0) {
+                                @Override
+                                public boolean matches(SNIServerName serverName) {
+                                    String serverName0 = new String(serverName.getEncoded());
+                                    return safeList(secureWebServerConfig.getSslVerifier().getSni().getHosts()).stream()
+                                            .anyMatch(h -> StringUtils.equals(h, serverName0));
+                                }
+                            });
+                            params.setSNIMatchers(matchers);
+                            engine.setSSLParameters(params);
                         });
-                        params.setSNIMatchers(matchers);
-                        engine.setSSLParameters(params);
-                    });
-                    builder.build();
+                        builder.build();
+                    }
                     //
                     // [End] ADD for SSL subject verifier.
                     //
@@ -198,7 +208,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
         }
 
         public static SecureX509TrustManagerFactory wrap(
-                SecureWebServerProperties secureWebServerConfig,
+                GatewayWebServerProperties secureWebServerConfig,
                 TrustManagerFactory tmf) {
             TrustManagerFactorySpi originalFactorySpi = getField(
                     findField(tmf.getClass(), "factorySpi", TrustManagerFactorySpi.class), tmf, true);
@@ -286,13 +296,12 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
     @Slf4j
     @AllArgsConstructor
     public static class SecureX509TrustManager extends X509ExtendedTrustManager {
-        private static final int WHITE_SIZE = 1024;
-        private final SecureWebServerProperties config;
+        private final GatewayWebServerProperties config;
         private final X509ExtendedTrustManager tm;
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             checkTrustedCustom(chain, null);
@@ -301,7 +310,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             String ip = null;
@@ -317,7 +326,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             String ip = null;
@@ -331,7 +340,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             checkTrustedCustom(chain, null);
@@ -340,7 +349,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             String ip = null;
@@ -356,7 +365,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
-            if (!config.isCheckPeerEnabled()) {
+            if (!config.getSslVerifier().getPeer().isEnabled()) {
                 return;
             }
             String ip = null;
@@ -380,7 +389,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
         }
 
         private void checkCNHost(X509Certificate[] chain, String ip) throws CertificateException {
-            if (config.isCheckCNHostEnabled()) {
+            if (config.getSslVerifier().getPeer().isCheckCNHost()) {
                 X509Certificate owner = CertificateUtil.findOwner(chain);
                 Set<String> cns = CertificateUtil.getCommonNames(owner);
                 // ip = isBlank(ip) ? custom.getHost() : ip;
@@ -424,41 +433,12 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
         }
 
         private void checkCNWhite(X509Certificate[] chain) throws CertificateException {
-            if (config.isCheckCNWhiteEnabled()) {
-                FileInputStream fis = null;
-                InputStreamReader reader = null;
-                try {
-                    String white = config.getCheckCNWhiteFile();
-                    fis = new FileInputStream(white);
-                    reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    char[] buffer = new char[WHITE_SIZE];
-                    int len = reader.read(buffer);
-                    String[] cns = new String(buffer, 0, len).split("\\s+");
-                    X509Certificate owner = CertificateUtil.findOwner(chain);
-                    Set<String> certCN = CertificateUtil.getCommonNames(owner);
-                    for (String c : cns) {
-                        if (cnValid(certCN, c)) {
-                            return;
-                        }
-                    }
-                } catch (FileNotFoundException e) {
-                    throw new CertificateException("CN does not match white. no white file.");
-                } catch (IOException e) {
-                    throw new CertificateException("CN does not match white. can not read file.");
-                } finally {
-                    try {
-                        if (reader != null) {
-                            reader.close();
-                        }
-                    } catch (IOException e) {
-                        ignore();
-                    }
-                    try {
-                        if (fis != null) {
-                            fis.close();
-                        }
-                    } catch (IOException e) {
-                        ignore();
+            if (nonNull(config.getSslVerifier().getPeer().getCheckCNWhiteFile())) {
+                String[] cns = config.getSslVerifier().getPeer().loadCheckCNWhitelist();
+                Set<String> certCN = CertificateUtil.getCommonNames(CertificateUtil.findOwner(chain));
+                for (String cn : cns) {
+                    if (cnValid(certCN, cn)) {
+                        return;
                     }
                 }
                 log.error("CN does not match white.");
@@ -467,17 +447,14 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
         }
 
         private void checkCRL(X509Certificate[] chain) throws CertificateException {
-            String crl = config.getCrl();
-            File file = new File(crl);
-            if (!file.exists()) {
-                return;
-            }
-            CRL[] crls = KeyStoreUtil.createCRL(crl);
-            X509Certificate owner = CertificateUtil.findOwner(chain);
-            for (CRL c : crls) {
-                if (c.isRevoked(owner)) {
-                    log.error("certificate revoked");
-                    throw new CertificateException("certificate revoked");
+            if (nonNull(config.getSslVerifier().getPeer().getCheckCrlFile())) {
+                CRL[] crls = config.getSslVerifier().getPeer().loadCrls();
+                X509Certificate owner = CertificateUtil.findOwner(chain);
+                for (CRL c : crls) {
+                    if (c.isRevoked(owner)) {
+                        log.error("certificate revoked");
+                        throw new CertificateException("certificate revoked");
+                    }
                 }
             }
         }

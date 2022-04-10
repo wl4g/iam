@@ -26,7 +26,7 @@ package com.wl4g.iam.common.constant;
 public abstract class GatewayIAMConstants extends IAMConstants {
 
     public static final String CONF_PREFIX_IAM_GATEWAY = CONF_PREFIX_IAM + ".gateway";
-    public static final String CONF_PREFIX_IAM_GATEWAY_SECURE = CONF_PREFIX_IAM_GATEWAY + ".secure";
+    public static final String CONF_PREFIX_IAM_GATEWAY_SERVER = CONF_PREFIX_IAM_GATEWAY + ".server";
     public static final String CONF_PREFIX_IAM_GATEWAY_RATELIMI = CONF_PREFIX_IAM_GATEWAY + ".ratelimit";
     public static final String CONF_PREFIX_IAM_GATEWAY_ROUTE = CONF_PREFIX_IAM_GATEWAY + ".route";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOADBANANER = CONF_PREFIX_IAM_GATEWAY + ".loadbalancer";

@@ -91,6 +91,18 @@ spring:
   ## IAM gateway configuration.
   iam:
     gateway:
+      server:
+        ssl-verifier:
+          sni:
+            enabled: true ## Default by true
+            ## By build-in it will contains: [localhost,127.0.0.1]
+            #hosts: []
+          peer:
+            enabled: true ## Default by true
+            check-cn-host: true ## Default by true
+            check-cn-white-file: classpath:/cert.d/cn_white.list ## Default no-set(disabled)
+            #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
+            allow-renegociate: true ## Default by true
       authing:
         simple-sign:
           secret-load-store: redis
@@ -250,11 +262,17 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
     ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
     ## see:io.netty.handler.ssl.OpenSslKeyMaterialManager#KEY_TYPES
     ## issue:https://www.cnblogs.com/wade-luffy/p/6019743.html
-    #ciphers: ['TLS_DH_RSA_WITH_AES_128_CBC_SHA', 'TLS_DH_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA256']
+    #ciphers:
+    #  - TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+    #  - TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+    #  - TLS_RSA_WITH_AES_128_CBC_SHA256
+    #  - TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+    #  - TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+    #  - TLS_RSA_WITH_AES_128_CBC_SHA
     key-password: ${server.ssl.key-store-password}
     key-store: 'classpath:cert.d/wl4g.io.p12'
     key-store-password: '123456'
-    key-store-type: PKCS12 ## Default no-set by JKS. Options(JKS|PKCS12|...)
+    key-store-type: PKCS12 ## Default no-set by JKS. Options(JKS|PKCS12|DER|CER|..)
     #key-store-provider:
     trust-store: 'classpath:cert.d/ca.p12'
     trust-store-password: '123456'
