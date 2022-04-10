@@ -72,7 +72,7 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-iam-common</artifactId>
 			<exclusions>
-				<!-- Excludes spring MVC -->
+				<!-- Must excludes web-mvc -->
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-web</artifactId>
@@ -87,21 +87,27 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-shell-springboot</artifactId>
 		</dependency>
-		<!-- Spring Security -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.boot</groupId> -->
-		<!-- <artifactId>spring-boot-starter-security</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.security</groupId> -->
-		<!-- <artifactId>spring-security-oauth2-client</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.security</groupId> -->
-		<!-- <artifactId>spring-security-oauth2-jose</artifactId> -->
-		<!-- </dependency> -->
-		<!-- Spring Data Redis -->
-		<!-- TODO: Remove redis depends, use UCM -->
+		<!-- Core Foundation -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-gateway</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+		</dependency>
+		<!-- see:io.netty.handler.ssl.SslContext#defaultProvider -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-tcnative-boringssl-static</artifactId>
+		</dependency>
+		<!-- Redis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
@@ -116,38 +122,25 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
 		</dependency>
-		<!-- Spring Cloud Netflix -->
+		<!-- Spring Security -->
 		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.cloud</groupId> -->
-		<!-- <artifactId>spring-cloud-starter-netflix-hystrix</artifactId> -->
+		<!-- <groupId>org.springframework.boot</groupId> -->
+		<!-- <artifactId>spring-boot-starter-security</artifactId> -->
 		<!-- </dependency> -->
 		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.cloud</groupId> -->
-		<!-- <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-oauth2-client</artifactId> -->
 		<!-- </dependency> -->
 		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.cloud</groupId> -->
-		<!-- <artifactId>spring-cloud-starter-netflix-ribbon</artifactId> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-oauth2-jose</artifactId> -->
 		<!-- </dependency> -->
-		<!-- Spring Cloud Gateway -->
+		<!-- Admin -->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>io.netty</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-		</dependency>
+		<!-- Trace -->
 		<!-- Webflux bridge for servlet filter -->
 		<!-- <dependency> -->
 		<!-- <groupId>javax.servlet</groupId> -->
@@ -183,7 +176,40 @@
 		<!-- <groupId>io.grpc</groupId> -->
 		<!-- <artifactId>grpc-netty-shaded</artifactId> -->
 		<!-- </dependency> -->
-		<!-- Nacos configuration -->
+		<!-- Metrics -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<!-- see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html#collecting-metrics -->
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-micrometer</artifactId>
+		</dependency>
+		<!-- Loadbalancer -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+		</dependency>
+		<!-- Circuitbreaker -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+		</dependency>
+		<!-- Netflix -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.cloud</groupId> -->
+		<!-- <artifactId>spring-cloud-starter-netflix-hystrix</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.cloud</groupId> -->
+		<!-- <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.cloud</groupId> -->
+		<!-- <artifactId>spring-cloud-starter-netflix-ribbon</artifactId> -->
+		<!-- </dependency> -->
+		<!-- Nacos -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.alibaba.cloud</groupId> -->
 		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId> -->
@@ -192,26 +218,6 @@
 		<!-- <groupId>com.alibaba.cloud</groupId> -->
 		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId> -->
 		<!-- </dependency> -->
-		<!-- Admin -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-		</dependency>
-		<!-- Foundation -->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
-		</dependency>
-		<!-- io.netty.handler.ssl.SslContext#defaultProvider -->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-tcnative-boringssl-static</artifactId>
-			<!-- <version>2.0.51.Final</version> -->
-		</dependency>
 		<!-- Tests -->
 		<dependency>
 			<groupId>io.projectreactor</groupId>

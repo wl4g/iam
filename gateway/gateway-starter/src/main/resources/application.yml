@@ -13,6 +13,8 @@
 spring:
   cloud:
     circuitbreaker:
+      ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
+      ## see:org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration
       resilience4j:
         enabled: true
     loadbalancer:
