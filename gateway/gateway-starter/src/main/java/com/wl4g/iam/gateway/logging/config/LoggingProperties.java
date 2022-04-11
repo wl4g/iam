@@ -51,7 +51,7 @@ public class LoggingProperties {
      * {@linkplain https://github.com/kubernetes/kubectl} design value range:
      * 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
      */
-    private int preferredFlightLogVerboseLevel = 1;
+    private int verboseLevel = 1;
 
     /**
      * Preferred to enable print flight log match rule definitions.

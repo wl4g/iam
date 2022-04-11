@@ -25,6 +25,7 @@ import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
@@ -102,6 +103,7 @@ import reactor.netty.tcp.SslProvider.Builder;
  * @since v3.0.0
  * @see https://github.com/netty/netty/issues/8537
  */
+@Slf4j
 @SuppressWarnings("unused")
 public class SecureSslServerCustomizer extends SslServerCustomizer {
 
@@ -159,8 +161,15 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                                 @Override
                                 public boolean matches(SNIServerName serverName) {
                                     String servname = new String(serverName.getEncoded());
-                                    return safeList(secureWebServerConfig.getSslVerifier().getSni().getHosts()).stream()
+                                    if (LOCAL_ADDRESS.contains(servname)) {
+                                        return true;
+                                    }
+                                    boolean flag = safeList(secureWebServerConfig.getSslVerifier().getSni().getHosts()).stream()
                                             .anyMatch(h -> StringUtils.equals(h, servname));
+                                    if (!flag) {
+                                        log.warn("No match SNI server name: {}", servname);
+                                    }
+                                    return flag;
                                 }
                             });
                             params.setSNIMatchers(matchers);
@@ -399,7 +408,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
                 // ip = isBlank(ip) ? custom.getHost() : ip;
                 // The request from the local machine, as long as the CN matches
                 // any IP address of the local machine.
-                if (equalsAnyIgnoreCase(ip, "127.0.0.1", "0:0:0:0:0:0:0:1", "::")) {
+                if (LOCAL_ADDRESS.contains(ip)) {
                     try {
                         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
                         if (interfaces != null) {
@@ -459,5 +468,7 @@ public class SecureSslServerCustomizer extends SslServerCustomizer {
             }
         }
     }
+
+    public static final List<String> LOCAL_ADDRESS = unmodifiableList(asList("localhost", "127.0.0.1", "0:0:0:0:0:0:0:1", "::"));
 
 }

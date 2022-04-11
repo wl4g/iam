@@ -131,7 +131,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         // Flight log level is disabled.
-        if (loggingConfig.getPreferredFlightLogVerboseLevel() <= 0) {
+        if (loggingConfig.getVerboseLevel() <= 0) {
             return chain.filter(exchange);
         }
         String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
@@ -507,8 +507,8 @@ public class LoggingFilter implements GlobalFilter, Ordered {
      * @return
      */
     private boolean isLoglevelRange(int lower, int upper) {
-        return loggingConfig.getPreferredFlightLogVerboseLevel() >= lower
-                && loggingConfig.getPreferredFlightLogVerboseLevel() <= upper;
+        return loggingConfig.getVerboseLevel() >= lower
+                && loggingConfig.getVerboseLevel() <= upper;
     }
 
     /**
@@ -528,7 +528,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                 || TEXT_PLAIN.isCompatibleWith(mediaType) || APPLICATION_FORM_URLENCODED.isCompatibleWith(mediaType);
     }
 
-    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;
+    public static final int ORDER_FILTER = Ordered.LOWEST_PRECEDENCE - 100;
     public static final String KEY_START_TIME = LoggingFilter.class.getName() + ".startTime";
 
     public static final String LOG_REQUEST_BEGIN = "\n---------- <IAM Gateway Request Log Begin> ------------\n::: Headers :::\n";
