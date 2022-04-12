@@ -20,7 +20,8 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_G
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.gateway.logging.LoggingFilter;
+import com.wl4g.iam.gateway.logging.RequestLoggingFilter;
+import com.wl4g.iam.gateway.logging.ResponseLoggingFilter;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
 /**
@@ -39,8 +40,13 @@ public class LoggingAutoConfiguration {
     }
 
     @Bean
-    public LoggingFilter loggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
-        return new LoggingFilter(traceConfig, loggingConfig);
+    public RequestLoggingFilter requestLoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+        return new RequestLoggingFilter(traceConfig, loggingConfig);
+    }
+
+    @Bean
+    public ResponseLoggingFilter responseLoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+        return new ResponseLoggingFilter(traceConfig, loggingConfig);
     }
 
 }
