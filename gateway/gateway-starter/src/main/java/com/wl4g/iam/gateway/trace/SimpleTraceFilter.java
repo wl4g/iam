@@ -53,6 +53,9 @@ public class SimpleTraceFilter implements GlobalFilter, Ordered {
     private @Autowired TraceProperties traceConfig;
     private final AtomicLong counter = new AtomicLong(0);
 
+    /**
+     * @see {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#loadFilters()}
+     */
     @Override
     public int getOrder() {
         return ORDER_FILTER;

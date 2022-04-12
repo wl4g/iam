@@ -71,13 +71,17 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
      * Note: The retry filter should be executed before the load balancing
      * filter, so that other back-end servers can be selected when retrying.
      * see:
+     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#loadFilters()}
+     * and
      * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+     * and
+     * {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#order}
      * and
      * {@link org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory}
      */
     @Override
     public int getOrder() {
-        return ORDER_FILTER;
+        return super.getOrder();
     }
 
     @Override
@@ -125,13 +129,4 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         return Mono.just(new DefaultResponse(canaryLoadBalancerRule.choose(serviceId, exchange.getRequest())));
     }
 
-    /**
-     * Note: The retry filter should be executed before the load balancing
-     * filter, so that other back-end servers can be selected when retrying.
-     * see:
-     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
-     * and
-     * {@link org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory}
-     */
-    public static final int ORDER_FILTER = 100;
 }

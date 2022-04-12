@@ -18,11 +18,6 @@ spring:
     ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
-      filter:
-        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-        request-rate-limiter:
-          deny-empty-key: true
-          empty-key-status-code: UNPROCESSABLE_ENTITY
       routes:
         - id: v2-energy-openapi-service
           uri: lb://v2-energy-openapi-service ## E.g: http://openapi.example-internal.com
@@ -88,10 +83,10 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  firstBackoff: 30ms
-                  maxBackoff: 80ms
+                  first-backoff: 30ms
+                  max-backoff: 80ms
                   factor: 2
-                  basedOnPreviousValue: false
+                  based-on-previous-value: false
             - name: CircuitBreaker
               args:
                 name: defaultCircuitBreaker
@@ -105,7 +100,7 @@ spring:
             - Path=/alimarket/v1/**
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/alimarket/v1/(?<segment>.*), /openapi/alimarket/v1/$\{segment}
+            - RewritePath=/alimarket/v1/(?<segment>.*),/openapi/alimarket/v1/$\{segment}
             - name: SimpleSignAuthing
               args:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define

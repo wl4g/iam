@@ -114,8 +114,30 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
 
+        // TODO
+        // return chain.filter(exchange.mutate()
+        // .request(logRequest(exchange, chain, headers, traceId, requestMethod,
+        // requestUri))
+        // .response(logResponse(exchange, chain, headers, traceId,
+        // requestMethod, requestUri))
+        // .build());
+
+        // TODO
+        // Error ???
+        //
         return logRequest(exchange, chain, headers, traceId, requestMethod, requestUri).then(Mono.defer(() -> chain.filter(
                 exchange.mutate().response(logResponse(exchange, chain, headers, traceId, requestMethod, requestUri)).build())));
+
+        // TODO
+        // Can only choose one? ? ?
+        //
+        // return logRequest(exchange, chain, headers, traceId, requestMethod,
+        // requestUri);
+        //
+
+        // return chain.filter(
+        // exchange.mutate().response(logResponse(exchange, chain, headers,
+        // traceId, requestMethod, requestUri)).build());
     }
 
     /**
@@ -128,7 +150,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
      * @param requestUri
      * @return
      */
-    private Mono<Void> logRequest(
+    private Mono<Void> /* ServerHttpRequest */ logRequest(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
             HttpHeaders headers,
@@ -311,7 +333,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
      * @return
      * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
      */
-    private Mono<Void> decorateRequest(
+    private Mono<Void> /* ServerHttpRequest */ decorateRequest(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
             Function<? super String, ? extends Mono<? extends String>> transformer) {
@@ -376,6 +398,8 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         return bodyInserter.insert(outputMessage, new BodyInserterContext())
                 .then(Mono.defer(() -> chain.filter(exchange.mutate().request(decorator).build())))
                 .onErrorResume((Function<Throwable, Mono<Void>>) ex -> Mono.error(ex));
+
+        // return decorator;
     }
 
     /**

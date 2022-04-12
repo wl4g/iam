@@ -48,7 +48,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
-import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -84,14 +83,27 @@ import reactor.core.publisher.Mono;
  * be a combination of GatewayFilters, Has nothing to do with GlobalFilter. In
  * fact, SCG adapts GlobalFilter to GatewayFilter by means of an adapter. We can
  * see this change in the constructor of
- * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler}.
+ * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}.
+ * </p>
+ * 
+ * <p>
+ * The simple signature filter should be executed before the rate limiting
+ * filter because rate limiting needs to be done based on the authentication
+ * subject. Also note: all GatewayFilters do not need to implement the Ordered
+ * interface, because the chain ordering is determined according to the
+ * configuration order of routes.filters. see:
+ * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
+ * and
+ * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
+ * and
+ * {@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory}
  * </p>
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-01 v3.0.0
  * @since v3.0.0
  */
-public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> implements Ordered {
+public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {
 
     private final SmartLogger log = getLogger(getClass());
     private final AuthingProperties authingConfig;
@@ -105,21 +117,6 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSimpleSign().getSecretLocalCacheSeconds(), SECONDS)
                 .build();
-    }
-
-    /**
-     * Note: The simple signature filter should be executed before the
-     * rate-limit filter, Therefore, traffic can be rate-limit to the principal
-     * of authenticated. see:
-     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
-     * and
-     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
-     * and
-     * {@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory}
-     */
-    @Override
-    public int getOrder() {
-        return ORDER_FILTER;
     }
 
     @Override
@@ -500,17 +497,5 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     }
 
     public static final String NAME_SIMPLE_SIGN_FILTER = "SimpleSignAuthing";
-
-    /**
-     * Note: The simple signature filter should be executed before the
-     * rate-limit filter, Therefore, traffic can be rate-limit to the principal
-     * of authenticated. see:
-     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
-     * and
-     * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
-     * and
-     * {@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory}
-     */
-    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 30;
 
 }
