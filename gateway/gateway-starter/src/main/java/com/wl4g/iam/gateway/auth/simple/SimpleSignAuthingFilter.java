@@ -294,16 +294,16 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
             SimpleSignAuthingFilter.Config config,
             String appId) {
 
-        // Sets the current authenticated client ID to context principal,
-        // For example: for subsequent current limiting based on client ID.
-        // see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
-        exchange.mutate().principal(Mono.just(new SimpleSignPrincipal(appId)));
-
         // Add the current authenticated client ID to the request header,
         // this will allow the back-end resource services to recognize the
         // current client ID.
         ServerHttpRequest request = exchange.getRequest().mutate().header(config.getAddSignAuthClientIdHeader(), appId).build();
-        return chain.filter(exchange.mutate().request(request).build());
+
+        // Sets the current authenticated client ID to context principal,
+        // For example: for subsequent current limiting based on client ID.
+        // see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+        // see:org.springframework.security.web.server.context.SecurityContextServerWebExchangeWebFilter#filter()
+        return chain.filter(exchange.mutate().principal(Mono.just(new SimpleSignPrincipal(appId))).request(request).build());
     }
 
     @Getter

@@ -20,22 +20,12 @@ spring:
     loadbalancer:
       use404: false ## Default by false
     ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
+    ## see:org.springframework.cloud.gateway.config.GatewayProperties
     ## see:org.springframework.cloud.gateway.handler.FilteringWebHandler#handle()
+    ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
-      #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
-      #  cors-configurations: ## Default no set.
-      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
-      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
-      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
-      metrics:
-        enabled: true ## Default no-set.
-        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
-        tags:
-          application: ${spring.application.name}
-          profiles.include: ${spring.profiles.include}
-          profiles.active: ${spring.profiles.active}
-      fail-on-route-definition-error: true ## Default by true
       filter:
         secure-headers:
           disable: ## Default no set.
@@ -45,6 +35,30 @@ spring:
           permitted-cross-domain-policies: none ## Default by 'none'
           frame-options: DENY ## Default by 'DENY'
           download-options: noopen ## Default by 'noopen'
+        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+        request-rate-limiter:
+          deny-empty-key: true
+          empty-key-status-code: UNPROCESSABLE_ENTITY
+      fail-on-route-definition-error: true ## Default by true
+      routes:
+        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
+        ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
+        - id: v1-default-fallback
+          uri: lb://v1-default-fallback
+          predicates:
+            - Path=/fallback/**
+          filters:
+            - name: FallbackHeaders
+              args:
+                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
+                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
+                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
+                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
+      #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
+      #  cors-configurations: ## Default no set.
+      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
+      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
+      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
       redis-rate-limiter:
         include-headers: false ## Default by true
         burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
@@ -64,14 +78,17 @@ spring:
         # port:
         # username:
         # password:
-        # nonProxyHostsPattern:
+        # non-proxy-hosts-pattern:
         pool:
           name: proxy ## Default by proxy
           #metrics: true ## Default by false
           #max-idle-time: 
           #acquire-timeout: 45000 # Default by 45000ms
+        websocket:
+          proxy-ping: true ## Default by true
+          max-frame-payload-length: 65535 ## Default no set.
           #max-connections: ## Default by: max(availableProcessors(),8)*2)
-        ssl:
+        ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
           default-configuration-type: TCP ## Default by 'TCP'
           handshake-timeout: 10000ms ## Default by 10000ms
           close-notify-flush-timeout: 3000ms ## Default by 3000ms
@@ -82,10 +99,14 @@ spring:
           #key-store-password:
           #key-store-provider:
           #trusted-x509-certificates:
-          use-insecure-trust-manager: true ## Default by false
-        websocket:
-          proxy-ping: true ## Default by true
-          max-frame-payload-length: 65535 ## Default no set.
+          #use-insecure-trust-manager: true ## Default by false
+      metrics:
+        enabled: true ## Default no-set.
+        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
+        tags:
+          application: ${spring.application.name}
+          profiles.include: ${spring.profiles.include}
+          profiles.active: ${spring.profiles.active}
       actuator:
         verbose:
           enabled: true ## Default by false
@@ -121,6 +142,7 @@ spring:
       route:
         refresh-delay-ms: 30_000
       loadbalancer:
+        enabled: false ## Default by true
         canary-discovery-service-label-key: Iscg-Canary-LB-Label ## Default by 'Iam-Gateway-Canary-LB-Label'
         match-expression: '#{$rule.test($request)}'
         match-rule-definitions:
@@ -146,9 +168,10 @@ spring:
       trace:
         trace-id-request-header: X-Iscg-Request-Id ## Default by 'X-Iam-Gateway-Trace-Id'
       logging:
-        ## If the mandatory switch is not set, it is determined whether to enable logging according to the preference switch, otherwise it is determined
-        ## it is determined whether to enable logging according to the mandatory switch, the default mandatory switch is empty, the preference switch is enabled.
-        ##required-flight-log-enabled: # Options:(null|true|false)
+        ## If this switch is enabled, then check whether the request header and parameters meet the current conditions for printing flight logs.
+        ## If so, print according to the predetermined level, otherwise do not print. If this switch is set to false, printing logs will be
+        ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
+        enabled: true ## Default by true
         ## The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         verbose-level: 10
         match-expression: '#{$headerLogOpenRule.or($queryLogOpenRule).test($request)}'
@@ -254,7 +277,7 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   ## see:io.netty.handler.ssl.SslHandler
   ## Example: curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/v2/hello?appId=oi554a94bc416e4edd9ff963ed0e9e25e6c10545&nonce=vV5Y0Sf2DCNPnjCB&timestamp=1649477512798&signature=66aeaa14cb229d9f9b54cd71e59f8df4bbd511c039977b9149a25db7ca848065&response_type=json'
   ssl:
-    enabled: true ## Default by false
+    enabled: false ## Default by false
     protocol: TLS ## Default by 'TLS'
     client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
     ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java

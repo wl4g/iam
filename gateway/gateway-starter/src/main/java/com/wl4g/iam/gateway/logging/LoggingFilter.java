@@ -119,7 +119,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * Wraps mutated response logging filtering.
+     * Request logging filtering.
      * 
      * @param exchange
      * @param chain
@@ -218,7 +218,61 @@ public class LoggingFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * Wraps mutated response logging filtering.
+     * Wraps the HTTP request for body edited. </br>
+     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
+     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
+     * 
+     * @param exchange
+     * @param chain
+     * @param transformer
+     * @return
+     * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
+     */
+    private Mono<Void> decorateRequest(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain,
+            Function<? super String, ? extends Mono<? extends String>> transformer) {
+
+        Class<String> inClass = String.class;
+        Class<String> outClass = String.class;
+        ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
+        // ServerRequest serverRequest = new
+        // org.springframework.cloud.gateway.support.DefaultServerRequest(exchange);
+        Mono<String> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
+
+        BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
+        HttpHeaders newHeaders = new HttpHeaders();
+        newHeaders.putAll(exchange.getRequest().getHeaders());
+        newHeaders.remove(HttpHeaders.CONTENT_LENGTH);
+
+        CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, newHeaders);
+        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+            @Override
+            public HttpHeaders getHeaders() {
+                long contentLength = newHeaders.getContentLength();
+                HttpHeaders _newHeaders = new HttpHeaders();
+                _newHeaders.putAll(newHeaders);
+                if (contentLength > 0) {
+                    _newHeaders.setContentLength(contentLength);
+                } else {
+                    _newHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
+                }
+                return _newHeaders;
+            }
+
+            @Override
+            public Flux<DataBuffer> getBody() {
+                return outputMessage.getBody();
+            }
+        };
+
+        return bodyInserter.insert(outputMessage, new BodyInserterContext())
+                .then(Mono.defer(() -> chain.filter(exchange.mutate().request(decorator).build())))
+                .onErrorResume((Function<Throwable, Mono<Void>>) ex -> Mono.error(ex));
+    }
+
+    /**
+     * Response logging filtering.
      * 
      * @param exchange
      * @param chain
@@ -291,91 +345,14 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                 // Full print response body.
                 responseLog.append(LOG_RESPONSE_BODY);
                 responseLogArgs.add(originalBody);
-            }
-            if (log3_10) {
+                responseLog.append(LOG_RESPONSE_END);
+                log.info(responseLog.toString(), responseLogArgs.toArray());
+            } else if (log3_10) {
                 responseLog.append(LOG_RESPONSE_END);
                 log.info(responseLog.toString(), responseLogArgs.toArray());
             }
             return Mono.just(originalBody);
         });
-    }
-
-    /**
-     * Wraps the HTTP request for body edited. </br>
-     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
-     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
-     * 
-     * @param exchange
-     * @param chain
-     * @param transformer
-     * @return
-     * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
-     */
-    private Mono<Void> decorateRequest(
-            ServerWebExchange exchange,
-            GatewayFilterChain chain,
-            Function<? super String, ? extends Mono<? extends String>> transformer) {
-
-        Class<String> inClass = String.class;
-        Class<String> outClass = String.class;
-        ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
-        // ServerRequest serverRequest = new
-        // org.springframework.cloud.gateway.support.DefaultServerRequest(exchange);
-        Mono<String> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
-
-        BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
-        HttpHeaders newHeaders = new HttpHeaders();
-        newHeaders.putAll(exchange.getRequest().getHeaders());
-        newHeaders.remove(HttpHeaders.CONTENT_LENGTH);
-
-        CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, newHeaders);
-        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
-            @Override
-            public HttpHeaders getHeaders() {
-                long contentLength = newHeaders.getContentLength();
-                HttpHeaders _newHeaders = new HttpHeaders();
-                _newHeaders.putAll(newHeaders);
-                if (contentLength > 0) {
-                    _newHeaders.setContentLength(contentLength);
-                } else {
-                    _newHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
-                }
-                return _newHeaders;
-            }
-
-            @Override
-            public Flux<DataBuffer> getBody() {
-                return outputMessage.getBody();
-
-                // if (hasBody(getHeaders().getContentType())) {
-                // return super.getBody().map(ds -> {
-                // System.out.println(11111111);
-                // System.out.println(java.nio.charset.StandardCharsets.UTF_8.decode(ds.asByteBuffer()));
-                // System.out.println(222222);
-                // return ds;
-                // }).doFinally((s) -> System.out.println("end----111---"));
-                // } else {
-                // System.out.println("end----222---");
-                // return super.getBody();
-                // }
-
-                // if (hasBody(getHeaders().getContentType())) {
-                // return outputMessage.getBody().map(ds -> {
-                // System.out.println(11111111);
-                // System.out.println(java.nio.charset.StandardCharsets.UTF_8.decode(ds.asByteBuffer()));
-                // System.out.println(222222);
-                // return ds;
-                // }).doFinally((s) -> System.out.println("end----111---"));
-                // } else {
-                // System.out.println("end----222---");
-                // return outputMessage.getBody();
-                // }
-            }
-        };
-
-        return bodyInserter.insert(outputMessage, new BodyInserterContext())
-                .then(Mono.defer(() -> chain.filter(exchange.mutate().request(decorator).build())))
-                .onErrorResume((Function<Throwable, Mono<Void>>) ex -> Mono.error(ex));
     }
 
     /**
@@ -446,15 +423,8 @@ public class LoggingFilter implements GlobalFilter, Ordered {
      * @return
      */
     private boolean isFilterLogging(ServerHttpRequest request, HttpHeaders headers) {
-        // If the mandatory switch is not set, it is determined whether to
-        // enable logging according to the preference switch, otherwise it is
-        // determined whether to enable logging according to the mandatory
-        // switch, the default mandatory switch is empty, the preference switch
-        // is enabled.
-        if (isNull(loggingConfig.getRequiredFlightLogEnabled())) {
-            return requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getMatchExpression());
-        }
-        return loggingConfig.getRequiredFlightLogEnabled();
+        return loggingConfig.isEnabled()
+                && requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getMatchExpression());
     }
 
     /**

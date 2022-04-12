@@ -43,7 +43,7 @@ spring:
                 sign-algorithm: S256 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: SimpleParamsBytesSortedHashing ## Default by 'UriParamsKeySortedHashing'
                 sign-hashing-include-params: [appId, timestamp, nonce] ## Default by []
-                sign-hashing-exclude-params: [] ## Default by []
+                sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 sign-hashing-required-include-params: [appId, timestamp, nonce] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
             - name: RequestSize
@@ -56,10 +56,10 @@ spring:
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 1
+                  burst-capacity: 10
                   ## The average rate of token bucket filling per second, which is equivalent to the average number of 
                   ## requests per second that users are allowed to process.
-                  replenish-rate: 1
+                  replenish-rate: 10
                 key-resolver: '#{@hostKeyResolver}'
                 status-code: TOO_MANY_REQUESTS
                 #empty-key-status: ## Default are set(recommended).
@@ -69,8 +69,8 @@ spring:
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
-                  burst-capacity: 1
-                  replenish-rate: 1
+                  burst-capacity: 10
+                  replenish-rate: 10
                 ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
@@ -110,13 +110,13 @@ spring:
                 ## Only valid when appId extract mode is parameter.
                 app-id-param: appId
                 secret-param: key ## Default by 'appSecret'
-                sign-replay-verify-enabled: true ## Default by true
+                sign-replay-verify-enabled: false ## Default by true
                 sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
                 sign-param: token ## Default by 'sign'
                 sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
                 sign-hashing-mode: UriParamsKeySortedHashing ## Default by 'UriParamsKeySortedHashing'
                 sign-hashing-include-params: ['*'] ## Default by []
-                sign-hashing-exclude-params: [] ## Default by []
+                sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
             - name: RequestSize
               args:
@@ -128,10 +128,10 @@ spring:
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 1
+                  burst-capacity: 10
                   ## The average rate of token bucket filling per second, which is equivalent to the average number of 
                   ## requests per second that users are allowed to process.
-                  replenish-rate: 1
+                  replenish-rate: 10
                 key-resolver: '#{@hostKeyResolver}'
                 status-code: TOO_MANY_REQUESTS
                 #empty-key-status: ## Default are set(recommended).
@@ -141,8 +141,8 @@ spring:
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
-                  burst-capacity: 1
-                  replenish-rate: 1
+                  burst-capacity: 10
+                  replenish-rate: 10
                 ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?

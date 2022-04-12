@@ -86,6 +86,10 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!loadBalancerConfig.isEnabled()) {
+            return chain.filter(exchange);
+        }
+
         URI requestUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
         String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
 

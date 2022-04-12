@@ -39,6 +39,11 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-LB-Canary-Label";
 
     /**
+     * Enabled status.
+     */
+    private boolean enabled = true;
+
+    /**
      * The tag key used to get whether the discovery service satisfies the
      * canary traffic group.
      */

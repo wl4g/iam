@@ -18,8 +18,6 @@ package com.wl4g.iam.gateway.logging.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
@@ -39,12 +37,14 @@ import lombok.ToString;
 public class LoggingProperties {
 
     /**
-     * If the mandatory switch is not set, it is determined whether to enable
-     * logging according to the preference switch, otherwise it is determined
-     * whether to enable logging according to the mandatory switch, the default
-     * mandatory switch is empty, the preference switch is enabled.
+     * If this switch is enabled, then check whether the request header and
+     * parameters meet the current conditions for printing flight logs. If so,
+     * print according to the predetermined level, otherwise do not print. If
+     * this switch is set to false, printing logs will be permanently disabled
+     * (regardless of the request header). and whether the parameters meet the
+     * conditions).
      */
-    private @Nullable Boolean requiredFlightLogEnabled = null;
+    private boolean enabled = true;
 
     /**
      * The output level of flight log printing, similar to

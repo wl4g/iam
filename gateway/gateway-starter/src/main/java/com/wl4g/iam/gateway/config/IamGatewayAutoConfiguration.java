@@ -15,8 +15,12 @@
  */
 package com.wl4g.iam.gateway.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
 
 import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
@@ -27,6 +31,8 @@ import com.wl4g.iam.gateway.ratelimit.config.RateLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
 import com.wl4g.iam.gateway.server.config.GatewayWebServerAutoConfiguration;
 import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
+
+import reactor.core.publisher.Mono;
 
 /**
  * IAM gateway auto configuration.
@@ -41,4 +47,47 @@ import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
         LoadbalanceAutoConfiguration.class, AuthingAutoConfiguration.class, TraceAutoConfiguration.class,
         LoggingAutoConfiguration.class, ConsoleAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
+
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter() {
+            @Override
+            public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+                return chain.filter(exchange);
+            }
+        };
+    }
+
+    // @Bean
+    // public WebFilter corsWebFilter() {
+    // return (ServerWebExchange ctx, WebFilterChain chain) -> {
+    // ServerHttpRequest request = ctx.getRequest();
+    // if (!CorsUtils.isCorsRequest(request)) {
+    // return chain.filter(ctx);
+    // }
+    //
+    // HttpHeaders requestHeaders = request.getHeaders();
+    // ServerHttpResponse response = ctx.getResponse();
+    // HttpMethod requestMethod =
+    // requestHeaders.getAccessControlRequestMethod();
+    // HttpHeaders headers = response.getHeaders();
+    // headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+    // requestHeaders.getOrigin());
+    // headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+    // requestHeaders.getAccessControlRequestHeaders());
+    // if (requestMethod != null) {
+    // headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+    // requestMethod.name());
+    // }
+    // headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+    // headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+    // headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "18000L");
+    // if (request.getMethod() == HttpMethod.OPTIONS) {
+    // response.setStatusCode(HttpStatus.OK);
+    // return Mono.empty();
+    // }
+    // return chain.filter(ctx);
+    // };
+    // }
+
 }

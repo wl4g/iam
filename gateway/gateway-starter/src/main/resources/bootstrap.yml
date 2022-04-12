@@ -13,7 +13,7 @@
 spring:
   application.name: iam-gateway
   profiles:
-    include: base,route
+    include: route
     active: dev
   banner:
       location: classpath:banner.txt
