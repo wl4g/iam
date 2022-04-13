@@ -19,11 +19,11 @@ spring:
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
       routes:
-        - id: v2-energy-openapi-service
-          uri: lb://v2-energy-openapi-service ## E.g: http://openapi.example-internal.com
+        - id: energy-openapi-service
+          uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
             - Path=/openapi/v2/**,/v2/**
-            #- Weight=v2-energy-openapi-service,5
+            #- Weight=energy-openapi-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
@@ -56,10 +56,10 @@ spring:
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 10
+                  burst-capacity: 2
                   ## The average rate of token bucket filling per second, which is equivalent to the average number of 
                   ## requests per second that users are allowed to process.
-                  replenish-rate: 10
+                  replenish-rate: 2
                 key-resolver: '#{@hostKeyResolver}'
                 status-code: TOO_MANY_REQUESTS
                 #empty-key-status: ## Default are set(recommended).
@@ -69,8 +69,8 @@ spring:
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
-                  burst-capacity: 10
-                  replenish-rate: 10
+                  burst-capacity: 2
+                  replenish-rate: 2
                 ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
@@ -94,8 +94,8 @@ spring:
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
-        - id: v1-alimarket-openapi-service
-          uri: lb://v1-alimarket-openapi-service
+        - id: alimarket-openapi-service
+          uri: lb://alimarket-openapi-service
           predicates:
             - Path=/alimarket/v1/**
           filters:
@@ -128,10 +128,10 @@ spring:
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 10
+                  burst-capacity: 2
                   ## The average rate of token bucket filling per second, which is equivalent to the average number of 
                   ## requests per second that users are allowed to process.
-                  replenish-rate: 10
+                  replenish-rate: 2
                 key-resolver: '#{@hostKeyResolver}'
                 status-code: TOO_MANY_REQUESTS
                 #empty-key-status: ## Default are set(recommended).
@@ -141,8 +141,8 @@ spring:
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
                 redis-rate-limiter:
-                  burst-capacity: 10
-                  replenish-rate: 10
+                  burst-capacity: 2
+                  replenish-rate: 2
                 ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
@@ -159,13 +159,13 @@ spring:
                   max-backoff: 80ms
                   factor: 2
                   based-on-previous-value: false
-            - name: CircuitBreaker
-              args:
-                name: defaultCircuitBreaker
-                fallback-uri: forward:/fallback
-                statusCodes:
-                  - 500
-                  - "NOT_FOUND"
+            #- name: CircuitBreaker
+            #  args:
+            #    name: defaultCircuitBreaker
+            #    fallback-uri: forward:/fallback
+            #    statusCodes:
+            #      - 500
+            #      - "NOT_FOUND"
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:

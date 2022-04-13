@@ -3,14 +3,14 @@ package com.wl4g.iam.gateway.loadbalance.rule;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -52,17 +52,22 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
             throw new NotFoundException("No found instance available for " + serviceId);
         }
 
+        List<ServiceInstance> candidates = null;
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
-        List<MatchHttpRequestRule> matchesRules = requestMatcher.find(new ReactiveRequestExtractor(request),
-                loadBalancerConfig.getMatchExpression());
-        if (isEmpty(matchesRules)) {
-            return instances.get(RandomUtils.nextInt(0, instances.size()));
+        List<MatchHttpRequestRule> rules = requestMatcher.find(new ReactiveRequestExtractor(request),
+                loadBalancerConfig.getSelectExpression());
+        if (isEmpty(rules)) {
+            log.warn("The request did not match the canary load balancer instance.");
+            if (loadBalancerConfig.isFallbackAllToCandidates()) {
+                candidates = instances;
+            } else {
+                return null;
+            }
+        } else {
+            // Gets a list of eligible candidate instances.
+            candidates = findCandidateInstances(instances, rules.stream().map(r -> r.getName()).collect(toList()));
         }
-
-        // Get a list of eligible candidate instances.
-        List<ServiceInstance> candidates = findCandidateInstances(instances,
-                matchesRules.stream().map(r -> r.getName()).collect(toList()));
 
         // TODO
         // int count = 0;
@@ -105,16 +110,17 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
         return doChooseServiceInstance(instances, candidates);
     }
 
-    protected List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, List<String> ruleNames) {
+    public List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, List<String> matchedRuleNames) {
         // Traverse the meta-data of the instance, and return this instance if
         // there is a match.
         List<ServiceInstance> candidates = safeList(instances).stream()
-                .filter(i -> ruleNames.stream()
-                        .anyMatch(rn -> equalsIgnoreCase(
-                                safeMap(i.getMetadata()).get(loadBalancerConfig.getCanaryDiscoveryServiceLabelKey()), rn)))
+                .filter(i -> safeMap(i.getMetadata()).entrySet()
+                        .stream()
+                        .filter(e -> startsWith(e.getKey(), loadBalancerConfig.getCanaryDiscoveryServiceLabelPrefix()))
+                        .anyMatch(e -> matchedRuleNames.stream().anyMatch(rn -> eqIgnCase(e.getValue(), rn))))
                 .collect(toList());
 
-        log.debug("Choosen canary loadbalancer candidates: {} -> {}", ruleNames, instances);
+        log.debug("Choosen canary loadbalancer candidate instances: {} -> {}", matchedRuleNames, instances);
         return candidates;
     }
 

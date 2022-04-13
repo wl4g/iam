@@ -26,7 +26,6 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
     protected ServiceInstance doChooseServiceInstance(
             List<ServiceInstance> availableInstances,
             List<ServiceInstance> candidateInstances) {
-        // Choose by random.
         return candidateInstances.get(current().nextInt(0, candidateInstances.size()));
     }
 

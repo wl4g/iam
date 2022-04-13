@@ -15,11 +15,7 @@
  */
 package com.wl4g.iam.gateway.trace;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
-import static java.lang.String.valueOf;
-
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -28,7 +24,6 @@ import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
-import com.wl4g.infra.common.codec.Base58;
 
 import reactor.core.publisher.Mono;
 
@@ -51,7 +46,7 @@ import reactor.core.publisher.Mono;
 public class SimpleTraceFilter implements GlobalFilter, Ordered {
 
     private @Autowired TraceProperties traceConfig;
-    private final AtomicLong counter = new AtomicLong(0);
+    // private final AtomicLong counter = new AtomicLong(0);
 
     /**
      * @see {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#loadFilters()}
@@ -68,8 +63,10 @@ public class SimpleTraceFilter implements GlobalFilter, Ordered {
     }
 
     public String generateTraceId() {
-        String traceId = valueOf(counter.incrementAndGet()).concat("@").concat(currentTimeMillis() + "");
-        return Base58.encodeBase58(traceId.getBytes(UTF_8)).toLowerCase();
+        // String traceId =
+        // valueOf(counter.incrementAndGet()).concat("@").concat(currentTimeMillis()+"");
+        // return Base58.encodeBase58(traceId.getBytes(UTF_8)).toLowerCase();
+        return UUID.randomUUID().toString();
     }
 
     public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 10;

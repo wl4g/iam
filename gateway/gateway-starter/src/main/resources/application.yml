@@ -43,8 +43,8 @@ spring:
       routes:
         ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
         ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
-        - id: v1-default-fallback
-          uri: lb://v1-default-fallback
+        - id: default-fallback
+          uri: lb://default-fallback-service
           predicates:
             - Path=/fallback/**
           filters:
@@ -142,11 +142,11 @@ spring:
       route:
         refresh-delay-ms: 30_000
       loadbalancer:
-        enabled: false ## Default by true
-        canary-discovery-service-label-key: Iscg-Canary-LB-Label ## Default by 'Iam-Gateway-Canary-LB-Label'
-        match-expression: '#{$rule.test($request)}'
+        enabled: true ## Default by true
+        canary-discovery-service-label-prefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
+        select-expression: '#{$rule.test($request)}'
         match-rule-definitions:
-          - name: headerCanaryLBOpenRule
+          - name: v1-canary-header
             #method:
             #schema:
             #host:
@@ -157,14 +157,16 @@ spring:
             #  key:
             #  value:
             header:
-              symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-              key: X-Iscg-LB-Canary
-              value: y
-          - name: queryCanaryLBOpenRule
+              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Canary
+              value: v1
+          - name: v1-canary-query
             query:
               symbol: EQ
-              key: __iscg_canary_lb
-              value: y
+              key: __iscg_canary
+              value: v1
+        ## When no canary condition is matched, whether all instances of the service are candidates.
+        fallback-all-to-candidates: true
       trace:
         trace-id-request-header: X-Iscg-Request-Id ## Default by 'X-Iam-Gateway-Trace-Id'
       logging:
@@ -187,7 +189,7 @@ spring:
             #  key:
             #  value:
             header:
-              symbol: EQ # Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Log
               value: y
           - name: queryLogOpenRule
@@ -224,11 +226,6 @@ management:
     web:
       exposure:
         include: '*'
-
-#eureka:
-#  client:
-#    registerWithEureka: false
-#    fetchRegistry: false
 
 ## Logging configuration.
 logging:

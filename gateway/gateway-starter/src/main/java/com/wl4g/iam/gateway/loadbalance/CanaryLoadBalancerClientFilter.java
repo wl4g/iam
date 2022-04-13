@@ -28,6 +28,7 @@ import java.net.URI;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
+import org.springframework.cloud.client.loadbalancer.EmptyResponse;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -106,7 +107,7 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
             log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName() + " url before: " + requestUri);
         }
 
-        return doChoose(exchange).doOnNext(response -> {
+        return choose(exchange).doOnNext(response -> {
             if (!response.hasServer()) {
                 throw NotFoundException.create(loadBalancerConfig.isUse404(),
                         "Unable to find instance for " + requestUri.getHost());
@@ -127,10 +128,14 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         }).then(chain.filter(exchange));
     }
 
-    private Mono<Response<ServiceInstance>> doChoose(ServerWebExchange exchange) {
+    private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange) {
         URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
         String serviceId = uri.getHost();
-        return Mono.just(new DefaultResponse(canaryLoadBalancerRule.choose(serviceId, exchange.getRequest())));
+        ServiceInstance chosen = canaryLoadBalancerRule.choose(serviceId, exchange.getRequest());
+        if (isNull(chosen)) {
+            return Mono.just(new EmptyResponse());
+        }
+        return Mono.just(new DefaultResponse(chosen));
     }
 
 }

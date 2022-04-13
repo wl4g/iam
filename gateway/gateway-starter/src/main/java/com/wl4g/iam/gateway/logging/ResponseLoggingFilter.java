@@ -113,11 +113,11 @@ public class ResponseLoggingFilter extends AbstractLoggingFilter {
             // Print HTTP URI. (E.g:
             // 997ac7d2-2056-419b-883b-6969aae77e3e ::
             // 200 GET /example/foo/bar)
-            responseLog.append("{} :: {} {} {} {}\n");
-            responseLogArgs.add(traceId);
+            responseLog.append("{} {} {} :: {} {}\n");
             responseLogArgs.add(response.getStatusCode().value());
             responseLogArgs.add(requestMethod);
             responseLogArgs.add(requestUri);
+            responseLogArgs.add(traceId);
             responseLogArgs.add(costTime + "ms");
         }
         // Print response headers.

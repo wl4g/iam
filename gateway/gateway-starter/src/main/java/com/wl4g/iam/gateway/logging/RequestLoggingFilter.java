@@ -97,10 +97,10 @@ public class RequestLoggingFilter extends AbstractLoggingFilter {
             requestLog.append(LOG_REQUEST_BEGIN);
             // Print HTTP URI. (E.g: 997ac7d2-2056-419b-883b-6969aae77e3e ::
             // GET /example/foo/bar)
-            requestLog.append("{} :: {} {}\n");
-            requestLogArgs.add(traceId);
+            requestLog.append("{} {} :: {}\n");
             requestLogArgs.add(requestMethod);
             requestLogArgs.add(requestUri);
+            requestLogArgs.add(traceId);
         }
         // Print request headers.
         if (log5_10) {

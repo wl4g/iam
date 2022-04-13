@@ -36,8 +36,6 @@ import lombok.ToString;
 @ToString
 public class LoadBalancerProperties extends org.springframework.cloud.gateway.config.LoadBalancerProperties {
 
-    public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-LB-Canary-Label";
-
     /**
      * Enabled status.
      */
@@ -47,7 +45,7 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
      * The tag key used to get whether the discovery service satisfies the
      * canary traffic group.
      */
-    private String canaryDiscoveryServiceLabelKey = DEFAULT_LB_CANARY_LABEL_KEY;
+    private String canaryDiscoveryServiceLabelPrefix = DEFAULT_LB_CANARY_LABEL_KEY;
 
     /**
      * Match whether the rule definition for a canary request is satisfied.
@@ -57,6 +55,14 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     /**
      * SPEL expressions that match canary requests.
      */
-    private String matchExpression;
+    private String selectExpression;
+
+    /**
+     * When no canary condition is matched, whether all instances of the service
+     * are candidates.
+     */
+    private boolean fallbackAllToCandidates = true;
+
+    public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-Canary-Label";
 
 }
