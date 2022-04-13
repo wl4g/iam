@@ -87,11 +87,11 @@ public class ResponseLoggingFilter extends AbstractLoggingFilter {
             String traceId,
             String requestMethod,
             String requestUri) {
-        boolean log1_2 = isLoglevelRange(1, 2);
-        boolean log3_10 = isLoglevelRange(3, 10);
-        boolean log6_10 = isLoglevelRange(6, 10);
-        boolean log8_10 = isLoglevelRange(8, 10);
-        boolean log9_10 = isLoglevelRange(9, 10);
+        boolean log1_2 = isLoglevelRange(exchange, 1, 2);
+        boolean log3_10 = isLoglevelRange(exchange, 3, 10);
+        boolean log6_10 = isLoglevelRange(exchange, 6, 10);
+        boolean log8_10 = isLoglevelRange(exchange, 8, 10);
+        boolean log9_10 = isLoglevelRange(exchange, 9, 10);
 
         // MDC.put("type", "RESPONSE-BODY");
         // log.info(String.format("[%s], %s", requestId,
@@ -131,27 +131,23 @@ public class ResponseLoggingFilter extends AbstractLoggingFilter {
                 }
             });
         }
-        // When the response has no body, print the end flag directly.
-        boolean isLogResBody = log9_10 && hasBody(response.getHeaders().getContentType());
-        if (!isLogResBody) {
-            responseLog.append(LOG_RESPONSE_END);
-            log.info(responseLog.toString(), responseLogArgs.toArray());
-        }
 
         return decorateResponse(exchange, chain, originalBody -> {
+            // When the response has no body, print the end flag directly.
+            boolean isLogResBody = log9_10 && hasBody(response.getHeaders().getContentType());
             // Print response body.
             if (isLogResBody) {
                 // Full print response body.
                 responseLog.append(LOG_RESPONSE_BODY);
                 responseLogArgs.add(originalBody);
-                responseLog.append(LOG_RESPONSE_END);
-                log.info(responseLog.toString(), responseLogArgs.toArray());
-            } else if (log3_10) {
+            }
+            if (log3_10) {
                 responseLog.append(LOG_RESPONSE_END);
                 log.info(responseLog.toString(), responseLogArgs.toArray());
             }
             return Mono.just(originalBody);
         });
+
     }
 
     /**

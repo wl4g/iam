@@ -44,6 +44,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
+import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -88,8 +89,8 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
         if (!isFilterLogging(request, headers)) {
             return chain.filter(exchange);
         }
-        // Flight log level is disabled.
-        if (loggingConfig.getVerboseLevel() <= 0) {
+        int verboseLevel = determineRequestVerboseLevel(exchange);
+        if (verboseLevel <= 0) { // is disabled?
             return chain.filter(exchange);
         }
         String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
@@ -119,15 +120,25 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
                 && requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getMatchExpression());
     }
 
+    protected int determineRequestVerboseLevel(ServerWebExchange exchange) {
+        Integer requestVerboseLevel = TypeConverts
+                .parseIntOrNull(exchange.getRequest().getHeaders().getFirst(loggingConfig.getRequestVerboseLevelHeader()));
+        int verboseLevel = isNull(requestVerboseLevel) ? loggingConfig.getDefaultVerboseLevel() : requestVerboseLevel;
+        exchange.getAttributes().put(KEY_VERBOSE_LEVEL, verboseLevel);
+        return verboseLevel;
+    }
+
     /**
      * Check if the specified flight log level range is met.
      * 
+     * @param exchange
      * @param lower
      * @param upper
      * @return
      */
-    protected boolean isLoglevelRange(int lower, int upper) {
-        return loggingConfig.getVerboseLevel() >= lower && loggingConfig.getVerboseLevel() <= upper;
+    protected boolean isLoglevelRange(ServerWebExchange exchange, int lower, int upper) {
+        int verboseLevel = exchange.getAttribute(KEY_VERBOSE_LEVEL);
+        return verboseLevel >= lower && verboseLevel <= upper;
     }
 
     /**
@@ -199,13 +210,14 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
         }
     });
 
-    public static final String LOG_REQUEST_BEGIN = "\n----- <IAM Gateway Request Log Begin> -------\n::: Headers :::\n";
-    public static final String LOG_REQUEST_BODY = "::: Body :::\n{}";
-    public static final String LOG_REQUEST_END = "\n----- <IAM Gateway Request Log End> --------\n";
-    public static final String LOG_RESPONSE_BEGIN = "\n----- <IAM Gateway Response Log Begin> -----\n::: Headers :::\n";
-    public static final String LOG_RESPONSE_BODY = "::: Body :::\n{}";
-    public static final String LOG_RESPONSE_END = "\n----- <IAM Gateway Response Log End> -------\n";
+    public static final String LOG_REQUEST_BEGIN = "\n--- <IAM Gateway Request> -----\n:: Headers ::\n";
+    public static final String LOG_REQUEST_BODY = ":: Body    ::\n{}";
+    public static final String LOG_REQUEST_END = "\n------------------------------\n";
+    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway Response> ---\n:: Headers ::\n";
+    public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
+    public static final String LOG_RESPONSE_END = "\n------------------------------\n";
     public static final String KEY_START_TIME = AbstractLoggingFilter.class.getName() + ".startTime";
+    public static final String KEY_VERBOSE_LEVEL = AbstractLoggingFilter.class.getName() + ".verboseLevel";
     public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;
 
 }

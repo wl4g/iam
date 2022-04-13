@@ -69,8 +69,9 @@ spring:
         wiretap: false ## Default by false
       httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
         compression: false ## Default by false
-        connect-timeout: 45 ## Default by 45s
-        response-timeout: 60 ## Default by 60s
+        connect-timeout: 45_000 ## Default by 45s
+        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+        response-timeout: 60_000 ## Default by 60s
         max-header-size: 65535 ## Default no set.
         wiretap: false ## Default by false
         #proxy:
@@ -174,8 +175,9 @@ spring:
         ## If so, print according to the predetermined level, otherwise do not print. If this switch is set to false, printing logs will be
         ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
         enabled: true ## Default by true
-        ## The output level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        verbose-level: 10
+        ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
+        default-verbose-level: 10
+        request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
         match-expression: '#{$headerLogOpenRule.or($queryLogOpenRule).test($request)}'
         match-rule-definitions:
           - name: headerLogOpenRule

@@ -47,11 +47,18 @@ public class LoggingProperties {
     private boolean enabled = true;
 
     /**
-     * The output level of flight log printing, similar to
+     * The output default level of flight log printing, similar to
      * {@linkplain https://github.com/kubernetes/kubectl} design value range:
      * 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
      */
-    private int verboseLevel = 1;
+    private int defaultVerboseLevel = 1;
+
+    /**
+     * The request header name used to set the log output verbose level valid
+     * only for the current request, This value takes precedence over
+     * {@link #defaultVerboseLevel}
+     */
+    private String requestVerboseLevelHeader = "X-Iam-Gateway-Log-Level";
 
     /**
      * Preferred to enable print flight log match rule definitions.

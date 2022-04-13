@@ -81,11 +81,11 @@ public class RequestLoggingFilter extends AbstractLoggingFilter {
             String traceId,
             String requestMethod,
             String requestUri) {
-        boolean log1_2 = isLoglevelRange(1, 2);
-        boolean log3_10 = isLoglevelRange(3, 10);
-        boolean log5_10 = isLoglevelRange(5, 10);
-        boolean log6_10 = isLoglevelRange(6, 10);
-        boolean log8_10 = isLoglevelRange(8, 10);
+        boolean log1_2 = isLoglevelRange(exchange, 1, 2);
+        boolean log3_10 = isLoglevelRange(exchange, 3, 10);
+        boolean log5_10 = isLoglevelRange(exchange, 5, 10);
+        boolean log6_10 = isLoglevelRange(exchange, 6, 10);
+        boolean log8_10 = isLoglevelRange(exchange, 8, 10);
 
         StringBuilder requestLog = new StringBuilder(300);
         List<Object> requestLogArgs = new ArrayList<>(16);
@@ -145,16 +145,11 @@ public class RequestLoggingFilter extends AbstractLoggingFilter {
 
         return decorateRequest(exchange, chain, body -> {
             // Print request body.
-            if (logReqBody) {
-                // Full print request body.
-                if (log8_10) {
-                    requestLog.append(LOG_REQUEST_BODY);
-                    // if (log3_10) {
-                    requestLog.append(LOG_REQUEST_END);
-                    // }
-                    requestLogArgs.add(body);
-                    log.info(requestLog.toString(), requestLogArgs.toArray());
-                }
+            if (log8_10 && logReqBody) {
+                requestLog.append(LOG_REQUEST_BODY);
+                requestLog.append(LOG_REQUEST_END);
+                requestLogArgs.add(body);
+                log.info(requestLog.toString(), requestLogArgs.toArray());
             } else if (log3_10) {
                 requestLog.append(LOG_REQUEST_END);
                 log.info(requestLog.toString(), requestLogArgs.toArray());
