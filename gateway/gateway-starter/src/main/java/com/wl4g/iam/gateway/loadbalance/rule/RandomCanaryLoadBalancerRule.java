@@ -23,6 +23,11 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
     }
 
     @Override
+    public CanaryLoadBalancerKind kind() {
+        return CanaryLoadBalancerKind.R;
+    }
+
+    @Override
     protected ServiceInstance doChooseServiceInstance(
             List<ServiceInstance> availableInstances,
             List<ServiceInstance> candidateInstances) {

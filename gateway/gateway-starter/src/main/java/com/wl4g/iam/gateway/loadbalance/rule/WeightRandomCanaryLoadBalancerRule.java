@@ -9,33 +9,34 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 
 /**
- * Round-Robin Grayscale Load Balancer rule based on random.
+ * Weight Round-Robin Grayscale Load Balancer rule based on random.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-03 v3.0.0
  * @since v3.0.0
- * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
- * @see {@link com.netflix.loadbalancer.RoundRobinRule}
+ * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
+public class WeightRandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
 
     private final AtomicInteger position = new AtomicInteger(0);
 
-    public RoundRobinCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public WeightRandomCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 
     @Override
     public CanaryLoadBalancerKind kind() {
-        return CanaryLoadBalancerKind.RR;
+        return CanaryLoadBalancerKind.WR;
     }
 
     @Override
     protected ServiceInstance doChooseServiceInstance(
             List<ServiceInstance> availableInstances,
             List<ServiceInstance> candidateInstances) {
-        // enforce order?
-        int pos = Math.abs(this.position.incrementAndGet());
+
+        // TODO
+        int pos = Math.abs(position.incrementAndGet());
+
         return candidateInstances.get(pos % candidateInstances.size());
     }
 

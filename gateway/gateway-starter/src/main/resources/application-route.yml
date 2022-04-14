@@ -83,8 +83,8 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  first-backoff: 30ms
-                  max-backoff: 80ms
+                  first-backoff: 50ms
+                  max-backoff: 100ms
                   factor: 2
                   based-on-previous-value: false
             - name: CircuitBreaker
@@ -155,17 +155,17 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  first-backoff: 30ms
-                  max-backoff: 80ms
+                  first-backoff: 50ms
+                  max-backoff: 100ms
                   factor: 2
                   based-on-previous-value: false
-            #- name: CircuitBreaker
-            #  args:
-            #    name: defaultCircuitBreaker
-            #    fallback-uri: forward:/fallback
-            #    statusCodes:
-            #      - 500
-            #      - "NOT_FOUND"
+            - name: CircuitBreaker
+              args:
+                name: defaultCircuitBreaker
+                fallback-uri: forward:/fallback
+                statusCodes:
+                  - 500
+                  - "NOT_FOUND"
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:

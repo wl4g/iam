@@ -17,12 +17,17 @@ import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
  * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
  * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class WeightCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
+public class WeightRoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
 
     private final AtomicInteger position = new AtomicInteger(0);
 
-    public WeightCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public WeightRoundRobinCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
+    }
+
+    @Override
+    public CanaryLoadBalancerKind kind() {
+        return CanaryLoadBalancerKind.WRR;
     }
 
     @Override

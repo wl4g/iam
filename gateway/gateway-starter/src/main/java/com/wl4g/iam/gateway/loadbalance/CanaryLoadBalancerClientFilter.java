@@ -39,9 +39,13 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.CanaryLoadBalancerKind;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 /**
  * Grayscale Load-Balancer filter. </br>
@@ -59,13 +63,16 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
 
     private final SmartLogger log = getLogger(getClass());
     private final LoadBalancerProperties loadBalancerConfig;
-    private final CanaryLoadBalancerRule canaryLoadBalancerRule;
+    private final GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter;
+    private final LoadBalancerStats loadBalancerStats;
 
     public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties loadBalancerConfig,
-            CanaryLoadBalancerRule canaryLoadBalancerRule) {
+            GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter,
+            LoadBalancerStats loadBalancerStats) {
         super(clientFactory, loadBalancerConfig);
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
-        this.canaryLoadBalancerRule = notNullOf(canaryLoadBalancerRule, "canaryLoadBalancerRule");
+        this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
+        this.loadBalancerStats = notNullOf(loadBalancerStats, "loadBalancerStats");
     }
 
     /**
@@ -107,35 +114,41 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
             log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName() + " url before: " + requestUri);
         }
 
-        return choose(exchange).doOnNext(response -> {
-            if (!response.hasServer()) {
-                throw NotFoundException.create(loadBalancerConfig.isUse404(),
-                        "Unable to find instance for " + requestUri.getHost());
+        Response<ServiceInstance> response = choose(exchange);
+        if (!response.hasServer()) {
+            throw NotFoundException.create(loadBalancerConfig.isUse404(), "Unable to find instance for " + requestUri.getHost());
+        }
+        URI uri = exchange.getRequest().getURI();
+
+        // if the `lb:<scheme>` mechanism was used, use `<scheme>` as the
+        // default, if the loadbalancer doesn't provide one.
+        String overrideScheme = !isBlank(schemePrefix) ? requestUri.getScheme() : null;
+        DelegatingServiceInstance instance = new DelegatingServiceInstance(response.getServer(), overrideScheme);
+
+        URI newRequestUri = reconstructURI(instance, uri);
+
+        if (log.isTraceEnabled()) {
+            log.trace("LoadBalancerClientFilter url chosen: {}", newRequestUri);
+        }
+        exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
+
+        return chain.filter(exchange).doOnRequest(v -> {
+            loadBalancerStats.connect(instance, 1);
+        }).doFinally(signal -> {
+            if (signal == SignalType.ON_COMPLETE || signal == SignalType.CANCEL || signal == SignalType.ON_ERROR) {
+                loadBalancerStats.disconnect(instance, 1);
             }
-            URI uri = exchange.getRequest().getURI();
-
-            // if the `lb:<scheme>` mechanism was used, use `<scheme>` as the
-            // default, if the loadbalancer doesn't provide one.
-            String overrideScheme = !isBlank(schemePrefix) ? requestUri.getScheme() : null;
-            DelegatingServiceInstance instance = new DelegatingServiceInstance(response.getServer(), overrideScheme);
-
-            URI newRequestUri = reconstructURI(instance, uri);
-
-            if (log.isTraceEnabled()) {
-                log.trace("LoadBalancerClientFilter url chosen: {}", newRequestUri);
-            }
-            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
-        }).then(chain.filter(exchange));
+        });
     }
 
-    private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange) {
+    private Response<ServiceInstance> choose(ServerWebExchange exchange) {
         URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
         String serviceId = uri.getHost();
-        ServiceInstance chosen = canaryLoadBalancerRule.choose(serviceId, exchange.getRequest());
+        ServiceInstance chosen = ruleAdapter.forOperator(CanaryLoadBalancerKind.R).choose(serviceId, exchange.getRequest());
         if (isNull(chosen)) {
-            return Mono.just(new EmptyResponse());
+            return new EmptyResponse();
         }
-        return Mono.just(new DefaultResponse(chosen));
+        return new DefaultResponse(chosen);
     }
 
 }

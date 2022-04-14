@@ -17,6 +17,8 @@ package com.wl4g.iam.gateway.loadbalance.config;
 
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOADBANANER;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
@@ -25,6 +27,12 @@ import org.springframework.context.annotation.Bean;
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.RandomCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.RoundRobinCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.WeightRandomCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.WeightRoundRobinCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.GlobalLoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
  * {@link LoadbalanceAutoConfiguration}
@@ -41,19 +49,60 @@ public class LoadbalanceAutoConfiguration {
         return new com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties();
     }
 
+    // Load-balancer stats.
+
     @Bean
-    public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
-            LoadBalancerClientFactory clientFactory,
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
-            CanaryLoadBalancerRule canaryLoadBalancerRule) {
-        return new CanaryLoadBalancerClientFilter(clientFactory, properties, canaryLoadBalancerRule);
+    public GlobalLoadBalancerStats globalLoadBalancerStats(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig) {
+        return new GlobalLoadBalancerStats(loadbalancerConfig);
     }
+
+    // Load-balancer rules.
 
     @Bean
     public CanaryLoadBalancerRule randomCanaryLoadBalancerRule(
             com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new RandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule roundRobinCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new RoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightRandomCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new WeightRandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightRoundRobinCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new WeightRoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> compositeCanaryLoadBalancerAdapter(
+            List<CanaryLoadBalancerRule> rules) {
+        return new GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule>(rules) {
+        };
+    }
+
+    // Load-balancer filters.
+
+    @Bean
+    public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
+            LoadBalancerClientFactory clientFactory,
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
+            GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter,
+            LoadBalancerStats loadBalancerStats) {
+        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerStats);
     }
 
 }

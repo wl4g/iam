@@ -80,6 +80,11 @@ public class CannaryLoadBalancerRuleTests {
                     List<ServiceInstance> candidateInstances) {
                 return null; // Ignore
             }
+
+            @Override
+            public CanaryLoadBalancerKind kind() {
+                return null; // Ignore
+            }
         };
 
         List<ServiceInstance> instances = new ArrayList<>();

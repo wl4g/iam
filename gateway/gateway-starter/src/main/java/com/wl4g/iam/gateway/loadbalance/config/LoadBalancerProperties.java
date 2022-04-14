@@ -63,6 +63,34 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
      */
     private boolean fallbackAllToCandidates = true;
 
+    /**
+     * Health checking properties.
+     */
+    private StatsProperties stats = new StatsProperties();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class StatsProperties {
+
+        /**
+         * Health checking on initial delay seconds.
+         */
+        private long initialDelaySeconds = 3;
+
+        /**
+         * Health checking on delay seconds. </br>
+         * default refer to:
+         * {@link com.netflix.loadbalancer.BaseLoadBalancer#pingIntervalSeconds}
+         */
+        private long delaySeconds = 10;
+
+        /**
+         * Expect ping response body.
+         */
+        private String expectContent;
+    }
+
     public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-Canary-Label";
 
 }
