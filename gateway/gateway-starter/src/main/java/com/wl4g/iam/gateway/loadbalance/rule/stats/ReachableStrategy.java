@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +24,7 @@ import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ActivePing;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.Stats;
-
-import io.netty.handler.codec.http.HttpResponseStatus;
-import lombok.extern.slf4j.Slf4j;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * Reachable search strategy.
@@ -36,34 +35,33 @@ import lombok.extern.slf4j.Slf4j;
  */
 public interface ReachableStrategy {
 
-    public static final ReachableStrategy DEFAULT = new LatestReachableStrategy();
+    public SmartLogger log = getLogger(ReachableStrategy.class);
 
-    ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
-
-    @Slf4j
-    class LatestReachableStrategy implements ReachableStrategy {
-
-        private LatestReachableStrategy() {
-        }
-
+    public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
         @Override
         public ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
             // Calculate health statistics status.
             Stats stats = status.getStats();
             ActivePing ping = stats.getActivePings().peekLast();
+            if (ping.isTimeout()) {
+                stats.setAlive(false);
+                return status;
+            }
 
             Boolean oldAlive = stats.getAlive();
-            if (ping.getStatus() == HttpResponseStatus.OK && !ping.isTimeout()) {
-                // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-                if (!isBlank(loadBalancerConfig.getStats().getExpectContent())) {
-                    if (StringUtils.equals(loadBalancerConfig.getStats().getExpectContent(), ping.getResponseBody())) {
-                        stats.setAlive(true);
-                    }
-                } else {
+            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
+            if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
+                if (StringUtils.equals(loadBalancerConfig.getPing().getExpectBody(), ping.getResponseBody())) {
                     stats.setAlive(true);
+                } else {
+                    stats.setAlive(false);
                 }
             } else {
-                stats.setAlive(false);
+                if (ping.getStatus().code() == loadBalancerConfig.getPing().getExpectStatus()) {
+                    stats.setAlive(true);
+                } else {
+                    stats.setAlive(false);
+                }
             }
 
             // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
@@ -74,6 +72,8 @@ public interface ReachableStrategy {
 
             return status;
         }
-    }
+    };
+
+    ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
 
 }

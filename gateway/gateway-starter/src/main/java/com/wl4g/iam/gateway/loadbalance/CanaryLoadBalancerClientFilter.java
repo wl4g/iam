@@ -132,7 +132,6 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         }
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
 
-        exchange.getRequest().getId();
         return chain.filter(exchange).doOnRequest(v -> {
             loadBalancerStats.connect(exchange, instance);
         }).doFinally(signal -> {

@@ -22,6 +22,7 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.net.URI;
 import java.time.Duration;
@@ -71,8 +72,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
     @Override
     protected void onApplicationStarted(ApplicationArguments args, SafeScheduledTaskPoolExecutor worker) throws Exception {
-        worker.scheduleWithFixedDelay(this, loadBalancerConfig.getStats().getInitialDelaySeconds(),
-                loadBalancerConfig.getStats().getDelaySeconds(), TimeUnit.SECONDS);
+        worker.scheduleWithFixedDelay(this, loadBalancerConfig.getPing().getInitialMs(),
+                loadBalancerConfig.getPing().getDelayMs(), TimeUnit.SECONDS);
     }
 
     @Override
@@ -158,16 +159,41 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
          * see:https://stackoverflow.com/questions/61843235/reactor-netty-not-getting-an-httpserver-response-when-the-httpclient-subscribes
          * see:https://github.com/reactor/reactor-netty/issues/151
          */
-        Duration timeout = Duration.ofMillis(loadBalancerConfig.getStats().getTimeoutMs());
+        Duration timeout = Duration.ofMillis(loadBalancerConfig.getPing().getTimeoutMs());
+        if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
+            return HttpClient.create()
+                    .wiretap(loadBalancerConfig.getPing().isDebug())
+                    .get()
+                    .uri(buildUri(status))
+                    .responseConnection((res, connection) -> Mono.just(res))
+                    .timeout(timeout,
+                            Mono.fromRunnable(() -> save(status, new ActivePing(currentTimeMillis(), true, null, null))))
+                    .doFinally(signal -> {
+                        if (signal != SignalType.ON_COMPLETE) {
+                            // Failed to request ping.
+                            if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
+                                save(status, new ActivePing(currentTimeMillis(), false, null, null));
+                            }
+                        }
+                    })
+                    // main thread non-blocking.
+                    .subscribe(response -> {
+                        save(status, new ActivePing(currentTimeMillis(), false, response.status(), null));
+                    }, ex -> {
+                        save(status, new ActivePing(currentTimeMillis(), false, null, null));
+                    }, () -> {
+                        log.debug("Ping completion for service instance status: {}", status);
+                    });
+        }
+
         return HttpClient.create()
-                .wiretap(true)
+                .wiretap(loadBalancerConfig.getPing().isDebug())
                 .get()
                 .uri(buildUri(status))
                 .responseContent()
                 .aggregate()
                 .asString()
-                .timeout(timeout,
-                        Mono.fromRunnable(() -> save(status, new ActivePing(currentTimeMillis(), true, null, null))))
+                .timeout(timeout, Mono.fromRunnable(() -> save(status, new ActivePing(currentTimeMillis(), true, null, null))))
                 .doFinally(signal -> {
                     if (signal != SignalType.ON_COMPLETE) {
                         // Failed to request ping.
@@ -182,7 +208,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                 }, ex -> {
                     save(status, new ActivePing(currentTimeMillis(), false, null, null));
                 }, () -> {
-                    log.debug("Ping completion");
+                    log.debug("Ping completion for service instance status: {}", status);
                 });
     }
 
@@ -196,7 +222,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     protected synchronized void save(ServiceInstanceStatus status, ActivePing activePing) {
         Stats stats = status.getStats();
         Deque<ActivePing> queue = stats.getActivePings();
-        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) {
+        if (queue.size() > loadBalancerConfig.getPing().getReceiveQueue()) {
             queue.poll();
         }
         queue.offer(activePing);
@@ -206,7 +232,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     protected synchronized void save(ServiceInstanceStatus status, PassivePing passivePing) {
         Stats stats = status.getStats();
         Deque<PassivePing> queue = stats.getPassivePings();
-        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) {
+        if (queue.size() > loadBalancerConfig.getPing().getReceiveQueue()) {
             queue.poll();
         }
         queue.offer(passivePing);

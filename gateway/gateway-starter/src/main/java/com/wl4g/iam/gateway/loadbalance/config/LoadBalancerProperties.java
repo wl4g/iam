@@ -48,14 +48,14 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     private String canaryDiscoveryServiceLabelPrefix = DEFAULT_LB_CANARY_LABEL_KEY;
 
     /**
-     * Match whether the rule definition for a canary request is satisfied.
-     */
-    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
-
-    /**
      * SPEL expressions that match canary requests.
      */
     private String selectExpression;
+
+    /**
+     * Match whether the rule definition for a canary request is satisfied.
+     */
+    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
 
     /**
      * When no canary condition is matched, whether all instances of the service
@@ -71,24 +71,29 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     /**
      * Health checking properties.
      */
-    private StatsProperties stats = new StatsProperties();
+    private PingProperties ping = new PingProperties();
 
     @Getter
     @Setter
     @ToString
-    public static class StatsProperties {
+    public static class PingProperties {
+
+        /**
+         * Ping request debug enabled.
+         */
+        private boolean debug = false;
 
         /**
          * Ping request on initial delay seconds.
          */
-        private long initialDelaySeconds = 3;
+        private long initialMs = 3;
 
         /**
          * Ping request on delay seconds. </br>
          * default refer to:
          * {@link com.netflix.loadbalancer.BaseLoadBalancer#pingIntervalSeconds}
          */
-        private long delaySeconds = 10;
+        private long delayMs = 10;
 
         /**
          * Ping request timeout mills.
@@ -96,14 +101,28 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
         private long timeoutMs = 10_000;
 
         /**
-         * Ping expect response body.
+         * Ping request path.
          */
-        private String expectContent;
+        private String path = "/healthz";
+
+        /**
+         * Ping expect response status code. </br>
+         * Note: only {@link #expectBody} takes effect when it is set at the
+         * same time as {@link #expectBody}.
+         */
+        private int expectStatus = 200;
+
+        /**
+         * Ping expect response body. </br>
+         * Note: only {@link #expectBody} takes effect when it is set at the
+         * same time as {@link #expectStatus}.
+         */
+        private String expectBody;
 
         /**
          * Ping records cache queue size.
          */
-        private int pingQueue = 8;
+        private int receiveQueue = 8;
 
     }
 

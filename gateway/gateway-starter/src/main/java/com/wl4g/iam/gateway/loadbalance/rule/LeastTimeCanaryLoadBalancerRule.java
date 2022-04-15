@@ -56,7 +56,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
             int avaCount = availableInstances.size();
 
             if ((avaCount == 0) || (allCount == 0)) {
-                log.warn("No up servers available from load balancer: {}", stats);
+                log.warn("No up servers available from load balancer stats: {}", stats);
                 return null;
             }
 
