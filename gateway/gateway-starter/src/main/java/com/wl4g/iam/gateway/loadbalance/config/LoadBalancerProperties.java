@@ -28,7 +28,7 @@ import lombok.ToString;
  * {@link LoadBalancerProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-02 v3.0.0
+ * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 @Getter
@@ -64,6 +64,11 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     private boolean fallbackAllToCandidates = true;
 
     /**
+     * The number of best-effort attempts to select an instance.
+     */
+    private int maxChooseTries = 10;
+
+    /**
      * Health checking properties.
      */
     private StatsProperties stats = new StatsProperties();
@@ -91,9 +96,15 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
         private long timeoutMs = 10_000;
 
         /**
-         * Expect ping response body.
+         * Ping expect response body.
          */
         private String expectContent;
+
+        /**
+         * Ping response records queue size.
+         */
+        private int pingQueue = 8;
+
     }
 
     public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-Canary-Label";

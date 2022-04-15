@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
@@ -17,7 +18,7 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInst
  * Random Grayscale Load Balancer rule based on random.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-03 v3.0.0
+ * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
 public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
@@ -27,12 +28,13 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
     }
 
     @Override
-    public CanaryLoadBalancerKind kind() {
-        return CanaryLoadBalancerKind.R;
+    public LoadBalancerAlgorithm kind() {
+        return LoadBalancerAlgorithm.R;
     }
 
     @Override
     protected ServiceInstance doChooseInstance(
+            ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
             List<ServiceInstance> candidateInstances) {
@@ -74,7 +76,7 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
             chosenInstance = null;
         }
 
-        if (count >= 10) {
+        if (count >= loadBalancerConfig.getMaxChooseTries()) {
             log.warn("No available alive servers after {} tries from load balancer: {}", count, stats);
         }
         return null;

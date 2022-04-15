@@ -20,6 +20,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Queues;
 
@@ -35,16 +36,16 @@ import lombok.With;
  * {@link LoadBalancerStats}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-13 v3.0.0
+ * @version 2021-09-13 v3.0.0
  * @since v3.0.0
  */
 public interface LoadBalancerStats {
 
     void register(List<ServiceInstanceStatus> instances);
 
-    int connect(ServiceInstance instance, int ammount);
+    int connect(ServerWebExchange exchange, ServiceInstance instance);
 
-    int disconnect(ServiceInstance instance, int ammount);
+    int disconnect(ServerWebExchange exchange, ServiceInstance instance);
 
     List<ServiceInstanceStatus> getReachableInstances(String serviceId);
 
@@ -69,7 +70,8 @@ public interface LoadBalancerStats {
     @AllArgsConstructor
     public static class Stats {
         private AtomicInteger connections = new AtomicInteger(0);
-        private Queue<PingRecord> pingRecords = Queues.newArrayDeque();
+        private Queue<ActivePingRecord> activePingRecords = Queues.newArrayDeque();
+        private Queue<PassivePingRecord> passiveRecords = Queues.newArrayDeque();
         private Boolean alive;
     }
 
@@ -78,11 +80,22 @@ public interface LoadBalancerStats {
     @Setter
     @ToString
     @AllArgsConstructor
-    public static class PingRecord {
+    public static class PassivePingRecord {
+        private long costTime;
+        // private HttpResponseStatus status;
+    }
+
+    @With
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    public static class ActivePingRecord {
         private long timestamp;
         private boolean isTimeout;
         private HttpResponseStatus status;
         private String responseBody;
     }
 
+    public static final String KEY_COST_TIME = LoadBalancerStats.class.getName().concat(".costTime");
 }

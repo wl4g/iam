@@ -22,7 +22,6 @@ import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.net.URI;
 import java.time.Duration;
@@ -32,16 +31,16 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
 import com.wl4g.infra.core.task.ApplicationTaskRunner;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -49,20 +48,25 @@ import reactor.core.publisher.SignalType;
 import reactor.netty.http.client.HttpClient;
 
 /**
- * {@link GlobalLoadBalancerStats}
+ * {@link DefaultLoadBalancerStats}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-13 v3.0.0
+ * @version 2021-09-13 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
+public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
 
-    private final Map<String, Map<String, ServiceInstanceStatus>> globalServices = new ConcurrentHashMap<>(32);
     private final LoadBalancerProperties loadBalancerConfig;
+    private final LoadBalancerCache loadBalancerCache;
+    private final ReachableStrategy strategy;
 
-    public GlobalLoadBalancerStats(LoadBalancerProperties loadBalancerConfig) {
+    public DefaultLoadBalancerStats(LoadBalancerProperties loadBalancerConfig, LoadBalancerCache loadBalancerCache,
+            ReachableStrategy strategy) {
+        super(new RunnerProperties(StartupMode.ASYNC, 1));
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
+        this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
+        this.strategy = notNullOf(strategy, "strategy");
     }
 
     @Override
@@ -72,96 +76,8 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
     }
 
     @Override
-    public void register(List<ServiceInstanceStatus> instances) {
-        if (nonNull(instances)) {
-            instances.stream().forEach(i -> getOrCreateInstance(i.getInstance().getServiceId(), i.getInstance().getInstanceId()));
-        }
-    }
-
-    @Override
-    public int connect(ServiceInstance instance, int ammount) {
-        ServiceInstanceStatus info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
-        return info.getStats().getConnections().addAndGet(ammount);
-    }
-
-    @Override
-    public int disconnect(ServiceInstance instance, int ammount) {
-        ServiceInstanceStatus info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
-        return info.getStats().getConnections().addAndGet(-ammount);
-    }
-
-    @Override
-    public List<ServiceInstanceStatus> getReachableInstances(String serviceId) {
-        return getOrCreateService(serviceId).values()
-                .stream()
-                .map(i -> calculateStatus(i))
-                .filter(i -> i.getStats().getAlive())
-                .collect(toList());
-    }
-
-    @Override
-    public List<ServiceInstanceStatus> getAllInstances(String serviceId) {
-        return getOrCreateService(serviceId).values().stream().collect(toList());
-    }
-
-    private synchronized ServiceInstanceStatus calculateStatus(ServiceInstanceStatus instance) {
-        // Calculate health statistics status.
-        Stats stats = instance.getStats();
-        Queue<PingRecord> queue = stats.getPingRecords();
-        for (int i = 0, lastAvailableSize = queue.size() / 4; i < lastAvailableSize; i++) {
-            PingRecord ping = queue.peek();
-            Boolean oldAlive = stats.getAlive();
-            if (ping.getStatus() == HttpResponseStatus.OK && !ping.isTimeout()) {
-                // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-                if (!isBlank(loadBalancerConfig.getStats().getExpectContent())) {
-                    if (StringUtils.equals(loadBalancerConfig.getStats().getExpectContent(), ping.getResponseBody())) {
-                        stats.setAlive(true);
-                    }
-                } else {
-                    stats.setAlive(true);
-                }
-            } else {
-                stats.setAlive(false);
-            }
-            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
-            if (oldAlive != stats.getAlive()) {
-                log.warn("LoadBalancer server [{}/{}] status changed to {}", instance.getInstance().getServiceId(),
-                        instance.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
-            }
-        }
-        return instance;
-    }
-
-    private ServiceInstanceStatus getOrCreateInstance(String serviceId, String instanceId) {
-        Map<String, ServiceInstanceStatus> service = getOrCreateService(serviceId);
-        ServiceInstanceStatus info = service.get(instanceId);
-        if (isNull(info)) {
-            synchronized (instanceId) {
-                info = service.get(instanceId);
-                if (isNull(info)) {
-                    service.put(instanceId, info = new ServiceInstanceStatus());
-                }
-            }
-        }
-        return info;
-    }
-
-    private Map<String, ServiceInstanceStatus> getOrCreateService(String serviceId) {
-        Map<String, ServiceInstanceStatus> instances = globalServices.get(serviceId);
-        if (isNull(instances)) {
-            synchronized (serviceId) {
-                instances = globalServices.get(serviceId);
-                if (isNull(instances)) {
-                    globalServices.put(serviceId, instances = new ConcurrentHashMap<>(16));
-                }
-            }
-        }
-        return instances;
-    }
-
-    @Override
     public void run() {
-        globalServices.forEach((serviceId, instances) -> {
+        loadBalancerCache.getAllServices().forEach((serviceId, instances) -> {
             safeMap(instances).forEach((instanceId, instance) -> {
                 try {
                     doPing(instance);
@@ -172,52 +88,129 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
         });
     }
 
-    private Disposable doPing(ServiceInstanceStatus instance) {
+    @Override
+    public void register(List<ServiceInstanceStatus> instances) {
+        if (nonNull(instances)) {
+            instances.stream().forEach(i -> getOrCreateInstance(i.getInstance().getServiceId(), i.getInstance().getInstanceId()));
+        }
+    }
+
+    @Override
+    public int connect(ServerWebExchange exchange, ServiceInstance instance) {
+        exchange.getAttributes().put(KEY_COST_TIME, currentTimeMillis());
+        ServiceInstanceStatus status = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
+        return status.getStats().getConnections().addAndGet(1);
+    }
+
+    @Override
+    public int disconnect(ServerWebExchange exchange, ServiceInstance instance) {
+        ServiceInstanceStatus status = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
+        Stats stats = status.getStats();
+        long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
+        save(status, new PassivePingRecord((currentTimeMillis() - beginTime)));
+        return stats.getConnections().addAndGet(-1);
+    }
+
+    @Override
+    public List<ServiceInstanceStatus> getReachableInstances(String serviceId) {
+        return getOrCreateService(serviceId).values()
+                .stream()
+                .map(i -> strategy.calculateStatus(loadBalancerConfig, i))
+                .filter(i -> i.getStats().getAlive())
+                .collect(toList());
+    }
+
+    @Override
+    public List<ServiceInstanceStatus> getAllInstances(String serviceId) {
+        return getOrCreateService(serviceId).values().stream().collect(toList());
+    }
+
+    protected ServiceInstanceStatus getOrCreateInstance(String serviceId, String instanceId) {
+        Map<String, ServiceInstanceStatus> service = getOrCreateService(serviceId);
+        ServiceInstanceStatus status = service.get(instanceId);
+        if (isNull(status)) {
+            synchronized (instanceId) {
+                status = service.get(instanceId);
+                if (isNull(status)) {
+                    service.put(instanceId, status = new ServiceInstanceStatus());
+                }
+            }
+        }
+        return status;
+    }
+
+    protected Map<String, ServiceInstanceStatus> getOrCreateService(String serviceId) {
+        Map<String, ServiceInstanceStatus> instances = loadBalancerCache.getService(serviceId);
+        if (isNull(instances)) {
+            synchronized (serviceId) {
+                instances = loadBalancerCache.getService(serviceId);
+                if (isNull(instances)) {
+                    loadBalancerCache.putService(serviceId, instances = new ConcurrentHashMap<>(16));
+                }
+            }
+        }
+        return instances;
+    }
+
+    protected Disposable doPing(ServiceInstanceStatus status) {
         /**
          * Notice: A timeout must be set when pinging an instance group to
          * prevent the group from being blocked for too long. Problems with
          * netflix ribbon implementation see:
          * {@link com.netflix.loadbalancer.BaseLoadBalancer.SerialPingStrategy}
          * and {@link com.netflix.loadbalancer.PingUrl#isAlive}
+         * see:https://stackoverflow.com/questions/61843235/reactor-netty-not-getting-an-httpserver-response-when-the-httpclient-subscribes
+         * see:https://github.com/reactor/reactor-netty/issues/151
          */
         Duration timeout = Duration.ofMillis(loadBalancerConfig.getStats().getTimeoutMs());
         return HttpClient.create()
                 .wiretap(true)
                 .get()
-                .uri(buildUri(instance))
+                .uri(buildUri(status))
                 .responseContent()
                 .aggregate()
                 .asString()
-                .timeout(timeout, Mono.fromRunnable(() -> save(instance, new PingRecord(currentTimeMillis(), true, null, null))))
+                .timeout(timeout,
+                        Mono.fromRunnable(() -> save(status, new ActivePingRecord(currentTimeMillis(), true, null, null))))
                 .doFinally(signal -> {
                     if (signal != SignalType.ON_COMPLETE) {
                         // Failed to request ping.
                         if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                            save(instance, new PingRecord(currentTimeMillis(), false, null, null));
+                            save(status, new ActivePingRecord(currentTimeMillis(), false, null, null));
                         }
                     }
                 })
                 // main thread non-blocking.
                 .subscribe(response -> {
-                    save(instance, new PingRecord(currentTimeMillis(), false, null, response));
+                    save(status, new ActivePingRecord(currentTimeMillis(), false, null, response));
                 }, ex -> {
-                    save(instance, new PingRecord(currentTimeMillis(), false, null, null));
+                    save(status, new ActivePingRecord(currentTimeMillis(), false, null, null));
                 }, () -> {
                     log.debug("Ping completion");
                 });
     }
 
-    private URI buildUri(ServiceInstanceStatus instance) {
-        return URI.create(instance.getInstance().getScheme() + "://" + instance.getInstance().getHost() + ":"
-                + instance.getInstance().getPort() + instance.getInstance());
+    protected URI buildUri(ServiceInstanceStatus status) {
+        ServiceInstance instance = status.getInstance();
+        return URI.create(
+                instance.getScheme().concat("://").concat(instance.getHost()).concat(":").concat(instance.getPort() + "").concat(
+                        "/healthz"));
     }
 
-    private void save(ServiceInstanceStatus instance, PingRecord pingRecord) {
-        Queue<PingRecord> queue = instance.getStats().getPingRecords();
-        if (queue.size() > 16) {
+    protected void save(ServiceInstanceStatus status, ActivePingRecord activePingRecord) {
+        Queue<ActivePingRecord> queue = status.getStats().getActivePingRecords();
+        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) {
             queue.poll();
         }
-        queue.offer(pingRecord);
+        queue.offer(activePingRecord);
+    }
+
+    protected void save(ServiceInstanceStatus status, PassivePingRecord passivePingRecord) {
+        Queue<PassivePingRecord> queue = status.getStats().getPassiveRecords();
+        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) { // TODO
+            queue.poll();
+        }
+        queue.offer(passivePingRecord);
     }
 
 }

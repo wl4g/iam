@@ -19,6 +19,7 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_G
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
@@ -32,8 +33,11 @@ import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastConnCanaryLoadBalancerRu
 import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastTimeCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRandomCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRoundRobinCanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.GlobalLoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.DefaultLoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.InMemoryLoadBalancerCache;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerCache;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
@@ -54,9 +58,23 @@ public class LoadbalanceAutoConfiguration {
     // Load-balancer stats.
 
     @Bean
-    public GlobalLoadBalancerStats globalLoadBalancerStats(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig) {
-        return new GlobalLoadBalancerStats(loadbalancerConfig);
+    @ConditionalOnMissingBean
+    public LoadBalancerCache inMemoryLoadBalancerCache() {
+        return new InMemoryLoadBalancerCache();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ReachableStrategy defaultReachableStrategy() {
+        return ReachableStrategy.DEFAULT;
+    }
+
+    @Bean
+    public DefaultLoadBalancerStats defaultLoadBalancerStats(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            LoadBalancerCache loadBalancerCache,
+            ReachableStrategy strategy) {
+        return new DefaultLoadBalancerStats(loadbalancerConfig, loadBalancerCache, strategy);
     }
 
     // Load-balancer rules.
@@ -104,9 +122,9 @@ public class LoadbalanceAutoConfiguration {
     }
 
     @Bean
-    public GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> compositeCanaryLoadBalancerAdapter(
+    public GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> compositeCanaryLoadBalancerAdapter(
             List<CanaryLoadBalancerRule> rules) {
-        return new GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule>(rules) {
+        return new GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule>(rules) {
         };
     }
 
@@ -116,7 +134,7 @@ public class LoadbalanceAutoConfiguration {
     public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
             LoadBalancerClientFactory clientFactory,
             com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
-            GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter,
+            GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
             LoadBalancerStats loadBalancerStats) {
         return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerStats);
     }

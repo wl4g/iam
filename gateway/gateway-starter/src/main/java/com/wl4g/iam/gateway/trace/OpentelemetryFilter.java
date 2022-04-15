@@ -39,7 +39,7 @@ package com.wl4g.iam.gateway.trace;
 // * {@link OpentelemetryGlobalFilter}
 // * 
 // * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-// * @version 2022-04-02 v3.0.0
+// * @version 2021-09-02 v3.0.0
 // * @since v3.0.0
 // */
 //public class OpentelemetryFilter implements GlobalFilter {

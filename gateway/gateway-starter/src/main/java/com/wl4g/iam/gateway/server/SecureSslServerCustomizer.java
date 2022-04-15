@@ -99,7 +99,7 @@ import reactor.netty.tcp.SslProvider.Builder;
  * see:{@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-09 v3.0.0
+ * @version 2021-09-09 v3.0.0
  * @since v3.0.0
  * @see https://github.com/netty/netty/issues/8537
  */

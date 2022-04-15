@@ -100,7 +100,7 @@ import reactor.core.publisher.Mono;
  * </p>
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-01 v3.0.0
+ * @version 2021-09-01 v3.0.0
  * @since v3.0.0
  */
 public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {

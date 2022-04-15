@@ -16,6 +16,7 @@
 package com.wl4g.iam.gateway.logging;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
@@ -43,7 +44,6 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
-import com.wl4g.infra.common.lang.FastTimeClock;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
@@ -55,7 +55,7 @@ import reactor.core.publisher.Mono;
  * {@link AbstractLoggingFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-02 v3.0.0
+ * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
@@ -81,7 +81,7 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getAttributes().put(KEY_START_TIME, FastTimeClock.currentTimeMillis());
+        exchange.getAttributes().put(KEY_START_TIME, currentTimeMillis());
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
 

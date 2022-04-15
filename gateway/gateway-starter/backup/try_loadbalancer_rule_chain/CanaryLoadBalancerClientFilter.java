@@ -23,8 +23,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
@@ -39,8 +42,11 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.LoadBalancerAlgorithm;
+import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.CanaryLoadBalancerKind;
+import com.wl4g.iam.gateway.loadbalance.rule.chain.CanaryLoadBalancerRuleChain;
+import com.wl4g.iam.gateway.loadbalance.rule.chain.DefaultCanaryLoadBalancerRuleChain;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
@@ -56,18 +62,18 @@ import reactor.core.publisher.SignalType;
  * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler.DefaultGatewayFilterChain#filter(ServerWebExchange)}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-09-03 v3.0.0
+ * @version 2022-04-03 v3.0.0
  * @since v3.0.0
  */
 public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilter {
 
     private final SmartLogger log = getLogger(getClass());
     private final LoadBalancerProperties loadBalancerConfig;
-    private final GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
+    private final GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter;
     private final LoadBalancerStats loadBalancerStats;
 
     public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties loadBalancerConfig,
-            GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
+            GenericOperatorAdapter<CanaryLoadBalancerRule.CanaryLoadBalancerKind, CanaryLoadBalancerRule> ruleAdapter,
             LoadBalancerStats loadBalancerStats) {
         super(clientFactory, loadBalancerConfig);
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
@@ -132,12 +138,11 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
         }
         exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
 
-        exchange.getRequest().getId();
         return chain.filter(exchange).doOnRequest(v -> {
-            loadBalancerStats.connect(exchange, instance);
+            loadBalancerStats.connect(instance, 1);
         }).doFinally(signal -> {
             if (signal == SignalType.ON_COMPLETE || signal == SignalType.CANCEL || signal == SignalType.ON_ERROR) {
-                loadBalancerStats.disconnect(exchange, instance);
+                loadBalancerStats.disconnect(instance, 1);
             }
         });
     }
@@ -145,12 +150,22 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
     private Response<ServiceInstance> choose(ServerWebExchange exchange) {
         URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
         String serviceId = uri.getHost();
-        // TODO use dynamic LB type
-        ServiceInstance chosen = ruleAdapter.forOperator(LoadBalancerAlgorithm.R).choose(exchange, loadBalancerStats, serviceId);
-        if (isNull(chosen)) {
+
+        // TODO use dynamic LB type.
+
+        List<CanaryLoadBalancerRule> rules = new ArrayList<>();
+        // TODO for testing
+        rules.add(ruleAdapter.forOperator(CanaryLoadBalancerKind.R));
+        CanaryLoadBalancerRuleChain chain = new DefaultCanaryLoadBalancerRuleChain(rules);
+
+        List<ServiceInstanceStatus> chosen = chain.choose(loadBalancerStats, serviceId, exchange.getRequest(), null, chain);
+        if (isEmpty(chosen)) {
             return new EmptyResponse();
         }
-        return new DefaultResponse(chosen);
+
+        // After the rule chain has been processed, there should usually be only
+        // 1 or a few available instances left.
+        return new DefaultResponse(chosen.get(0).getInstance());
     }
 
 }

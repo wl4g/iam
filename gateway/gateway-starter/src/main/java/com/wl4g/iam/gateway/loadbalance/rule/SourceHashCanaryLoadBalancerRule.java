@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -15,25 +14,27 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 /**
- * Round-Robin Grayscale Load Balancer rule based on random.
+ * Grayscale load balancer rule for based source address hashing. </br>
+ * That is, the request from the same ip is sent to the same server in the
+ * backend, if the backend server is working normally and not overloaded. This
+ * can solve the problem of session sharing, but there is a problem here. Many
+ * enterprises, communities, and schools share an IP, which will lead to uneven
+ * distribution of requests.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
- * @see {@link com.netflix.loadbalancer.RoundRobinRule}
  */
-public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
+public class SourceHashCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
 
-    private final AtomicInteger nextInstanceCyclicCounter = new AtomicInteger(0);
-
-    public RoundRobinCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public SourceHashCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 
     @Override
     public LoadBalancerAlgorithm kind() {
-        return LoadBalancerAlgorithm.RR;
+        return LoadBalancerAlgorithm.SH;
     }
 
     @Override
@@ -42,10 +43,6 @@ public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
             LoadBalancerStats stats,
             String serviceId,
             List<ServiceInstance> candidateInstances) {
-
-        // Refer to spring-loadbalaner:
-        // int pos = Math.abs(nextServerCyclicCounter.incrementAndGet());
-        // return candidateInstances.get(pos % candidateInstances.size());
 
         int count = 0;
         ServiceInstanceStatus chosenInstance = null;
@@ -62,7 +59,8 @@ public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
                 return null;
             }
 
-            int nextInstanceIndex = incrementAndGetModulo(allCount);
+            int hash = exchange.getRequest().getRemoteAddress().getHostString().hashCode();
+            int nextInstanceIndex = avaCount % hash;
             chosenInstance = availableInstances.get(nextInstanceIndex);
 
             if (isNull(chosenInstance)) {
@@ -85,25 +83,6 @@ public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
             log.warn("No available alive servers after {} tries from load balancer: {}", count, stats);
         }
         return null;
-    }
-
-    /**
-     * Inspired by the implementation of
-     * {@link AtomicInteger#incrementAndGet()}.
-     *
-     * @param modulo
-     *            The modulo to bound the value of the counter.
-     * @return The next value.
-     * @see {@link com.netflix.loadbalancer.RoundRobinRule#incrementAndGetModulo()}
-     */
-    protected int incrementAndGetModulo(int modulo) {
-        for (;;) {
-            int current = nextInstanceCyclicCounter.get();
-            int next = (current + 1) % modulo;
-            if (nextInstanceCyclicCounter.compareAndSet(current, next)) {
-                return next;
-            }
-        }
     }
 
 }

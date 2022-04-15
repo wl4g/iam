@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
@@ -29,7 +29,7 @@ import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
  * Abstract Grayscale Load Balancer rule based on random.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-03 v3.0.0
+ * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
 public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalancerRule {
@@ -46,7 +46,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
     }
 
     @Override
-    public ServiceInstance choose(LoadBalancerStats stats, String serviceId, ServerHttpRequest request) {
+    public ServiceInstance choose(ServerWebExchange exchange, LoadBalancerStats stats, String serviceId) {
         List<ServiceInstance> allInstances = discoveryClient.getInstances(serviceId);
 
         // There is no instance in the registry throwing an exception.
@@ -61,7 +61,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
         List<ServiceInstance> candidateInstances = null;
-        List<MatchHttpRequestRule> rules = requestMatcher.find(new ReactiveRequestExtractor(request),
+        List<MatchHttpRequestRule> rules = requestMatcher.find(new ReactiveRequestExtractor(exchange.getRequest()),
                 loadBalancerConfig.getSelectExpression());
         if (isEmpty(rules)) {
             log.warn("The request did not match the canary load balancer instance.");
@@ -75,7 +75,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
             candidateInstances = findCandidateInstances(allInstances, rules.stream().map(r -> r.getName()).collect(toList()));
         }
 
-        return doChooseInstance(stats, serviceId, candidateInstances);
+        return doChooseInstance(exchange, stats, serviceId, candidateInstances);
     }
 
     public List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, List<String> matchedRuleNames) {
@@ -93,6 +93,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
     }
 
     protected abstract ServiceInstance doChooseInstance(
+            ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
             List<ServiceInstance> candidateInstances);

@@ -28,7 +28,7 @@ import lombok.ToString;
  * {@link LoggingProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-02 v3.0.0
+ * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 @Getter

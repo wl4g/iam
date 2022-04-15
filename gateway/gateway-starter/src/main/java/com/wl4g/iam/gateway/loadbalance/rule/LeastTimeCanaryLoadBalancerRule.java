@@ -1,10 +1,11 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
+import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -12,28 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.PassivePingRecord;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 /**
- * Round-Robin Grayscale Load Balancer rule based on random.
+ * Grayscale load balancer rule for based least response time. </br>
+ * 
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
- * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
- * @see {@link com.netflix.loadbalancer.RoundRobinRule}
+ * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
+public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
 
-    private final AtomicInteger nextInstanceCyclicCounter = new AtomicInteger(0);
-
-    public RoundRobinCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public LeastTimeCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 
     @Override
     public LoadBalancerAlgorithm kind() {
-        return LoadBalancerAlgorithm.RR;
+        return LoadBalancerAlgorithm.LT;
     }
 
     @Override
@@ -62,9 +62,7 @@ public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
                 return null;
             }
 
-            int nextInstanceIndex = incrementAndGetModulo(allCount);
-            chosenInstance = availableInstances.get(nextInstanceIndex);
-
+            chosenInstance = availableInstances.stream().min(DEFAULT).orElse(null);
             if (isNull(chosenInstance)) {
                 // Give up the opportunity for short-term CPU to give other
                 // threads execution, just like the sleep() method does not
@@ -87,23 +85,13 @@ public class RoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
         return null;
     }
 
-    /**
-     * Inspired by the implementation of
-     * {@link AtomicInteger#incrementAndGet()}.
-     *
-     * @param modulo
-     *            The modulo to bound the value of the counter.
-     * @return The next value.
-     * @see {@link com.netflix.loadbalancer.RoundRobinRule#incrementAndGetModulo()}
-     */
-    protected int incrementAndGetModulo(int modulo) {
-        for (;;) {
-            int current = nextInstanceCyclicCounter.get();
-            int next = (current + 1) % modulo;
-            if (nextInstanceCyclicCounter.compareAndSet(current, next)) {
-                return next;
-            }
+    public static final Comparator<ServiceInstanceStatus> DEFAULT = (o1, o2) -> {
+        PassivePingRecord p1 = o1.getStats().getPassiveRecords().peek();
+        PassivePingRecord p2 = o2.getStats().getPassiveRecords().peek();
+        if (nonNull(p1) && nonNull(p2)) {
+            return safeLongToInt(p1.getCostTime() - p2.getCostTime());
         }
-    }
+        return 0;
+    };
 
 }

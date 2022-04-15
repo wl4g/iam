@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace.config;
+package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
-import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 /**
- * {@link LoggingProperties}
+ * {@link LoadBalancerCache}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-09-02 v3.0.0
+ * @version 2021-09-15 v3.0.0
  * @since v3.0.0
  */
-@Getter
-@Setter
-@ToString
-public class TraceProperties {
+public interface LoadBalancerCache {
 
-    /**
-     * Tracing request header name.
-     */
-    private String traceIdRequestHeader = DEFAULT_TRACE_ID_HEADER;
+    Map<String, Map<String, ServiceInstanceStatus>> getAllServices();
 
-    public static final String DEFAULT_TRACE_ID_HEADER = "X-Iam-Gateway-Trace-Id";
+    Map<String, ServiceInstanceStatus> getService(String serviceId);
+
+    void putService(String serviceId, Map<String, ServiceInstanceStatus> service);
+
 }

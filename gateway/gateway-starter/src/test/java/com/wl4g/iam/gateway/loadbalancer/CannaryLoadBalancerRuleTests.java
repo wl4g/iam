@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.AbstractCanaryLoadBalancerRule;
@@ -77,6 +78,7 @@ public class CannaryLoadBalancerRuleTests {
         AbstractCanaryLoadBalancerRule rule = new AbstractCanaryLoadBalancerRule(config, new SimpleDiscoveryClient(null)) {
             @Override
             protected ServiceInstance doChooseInstance(
+                    ServerWebExchange exchange,
                     LoadBalancerStats stats,
                     String serviceId,
                     List<ServiceInstance> candidateInstances) {
@@ -84,7 +86,7 @@ public class CannaryLoadBalancerRuleTests {
             }
 
             @Override
-            public CanaryLoadBalancerKind kind() {
+            public LoadBalancerAlgorithm kind() {
                 return null; // Ignore
             }
         };
