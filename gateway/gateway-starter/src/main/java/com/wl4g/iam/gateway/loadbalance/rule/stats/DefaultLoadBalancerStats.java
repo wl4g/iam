@@ -25,9 +25,9 @@ import static java.util.stream.Collectors.toList;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -59,14 +59,14 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
     private final LoadBalancerProperties loadBalancerConfig;
     private final LoadBalancerCache loadBalancerCache;
-    private final ReachableStrategy strategy;
+    private final ReachableStrategy reachableStrategy;
 
     public DefaultLoadBalancerStats(LoadBalancerProperties loadBalancerConfig, LoadBalancerCache loadBalancerCache,
-            ReachableStrategy strategy) {
+            ReachableStrategy reachableStrategy) {
         super(new RunnerProperties(StartupMode.ASYNC, 1));
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
         this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
-        this.strategy = notNullOf(strategy, "strategy");
+        this.reachableStrategy = notNullOf(reachableStrategy, "reachableStrategy");
     }
 
     @Override
@@ -107,17 +107,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         ServiceInstanceStatus status = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
         Stats stats = status.getStats();
         long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
-        save(status, new PassivePingRecord((currentTimeMillis() - beginTime)));
+        save(status, new PassivePing((currentTimeMillis() - beginTime)));
         return stats.getConnections().addAndGet(-1);
     }
 
     @Override
     public List<ServiceInstanceStatus> getReachableInstances(String serviceId) {
-        return getOrCreateService(serviceId).values()
-                .stream()
-                .map(i -> strategy.calculateStatus(loadBalancerConfig, i))
-                .filter(i -> i.getStats().getAlive())
-                .collect(toList());
+        return getOrCreateService(serviceId).values().stream().filter(i -> i.getStats().getAlive()).collect(toList());
     }
 
     @Override
@@ -171,20 +167,20 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                 .aggregate()
                 .asString()
                 .timeout(timeout,
-                        Mono.fromRunnable(() -> save(status, new ActivePingRecord(currentTimeMillis(), true, null, null))))
+                        Mono.fromRunnable(() -> save(status, new ActivePing(currentTimeMillis(), true, null, null))))
                 .doFinally(signal -> {
                     if (signal != SignalType.ON_COMPLETE) {
                         // Failed to request ping.
                         if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                            save(status, new ActivePingRecord(currentTimeMillis(), false, null, null));
+                            save(status, new ActivePing(currentTimeMillis(), false, null, null));
                         }
                     }
                 })
                 // main thread non-blocking.
                 .subscribe(response -> {
-                    save(status, new ActivePingRecord(currentTimeMillis(), false, null, response));
+                    save(status, new ActivePing(currentTimeMillis(), false, null, response));
                 }, ex -> {
-                    save(status, new ActivePingRecord(currentTimeMillis(), false, null, null));
+                    save(status, new ActivePing(currentTimeMillis(), false, null, null));
                 }, () -> {
                     log.debug("Ping completion");
                 });
@@ -197,20 +193,28 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                         "/healthz"));
     }
 
-    protected void save(ServiceInstanceStatus status, ActivePingRecord activePingRecord) {
-        Queue<ActivePingRecord> queue = status.getStats().getActivePingRecords();
+    protected synchronized void save(ServiceInstanceStatus status, ActivePing activePing) {
+        Stats stats = status.getStats();
+        Deque<ActivePing> queue = stats.getActivePings();
         if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) {
             queue.poll();
         }
-        queue.offer(activePingRecord);
+        queue.offer(activePing);
+        reachableStrategy.updateStatus(loadBalancerConfig, status);
     }
 
-    protected void save(ServiceInstanceStatus status, PassivePingRecord passivePingRecord) {
-        Queue<PassivePingRecord> queue = status.getStats().getPassiveRecords();
-        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) { // TODO
+    protected synchronized void save(ServiceInstanceStatus status, PassivePing passivePing) {
+        Stats stats = status.getStats();
+        Deque<PassivePing> queue = stats.getPassivePings();
+        if (queue.size() > loadBalancerConfig.getStats().getPingQueue()) {
             queue.poll();
         }
-        queue.offer(passivePingRecord);
+        queue.offer(passivePing);
+        stats.setLatestCostTime(queue.peekLast().getCostTime());
+        stats.setOldestCostTime(queue.peekLast().getCostTime());
+        stats.setMaxCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).max().getAsDouble());
+        stats.setMinCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).min().getAsDouble());
+        stats.setAvgCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).average().getAsDouble());
     }
 
 }

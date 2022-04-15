@@ -17,12 +17,10 @@ package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.Queue;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ActivePingRecord;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ActivePing;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.Stats;
 
@@ -40,7 +38,7 @@ public interface ReachableStrategy {
 
     public static final ReachableStrategy DEFAULT = new LatestReachableStrategy();
 
-    ServiceInstanceStatus calculateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
+    ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
 
     @Slf4j
     class LatestReachableStrategy implements ReachableStrategy {
@@ -49,32 +47,31 @@ public interface ReachableStrategy {
         }
 
         @Override
-        public ServiceInstanceStatus calculateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
+        public ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
             // Calculate health statistics status.
             Stats stats = status.getStats();
-            Queue<ActivePingRecord> queue = stats.getActivePingRecords();
-            // TODO use least element.
-            for (int i = 0, lastAvailableSize = queue.size() / 4; i < lastAvailableSize; i++) {
-                ActivePingRecord ping = queue.peek();
-                Boolean oldAlive = stats.getAlive();
-                if (ping.getStatus() == HttpResponseStatus.OK && !ping.isTimeout()) {
-                    // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-                    if (!isBlank(loadBalancerConfig.getStats().getExpectContent())) {
-                        if (StringUtils.equals(loadBalancerConfig.getStats().getExpectContent(), ping.getResponseBody())) {
-                            stats.setAlive(true);
-                        }
-                    } else {
+            ActivePing ping = stats.getActivePings().peekLast();
+
+            Boolean oldAlive = stats.getAlive();
+            if (ping.getStatus() == HttpResponseStatus.OK && !ping.isTimeout()) {
+                // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
+                if (!isBlank(loadBalancerConfig.getStats().getExpectContent())) {
+                    if (StringUtils.equals(loadBalancerConfig.getStats().getExpectContent(), ping.getResponseBody())) {
                         stats.setAlive(true);
                     }
                 } else {
-                    stats.setAlive(false);
+                    stats.setAlive(true);
                 }
-                // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
-                if (oldAlive != stats.getAlive()) {
-                    log.warn("LoadBalancer server [{}/{}] status changed to {}", status.getInstance().getServiceId(),
-                            status.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
-                }
+            } else {
+                stats.setAlive(false);
             }
+
+            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
+            if (oldAlive != stats.getAlive()) {
+                log.warn("LoadBalancer server [{}/{}] status changed to {}", status.getInstance().getServiceId(),
+                        status.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
+            }
+
             return status;
         }
     }

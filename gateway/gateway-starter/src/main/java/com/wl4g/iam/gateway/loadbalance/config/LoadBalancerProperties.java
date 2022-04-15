@@ -101,7 +101,7 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
         private String expectContent;
 
         /**
-         * Ping response records queue size.
+         * Ping records cache queue size.
          */
         private int pingQueue = 8;
 

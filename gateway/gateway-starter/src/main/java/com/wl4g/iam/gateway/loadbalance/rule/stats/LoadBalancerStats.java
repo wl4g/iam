@@ -15,8 +15,8 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
@@ -70,31 +70,42 @@ public interface LoadBalancerStats {
     @AllArgsConstructor
     public static class Stats {
         private AtomicInteger connections = new AtomicInteger(0);
-        private Queue<ActivePingRecord> activePingRecords = Queues.newArrayDeque();
-        private Queue<PassivePingRecord> passiveRecords = Queues.newArrayDeque();
+        private Deque<ActivePing> activePings = Queues.newArrayDeque();
+        private Deque<PassivePing> passivePings = Queues.newArrayDeque();
         private Boolean alive;
+        private double latestCostTime;
+        private double oldestCostTime;
+        private double maxCostTime;
+        private double minCostTime;
+        private double avgCostTime;
     }
 
+    /**
+     * Active ping result.
+     */
     @With
     @Getter
     @Setter
     @ToString
     @AllArgsConstructor
-    public static class PassivePingRecord {
-        private long costTime;
-        // private HttpResponseStatus status;
-    }
-
-    @With
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    public static class ActivePingRecord {
+    public static class ActivePing {
         private long timestamp;
         private boolean isTimeout;
         private HttpResponseStatus status;
         private String responseBody;
+    }
+
+    /**
+     * Passive ping result.
+     */
+    @With
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    public static class PassivePing {
+        private long costTime;
+        // private HttpResponseStatus status;
     }
 
     public static final String KEY_COST_TIME = LoadBalancerStats.class.getName().concat(".costTime");

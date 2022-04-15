@@ -1,6 +1,5 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
-import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -13,7 +12,6 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.PassivePingRecord;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 /**
@@ -86,12 +84,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
     }
 
     public static final Comparator<ServiceInstanceStatus> DEFAULT = (o1, o2) -> {
-        PassivePingRecord p1 = o1.getStats().getPassiveRecords().peek();
-        PassivePingRecord p2 = o2.getStats().getPassiveRecords().peek();
-        if (nonNull(p1) && nonNull(p2)) {
-            return safeLongToInt(p1.getCostTime() - p2.getCostTime());
-        }
-        return 0;
+        return (int) (o1.getStats().getLatestCostTime() - o2.getStats().getLatestCostTime());
     };
 
 }

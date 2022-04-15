@@ -40,7 +40,7 @@ public class DestinationHashCanaryLoadBalancerRule extends RoundRobinCanaryLoadB
     }
 
     @Override
-    protected ServiceInstance doChooseInstance(
+    protected ServiceInstance doChooseInstance( 
             ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
