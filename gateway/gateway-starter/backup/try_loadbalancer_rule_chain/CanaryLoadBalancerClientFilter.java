@@ -40,7 +40,7 @@ import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.CanaryLoadBalancerKind;
 import com.wl4g.iam.gateway.loadbalance.rule.chain.CanaryLoadBalancerRuleChain;

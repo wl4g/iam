@@ -6,7 +6,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
 /**
@@ -18,7 +18,7 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
  */
 public class WeightRandomCanaryLoadBalancerRule extends RandomCanaryLoadBalancerRule {
 
-    public WeightRandomCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public WeightRandomCanaryLoadBalancerRule(CanaryLoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 

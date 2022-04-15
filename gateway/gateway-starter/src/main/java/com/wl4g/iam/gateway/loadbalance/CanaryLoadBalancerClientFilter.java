@@ -41,11 +41,12 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.DefaultLoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerCache;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
@@ -72,17 +73,20 @@ import reactor.core.publisher.SignalType;
 public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory<CanaryLoadBalancerClientFilter.Config> {
     private final SmartLogger log = getLogger(getClass());
 
-    private final LoadBalancerProperties loadBalancerConfig;
+    private final CanaryLoadBalancerProperties loadBalancerConfig;
     private final GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
     private final LoadBalancerCache loadBalancerCache;
+    private final ReachableStrategy reachableStrategy;
 
-    public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory, LoadBalancerProperties loadBalancerConfig,
+    public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory,
+            CanaryLoadBalancerProperties loadBalancerConfig,
             GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
-            LoadBalancerCache loadBalancerCache) {
+            LoadBalancerCache loadBalancerCache, ReachableStrategy reachableStrategy) {
         super(CanaryLoadBalancerClientFilter.Config.class);
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
         this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
         this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
+        this.reachableStrategy = notNullOf(reachableStrategy, "reachableStrategy");
     }
 
     @Override
@@ -93,7 +97,8 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
     @Override
     public GatewayFilter apply(Config config) {
         applyGlobalToConfig(config);
-        return new CanaryLoadBalancerClientGatewayFilter(config, new DefaultLoadBalancerStats(config, loadBalancerCache, null));
+        return new CanaryLoadBalancerClientGatewayFilter(config,
+                new DefaultLoadBalancerStats(config, loadBalancerCache, reachableStrategy));
     }
 
     private void applyGlobalToConfig(Config config) {
@@ -107,7 +112,7 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
     @Getter
     @Setter
     @ToString
-    public static class Config extends LoadBalancerProperties {
+    public static class Config extends CanaryLoadBalancerProperties {
     }
 
     @AllArgsConstructor
@@ -158,7 +163,7 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
 
             Response<ServiceInstance> response = choose(config, exchange);
             if (!response.hasServer()) {
-                throw NotFoundException.create(config.isUse404(), "Unable to find instance for " + requestUri.getHost());
+                throw NotFoundException.create(false, "Unable to find instance for " + requestUri.getHost());
             }
             URI uri = exchange.getRequest().getURI();
 

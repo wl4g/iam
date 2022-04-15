@@ -10,7 +10,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
@@ -28,7 +28,7 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInst
  */
 public class LeastConnCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
 
-    public LeastConnCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public LeastConnCanaryLoadBalancerRule(CanaryLoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 

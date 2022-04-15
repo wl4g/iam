@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ActivePing;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.Stats;
@@ -39,7 +39,7 @@ public interface ReachableStrategy {
 
     public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
         @Override
-        public ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
+        public ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
             // Calculate health statistics status.
             Stats stats = status.getStats();
             ActivePing ping = stats.getActivePings().peekLast();
@@ -74,6 +74,6 @@ public interface ReachableStrategy {
         }
     };
 
-    ServiceInstanceStatus updateStatus(LoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
+    ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
 
 }

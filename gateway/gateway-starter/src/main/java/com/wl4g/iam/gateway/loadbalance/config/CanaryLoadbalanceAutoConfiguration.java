@@ -39,18 +39,18 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
- * {@link LoadbalanceAutoConfiguration}
+ * {@link CanaryLoadbalanceAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-13 v1.0.0
  * @since v1.0.0
  */
-public class LoadbalanceAutoConfiguration {
+public class CanaryLoadbalanceAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_LOADBANANER)
-    public com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadBalancerProperties() {
-        return new com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties();
+    public CanaryLoadBalancerProperties canaryLoadBalancerProperties() {
+        return new CanaryLoadBalancerProperties();
     }
 
     // Load-balancer stats.
@@ -71,42 +71,42 @@ public class LoadbalanceAutoConfiguration {
 
     @Bean
     public CanaryLoadBalancerRule randomCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new RandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public CanaryLoadBalancerRule roundRobinCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new RoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public CanaryLoadBalancerRule weightRandomCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new WeightRandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public CanaryLoadBalancerRule weightRoundRobinCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new WeightRoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public CanaryLoadBalancerRule weightLeastConnCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new WeightLeastConnCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
     public CanaryLoadBalancerRule weightLeastTimeCanaryLoadBalancerRule(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            CanaryLoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new WeightLeastTimeCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
@@ -123,10 +123,11 @@ public class LoadbalanceAutoConfiguration {
     @Bean
     public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
             LoadBalancerClientFactory clientFactory,
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
+            CanaryLoadBalancerProperties properties,
             GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
-            LoadBalancerCache loadBalancerCache) {
-        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerCache);
+            LoadBalancerCache loadBalancerCache,
+            ReachableStrategy reachableStrategy) {
+        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerCache, reachableStrategy);
     }
 
 }

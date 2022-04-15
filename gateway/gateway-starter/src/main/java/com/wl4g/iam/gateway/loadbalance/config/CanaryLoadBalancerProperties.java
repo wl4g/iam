@@ -26,18 +26,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link LoadBalancerProperties}
+ * {@link CanaryLoadBalancerProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
+ * @see {@link org.springframework.cloud.gateway.config.LoadBalancerProperties}
  */
 @Getter
 @Setter
 @ToString
-public class LoadBalancerProperties extends org.springframework.cloud.gateway.config.LoadBalancerProperties {
+public class CanaryLoadBalancerProperties {
 
-    public static final LoadBalancerProperties DEFAULT = new LoadBalancerProperties();
+    public static final CanaryLoadBalancerProperties DEFAULT = new CanaryLoadBalancerProperties();
 
     /**
      * Enabled status.

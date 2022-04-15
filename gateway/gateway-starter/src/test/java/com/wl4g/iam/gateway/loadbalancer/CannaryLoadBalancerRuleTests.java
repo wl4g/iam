@@ -26,7 +26,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.AbstractCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
@@ -71,7 +71,7 @@ public class CannaryLoadBalancerRuleTests {
     }
 
     private List<ServiceInstance> doOnlyFindCandidateInstances(List<String> matchedRuleNames) {
-        LoadBalancerProperties config = new LoadBalancerProperties();
+        CanaryLoadBalancerProperties config = new CanaryLoadBalancerProperties();
         config.setFallbackAllToCandidates(true);
         config.setCanaryDiscoveryServiceLabelPrefix("Iscg-Canary-Label");
 

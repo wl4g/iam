@@ -17,7 +17,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -35,11 +35,11 @@ import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalancerRule {
 
     protected final SmartLogger log = getLogger(getClass());
-    protected final LoadBalancerProperties loadBalancerConfig;
+    protected final CanaryLoadBalancerProperties loadBalancerConfig;
     protected final DiscoveryClient discoveryClient;
     protected final SpelRequestMatcher requestMatcher;
 
-    public AbstractCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public AbstractCanaryLoadBalancerRule(CanaryLoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
         this.discoveryClient = notNullOf(discoveryClient, "discoveryClient");
         this.requestMatcher = new SpelRequestMatcher(loadBalancerConfig.getMatchRuleDefinitions());
