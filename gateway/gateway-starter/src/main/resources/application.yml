@@ -168,14 +168,15 @@ spring:
               value: v1
         ## When no canary condition is matched, whether all instances of the service are candidates.
         fallback-all-to-candidates: true
+        load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
         max-choose-tries: 10
-        ping:
+        ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
           debug: false ## Default by false
           initial-ms: 3_000 ## Default by 3_000ms
           delay-ms: 10_000 ## Default by 10_000ms
           timeout-ms: 10_000 ## Default by 10_000ms
           receive-queue: 8 ## Default by 8
-          path: /healthz
+          path: /healthz ## Default by '/healthz'
           ## Note: only expectBody takes effect when it is set at the same time as expectBody.
           expect-status: 200 ## Default by 200
           #expect-body: ## Default by ''

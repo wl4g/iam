@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.loadbalance.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.LoadBalancerAlgorithm;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
@@ -35,6 +36,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class LoadBalancerProperties extends org.springframework.cloud.gateway.config.LoadBalancerProperties {
+
+    public static final LoadBalancerProperties DEFAULT = new LoadBalancerProperties();
 
     /**
      * Enabled status.
@@ -62,6 +65,11 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
      * are candidates.
      */
     private boolean fallbackAllToCandidates = true;
+
+    /**
+     * Load balancer algorithm.
+     */
+    private LoadBalancerAlgorithm loadBalancerAlgorithm = LoadBalancerAlgorithm.R;
 
     /**
      * The number of best-effort attempts to select an instance.

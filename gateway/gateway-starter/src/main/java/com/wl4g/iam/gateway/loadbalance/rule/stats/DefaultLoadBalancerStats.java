@@ -36,7 +36,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter;
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
@@ -58,22 +58,22 @@ import reactor.netty.http.client.HttpClient;
 @Slf4j
 public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
 
-    private final LoadBalancerProperties loadBalancerConfig;
+    private final CanaryLoadBalancerClientFilter.Config config;
     private final LoadBalancerCache loadBalancerCache;
     private final ReachableStrategy reachableStrategy;
 
-    public DefaultLoadBalancerStats(LoadBalancerProperties loadBalancerConfig, LoadBalancerCache loadBalancerCache,
+    public DefaultLoadBalancerStats(CanaryLoadBalancerClientFilter.Config config, LoadBalancerCache loadBalancerCache,
             ReachableStrategy reachableStrategy) {
         super(new RunnerProperties(StartupMode.ASYNC, 1));
-        this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
+        this.config = notNullOf(config, "config");
         this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
         this.reachableStrategy = notNullOf(reachableStrategy, "reachableStrategy");
     }
 
     @Override
     protected void onApplicationStarted(ApplicationArguments args, SafeScheduledTaskPoolExecutor worker) throws Exception {
-        worker.scheduleWithFixedDelay(this, loadBalancerConfig.getPing().getInitialMs(),
-                loadBalancerConfig.getPing().getDelayMs(), TimeUnit.SECONDS);
+        worker.scheduleWithFixedDelay(this, config.getPing().getInitialMs(), config.getPing().getDelayMs(),
+                TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -159,10 +159,10 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
          * see:https://stackoverflow.com/questions/61843235/reactor-netty-not-getting-an-httpserver-response-when-the-httpclient-subscribes
          * see:https://github.com/reactor/reactor-netty/issues/151
          */
-        Duration timeout = Duration.ofMillis(loadBalancerConfig.getPing().getTimeoutMs());
-        if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
+        Duration timeout = Duration.ofMillis(config.getPing().getTimeoutMs());
+        if (!isBlank(config.getPing().getExpectBody())) {
             return HttpClient.create()
-                    .wiretap(loadBalancerConfig.getPing().isDebug())
+                    .wiretap(config.getPing().isDebug())
                     .get()
                     .uri(buildUri(status))
                     .responseConnection((res, connection) -> Mono.just(res))
@@ -187,7 +187,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         }
 
         return HttpClient.create()
-                .wiretap(loadBalancerConfig.getPing().isDebug())
+                .wiretap(config.getPing().isDebug())
                 .get()
                 .uri(buildUri(status))
                 .responseContent()
@@ -216,23 +216,23 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         ServiceInstance instance = status.getInstance();
         return URI.create(
                 instance.getScheme().concat("://").concat(instance.getHost()).concat(":").concat(instance.getPort() + "").concat(
-                        "/healthz"));
+                        config.getPing().getPath()));
     }
 
     protected synchronized void save(ServiceInstanceStatus status, ActivePing activePing) {
         Stats stats = status.getStats();
         Deque<ActivePing> queue = stats.getActivePings();
-        if (queue.size() > loadBalancerConfig.getPing().getReceiveQueue()) {
+        if (queue.size() > config.getPing().getReceiveQueue()) {
             queue.poll();
         }
         queue.offer(activePing);
-        reachableStrategy.updateStatus(loadBalancerConfig, status);
+        reachableStrategy.updateStatus(config, status);
     }
 
     protected synchronized void save(ServiceInstanceStatus status, PassivePing passivePing) {
         Stats stats = status.getStats();
         Deque<PassivePing> queue = stats.getPassivePings();
-        if (queue.size() > loadBalancerConfig.getPing().getReceiveQueue()) {
+        if (queue.size() > config.getPing().getReceiveQueue()) {
             queue.poll();
         }
         queue.offer(passivePing);

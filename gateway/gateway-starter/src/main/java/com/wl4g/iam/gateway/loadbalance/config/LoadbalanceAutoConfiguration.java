@@ -33,10 +33,8 @@ import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastConnCanaryLoadBalancerRu
 import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastTimeCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRandomCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRoundRobinCanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.DefaultLoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.InMemoryLoadBalancerCache;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerCache;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
@@ -67,14 +65,6 @@ public class LoadbalanceAutoConfiguration {
     @ConditionalOnMissingBean
     public ReachableStrategy defaultReachableStrategy() {
         return ReachableStrategy.DEFAULT;
-    }
-
-    @Bean
-    public DefaultLoadBalancerStats defaultLoadBalancerStats(
-            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
-            LoadBalancerCache loadBalancerCache,
-            ReachableStrategy strategy) {
-        return new DefaultLoadBalancerStats(loadbalancerConfig, loadBalancerCache, strategy);
     }
 
     // Load-balancer rules.
@@ -135,8 +125,8 @@ public class LoadbalanceAutoConfiguration {
             LoadBalancerClientFactory clientFactory,
             com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties properties,
             GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
-            LoadBalancerStats loadBalancerStats) {
-        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerStats);
+            LoadBalancerCache loadBalancerCache) {
+        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerCache);
     }
 
 }
