@@ -46,7 +46,7 @@ public class LeastConnCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
 
         int count = 0;
         ServiceInstanceStatus chosenInstance = null;
-        while (chosenInstance == null && count++ < 10) {
+        while (isNull(chosenInstance) && count++ < 10) {
             List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
             List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
             List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);

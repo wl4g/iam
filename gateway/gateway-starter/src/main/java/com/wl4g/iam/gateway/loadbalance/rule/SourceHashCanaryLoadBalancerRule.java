@@ -3,6 +3,7 @@ package com.wl4g.iam.gateway.loadbalance.rule;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
@@ -46,7 +47,7 @@ public class SourceHashCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
 
         int count = 0;
         ServiceInstanceStatus chosenInstance = null;
-        while (chosenInstance == null && count++ < 10) {
+        while (isNull(chosenInstance) && count++ < 10) {
             List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
             List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
             List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
@@ -59,24 +60,27 @@ public class SourceHashCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
                 return null;
             }
 
-            int hash = exchange.getRequest().getRemoteAddress().getHostString().hashCode();
-            int nextInstanceIndex = avaCount % hash;
-            chosenInstance = availableInstances.get(nextInstanceIndex);
+            InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
+            if (nonNull(remoteAddress)) {
+                int hash = remoteAddress.getHostString().hashCode();
+                int nextInstanceIndex = avaCount % hash;
 
-            if (isNull(chosenInstance)) {
-                // Give up the opportunity for short-term CPU to give other
-                // threads execution, just like the sleep() method does not
-                // release the lock.
-                Thread.yield();
-                continue;
+                chosenInstance = availableInstances.get(nextInstanceIndex);
+                if (isNull(chosenInstance)) {
+                    // Give up the opportunity for short-term CPU to give other
+                    // threads execution, just like the sleep() method does not
+                    // release the lock.
+                    Thread.yield();
+                    continue;
+                }
+
+                if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
+                    return chosenInstance.getInstance();
+                }
+
+                // Next.
+                chosenInstance = null;
             }
-
-            if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
-                return chosenInstance.getInstance();
-            }
-
-            // Next.
-            chosenInstance = null;
         }
 
         if (count >= loadBalancerConfig.getMaxChooseTries()) {
