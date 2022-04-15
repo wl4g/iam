@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,11 +40,15 @@ import lombok.With;
  */
 public interface LoadBalancerStats {
 
-    void register(ServiceInstanceInfo instance);
+    void register(List<ServiceInstanceStatus> instances);
 
     int connect(ServiceInstance instance, int ammount);
 
     int disconnect(ServiceInstance instance, int ammount);
+
+    List<ServiceInstanceStatus> getReachableInstances(String serviceId);
+
+    List<ServiceInstanceStatus> getAllInstances(String serviceId);
 
     @With
     @Getter
@@ -51,7 +56,7 @@ public interface LoadBalancerStats {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ServiceInstanceInfo {
+    public static class ServiceInstanceStatus {
         private ServiceInstance instance;
         private Stats stats = new Stats();
     }
@@ -64,8 +69,8 @@ public interface LoadBalancerStats {
     @AllArgsConstructor
     public static class Stats {
         private AtomicInteger connections = new AtomicInteger(0);
-        private Boolean alive;
         private Queue<PingRecord> pingRecords = Queues.newArrayDeque();
+        private Boolean alive;
     }
 
     @With

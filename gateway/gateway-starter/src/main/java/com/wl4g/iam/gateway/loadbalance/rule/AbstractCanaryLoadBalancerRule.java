@@ -11,12 +11,15 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -43,71 +46,36 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
     }
 
     @Override
-    public ServiceInstance choose(String serviceId, ServerHttpRequest request) {
-        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
+    public ServiceInstance choose(LoadBalancerStats stats, String serviceId, ServerHttpRequest request) {
+        List<ServiceInstance> allInstances = discoveryClient.getInstances(serviceId);
 
         // There is no instance in the registry throwing an exception.
-        if (isEmpty(instances)) {
+        if (isEmpty(allInstances)) {
             log.warn("No found instance available for {}", serviceId);
             throw new NotFoundException("No found instance available for " + serviceId);
         }
 
-        List<ServiceInstance> candidates = null;
+        // Register all instances.
+        stats.register(allInstances.stream().map(i -> new ServiceInstanceStatus().withInstance(i)).collect(toList()));
+
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
+        List<ServiceInstance> candidateInstances = null;
         List<MatchHttpRequestRule> rules = requestMatcher.find(new ReactiveRequestExtractor(request),
                 loadBalancerConfig.getSelectExpression());
         if (isEmpty(rules)) {
             log.warn("The request did not match the canary load balancer instance.");
             if (loadBalancerConfig.isFallbackAllToCandidates()) {
-                candidates = instances;
+                candidateInstances = allInstances;
             } else {
                 return null;
             }
         } else {
             // Gets a list of eligible candidate instances.
-            candidates = findCandidateInstances(instances, rules.stream().map(r -> r.getName()).collect(toList()));
+            candidateInstances = findCandidateInstances(allInstances, rules.stream().map(r -> r.getName()).collect(toList()));
         }
 
-        // TODO
-        // int count = 0;
-        // ServiceInstance chosenInstance = null;
-        // while (chosenInstance == null && count++ < 10) {
-        // List<Server> reachableServers = lb.getReachableServers();
-        // List<Server> allServers = lb.getAllServers();
-        // int upCount = reachableServers.size();
-        // int serverCount = allServers.size();
-        //
-        // if ((upCount == 0) || (serverCount == 0)) {
-        // log.warn("No up servers available from load balancer: " + lb);
-        // return null;
-        // }
-        //
-        // int nextServerIndex = incrementAndGetModulo(serverCount);
-        // chosenInstance = allServers.get(nextServerIndex);
-        //
-        // if (chosenInstance == null) {
-        // // Give up the opportunity for short-term CPU to give other
-        // // threads execution, just like the sleep() method does not
-        // // release the lock.
-        // Thread.yield();
-        // continue;
-        // }
-        //
-        // // if (server.isAlive() && (server.isReadyToServe())) {
-        // // return (chosenInstance);
-        // // }
-        //
-        // // Next.
-        // chosenInstance = null;
-        // }
-        //
-        // if (count >= 10) {
-        // log.warn("No available alive servers after 10 tries from load
-        // balancer: " + lb);
-        // }
-
-        return doChooseServiceInstance(instances, candidates);
+        return doChooseInstance(stats, serviceId, candidateInstances);
     }
 
     public List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, List<String> matchedRuleNames) {
@@ -124,8 +92,19 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
         return candidates;
     }
 
-    protected abstract ServiceInstance doChooseServiceInstance(
-            List<ServiceInstance> availableInstances,
+    protected abstract ServiceInstance doChooseInstance(
+            LoadBalancerStats stats,
+            String serviceId,
             List<ServiceInstance> candidateInstances);
+
+    protected List<ServiceInstanceStatus> getAvailableInstances(
+            List<ServiceInstanceStatus> reachableInstances,
+            List<ServiceInstance> candidateInstances) {
+
+        return safeList(reachableInstances).stream()
+                .filter(i -> safeList(candidateInstances).stream()
+                        .anyMatch(c -> StringUtils.equals(i.getInstance().getInstanceId(), c.getInstanceId())))
+                .collect(toList());
+    }
 
 }

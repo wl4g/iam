@@ -9,21 +9,22 @@ import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
 /**
- * Grayscale load balancer rule for weight-based random.
+ * Grayscale load balancer rule for weight-based least response time.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-03 v3.0.0
  * @since v3.0.0
+ * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class WeightRandomCanaryLoadBalancerRule extends RandomCanaryLoadBalancerRule {
+public class WeightLeastTimeCanaryLoadBalancerRule extends RoundRobinCanaryLoadBalancerRule {
 
-    public WeightRandomCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
+    public WeightLeastTimeCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
     }
 
     @Override
     public CanaryLoadBalancerKind kind() {
-        return CanaryLoadBalancerKind.WR;
+        return CanaryLoadBalancerKind.WLT;
     }
 
     @Override

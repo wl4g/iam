@@ -27,6 +27,7 @@ import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.AbstractCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
 /**
  * {@link CannaryLoadBalancerRuleTests}
@@ -42,7 +43,7 @@ public class CannaryLoadBalancerRuleTests {
         List<String> matchedRuleNames = new ArrayList<>();
         matchedRuleNames.add("v1-canary-header");
 
-        List<ServiceInstance> candidates = doFindCandidateInstances(matchedRuleNames);
+        List<ServiceInstance> candidates = doOnlyFindCandidateInstances(matchedRuleNames);
         System.out.println(candidates);
 
         assert candidates.size() == 1;
@@ -53,7 +54,7 @@ public class CannaryLoadBalancerRuleTests {
         List<String> matchedRuleNames = new ArrayList<>();
         matchedRuleNames.add("v1-canary-query");
 
-        List<ServiceInstance> candidates = doFindCandidateInstances(matchedRuleNames);
+        List<ServiceInstance> candidates = doOnlyFindCandidateInstances(matchedRuleNames);
         System.out.println(candidates);
 
         assert candidates.size() == 1;
@@ -63,20 +64,21 @@ public class CannaryLoadBalancerRuleTests {
     public void testFailNoMatchedWithFindCandidateInstances() {
         List<String> matchedRuleNames = new ArrayList<>();
 
-        List<ServiceInstance> candidates = doFindCandidateInstances(matchedRuleNames);
+        List<ServiceInstance> candidates = doOnlyFindCandidateInstances(matchedRuleNames);
 
         assert candidates.size() == 0;
     }
 
-    private List<ServiceInstance> doFindCandidateInstances(List<String> matchedRuleNames) {
+    private List<ServiceInstance> doOnlyFindCandidateInstances(List<String> matchedRuleNames) {
         LoadBalancerProperties config = new LoadBalancerProperties();
         config.setFallbackAllToCandidates(true);
         config.setCanaryDiscoveryServiceLabelPrefix("Iscg-Canary-Label");
 
         AbstractCanaryLoadBalancerRule rule = new AbstractCanaryLoadBalancerRule(config, new SimpleDiscoveryClient(null)) {
             @Override
-            protected ServiceInstance doChooseServiceInstance(
-                    List<ServiceInstance> availableInstances,
+            protected ServiceInstance doChooseInstance(
+                    LoadBalancerStats stats,
+                    String serviceId,
                     List<ServiceInstance> candidateInstances) {
                 return null; // Ignore
             }

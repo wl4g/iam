@@ -144,7 +144,9 @@ public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFi
     private Response<ServiceInstance> choose(ServerWebExchange exchange) {
         URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
         String serviceId = uri.getHost();
-        ServiceInstance chosen = ruleAdapter.forOperator(CanaryLoadBalancerKind.R).choose(serviceId, exchange.getRequest());
+        // TODO use dynamic LB type
+        ServiceInstance chosen = ruleAdapter.forOperator(CanaryLoadBalancerKind.R).choose(loadBalancerStats, serviceId,
+                exchange.getRequest());
         if (isNull(chosen)) {
             return new EmptyResponse();
         }

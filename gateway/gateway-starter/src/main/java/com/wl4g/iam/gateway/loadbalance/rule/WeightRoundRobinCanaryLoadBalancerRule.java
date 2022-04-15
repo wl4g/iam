@@ -1,25 +1,22 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
 /**
- * Weight Round-Robin Grayscale Load Balancer rule based on random.
+ * Grayscale load balancer rule for weight-based round-Robin.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-03 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
- * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class WeightRoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
-
-    private final AtomicInteger position = new AtomicInteger(0);
+public class WeightRoundRobinCanaryLoadBalancerRule extends RoundRobinCanaryLoadBalancerRule {
 
     public WeightRoundRobinCanaryLoadBalancerRule(LoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
         super(loadBalancerConfig, discoveryClient);
@@ -31,14 +28,14 @@ public class WeightRoundRobinCanaryLoadBalancerRule extends AbstractCanaryLoadBa
     }
 
     @Override
-    protected ServiceInstance doChooseServiceInstance(
-            List<ServiceInstance> availableInstances,
+    protected ServiceInstance doChooseInstance(
+            LoadBalancerStats stats,
+            String serviceId,
             List<ServiceInstance> candidateInstances) {
 
         // TODO
-        int pos = Math.abs(position.incrementAndGet());
 
-        return candidateInstances.get(pos % candidateInstances.size());
+        return super.doChooseInstance(stats, serviceId, candidateInstances);
     }
 
 }

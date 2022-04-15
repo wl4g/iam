@@ -20,7 +20,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.joining;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -43,6 +43,7 @@ import com.wl4g.infra.core.task.ApplicationTaskRunner;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
 import reactor.netty.http.client.HttpClient;
@@ -57,7 +58,7 @@ import reactor.netty.http.client.HttpClient;
 @Slf4j
 public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
 
-    private final Map<String, Map<String, ServiceInstanceInfo>> globalServices = new ConcurrentHashMap<>(32);
+    private final Map<String, Map<String, ServiceInstanceStatus>> globalServices = new ConcurrentHashMap<>(32);
     private final LoadBalancerProperties loadBalancerConfig;
 
     public GlobalLoadBalancerStats(LoadBalancerProperties loadBalancerConfig) {
@@ -71,23 +72,26 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
     }
 
     @Override
-    public void register(ServiceInstanceInfo instance) {
-        getOrCreateInstance(instance.getInstance().getServiceId(), instance.getInstance().getInstanceId());
+    public void register(List<ServiceInstanceStatus> instances) {
+        if (nonNull(instances)) {
+            instances.stream().forEach(i -> getOrCreateInstance(i.getInstance().getServiceId(), i.getInstance().getInstanceId()));
+        }
     }
 
     @Override
     public int connect(ServiceInstance instance, int ammount) {
-        ServiceInstanceInfo info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
+        ServiceInstanceStatus info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
         return info.getStats().getConnections().addAndGet(ammount);
     }
 
     @Override
     public int disconnect(ServiceInstance instance, int ammount) {
-        ServiceInstanceInfo info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
+        ServiceInstanceStatus info = getOrCreateInstance(instance.getServiceId(), instance.getInstanceId());
         return info.getStats().getConnections().addAndGet(-ammount);
     }
 
-    public List<ServiceInstanceInfo> getReachableInstances(String serviceId) {
+    @Override
+    public List<ServiceInstanceStatus> getReachableInstances(String serviceId) {
         return getOrCreateService(serviceId).values()
                 .stream()
                 .map(i -> calculateStatus(i))
@@ -95,11 +99,12 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
                 .collect(toList());
     }
 
-    public List<ServiceInstanceInfo> getAllInstances(String serviceId) {
+    @Override
+    public List<ServiceInstanceStatus> getAllInstances(String serviceId) {
         return getOrCreateService(serviceId).values().stream().collect(toList());
     }
 
-    private synchronized ServiceInstanceInfo calculateStatus(ServiceInstanceInfo instance) {
+    private synchronized ServiceInstanceStatus calculateStatus(ServiceInstanceStatus instance) {
         // Calculate health statistics status.
         Stats stats = instance.getStats();
         Queue<PingRecord> queue = stats.getPingRecords();
@@ -127,22 +132,22 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
         return instance;
     }
 
-    private ServiceInstanceInfo getOrCreateInstance(String serviceId, String instanceId) {
-        Map<String, ServiceInstanceInfo> service = getOrCreateService(serviceId);
-        ServiceInstanceInfo info = service.get(instanceId);
+    private ServiceInstanceStatus getOrCreateInstance(String serviceId, String instanceId) {
+        Map<String, ServiceInstanceStatus> service = getOrCreateService(serviceId);
+        ServiceInstanceStatus info = service.get(instanceId);
         if (isNull(info)) {
             synchronized (instanceId) {
                 info = service.get(instanceId);
                 if (isNull(info)) {
-                    service.put(instanceId, info = new ServiceInstanceInfo());
+                    service.put(instanceId, info = new ServiceInstanceStatus());
                 }
             }
         }
         return info;
     }
 
-    private Map<String, ServiceInstanceInfo> getOrCreateService(String serviceId) {
-        Map<String, ServiceInstanceInfo> instances = globalServices.get(serviceId);
+    private Map<String, ServiceInstanceStatus> getOrCreateService(String serviceId) {
+        Map<String, ServiceInstanceStatus> instances = globalServices.get(serviceId);
         if (isNull(instances)) {
             synchronized (serviceId) {
                 instances = globalServices.get(serviceId);
@@ -167,7 +172,7 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
         });
     }
 
-    private void doPing(ServiceInstanceInfo instance) {
+    private Disposable doPing(ServiceInstanceStatus instance) {
         /**
          * Notice: A timeout must be set when pinging an instance group to
          * prevent the group from being blocked for too long. Problems with
@@ -175,20 +180,15 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
          * {@link com.netflix.loadbalancer.BaseLoadBalancer.SerialPingStrategy}
          * and {@link com.netflix.loadbalancer.PingUrl#isAlive}
          */
-        Duration responseTimeout = Duration.ofMillis(30_000);
-        HttpClient.create()
+        Duration timeout = Duration.ofMillis(loadBalancerConfig.getStats().getTimeoutMs());
+        return HttpClient.create()
                 .wiretap(true)
                 .get()
                 .uri(buildUri(instance))
                 .responseContent()
+                .aggregate()
                 .asString()
-                .collectList()
-                .doOnSuccess(body -> {
-                    String responseBody = body.stream().collect(joining());
-                    save(instance, new PingRecord(currentTimeMillis(), false, null, responseBody));
-                })
-                .timeout(responseTimeout,
-                        Mono.fromRunnable(() -> save(instance, new PingRecord(currentTimeMillis(), true, null, null))))
+                .timeout(timeout, Mono.fromRunnable(() -> save(instance, new PingRecord(currentTimeMillis(), true, null, null))))
                 .doFinally(signal -> {
                     if (signal != SignalType.ON_COMPLETE) {
                         // Failed to request ping.
@@ -197,16 +197,22 @@ public class GlobalLoadBalancerStats extends ApplicationTaskRunner<RunnerPropert
                         }
                     }
                 })
-                // TODO use non-blocking ping request.
-                .block(responseTimeout);
+                // main thread non-blocking.
+                .subscribe(response -> {
+                    save(instance, new PingRecord(currentTimeMillis(), false, null, response));
+                }, ex -> {
+                    save(instance, new PingRecord(currentTimeMillis(), false, null, null));
+                }, () -> {
+                    log.debug("Ping completion");
+                });
     }
 
-    private URI buildUri(ServiceInstanceInfo instance) {
+    private URI buildUri(ServiceInstanceStatus instance) {
         return URI.create(instance.getInstance().getScheme() + "://" + instance.getInstance().getHost() + ":"
                 + instance.getInstance().getPort() + instance.getInstance());
     }
 
-    private void save(ServiceInstanceInfo instance, PingRecord pingRecord) {
+    private void save(ServiceInstanceStatus instance, PingRecord pingRecord) {
         Queue<PingRecord> queue = instance.getStats().getPingRecords();
         if (queue.size() > 16) {
             queue.poll();

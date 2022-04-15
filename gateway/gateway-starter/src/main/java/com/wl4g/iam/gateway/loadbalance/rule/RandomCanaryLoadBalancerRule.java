@@ -1,5 +1,7 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 import java.util.List;
@@ -8,6 +10,8 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 /**
  * Random Grayscale Load Balancer rule based on random.
@@ -28,10 +32,52 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
     }
 
     @Override
-    protected ServiceInstance doChooseServiceInstance(
-            List<ServiceInstance> availableInstances,
+    protected ServiceInstance doChooseInstance(
+            LoadBalancerStats stats,
+            String serviceId,
             List<ServiceInstance> candidateInstances) {
-        return candidateInstances.get(current().nextInt(0, candidateInstances.size()));
+
+        // return
+        // candidateInstances.get(current().nextInt(0,candidateInstances.size()));
+
+        int count = 0;
+        ServiceInstanceStatus chosenInstance = null;
+        while (chosenInstance == null && count++ < 10) {
+            List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
+            List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
+            List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
+
+            int allCount = allInstances.size();
+            int avaCount = availableInstances.size();
+
+            if ((avaCount == 0) || (allCount == 0)) {
+                log.warn("No up servers available from load balancer: {}", stats);
+                return null;
+            }
+
+            int nextInstanceIndex = current().nextInt(0, availableInstances.size());
+            chosenInstance = availableInstances.get(nextInstanceIndex);
+
+            if (isNull(chosenInstance)) {
+                // Give up the opportunity for short-term CPU to give other
+                // threads execution, just like the sleep() method does not
+                // release the lock.
+                Thread.yield();
+                continue;
+            }
+
+            if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
+                return chosenInstance.getInstance();
+            }
+
+            // Next.
+            chosenInstance = null;
+        }
+
+        if (count >= 10) {
+            log.warn("No available alive servers after {} tries from load balancer: {}", count, stats);
+        }
+        return null;
     }
 
 }

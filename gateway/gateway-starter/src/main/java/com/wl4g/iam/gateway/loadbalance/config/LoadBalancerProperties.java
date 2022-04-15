@@ -74,16 +74,21 @@ public class LoadBalancerProperties extends org.springframework.cloud.gateway.co
     public static class StatsProperties {
 
         /**
-         * Health checking on initial delay seconds.
+         * Ping request on initial delay seconds.
          */
         private long initialDelaySeconds = 3;
 
         /**
-         * Health checking on delay seconds. </br>
+         * Ping request on delay seconds. </br>
          * default refer to:
          * {@link com.netflix.loadbalancer.BaseLoadBalancer#pingIntervalSeconds}
          */
         private long delaySeconds = 10;
+
+        /**
+         * Ping request timeout mills.
+         */
+        private long timeoutMs = 10_000;
 
         /**
          * Expect ping response body.

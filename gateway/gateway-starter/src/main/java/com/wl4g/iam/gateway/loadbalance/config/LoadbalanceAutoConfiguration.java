@@ -28,6 +28,8 @@ import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.RandomCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.RoundRobinCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastConnCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastTimeCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRandomCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRoundRobinCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.GlobalLoadBalancerStats;
@@ -85,6 +87,20 @@ public class LoadbalanceAutoConfiguration {
             com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
             DiscoveryClient discoveryClient) {
         return new WeightRoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightLeastConnCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new WeightLeastConnCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightLeastTimeCanaryLoadBalancerRule(
+            com.wl4g.iam.gateway.loadbalance.config.LoadBalancerProperties loadbalancerConfig,
+            DiscoveryClient discoveryClient) {
+        return new WeightLeastTimeCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
     }
 
     @Bean
