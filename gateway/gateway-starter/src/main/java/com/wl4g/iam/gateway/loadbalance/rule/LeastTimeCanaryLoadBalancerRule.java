@@ -47,7 +47,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
 
         int count = 0;
         ServiceInstanceStatus chosenInstance = null;
-        while (isNull(chosenInstance) && count++ < 10) {
+        while (isNull(chosenInstance) && count++ < loadBalancerConfig.getMaxChooseTries()) {
             List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
             List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
             List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
@@ -78,7 +78,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
         }
 
         if (count >= loadBalancerConfig.getMaxChooseTries()) {
-            log.warn("No available alive servers after {} tries from load balancer: {}", count, stats);
+            log.warn("No available alive servers after {} tries from load balancer stats: {}", count, stats);
         }
         return null;
     }
