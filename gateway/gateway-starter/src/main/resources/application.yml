@@ -202,8 +202,7 @@ spring:
           ## Note: only expectBody takes effect when it is set at the same time as expectBody.
           expect-status: 200 ## Default by 200
           #expect-body: ## Default by ''
-      trace:
-        trace-id-request-header: X-Iscg-Request-Id ## Default by 'X-Iam-Gateway-Trace-Id'
+      trace: {}
       logging:
         ## If this switch is enabled, then check whether the request header and parameters meet the current conditions for printing flight logs.
         ## If so, print according to the predetermined level, otherwise do not print. If this switch is set to false, printing logs will be

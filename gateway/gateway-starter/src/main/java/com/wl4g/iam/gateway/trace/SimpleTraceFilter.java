@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.trace;
 
+import static com.wl4g.infra.core.constant.CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME;
+
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +47,8 @@ import reactor.core.publisher.Mono;
  */
 public class SimpleTraceFilter implements GlobalFilter, Ordered {
 
+    @SuppressWarnings("unused")
     private @Autowired TraceProperties traceConfig;
-    // private final AtomicLong counter = new AtomicLong(0);
 
     /**
      * @see {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#loadFilters()}
@@ -58,14 +60,11 @@ public class SimpleTraceFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getRequest().mutate().header(traceConfig.getTraceIdRequestHeader(), generateTraceId()).build();
+        exchange.getRequest().mutate().header(TRACE_REQUEST_ID_HEADER_NAME, generateTraceId()).build();
         return chain.filter(exchange);
     }
 
     public String generateTraceId() {
-        // String traceId =
-        // valueOf(counter.incrementAndGet()).concat("@").concat(currentTimeMillis()+"");
-        // return Base58.encodeBase58(traceId.getBytes(UTF_8)).toLowerCase();
         return UUID.randomUUID().toString();
     }
 

@@ -46,6 +46,7 @@ import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -93,7 +94,7 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
         if (verboseLevel <= 0) { // is disabled?
             return chain.filter(exchange);
         }
-        String traceId = headers.getFirst(traceConfig.getTraceIdRequestHeader());
+        String traceId = headers.getFirst(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME);
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
 
