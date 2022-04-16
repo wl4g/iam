@@ -25,9 +25,11 @@
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
 				<exclude>script/**</exclude>
-				<exclude>static/**</exclude>
 			</excludes>
 			<includes>
+				<include>cert.d/**</include>
+				<include>default-webapps/**</include>
+				<include>static/**</include>
 				<include>*.yml</include>
 				<include>*.yaml</include>
 				<include>*.properties</include>

@@ -25,13 +25,16 @@
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
 				<exclude>script/**</exclude>
-				<exclude>static/**</exclude>
 			</excludes>
 			<includes>
-				<include>*.yml</include>
-				<include>*.yaml</include>
-				<include>*.properties</include>
-				<include>*.txt</include>
+				<include>dubbo/**</include>
+				<include>sbf/**</include>
+				<include>scf/**</include>
+				<include>default-webapps/**</include>
+				<include>static/**</include>
+                <include>*.yml</include>
+                <include>*.yaml</include>
+                <include>*.properties</include>
 			</includes>
 		</fileSet>
 		<fileSet>

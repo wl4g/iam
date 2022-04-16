@@ -271,7 +271,11 @@
 				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
 				<filtering>false</filtering>
 				<excludes>
+					<exclude>cert.d/**</exclude>
 					<exclude>script/**</exclude>
+					<exclude>default-webapps/**</exclude>
+					<exclude>static/**</exclude>
+					<exclude>*.*</exclude>
 				</excludes>
 			</resource>
 		</resources>
