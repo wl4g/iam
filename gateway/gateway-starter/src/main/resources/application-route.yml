@@ -101,6 +101,8 @@ spring:
                   factor: 2
                   based-on-previous-value: false
             ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
+            ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             - name: CircuitBreaker
               args:
                 name: defaultCircuitBreaker
@@ -181,6 +183,8 @@ spring:
                   factor: 2
                   based-on-previous-value: false
             ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
+            ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             - name: CircuitBreaker
               args:
                 name: defaultCircuitBreaker

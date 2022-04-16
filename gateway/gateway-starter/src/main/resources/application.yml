@@ -127,7 +127,21 @@ spring:
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
       ratelimit: {}
       route:
-        refresh-delay-ms: 30_000
+        refresh-delay-ms: 30_000 ## Default by 30_000
+      circuitbreaker:
+        failureRateThreshold: 40 ## Default by 50
+        permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
+        slidingWindowSize: 100 ## Default by 100
+        slidingWindowType: COUNT_BASED ## Default by COUNT_BASED, Optional(TIME_BASED|COUNT_BASED)
+        minimumNumberOfCalls: 100 ## Default by 100
+        writableStackTraceEnabled: true ## Default by true
+        automaticTransitionFromOpenToHalfOpenEnabled: false ## Default by false
+        waitIntervalFunctionInOpenState: 60 ## Default by 60s
+        slowCallRateThreshold: 100 ## Default by 100
+        slowCallDurationThreshold: 60 ## Default by 60
+        timeLimiter:
+          timeoutDuration: 3_000 ## Default by 1000ms
+          cancelRunningFuture: true ## Default by true
       loadbalancer:
         enabled: true ## Default by true
         canary-discovery-service-label-prefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
