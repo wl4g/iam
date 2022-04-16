@@ -152,15 +152,19 @@ spring:
             #schema:
             #host:
             #port:
-            #path-pattern:
-            #query:
-            #  symbol:
-            #  key:
-            #  value:
+            #path: ## support ant path pattern.
             header:
               symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Canary
               value: v1
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
           - name: v1-canary-query
             query:
               symbol: EQ
@@ -191,27 +195,34 @@ spring:
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         default-verbose-level: 10
         request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
-        match-expression: '#{$headerLogOpenRule.or($queryLogOpenRule).test($request)}'
+        #match-expression: '#{$defaultHeaderLogOpenRule.or($defaultQueryLogOpenRule).test($request)}'
+        match-expression: '#{$energyOpenApiLogOpenRule.test($request)}'
         match-rule-definitions:
-          - name: headerLogOpenRule
+          - name: defaultHeaderLogOpenRule
             #method:
             #schema:
             #host:
             #port:
-            #path-pattern:
-            #query:
-            #  symbol:
-            #  key:
-            #  value:
+            #path: ## support ant path pattern.
             header:
               symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Log
               value: y
-          - name: queryLogOpenRule
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+          - name: defaultQueryLogOpenRule
             query:
               symbol: EQ
               key: __iscg_log
               value: y
+          - name: energyOpenApiLogOpenRule
+            path: '/openapi/**'
 
   ## Security configuration.
   security:

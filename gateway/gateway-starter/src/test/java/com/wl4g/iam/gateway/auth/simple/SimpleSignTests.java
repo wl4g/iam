@@ -129,6 +129,13 @@ public class SimpleSignTests {
         out.println(format("timestamp=%s", timestamp));
         out.println(format("signature=%s", signature));
         out.println();
+
+        out.println(format(
+                "curl -v 'http://localhost:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s&response_type=json'",
+                appId, nonce, timestamp, signature));
+
+        out.println();
+
         out.println(format(
                 "curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s&response_type=json'",
                 appId, nonce, timestamp, signature));
