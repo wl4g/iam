@@ -3,10 +3,8 @@ package com.wl4g.iam.gateway.loadbalance.rule;
 import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 
 /**
@@ -18,10 +16,6 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
  * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
  */
 public class WeightRoundRobinCanaryLoadBalancerRule extends RoundRobinCanaryLoadBalancerRule {
-
-    public WeightRoundRobinCanaryLoadBalancerRule(CanaryLoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
-        super(loadBalancerConfig, discoveryClient);
-    }
 
     @Override
     public LoadBalancerAlgorithm kind() {

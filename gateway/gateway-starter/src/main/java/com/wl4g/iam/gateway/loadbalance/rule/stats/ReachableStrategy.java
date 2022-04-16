@@ -40,7 +40,7 @@ public interface ReachableStrategy {
     public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
     };
 
-    default ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
+    default ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties config, ServiceInstanceStatus status) {
         // Calculate health statistics status.
         Stats stats = status.getStats();
         ActivePing ping = stats.getActivePings().peekLast();
@@ -51,14 +51,14 @@ public interface ReachableStrategy {
 
         Boolean oldAlive = stats.getAlive();
         // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-        if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
-            if (StringUtils.equals(loadBalancerConfig.getPing().getExpectBody(), ping.getResponseBody())) {
+        if (!isBlank(config.getPing().getExpectBody())) {
+            if (StringUtils.equals(config.getPing().getExpectBody(), ping.getResponseBody())) {
                 stats.setAlive(true);
             } else {
                 stats.setAlive(false);
             }
         } else {
-            if (ping.getStatus().code() == loadBalancerConfig.getPing().getExpectStatus()) {
+            if (ping.getStatus().code() == config.getPing().getExpectStatus()) {
                 stats.setAlive(true);
             } else {
                 stats.setAlive(false);

@@ -60,6 +60,8 @@ import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretLoadStore;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -109,12 +111,15 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     private final AuthingProperties authingConfig;
     private final StringRedisTemplate redisTemplate;
     private final Cache<String, String> secretCacheStore;
+    private final IamGatewayMetricsFacade metricsFacade;
     private final Map<String, RedisBloomFilter<String>> cachedBloomFilters = new ConcurrentHashMap<>(8);
 
-    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate) {
+    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
+            @NotNull IamGatewayMetricsFacade metricsFacade) {
         super(SimpleSignAuthingFilter.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
+        this.metricsFacade = notNullOf(metricsFacade, "redisTemplate");
         this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSimpleSign().getSecretLocalCacheSeconds(), SECONDS)
                 .build();
     }
@@ -181,10 +186,13 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
                 byte[] _sign = doSignature(config, exchange, appId);
                 if (!isEqual(_sign, Hex.decodeHex(sign.toCharArray()))) {
                     log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
+                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, 1);
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
+                metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
                 if (config.isSignReplayVerifyEnabled()) {
                     obtainBloomFilter(exchange, config).bloomAdd(getBloomKey(exchange), sign);
+                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_BLOOM_TOTAL, 1);
                 }
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");

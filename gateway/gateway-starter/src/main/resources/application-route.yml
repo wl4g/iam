@@ -105,7 +105,7 @@ spring:
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             - name: CircuitBreaker
               args:
-                name: defaultCircuitBreaker
+                name: energy-openapi-service-circuitbreaker
                 fallback-uri: forward:/_fallback
                 statusCodes:
                   - 500
@@ -187,7 +187,7 @@ spring:
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             - name: CircuitBreaker
               args:
-                name: defaultCircuitBreaker
+                name: alimarket-openapi-service-circuitbreaker
                 fallback-uri: forward:/_fallback
                 statusCodes:
                   - 500

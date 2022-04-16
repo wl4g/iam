@@ -6,13 +6,12 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 
 /**
  * Grayscale load balancer rule for based destination service hashing. </br>
@@ -29,17 +28,13 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInst
  */
 public class DestinationHashCanaryLoadBalancerRule extends RoundRobinCanaryLoadBalancerRule {
 
-    public DestinationHashCanaryLoadBalancerRule(CanaryLoadBalancerProperties loadBalancerConfig, DiscoveryClient discoveryClient) {
-        super(loadBalancerConfig, discoveryClient);
-    }
-
     @Override
     public LoadBalancerAlgorithm kind() {
         return LoadBalancerAlgorithm.DH;
     }
 
     @Override
-    protected ServiceInstance doChooseInstance( 
+    protected ServiceInstance doChooseInstance(
             ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
@@ -47,7 +42,7 @@ public class DestinationHashCanaryLoadBalancerRule extends RoundRobinCanaryLoadB
 
         int count = 0;
         ServiceInstanceStatus chosenInstance = null;
-        while (isNull(chosenInstance) && count++ < loadBalancerConfig.getMaxChooseTries()) {
+        while (isNull(chosenInstance) && count++ < getLoadBalancerConfig().getMaxChooseTries()) {
             List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
             List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
             List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
@@ -91,7 +86,8 @@ public class DestinationHashCanaryLoadBalancerRule extends RoundRobinCanaryLoadB
             chosenInstance = null;
         }
 
-        if (count >= loadBalancerConfig.getMaxChooseTries()) {
+        if (count >= getLoadBalancerConfig().getMaxChooseTries()) {
+            addCounterMetrics(exchange, MetricsName.CANARY_LB_CHOOSE_MAX_TRIES_FAIL_TOTAL, serviceId);
             log.warn("No available alive servers after {} tries from load balancer stats: {}", count, stats);
         }
         return null;

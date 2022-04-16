@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.loadbalance;
 
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
@@ -26,6 +25,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.a
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.EmptyResponse;
@@ -38,7 +38,6 @@ import org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -74,20 +73,13 @@ import reactor.core.publisher.SignalType;
 public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory<CanaryLoadBalancerClientFilter.Config> {
     private final SmartLogger log = getLogger(getClass());
 
-    private final CanaryLoadBalancerProperties loadBalancerConfig;
-    private final GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
-    private final LoadBalancerCache loadBalancerCache;
-    private final ReachableStrategy reachableStrategy;
+    private @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
+    private @Autowired GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
+    private @Autowired LoadBalancerCache loadBalancerCache;
+    private @Autowired ReachableStrategy reachableStrategy;
 
-    public CanaryLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory,
-            CanaryLoadBalancerProperties loadBalancerConfig,
-            GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
-            LoadBalancerCache loadBalancerCache, ReachableStrategy reachableStrategy) {
+    public CanaryLoadBalancerClientFilter() {
         super(CanaryLoadBalancerClientFilter.Config.class);
-        this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
-        this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
-        this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
-        this.reachableStrategy = notNullOf(reachableStrategy, "reachableStrategy");
     }
 
     @Override

@@ -21,14 +21,16 @@ import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter;
 import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.DestinationHashCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.LeastConnCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.LeastTimeCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.RandomCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.RoundRobinCanaryLoadBalancerRule;
+import com.wl4g.iam.gateway.loadbalance.rule.SourceHashCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastConnCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightLeastTimeCanaryLoadBalancerRule;
 import com.wl4g.iam.gateway.loadbalance.rule.WeightRandomCanaryLoadBalancerRule;
@@ -37,6 +39,7 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.InMemoryLoadBalancerCache;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerCache;
 import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 /**
  * {@link CanaryLoadbalanceAutoConfiguration}
@@ -69,46 +72,59 @@ public class CanaryLoadbalanceAutoConfiguration {
 
     // Load-balancer rules.
 
-    @Bean
-    public CanaryLoadBalancerRule randomCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new RandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    @Bean(BEAN_CANARY_LB_REQUEST_MATCHER)
+    public SpelRequestMatcher canaryLoadBalancerSpelRequestMatcher(CanaryLoadBalancerProperties config) {
+        return new SpelRequestMatcher(config.getMatchRuleDefinitions());
     }
 
     @Bean
-    public CanaryLoadBalancerRule roundRobinCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new RoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerRule destinationHashCanaryLoadBalancerRule() {
+        return new DestinationHashCanaryLoadBalancerRule();
     }
 
     @Bean
-    public CanaryLoadBalancerRule weightRandomCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new WeightRandomCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerRule leastConnCanaryLoadBalancerRule() {
+        return new LeastConnCanaryLoadBalancerRule();
     }
 
     @Bean
-    public CanaryLoadBalancerRule weightRoundRobinCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new WeightRoundRobinCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerRule leastTimeCanaryLoadBalancerRule() {
+        return new LeastTimeCanaryLoadBalancerRule();
     }
 
     @Bean
-    public CanaryLoadBalancerRule weightLeastConnCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new WeightLeastConnCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerRule randomCanaryLoadBalancerRule() {
+        return new RandomCanaryLoadBalancerRule();
     }
 
     @Bean
-    public CanaryLoadBalancerRule weightLeastTimeCanaryLoadBalancerRule(
-            CanaryLoadBalancerProperties loadbalancerConfig,
-            DiscoveryClient discoveryClient) {
-        return new WeightLeastTimeCanaryLoadBalancerRule(loadbalancerConfig, discoveryClient);
+    public CanaryLoadBalancerRule roundRobinCanaryLoadBalancerRule() {
+        return new RoundRobinCanaryLoadBalancerRule();
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule sourceHashCanaryLoadBalancerRule() {
+        return new SourceHashCanaryLoadBalancerRule();
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightRandomCanaryLoadBalancerRule() {
+        return new WeightRandomCanaryLoadBalancerRule();
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightRoundRobinCanaryLoadBalancerRule() {
+        return new WeightRoundRobinCanaryLoadBalancerRule();
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightLeastConnCanaryLoadBalancerRule() {
+        return new WeightLeastConnCanaryLoadBalancerRule();
+    }
+
+    @Bean
+    public CanaryLoadBalancerRule weightLeastTimeCanaryLoadBalancerRule() {
+        return new WeightLeastTimeCanaryLoadBalancerRule();
     }
 
     @Bean
@@ -121,13 +137,10 @@ public class CanaryLoadbalanceAutoConfiguration {
     // Load-balancer filters.
 
     @Bean
-    public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter(
-            LoadBalancerClientFactory clientFactory,
-            CanaryLoadBalancerProperties properties,
-            GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
-            LoadBalancerCache loadBalancerCache,
-            ReachableStrategy reachableStrategy) {
-        return new CanaryLoadBalancerClientFilter(clientFactory, properties, ruleAdapter, loadBalancerCache, reachableStrategy);
+    public CanaryLoadBalancerClientFilter canaryLoadBalancerClientFilter() {
+        return new CanaryLoadBalancerClientFilter();
     }
+
+    public static final String BEAN_CANARY_LB_REQUEST_MATCHER = "canaryLoadBalancerSpelRequestMatcher";
 
 }

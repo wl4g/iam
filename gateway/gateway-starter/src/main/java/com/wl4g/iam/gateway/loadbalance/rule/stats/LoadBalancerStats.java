@@ -94,8 +94,8 @@ public interface LoadBalancerStats {
         private double minCostTime;
         private double avgCostTime;
 
-        public static boolean isAlive(CanaryLoadBalancerProperties loadBalancerConfig, Stats stats) {
-            return isNull(stats.getAlive()) ? loadBalancerConfig.isNullPingToReachable() : stats.getAlive();
+        public static boolean isAlive(CanaryLoadBalancerProperties config, Stats stats) {
+            return isNull(stats.getAlive()) ? config.isNullPingToReachable() : stats.getAlive();
         }
     }
 
