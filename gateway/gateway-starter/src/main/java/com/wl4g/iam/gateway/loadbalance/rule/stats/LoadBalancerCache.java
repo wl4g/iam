@@ -30,8 +30,12 @@ public interface LoadBalancerCache {
 
     Map<String, Map<String, ServiceInstanceStatus>> getAllServices();
 
-    Map<String, ServiceInstanceStatus> getService(String serviceId);
+    Map<String, ServiceInstanceStatus> getService(String serviceId, boolean orCreate);
 
     void putService(String serviceId, Map<String, ServiceInstanceStatus> service);
+
+    ServiceInstanceStatus getServiceInstance(String serviceId, String instanceId, boolean orCreate);
+
+    void putServiceInstance(ServiceInstanceStatus instance);
 
 }

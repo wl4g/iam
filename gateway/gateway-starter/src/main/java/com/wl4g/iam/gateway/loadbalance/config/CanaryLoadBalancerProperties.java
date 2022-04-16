@@ -78,6 +78,12 @@ public class CanaryLoadBalancerProperties {
     private int maxChooseTries = 10;
 
     /**
+     * Whether to consider these instance reachable by default when there is not
+     * enough ping data (such as just started up).
+     */
+    private boolean nullPingToReachable = true;
+
+    /**
      * Health checking properties.
      */
     private PingProperties ping = new PingProperties();

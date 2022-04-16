@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import static java.util.Objects.isNull;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,13 +39,45 @@ public class InMemoryLoadBalancerCache implements LoadBalancerCache {
     }
 
     @Override
-    public Map<String, ServiceInstanceStatus> getService(String serviceId) {
-        return registerServices.get(serviceId);
+    public Map<String, ServiceInstanceStatus> getService(String serviceId, boolean orCreate) {
+        // Gets or create
+        Map<String, ServiceInstanceStatus> instances = registerServices.get(serviceId);
+        if (orCreate && isNull(instances)) {
+            synchronized (serviceId) {
+                instances = registerServices.get(serviceId);
+                if (isNull(instances)) {
+                    registerServices.put(serviceId, instances = new ConcurrentHashMap<>(16));
+                }
+            }
+        }
+        return instances;
     }
 
     @Override
     public void putService(String serviceId, Map<String, ServiceInstanceStatus> instances) {
         registerServices.put(serviceId, instances);
+    }
+
+    @Override
+    public ServiceInstanceStatus getServiceInstance(String serviceId, String instanceId, boolean orCreate) {
+        // Gets or create
+        Map<String, ServiceInstanceStatus> service = getService(serviceId, orCreate);
+        ServiceInstanceStatus status = service.get(instanceId);
+        if (orCreate && isNull(status)) {
+            synchronized (instanceId) {
+                status = service.get(instanceId);
+                if (isNull(status)) {
+                    service.put(instanceId, status = new ServiceInstanceStatus());
+                }
+            }
+        }
+        return status;
+    }
+
+    @Override
+    public void putServiceInstance(ServiceInstanceStatus instance) {
+        Map<String, ServiceInstanceStatus> service = getService(instance.getInstance().getServiceId(), true);
+        service.put(instance.getInstance().getInstanceId(), instance);
     }
 
 }

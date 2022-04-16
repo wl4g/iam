@@ -38,42 +38,40 @@ public interface ReachableStrategy {
     public SmartLogger log = getLogger(ReachableStrategy.class);
 
     public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
-        @Override
-        public ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
-            // Calculate health statistics status.
-            Stats stats = status.getStats();
-            ActivePing ping = stats.getActivePings().peekLast();
-            if (ping.isTimeout()) {
-                stats.setAlive(false);
-                return status;
-            }
-
-            Boolean oldAlive = stats.getAlive();
-            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-            if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
-                if (StringUtils.equals(loadBalancerConfig.getPing().getExpectBody(), ping.getResponseBody())) {
-                    stats.setAlive(true);
-                } else {
-                    stats.setAlive(false);
-                }
-            } else {
-                if (ping.getStatus().code() == loadBalancerConfig.getPing().getExpectStatus()) {
-                    stats.setAlive(true);
-                } else {
-                    stats.setAlive(false);
-                }
-            }
-
-            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
-            if (oldAlive != stats.getAlive()) {
-                log.warn("LoadBalancer server [{}/{}] status changed to {}", status.getInstance().getServiceId(),
-                        status.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
-            }
-
-            return status;
-        }
     };
 
-    ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status);
+    default ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties loadBalancerConfig, ServiceInstanceStatus status) {
+        // Calculate health statistics status.
+        Stats stats = status.getStats();
+        ActivePing ping = stats.getActivePings().peekLast();
+        if (ping.isTimeout()) {
+            stats.setAlive(false);
+            return status;
+        }
+
+        Boolean oldAlive = stats.getAlive();
+        // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
+        if (!isBlank(loadBalancerConfig.getPing().getExpectBody())) {
+            if (StringUtils.equals(loadBalancerConfig.getPing().getExpectBody(), ping.getResponseBody())) {
+                stats.setAlive(true);
+            } else {
+                stats.setAlive(false);
+            }
+        } else {
+            if (ping.getStatus().code() == loadBalancerConfig.getPing().getExpectStatus()) {
+                stats.setAlive(true);
+            } else {
+                stats.setAlive(false);
+            }
+        }
+
+        // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
+        if (oldAlive != stats.getAlive()) {
+            log.warn("LoadBalancer server [{}/{}] status changed to {}", status.getInstance().getServiceId(),
+                    status.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
+        }
+
+        return status;
+    }
 
 }

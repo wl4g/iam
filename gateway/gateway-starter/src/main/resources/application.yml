@@ -169,7 +169,8 @@ spring:
         ## When no canary condition is matched, whether all instances of the service are candidates.
         fallback-all-to-candidates: true
         load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-        max-choose-tries: 10
+        max-choose-tries: 10 ## Default by 10
+        null-ping-to-reachable: true ## Default by true
         ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
           debug: false ## Default by false
           initial-ms: 3_000 ## Default by 3_000ms

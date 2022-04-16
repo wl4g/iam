@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.loadbalance;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
@@ -32,8 +33,8 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
-import org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -70,7 +71,7 @@ import reactor.core.publisher.SignalType;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
-public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory<CanaryLoadBalancerClientFilter.Config> {
+public class CanaryLoadBalancerClientFilter extends ReactiveLoadBalancerClientFilter /*extends AbstractGatewayFilterFactory<CanaryLoadBalancerClientFilter.Config>*/ {
     private final SmartLogger log = getLogger(getClass());
 
     private final CanaryLoadBalancerProperties loadBalancerConfig;
@@ -82,32 +83,33 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
             CanaryLoadBalancerProperties loadBalancerConfig,
             GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter,
             LoadBalancerCache loadBalancerCache, ReachableStrategy reachableStrategy) {
-        super(CanaryLoadBalancerClientFilter.Config.class);
+//        super(CanaryLoadBalancerClientFilter.Config.class);
+        super(null, null);
         this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
         this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
         this.loadBalancerCache = notNullOf(loadBalancerCache, "loadBalancerCache");
         this.reachableStrategy = notNullOf(reachableStrategy, "reachableStrategy");
     }
-
-    @Override
-    public String name() {
-        return NAME_CANARY_LOADBALANCER_FILTER;
-    }
-
-    @Override
-    public GatewayFilter apply(Config config) {
-        applyGlobalToConfig(config);
-        return new CanaryLoadBalancerClientGatewayFilter(config,
-                new DefaultLoadBalancerStats(config, loadBalancerCache, reachableStrategy));
-    }
-
-    private void applyGlobalToConfig(Config config) {
-        try {
-            BeanCopierUtils.deepCopyWithDefault(config, loadBalancerConfig);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+//
+//    @Override
+//    public String name() {
+//        return NAME_CANARY_LOADBALANCER_FILTER;
+//    }
+//
+//    @Override
+//    public GatewayFilter apply(Config config) {
+//        applyGlobalToConfig(config);
+//        return new CanaryLoadBalancerClientGatewayFilter(config,
+//                new DefaultLoadBalancerStats(config, loadBalancerCache, reachableStrategy));
+//    }
+//
+//    private void applyGlobalToConfig(Config config) {
+//        try {
+//            BeanCopierUtils.deepCopyWithDefault(config, loadBalancerConfig);
+//        } catch (IllegalArgumentException | IllegalAccessException e) {
+//            throw new IllegalStateException(e);
+//        }
+//    }
 
     @Getter
     @Setter
@@ -116,36 +118,29 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
     }
 
     @AllArgsConstructor
-    class CanaryLoadBalancerClientGatewayFilter implements GatewayFilter, Ordered {
+    public static class CanaryLoadBalancerClientGatewayFilter implements GlobalFilter, Ordered {
+        private final SmartLogger log = getLogger(getClass());
         private final Config config;
-        private final LoadBalancerStats loadBalancerStats;
+//        private final LoadBalancerStats loadBalancerStats;
+        private final GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
 
         /**
-         * Note: The Load balancing filter order must be before
-         * {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER}
-         * {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#filter#L116}
-         * but after
-         * {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter}
-         * 
          * Note: The retry filter should be executed before the load balancing
          * filter, so that other back-end servers can be selected when retrying.
-         * 
-         * The correct and complete execution chain is as follows:
+         * see:
          * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#loadFilters()}
          * and
          * {@link org.springframework.cloud.gateway.handler.FilteringWebHandler#handle(ServerWebExchange)}
          * and
          * {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#order}
          * and
-         * {@link com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter}
-         * and
-         * {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#filter}
-         * and
          * {@link org.springframework.cloud.gateway.filter.factory.RetryGatewayFilterFactory}
          */
         @Override
         public int getOrder() {
-            return RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 10;
+            // Load balancing filters should be executed after other filters.
+            // see:org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER
+            return 10150;
         }
 
         @Override
@@ -160,10 +155,9 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
 
             // Ignore the URi prefix If it does not start with LB, go to the
             // next filter.
-            // if (isNull(requestUri) || (!equalsAnyIgnoreCase("LB",
-            // requestUri.getScheme(), schemePrefix))) {
-            // return chain.filter(exchange);
-            // }
+//            if (isNull(requestUri) || (!equalsAnyIgnoreCase("LB", requestUri.getScheme(), schemePrefix))) {
+//                return chain.filter(exchange);
+//            }
 
             // According to the original URL of the gateway. Replace the URI of
             // http://IP:PORT/path
@@ -191,10 +185,10 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
             exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
 
             return chain.filter(exchange).doOnRequest(v -> {
-                loadBalancerStats.connect(exchange, instance);
+//                loadBalancerStats.connect(exchange, instance);
             }).doFinally(signal -> {
                 if (signal == SignalType.ON_COMPLETE || signal == SignalType.CANCEL || signal == SignalType.ON_ERROR) {
-                    loadBalancerStats.disconnect(exchange, instance);
+//                    loadBalancerStats.disconnect(exchange, instance);
                 }
             });
         }
@@ -203,7 +197,7 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
             URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
             String serviceId = uri.getHost();
             ServiceInstance chosen = ruleAdapter.forOperator(config.getLoadBalancerAlgorithm()).choose(exchange,
-                    loadBalancerStats, serviceId);
+                    /*loadBalancerStats*/null, serviceId);
             if (isNull(chosen)) {
                 return new EmptyResponse();
             }

@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import static java.util.Objects.isNull;
+
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,6 +25,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Queues;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.AllArgsConstructor;
@@ -41,7 +44,7 @@ import lombok.With;
  */
 public interface LoadBalancerStats {
 
-    void register(List<ServiceInstanceStatus> instances);
+    void register(List<ServiceInstance> instances);
 
     int connect(ServerWebExchange exchange, ServiceInstance instance);
 
@@ -78,6 +81,10 @@ public interface LoadBalancerStats {
         private double maxCostTime;
         private double minCostTime;
         private double avgCostTime;
+
+        public static boolean isAlive(CanaryLoadBalancerProperties loadBalancerConfig, Stats stats) {
+            return isNull(stats.getAlive()) ? loadBalancerConfig.isNullPingToReachable() : stats.getAlive();
+        }
     }
 
     /**

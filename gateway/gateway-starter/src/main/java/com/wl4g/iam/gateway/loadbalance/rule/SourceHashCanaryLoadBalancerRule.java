@@ -74,7 +74,7 @@ public class SourceHashCanaryLoadBalancerRule extends AbstractCanaryLoadBalancer
                     continue;
                 }
 
-                if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
+                if (LoadBalancerStats.Stats.isAlive(loadBalancerConfig, chosenInstance.getStats())) {
                     return chosenInstance.getInstance();
                 }
 

@@ -100,9 +100,7 @@ spring:
                 ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
                   timeout-ms: 10_000 ## Default by 10_000ms
                   path: /healthz ## Default by '/healthz'
-                  ## Note: only expectBody takes effect when it is set at the same time as expectBody.
                   expect-status: 200 ## Default by 200
-                  #expect-body: ## Default by ''
         - id: alimarket-openapi-service
           uri: lb://alimarket-openapi-service
           predicates:
@@ -168,13 +166,20 @@ spring:
                   max-backoff: 100ms
                   factor: 2
                   based-on-previous-value: false
-            - name: CircuitBreaker
+            #- name: CircuitBreaker
+            #  args:
+            #    name: defaultCircuitBreaker
+            #    fallback-uri: forward:/fallback
+            #    statusCodes:
+            #      - 500
+            #      - "NOT_FOUND"
+            - name: canaryLoadbalancer
               args:
-                name: defaultCircuitBreaker
-                fallback-uri: forward:/fallback
-                statusCodes:
-                  - 500
-                  - "NOT_FOUND"
+                load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
+                  timeout-ms: 10_000 ## Default by 10_000ms
+                  path: /healthz ## Default by '/healthz'
+                  expect-status: 200 ## Default by 200
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:

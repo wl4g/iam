@@ -1,7 +1,6 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 import java.util.List;
@@ -68,7 +67,7 @@ public class RandomCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule
                 continue;
             }
 
-            if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
+            if (LoadBalancerStats.Stats.isAlive(loadBalancerConfig, chosenInstance.getStats())) {
                 return chosenInstance.getInstance();
             }
 

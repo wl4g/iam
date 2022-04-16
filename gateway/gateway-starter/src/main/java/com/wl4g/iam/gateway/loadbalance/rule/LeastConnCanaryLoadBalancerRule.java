@@ -1,7 +1,6 @@
 package com.wl4g.iam.gateway.loadbalance.rule;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.Comparator;
 import java.util.List;
@@ -68,7 +67,7 @@ public class LeastConnCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
                 continue;
             }
 
-            if (nonNull(chosenInstance.getStats().getAlive()) && chosenInstance.getStats().getAlive()) {
+            if (LoadBalancerStats.Stats.isAlive(loadBalancerConfig, chosenInstance.getStats())) {
                 return chosenInstance.getInstance();
             }
 

@@ -56,7 +56,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
         }
 
         // Register all instances.
-        stats.register(allInstances.stream().map(i -> new ServiceInstanceStatus().withInstance(i)).collect(toList()));
+        stats.register(allInstances);
 
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
