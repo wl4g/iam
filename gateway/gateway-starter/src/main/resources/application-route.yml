@@ -32,6 +32,7 @@ spring:
                 execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
                 root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
                 root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
+                cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Irregular setter method naming?? bug??
         - id: energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:

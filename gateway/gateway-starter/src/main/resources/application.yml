@@ -195,10 +195,9 @@ spring:
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         default-verbose-level: 7
         request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
-        #match-expression: '#{$defaultHeaderLogOpenRule.or($defaultQueryLogOpenRule).test($request)}'
-        match-expression: '#{$energyOpenApiLogOpenRule.test($request)}'
+        match-expression: '#{$defaultHeaderLogRule.or($defaultQueryLogRule).or($energyOpenApiLogRule).test($request)}'
         match-rule-definitions:
-          - name: defaultHeaderLogOpenRule
+          - name: defaultHeaderLogRule
             #method:
             #schema:
             #host:
@@ -216,12 +215,12 @@ spring:
             #  symbol:
             #  key:
             #  value:
-          - name: defaultQueryLogOpenRule
+          - name: defaultQueryLogRule
             query:
               symbol: EQ
               key: __iscg_log
               value: y
-          - name: energyOpenApiLogOpenRule
+          - name: energyOpenApiLogRule
             path: '/openapi/**'
 
   ## Security configuration.
