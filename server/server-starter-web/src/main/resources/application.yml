@@ -19,7 +19,7 @@ spring:
     include: common,util,default
     active: dev
   banner:
-    location: classpath:banner.txt
+    location: classpath:META-INF/banner.txt
 
 # Logging configuration.
 logging:

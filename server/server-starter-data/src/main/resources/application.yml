@@ -19,7 +19,7 @@ spring:
     include: common,util
     active: dev
   banner:
-    location: classpath:banner.txt
+    location: classpath:META-INF/banner.txt
   infra:
     data:
       mybatis:

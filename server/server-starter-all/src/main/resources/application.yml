@@ -19,7 +19,7 @@ spring:
     include: common,util,security
     active: dev
   banner:
-    location: classpath:banner.txt
+    location: classpath:META-INF/banner.txt
   infra:
     rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
 

@@ -16,6 +16,6 @@ spring:
     include: route
     active: dev
   banner:
-      location: classpath:banner.txt
+      location: classpath:META-INF/banner.txt
   freemarker:
     checkTemplateLocation: false
