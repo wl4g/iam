@@ -211,6 +211,6 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
         }
     }
 
-    public static final String NAME_CANARY_LOADBALANCER_FILTER = "canaryLoadbalancer";
+    public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadbalancer";
 
 }

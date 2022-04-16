@@ -94,7 +94,7 @@ spring:
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
-            - name: canaryLoadbalancer
+            - name: CanaryLoadbalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
                 ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
@@ -173,7 +173,7 @@ spring:
             #    statusCodes:
             #      - 500
             #      - "NOT_FOUND"
-            - name: canaryLoadbalancer
+            - name: CanaryLoadbalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
                 ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
