@@ -268,18 +268,8 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-                <!-- When true and will check file encoding, causes the picture file copy to fail. -->
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>dubbo/**</exclude>
-                    <exclude>sbf/**</exclude>
-                    <exclude>scf/**</exclude>
-                    <exclude>cert.d/**</exclude>
-                    <exclude>script/**</exclude>
-                    <exclude>default-webapps/**</exclude>
-                    <exclude>static/**</exclude>
-                    <exclude>*.*</exclude>
-                </excludes>
+				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>

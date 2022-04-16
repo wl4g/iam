@@ -22,6 +22,7 @@ import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.circuitbreaker.DefaultCircuitBreakerCustomizer;
 
 /**
  * {@link CircuitBreakerAutoConfiguration}
@@ -30,6 +31,7 @@ import com.wl4g.iam.common.constant.GatewayIAMConstants;
  * @version 2022-04-16 v3.0.0
  * @since v3.0.0
  * @see https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html#auto-configuration
+ * @see https://resilience4j.readme.io/docs/examples
  */
 public class CustomCircuitBreakerAutoConfiguration {
 
@@ -39,16 +41,24 @@ public class CustomCircuitBreakerAutoConfiguration {
         return new CustomCircuitBreakerProperties();
     }
 
+    @Bean
+    public DefaultCircuitBreakerCustomizer defaultCircuitBreakerCustomizer() {
+        return new DefaultCircuitBreakerCustomizer();
+    }
+
     /**
      * {@link org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory#configureDefault(java.util.function.Function)}
      */
     @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultReactiveResilience4JCircuitBreakerCustomizer(
-            CustomCircuitBreakerProperties config) {
-        return factory -> factory
-                .configureDefault(id -> new Resilience4JConfigBuilder(id).circuitBreakerConfig(config.toCircuitBreakerConfig())
-                        .timeLimiterConfig(config.toTimeLimiterConfig())
-                        .build());
+            CustomCircuitBreakerProperties config,
+            DefaultCircuitBreakerCustomizer customizer) {
+        return factory -> {
+            factory.configureDefault(id -> new Resilience4JConfigBuilder(id).circuitBreakerConfig(config.toCircuitBreakerConfig())
+                    .timeLimiterConfig(config.toTimeLimiterConfig())
+                    .build());
+            factory.addCircuitBreakerCustomizer(customizer, customizer.getClass().getSimpleName());
+        };
     }
 
 }

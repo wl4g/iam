@@ -52,7 +52,7 @@ curl -v \
 --cacert ca.pem \
 --cert client1.pem \
 --key client1-key.pem \
-'https://localhost:18085/alimarket/v1/hello?response_type=json'
+'https://localhost:18085/alimarket/v1/hello?response_type=json' | jq
 ```
 
 ## 3. Admin API
@@ -62,18 +62,18 @@ curl -v \
 - Routes(for example):
 
 ```bash
-curl -v 'http://localhost:18085/actuator/gateway/routes'
+curl -v 'http://localhost:18086/actuator/gateway/routes' | jq
 ```
 
 - Actuator Metrics(for example):
 
 ```bash
-curl -v 'http://localhost:18085/actuator/metrics'
+curl -v 'http://localhost:18086/actuator/metrics' | jq
 ```
 
 - Prometheus Metrics(for example):
 
 ```bash
-curl -v 'http://localhost:18085/actuator/prometheus'
+curl -v 'http://localhost:18086/actuator/prometheus'
 ```
 

@@ -13,14 +13,14 @@
 spring:
   cloud:
     ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
-    ## see:org.springframework.cloud.gateway.config.GatewayProperties
     ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
     ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
       routes:
-        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
+        ## see:org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping#lookupRoute()
         ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
+        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
         - id: default-fallback
           uri: lb://default-fallback-service
           predicates:

@@ -27,15 +27,23 @@
 				<exclude>script/**</exclude>
 			</excludes>
 			<includes>
-				<include>dubbo/**</include>
-				<include>sbf/**</include>
-				<include>scf/**</include>
-				<include>default-webapps/**</include>
-				<include>static/**</include>
+                <include>dubbo/**</include>
+                <include>sbf/**</include>
+                <include>scf/**</include>
+                <include>cert.d/**</include>
+                <include>script/**</include>
+                <include>default-webapps/**</include>
+                <include>static/**</include>
                 <include>*.yml</include>
                 <include>*.yaml</include>
+                <include>*.json</include>
+                <include>*.conf</include>
+                <include>*.tom</include>
+                <include>*.toml</include>
+                <include>*.hcon</include>
+                <include>*.ini</include>
                 <include>*.properties</include>
-			</includes>
+            </includes>
 		</fileSet>
 		<fileSet>
 			<directory>target</directory>
