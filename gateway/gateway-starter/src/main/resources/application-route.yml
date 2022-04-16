@@ -60,6 +60,8 @@ spring:
                 sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 sign-hashing-required-include-params: [appId, timestamp, nonce] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+            ## Limit for request content-length
+            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
@@ -142,6 +144,8 @@ spring:
                 sign-hashing-include-params: ['*'] ## Default by []
                 sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+            ## Limit for request content-length
+            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB

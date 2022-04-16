@@ -32,8 +32,9 @@ spring:
         simple: # for testing
           instances:
             default-fallback-service:
-              - instanceId: n1.default-fallback-service:${server.port}
-                uri: http://127.0.0.1:${server.port}
+              - instanceId: n1.default-fallback-service
+                #uri: https://httpbin.org/
+                uri: http://127.0.0.1:${server.port}/_fallback
                 metadata: {}
             energy-openapi-service:
               - instanceId: n2.v1-energy-openapi-service:28092

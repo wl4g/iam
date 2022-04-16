@@ -88,15 +88,15 @@ public class LoadBalancerStatsTests {
 
     @Test
     public void testSuccessPostRequestBlockTimeout() throws Exception {
-        doTestPostRequestBlockTimeout(5_000);
+        doTestPostRequestBlockTimeout("https://www.httpbin.org/get", 5_000);
     }
 
     @Test
     public void testFailPostRequestBlockTimeout() throws Exception {
-        doTestPostRequestBlockTimeout(1);
+        doTestPostRequestBlockTimeout("https://www.httpbin.org/post", 1);
     }
 
-    private void doTestPostRequestBlockTimeout(long timeout) throws InterruptedException {
+    private void doTestPostRequestBlockTimeout(String uri, long timeout) throws InterruptedException {
         System.out.println("=============== start...");
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -104,7 +104,7 @@ public class LoadBalancerStatsTests {
         Flux<HttpClientResponse> responseFlux = HttpClient.create()
                 .wiretap(false)
                 .post()
-                .uri("http://httpbin.org/")
+                .uri(uri)
                 .send((req, nettyOutbound) -> nettyOutbound.send(Mono.just(Unpooled.wrappedBuffer("Hello".getBytes()))))
                 .responseConnection((res, connection) -> {
                     System.out.println(currentTimeMillis() + " - call response: " + res.status());
@@ -187,17 +187,17 @@ public class LoadBalancerStatsTests {
 
     @Test
     public void testSuccessPostRequestNonBlockTimeout() throws Exception {
-        CountDownLatch successLatch = doTestPostRequestNonBlockTimeout(5000);
+        CountDownLatch successLatch = doTestPostRequestNonBlockTimeout("https://www.httpbin.org/get", 5000);
         Assertions.assertTrue(successLatch.await(5000, TimeUnit.MILLISECONDS), () -> "Latch didn't time out");
     }
 
     @Test
     public void testFailPostRequestNonBlockTimeout() throws Exception {
-        CountDownLatch successLatch = doTestPostRequestNonBlockTimeout(1);
+        CountDownLatch successLatch = doTestPostRequestNonBlockTimeout("https://www.httpbin.org/post", 1);
         Assertions.assertFalse(successLatch.await(1, TimeUnit.MILLISECONDS), () -> "Latch didn't time out");
     }
 
-    private CountDownLatch doTestPostRequestNonBlockTimeout(long timeout) throws InterruptedException {
+    private CountDownLatch doTestPostRequestNonBlockTimeout(String uri, long timeout) throws InterruptedException {
         System.out.println("=============== start...");
         final CountDownLatch successLatch = new CountDownLatch(1);
 
@@ -217,7 +217,7 @@ public class LoadBalancerStatsTests {
         HttpClient.create()
                 .wiretap(false)
                 .post()
-                .uri("https://www.httpbin.org/")
+                .uri(uri)
                 .send(ByteBufFlux.fromString(Mono.just("Hello")))
                 .responseContent()
                 .aggregate()

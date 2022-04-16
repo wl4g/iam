@@ -26,7 +26,24 @@ spring:
     ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
+      x-forwarded: ## see:org.springframework.cloud.gateway.filter.headers.XForwardedHeadersFilter
+        ## [Note]: Note: If the fallbackURI must not be set to '/', otherwise when the circuit breaker is enabled, since the addition of the
+        ## 'x-forward' and 'forwarded' headers is enabled by default, when all backend service instances are unreachable, a large number of 
+        ## repetitions will be added header, the client eventually responds with a 413 error.
+        enabled: true ## Default by true
+        forEnabled: true ## Add for X-Forwarded-For, Default by true
+        hostEnabled: true ## true ## Add for X-Forwarded-Host, Default by true
+        portEnabled: true ## true ## Add for X-Forwarded-Port, Default by true
+        protoEnabled: true ## true ## Add for X-Forwarded-Proto, Default by true
+        prefixEnabled: true ## true ## Add for X-Forwarded-Prefix, Default by true
+        forAppend: true ## Add for X-Forwarded-For list, Default by true
+        hostAppend: true ## Add for X-Forwarded-Host list, Default by true
+        portAppend: true ## Add for X-Forwarded-Port list, Default by true
+        protoAppend: true ## Add for X-Forwarded-Proto list, Default by true
+        prefixAppend: true ## Add for X-Forwarded-Prefix list, Default by true
       filter:
+        remove-hop-by-hop:
+          headers: ["connection","keep-alive","transfer-encoding","te","trailer","proxy-authorization","proxy-authenticate","x-application-context","upgrade"]
         secure-headers:
           disable: ## Default no set.
           referrer-policy: 'no-referrer' ## Default by 'no-referrer'
