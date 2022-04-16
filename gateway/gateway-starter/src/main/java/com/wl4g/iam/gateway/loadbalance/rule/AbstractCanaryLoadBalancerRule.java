@@ -11,9 +11,10 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -45,7 +46,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
     protected final SmartLogger log = getLogger(getClass());
     protected @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
     protected @Autowired DiscoveryClient discoveryClient;
-    protected @Qualifier(BEAN_CANARY_LB_REQUEST_MATCHER) SpelRequestMatcher requestMatcher;
+    protected @Resource(name = BEAN_CANARY_LB_REQUEST_MATCHER) SpelRequestMatcher requestMatcher;
     protected @Autowired IamGatewayMetricsFacade metricsFacade;
 
     @Override

@@ -193,7 +193,7 @@ spring:
         ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
         enabled: true ## Default by true
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        default-verbose-level: 10
+        default-verbose-level: 7
         request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
         #match-expression: '#{$defaultHeaderLogOpenRule.or($defaultQueryLogOpenRule).test($request)}'
         match-expression: '#{$energyOpenApiLogOpenRule.test($request)}'
