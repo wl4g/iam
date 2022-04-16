@@ -21,7 +21,7 @@ spring:
         ## see:org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping#lookupRoute()
         ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
         ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
-        - id: default-fallback
+        - id: default-fallback-route
           uri: lb://default-fallback-service
           predicates:
             - Path=/_fallback,/_fallback/**
@@ -32,7 +32,7 @@ spring:
                 execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
                 root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
                 root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
-        - id: energy-openapi-service
+        - id: energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
             - Path=/openapi/v2/**,/v2/**
@@ -117,7 +117,7 @@ spring:
                   timeout-ms: 10_000 ## Default by 10_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-status: 200 ## Default by 200
-        - id: alimarket-openapi-service
+        - id: alimarket-openapi-service-route
           uri: lb://alimarket-openapi-service
           predicates:
             - Path=/alimarket/v1/**
