@@ -40,20 +40,6 @@ spring:
           deny-empty-key: true
           empty-key-status-code: UNPROCESSABLE_ENTITY
       fail-on-route-definition-error: true ## Default by true
-      routes:
-        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
-        ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
-        - id: default-fallback
-          uri: lb://default-fallback-service
-          predicates:
-            - Path=/fallback/**
-          filters:
-            - name: FallbackHeaders
-              args:
-                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
-                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
-                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
-                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
       #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
       #  cors-configurations: ## Default no set.
       ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration

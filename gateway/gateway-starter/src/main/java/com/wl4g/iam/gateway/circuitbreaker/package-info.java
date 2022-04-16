@@ -15,5 +15,6 @@
  */
 /**
  * {@link org.springframework.cloud.gateway.route.builder.GatewayFilterSpec#circuitBreakeer()}
+ * {@link org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory}
  */
 package com.wl4g.iam.gateway.circuitbreaker;

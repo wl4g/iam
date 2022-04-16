@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.loadbalance;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR;
@@ -160,10 +161,9 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
 
             // Ignore the URi prefix If it does not start with LB, go to the
             // next filter.
-            // if (isNull(requestUri) || (!equalsAnyIgnoreCase("LB",
-            // requestUri.getScheme(), schemePrefix))) {
-            // return chain.filter(exchange);
-            // }
+            if (isNull(requestUri) || (!equalsAnyIgnoreCase("LB", requestUri.getScheme(), schemePrefix))) {
+                return chain.filter(exchange);
+            }
 
             // According to the original URL of the gateway. Replace the URI of
             // http://IP:PORT/path

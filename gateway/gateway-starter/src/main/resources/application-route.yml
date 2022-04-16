@@ -19,6 +19,19 @@ spring:
     ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
     gateway:
       routes:
+        ## see:https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#fallback-headers
+        ## see:org.springframework.cloud.gateway.filter.factory.FallbackHeadersGatewayFilterFactory
+        - id: default-fallback
+          uri: lb://default-fallback-service
+          predicates:
+            - Path=/_fallback,/_fallback/**
+          filters:
+            - name: FallbackHeaders
+              args:
+                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
+                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
+                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
+                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
         - id: energy-openapi-service
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
@@ -83,14 +96,15 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  first-backoff: 50ms
-                  max-backoff: 100ms
+                  first-backoff: 100ms
+                  max-backoff: 500ms
                   factor: 2
                   based-on-previous-value: false
+            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
             - name: CircuitBreaker
               args:
                 name: defaultCircuitBreaker
-                fallback-uri: forward:/fallback
+                fallback-uri: forward:/_fallback
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
@@ -162,17 +176,18 @@ spring:
                 statuses: BAD_GATEWAY
                 methods: GET,POST
                 backoff:
-                  first-backoff: 50ms
-                  max-backoff: 100ms
+                  first-backoff: 100ms
+                  max-backoff: 500ms
                   factor: 2
                   based-on-previous-value: false
-            #- name: CircuitBreaker
-            #  args:
-            #    name: defaultCircuitBreaker
-            #    fallback-uri: forward:/fallback
-            #    statusCodes:
-            #      - 500
-            #      - "NOT_FOUND"
+            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            - name: CircuitBreaker
+              args:
+                name: defaultCircuitBreaker
+                fallback-uri: forward:/_fallback
+                statusCodes:
+                  - 500
+                  - "NOT_FOUND"
             - name: CanaryLoadbalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)

@@ -122,6 +122,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
 		<!-- Spring Security -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.springframework.boot</groupId> -->
