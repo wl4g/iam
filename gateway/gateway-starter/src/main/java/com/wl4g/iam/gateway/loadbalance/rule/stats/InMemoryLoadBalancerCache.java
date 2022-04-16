@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 import java.util.Map;
@@ -40,6 +42,7 @@ public class InMemoryLoadBalancerCache implements LoadBalancerCache {
 
     @Override
     public Map<String, ServiceInstanceStatus> getService(String serviceId, boolean orCreate) {
+        hasTextOf(serviceId, "serviceId");
         // Gets or create
         Map<String, ServiceInstanceStatus> instances = registerServices.get(serviceId);
         if (orCreate && isNull(instances)) {
@@ -55,11 +58,15 @@ public class InMemoryLoadBalancerCache implements LoadBalancerCache {
 
     @Override
     public void putService(String serviceId, Map<String, ServiceInstanceStatus> instances) {
+        hasTextOf(serviceId, "serviceId");
+        notNullOf(instances, "instances");
         registerServices.put(serviceId, instances);
     }
 
     @Override
     public ServiceInstanceStatus getServiceInstance(String serviceId, String instanceId, boolean orCreate) {
+        hasTextOf(serviceId, "serviceId");
+        hasTextOf(instanceId, "instanceId");
         // Gets or create
         Map<String, ServiceInstanceStatus> service = getService(serviceId, orCreate);
         ServiceInstanceStatus status = service.get(instanceId);
@@ -76,6 +83,9 @@ public class InMemoryLoadBalancerCache implements LoadBalancerCache {
 
     @Override
     public void putServiceInstance(ServiceInstanceStatus instance) {
+        notNullOf(instance, "instance");
+        notNullOf(instance.getInstance(), "instances");
+        hasTextOf(instance.getInstance().getServiceId(), "instance.serviceId");
         Map<String, ServiceInstanceStatus> service = getService(instance.getInstance().getServiceId(), true);
         service.put(instance.getInstance().getInstanceId(), instance);
     }

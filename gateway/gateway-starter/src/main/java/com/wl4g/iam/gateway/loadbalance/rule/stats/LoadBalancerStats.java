@@ -15,13 +15,17 @@
  */
 package com.wl4g.iam.gateway.loadbalance.rule.stats;
 
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.util.Objects.isNull;
 
+import java.lang.reflect.Field;
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Queues;
@@ -53,6 +57,14 @@ public interface LoadBalancerStats {
     List<ServiceInstanceStatus> getReachableInstances(String serviceId);
 
     List<ServiceInstanceStatus> getAllInstances(String serviceId);
+
+    public static String getInstanceId(ServiceInstance instance) {
+        if (instance instanceof DelegatingServiceInstance) {
+            ServiceInstance _instance = getField(DELEGATE_FIELD, (DelegatingServiceInstance) instance, true);
+            return _instance.getInstanceId();
+        }
+        return instance.getInstanceId();
+    }
 
     @With
     @Getter
@@ -116,4 +128,5 @@ public interface LoadBalancerStats {
     }
 
     public static final String KEY_COST_TIME = LoadBalancerStats.class.getName().concat(".costTime");
+    public static final Field DELEGATE_FIELD = findField(DelegatingServiceInstance.class, "delegate", ServiceInstance.class);
 }

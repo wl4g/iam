@@ -97,8 +97,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public int connect(ServerWebExchange exchange, ServiceInstance instance) {
         exchange.getAttributes().put(KEY_COST_TIME, currentTimeMillis());
-        ServiceInstanceStatus status = loadBalancerCache.getServiceInstance(instance.getServiceId(), instance.getInstanceId(),
-                true);
+        ServiceInstanceStatus status = loadBalancerCache.getServiceInstance(instance.getServiceId(),
+                LoadBalancerStats.getInstanceId(instance), true);
         try {
             return status.getStats().getConnections().addAndGet(1);
         } finally {
@@ -109,8 +109,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
     @Override
     public int disconnect(ServerWebExchange exchange, ServiceInstance instance) {
-        ServiceInstanceStatus status = loadBalancerCache.getServiceInstance(instance.getServiceId(), instance.getInstanceId(),
-                true);
+        ServiceInstanceStatus status = loadBalancerCache.getServiceInstance(instance.getServiceId(),
+                LoadBalancerStats.getInstanceId(instance), true);
         try {
             Stats stats = status.getStats();
             long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
