@@ -9,6 +9,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
@@ -65,7 +66,7 @@ public class LeastTimeCanaryLoadBalancerChooser extends AbstractCanaryLoadBalanc
                 continue;
             }
 
-            if (LoadBalancerStats.Stats.isAlive(config, chosenInstance.getStats())) {
+            if (LoadBalancerUtil.isAlive(config, chosenInstance.getStats())) {
                 return chosenInstance.getInstance();
             }
 
@@ -74,7 +75,7 @@ public class LeastTimeCanaryLoadBalancerChooser extends AbstractCanaryLoadBalanc
         }
 
         if (count >= config.getChoose().getMaxChooseTries()) {
-            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_MAX_TRIES_FAIL_TOTAL, serviceId);
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_MAX_TRIES_TOTAL, serviceId);
             log.warn("No available alive servers after {} tries from load balancer loadBalancerStats: {}", count, stats);
         }
         return null;

@@ -52,6 +52,7 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory.CanaryLoadBalancerGatewayFilter;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
@@ -91,16 +92,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
     @Override
     protected void onApplicationStarted(ApplicationArguments args, SafeScheduledTaskPoolExecutor worker) throws Exception {
-        getWorker().scheduleWithFixedDelay(() -> pullUpdateRouteServicesToRegistry(),
+        getWorker().scheduleWithFixedDelay(() -> registerAllRouteServices(),
                 loadBalancerConfig.getPullUpdateRouteServicesInitialMs(), loadBalancerConfig.getPullUpdateRouteServicesDelayMs(),
                 MILLISECONDS);
     }
 
-    /**
-     * Update or register all instances pulled from the discovery server to the
-     * statistic probe registry.
-     */
-    private void pullUpdateRouteServicesToRegistry() {
+    @Override
+    public synchronized void registerAllRouteServices() {
         try {
             routeRlocator.getRoutes().subscribe(route -> {
                 if (nonNull(route.getUri()) && equalsIgnoreCase("lb", route.getUri().getScheme())) {
@@ -137,7 +135,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         }
     }
 
-    public void updateRouteServicesProbeTask(@Nullable String... routeIds) {
+    @Override
+    public synchronized void restartProbeTask(@Nullable String... routeIds) {
         List<String> _routeIds = safeArrayToList(routeIds);
         Map<String, ScheduledFuture<?>> updateRouteServicesProbeFutures = routeServicesProbeFutures.entrySet()
                 .stream()
@@ -159,7 +158,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
         // Re-scheduling probe tasks.
         int count = 0, maxTries = routeServices.size() * 2;
-        while (routeServices.size() > 0 || count >= maxTries) {
+        while (routeServices.size() > 0 && count < maxTries) {
             ++count;
             Iterator<Entry<String, RouteServiceStatus>> it = routeServices.entrySet().iterator();
             while (it.hasNext()) {
@@ -185,6 +184,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                     it.remove();
                 }
             }
+            if (routeServices.size() > 0) {
+                // Give up the opportunity for short-term CPU to give other
+                // threads execution, just like the sleep() method does not
+                // release the lock.
+                Thread.yield();
+                continue;
+            }
         }
         if (routeServices.size() > 0) {
             log.warn("Cannot to update route services instance probe tasks. routeIds={}", routeServices.keySet());
@@ -196,10 +202,10 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         exchange.getAttributes().put(KEY_COST_TIME, currentTimeMillis());
         RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
-        InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerStats.getInstanceId(instance));
+        InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerUtil.getInstanceId(instance));
         if (nonNull(instanceStatus)) {
             int count = instanceStatus.getStats().getConnections().addAndGet(1);
-            loadBalancerRegistry.update(route.getId(), routeService);
+            loadBalancerRegistry.register(route.getId(), routeService);
             return count;
         }
         return 0;
@@ -209,13 +215,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     public int disconnect(ServerWebExchange exchange, ServiceInstance instance) {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
-        InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerStats.getInstanceId(instance));
+        InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerUtil.getInstanceId(instance));
         if (nonNull(instanceStatus)) {
             Stats stats = instanceStatus.getStats();
             long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
             save(routeService.getConfig().getProbe(), instanceStatus, new PassiveProbe((currentTimeMillis() - beginTime)));
             int count = stats.getConnections().addAndGet(-1);
-            loadBalancerRegistry.update(route.getId(), routeService);
+            loadBalancerRegistry.register(route.getId(), routeService);
             return count;
         }
         return 0;
@@ -227,7 +233,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
         return safeMap(routeService.getInstances()).values()
                 .stream()
-                .filter(i -> LoadBalancerStats.Stats.isAlive(routeService.getConfig(), i.getStats()))
+                .filter(i -> LoadBalancerUtil.isAlive(routeService.getConfig(), i.getStats()))
                 .collect(toList());
     }
 

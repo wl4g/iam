@@ -66,9 +66,11 @@ public class IamGatewayMetricsFacade {
         public static final String SIMPLE_SIGN_SUCCCESS_TOTAL = "simple_sign_success_total";
         public static final String SIMPLE_SIGN_FAIL_TOTAL = "simple_sign_fail_total";
 
-        public static final String CANARY_LB_NOT_FOUND_INSTANCES_TOTAL = "canary_lb_not_found_instances_total";
-        public static final String CANARY_LB_REQUEST_TOTAL = "canary_lb_request_total";
-        public static final String CANARY_LB_CHOOSE_MAX_TRIES_FAIL_TOTAL = "canary_lb_choose_max_tries_fail_total";
+        public static final String CANARY_LB_CHOOSE_TOTAL = "canary_lb_choose_total";
+        public static final String CANARY_LB_CHOOSE_FALLBACK_TOTAL = "canary_lb_choose_fallback_total";
+        public static final String CANARY_LB_CHOOSE_MISSING_TOTAL = "canary_lb_choose_missing_total";
+        public static final String CANARY_LB_CHOOSE_MAX_TRIES_TOTAL = "canary_lb_choose_max_tries_total";
+        public static final String CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL = "canary_lb_choose_empty_instances_total";
     }
 
     public static abstract class MetricsTag {

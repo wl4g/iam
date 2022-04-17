@@ -22,6 +22,7 @@ import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
@@ -59,12 +60,9 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
         // There is no instance in the registry throwing an exception.
         if (isEmpty(allInstances)) {
             log.warn("No found instance available for {}", serviceId);
-            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_NOT_FOUND_INSTANCES_TOTAL, serviceId);
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL, serviceId);
             throw new NotFoundException(format("No found instance available for %s", serviceId));
         }
-
-        // Add metrics.
-        addCounterMetrics(config, exchange, MetricsName.CANARY_LB_REQUEST_TOTAL, serviceId);
 
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
@@ -73,12 +71,15 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
                 getLoadBalancerConfig().getSelectExpression());
         if (isEmpty(rules)) {
             log.warn("The request did not match the canary load balancer instance.");
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_MISSING_TOTAL, serviceId);
             if (config.getChoose().isFallbackAllToCandidates()) {
                 candidateInstances = allInstances;
+                addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_FALLBACK_TOTAL, serviceId);
             } else {
                 return null;
             }
         } else {
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_TOTAL, serviceId);
             // Gets a list of eligible candidate instances.
             candidateInstances = findCandidateInstances(allInstances, rules.stream().map(r -> r.getName()).collect(toList()));
         }
@@ -113,7 +114,7 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
 
         return safeList(reachableInstances).stream()
                 .filter(i -> safeList(candidateInstances).stream()
-                        .anyMatch(c -> StringUtils.equals(i.getInstance().getInstanceId(), c.getInstanceId())))
+                        .anyMatch(c -> StringUtils.equals(i.getInstance().getInstanceId(), LoadBalancerUtil.getInstanceId(c))))
                 .collect(toList());
     }
 

@@ -26,6 +26,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.RouteServiceStatus;
 
@@ -51,12 +52,12 @@ public class InMemoryLoadBalancerRegistry implements LoadBalancerRegistry {
         RouteServiceStatus routeService = getRouteService(routeId);
         routeService.setRouteId(routeId);
         routeService.setConfig(config);
-        routeService.getInstances().put(LoadBalancerStats.getInstanceId(instance.getInstance()), instance);
+        routeService.getInstances().put(LoadBalancerUtil.getInstanceId(instance.getInstance()), instance);
         registerRouteServices.put(routeId, routeService);
     }
 
     @Override
-    public void update(@NotBlank String routeId, @NotNull RouteServiceStatus routeService) {
+    public void register(@NotBlank String routeId, @NotNull RouteServiceStatus routeService) {
         hasTextOf(routeId, "routeId");
         notNullOf(routeService, "routeService");
         registerRouteServices.put(routeId, routeService);
