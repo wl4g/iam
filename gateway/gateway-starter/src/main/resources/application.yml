@@ -187,16 +187,23 @@ spring:
               symbol: EQ
               key: __iscg_canary
               value: v1
-        ## When no canary condition is matched, whether all instances of the service are candidates.
-        fallback-all-to-candidates: true
-        load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-        max-choose-tries: 10 ## Default by 10
-        null-ping-to-reachable: true ## Default by true
-        ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+        ## The number of load balancer statistician scheduler worker threads.
+        stats-scheduler-thread: 2 ## Default by 2
+        ## The initial interval at which the instance list is periodically pulled update register from the discovery service.
+        register-route-services-initial-seconds: 1 ## Default by 1s
+        ## The interval at which the instance list is periodically pulled update register from the discovery server.
+        register-route-services-delay-seconds: 60 ## Default by 60s
+        choose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+          ## When no canary condition is matched, whether all instances of the service are candidates.
+          fallback-all-to-candidates: true
+          load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+          max-choose-tries: 10 ## Default by 10
+          null-ping-to-reachable: true ## Default by true
+        probe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
           debug: false ## Default by false
-          initial-ms: 3_000 ## Default by 3_000ms
-          delay-ms: 10_000 ## Default by 10_000ms
-          timeout-ms: 10_000 ## Default by 10_000ms
+          initial-seconds: 3 ## Default by 3s
+          delay-seconds: 10 ## Default by 10s
+          timeout-ms: 10_000 ## Default by 10000ms
           receive-queue: 8 ## Default by 8
           path: /healthz ## Default by '/healthz'
           ## Note: only expectBody takes effect when it is set at the same time as expectBody.

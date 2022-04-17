@@ -50,8 +50,10 @@ public interface LoadBalancerStats {
     /**
      * Update or register all instances pulled from the discovery server to the
      * statistic probe registry.
+     * 
+     * @param callback
      */
-    void registerAllRouteServices();
+    void registerAllRouteServices(@Nullable Runnable callback);
 
     void restartProbeTask(@Nullable String... routeIds);
 

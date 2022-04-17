@@ -62,16 +62,21 @@ public class CanaryLoadBalancerProperties {
     private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
 
     /**
-     * The initial interval at which the instance list is periodically pulled
-     * from the discovery service.
+     * The number of load balancer statistician scheduler worker threads.
      */
-    private int pullUpdateRouteServicesInitialMs = 1000;
+    private int statsSchedulerThread = 2;
 
     /**
-     * The interval at which the instance list is periodically pulled from the
-     * discovery server.
+     * The initial interval at which the instance list is periodically pulled
+     * update register from the discovery service.
      */
-    private int pullUpdateRouteServicesDelayMs = 60_000;
+    private int registerRouteServicesInitialSeconds = 1;
+
+    /**
+     * The interval at which the instance list is periodically pulled update
+     * register from the discovery server.
+     */
+    private int registerRouteServicesDelaySeconds = 60;
 
     /**
      * LoadBalancer choose properties.
@@ -125,19 +130,19 @@ public class CanaryLoadBalancerProperties {
         /**
          * Ping request on initial delay seconds.
          */
-        private long initialMs = 3;
+        private long initialSeconds = 3;
 
         /**
          * Ping request on delay seconds. </br>
          * default refer to:
          * {@link com.netflix.loadbalancer.BaseLoadBalancer#pingIntervalSeconds}
          */
-        private long delayMs = 10;
+        private long delaySeconds = 10;
 
         /**
          * Ping request timeout mills.
          */
-        private long timeoutMs = 10_000;
+        private long timeoutMs = 5_000;
 
         /**
          * Ping request path.

@@ -19,11 +19,12 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeArrayToList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nullable;
 
@@ -52,8 +54,8 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory.CanaryLoadBalancerGatewayFilter;
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
 import com.wl4g.infra.common.task.RunnerProperties;
@@ -79,28 +81,33 @@ import reactor.netty.http.client.HttpClient;
 @ToString
 public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
 
-    private @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
+    private final CanaryLoadBalancerProperties loadBalancerConfig;
     private @Autowired LoadBalancerRegistry loadBalancerRegistry;
     private @Autowired ReachableStrategy reachableStrategy;
     private @Autowired @Lazy RouteLocator routeRlocator;
     private @Autowired DiscoveryClient discoveryClient;
+    private final AtomicBoolean initRegisterAllRouteServicesCompleted = new AtomicBoolean(false);
     private final Map<String, ScheduledFuture<?>> routeServicesProbeFutures = new ConcurrentHashMap<>(4);
 
-    public DefaultLoadBalancerStats() {
-        super(new RunnerProperties(StartupMode.ASYNC, 1));
+    public DefaultLoadBalancerStats(CanaryLoadBalancerProperties loadBalancerConfig) {
+        super(new RunnerProperties(StartupMode.ASYNC, loadBalancerConfig.getStatsSchedulerThread()));
+        this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
     }
 
     @Override
     protected void onApplicationStarted(ApplicationArguments args, SafeScheduledTaskPoolExecutor worker) throws Exception {
-        getWorker().scheduleWithFixedDelay(() -> registerAllRouteServices(),
-                loadBalancerConfig.getPullUpdateRouteServicesInitialMs(), loadBalancerConfig.getPullUpdateRouteServicesDelayMs(),
-                MILLISECONDS);
+        getWorker().scheduleWithFixedDelay(() -> registerAllRouteServices(() -> {
+            if (initRegisterAllRouteServicesCompleted.compareAndSet(false, true)) {
+                restartProbeTask();
+            }
+        }), loadBalancerConfig.getRegisterRouteServicesInitialSeconds(),
+                loadBalancerConfig.getRegisterRouteServicesDelaySeconds(), SECONDS);
     }
 
     @Override
-    public synchronized void registerAllRouteServices() {
+    public synchronized void registerAllRouteServices(@Nullable Runnable callback) {
         try {
-            routeRlocator.getRoutes().subscribe(route -> {
+            routeRlocator.getRoutes().collectList().block().forEach(route -> {
                 if (nonNull(route.getUri()) && equalsIgnoreCase("lb", route.getUri().getScheme())) {
                     String serviceId = hasText(route.getUri().getHost(), "invalid the LB route.uri. %s", route.getUri());
 
@@ -130,6 +137,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                     }
                 }
             });
+            callback.run();
         } catch (Exception e) {
             log.warn("Failed to update or register all route services instance to the canary LB probe registry.", e);
         }
@@ -180,7 +188,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                                         e);
                             }
                         });
-                    }, probe.getInitialMs(), probe.getDelayMs(), MILLISECONDS);
+                    }, probe.getInitialSeconds(), probe.getDelaySeconds(), SECONDS);
                     it.remove();
                 }
             }

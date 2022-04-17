@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
 import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser.LoadBalancerAlgorithm;
 import com.wl4g.iam.gateway.loadbalance.chooser.DestinationCanaryHashLoadBalancerChooser;
 import com.wl4g.iam.gateway.loadbalance.chooser.LeastConnCanaryLoadBalancerChooser;
 import com.wl4g.iam.gateway.loadbalance.chooser.LeastTimeCanaryLoadBalancerChooser;
@@ -73,15 +74,15 @@ public class CanaryLoadbalanceAutoConfiguration {
     }
 
     @Bean
-    public LoadBalancerStats defaultLoadBalancerStats() {
-        return new DefaultLoadBalancerStats();
+    public LoadBalancerStats defaultLoadBalancerStats(CanaryLoadBalancerProperties loadBalancerConfig) {
+        return new DefaultLoadBalancerStats(loadBalancerConfig);
     }
 
     // Load-balancer rules.
 
     @Bean(BEAN_CANARY_LB_REQUEST_MATCHER)
-    public SpelRequestMatcher canaryLoadBalancerSpelRequestMatcher(CanaryLoadBalancerProperties config) {
-        return new SpelRequestMatcher(config.getMatchRuleDefinitions());
+    public SpelRequestMatcher canaryLoadBalancerSpelRequestMatcher(CanaryLoadBalancerProperties loadBalancerConfig) {
+        return new SpelRequestMatcher(loadBalancerConfig.getMatchRuleDefinitions());
     }
 
     @Bean
@@ -135,9 +136,9 @@ public class CanaryLoadbalanceAutoConfiguration {
     }
 
     @Bean
-    public GenericOperatorAdapter<CanaryLoadBalancerChooser.LoadBalancerAlgorithm, CanaryLoadBalancerChooser> compositeCanaryLoadBalancerAdapter(
+    public GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> compositeCanaryLoadBalancerAdapter(
             List<CanaryLoadBalancerChooser> rules) {
-        return new GenericOperatorAdapter<CanaryLoadBalancerChooser.LoadBalancerAlgorithm, CanaryLoadBalancerChooser>(rules) {
+        return new GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser>(rules) {
         };
     }
 
