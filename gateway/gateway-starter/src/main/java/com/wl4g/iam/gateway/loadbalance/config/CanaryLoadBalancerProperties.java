@@ -15,6 +15,8 @@
  */
 package com.wl4g.iam.gateway.loadbalance.config;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,11 +152,12 @@ public class CanaryLoadBalancerProperties {
         private String path = "/healthz";
 
         /**
-         * Ping expect response status code. </br>
+         * Ping expect response status codes. (As long as any status code is
+         * satisfied) </br>
          * Note: only {@link #expectBody} takes effect when it is set at the
          * same time as {@link #expectBody}.
          */
-        private int expectStatus = 200;
+        private List<Integer> expectStatuses = asList(200);
 
         /**
          * Ping expect response body. </br>

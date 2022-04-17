@@ -15,11 +15,15 @@
  */
 package com.wl4g.iam.gateway.loadbalance.stats;
 
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ActiveProbe;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
@@ -52,23 +56,19 @@ public interface ReachableStrategy {
         Boolean oldAlive = stats.getAlive();
         // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
         if (!isBlank(probe.getExpectBody())) {
-            if (StringUtils.equals(probe.getExpectBody(), activeProbe.getResponseBody())) {
-                stats.setAlive(true);
-            } else {
-                stats.setAlive(false);
-            }
+            stats.setAlive(StringUtils.equals(probe.getExpectBody(), activeProbe.getResponseBody()));
         } else {
-            if (activeProbe.getStatus().code() == probe.getExpectStatus()) {
-                stats.setAlive(true);
+            if (isNull(activeProbe.getResponseStatus())) {
+                stats.setAlive(nonNull(activeProbe.getErrorOrCancel()) && !activeProbe.getErrorOrCancel());
             } else {
-                stats.setAlive(false);
+                stats.setAlive(safeList(probe.getExpectStatuses()).contains(activeProbe.getResponseStatus().code()));
             }
         }
 
         // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
         if (oldAlive != stats.getAlive()) {
-            log.warn("LoadBalancer server [{}/{}] status changed to {}", status.getInstance().getServiceId(),
-                    status.getInstance().getInstanceId(), (stats.getAlive() ? "ALIVE" : "DEAD"));
+            log.warn("Canary loadBalancer upstream server({}::{}) status changed to {}", status.getInstance().getServiceId(),
+                    LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
         }
 
         return status;

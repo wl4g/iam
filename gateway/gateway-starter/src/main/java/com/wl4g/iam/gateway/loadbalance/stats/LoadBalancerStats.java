@@ -112,7 +112,8 @@ public interface LoadBalancerStats {
     public static class ActiveProbe {
         private long timestamp;
         private boolean isTimeout;
-        private HttpResponseStatus status;
+        private Boolean errorOrCancel;
+        private HttpResponseStatus responseStatus;
         private String responseBody;
     }
 
@@ -126,7 +127,8 @@ public interface LoadBalancerStats {
     @AllArgsConstructor
     public static class PassiveProbe {
         private long costTime;
-        // private HttpResponseStatus status;
+        private Boolean errorOrCancel;
+        // private HttpResponseStatus responseStatus;
     }
 
     public static final String KEY_COST_TIME = LoadBalancerStats.class.getName().concat(".costTime");

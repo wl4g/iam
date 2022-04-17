@@ -227,7 +227,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         if (nonNull(instanceStatus)) {
             Stats stats = instanceStatus.getStats();
             long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
-            save(routeService.getConfig().getProbe(), instanceStatus, new PassiveProbe((currentTimeMillis() - beginTime)));
+            save(routeService.getConfig().getProbe(), instanceStatus, new PassiveProbe((currentTimeMillis() - beginTime), null));
             int count = stats.getConnections().addAndGet(-1);
             loadBalancerRegistry.register(route.getId(), routeService);
             return count;
@@ -272,20 +272,21 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                     .aggregate()
                     .asString()
                     .timeout(timeout,
-                            Mono.fromRunnable(() -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null))))
+                            Mono.fromRunnable(
+                                    () -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null, null))))
                     .doFinally(signal -> {
                         if (signal != SignalType.ON_COMPLETE) {
                             // Failed to request ping.
                             if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                                save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null));
+                                save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
                             }
                         }
                     })
                     // main thread non-blocking.
                     .subscribe(response -> {
-                        save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, response));
+                        save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, response));
                     }, ex -> {
-                        save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null));
+                        save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, null));
                     }, () -> {
                         log.debug("Ping completion for service instance status: {}", status);
                     });
@@ -296,31 +297,30 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                 .uri(buildUri(probe, status))
                 .responseConnection((res, connection) -> Mono.just(res))
                 .timeout(timeout,
-                        Mono.fromRunnable(() -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null))))
+                        Mono.fromRunnable(
+                                () -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null, null))))
                 .doFinally(signal -> {
                     if (signal != SignalType.ON_COMPLETE) {
                         // Failed to request ping.
                         if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                            save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null));
+                            save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
                         }
                     }
                 })
                 // main thread non-blocking.
                 .subscribe(response -> {
-                    save(probe, status, new ActiveProbe(currentTimeMillis(), false, response.status(), null));
+                    save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, response.status(), null));
                 }, ex -> {
-                    save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null));
+                    save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, null));
                 }, () -> {
                     log.debug("Ping completion for service instance status: {}", status);
                 });
-
     }
 
     protected URI buildUri(ProbeProperties probe, InstanceStatus status) {
         ServiceInstance instance = status.getInstance();
-        return URI.create(
-                instance.getScheme().concat("://").concat(instance.getHost()).concat(":").concat(instance.getPort() + "").concat(
-                        probe.getPath()));
+        String scheme = instance.isSecure() ? "https://" : "http://";
+        return URI.create(scheme.concat(instance.getHost()).concat(":").concat(instance.getPort() + "").concat(probe.getPath()));
     }
 
     protected synchronized void save(ProbeProperties probe, InstanceStatus status, ActiveProbe activeProbe) {

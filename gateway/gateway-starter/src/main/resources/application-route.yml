@@ -116,10 +116,10 @@ spring:
             - name: CanaryLoadBalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
-                  timeout-ms: 10_000 ## Default by 10_000ms
+                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+                  timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
-                  expect-status: 200 ## Default by 200
+                  expect-statuses: [200,404] ## Default by 200
         - id: alimarket-openapi-service-route
           uri: lb://alimarket-openapi-service
           predicates:
@@ -200,10 +200,10 @@ spring:
             - name: CanaryLoadBalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
-                  timeout-ms: 10_000 ## Default by 10_000ms
+                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+                  timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
-                  expect-status: 200 ## Default by 200
+                  expect-statuses: [200,404] ## Default by 200
         #- id: portal
         #  uri: https://www.httpbin.org/
         #  predicates:
