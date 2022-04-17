@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.loadbalance.rule.chain;
+package com.wl4g.iam.gateway.loadbalance.chooser.chain;
 
 import static java.util.Objects.nonNull;
 
@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ServiceInstanceStatus;
 
 import lombok.AllArgsConstructor;
 

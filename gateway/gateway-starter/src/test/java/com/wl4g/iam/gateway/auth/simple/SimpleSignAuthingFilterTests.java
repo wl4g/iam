@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.SignHashingMode;
+import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
 /**
@@ -87,9 +87,9 @@ public class SimpleSignAuthingFilterTests {
 
             return builder.routes().route(p -> p.path(TEST_ROUTE_PATH).filters(f -> {
                 // for Add simple sign filter.
-                SimpleSignAuthingFilter filter = new SimpleSignAuthingFilter(new AuthingProperties(), redisTemplate,
+                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new AuthingProperties(), redisTemplate,
                         metricsFacade);
-                SimpleSignAuthingFilter.Config config = new SimpleSignAuthingFilter.Config();
+                SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
                 // custom sign parameter name.
                 config.setSignParam("signature");
                 // custom sign hashing mode.

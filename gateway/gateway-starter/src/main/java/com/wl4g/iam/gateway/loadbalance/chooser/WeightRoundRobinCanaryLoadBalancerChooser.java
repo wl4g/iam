@@ -1,11 +1,12 @@
-package com.wl4g.iam.gateway.loadbalance.rule;
+package com.wl4g.iam.gateway.loadbalance.chooser;
 
 import java.util.List;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 
 /**
  * Grayscale load balancer rule for weight-based round-Robin.
@@ -15,7 +16,7 @@ import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
  * @since v3.0.0
  * @see {@link org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer}
  */
-public class WeightRoundRobinCanaryLoadBalancerRule extends RoundRobinCanaryLoadBalancerRule {
+public class WeightRoundRobinCanaryLoadBalancerChooser extends RoundRobinCanaryLoadBalancerChooser {
 
     @Override
     public LoadBalancerAlgorithm kind() {
@@ -24,6 +25,7 @@ public class WeightRoundRobinCanaryLoadBalancerRule extends RoundRobinCanaryLoad
 
     @Override
     protected ServiceInstance doChooseInstance(
+            CanaryLoadBalancerFilterFactory.Config config,
             ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
@@ -31,7 +33,7 @@ public class WeightRoundRobinCanaryLoadBalancerRule extends RoundRobinCanaryLoad
 
         // TODO
 
-        return super.doChooseInstance(exchange, stats, serviceId, candidateInstances);
+        return super.doChooseInstance(config, exchange, stats, serviceId, candidateInstances);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.wl4g.iam.gateway.loadbalance.rule;
+package com.wl4g.iam.gateway.loadbalance.chooser;
 
 import static java.util.Objects.isNull;
 
@@ -8,8 +8,9 @@ import java.util.List;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 
 /**
@@ -21,7 +22,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
  * @since v3.0.0
  * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}
  */
-public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerRule {
+public class LeastTimeCanaryLoadBalancerChooser extends AbstractCanaryLoadBalancerChooser {
 
     @Override
     public LoadBalancerAlgorithm kind() {
@@ -30,6 +31,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
 
     @Override
     protected ServiceInstance doChooseInstance(
+            CanaryLoadBalancerFilterFactory.Config config,
             ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
@@ -40,17 +42,17 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
         // return candidateInstances.get(pos % candidateInstances.size());
 
         int count = 0;
-        ServiceInstanceStatus chosenInstance = null;
-        while (isNull(chosenInstance) && count++ < getLoadBalancerConfig().getMaxChooseTries()) {
-            List<ServiceInstanceStatus> allInstances = stats.getAllInstances(serviceId);
-            List<ServiceInstanceStatus> reachableInstances = stats.getReachableInstances(serviceId);
-            List<ServiceInstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
+        InstanceStatus chosenInstance = null;
+        while (isNull(chosenInstance) && count++ < config.getChoose().getMaxChooseTries()) {
+            List<InstanceStatus> allInstances = stats.getAllInstances(exchange);
+            List<InstanceStatus> reachableInstances = stats.getReachableInstances(exchange);
+            List<InstanceStatus> availableInstances = getAvailableInstances(reachableInstances, candidateInstances);
 
             int allCount = allInstances.size();
             int avaCount = availableInstances.size();
 
             if ((avaCount == 0) || (allCount == 0)) {
-                log.warn("No up servers available from load balancer stats: {}", stats);
+                log.warn("No up servers available from load balancer loadBalancerStats: {}", stats);
                 return null;
             }
 
@@ -63,7 +65,7 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
                 continue;
             }
 
-            if (LoadBalancerStats.Stats.isAlive(loadBalancerConfig, chosenInstance.getStats())) {
+            if (LoadBalancerStats.Stats.isAlive(config, chosenInstance.getStats())) {
                 return chosenInstance.getInstance();
             }
 
@@ -71,14 +73,14 @@ public class LeastTimeCanaryLoadBalancerRule extends AbstractCanaryLoadBalancerR
             chosenInstance = null;
         }
 
-        if (count >= getLoadBalancerConfig().getMaxChooseTries()) {
-            addCounterMetrics(exchange, MetricsName.CANARY_LB_CHOOSE_MAX_TRIES_FAIL_TOTAL, serviceId);
-            log.warn("No available alive servers after {} tries from load balancer stats: {}", count, stats);
+        if (count >= config.getChoose().getMaxChooseTries()) {
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_MAX_TRIES_FAIL_TOTAL, serviceId);
+            log.warn("No available alive servers after {} tries from load balancer loadBalancerStats: {}", count, stats);
         }
         return null;
     }
 
-    public static final Comparator<ServiceInstanceStatus> DEFAULT = (o1, o2) -> {
+    public static final Comparator<InstanceStatus> DEFAULT = (o1, o2) -> {
         return (int) (o1.getStats().getLatestCostTime() - o2.getStats().getLatestCostTime());
     };
 

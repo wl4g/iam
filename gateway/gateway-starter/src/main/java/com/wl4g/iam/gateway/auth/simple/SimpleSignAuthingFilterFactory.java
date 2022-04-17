@@ -75,7 +75,7 @@ import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link SimpleSignAuthingFilter}
+ * {@link SimpleSignAuthingFilterFactory}
  * 
  * <p>
  * Comparison of global filter and gateway filter: </br>
@@ -105,7 +105,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-01 v3.0.0
  * @since v3.0.0
  */
-public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<SimpleSignAuthingFilter.Config> {
+public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory<SimpleSignAuthingFilterFactory.Config> {
 
     private final SmartLogger log = getLogger(getClass());
     private final AuthingProperties authingConfig;
@@ -114,9 +114,9 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     private final IamGatewayMetricsFacade metricsFacade;
     private final Map<String, RedisBloomFilter<String>> cachedBloomFilters = new ConcurrentHashMap<>(8);
 
-    public SimpleSignAuthingFilter(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
+    public SimpleSignAuthingFilterFactory(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
             @NotNull IamGatewayMetricsFacade metricsFacade) {
-        super(SimpleSignAuthingFilter.Config.class);
+        super(SimpleSignAuthingFilterFactory.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         this.metricsFacade = notNullOf(metricsFacade, "redisTemplate");
@@ -149,7 +149,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
      * see:{@link org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()}
      */
     @Override
-    public GatewayFilter apply(SimpleSignAuthingFilter.Config config) {
+    public GatewayFilter apply(SimpleSignAuthingFilterFactory.Config config) {
         return (exchange, chain) -> {
             if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSimpleSign().isIgnoredAuthingInJvmDebug()) {
                 return chain.filter(exchange);
@@ -204,7 +204,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         };
     }
 
-    private RedisBloomFilter<String> obtainBloomFilter(ServerWebExchange exchange, SimpleSignAuthingFilter.Config config) {
+    private RedisBloomFilter<String> obtainBloomFilter(ServerWebExchange exchange, SimpleSignAuthingFilterFactory.Config config) {
         String routeId = ((Route) exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR)).getId();
         if (isBlank(routeId)) {
             throw new Error(format("Should't be here, cannot to get routeId"));
@@ -232,7 +232,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         return authingConfig.getSimpleSign().getSignReplayVerifyBloomLoadPrefix().concat(":").concat(routeId);
     }
 
-    private byte[] doSignature(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange, String appId) {
+    private byte[] doSignature(SimpleSignAuthingFilterFactory.Config config, ServerWebExchange exchange, String appId) {
         // Load stored secret.
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
@@ -244,7 +244,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
     }
 
-    private byte[] loadStoredSecret(SimpleSignAuthingFilter.Config config, String appId) {
+    private byte[] loadStoredSecret(SimpleSignAuthingFilterFactory.Config config, String appId) {
         String loadKey = authingConfig.getSimpleSign().getSecretLoadPrefix().concat(":").concat(appId);
         switch (authingConfig.getSimpleSign().getSecretLoadStore()) {
         case ENV:
@@ -279,7 +279,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
         }
     }
 
-    private String getRequestAppId(SimpleSignAuthingFilter.Config config, ServerWebExchange exchange) {
+    private String getRequestAppId(SimpleSignAuthingFilterFactory.Config config, ServerWebExchange exchange) {
         // Note: In some special business platform
         // scenarios, the signature authentication protocol may not define
         // appId (such as Alibaba Cloud Market SaaS product authentication
@@ -299,7 +299,7 @@ public class SimpleSignAuthingFilter extends AbstractGatewayFilterFactory<Simple
     private Mono<Void> bindSignedToContext(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
-            SimpleSignAuthingFilter.Config config,
+            SimpleSignAuthingFilterFactory.Config config,
             String appId) {
 
         // Add the current authenticated client ID to the request header,

@@ -18,7 +18,7 @@ package com.wl4g.iam.gateway.loadbalance.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.LoadBalancerAlgorithm;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser.LoadBalancerAlgorithm;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
@@ -62,36 +62,60 @@ public class CanaryLoadBalancerProperties {
     private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
 
     /**
-     * When no canary condition is matched, whether all instances of the service
-     * are candidates.
+     * The initial interval at which the instance list is periodically pulled
+     * from the discovery service.
      */
-    private boolean fallbackAllToCandidates = true;
+    private int pullUpdateRouteServicesInitialMs = 1000;
 
     /**
-     * Load balancer algorithm.
+     * The interval at which the instance list is periodically pulled from the
+     * discovery server.
      */
-    private LoadBalancerAlgorithm loadBalancerAlgorithm = LoadBalancerAlgorithm.R;
+    private int pullUpdateRouteServicesDelayMs = 60_000;
 
     /**
-     * The number of best-effort attempts to select an instance.
+     * LoadBalancer choose properties.
      */
-    private int maxChooseTries = 10;
+    private ChooseProperties choose = new ChooseProperties();
 
     /**
-     * Whether to consider these instance reachable by default when there is not
-     * enough ping data (such as just started up).
+     * Health probe properties.
      */
-    private boolean nullPingToReachable = true;
-
-    /**
-     * Health checking properties.
-     */
-    private PingProperties ping = new PingProperties();
+    private ProbeProperties probe = new ProbeProperties();
 
     @Getter
     @Setter
     @ToString
-    public static class PingProperties {
+    public static class ChooseProperties {
+
+        /**
+         * When no canary condition is matched, whether all instances of the
+         * service are candidates.
+         */
+        private boolean fallbackAllToCandidates = true;
+
+        /**
+         * Load balancer algorithm.
+         */
+        private LoadBalancerAlgorithm loadBalancerAlgorithm = LoadBalancerAlgorithm.R;
+
+        /**
+         * The number of best-effort attempts to select an instance.
+         */
+        private int maxChooseTries = 10;
+
+        /**
+         * Whether to consider these instance reachable by default when there is
+         * not enough probe data (such as just started up).
+         */
+        private boolean nullPingToReachable = true;
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class ProbeProperties {
 
         /**
          * Ping request debug enabled.

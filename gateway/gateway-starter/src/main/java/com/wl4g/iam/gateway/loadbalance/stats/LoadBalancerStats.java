@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.loadbalance.rule.stats;
+package com.wl4g.iam.gateway.loadbalance.stats;
 
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.util.Objects.isNull;
@@ -22,19 +23,20 @@ import static java.util.Objects.isNull;
 import java.lang.reflect.Field;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
-import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
@@ -48,15 +50,13 @@ import lombok.With;
  */
 public interface LoadBalancerStats {
 
-    void register(List<ServiceInstance> instances);
-
     int connect(ServerWebExchange exchange, ServiceInstance instance);
 
     int disconnect(ServerWebExchange exchange, ServiceInstance instance);
 
-    List<ServiceInstanceStatus> getReachableInstances(String serviceId);
+    List<InstanceStatus> getReachableInstances(ServerWebExchange exchange);
 
-    List<ServiceInstanceStatus> getAllInstances(String serviceId);
+    List<InstanceStatus> getAllInstances(ServerWebExchange exchange);
 
     public static String getInstanceId(ServiceInstance instance) {
         if (instance instanceof DelegatingServiceInstance) {
@@ -66,27 +66,34 @@ public interface LoadBalancerStats {
         return instance.getInstanceId();
     }
 
-    @With
     @Getter
     @Setter
     @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ServiceInstanceStatus {
-        private ServiceInstance instance;
-        private Stats stats = new Stats();
+    public static class RouteServiceStatus {
+        private String routeId;
+        private CanaryLoadBalancerFilterFactory.Config config;
+        private Map<String, InstanceStatus> instances = Maps.newConcurrentMap();
     }
 
-    @With
     @Getter
     @Setter
     @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
+    public static class InstanceStatus {
+        private ServiceInstance instance;
+        private Stats stats = new Stats();
+
+        public InstanceStatus(ServiceInstance instance) {
+            this.instance = notNullOf(instance, "instance");
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
     public static class Stats {
         private AtomicInteger connections = new AtomicInteger(0);
-        private Deque<ActivePing> activePings = Queues.newArrayDeque();
-        private Deque<PassivePing> passivePings = Queues.newArrayDeque();
+        private Deque<ActiveProbe> activeProbes = Queues.newArrayDeque();
+        private Deque<PassiveProbe> passiveProbes = Queues.newArrayDeque();
         private Boolean alive;
         private double latestCostTime;
         private double oldestCostTime;
@@ -94,20 +101,20 @@ public interface LoadBalancerStats {
         private double minCostTime;
         private double avgCostTime;
 
-        public static boolean isAlive(CanaryLoadBalancerProperties config, Stats stats) {
-            return isNull(stats.getAlive()) ? config.isNullPingToReachable() : stats.getAlive();
+        public static boolean isAlive(CanaryLoadBalancerFilterFactory.Config config, Stats stats) {
+            return isNull(stats.getAlive()) ? config.getChoose().isNullPingToReachable() : stats.getAlive();
         }
     }
 
     /**
-     * Active ping result.
+     * Active probe result.
      */
     @With
     @Getter
     @Setter
     @ToString
     @AllArgsConstructor
-    public static class ActivePing {
+    public static class ActiveProbe {
         private long timestamp;
         private boolean isTimeout;
         private HttpResponseStatus status;
@@ -115,14 +122,14 @@ public interface LoadBalancerStats {
     }
 
     /**
-     * Passive ping result.
+     * Passive probe result.
      */
     @With
     @Getter
     @Setter
     @ToString
     @AllArgsConstructor
-    public static class PassivePing {
+    public static class PassiveProbe {
         private long costTime;
         // private HttpResponseStatus status;
     }

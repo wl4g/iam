@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.loadbalance.rule.stats;
+package com.wl4g.iam.gateway.loadbalance.stats;
 
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ActivePing;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.Stats;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ActiveProbe;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.Stats;
 import com.wl4g.infra.common.log.SmartLogger;
 
 /**
@@ -40,25 +40,25 @@ public interface ReachableStrategy {
     public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
     };
 
-    default ServiceInstanceStatus updateStatus(CanaryLoadBalancerProperties config, ServiceInstanceStatus status) {
+    default InstanceStatus updateStatus(ProbeProperties probe, InstanceStatus status) {
         // Calculate health statistics status.
         Stats stats = status.getStats();
-        ActivePing ping = stats.getActivePings().peekLast();
-        if (ping.isTimeout()) {
+        ActiveProbe activeProbe = stats.getActiveProbes().peekLast();
+        if (activeProbe.isTimeout()) {
             stats.setAlive(false);
             return status;
         }
 
         Boolean oldAlive = stats.getAlive();
         // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-        if (!isBlank(config.getPing().getExpectBody())) {
-            if (StringUtils.equals(config.getPing().getExpectBody(), ping.getResponseBody())) {
+        if (!isBlank(probe.getExpectBody())) {
+            if (StringUtils.equals(probe.getExpectBody(), activeProbe.getResponseBody())) {
                 stats.setAlive(true);
             } else {
                 stats.setAlive(false);
             }
         } else {
-            if (ping.getStatus().code() == config.getPing().getExpectStatus()) {
+            if (activeProbe.getStatus().code() == probe.getExpectStatus()) {
                 stats.setAlive(true);
             } else {
                 stats.setAlive(false);

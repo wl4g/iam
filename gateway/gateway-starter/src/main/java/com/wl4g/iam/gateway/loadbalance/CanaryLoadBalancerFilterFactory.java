@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.loadbalance;
 
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
@@ -41,17 +42,16 @@ import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser.LoadBalancerAlgorithm;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.DefaultLoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerCache;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.ReachableStrategy;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ChooseProperties;
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -70,16 +70,16 @@ import reactor.core.publisher.SignalType;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
-public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory<CanaryLoadBalancerClientFilter.Config> {
-    private final SmartLogger log = getLogger(getClass());
+@Getter
+@ToString
+public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactory<CanaryLoadBalancerFilterFactory.Config> {
 
     private @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
-    private @Autowired GenericOperatorAdapter<CanaryLoadBalancerRule.LoadBalancerAlgorithm, CanaryLoadBalancerRule> ruleAdapter;
-    private @Autowired LoadBalancerCache loadBalancerCache;
-    private @Autowired ReachableStrategy reachableStrategy;
+    private @Autowired GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
+    private @Autowired LoadBalancerStats loadBalancerStats;
 
-    public CanaryLoadBalancerClientFilter() {
-        super(CanaryLoadBalancerClientFilter.Config.class);
+    public CanaryLoadBalancerFilterFactory() {
+        super(CanaryLoadBalancerFilterFactory.Config.class);
     }
 
     @Override
@@ -90,13 +90,13 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
     @Override
     public GatewayFilter apply(Config config) {
         applyGlobalToConfig(config);
-        return new CanaryLoadBalancerClientGatewayFilter(config,
-                new DefaultLoadBalancerStats(config, loadBalancerCache, reachableStrategy));
+        return new CanaryLoadBalancerGatewayFilter(ruleAdapter, loadBalancerStats, config);
     }
 
     private void applyGlobalToConfig(Config config) {
         try {
-            BeanCopierUtils.deepCopyWithDefault(config, loadBalancerConfig);
+            BeanCopierUtils.deepCopyWithDefault(config.getChoose(), loadBalancerConfig.getChoose());
+            BeanCopierUtils.deepCopyWithDefault(config.getProbe(), loadBalancerConfig.getProbe());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
@@ -105,13 +105,34 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
     @Getter
     @Setter
     @ToString
-    public static class Config extends CanaryLoadBalancerProperties {
+    public static class Config extends ProbeProperties {
+
+        /**
+         * LoadBalancer choose properties.
+         */
+        private ChooseProperties choose = new ChooseProperties();
+
+        /**
+         * Health probe properties.
+         */
+        private ProbeProperties probe = new ProbeProperties();
     }
 
-    @AllArgsConstructor
-    class CanaryLoadBalancerClientGatewayFilter implements GatewayFilter, Ordered {
-        private final Config config;
+    @Getter
+    @ToString
+    public static class CanaryLoadBalancerGatewayFilter implements GatewayFilter, Ordered {
+        private final SmartLogger log = getLogger(getClass());
+        private final GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
         private final LoadBalancerStats loadBalancerStats;
+        private final Config config;
+
+        public CanaryLoadBalancerGatewayFilter(
+                GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter,
+                LoadBalancerStats loadBalancerStats, Config config) {
+            this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
+            this.loadBalancerStats = notNullOf(loadBalancerStats, "loadBalancerStats");
+            this.config = notNullOf(config, "config");
+        }
 
         /**
          * Note: The Load balancing filter order must be before
@@ -130,7 +151,7 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
          * and
          * {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#order}
          * and
-         * {@link com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter}
+         * {@link com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory}
          * and
          * {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#filter}
          * and
@@ -143,10 +164,6 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            if (!config.isEnabled()) {
-                return chain.filter(exchange);
-            }
-
             URI requestUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
             // see:org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#hasAnotherScheme
             String schemePrefix = exchange.getAttribute(GATEWAY_SCHEME_PREFIX_ATTR);
@@ -194,8 +211,8 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
         private Response<ServiceInstance> choose(Config config, ServerWebExchange exchange) {
             URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
             String serviceId = uri.getHost();
-            ServiceInstance chosen = ruleAdapter.forOperator(config.getLoadBalancerAlgorithm()).choose(exchange,
-                    loadBalancerStats, serviceId);
+            ServiceInstance chosen = ruleAdapter.forOperator(config.getChoose().getLoadBalancerAlgorithm()).choose(config,
+                    exchange, serviceId);
             if (isNull(chosen)) {
                 return new EmptyResponse();
             }
@@ -203,6 +220,6 @@ public class CanaryLoadBalancerClientFilter extends AbstractGatewayFilterFactory
         }
     }
 
-    public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadbalancer";
+    public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadBalancer";
 
 }

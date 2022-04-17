@@ -87,7 +87,7 @@ spring:
                 redis-rate-limiter:
                   burst-capacity: 2
                   replenish-rate: 2
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'
@@ -113,10 +113,10 @@ spring:
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
-            - name: CanaryLoadbalancer
+            - name: CanaryLoadBalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
+                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
                   timeout-ms: 10_000 ## Default by 10_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-status: 200 ## Default by 200
@@ -171,7 +171,7 @@ spring:
                 redis-rate-limiter:
                   burst-capacity: 2
                   replenish-rate: 2
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilter.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'
@@ -197,10 +197,10 @@ spring:
                 statusCodes:
                   - 500
                   - "NOT_FOUND"
-            - name: CanaryLoadbalancer
+            - name: CanaryLoadBalancer
               args:
                 load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerClientFilter#applyDefault()
+                ping: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
                   timeout-ms: 10_000 ## Default by 10_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-status: 200 ## Default by 200

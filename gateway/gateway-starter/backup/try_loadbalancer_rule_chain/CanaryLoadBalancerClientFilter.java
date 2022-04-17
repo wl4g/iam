@@ -41,12 +41,12 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.CanaryLoadBalancerRule.CanaryLoadBalancerKind;
-import com.wl4g.iam.gateway.loadbalance.rule.chain.CanaryLoadBalancerRuleChain;
-import com.wl4g.iam.gateway.loadbalance.rule.chain.DefaultCanaryLoadBalancerRuleChain;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser;
+import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser.CanaryLoadBalancerKind;
+import com.wl4g.iam.gateway.loadbalance.chooser.chain.CanaryLoadBalancerRuleChain;
+import com.wl4g.iam.gateway.loadbalance.chooser.chain.DefaultCanaryLoadBalancerRuleChain;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 

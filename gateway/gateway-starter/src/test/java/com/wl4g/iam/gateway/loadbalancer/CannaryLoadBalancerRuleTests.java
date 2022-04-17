@@ -25,9 +25,10 @@ import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.loadbalance.chooser.AbstractCanaryLoadBalancerChooser;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.AbstractCanaryLoadBalancerRule;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 
 /**
  * {@link CannaryLoadBalancerRuleTests}
@@ -71,12 +72,13 @@ public class CannaryLoadBalancerRuleTests {
 
     private List<ServiceInstance> doOnlyFindCandidateInstances(List<String> matchedRuleNames) {
         CanaryLoadBalancerProperties config = new CanaryLoadBalancerProperties();
-        config.setFallbackAllToCandidates(true);
+        config.getChoose().setFallbackAllToCandidates(true);
         config.setCanaryDiscoveryServiceLabelPrefix("Iscg-Canary-Label");
 
-        AbstractCanaryLoadBalancerRule rule = new AbstractCanaryLoadBalancerRule() {
+        AbstractCanaryLoadBalancerChooser rule = new AbstractCanaryLoadBalancerChooser() {
             @Override
             protected ServiceInstance doChooseInstance(
+                    CanaryLoadBalancerFilterFactory.Config config,
                     ServerWebExchange exchange,
                     LoadBalancerStats stats,
                     String serviceId,

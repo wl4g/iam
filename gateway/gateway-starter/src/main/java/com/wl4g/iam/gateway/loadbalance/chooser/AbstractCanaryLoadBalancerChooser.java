@@ -1,10 +1,11 @@
-package com.wl4g.iam.gateway.loadbalance.rule;
+package com.wl4g.iam.gateway.loadbalance.chooser;
 
 import static com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration.BEAN_CANARY_LB_REQUEST_MATCHER;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -20,9 +21,10 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats;
-import com.wl4g.iam.gateway.loadbalance.rule.stats.LoadBalancerStats.ServiceInstanceStatus;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
@@ -34,35 +36,35 @@ import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 import lombok.Getter;
 
 /**
- * Abstract Grayscale Load Balancer rule based on random.
+ * Abstract Grayscale Load Balancer chooser based on random.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalancerRule {
+public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBalancerChooser {
 
     protected final SmartLogger log = getLogger(getClass());
     protected @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
+    protected @Autowired LoadBalancerStats loadBalancerStats;
     protected @Autowired DiscoveryClient discoveryClient;
     protected @Resource(name = BEAN_CANARY_LB_REQUEST_MATCHER) SpelRequestMatcher requestMatcher;
     protected @Autowired IamGatewayMetricsFacade metricsFacade;
 
     @Override
-    public ServiceInstance choose(ServerWebExchange exchange, LoadBalancerStats stats, String serviceId) {
+    public ServiceInstance choose(CanaryLoadBalancerFilterFactory.Config config, ServerWebExchange exchange, String serviceId) {
         List<ServiceInstance> allInstances = discoveryClient.getInstances(serviceId);
 
         // There is no instance in the registry throwing an exception.
         if (isEmpty(allInstances)) {
             log.warn("No found instance available for {}", serviceId);
-            addCounterMetrics(exchange, MetricsName.CANARY_LB_NOT_FOUND_INSTANCES_TOTAL, serviceId);
-            throw new NotFoundException("No found instance available for " + serviceId);
+            addCounterMetrics(config, exchange, MetricsName.CANARY_LB_NOT_FOUND_INSTANCES_TOTAL, serviceId);
+            throw new NotFoundException(format("No found instance available for %s", serviceId));
         }
 
-        // Register all instances.
-        stats.register(allInstances);
-        addCounterMetrics(exchange, MetricsName.CANARY_LB_REQUEST_TOTAL, serviceId);
+        // Add metrics.
+        addCounterMetrics(config, exchange, MetricsName.CANARY_LB_REQUEST_TOTAL, serviceId);
 
         // According to the configuration expression, match whether the current
         // request satisfies the load condition for executing the canary.
@@ -71,7 +73,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
                 getLoadBalancerConfig().getSelectExpression());
         if (isEmpty(rules)) {
             log.warn("The request did not match the canary load balancer instance.");
-            if (getLoadBalancerConfig().isFallbackAllToCandidates()) {
+            if (config.getChoose().isFallbackAllToCandidates()) {
                 candidateInstances = allInstances;
             } else {
                 return null;
@@ -81,7 +83,7 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
             candidateInstances = findCandidateInstances(allInstances, rules.stream().map(r -> r.getName()).collect(toList()));
         }
 
-        return doChooseInstance(exchange, stats, serviceId, candidateInstances);
+        return doChooseInstance(config, exchange, loadBalancerStats, serviceId, candidateInstances);
     }
 
     public List<ServiceInstance> findCandidateInstances(List<ServiceInstance> instances, List<String> matchedRuleNames) {
@@ -99,13 +101,14 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
     }
 
     protected abstract ServiceInstance doChooseInstance(
+            CanaryLoadBalancerFilterFactory.Config config,
             ServerWebExchange exchange,
             LoadBalancerStats stats,
             String serviceId,
             List<ServiceInstance> candidateInstances);
 
-    protected List<ServiceInstanceStatus> getAvailableInstances(
-            List<ServiceInstanceStatus> reachableInstances,
+    protected List<InstanceStatus> getAvailableInstances(
+            List<InstanceStatus> reachableInstances,
             List<ServiceInstance> candidateInstances) {
 
         return safeList(reachableInstances).stream()
@@ -114,7 +117,11 @@ public abstract class AbstractCanaryLoadBalancerRule implements CanaryLoadBalanc
                 .collect(toList());
     }
 
-    protected void addCounterMetrics(ServerWebExchange exchange, String name, String serviceId) {
+    protected void addCounterMetrics(
+            CanaryLoadBalancerFilterFactory.Config config,
+            ServerWebExchange exchange,
+            String name,
+            String serviceId) {
         metricsFacade.counter(exchange, name, 1, MetricsTag.SERVICE_ID, serviceId, MetricsTag.LB, kind().name());
     }
 
