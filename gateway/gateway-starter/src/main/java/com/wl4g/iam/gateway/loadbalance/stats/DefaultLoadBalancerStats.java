@@ -263,11 +263,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
          * see:https://github.com/reactor/reactor-netty/issues/151
          */
         Duration timeout = Duration.ofMillis(probe.getTimeoutMs());
+        URI pingUri = buildUri(probe, status);
+        log.debug("LoadBalancer stats probe to {}->'{}' ...", status, pingUri);
         if (!isBlank(probe.getExpectBody())) {
             return HttpClient.create()
                     .wiretap(probe.isDebug())
                     .get()
-                    .uri(buildUri(probe, status))
+                    .uri(pingUri)
                     .responseContent()
                     .aggregate()
                     .asString()
@@ -275,17 +277,17 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                             Mono.fromRunnable(
                                     () -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null, null))))
                     .doFinally(signal -> {
-                        if (signal != SignalType.ON_COMPLETE) {
-                            // Failed to request ping.
-                            if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                                save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
-                            }
+                        // Failed to request probe ping.
+                        if (signal == SignalType.CANCEL) {
+                            save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
                         }
                     })
                     // main thread non-blocking.
                     .subscribe(response -> {
+                        log.debug("Probe success for instance status: {}, response: {}", status, response);
                         save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, response));
                     }, ex -> {
+                        log.debug("Probe error for instance status: {}", status);
                         save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, null));
                     }, () -> {
                         log.debug("Ping completion for service instance status: {}", status);
@@ -294,26 +296,26 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         return HttpClient.create()
                 .wiretap(probe.isDebug())
                 .get()
-                .uri(buildUri(probe, status))
+                .uri(pingUri)
                 .responseConnection((res, connection) -> Mono.just(res))
                 .timeout(timeout,
                         Mono.fromRunnable(
                                 () -> save(probe, status, new ActiveProbe(currentTimeMillis(), true, null, null, null))))
                 .doFinally(signal -> {
-                    if (signal != SignalType.ON_COMPLETE) {
-                        // Failed to request ping.
-                        if (signal == SignalType.ON_ERROR || signal == SignalType.CANCEL) {
-                            save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
-                        }
+                    // Failed to request probe ping.
+                    if (signal == SignalType.CANCEL) {
+                        save(probe, status, new ActiveProbe(currentTimeMillis(), false, true, null, null));
                     }
                 })
                 // main thread non-blocking.
                 .subscribe(response -> {
+                    log.debug("Probe success for instance status: {}, response: {}", status, response);
                     save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, response.status(), null));
                 }, ex -> {
+                    log.debug("Probe error for instance status: {}", status);
                     save(probe, status, new ActiveProbe(currentTimeMillis(), false, null, null, null));
                 }, () -> {
-                    log.debug("Ping completion for service instance status: {}", status);
+                    log.debug("Probe completion for instance status: {}", status);
                 });
     }
 

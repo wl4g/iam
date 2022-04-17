@@ -52,6 +52,11 @@ public class RouteAutoConfiguration {
         return new RedisRouteDefinitionRepository();
     }
 
+    // @Bean
+    // public RouteDefinitionRepository nacosRouteDefinitionRepository() {
+    // return new NacosRouteDefinitionRepository();
+    // }
+
     @Bean
     public RefreshRouteApplicationListener refreshRouteApplicationListener() {
         return new RefreshRouteApplicationListener();

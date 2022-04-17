@@ -16,14 +16,18 @@
 //package com.wl4g.iam.gateway.route.repository;
 //
 //import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+//import static java.util.Objects.isNull;
 //
+//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.cloud.gateway.route.RouteDefinition;
 //
-//import com.alibaba.nacos.api.NacosFactory;
+//import com.alibaba.cloud.nacos.NacosConfigManager;
+//import com.alibaba.cloud.nacos.NacosConfigProperties;
 //import com.alibaba.nacos.api.config.ConfigService;
 //import com.alibaba.nacos.api.exception.NacosException;
 //import com.fasterxml.jackson.core.type.TypeReference;
 //
+//import lombok.extern.slf4j.Slf4j;
 //import reactor.core.publisher.Flux;
 //
 ///**
@@ -33,38 +37,38 @@
 // * @version 2021-09-05 v3.0.0
 // * @since v3.0.0
 // */
+//@Slf4j
 //public class NacosRouteDefinitionRepository extends AbstractRouteRepository {
+//
+//    private @Autowired NacosConfigManager configManager;
 //
 //    @Override
 //    protected Flux<RouteDefinition> loadPermanentRouteDefinitions() {
 //        return Flux.defer(() -> {
-//            ConfigService configService = null;
+//            NacosConfigProperties config = configManager.getNacosConfigProperties();
+//            ConfigService configService = configManager.getConfigService();
 //            try {
-//                configService = NacosFactory.createConfigService("//TODO serverAddr");
+//                // configService.addListener(config.getName(),
+//                // config.getGroup(), new Listener() {
+//                // @Override
+//                // public void receiveConfigInfo(String configInfo) {
+//                // RouteDefinition routes = parseJSON(configInfo, new
+//                // TypeReference<RouteDefinition>() {
+//                // });
+//                // }
+//                // @Override
+//                // public Executor getExecutor() {
+//                // return Executors.newSingleThreadExecutor();
+//                // }
+//                // });
+//                String configInfo = configService.getConfig(config.getName(), config.getGroup(), config.getTimeout());
+//                RouteDefinition routes = parseJSON(configInfo, new TypeReference<RouteDefinition>() {
+//                });
+//                return isNull(routes) ? Flux.empty() : Flux.just(routes);
 //            } catch (NacosException e) {
-//                e.printStackTrace();
+//                log.error("", e);
 //            }
-//            // configService.addListener("//TODO dataId", "//TODO group",
-//            // new com.alibaba.nacos.api.config.listener.Listener() {
-//            // @Override
-//            // public void receiveConfigInfo(String configInfo) {
-//            // refreshRoutes();
-//            // }
-//            //
-//            // @Override
-//            // public Executor getExecutor() {
-//            // return null;
-//            // }
-//            // });
-//            String initConfig = null;
-//            try {
-//                initConfig = configService.getConfig("//TODO dataId", "//TODO group", 5000);
-//            } catch (NacosException e) {
-//                e.printStackTrace();
-//            }
-//            RouteDefinition routes = parseJSON(initConfig, new TypeReference<RouteDefinition>() {
-//            });
-//            return Flux.just(routes);
+//            return Flux.empty();
 //        });
 //    }
 //

@@ -85,7 +85,6 @@ public class TimingRouteRefreshTask extends ApplicationTaskRunner<RunnerProperti
         if (nonNull(future) && !future.isDone()) {
             throw new IllegalStateException(format("Cannot refresh routes, because already refreshing task. %s", future));
         }
-
         this.future = getWorker().scheduleWithFixedDelay(() -> {
             try {
                 log.debug("Refreshing routes ...");
@@ -94,7 +93,6 @@ public class TimingRouteRefreshTask extends ApplicationTaskRunner<RunnerProperti
                 log.error("Failed to refreshing routes.", e);
             }
         }, 1_000L, config.getRefreshDelayMs(), MILLISECONDS);
-
     }
 
 }
