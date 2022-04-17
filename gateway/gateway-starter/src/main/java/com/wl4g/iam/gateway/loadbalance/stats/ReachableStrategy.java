@@ -67,7 +67,7 @@ public interface ReachableStrategy {
 
         // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
         if (oldAlive != stats.getAlive()) {
-            log.warn("Canary loadBalancer upstream server({}::{}) status changed to {}", status.getInstance().getServiceId(),
+            log.warn("Canary loadBalancer upstream server({}->{}) status changed to {}", status.getInstance().getServiceId(),
                     LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
         }
 
