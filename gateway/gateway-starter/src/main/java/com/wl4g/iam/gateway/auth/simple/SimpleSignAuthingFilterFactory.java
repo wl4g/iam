@@ -185,6 +185,8 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 if (obtainBloomFilter(exchange, config).bloomExist(getBloomKey(exchange), sign)) {
                     log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_FAIL_TOTAL, config);
+                    // Publish failure event.
+                    publishFailureEvent(appId, config);
                     return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
                 }
             }
@@ -196,18 +198,18 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                     log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, config);
                     // Publish failure event.
-                    eventBus.post(new SignAuthingFailureEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
-                            config.getSignHashingMode()));
+                    publishFailureEvent(appId, config);
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
+                log.info("Verified request appId='{}', sign='{}'", appId, sign);
+
                 metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
                 if (config.isSignReplayVerifyEnabled()) {
                     obtainBloomFilter(exchange, config).bloomAdd(getBloomKey(exchange), sign);
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL, config);
                 }
                 // Publish success event.
-                eventBus.post(new SignAuthingSuccessEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
-                        config.getSignHashingMode()));
+                publishSuccessEvent(appId, config);
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
             } catch (IllegalArgumentException e) {
@@ -348,6 +350,16 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
             long beginNanoTime) {
         metricsFacade.timer(exchange, metricsName, beginNanoTime, MetricsTag.SIGN_ALG, config.getSignAlgorithm().name(),
                 MetricsTag.SIGN_HASH, config.getSignHashingMode().name());
+    }
+
+    private void publishSuccessEvent(String appId, SimpleSignAuthingFilterFactory.Config config) {
+        eventBus.post(new SignAuthingSuccessEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                config.getSignHashingMode()));
+    }
+
+    private void publishFailureEvent(String appId, SimpleSignAuthingFilterFactory.Config config) {
+        eventBus.post(new SignAuthingFailureEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                config.getSignHashingMode()));
     }
 
     @Getter

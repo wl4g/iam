@@ -1,7 +1,9 @@
 package com.wl4g.iam.gateway.auth.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -56,6 +58,23 @@ public class AuthingProperties {
          * Publish event bus threads.
          */
         private int publishEventBusThreads = 1;
+
+        /**
+         * Based on whether the redis event logger enables logging, if it is
+         * turned on, it can be used as a downgrade recovery strategy when data
+         * is lost due to a catastrophic failure of the persistent accumulator.
+         */
+        private boolean redisEventRecoderLogEnabled = true;
+
+        /**
+         * Redis event recorder success accumulator key.
+         */
+        private String redisEventRecoderSuccessCumulatorKey = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
+
+        /**
+         * Redis event recorder failure accumulator key.
+         */
+        private String redisEventRecoderFailureCumulatorKey = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
 
     }
 

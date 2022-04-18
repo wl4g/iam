@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory;
+import com.wl4g.iam.gateway.auth.simple.recorder.RedisSimpleSignEventRecoder;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
@@ -40,7 +41,9 @@ public class AuthingAutoConfiguration {
         return new AuthingProperties();
     }
 
-    @Bean(name = BEAN_EVENTBUS, destroyMethod = "close")
+    // Simple signature authorizer configuration.
+
+    @Bean(name = BEAN_SIMPLE_SIGN_EVENTBUS, destroyMethod = "close")
     public EventBusSupport simpleSignAuthingEventBusSupport(AuthingProperties authingConfig) {
         return new EventBusSupport(authingConfig.getSimpleSign().getPublishEventBusThreads());
     }
@@ -50,9 +53,16 @@ public class AuthingAutoConfiguration {
             AuthingProperties authingConfig,
             StringRedisTemplate stringTemplate,
             IamGatewayMetricsFacade metricsFacade,
-            @Qualifier(BEAN_EVENTBUS) EventBusSupport eventBus) {
+            @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {
         return new SimpleSignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade, eventBus);
     }
+
+    @Bean
+    public RedisSimpleSignEventRecoder redisSimpleSignEventRecoder() {
+        return new RedisSimpleSignEventRecoder();
+    }
+
+    // Oauth2 authorizer configuration.
 
     // @Bean
     // public TokenRelayRefreshFilter
@@ -64,6 +74,6 @@ public class AuthingAutoConfiguration {
     // clientRegistrationRepository);
     // }
 
-    public static final String BEAN_EVENTBUS = "simpleSignAuthingEventBusSupport";
+    public static final String BEAN_SIMPLE_SIGN_EVENTBUS = "simpleSignAuthingEventBusSupport";
 
 }

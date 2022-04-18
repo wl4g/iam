@@ -41,5 +41,9 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET = CACHE_PREFIX_IAM_GWTEWAY_AUTH + ":sign:secret";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM = CACHE_PREFIX_IAM_GWTEWAY_AUTH
             + ":sign:replay:bloom";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS = CACHE_PREFIX_IAM_GWTEWAY_AUTH
+            + ":sign:redis:recorder:success";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE = CACHE_PREFIX_IAM_GWTEWAY_AUTH
+            + ":sign:redis:recorder:failure";
 
 }
