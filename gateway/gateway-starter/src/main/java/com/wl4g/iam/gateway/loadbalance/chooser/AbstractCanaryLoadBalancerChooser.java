@@ -121,7 +121,7 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
     protected void addCounterMetrics(
             CanaryLoadBalancerFilterFactory.Config config,
             ServerWebExchange exchange,
-            String metricsName,
+            MetricsName metricsName,
             String serviceId) {
         metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SERVICE_ID, serviceId, MetricsTag.LB, kind().name());
     }

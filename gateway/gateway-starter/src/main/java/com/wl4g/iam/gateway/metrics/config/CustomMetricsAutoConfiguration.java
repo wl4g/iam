@@ -19,8 +19,6 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-
 /**
  * {@link CustomMetricsAutoConfiguration}
  * 
@@ -31,8 +29,8 @@ import io.micrometer.prometheus.PrometheusMeterRegistry;
 public class CustomMetricsAutoConfiguration {
 
     @Bean
-    public IamGatewayMetricsFacade iamGatewayMetricsFacade(PrometheusMeterRegistry registry) {
-        return new IamGatewayMetricsFacade(registry);
+    public IamGatewayMetricsFacade iamGatewayMetricsFacade() {
+        return new IamGatewayMetricsFacade();
     }
 
 }

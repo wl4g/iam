@@ -114,7 +114,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public synchronized void registerAllRouteServices(@Nullable Runnable callback) {
         try {
-            addCounterMetrics(MetricsName.CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL);
+            discoveryClient.getServices();
+            addCounterMetrics(MetricsName.CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL);
 
             routeRlocator.getRoutes().collectList().block().forEach(route -> {
                 if (nonNull(route.getUri()) && equalsIgnoreCase("lb", route.getUri().getScheme())) {
@@ -375,14 +376,14 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     /**
      * Add register all route services metrics.
      */
-    protected void addCounterMetrics(String metricsName) {
+    protected void addCounterMetrics(MetricsName metricsName) {
         metricsFacade.counter(metricsName, 1);
     }
 
     /**
      * Add restart probe task metrics.
      */
-    protected void addCounterMetrics(String metricsName, String... routeIds) {
+    protected void addCounterMetrics(MetricsName metricsName, String... routeIds) {
         if (isEmptyArray(routeIds)) {
             metricsFacade.counter(metricsName, 1);
         } else {
@@ -394,7 +395,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
      * Add restart probe task metrics.
      */
     protected void addCounterMetrics(
-            String metricsName,
+            MetricsName metricsName,
             Map<String, RouteServiceStatus> failRouteServices,
             int maxTries,
             String... routeIds) {
@@ -420,14 +421,14 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     /**
      * Add active probe metrics.
      */
-    protected void addCounterMetrics(InstanceStatus status, String metricsName) {
+    protected void addCounterMetrics(InstanceStatus status, MetricsName metricsName) {
         metricsFacade.counter(status, metricsName, 1, new String[0]);
     }
 
     /**
      * Add passive probe metrics.
      */
-    protected void addCounterMetrics(ServerWebExchange exchange, String metricsName, ServiceInstance instance) {
+    protected void addCounterMetrics(ServerWebExchange exchange, MetricsName metricsName, ServiceInstance instance) {
         metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SERVICE_ID, instance.getServiceId(), MetricsTag.INSTANCE_ID,
                 LoadBalancerUtil.getInstanceId(instance));
     }

@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.metrics;
 
-import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -23,14 +22,20 @@ import static java.util.Objects.nonNull;
 
 import java.util.List;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Lists;
 import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,89 +50,173 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
-public class IamGatewayMetricsFacade {
+public class IamGatewayMetricsFacade implements InitializingBean {
 
-    private final PrometheusMeterRegistry registry;
+    private @Autowired PrometheusMeterRegistry registry;
 
-    public void counter(ServerWebExchange exchange, String metricsName, double amount, String... tags) {
+    /**
+     * see:{@link org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration#simpleDiscoveryProperties}
+     */
+    private @Autowired InetUtils inet;
+
+    private @Autowired Environment environment;
+
+    /**
+     * see:{@link org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperties#local}
+     */
+    private DefaultServiceInstance localInstance;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initLocalInstance();
+    }
+
+    public void counter(ServerWebExchange exchange, MetricsName metricsName, double amount, String... tags) {
         try {
             notNullOf(exchange, "exchange");
-            hasTextOf(metricsName, "metricsName");
+            notNullOf(metricsName, "metricsName");
             Object route = exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
             if (nonNull(route)) {
                 String routeId = ((Route) route).getId();
                 List<String> _tags = Lists.newArrayList(tags);
+                _tags.add(MetricsTag.SELF_INSTANCE_ID);
+                _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
-                registry.counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+                doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
             }
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
         }
     }
 
-    public void counter(String metricsName, double amount, String... tags) {
+    public void counter(MetricsName metricsName, double amount, String... tags) {
         try {
-            hasTextOf(metricsName, "metricsName");
+            notNullOf(metricsName, "metricsName");
             List<String> _tags = Lists.newArrayList(tags);
-            registry.counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            _tags.add(MetricsTag.SELF_INSTANCE_ID);
+            _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
+            doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
         }
     }
 
-    public void counter(InstanceStatus status, String metricsName, double amount, String... tags) {
+    public void counter(InstanceStatus status, MetricsName metricsName, double amount, String... tags) {
         try {
             notNullOf(status, "instanceStatus");
             notNullOf(status.getInstance(), "instanceStatus.instance");
-            hasTextOf(metricsName, "metricsName");
+            notNullOf(metricsName, "metricsName");
             List<String> _tags = Lists.newArrayList(tags);
+            _tags.add(MetricsTag.SELF_INSTANCE_ID);
+            _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
             _tags.add(MetricsTag.SERVICE_ID);
             _tags.add(status.getInstance().getServiceId());
             _tags.add(MetricsTag.INSTANCE_ID);
             _tags.add(LoadBalancerUtil.getInstanceId(status.getInstance()));
-            registry.counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}, instanceStatus: {}", metricsName,
                     valueOf(amount)), status, e);
         }
     }
 
-    public static abstract class MetricsName {
+    /**
+     * Tracks a monotonically increasing value.
+     *
+     * @param metricsName
+     *            The base metric name
+     *
+     * @param tags
+     *            Sequence of dimensions for breaking down the name.
+     * @return A new or existing counter.
+     */
+    private Counter doCounter(MetricsName metricsName, String... tags) {
+        return Counter.builder(metricsName.getName()).description(metricsName.getHelp()).tags(tags).register(registry);
+    }
+
+    public void initLocalInstance() throws Exception {
+        boolean secure = environment.getProperty("server.ssl.enabled", Boolean.class, false);
+        String serviceId = environment.getRequiredProperty("spring.application.name");
+        String host = inet.findFirstNonLoopbackHostInfo().getHostname();
+        int port = environment.getRequiredProperty("server.port", Integer.class);
+        String instanceId = host.concat(":").concat(valueOf(port));
+        this.localInstance = new DefaultServiceInstance(instanceId, serviceId, host, port, secure);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static enum MetricsName {
         // Simple signature authorizer.
-        public static final String SIMPLE_SIGN_BLOOM_TOTAL = "simple_sign_bloom_total";
-        public static final String SIMPLE_SIGN_SUCCCESS_TOTAL = "simple_sign_success_total";
-        public static final String SIMPLE_SIGN_FAIL_TOTAL = "simple_sign_fail_total";
+        SIMPLE_SIGN_BLOOM_TOTAL("simple_sign_bloom_total", "The total number of bloom checks for simple signature authenticator"),
+
+        SIMPLE_SIGN_BLOOM_FAIL_TOTAL("simple_sign_bloom_fail_total",
+                "The total number of failed bloom checks for simple signature authenticator"),
+
+        SIMPLE_SIGN_SUCCCESS_TOTAL("simple_sign_success_total",
+                "The total number of successful authentication by the simple signature authenticator"),
+
+        SIMPLE_SIGN_FAIL_TOTAL("simple_sign_fail_total",
+                "The total number of failure authentication by the simple sign authenticator"),
+
         // Canary LoadBalacner chooser.
-        public static final String CANARY_LB_CHOOSE_TOTAL = "canary_lb_choose_total";
-        public static final String CANARY_LB_CHOOSE_FALLBACK_TOTAL = "canary_lb_choose_fallback_total";
-        public static final String CANARY_LB_CHOOSE_MISSING_TOTAL = "canary_lb_choose_missing_total";
-        public static final String CANARY_LB_CHOOSE_MAX_TRIES_TOTAL = "canary_lb_choose_max_tries_total";
-        public static final String CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL = "canary_lb_choose_empty_instances_total";
+        CANARY_LB_CHOOSE_TOTAL("canary_lb_choose_total", "The total number of instances selected by the canary LoadBalancer"),
+
+        CANARY_LB_CHOOSE_FALLBACK_TOTAL("canary_lb_choose_fallback_total",
+                "The total number of times that Canary LoadBalancer chose to fallback on instances"),
+
+        CANARY_LB_CHOOSE_MISSING_TOTAL("canary_lb_choose_missing_total", "Total number of canary load balancing misses"),
+
+        CANARY_LB_CHOOSE_MAX_TRIES_TOTAL("canary_lb_choose_max_tries_total",
+                "The total number of times the canary load balancer selects a reachable instance to retry"),
+
+        CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL("canary_lb_choose_empty_instances_total",
+                "The total number of times the available instances was not found by canary load balancer"),
+
         // Canary LoadBalacnerStats Active probe.
-        public static final String CANARY_LB_STATS_TOTAL = "canary_lb_stats_total";
-        public static final String CANARY_LB_STATS_TIMEOUT_TOTAL = "canary_lb_stats_timeout_total";
-        public static final String CANARY_LB_STATS_CANCEL_ERROR_TOTAL = "canary_lb_stats_cancel_error_total";
+        CANARY_LB_STATS_TOTAL("canary_lb_stats_total", "The total number of active probes of the canary load balancer"),
+
+        CANARY_LB_STATS_TIMEOUT_TOTAL("canary_lb_stats_timeout_total",
+                "The total number of active probe timeouts of the canary load balancing statistic"),
+
+        CANARY_LB_STATS_CANCEL_ERROR_TOTAL("canary_lb_stats_cancel_error_total",
+                "The total number of active probe cancel or error of the canary load balancing statistic"),
+
         // Canary LoadBalacnerStats Passive probe.
-        public static final String CANARY_LB_STATS_CONNECT_OPEN_TOTAL = "canary_lb_stats_connect_open_total";
-        public static final String CANARY_LB_STATS_CONNECT_CLOSE_TOTAL = "canary_lb_stats_connect_close_total";
+        CANARY_LB_STATS_CONNECT_OPEN_TOTAL("canary_lb_stats_connect_open_total",
+                "The total number of connections opened by the canary load balancer passive probe"),
+
+        CANARY_LB_STATS_CONNECT_CLOSE_TOTAL("canary_lb_stats_connect_close_total",
+                "The total number of connections closed by the canary load balancer passive probe"),
+
         // Canary LoadBalacnerStats Register.
-        public static final String CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL = "canary_lb_stats_register_all_services_total";
-        public static final String CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL = "canary_lb_stats_restart_probe_task_total";
-        public static final String CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL = "canary_lb_stats_restart_probe_task_fail_total";
+        CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL("canary_lb_stats_register_all_services_total",
+                "The total number of times the canary load balancer stats is updated and registered according to the router service instance"),
+
+        CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL("canary_lb_stats_restart_probe_task_total",
+                "The total number of detection tasks based on router update or restart canary load balancer"),
+
+        CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL("canary_lb_stats_restart_probe_task_fail_total",
+                "The total number of detection tasks based on router update or restart canary load balancer"),
+
         // Canary LoadBalacnerStats instance state changed.
-        public static final String CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL = "canary_lb_stats_instance_state_changed_total";
+        CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("canary_lb_stats_instance_state_changed_total",
+                "The total number of failed restart or update loadbalancer probe tasks");
+
+        private final String name;
+        private final String help;
     }
 
     public static abstract class MetricsTag {
         public static final String LB = "lb";
+        public static final String SELF_INSTANCE_ID = "self";
         public static final String SERVICE_ID = "serviceId";
         public static final String INSTANCE_ID = "instanceId";
         public static final String ROUTE_ID = "routeId";
         public static final String ROUTE_IDS = "routeIds";
         public static final String MAX_TRIES = "maxTries";
         public static final String FAIL_ROUTE_SERVICE = "failRouteService";
+        public static final String OLD_ALIVE = "oldAlive";
         public static final String NEW_ALIVE = "newAlive";
     }
 

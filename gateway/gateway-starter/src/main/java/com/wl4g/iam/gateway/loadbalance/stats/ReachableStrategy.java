@@ -79,7 +79,8 @@ public interface ReachableStrategy {
                         LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
                 metricsFacade.counter(MetricsName.CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL, 1, MetricsTag.SERVICE_ID,
                         status.getInstance().getServiceId(), MetricsTag.INSTANCE_ID,
-                        LoadBalancerUtil.getInstanceId(status.getInstance()), MetricsTag.NEW_ALIVE, valueOf(stats.getAlive()));
+                        LoadBalancerUtil.getInstanceId(status.getInstance()), MetricsTag.OLD_ALIVE, valueOf(oldAlive),
+                        MetricsTag.NEW_ALIVE, valueOf(stats.getAlive()));
             }
 
             return status;

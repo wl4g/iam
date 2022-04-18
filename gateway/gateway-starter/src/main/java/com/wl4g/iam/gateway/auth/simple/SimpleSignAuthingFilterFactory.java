@@ -177,6 +177,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
             if (config.isSignReplayVerifyEnabled()) {
                 if (obtainBloomFilter(exchange, config).bloomExist(getBloomKey(exchange), sign)) {
                     log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
+                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_BLOOM_FAIL_TOTAL, 1);
                     return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
                 }
             }
