@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.loadbalance.stats;
 
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeArrayToList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
@@ -382,7 +383,11 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
      * Add restart probe task metrics.
      */
     protected void addCounterMetrics(String metricsName, String... routeIds) {
-        metricsFacade.counter(metricsName, 1, MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+        if (isEmptyArray(routeIds)) {
+            metricsFacade.counter(metricsName, 1);
+        } else {
+            metricsFacade.counter(metricsName, 1, MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+        }
     }
 
     /**
