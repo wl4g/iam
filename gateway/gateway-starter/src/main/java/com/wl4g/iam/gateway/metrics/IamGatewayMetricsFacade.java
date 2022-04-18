@@ -255,8 +255,8 @@ public class IamGatewayMetricsFacade implements InitializingBean {
         public static final String SELF_INSTANCE_ID = "self";
         public static final String ROUTE_ID = "routeId";
 
-        public static final String SIGN_ALG = "signAlg";
-        public static final String SIGN_HASH = "signHash";
+        public static final String SIGN_ALG = "alg";
+        public static final String SIGN_HASH = "hash";
 
         public static final String LB = "lb";
         public static final String LB_SERVICE_ID = "serviceId";
