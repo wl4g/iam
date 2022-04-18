@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.loadbalance.stats;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 import java.util.Map;
@@ -42,24 +43,55 @@ public class InMemoryLoadBalancerRegistry implements LoadBalancerRegistry {
     private final Map<String, RouteServiceStatus> registerRouteServices = new ConcurrentHashMap<>(32);
 
     @Override
-    public void register(
+    public synchronized void register(
             @NotBlank String routeId,
             @NotNull CanaryLoadBalancerFilterFactory.Config config,
             @NotNull InstanceStatus instance) {
         hasTextOf(routeId, "routeId");
         notNullOf(config, "config");
         notNullOf(instance, "instance");
-        RouteServiceStatus routeService = getRouteService(routeId);
-        routeService.setRouteId(routeId);
-        routeService.setConfig(config);
-        routeService.getInstances().put(LoadBalancerUtil.getInstanceId(instance.getInstance()), instance);
-        registerRouteServices.put(routeId, routeService);
+
+        // Gets or initial route service.
+        RouteServiceStatus existingRouteService = getRouteService(routeId, false);
+        if (isNull(existingRouteService)) {
+            synchronized (this) {
+                existingRouteService = registerRouteServices.get(routeId);
+                if (isNull(existingRouteService)) {
+                    registerRouteServices.put(routeId, existingRouteService = new RouteServiceStatus());
+                }
+            }
+        }
+
+        // If it is a renewal registration (not the first registration), whether
+        // to overwrite the previously existing instance.
+        String instanceId = LoadBalancerUtil.getInstanceId(instance.getInstance());
+        InstanceStatus existingInstance = existingRouteService.getInstances().get(instanceId);
+        if (isNull(existingInstance)) {
+            existingRouteService.getInstances().put(instanceId, instance);
+        } else {
+            // Note: Only update instance information but not stats to prevent
+            // loss of previous statistics
+            existingInstance.setInstance(instance.getInstance());
+            existingRouteService.getInstances().put(instanceId, existingInstance);
+        }
+
+        existingRouteService.setRouteId(routeId);
+        existingRouteService.setConfig(config);
+
+        registerRouteServices.put(routeId, existingRouteService);
     }
 
     @Override
-    public void register(@NotBlank String routeId, @NotNull RouteServiceStatus routeService) {
+    public synchronized void update(@NotBlank String routeId, @NotNull RouteServiceStatus routeService, boolean safeCheck) {
         hasTextOf(routeId, "routeId");
         notNullOf(routeService, "routeService");
+        // Check to make sure that the routing service instance to be updated
+        // must match all instances in the registry.
+        if (safeCheck) {
+            RouteServiceStatus existingRouteService = getRouteService(routeId, true);
+            existingRouteService.getInstances().keySet().stream().allMatch(
+                    instanceId -> routeService.getInstances().keySet().contains(instanceId));
+        }
         registerRouteServices.put(routeId, routeService);
     }
 
@@ -69,16 +101,11 @@ public class InMemoryLoadBalancerRegistry implements LoadBalancerRegistry {
     }
 
     @Override
-    public @NotNull RouteServiceStatus getRouteService(@NotBlank String routeId) {
+    public @NotNull RouteServiceStatus getRouteService(@NotBlank String routeId, boolean required) {
         hasTextOf(routeId, "routeId");
         RouteServiceStatus routeService = registerRouteServices.get(routeId);
-        if (isNull(routeService)) {
-            synchronized (this) {
-                routeService = registerRouteServices.get(routeId);
-                if (isNull(routeService)) {
-                    registerRouteServices.put(routeId, routeService = new RouteServiceStatus());
-                }
-            }
+        if (required && isNull(routeService)) {
+            throw new IllegalStateException(format(""));
         }
         return routeService;
     }

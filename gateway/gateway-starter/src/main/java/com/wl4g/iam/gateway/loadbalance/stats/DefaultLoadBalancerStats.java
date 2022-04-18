@@ -222,11 +222,11 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     public int connect(ServerWebExchange exchange, ServiceInstance instance) {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         exchange.getAttributes().put(KEY_COST_TIME, currentTimeMillis());
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
         InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerUtil.getInstanceId(instance));
         if (nonNull(instanceStatus)) {
             int count = instanceStatus.getStats().getConnections().addAndGet(1);
-            loadBalancerRegistry.register(route.getId(), routeService);
+            loadBalancerRegistry.update(route.getId(), routeService, true);
             addCounterMetrics(exchange, MetricsName.CANARY_LB_STATS_CONNECT_OPEN_TOTAL, instance);
             return count;
         }
@@ -236,14 +236,14 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public int disconnect(ServerWebExchange exchange, ServiceInstance instance) {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
         InstanceStatus instanceStatus = routeService.getInstances().get(LoadBalancerUtil.getInstanceId(instance));
         if (nonNull(instanceStatus)) {
             Stats stats = instanceStatus.getStats();
             long beginTime = exchange.getRequiredAttribute(KEY_COST_TIME);
             save(routeService.getConfig().getProbe(), instanceStatus, new PassiveProbe((currentTimeMillis() - beginTime), null));
             int count = stats.getConnections().addAndGet(-1);
-            loadBalancerRegistry.register(route.getId(), routeService);
+            loadBalancerRegistry.update(route.getId(), routeService, true);
             addCounterMetrics(exchange, MetricsName.CANARY_LB_STATS_CONNECT_CLOSE_TOTAL, instance);
             return count;
         }
@@ -253,7 +253,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public List<InstanceStatus> getReachableInstances(ServerWebExchange exchange) {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
         return safeMap(routeService.getInstances()).values()
                 .stream()
                 .filter(i -> LoadBalancerUtil.isAlive(routeService.getConfig(), i.getStats()))
@@ -263,7 +263,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public List<InstanceStatus> getAllInstances(ServerWebExchange exchange) {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId());
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
         return safeMap(routeService.getInstances()).values().stream().collect(toList());
     }
 
@@ -387,7 +387,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         if (isEmptyArray(routeIds)) {
             metricsFacade.counter(metricsName, 1);
         } else {
-            metricsFacade.counter(metricsName, 1, MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+            metricsFacade.counter(metricsName, 1, MetricsTag.LB_ROUTE_IDS, asList(routeIds).toString());
         }
     }
 
@@ -414,8 +414,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                 .collect(toList())
                 .toString();
 
-        metricsFacade.counter(metricsName, 1, MetricsTag.FAIL_ROUTE_SERVICE, failRouteServiceStr, MetricsTag.MAX_TRIES,
-                valueOf(maxTries), MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+        metricsFacade.counter(metricsName, 1, MetricsTag.LB_FAIL_ROUTE_SERVICE, failRouteServiceStr, MetricsTag.LB_MAX_TRIES,
+                valueOf(maxTries), MetricsTag.LB_ROUTE_IDS, asList(routeIds).toString());
     }
 
     /**
@@ -429,7 +429,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
      * Add passive probe metrics.
      */
     protected void addCounterMetrics(ServerWebExchange exchange, MetricsName metricsName, ServiceInstance instance) {
-        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SERVICE_ID, instance.getServiceId(), MetricsTag.INSTANCE_ID,
+        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.LB_SERVICE_ID, instance.getServiceId(), MetricsTag.LB_INSTANCE_ID,
                 LoadBalancerUtil.getInstanceId(instance));
     }
 

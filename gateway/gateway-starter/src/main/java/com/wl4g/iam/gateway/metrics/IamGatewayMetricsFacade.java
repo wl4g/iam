@@ -18,9 +18,12 @@ package com.wl4g.iam.gateway.metrics;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.lang.System.nanoTime;
 import static java.util.Objects.nonNull;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -83,7 +89,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
-                doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
+                counter(metricsName, _tags.toArray(new String[0])).increment(amount);
             }
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
@@ -96,7 +102,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             List<String> _tags = Lists.newArrayList(tags);
             _tags.add(MetricsTag.SELF_INSTANCE_ID);
             _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
-            doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
         }
@@ -110,32 +116,65 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             List<String> _tags = Lists.newArrayList(tags);
             _tags.add(MetricsTag.SELF_INSTANCE_ID);
             _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
-            _tags.add(MetricsTag.SERVICE_ID);
+            _tags.add(MetricsTag.LB_SERVICE_ID);
             _tags.add(status.getInstance().getServiceId());
-            _tags.add(MetricsTag.INSTANCE_ID);
+            _tags.add(MetricsTag.LB_INSTANCE_ID);
             _tags.add(LoadBalancerUtil.getInstanceId(status.getInstance()));
-            doCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}, instanceStatus: {}", metricsName,
                     valueOf(amount)), status, e);
         }
     }
 
-    /**
-     * Tracks a monotonically increasing value.
-     *
-     * @param metricsName
-     *            The base metric name
-     *
-     * @param tags
-     *            Sequence of dimensions for breaking down the name.
-     * @return A new or existing counter.
-     */
-    private Counter doCounter(MetricsName metricsName, String... tags) {
+    public Counter counter(MetricsName metricsName, String... tags) {
         return Counter.builder(metricsName.getName()).description(metricsName.getHelp()).tags(tags).register(registry);
     }
 
-    public void initLocalInstance() throws Exception {
+    public Gauge gauge(MetricsName metricsName, Supplier<Number> supplier, String... tags) {
+        return Gauge.builder(metricsName.getName(), supplier).description(metricsName.getHelp()).tags(tags).register(registry);
+    }
+
+    public void timer(ServerWebExchange exchange, MetricsName metricsName, long beginNanoTime, String... tags) {
+        notNullOf(exchange, "exchange");
+        notNullOf(metricsName, "metricsName");
+        Duration cost = Duration.ofNanos(nanoTime() - beginNanoTime);
+        try {
+            Object route = exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+            if (nonNull(route)) {
+                String routeId = ((Route) route).getId();
+                List<String> _tags = Lists.newArrayList(tags);
+                _tags.add(MetricsTag.SELF_INSTANCE_ID);
+                _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
+                _tags.add(MetricsTag.ROUTE_ID);
+                _tags.add(routeId);
+                timer(metricsName, _tags.toArray(new String[0])).record(cost);
+            }
+        } catch (Exception e) {
+            log.warn(format("Cannot add to counter metrics name: %s, cost: {}ns", metricsName, valueOf(cost.getNano())), e);
+        }
+    }
+
+    public Timer timer(MetricsName metricsName, String... tags) {
+        return Timer.builder(metricsName.getName())
+                .distributionStatisticBufferLength(10240)
+                // .distributionStatisticExpiry(Duration.ofDays(1))
+                .description(metricsName.getHelp())
+                .tags(tags)
+                .register(registry);
+    }
+
+    public DistributionSummary distributionSummary(MetricsName metricsName, String unit, String... tags) {
+        return DistributionSummary.builder(metricsName.getName())
+                .distributionStatisticBufferLength(10240)
+                // .distributionStatisticExpiry(Duration.ofDays(1))
+                .baseUnit(unit)
+                .description(metricsName.getHelp())
+                .tags(tags)
+                .register(registry);
+    }
+
+    private void initLocalInstance() throws Exception {
         boolean secure = environment.getProperty("server.ssl.enabled", Boolean.class, false);
         String serviceId = environment.getRequiredProperty("spring.application.name");
         String host = inet.findFirstNonLoopbackHostInfo().getHostname();
@@ -148,10 +187,11 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     @AllArgsConstructor
     public static enum MetricsName {
         // Simple signature authorizer.
-        SIMPLE_SIGN_BLOOM_TOTAL("simple_sign_bloom_total", "The total number of bloom checks for simple signature authenticator"),
+        SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL("simple_sign_bloom_success_total",
+                "The total number of success bloom validate for simple signature authenticator"),
 
         SIMPLE_SIGN_BLOOM_FAIL_TOTAL("simple_sign_bloom_fail_total",
-                "The total number of failed bloom checks for simple signature authenticator"),
+                "The total number of failed bloom validate for simple signature authenticator"),
 
         SIMPLE_SIGN_SUCCCESS_TOTAL("simple_sign_success_total",
                 "The total number of successful authentication by the simple signature authenticator"),
@@ -201,23 +241,29 @@ public class IamGatewayMetricsFacade implements InitializingBean {
 
         // Canary LoadBalacnerStats instance state changed.
         CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("canary_lb_stats_instance_state_changed_total",
-                "The total number of failed restart or update loadbalancer probe tasks");
+                "The total number of failed restart or update loadbalancer probe tasks"),
+
+        SIMPLE_SIGN_TIME("simple_sign_time", "The total number of simple signature execution cost time"),
+
+        CANARY_LB_CHOOSE_TIME("canary_lb_choose_time", "The total number of canary loadbalancer choose cost time");
 
         private final String name;
         private final String help;
     }
 
     public static abstract class MetricsTag {
-        public static final String LB = "lb";
         public static final String SELF_INSTANCE_ID = "self";
-        public static final String SERVICE_ID = "serviceId";
-        public static final String INSTANCE_ID = "instanceId";
         public static final String ROUTE_ID = "routeId";
-        public static final String ROUTE_IDS = "routeIds";
-        public static final String MAX_TRIES = "maxTries";
-        public static final String FAIL_ROUTE_SERVICE = "failRouteService";
-        public static final String OLD_ALIVE = "oldAlive";
-        public static final String NEW_ALIVE = "newAlive";
+
+        public static final String SIGN_ALG = "signAlg";
+        public static final String SIGN_HASH = "signHash";
+
+        public static final String LB = "lb";
+        public static final String LB_SERVICE_ID = "serviceId";
+        public static final String LB_INSTANCE_ID = "instanceId";
+        public static final String LB_ROUTE_IDS = "routeIds";
+        public static final String LB_MAX_TRIES = "maxTries";
+        public static final String LB_FAIL_ROUTE_SERVICE = "failRouteService";
     }
 
 }

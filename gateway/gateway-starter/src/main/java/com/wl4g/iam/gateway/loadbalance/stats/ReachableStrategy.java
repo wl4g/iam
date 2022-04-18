@@ -17,7 +17,6 @@ package com.wl4g.iam.gateway.loadbalance.stats;
 
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -77,10 +76,9 @@ public interface ReachableStrategy {
             if (oldAlive != stats.getAlive()) {
                 log.warn("Canary loadBalancer upstream server({}->{}) status changed to {}", status.getInstance().getServiceId(),
                         LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
-                metricsFacade.counter(MetricsName.CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL, 1, MetricsTag.SERVICE_ID,
-                        status.getInstance().getServiceId(), MetricsTag.INSTANCE_ID,
-                        LoadBalancerUtil.getInstanceId(status.getInstance()), MetricsTag.OLD_ALIVE, valueOf(oldAlive),
-                        MetricsTag.NEW_ALIVE, valueOf(stats.getAlive()));
+                metricsFacade.counter(MetricsName.CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL, 1, MetricsTag.LB_SERVICE_ID,
+                        status.getInstance().getServiceId(), MetricsTag.LB_INSTANCE_ID,
+                        LoadBalancerUtil.getInstanceId(status.getInstance()));
             }
 
             return status;

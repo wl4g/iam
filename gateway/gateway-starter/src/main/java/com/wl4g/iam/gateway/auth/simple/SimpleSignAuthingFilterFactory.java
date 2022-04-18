@@ -23,6 +23,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.lang.System.nanoTime;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -62,6 +63,7 @@ import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretLoadStore;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -177,7 +179,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
             if (config.isSignReplayVerifyEnabled()) {
                 if (obtainBloomFilter(exchange, config).bloomExist(getBloomKey(exchange), sign)) {
                     log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
-                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_BLOOM_FAIL_TOTAL, 1);
+                    addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_FAIL_TOTAL, config);
                     return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
                 }
             }
@@ -187,13 +189,13 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 byte[] _sign = doSignature(config, exchange, appId);
                 if (!isEqual(_sign, Hex.decodeHex(sign.toCharArray()))) {
                     log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
-                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, 1);
+                    addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, config);
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
                 metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
                 if (config.isSignReplayVerifyEnabled()) {
                     obtainBloomFilter(exchange, config).bloomAdd(getBloomKey(exchange), sign);
-                    metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_BLOOM_TOTAL, 1);
+                    addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL, config);
                 }
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
@@ -237,12 +239,17 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
         // Load stored secret.
         byte[] storedAppSecret = loadStoredSecret(config, appId);
 
-        // Make signature plain text.
-        byte[] signPlainBytes = config.getSignHashingMode().getFunction().apply(
-                new Object[] { config, storedAppSecret, exchange.getRequest() });
-
-        // Hashing signature.
-        return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
+        long beginTime = nanoTime();
+        try {
+            // Make signature plain text.
+            byte[] signPlainBytes = config.getSignHashingMode().getFunction().apply(
+                    new Object[] { config, storedAppSecret, exchange.getRequest() });
+            // Hashing signature.
+            return config.getSignAlgorithm().getFunction().apply(new byte[][] { storedAppSecret, signPlainBytes });
+        } finally {
+            // Add time metrics.
+            addTimerMetrics(exchange, MetricsName.SIMPLE_SIGN_TIME, config, beginTime);
+        }
     }
 
     private byte[] loadStoredSecret(SimpleSignAuthingFilterFactory.Config config, String appId) {
@@ -313,6 +320,23 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
         // see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
         // see:org.springframework.security.web.server.context.SecurityContextServerWebExchangeWebFilter#filter()
         return chain.filter(exchange.mutate().principal(Mono.just(new SimpleSignPrincipal(appId))).request(request).build());
+    }
+
+    private void addCounterMetrics(
+            ServerWebExchange exchange,
+            MetricsName metricsName,
+            SimpleSignAuthingFilterFactory.Config config) {
+        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SIGN_ALG, config.getSignAlgorithm().name(),
+                MetricsTag.SIGN_HASH, config.getSignHashingMode().name());
+    }
+
+    private void addTimerMetrics(
+            ServerWebExchange exchange,
+            MetricsName metricsName,
+            SimpleSignAuthingFilterFactory.Config config,
+            long beginNanoTime) {
+        metricsFacade.timer(exchange, metricsName, beginNanoTime, MetricsTag.SIGN_ALG, config.getSignAlgorithm().name(),
+                MetricsTag.SIGN_HASH, config.getSignHashingMode().name());
     }
 
     @Getter

@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.loadbalance;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.System.nanoTime;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -25,6 +26,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.addOriginalRequestUrl;
 
 import java.net.URI;
+import java.time.Duration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -48,6 +50,9 @@ import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ChooseProperties;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
@@ -77,6 +82,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     private @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
     private @Autowired GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
     private @Autowired LoadBalancerStats loadBalancerStats;
+    private @Autowired IamGatewayMetricsFacade metricsFacade;
 
     public CanaryLoadBalancerFilterFactory() {
         super(CanaryLoadBalancerFilterFactory.Config.class);
@@ -90,7 +96,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     @Override
     public GatewayFilter apply(Config config) {
         applyGlobalToConfig(config);
-        return new CanaryLoadBalancerGatewayFilter(ruleAdapter, loadBalancerStats, config);
+        return new CanaryLoadBalancerGatewayFilter(ruleAdapter, loadBalancerStats, config, metricsFacade);
     }
 
     private void applyGlobalToConfig(Config config) {
@@ -125,13 +131,15 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
         private final GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
         private final LoadBalancerStats loadBalancerStats;
         private final Config config;
+        private final IamGatewayMetricsFacade metricsFacade;
 
         public CanaryLoadBalancerGatewayFilter(
                 GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter,
-                LoadBalancerStats loadBalancerStats, Config config) {
+                LoadBalancerStats loadBalancerStats, Config config, IamGatewayMetricsFacade metricsFacade) {
             this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
             this.loadBalancerStats = notNullOf(loadBalancerStats, "loadBalancerStats");
             this.config = notNullOf(config, "config");
+            this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
         }
 
         /**
@@ -209,10 +217,18 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
         }
 
         private Response<ServiceInstance> choose(Config config, ServerWebExchange exchange) {
+            long beginTime = nanoTime();
+
             URI uri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
             String serviceId = uri.getHost();
             ServiceInstance chosen = ruleAdapter.forOperator(config.getChoose().getLoadBalancerAlgorithm()).choose(config,
                     exchange, serviceId);
+
+            // Add time metrics.
+            metricsFacade
+                    .timer(MetricsName.CANARY_LB_CHOOSE_TIME, MetricsTag.LB, config.getChoose().getLoadBalancerAlgorithm().name())
+                    .record(Duration.ofNanos(nanoTime() - beginTime));
+
             if (isNull(chosen)) {
                 return new EmptyResponse();
             }

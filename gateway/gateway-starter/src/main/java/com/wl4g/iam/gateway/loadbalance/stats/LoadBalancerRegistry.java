@@ -38,12 +38,12 @@ public interface LoadBalancerRegistry {
             @NotNull CanaryLoadBalancerFilterFactory.Config config,
             @NotNull InstanceStatus instance);
 
-    void register(@NotBlank String routeId, @NotNull RouteServiceStatus routeService);
+    void update(@NotBlank String routeId, @NotNull RouteServiceStatus routeService, boolean safeCheck);
 
     @NotNull
     Map<String, RouteServiceStatus> getAllRouteServices();
 
     @NotNull
-    RouteServiceStatus getRouteService(@NotBlank String routeId);
+    RouteServiceStatus getRouteService(@NotBlank String routeId, boolean required);
 
 }

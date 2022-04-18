@@ -123,7 +123,7 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
             ServerWebExchange exchange,
             MetricsName metricsName,
             String serviceId) {
-        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SERVICE_ID, serviceId, MetricsTag.LB, kind().name());
+        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.LB_SERVICE_ID, serviceId, MetricsTag.LB, kind().name());
     }
 
 }
