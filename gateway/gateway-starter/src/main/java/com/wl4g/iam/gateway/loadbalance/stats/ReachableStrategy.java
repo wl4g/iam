@@ -17,17 +17,22 @@ package com.wl4g.iam.gateway.loadbalance.stats;
 
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ActiveProbe;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.Stats;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.infra.common.log.SmartLogger;
 
 /**
@@ -41,37 +46,44 @@ public interface ReachableStrategy {
 
     public SmartLogger log = getLogger(ReachableStrategy.class);
 
-    public static final ReachableStrategy DEFAULT = new ReachableStrategy() {
-    };
+    InstanceStatus updateStatus(ProbeProperties probe, InstanceStatus status);
 
-    default InstanceStatus updateStatus(ProbeProperties probe, InstanceStatus status) {
-        // Calculate health statistics status.
-        Stats stats = status.getStats();
-        ActiveProbe activeProbe = stats.getActiveProbes().peekLast();
-        if (activeProbe.isTimeout()) {
-            stats.setAlive(false);
+    public static class DefaultLatestReachableStrategy implements ReachableStrategy {
+        private @Autowired IamGatewayMetricsFacade metricsFacade;
+
+        @Override
+        public InstanceStatus updateStatus(ProbeProperties probe, InstanceStatus status) {
+            // Calculate health statistics status.
+            Stats stats = status.getStats();
+            ActiveProbe activeProbe = stats.getActiveProbes().peekLast();
+            if (activeProbe.isTimeout()) {
+                stats.setAlive(false);
+                return status;
+            }
+
+            Boolean oldAlive = stats.getAlive();
+            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
+            if (!isBlank(probe.getExpectBody())) {
+                stats.setAlive(StringUtils.equals(probe.getExpectBody(), activeProbe.getResponseBody()));
+            } else {
+                if (isNull(activeProbe.getResponseStatus())) {
+                    stats.setAlive(nonNull(activeProbe.getErrorOrCancel()) && !activeProbe.getErrorOrCancel());
+                } else {
+                    stats.setAlive(safeList(probe.getExpectStatuses()).contains(activeProbe.getResponseStatus().code()));
+                }
+            }
+
+            // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
+            if (oldAlive != stats.getAlive()) {
+                log.warn("Canary loadBalancer upstream server({}->{}) status changed to {}", status.getInstance().getServiceId(),
+                        LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
+                metricsFacade.counter(MetricsName.CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL, 1, MetricsTag.SERVICE_ID,
+                        status.getInstance().getServiceId(), MetricsTag.INSTANCE_ID,
+                        LoadBalancerUtil.getInstanceId(status.getInstance()), MetricsTag.NEW_ALIVE, valueOf(stats.getAlive()));
+            }
+
             return status;
         }
-
-        Boolean oldAlive = stats.getAlive();
-        // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-httpclient/src/main/java/com/netflix/loadbalancer/PingUrl.java#L129
-        if (!isBlank(probe.getExpectBody())) {
-            stats.setAlive(StringUtils.equals(probe.getExpectBody(), activeProbe.getResponseBody()));
-        } else {
-            if (isNull(activeProbe.getResponseStatus())) {
-                stats.setAlive(nonNull(activeProbe.getErrorOrCancel()) && !activeProbe.getErrorOrCancel());
-            } else {
-                stats.setAlive(safeList(probe.getExpectStatuses()).contains(activeProbe.getResponseStatus().code()));
-            }
-        }
-
-        // see:https://github.com/Netflix/ribbon/blob/v2.7.18/ribbon-loadbalancer/src/main/java/com/netflix/loadbalancer/BaseLoadBalancer.java#L696
-        if (oldAlive != stats.getAlive()) {
-            log.warn("Canary loadBalancer upstream server({}->{}) status changed to {}", status.getInstance().getServiceId(),
-                    LoadBalancerUtil.getInstanceId(status.getInstance()), (stats.getAlive() ? "ALIVE" : "DEAD"));
-        }
-
-        return status;
     }
 
 }

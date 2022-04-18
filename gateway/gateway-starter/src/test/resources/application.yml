@@ -1,0 +1,350 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+## #### IAM Gateway configuration. ####
+#
+spring:
+  cloud:
+    circuitbreaker:
+      ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
+      ## see:org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration
+      resilience4j:
+        enabled: true
+    loadbalancer:
+      use404: false ## Default by false
+    ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
+    ## see:org.springframework.cloud.gateway.config.GatewayProperties
+    ## see:org.springframework.cloud.gateway.handler.FilteringWebHandler#handle()
+    ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
+    ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+    gateway:
+      x-forwarded: ## see:org.springframework.cloud.gateway.filter.headers.XForwardedHeadersFilter
+        ## [Note]: Note: If the fallbackURI must not be set to '/', otherwise when the circuit breaker is enabled, since the addition of the
+        ## 'x-forward' and 'forwarded' headers is enabled by default, when all backend service instances are unreachable, a large number of 
+        ## repetitions will be added header, the client eventually responds with a 413 error.
+        enabled: true ## Default by true
+        forEnabled: true ## Add for X-Forwarded-For, Default by true
+        hostEnabled: true ## true ## Add for X-Forwarded-Host, Default by true
+        portEnabled: true ## true ## Add for X-Forwarded-Port, Default by true
+        protoEnabled: true ## true ## Add for X-Forwarded-Proto, Default by true
+        prefixEnabled: true ## true ## Add for X-Forwarded-Prefix, Default by true
+        forAppend: true ## Add for X-Forwarded-For list, Default by true
+        hostAppend: true ## Add for X-Forwarded-Host list, Default by true
+        portAppend: true ## Add for X-Forwarded-Port list, Default by true
+        protoAppend: true ## Add for X-Forwarded-Proto list, Default by true
+        prefixAppend: true ## Add for X-Forwarded-Prefix list, Default by true
+      filter:
+        remove-hop-by-hop:
+          headers: ["connection","keep-alive","transfer-encoding","te","trailer","proxy-authorization","proxy-authenticate","x-application-context","upgrade"]
+        secure-headers:
+          disable: ## Default no set.
+          referrer-policy: 'no-referrer' ## Default by 'no-referrer'
+          strict-transport-security: 'max-age=631138519' ## Default by 'max-age=631138519'
+          xss-protection-header: '1 ; mode=block' ## Default by '1 ; mode=block'
+          permitted-cross-domain-policies: none ## Default by 'none'
+          frame-options: DENY ## Default by 'DENY'
+          download-options: noopen ## Default by 'noopen'
+        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+        request-rate-limiter:
+          deny-empty-key: true
+          empty-key-status-code: UNPROCESSABLE_ENTITY
+      fail-on-route-definition-error: true ## Default by true
+      #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
+      #  cors-configurations: ## Default no set.
+      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
+      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
+      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
+      redis-rate-limiter:
+        include-headers: false ## Default by true
+        burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+        remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+        replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+        requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+      httpserver:
+        wiretap: false ## Default by false
+      httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
+        compression: false ## Default by false
+        connect-timeout: 45_000 ## Default by 45s
+        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+        response-timeout: 60_000 ## Default by 60s
+        max-header-size: 65535 ## Default no set.
+        wiretap: false ## Default by false
+        #proxy:
+        # host:
+        # port:
+        # username:
+        # password:
+        # non-proxy-hosts-pattern:
+        pool:
+          name: proxy ## Default by proxy
+          #metrics: true ## Default by false
+          #max-idle-time: 
+          #acquire-timeout: 45000 # Default by 45000ms
+        websocket:
+          proxy-ping: true ## Default by true
+          max-frame-payload-length: 65535 ## Default no set.
+          #max-connections: ## Default by: max(availableProcessors(),8)*2)
+        ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+          default-configuration-type: TCP ## Default by 'TCP'
+          handshake-timeout: 10000ms ## Default by 10000ms
+          close-notify-flush-timeout: 3000ms ## Default by 3000ms
+          close-notify-read-timeout: 0 ## Default by 0
+          #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+          #key-store: ## Keystore path for Netty HttpClient.
+          #key-store-type:
+          #key-store-password:
+          #key-store-provider:
+          #trusted-x509-certificates:
+          #use-insecure-trust-manager: true ## Default by false
+      metrics:
+        enabled: true ## Default no-set.
+        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
+        tags:
+          application: ${spring.application.name}
+          profiles.include: ${spring.profiles.include}
+          profiles.active: ${spring.profiles.active}
+      actuator:
+        verbose:
+          enabled: true ## Default by false
+
+  ## IAM gateway configuration.
+  iam:
+    gateway:
+      server:
+        ssl-verifier:
+          sni:
+            enabled: true ## Default by true
+            ## By build-in it will contains: [localhost,127.0.0.1]
+            #hosts: []
+          peer:
+            enabled: true ## Default by true
+            check-cn-host: true ## Default by true
+            check-cn-white-file: classpath:/cert.d/cn_white.list ## Default no-set(disabled)
+            #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
+            allow-renegociate: true ## Default by true
+      authing:
+        simple-sign:
+          secret-load-store: redis
+          secret-load-prefix: iam:gateway:auth:sign:secret
+          secret-local-cache-seconds: 6 ## Default by 6sec
+          ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
+          ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
+          ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
+          ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
+          ## authenticated principal name cannot be obtained.
+          ignored-authing-in-jvm-debug: false ## Default by false
+          sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
+      ratelimit: {}
+      route:
+        refresh-delay-ms: 30_000 ## Default by 30_000
+      circuitbreaker:
+        failureRateThreshold: 40 ## Default by 50
+        permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
+        slidingWindowSize: 100 ## Default by 100
+        slidingWindowType: COUNT_BASED ## Default by COUNT_BASED, Optional(TIME_BASED|COUNT_BASED)
+        minimumNumberOfCalls: 100 ## Default by 100
+        writableStackTraceEnabled: true ## Default by true
+        automaticTransitionFromOpenToHalfOpenEnabled: false ## Default by false
+        waitIntervalFunctionInOpenState: 60 ## Default by 60s
+        slowCallRateThreshold: 100 ## Default by 100
+        slowCallDurationThreshold: 60 ## Default by 60
+        timeLimiter:
+          timeoutDuration: 3_000 ## Default by 1000ms
+          cancelRunningFuture: true ## Default by true
+      loadbalancer:
+        enabled: true ## Default by true
+        canary-discovery-service-label-prefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
+        select-expression: '#{$rule.test($request)}'
+        match-rule-definitions:
+          - name: v1-canary-header
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## support ant path pattern.
+            header:
+              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Canary
+              value: v1
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+          - name: v1-canary-query
+            query:
+              symbol: EQ
+              key: __iscg_canary
+              value: v1
+        ## The number of load balancer statistician scheduler worker threads.
+        stats-scheduler-thread: 2 ## Default by 2
+        ## The initial interval at which the instance list is periodically pulled update register from the discovery service.
+        register-route-services-initial-seconds: 1 ## Default by 1s
+        ## The interval at which the instance list is periodically pulled update register from the discovery server.
+        register-route-services-delay-seconds: 60 ## Default by 60s
+        choose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+          ## When no canary condition is matched, whether all instances of the service are candidates.
+          fallback-all-to-candidates: true
+          load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+          max-choose-tries: 10 ## Default by 10
+          null-ping-to-reachable: true ## Default by true
+        probe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+          debug: false ## Default by false
+          initial-seconds: 3 ## Default by 3s
+          delay-seconds: 10 ## Default by 10s
+          timeout-ms: 5_000 ## Default by 5_000ms
+          receive-queue: 8 ## Default by 8
+          path: /healthz ## Default by '/healthz'
+          ## Note: only expectBody takes effect when it is set at the same time as expectBody. (As long as any
+          ## status code is satisfied)
+          expect-statuses: [200] ## Default by 200
+          #expect-body: ## Default by ''
+      trace: {}
+      logging:
+        ## If this switch is enabled, then check whether the request header and parameters meet the current conditions for printing flight logs.
+        ## If so, print according to the predetermined level, otherwise do not print. If this switch is set to false, printing logs will be
+        ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
+        enabled: true ## Default by true
+        ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
+        default-verbose-level: 7
+        request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        match-expression: '#{$defaultHeaderLogRule.or($defaultQueryLogRule).or($energyOpenApiLogRule).test($request)}'
+        match-rule-definitions:
+          - name: defaultHeaderLogRule
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## support ant path pattern.
+            header:
+              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Log
+              value: y
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+          - name: defaultQueryLogRule
+            query:
+              symbol: EQ
+              key: __iscg_log
+              value: y
+          - name: energyOpenApiLogRule
+            path: '/openapi/**'
+
+  ## Security configuration.
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: https://iam.wl4g.com/realms/master
+        registration:
+          keycloak:
+            client-id: portal
+            client-secret: a12463984c2f46bdb83d9b1313f3378d
+            scope:
+            - email
+            - profile
+            - roles
+
+management:
+  server:
+    port: 18086
+  security:
+    enabled: false
+  endpoint:
+    gateway:
+      enabled: true ## Default by true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+## Logging configuration.
+logging:
+  file:
+    ## see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
+    ## see:org.springframework.boot.logging.LogFile#toString
+    name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
+    clean-history-on-start: false # By default: false
+    total-size-cap: 200GB # By default: 200GB
+    max-size: 1GB # By default: 500MB
+    max-history: 30 # By default: 7
+  pattern:
+    #console: ${logging.pattern.file.name}
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #dateformat: yyyy-MM-dd HH:mm:ss.SSS
+    #level: '%5p'
+    #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+  root: INFO
+  level:
+    de.codecentric.boot.admin: INFO
+    reactor.netty.http.client: INFO
+    org:
+      springframework: INFO
+        #boot.context.config: DEBUG ## Print load config
+      apache: INFO
+    feign: DEBUG
+    com:
+      wl4g.iam.gateway: INFO
+
+## Server configuration.
+server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
+  port: 18085
+  address: 0.0.0.0
+  compression:
+    enabled: true
+  http2:
+    enabled: true ## Default by false
+  #netty:
+  #  connection-timeout: 
+  ## see:https://github.com/netty/netty/issues/832
+  ## see:https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html
+  ## see:https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-configure-ssl
+  ## see:https://github.com/spring-projects/spring-boot/blob/v2.6.6/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/server/Ssl.java
+  ## see:org.springframework.boot.web.embedded.netty.SslServerCustomizer#apply()
+  ## see:io.netty.handler.ssl.SslContext#defaultProvider()
+  ## see:io.netty.handler.ssl.SslHandler
+  ## Example: curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/v2/hello?appId=oi554a94bc416e4edd9ff963ed0e9e25e6c10545&nonce=vV5Y0Sf2DCNPnjCB&timestamp=1649477512798&signature=66aeaa14cb229d9f9b54cd71e59f8df4bbd511c039977b9149a25db7ca848065&response_type=json'
+  ssl:
+    enabled: false ## Default by false
+    protocol: TLS ## Default by 'TLS'
+    client-auth: NEED ## Default no set. Options(NONE|WANT|NEED)
+    ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/ProtocolVersion.java
+    ## issue:https://bugs.openjdk.java.net/browse/JDK-8221218
+    enabled-protocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3'] ## Default no-set. Options(SSLv3|TLSv1|TLSv1.1|TLSv1.2|TLSv1.3)
+    ## see:https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/sun/security/ssl/CipherSuite.java
+    ## see:https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/sun/security/ssl/CipherSuite.java
+    ## see:io.netty.handler.ssl.OpenSslKeyMaterialManager#KEY_TYPES
+    ## issue:https://www.cnblogs.com/wade-luffy/p/6019743.html
+    #ciphers:
+    #  - TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+    #  - TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+    #  - TLS_RSA_WITH_AES_128_CBC_SHA256
+    #  - TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+    #  - TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+    #  - TLS_RSA_WITH_AES_128_CBC_SHA
+    key-password: ${server.ssl.key-store-password}
+    key-store: 'classpath:cert.d/wl4g.io.p12'
+    key-store-password: '123456'
+    key-store-type: PKCS12 ## Default no-set by JKS. Options(JKS|PKCS12|DER|CER|..)
+    #key-store-provider:
+    trust-store: 'classpath:cert.d/ca.p12'
+    trust-store-password: '123456'
+    trust-store-type: PKCS12

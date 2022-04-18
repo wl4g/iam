@@ -22,6 +22,8 @@ import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -58,6 +60,9 @@ import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory.CanaryLo
 import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ProbeProperties;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
@@ -86,6 +91,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     private @Autowired ReachableStrategy reachableStrategy;
     private @Autowired @Lazy RouteLocator routeRlocator;
     private @Autowired DiscoveryClient discoveryClient;
+    private @Autowired IamGatewayMetricsFacade metricsFacade;
     private final AtomicBoolean initRegisterAllRouteServicesCompleted = new AtomicBoolean(false);
     private final Map<String, ScheduledFuture<?>> routeServicesProbeFutures = new ConcurrentHashMap<>(4);
 
@@ -107,6 +113,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public synchronized void registerAllRouteServices(@Nullable Runnable callback) {
         try {
+            addCounterMetrics(MetricsName.CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL);
+
             routeRlocator.getRoutes().collectList().block().forEach(route -> {
                 if (nonNull(route.getUri()) && equalsIgnoreCase("lb", route.getUri().getScheme())) {
                     String serviceId = hasText(route.getUri().getHost(), "invalid the LB route.uri. %s", route.getUri());
@@ -145,6 +153,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
 
     @Override
     public synchronized void restartProbeTask(@Nullable String... routeIds) {
+        addCounterMetrics(MetricsName.CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL, routeIds);
+
         List<String> _routeIds = safeArrayToList(routeIds);
         Map<String, ScheduledFuture<?>> updateRouteServicesProbeFutures = routeServicesProbeFutures.entrySet()
                 .stream()
@@ -202,6 +212,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         }
         if (routeServices.size() > 0) {
             log.warn("Cannot to update route services instance probe tasks. routeIds={}", routeServices.keySet());
+            addCounterMetrics(MetricsName.CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL, routeIds);
         }
     }
 
@@ -214,6 +225,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         if (nonNull(instanceStatus)) {
             int count = instanceStatus.getStats().getConnections().addAndGet(1);
             loadBalancerRegistry.register(route.getId(), routeService);
+            addCounterMetrics(exchange, MetricsName.CANARY_LB_STATS_CONNECT_OPEN_TOTAL, instance);
             return count;
         }
         return 0;
@@ -230,6 +242,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
             save(routeService.getConfig().getProbe(), instanceStatus, new PassiveProbe((currentTimeMillis() - beginTime), null));
             int count = stats.getConnections().addAndGet(-1);
             loadBalancerRegistry.register(route.getId(), routeService);
+            addCounterMetrics(exchange, MetricsName.CANARY_LB_STATS_CONNECT_CLOSE_TOTAL, instance);
             return count;
         }
         return 0;
@@ -253,6 +266,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     }
 
     protected Disposable doPing(ProbeProperties probe, InstanceStatus status) {
+        addCounterMetrics(status, MetricsName.CANARY_LB_STATS_TOTAL);
+
         /**
          * Notice: A timeout must be set when pinging an instance group to
          * prevent the group from being blocked for too long. Problems with
@@ -333,6 +348,13 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         }
         queue.offer(activeProbe);
         reachableStrategy.updateStatus(probe, status);
+
+        if (activeProbe.isTimeout()) {
+            addCounterMetrics(status, MetricsName.CANARY_LB_STATS_TIMEOUT_TOTAL);
+        }
+        if (nonNull(activeProbe.getErrorOrCancel()) && activeProbe.getErrorOrCancel()) {
+            addCounterMetrics(status, MetricsName.CANARY_LB_STATS_CANCEL_ERROR_TOTAL);
+        }
     }
 
     protected synchronized void save(ProbeProperties probe, InstanceStatus status, PassiveProbe passiveProbe) {
@@ -347,6 +369,62 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         stats.setMaxCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).max().getAsDouble());
         stats.setMinCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).min().getAsDouble());
         stats.setAvgCostTime(queue.stream().mapToDouble(p -> p.getCostTime()).average().getAsDouble());
+    }
+
+    /**
+     * Add register all route services metrics.
+     */
+    protected void addCounterMetrics(String metricsName) {
+        metricsFacade.counter(metricsName, 1);
+    }
+
+    /**
+     * Add restart probe task metrics.
+     */
+    protected void addCounterMetrics(String metricsName, String... routeIds) {
+        metricsFacade.counter(metricsName, 1, MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+    }
+
+    /**
+     * Add restart probe task metrics.
+     */
+    protected void addCounterMetrics(
+            String metricsName,
+            Map<String, RouteServiceStatus> failRouteServices,
+            int maxTries,
+            String... routeIds) {
+
+        String failRouteServiceStr = failRouteServices.values()
+                .stream()
+                .map(rs -> rs.getRouteId()
+                        .concat("->")
+                        .concat(rs.getInstances()
+                                .values()
+                                .stream()
+                                .map(i -> i.getInstance().getServiceId().concat("/").concat(
+                                        LoadBalancerUtil.getInstanceId(i.getInstance())))
+                                .collect(toList())
+                                .toString()))
+                .collect(toList())
+                .toString();
+
+        metricsFacade.counter(metricsName, 1, MetricsTag.FAIL_ROUTE_SERVICE, failRouteServiceStr, MetricsTag.MAX_TRIES,
+                valueOf(maxTries), MetricsTag.ROUTE_IDS, asList(routeIds).toString());
+    }
+
+    /**
+     * Add active probe metrics.
+     */
+    protected void addCounterMetrics(InstanceStatus status, String metricsName) {
+        metricsFacade.counter(status, metricsName, 1, new String[0]);
+    }
+
+    /**
+     * Add passive probe metrics.
+     */
+    protected void addCounterMetrics(ServerWebExchange exchange, String metricsName, ServiceInstance instance) {
+        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.SERVICE_ID, instance.getServiceId(), MetricsTag.INSTANCE_ID,
+                LoadBalancerUtil.getInstanceId(instance));
     }
 
 }

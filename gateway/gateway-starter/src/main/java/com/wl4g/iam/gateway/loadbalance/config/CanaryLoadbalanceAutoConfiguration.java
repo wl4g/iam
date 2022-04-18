@@ -41,6 +41,7 @@ import com.wl4g.iam.gateway.loadbalance.stats.InMemoryLoadBalancerRegistry;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerRegistry;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy;
+import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy.DefaultLatestReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -70,7 +71,7 @@ public class CanaryLoadbalanceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ReachableStrategy defaultReachableStrategy() {
-        return ReachableStrategy.DEFAULT;
+        return new DefaultLatestReachableStrategy();
     }
 
     @Bean
