@@ -58,8 +58,11 @@ public class AuthingAutoConfiguration {
     }
 
     @Bean
-    public RedisSimpleSignEventRecoder redisSimpleSignEventRecoder() {
-        return new RedisSimpleSignEventRecoder();
+    public RedisSimpleSignEventRecoder redisSimpleSignEventRecoder(
+            @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {
+        RedisSimpleSignEventRecoder recorder = new RedisSimpleSignEventRecoder();
+        eventBus.register(recorder);
+        return recorder;
     }
 
     // Oauth2 authorizer configuration.
