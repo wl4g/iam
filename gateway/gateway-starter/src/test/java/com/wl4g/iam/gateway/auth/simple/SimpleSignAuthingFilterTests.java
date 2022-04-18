@@ -40,6 +40,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
  * {@link SimpleSignAuthingFilterTests}
@@ -67,6 +68,7 @@ public class SimpleSignAuthingFilterTests {
         private @Autowired AuthingProperties authingConfig;
         private @Autowired StringRedisTemplate redisTemplate;
         private @Autowired IamGatewayMetricsFacade metricsFacade;
+        private EventBusSupport eventBus = EventBusSupport.getDefault();
 
         // Unable to overwrite the original auto-configuration instance??
         //
@@ -88,7 +90,7 @@ public class SimpleSignAuthingFilterTests {
             return builder.routes().route(p -> p.path(TEST_ROUTE_PATH).filters(f -> {
                 // for Add simple sign filter.
                 SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new AuthingProperties(), redisTemplate,
-                        metricsFacade);
+                        metricsFacade, eventBus);
                 SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
                 // custom sign parameter name.
                 config.setSignParam("signature");
