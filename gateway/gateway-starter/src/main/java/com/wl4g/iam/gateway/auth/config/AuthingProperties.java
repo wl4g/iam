@@ -52,6 +52,11 @@ public class AuthingProperties {
          */
         private String signReplayVerifyBloomLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 
+        /**
+         * Publish event bus threads.
+         */
+        private int publishEventBusThreads = 1;
+
     }
 
     public static enum SecretLoadStore {

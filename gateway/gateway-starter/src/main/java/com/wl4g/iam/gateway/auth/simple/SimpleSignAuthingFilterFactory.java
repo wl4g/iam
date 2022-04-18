@@ -61,11 +61,14 @@ import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretLoadStore;
+import com.wl4g.iam.gateway.auth.simple.event.SignAuthingFailureEvent;
+import com.wl4g.iam.gateway.auth.simple.event.SignAuthingSuccessEvent;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.runtime.JvmRuntimeTool;
 import com.wl4g.infra.common.web.rest.RespBase;
@@ -114,14 +117,16 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
     private final StringRedisTemplate redisTemplate;
     private final Cache<String, String> secretCacheStore;
     private final IamGatewayMetricsFacade metricsFacade;
+    private final EventBusSupport eventBus;
     private final Map<String, RedisBloomFilter<String>> cachedBloomFilters = new ConcurrentHashMap<>(8);
 
     public SimpleSignAuthingFilterFactory(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
-            @NotNull IamGatewayMetricsFacade metricsFacade) {
+            @NotNull IamGatewayMetricsFacade metricsFacade, EventBusSupport eventBus) {
         super(SimpleSignAuthingFilterFactory.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
-        this.metricsFacade = notNullOf(metricsFacade, "redisTemplate");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
+        this.eventBus = notNullOf(eventBus, "eventBus");
         this.secretCacheStore = newBuilder().expireAfterWrite(authingConfig.getSimpleSign().getSecretLocalCacheSeconds(), SECONDS)
                 .build();
     }
@@ -190,6 +195,9 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 if (!isEqual(_sign, Hex.decodeHex(sign.toCharArray()))) {
                     log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, config);
+                    // Publish failure event.
+                    eventBus.post(new SignAuthingFailureEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                            config.getSignHashingMode()));
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
                 metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
@@ -197,6 +205,9 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                     obtainBloomFilter(exchange, config).bloomAdd(getBloomKey(exchange), sign);
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL, config);
                 }
+                // Publish success event.
+                eventBus.post(new SignAuthingSuccessEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                        config.getSignHashingMode()));
             } catch (DecoderException e) {
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
             } catch (IllegalArgumentException e) {

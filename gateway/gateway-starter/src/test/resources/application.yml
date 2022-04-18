@@ -142,6 +142,7 @@ spring:
           ## authenticated principal name cannot be obtained.
           ignored-authing-in-jvm-debug: false ## Default by false
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
+          publish-event-bus-threads: 1 ## Default by 1
       ratelimit: {}
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000

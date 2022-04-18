@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.auth.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,6 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
  * {@link AuthingAutoConfiguration}
@@ -38,12 +40,18 @@ public class AuthingAutoConfiguration {
         return new AuthingProperties();
     }
 
+    @Bean(name = BEAN_EVENTBUS, destroyMethod = "close")
+    public EventBusSupport simpleSignAuthingEventBusSupport(AuthingProperties authingConfig) {
+        return new EventBusSupport(authingConfig.getSimpleSign().getPublishEventBusThreads());
+    }
+
     @Bean
     public SimpleSignAuthingFilterFactory simpleSignAuthingFilterFactory(
             AuthingProperties authingConfig,
             StringRedisTemplate stringTemplate,
-            IamGatewayMetricsFacade metricsFacade) {
-        return new SimpleSignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade);
+            IamGatewayMetricsFacade metricsFacade,
+            @Qualifier(BEAN_EVENTBUS) EventBusSupport eventBus) {
+        return new SimpleSignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade, eventBus);
     }
 
     // @Bean
@@ -55,5 +63,7 @@ public class AuthingAutoConfiguration {
     // TokenRelayRefreshFilterFactory(authorizedClientRepository,
     // clientRegistrationRepository);
     // }
+
+    public static final String BEAN_EVENTBUS = "simpleSignAuthingEventBusSupport";
 
 }
