@@ -17,7 +17,6 @@ package com.wl4g.iam.gateway.auth.simple.recorder;
 
 import static java.lang.String.valueOf;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,6 +25,7 @@ import com.google.common.eventbus.Subscribe;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
 import com.wl4g.iam.gateway.auth.simple.event.SignAuthingFailureEvent;
 import com.wl4g.iam.gateway.auth.simple.event.SignAuthingSuccessEvent;
+import com.wl4g.infra.common.lang.DateUtils2;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,30 +38,20 @@ import lombok.extern.slf4j.Slf4j;
  * @since v3.0.0
  */
 @Slf4j
-public class RedisSimpleSignEventRecoder implements InitializingBean {
+public class RedisSimpleSignEventRecoder {
 
     public static final String LOG_SIGN_EVENT_SUCCESS_PREFIX = "SIGN_EVENT_SUCCESS";
     public static final String LOG_SIGN_EVENT_FAILURE_PREFIX = "SIGN_EVENT_FAILURE";
 
     private @Autowired AuthingProperties authingConfig;
     private @Autowired StringRedisTemplate redisTemplate;
-    private BoundHashOperations<String, Object, Object> successCumulator;
-    private BoundHashOperations<String, Object, Object> failureCumulator;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.successCumulator = redisTemplate
-                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderSuccessCumulatorKey());
-        this.failureCumulator = redisTemplate
-                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderFailureCumulatorKey());
-    }
 
     @Subscribe
     public void onSuccess(SignAuthingSuccessEvent event) {
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = successCumulator.increment(appId, 1);
+            incr = getSuccessCumulator().increment(appId, 1);
         } finally {
             if (log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_SUCCESS_PREFIX, appId, incr);
@@ -74,12 +64,24 @@ public class RedisSimpleSignEventRecoder implements InitializingBean {
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = failureCumulator.increment(appId, 1);
+            incr = getFailureCumulator().increment(appId, 1);
         } finally {
             if (log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_FAILURE_PREFIX, appId, incr);
             }
         }
+    }
+
+    private BoundHashOperations<String, Object, Object> getSuccessCumulator() {
+        return redisTemplate
+                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderSuccessCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(authingConfig.getSimpleSign().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+    }
+
+    private BoundHashOperations<String, Object, Object> getFailureCumulator() {
+        return redisTemplate
+                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderFailureCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(authingConfig.getSimpleSign().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
     }
 
 }

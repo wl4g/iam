@@ -146,10 +146,12 @@ spring:
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
           ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
           redisEventRecoderLogEnabled: true ## Default by true
-          ## Redis event recorder success accumulator key.
-          redisEventRecoderSuccessCumulatorKey: iam:gateway:auth:sign:redis:recorder:success
-          ## Redis event recorder failure accumulator key.
-          redisEventRecoderFailureCumulatorKey: iam:gateway:auth:sign:redis:recorder:failure
+          ## Redis event recorder success accumulator prefix.
+          redisEventRecoderSuccessCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:success
+          ## Redis event recorder failure accumulator prefix.
+          redisEventRecoderFailureCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:failure
+          ## Redis event recorder accumulator suffix of date format pattern.
+          redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
       ratelimit: {}
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000

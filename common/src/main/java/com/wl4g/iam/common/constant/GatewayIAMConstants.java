@@ -46,4 +46,6 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE = CACHE_PREFIX_IAM_GWTEWAY_AUTH
             + ":sign:redis:recorder:failure";
 
+    public static final String PATTERN_SUFFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER = "yyyyMMdd";
+
 }

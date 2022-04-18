@@ -4,6 +4,7 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.PATTERN_SUFFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -69,12 +70,17 @@ public class AuthingProperties {
         /**
          * Redis event recorder success accumulator key.
          */
-        private String redisEventRecoderSuccessCumulatorKey = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
+        private String redisEventRecoderSuccessCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
 
         /**
-         * Redis event recorder failure accumulator key.
+         * Redis event recorder failure accumulator prefix.
          */
-        private String redisEventRecoderFailureCumulatorKey = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
+        private String redisEventRecoderFailureCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
+
+        /**
+         * Redis event recorder accumulator suffix of date format pattern.
+         */
+        private String redisEventRecoderCumulatorSuffixOfDatePattern = PATTERN_SUFFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER;
 
     }
 
