@@ -61,6 +61,11 @@ public class IamRateLimiterProperties {
      */
     private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
 
+    /**
+     * Publish event bus threads.
+     */
+    private int publishEventBusThreads = 1;
+
     private TokenRateLimiterProperties token = new TokenRateLimiterProperties();
 
     @Getter

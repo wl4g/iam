@@ -57,6 +57,8 @@ public class AuthingAutoConfiguration {
         return new SimpleSignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade, eventBus);
     }
 
+    // Simple signature authorizer event recorder
+
     @Bean
     public RedisSimpleSignEventRecoder redisSimpleSignEventRecoder(
             @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {

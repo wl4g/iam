@@ -39,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RedisSimpleSignEventRecoder {
-
     public static final String LOG_SIGN_EVENT_SUCCESS_PREFIX = "SIGN_EVENT_SUCCESS";
     public static final String LOG_SIGN_EVENT_FAILURE_PREFIX = "SIGN_EVENT_FAILURE";
 

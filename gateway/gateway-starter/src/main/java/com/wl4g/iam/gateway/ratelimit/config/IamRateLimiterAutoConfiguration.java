@@ -35,6 +35,8 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.ratelimit.IamRedisRateLimiter;
 import com.wl4g.iam.gateway.ratelimit.key.HostKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
+import com.wl4g.iam.gateway.ratelimit.recorder.RedisRateLimitEventRecorder;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.log.SmartLogger;
 
 import reactor.core.publisher.Mono;
@@ -105,6 +107,22 @@ public class IamRateLimiterAutoConfiguration {
         return new IamRedisRateLimiter(rateLimiterConfig, redisTemplate, redisScript, configurationService, metricsFacade);
     }
 
+    // Redis rate-limit event recorder
+
+    @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
+    public EventBusSupport redisRateLimiteEventBusSupport(IamRateLimiterProperties rateLimiteConfig) {
+        return new EventBusSupport(rateLimiteConfig.getPublishEventBusThreads());
+    }
+
+    @Bean
+    public RedisRateLimitEventRecorder redisRateLimiteEventRecoder(
+            @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus) {
+        RedisRateLimitEventRecorder recorder = new RedisRateLimitEventRecorder();
+        eventBus.register(recorder);
+        return recorder;
+    }
+
+    public static final String BEAN_REDIS_RATELIMITE_EVENTBUS = "redisRateLimiteEventBusSupport";
     public static final String BEAN_HOST_RESOLVER = "hostKeyResolver";
     public static final String BEAN_URI_RESOLVER = "uriKeyResolver";
 
