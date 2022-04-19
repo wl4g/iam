@@ -98,7 +98,7 @@ public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter
      */
     @Override
     public Mono<Response> isAllowed(String routeId, String id) {
-        metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId);
+        metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
         Config routeConfig = loadConfiguration(routeId);
@@ -138,7 +138,7 @@ public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter
                 // Add rata limit metrics.
                 metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
                 if (!allowed) { // Total hits metric
-                    metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId);
+                    metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
                 }
 
                 return response;

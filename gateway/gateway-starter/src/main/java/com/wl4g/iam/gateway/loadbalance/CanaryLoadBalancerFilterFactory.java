@@ -226,7 +226,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
             // Add time metrics.
             metricsFacade
-                    .timer(MetricsName.CANARY_LB_CHOOSE_TIME, MetricsTag.LB, config.getChoose().getLoadBalancerAlgorithm().name())
+                    .getTimer(MetricsName.CANARY_LB_CHOOSE_TIME, MetricsTag.LB, config.getChoose().getLoadBalancerAlgorithm().name())
                     .record(Duration.ofNanos(nanoTime() - beginTime));
 
             if (isNull(chosen)) {

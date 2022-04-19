@@ -88,7 +88,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 List<String> _tags = Lists.newArrayList(tags);
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
-                counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+                getCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
             }
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
@@ -98,7 +98,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     public void counter(MetricsName metricsName, double amount, String... tags) {
         try {
             notNullOf(metricsName, "metricsName");
-            counter(metricsName, tags).increment(amount);
+            getCounter(metricsName, tags).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
         }
@@ -114,7 +114,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             _tags.add(status.getInstance().getServiceId());
             _tags.add(MetricsTag.LB_INSTANCE_ID);
             _tags.add(LoadBalancerUtil.getInstanceId(status.getInstance()));
-            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            getCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}, instanceStatus: {}", metricsName,
                     valueOf(amount)), status, e);
@@ -126,14 +126,14 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             List<String> _tags = Lists.newArrayList(tags);
             _tags.add(MetricsTag.ROUTE_ID);
             _tags.add(routeId);
-            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            getCounter(metricsName, _tags.toArray(new String[0])).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}, routeId: {}", metricsName, valueOf(amount)),
                     routeId, e);
         }
     }
 
-    public Counter counter(MetricsName metricsName, String... tags) {
+    public Counter getCounter(MetricsName metricsName, String... tags) {
         List<String> _tags = Lists.newArrayList(tags);
         _tags.add(MetricsTag.SELF_INSTANCE_ID);
         _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
@@ -157,7 +157,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
-                timer(metricsName, _tags.toArray(new String[0])).record(cost);
+                getTimer(metricsName, _tags.toArray(new String[0])).record(cost);
             }
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, cost: {}ns", metricsName, valueOf(cost.getNano())), e);
@@ -174,13 +174,13 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
             _tags.add(MetricsTag.ROUTE_ID);
             _tags.add(routeId);
-            timer(metricsName, _tags.toArray(new String[0])).record(cost);
+            getTimer(metricsName, _tags.toArray(new String[0])).record(cost);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, cost: {}ns", metricsName, valueOf(cost.getNano())), e);
         }
     }
 
-    public Timer timer(MetricsName metricsName, String... tags) {
+    public Timer getTimer(MetricsName metricsName, String... tags) {
         return Timer.builder(metricsName.getName())
                 .distributionStatisticBufferLength(10240)
                 // .distributionStatisticExpiry(Duration.ofDays(1))
@@ -189,7 +189,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 .register(registry);
     }
 
-    public DistributionSummary distributionSummary(MetricsName metricsName, String unit, String... tags) {
+    public DistributionSummary getDistributionSummary(MetricsName metricsName, String unit, String... tags) {
         return DistributionSummary.builder(metricsName.getName())
                 .distributionStatisticBufferLength(10240)
                 // .distributionStatisticExpiry(Duration.ofDays(1))
