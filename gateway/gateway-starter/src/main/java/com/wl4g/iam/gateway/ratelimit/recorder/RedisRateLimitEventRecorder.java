@@ -15,8 +15,18 @@
  */
 package com.wl4g.iam.gateway.ratelimit.recorder;
 
+import static java.lang.String.valueOf;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
 import com.google.common.eventbus.Subscribe;
+import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterProperties;
 import com.wl4g.iam.gateway.ratelimit.event.RateLimitHitEvent;
+import com.wl4g.infra.common.lang.DateUtils2;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link RedisRateLimitEventRecorder}
@@ -25,11 +35,30 @@ import com.wl4g.iam.gateway.ratelimit.event.RateLimitHitEvent;
  * @version 2022-04-19 v3.0.0
  * @since v3.0.0
  */
+@Slf4j
 public class RedisRateLimitEventRecorder {
+
+    public static final String LOG_SIGN_EVENT_HITS_PREFIX = "RATELIMIT_EVENT_HITS";
+
+    private @Autowired IamRateLimiterProperties rateLimitConfig;
+    private @Autowired StringRedisTemplate redisTemplate;
 
     @Subscribe
     public void onRateLimitHit(RateLimitHitEvent event) {
-        // TODO
+        String rateLimitId = valueOf(event.getSource());
+        Long incr = null;
+        try {
+            incr = getHitsCumulator().increment(rateLimitId, 1);
+        } finally {
+            if (rateLimitConfig.getEvent().isRedisEventRecoderLogEnabled() && log.isInfoEnabled()) {
+                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, rateLimitId, incr);
+            }
+        }
+    }
+
+    private BoundHashOperations<String, Object, Object> getHitsCumulator() {
+        return redisTemplate.boundHashOps(rateLimitConfig.getEvent().getRedisEventRecoderHitsCumulatorPrefix().concat(":").concat(
+                DateUtils2.getDate(rateLimitConfig.getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
     }
 
 }

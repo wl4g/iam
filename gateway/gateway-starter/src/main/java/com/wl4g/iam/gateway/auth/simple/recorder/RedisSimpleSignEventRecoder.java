@@ -52,7 +52,7 @@ public class RedisSimpleSignEventRecoder {
         try {
             incr = getSuccessCumulator().increment(appId, 1);
         } finally {
-            if (log.isInfoEnabled()) {
+            if (authingConfig.getSimpleSign().getEvent().isRedisEventRecoderLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_SUCCESS_PREFIX, appId, incr);
             }
         }
@@ -72,15 +72,17 @@ public class RedisSimpleSignEventRecoder {
     }
 
     private BoundHashOperations<String, Object, Object> getSuccessCumulator() {
-        return redisTemplate
-                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderSuccessCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(authingConfig.getSimpleSign().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+        return redisTemplate.boundHashOps(
+                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderSuccessCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(
+                                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
     }
 
     private BoundHashOperations<String, Object, Object> getFailureCumulator() {
-        return redisTemplate
-                .boundHashOps(authingConfig.getSimpleSign().getRedisEventRecoderFailureCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(authingConfig.getSimpleSign().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+        return redisTemplate.boundHashOps(
+                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderFailureCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(
+                                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
     }
 
 }

@@ -27,8 +27,8 @@ import org.springframework.context.ApplicationEvent;
 public class RateLimitHitEvent extends ApplicationEvent {
     private static final long serialVersionUID = -7137748823573974641L;
 
-    public RateLimitHitEvent(String routeId) {
-        super(routeId);
+    public RateLimitHitEvent(String rateLimitId) {
+        super(rateLimitId);
     }
 
 }

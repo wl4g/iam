@@ -4,9 +4,13 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.PATTERN_SUFFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
 
+import org.springframework.validation.annotation.Validated;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -55,6 +59,21 @@ public class AuthingProperties {
          */
         private String signReplayVerifyBloomLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 
+        private SimpleSignAuthingEventProperties event = new SimpleSignAuthingEventProperties();
+    }
+
+    public static enum SecretLoadStore {
+        ENV, REDIS;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SimpleSignAuthingEventProperties {
+
         /**
          * Publish event bus threads.
          */
@@ -80,12 +99,8 @@ public class AuthingProperties {
         /**
          * Redis event recorder accumulator suffix of date format pattern.
          */
-        private String redisEventRecoderCumulatorSuffixOfDatePattern = PATTERN_SUFFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER;
+        private String redisEventRecoderCumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
 
-    }
-
-    public static enum SecretLoadStore {
-        ENV, REDIS;
     }
 
 }

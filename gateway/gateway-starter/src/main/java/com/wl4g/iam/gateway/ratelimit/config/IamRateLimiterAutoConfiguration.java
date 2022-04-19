@@ -51,7 +51,7 @@ import reactor.core.publisher.Mono;
 public class IamRateLimiterAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMI)
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMIT)
     public IamRateLimiterProperties iamRateLimiterProperties() {
         return new IamRateLimiterProperties();
     }
@@ -102,16 +102,18 @@ public class IamRateLimiterAutoConfiguration {
             IamRateLimiterProperties rateLimiterConfig,
             ReactiveStringRedisTemplate redisTemplate,
             @Qualifier(RedisRateLimiter.REDIS_SCRIPT_NAME) RedisScript<List<Long>> redisScript,
-            ConfigurationService configurationService,
-            IamGatewayMetricsFacade metricsFacade) {
-        return new IamRedisRateLimiter(rateLimiterConfig, redisTemplate, redisScript, configurationService, metricsFacade);
+            IamGatewayMetricsFacade metricsFacade,
+            @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus,
+            ConfigurationService configurationService) {
+        return new IamRedisRateLimiter(rateLimiterConfig, redisTemplate, redisScript, eventBus, metricsFacade,
+                configurationService);
     }
 
     // Redis rate-limit event recorder
 
     @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
     public EventBusSupport redisRateLimiteEventBusSupport(IamRateLimiterProperties rateLimiteConfig) {
-        return new EventBusSupport(rateLimiteConfig.getPublishEventBusThreads());
+        return new EventBusSupport(rateLimiteConfig.getEvent().getPublishEventBusThreads());
     }
 
     @Bean
@@ -122,8 +124,8 @@ public class IamRateLimiterAutoConfiguration {
         return recorder;
     }
 
-    public static final String BEAN_REDIS_RATELIMITE_EVENTBUS = "redisRateLimiteEventBusSupport";
     public static final String BEAN_HOST_RESOLVER = "hostKeyResolver";
     public static final String BEAN_URI_RESOLVER = "uriKeyResolver";
+    public static final String BEAN_REDIS_RATELIMITE_EVENTBUS = "redisRateLimiteEventBusSupport";
 
 }

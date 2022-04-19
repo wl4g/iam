@@ -45,7 +45,7 @@ public class AuthingAutoConfiguration {
 
     @Bean(name = BEAN_SIMPLE_SIGN_EVENTBUS, destroyMethod = "close")
     public EventBusSupport simpleSignAuthingEventBusSupport(AuthingProperties authingConfig) {
-        return new EventBusSupport(authingConfig.getSimpleSign().getPublishEventBusThreads());
+        return new EventBusSupport(authingConfig.getSimpleSign().getEvent().getPublishEventBusThreads());
     }
 
     @Bean

@@ -29,6 +29,7 @@ import javax.validation.constraints.Min;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.ratelimit.AbstractRateLimiter;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
 import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -39,6 +40,8 @@ import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterProperties;
+import com.wl4g.iam.gateway.ratelimit.event.RateLimitHitEvent;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,33 +63,25 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @Slf4j
-@ConfigurationProperties(GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMI)
+@ConfigurationProperties(GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMIT)
 public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter.Config> {
-
-    /**
-     * Redis Rate Limiter property name.
-     */
-    public static final String CONFIGURATION_PROPERTY_NAME = "redis-rate-limiter";
-
-    /**
-     * Redis Script name.
-     */
-    public static final String REDIS_SCRIPT_NAME = "redisRequestRateLimiterScript";
 
     private final IamRateLimiterProperties rateLimiterConfig;
     private final ReactiveStringRedisTemplate redisTemplate;
     private final RedisScript<List<Long>> redisScript;
+    private final EventBusSupport eventBus;
     private final IamGatewayMetricsFacade metricsFacade;
     private final Config defaultConfig;
 
     public IamRedisRateLimiter(IamRateLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
-            RedisScript<List<Long>> redisScript, ConfigurationService configurationService,
-            IamGatewayMetricsFacade metricsFacade) {
-        super(Config.class, CONFIGURATION_PROPERTY_NAME, configurationService);
+            RedisScript<List<Long>> redisScript, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade,
+            ConfigurationService configurationService) {
+        super(Config.class, RedisRateLimiter.CONFIGURATION_PROPERTY_NAME, configurationService);
         this.rateLimiterConfig = notNullOf(rateLimiterConfig, "rateLimiterConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         this.redisScript = notNullOf(redisScript, "redisScript");
         this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
+        this.eventBus = notNullOf(eventBus, "eventBus");
         this.defaultConfig = new Config(rateLimiterConfig.getToken().getReplenishRate(),
                 rateLimiterConfig.getToken().getBurstCapacity(), rateLimiterConfig.getToken().getRequestedTokens());
     }
@@ -139,6 +134,7 @@ public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter
                 metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
                 if (!allowed) { // Total hits metric
                     metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
+                    eventBus.post(new RateLimitHitEvent(id));
                 }
 
                 return response;

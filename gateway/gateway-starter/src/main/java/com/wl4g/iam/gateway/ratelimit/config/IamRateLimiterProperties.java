@@ -15,6 +15,9 @@
  */
 package com.wl4g.iam.gateway.ratelimit.config;
 
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_REDIS_RECORDER_HITS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+
 import javax.validation.constraints.Min;
 
 import org.springframework.validation.annotation.Validated;
@@ -61,12 +64,24 @@ public class IamRateLimiterProperties {
      */
     private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
 
-    /**
-     * Publish event bus threads.
-     */
-    private int publishEventBusThreads = 1;
+    private TokenRateLimitProperties token = new TokenRateLimitProperties();
 
-    private TokenRateLimiterProperties token = new TokenRateLimiterProperties();
+    private RateLimitEventProperties event = new RateLimitEventProperties();
+
+    /**
+     * Token bucket-based current limiting algorithm configuration
+     */
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TokenRateLimitProperties {
+        private @Min(1) int replenishRate = 1;
+        private @Min(0) int burstCapacity = 1;
+        private @Min(1) int requestedTokens = 1;
+    }
 
     @Getter
     @Setter
@@ -74,10 +89,30 @@ public class IamRateLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class TokenRateLimiterProperties {
-        private @Min(1) int replenishRate = 1;
-        private @Min(0) int burstCapacity = 1;
-        private @Min(1) int requestedTokens = 1;
+    public static class RateLimitEventProperties {
+
+        /**
+         * Publish event bus threads.
+         */
+        private int publishEventBusThreads = 1;
+
+        /**
+         * Based on whether the redis event logger enables logging, if it is
+         * turned on, it can be used as a downgrade recovery strategy when data
+         * is lost due to a catastrophic failure of the persistent accumulator.
+         */
+        private boolean redisEventRecoderLogEnabled = true;
+
+        /**
+         * Redis event recorder hits accumulator key.
+         */
+        private String redisEventRecoderHitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_REDIS_RECORDER_HITS;
+
+        /**
+         * Redis event recorder accumulator suffix of date format pattern.
+         */
+        private String redisEventRecoderCumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+
     }
 
     /**
