@@ -29,7 +29,7 @@ import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
 import com.wl4g.iam.gateway.logging.config.LoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
-import com.wl4g.iam.gateway.ratelimit.config.RateLimiterAutoConfiguration;
+import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
 import com.wl4g.iam.gateway.server.config.GatewayWebServerAutoConfiguration;
 import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
@@ -45,7 +45,7 @@ import reactor.core.publisher.Mono;
  * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration}
  */
 @Configuration
-@Import({ GatewayWebServerAutoConfiguration.class, RateLimiterAutoConfiguration.class,
+@Import({ GatewayWebServerAutoConfiguration.class, IamRateLimiterAutoConfiguration.class,
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         AuthingAutoConfiguration.class, TraceAutoConfiguration.class, LoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class })

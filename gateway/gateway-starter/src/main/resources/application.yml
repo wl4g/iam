@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 #
-## #### IAM Gateway configuration. ####
+## #### IAM Gateway Primary configuration. ####
 #
 spring:
   cloud:
@@ -41,6 +41,10 @@ spring:
         portAppend: true ## Add for X-Forwarded-Port list, Default by true
         protoAppend: true ## Add for X-Forwarded-Proto list, Default by true
         prefixAppend: true ## Add for X-Forwarded-Prefix list, Default by true
+      ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
+      #globalcors:
+      #  cors-configurations: ## Default no set.
+      fail-on-route-definition-error: true ## Default by true
       filter:
         remove-hop-by-hop:
           headers: ["connection","keep-alive","transfer-encoding","te","trailer","proxy-authorization","proxy-authenticate","x-application-context","upgrade"]
@@ -52,22 +56,21 @@ spring:
           permitted-cross-domain-policies: none ## Default by 'none'
           frame-options: DENY ## Default by 'DENY'
           download-options: noopen ## Default by 'noopen'
-        ## The default config see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
+        ## The default request ratelimiter configuragion.
+        ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
         request-rate-limiter:
-          deny-empty-key: true
-          empty-key-status-code: UNPROCESSABLE_ENTITY
-      fail-on-route-definition-error: true ## Default by true
-      #globalcors: ## see:org.springframework.cloud.gateway.config.GlobalCorsProperties
-      #  cors-configurations: ## Default no set.
-      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
-      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
-      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
-      redis-rate-limiter:
-        include-headers: false ## Default by true
-        burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
-        remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
-        replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
-        requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+          denyEmptyKey: true
+          emptyKeyStatusCode: UNPROCESSABLE_ENTITY
+      ## The default based on redis ratelimiter configuragion.
+      ## [Deprecated]: use 'spring.iam.gateway.ratelimit'
+      ## see:org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimiter
+      ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter
+      ##redis-rate-limiter:
+      ##  include-headers: false ## Default by true
+      ##  burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+      ##  remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+      ##  replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+      ##  requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
       httpserver:
         wiretap: false ## Default by false
       httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
@@ -104,6 +107,9 @@ spring:
           #key-store-provider:
           #trusted-x509-certificates:
           #use-insecure-trust-manager: true ## Default by false
+      ## see:org.springframework.cloud.gateway.config.GatewayMetricsAutoConfiguration
+      ## see:org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter
+      ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
       metrics:
         enabled: true ## Default no-set.
         prefix: iam_gateway ## Default by 'spring.cloud.gateway'
@@ -140,7 +146,7 @@ spring:
           ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
           ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
           ## authenticated principal name cannot be obtained.
-          ignored-authing-in-jvm-debug: false ## Default by false
+          ignored-authing-in-jvm-debug: true ## Default by false
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
@@ -152,7 +158,16 @@ spring:
           redisEventRecoderFailureCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:failure
           ## Redis event recorder accumulator suffix of date format pattern.
           redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
-      ratelimit: {}
+      ratelimit:
+        include-headers: false ## Default by true
+        burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+        remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+        replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+        requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+        token:
+          replenishRate: 1
+          burstCapacity: 1
+          requestedTokens: 1
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000
       circuitbreaker:

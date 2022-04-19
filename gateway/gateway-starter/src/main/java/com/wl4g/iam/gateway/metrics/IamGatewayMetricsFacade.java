@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.metrics;
 
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -85,8 +86,6 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             if (nonNull(route)) {
                 String routeId = ((Route) route).getId();
                 List<String> _tags = Lists.newArrayList(tags);
-                _tags.add(MetricsTag.SELF_INSTANCE_ID);
-                _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
                 counter(metricsName, _tags.toArray(new String[0])).increment(amount);
@@ -99,10 +98,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     public void counter(MetricsName metricsName, double amount, String... tags) {
         try {
             notNullOf(metricsName, "metricsName");
-            List<String> _tags = Lists.newArrayList(tags);
-            _tags.add(MetricsTag.SELF_INSTANCE_ID);
-            _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
-            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+            counter(metricsName, tags).increment(amount);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, amount: {}", metricsName, valueOf(amount)), e);
         }
@@ -114,8 +110,6 @@ public class IamGatewayMetricsFacade implements InitializingBean {
             notNullOf(status.getInstance(), "instanceStatus.instance");
             notNullOf(metricsName, "metricsName");
             List<String> _tags = Lists.newArrayList(tags);
-            _tags.add(MetricsTag.SELF_INSTANCE_ID);
-            _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
             _tags.add(MetricsTag.LB_SERVICE_ID);
             _tags.add(status.getInstance().getServiceId());
             _tags.add(MetricsTag.LB_INSTANCE_ID);
@@ -128,6 +122,9 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     }
 
     public Counter counter(MetricsName metricsName, String... tags) {
+        List<String> _tags = Lists.newArrayList(tags);
+        _tags.add(MetricsTag.SELF_INSTANCE_ID);
+        _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
         return Counter.builder(metricsName.getName()).description(metricsName.getHelp()).tags(tags).register(registry);
     }
 
@@ -150,6 +147,22 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 _tags.add(routeId);
                 timer(metricsName, _tags.toArray(new String[0])).record(cost);
             }
+        } catch (Exception e) {
+            log.warn(format("Cannot add to counter metrics name: %s, cost: {}ns", metricsName, valueOf(cost.getNano())), e);
+        }
+    }
+
+    public void timer(MetricsName metricsName, String routeId, long beginNanoTime, String... tags) {
+        notNullOf(metricsName, "metricsName");
+        hasTextOf(routeId, "routeId");
+        Duration cost = Duration.ofNanos(nanoTime() - beginNanoTime);
+        try {
+            List<String> _tags = Lists.newArrayList(tags);
+            _tags.add(MetricsTag.SELF_INSTANCE_ID);
+            _tags.add(LoadBalancerUtil.getInstanceId(localInstance));
+            _tags.add(MetricsTag.ROUTE_ID);
+            _tags.add(routeId);
+            timer(metricsName, _tags.toArray(new String[0])).record(cost);
         } catch (Exception e) {
             log.warn(format("Cannot add to counter metrics name: %s, cost: {}ns", metricsName, valueOf(cost.getNano())), e);
         }
@@ -186,66 +199,75 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     @Getter
     @AllArgsConstructor
     public static enum MetricsName {
+
         // Simple signature authorizer.
-        SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL("simple_sign_bloom_success_total",
+
+        SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL("iam_simple_sign_bloom_success_total",
                 "The total number of success bloom validate for simple signature authenticator"),
 
-        SIMPLE_SIGN_BLOOM_FAIL_TOTAL("simple_sign_bloom_fail_total",
+        SIMPLE_SIGN_BLOOM_FAIL_TOTAL("iam_simple_sign_bloom_fail_total",
                 "The total number of failed bloom validate for simple signature authenticator"),
 
-        SIMPLE_SIGN_SUCCCESS_TOTAL("simple_sign_success_total",
+        SIMPLE_SIGN_SUCCCESS_TOTAL("iam_simple_sign_success_total",
                 "The total number of successful authentication by the simple signature authenticator"),
 
-        SIMPLE_SIGN_FAIL_TOTAL("simple_sign_fail_total",
+        SIMPLE_SIGN_FAIL_TOTAL("iam_simple_sign_fail_total",
                 "The total number of failure authentication by the simple sign authenticator"),
 
-        // Canary LoadBalacner chooser.
-        CANARY_LB_CHOOSE_TOTAL("canary_lb_choose_total", "The total number of instances selected by the canary LoadBalancer"),
+        SIMPLE_SIGN_TIME("iam_simple_sign_time", "The number of simple signature execution cost time"),
 
-        CANARY_LB_CHOOSE_FALLBACK_TOTAL("canary_lb_choose_fallback_total",
+        // Canary LoadBalacner.
+
+        CANARY_LB_CHOOSE_TOTAL("iam_canary_lb_choose_total", "The total number of instances selected by the canary LoadBalancer"),
+
+        CANARY_LB_CHOOSE_FALLBACK_TOTAL("iam_canary_lb_choose_fallback_total",
                 "The total number of times that Canary LoadBalancer chose to fallback on instances"),
 
-        CANARY_LB_CHOOSE_MISSING_TOTAL("canary_lb_choose_missing_total", "Total number of canary load balancing misses"),
+        CANARY_LB_CHOOSE_MISSING_TOTAL("iam_canary_lb_choose_missing_total", "Total number of canary load balancing misses"),
 
-        CANARY_LB_CHOOSE_MAX_TRIES_TOTAL("canary_lb_choose_max_tries_total",
+        CANARY_LB_CHOOSE_MAX_TRIES_TOTAL("iam_canary_lb_choose_max_tries_total",
                 "The total number of times the canary load balancer selects a reachable instance to retry"),
 
-        CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL("canary_lb_choose_empty_instances_total",
+        CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL("iam_canary_lb_choose_empty_instances_total",
                 "The total number of times the available instances was not found by canary load balancer"),
 
-        // Canary LoadBalacnerStats Active probe.
-        CANARY_LB_STATS_TOTAL("canary_lb_stats_total", "The total number of active probes of the canary load balancer"),
+        // LoadBalacnerStats Active probe.
+        CANARY_LB_STATS_TOTAL("iam_canary_lb_stats_total", "The total number of active probes of the canary load balancer"),
 
-        CANARY_LB_STATS_TIMEOUT_TOTAL("canary_lb_stats_timeout_total",
+        CANARY_LB_STATS_TIMEOUT_TOTAL("iam_canary_lb_stats_timeout_total",
                 "The total number of active probe timeouts of the canary load balancing statistic"),
 
-        CANARY_LB_STATS_CANCEL_ERROR_TOTAL("canary_lb_stats_cancel_error_total",
+        CANARY_LB_STATS_CANCEL_ERROR_TOTAL("iam_canary_lb_stats_cancel_error_total",
                 "The total number of active probe cancel or error of the canary load balancing statistic"),
 
-        // Canary LoadBalacnerStats Passive probe.
-        CANARY_LB_STATS_CONNECT_OPEN_TOTAL("canary_lb_stats_connect_open_total",
+        // LoadBalacnerStats Passive probe.
+        CANARY_LB_STATS_CONNECT_OPEN_TOTAL("iam_canary_lb_stats_connect_open_total",
                 "The total number of connections opened by the canary load balancer passive probe"),
 
-        CANARY_LB_STATS_CONNECT_CLOSE_TOTAL("canary_lb_stats_connect_close_total",
+        CANARY_LB_STATS_CONNECT_CLOSE_TOTAL("iam_canary_lb_stats_connect_close_total",
                 "The total number of connections closed by the canary load balancer passive probe"),
 
-        // Canary LoadBalacnerStats Register.
-        CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL("canary_lb_stats_register_all_services_total",
+        CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL("iam_canary_lb_stats_register_all_services_total",
                 "The total number of times the canary load balancer stats is updated and registered according to the router service instance"),
 
-        CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL("canary_lb_stats_restart_probe_task_total",
+        CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL("iam_canary_lb_stats_restart_probe_task_total",
                 "The total number of detection tasks based on router update or restart canary load balancer"),
 
-        CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL("canary_lb_stats_restart_probe_task_fail_total",
+        CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL("iam_canary_lb_stats_restart_probe_task_fail_total",
                 "The total number of detection tasks based on router update or restart canary load balancer"),
 
-        // Canary LoadBalacnerStats instance state changed.
-        CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("canary_lb_stats_instance_state_changed_total",
+        CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("iam_canary_lb_stats_instance_state_changed_total",
                 "The total number of failed restart or update loadbalancer probe tasks"),
 
-        SIMPLE_SIGN_TIME("simple_sign_time", "The total number of simple signature execution cost time"),
+        CANARY_LB_CHOOSE_TIME("iam_canary_lb_choose_time", "The number of canary loadbalancer choose cost time"),
 
-        CANARY_LB_CHOOSE_TIME("canary_lb_choose_time", "The total number of canary loadbalancer choose cost time");
+        // Request Redis rate-limit.
+
+        REDIS_RATELIMIT_TOTAL("iam_redis_ratelimit_total", "The number of total processing in the redis rate limiter"),
+
+        REDIS_RATELIMIT_HITS_TOTAL("iam_redis_ratelimit_hits_total", "The number of total hits in the redis rate limiter"),
+
+        REDIS_RATELIMIT_TIME("iam_redis_ratelimit_time", "The number of redis ratelimit cost time");
 
         private final String name;
         private final String help;
