@@ -121,6 +121,18 @@ public class IamGatewayMetricsFacade implements InitializingBean {
         }
     }
 
+    public void counter(MetricsName metricsName, String routeId, double amount, String... tags) {
+        try {
+            List<String> _tags = Lists.newArrayList(tags);
+            _tags.add(MetricsTag.ROUTE_ID);
+            _tags.add(routeId);
+            counter(metricsName, _tags.toArray(new String[0])).increment(amount);
+        } catch (Exception e) {
+            log.warn(format("Cannot add to counter metrics name: %s, amount: {}, routeId: {}", metricsName, valueOf(amount)),
+                    routeId, e);
+        }
+    }
+
     public Counter counter(MetricsName metricsName, String... tags) {
         List<String> _tags = Lists.newArrayList(tags);
         _tags.add(MetricsTag.SELF_INSTANCE_ID);
