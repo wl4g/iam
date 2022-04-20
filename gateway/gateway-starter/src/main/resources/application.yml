@@ -56,13 +56,14 @@ spring:
           permitted-cross-domain-policies: none ## Default by 'none'
           frame-options: DENY ## Default by 'DENY'
           download-options: noopen ## Default by 'noopen'
+        ## !!! [Deprecated]: use 'spring.iam.gateway.ratelimit' !!!
         ## The default request ratelimiter configuragion.
         ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-        request-rate-limiter:
-          denyEmptyKey: true
-          emptyKeyStatusCode: UNPROCESSABLE_ENTITY
-      ## The default based on redis ratelimiter configuragion.
-      ## [Deprecated]: use 'spring.iam.gateway.ratelimit'
+        ##request-rate-limiter:
+        ##  denyEmptyKey: true
+        ##  emptyKeyStatusCode: UNPROCESSABLE_ENTITY
+      ## !!! [Deprecated]: use 'spring.iam.gateway.ratelimit' !!!
+      ## The default based redis ratelimiter configuragion.
       ## see:org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimiter
       ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter
       ##redis-rate-limiter:
@@ -164,8 +165,8 @@ spring:
         replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
         requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
         token:
-          replenishRate: 1
           burstCapacity: 1
+          replenishRate: 1
           requestedTokens: 1
         event:
           publishEventBusThreads: 1 ## Default by 1
@@ -231,7 +232,7 @@ spring:
         choose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
           ## When no canary condition is matched, whether all instances of the service are candidates.
           fallback-all-to-candidates: true
-          load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+          load-balancer-algorithm: LC ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
           max-choose-tries: 10 ## Default by 10
           null-ping-to-reachable: true ## Default by true
         probe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()

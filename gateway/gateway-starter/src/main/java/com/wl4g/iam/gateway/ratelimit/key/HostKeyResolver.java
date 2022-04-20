@@ -31,6 +31,7 @@ public class HostKeyResolver implements KeyResolver {
 
     @Override
     public Mono<String> resolve(ServerWebExchange exchange) {
+        // TODO use x-forward host header
         return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
     }
 

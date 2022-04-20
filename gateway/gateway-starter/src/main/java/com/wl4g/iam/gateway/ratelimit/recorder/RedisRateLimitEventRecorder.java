@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedisRateLimitEventRecorder {
 
-    public static final String LOG_SIGN_EVENT_HITS_PREFIX = "RATELIMIT_EVENT_HITS";
+    public static final String LOG_SIGN_EVENT_HITS_PREFIX = "RATELIMIT_HITS_EVENT";
 
     private @Autowired IamRateLimiterProperties rateLimitConfig;
     private @Autowired StringRedisTemplate redisTemplate;

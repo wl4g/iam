@@ -20,6 +20,7 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_
 
 import javax.validation.constraints.Min;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +41,17 @@ import lombok.ToString;
 @ToString
 @Validated
 public class IamRateLimiterProperties {
+
+    /**
+     * Switch to deny requests if the Key Resolver returns an empty key,
+     * defaults to true.
+     */
+    private boolean denyEmptyKey = true;
+
+    /**
+     * HttpStatus to return when denyEmptyKey is true, defaults to FORBIDDEN.
+     */
+    private String emptyKeyStatusCode = HttpStatus.FORBIDDEN.name();
 
     /**
      * Whether or not to include headers containing rate limiter information,
@@ -66,7 +78,7 @@ public class IamRateLimiterProperties {
 
     private TokenRateLimitProperties token = new TokenRateLimitProperties();
 
-    private RateLimitEventProperties event = new RateLimitEventProperties();
+    private RedisRateLimitEventProperties event = new RedisRateLimitEventProperties();
 
     /**
      * Token bucket-based current limiting algorithm configuration
@@ -78,9 +90,9 @@ public class IamRateLimiterProperties {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TokenRateLimitProperties {
-        private @Min(1) int replenishRate = 1;
-        private @Min(0) int burstCapacity = 1;
-        private @Min(1) int requestedTokens = 1;
+        private @Min(1) Integer replenishRate = 1;
+        private @Min(0) Integer burstCapacity = 1;
+        private @Min(1) Integer requestedTokens = 1;
     }
 
     @Getter
@@ -89,7 +101,7 @@ public class IamRateLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RateLimitEventProperties {
+    public static class RedisRateLimitEventProperties {
 
         /**
          * Publish event bus threads.

@@ -15,30 +15,37 @@
  */
 package com.wl4g.iam.gateway.ratelimit.config;
 
-import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
+import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
-import com.wl4g.iam.gateway.ratelimit.IamRedisRateLimiter;
+import com.wl4g.iam.gateway.ratelimit.IamRedisTokenRateLimiter;
+import com.wl4g.iam.gateway.ratelimit.IamRequestRateLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.ratelimit.key.HostKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.recorder.RedisRateLimitEventRecorder;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
-import com.wl4g.infra.common.log.SmartLogger;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -48,6 +55,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-10-13 v1.0.0
  * @since v1.0.0
  */
+@Slf4j
 public class IamRateLimiterAutoConfiguration {
 
     @Bean
@@ -76,21 +84,13 @@ public class IamRateLimiterAutoConfiguration {
      * {@link org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimite}
      */
     @Bean
-    @ConditionalOnBean(IamRedisRateLimiter.class)
     public RedisRateLimiter warningDeprecatedRedisRateLimiter(
+            @Lazy RouteDefinitionLocator routeLocator,
             ReactiveStringRedisTemplate redisTemplate,
             @Qualifier(RedisRateLimiter.REDIS_SCRIPT_NAME) RedisScript<List<Long>> redisScript,
             ConfigurationService configurationService) {
-        return new RedisRateLimiter(redisTemplate, redisScript, configurationService) {
-            private final SmartLogger log = getLogger(getClass());
 
-            @Override
-            public Mono<Response> isAllowed(String routeId, String id) {
-                log.warn(
-                        "\n[WARNING]: The default redisRateLimiter is deprecated, please use the IAM rate limiter with the configuration prefix: 'spring.iam.gateway.ratelimit'\n");
-                return Mono.empty(); // Ignore
-            }
-        };
+        return new WarningDeprecatedRedisRateLimiter(redisTemplate, redisScript, configurationService);
     }
 
     /**
@@ -98,15 +98,26 @@ public class IamRateLimiterAutoConfiguration {
      */
     @Bean
     @Primary
-    public IamRedisRateLimiter iamRedisRateLimiter(
+    public IamRedisTokenRateLimiter iamRedisTokenRateLimiter(
             IamRateLimiterProperties rateLimiterConfig,
             ReactiveStringRedisTemplate redisTemplate,
             @Qualifier(RedisRateLimiter.REDIS_SCRIPT_NAME) RedisScript<List<Long>> redisScript,
             IamGatewayMetricsFacade metricsFacade,
             @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus,
             ConfigurationService configurationService) {
-        return new IamRedisRateLimiter(rateLimiterConfig, redisTemplate, redisScript, eventBus, metricsFacade,
+        return new IamRedisTokenRateLimiter(rateLimiterConfig, redisTemplate, redisScript, eventBus, metricsFacade,
                 configurationService);
+    }
+
+    /**
+     * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration#requestRateLimiterGatewayFilterFactory}
+     */
+    @Bean
+    public IamRequestRateLimiterGatewayFilterFactory iamRequestRateLimiterGatewayFilterFactory(
+            IamRateLimiterProperties rateLimitConfig,
+            IamRedisTokenRateLimiter rateLimiter,
+            KeyResolver resolver) {
+        return new IamRequestRateLimiterGatewayFilterFactory(rateLimitConfig, rateLimiter, resolver);
     }
 
     // Redis rate-limit event recorder
@@ -124,8 +135,33 @@ public class IamRateLimiterAutoConfiguration {
         return recorder;
     }
 
+    class WarningDeprecatedRedisRateLimiter extends RedisRateLimiter implements ApplicationRunner {
+        private @Lazy @Autowired RouteDefinitionLocator routeLocator;
+
+        public WarningDeprecatedRedisRateLimiter(ReactiveStringRedisTemplate redisTemplate, RedisScript<List<Long>> script,
+                ConfigurationService configurationService) {
+            super(redisTemplate, script, configurationService);
+        }
+
+        @Override
+        public void run(ApplicationArguments args) throws Exception {
+            boolean useDefaultRedisRateLimiter = routeLocator.getRouteDefinitions().collectList().block().stream().anyMatch(
+                    r -> safeList(r.getFilters()).stream().anyMatch(f -> StringUtils.equals(f.getName(), "RequestRateLimiter")));
+            if (useDefaultRedisRateLimiter) {
+                log.warn(LOG_MESSAGE_WARNING_REDIS_RATE_LIMITER);
+            }
+        }
+
+        @Override
+        public Mono<Response> isAllowed(String routeId, String id) {
+            log.warn(LOG_MESSAGE_WARNING_REDIS_RATE_LIMITER);
+            return Mono.empty(); // Ignore
+        }
+    }
+
     public static final String BEAN_HOST_RESOLVER = "hostKeyResolver";
     public static final String BEAN_URI_RESOLVER = "uriKeyResolver";
     public static final String BEAN_REDIS_RATELIMITE_EVENTBUS = "redisRateLimiteEventBusSupport";
+    public static final String LOG_MESSAGE_WARNING_REDIS_RATE_LIMITER = "\n[WARNING]: The default redisRateLimiter is deprecated, please use the IAM rate limiter with the configuration key prefix: 'spring.iam.gateway.ratelimit'\n";
 
 }

@@ -53,9 +53,9 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
+import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -95,14 +95,15 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
     @Override
     public GatewayFilter apply(Config config) {
-        applyGlobalToConfig(config);
+        applyDefaultToConfig(config);
         return new CanaryLoadBalancerGatewayFilter(ruleAdapter, loadBalancerStats, config, metricsFacade);
     }
 
-    private void applyGlobalToConfig(Config config) {
+    private void applyDefaultToConfig(Config config) {
         try {
-            BeanCopierUtils.deepCopyWithDefault(config.getChoose(), loadBalancerConfig.getChoose());
-            BeanCopierUtils.deepCopyWithDefault(config.getProbe(), loadBalancerConfig.getProbe());
+            ConfigBeanUtils.configureWithDefault(new ChooseProperties(), config.getChoose(), loadBalancerConfig.getChoose());
+            ConfigBeanUtils.configureWithDefault(new ProbeProperties(), loadBalancerConfig.getProbe(),
+                    loadBalancerConfig.getProbe());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
@@ -226,7 +227,8 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
             // Add time metrics.
             metricsFacade
-                    .getTimer(MetricsName.CANARY_LB_CHOOSE_TIME, MetricsTag.LB, config.getChoose().getLoadBalancerAlgorithm().name())
+                    .getTimer(MetricsName.CANARY_LB_CHOOSE_TIME, MetricsTag.LB,
+                            config.getChoose().getLoadBalancerAlgorithm().name())
                     .record(Duration.ofNanos(nanoTime() - beginTime));
 
             if (isNull(chosen)) {

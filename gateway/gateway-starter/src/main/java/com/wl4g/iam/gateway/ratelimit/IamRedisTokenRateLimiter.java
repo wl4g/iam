@@ -29,7 +29,6 @@ import javax.validation.constraints.Min;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.ratelimit.AbstractRateLimiter;
-import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
 import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -53,7 +52,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IamRedisRateLimiter}
+ * {@link IamRedisTokenRateLimiter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-19 v3.0.0
@@ -64,7 +63,12 @@ import reactor.core.publisher.Mono;
 @Setter
 @Slf4j
 @ConfigurationProperties(GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMIT)
-public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter.Config> {
+public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenRateLimiter.Config> {
+
+    /**
+     * Redis Rate Limiter property name.
+     */
+    public static final String CONFIGURATION_PROPERTY_NAME = "iam-redis-rate-limiter";
 
     private final IamRateLimiterProperties rateLimiterConfig;
     private final ReactiveStringRedisTemplate redisTemplate;
@@ -73,10 +77,10 @@ public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter
     private final IamGatewayMetricsFacade metricsFacade;
     private final Config defaultConfig;
 
-    public IamRedisRateLimiter(IamRateLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
+    public IamRedisTokenRateLimiter(IamRateLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
             RedisScript<List<Long>> redisScript, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade,
             ConfigurationService configurationService) {
-        super(Config.class, RedisRateLimiter.CONFIGURATION_PROPERTY_NAME, configurationService);
+        super(Config.class, CONFIGURATION_PROPERTY_NAME, configurationService);
         this.rateLimiterConfig = notNullOf(rateLimiterConfig, "rateLimiterConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         this.redisScript = notNullOf(redisScript, "redisScript");
@@ -130,12 +134,17 @@ public class IamRedisRateLimiter extends AbstractRateLimiter<IamRedisRateLimiter
                     log.debug("response: " + response);
                 }
 
-                // Add rata limit metrics.
+                //
+                // [Begin] ADD feature for metrics
+                //
                 metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
                 if (!allowed) { // Total hits metric
                     metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
                     eventBus.post(new RateLimitHitEvent(id));
                 }
+                //
+                // [End] ADD feature for metrics
+                //
 
                 return response;
             });
