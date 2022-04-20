@@ -50,15 +50,16 @@ public class RedisRateLimitEventRecorder {
         try {
             incr = getHitsCumulator().increment(rateLimitId, 1);
         } finally {
-            if (rateLimitConfig.getEvent().isRedisEventRecoderLogEnabled() && log.isInfoEnabled()) {
+            if (rateLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, rateLimitId, incr);
             }
         }
     }
 
     private BoundHashOperations<String, Object, Object> getHitsCumulator() {
-        return redisTemplate.boundHashOps(rateLimitConfig.getEvent().getRedisEventRecoderHitsCumulatorPrefix().concat(":").concat(
-                DateUtils2.getDate(rateLimitConfig.getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+        return redisTemplate
+                .boundHashOps(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix())));
     }
 
 }

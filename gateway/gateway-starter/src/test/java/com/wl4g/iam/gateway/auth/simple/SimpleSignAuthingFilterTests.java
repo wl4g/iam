@@ -38,7 +38,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.SignHashingMode;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
@@ -77,7 +78,7 @@ public class SimpleSignAuthingFilterTests {
         // public AuthingProperties authingProperties() {
         // AuthingProperties config = new AuthingProperties();
         // // custom secret store type.
-        // config.getSimpleSign().setSecretLoadStore(SecretLoadStore.REDIS);
+        // config.getSimpleSign().setSecretLoadStore(SecretStore.REDIS);
         // return config;
         // }
 
@@ -85,13 +86,13 @@ public class SimpleSignAuthingFilterTests {
         @Bean
         public RouteLocator configureTestRoutes(RouteLocatorBuilder builder) {
             // custom store secret.
-            System.setProperty(authingConfig.getSimpleSign().getSecretLoadPrefix() + ":" + TEST_APPID, TEST_APPSECRET);
+            System.setProperty(authingConfig.getSign().getSecretStorePrefix() + ":" + TEST_APPID, TEST_APPSECRET);
 
             return builder.routes().route(p -> p.path(TEST_ROUTE_PATH).filters(f -> {
                 // for Add simple sign filter.
-                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new AuthingProperties(), redisTemplate,
+                SignAuthingFilterFactory filter = new SignAuthingFilterFactory(new AuthingProperties(), redisTemplate,
                         metricsFacade, eventBus);
-                SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
+                SignAuthingFilterFactory.Config config = new SignAuthingFilterFactory.Config();
                 // custom sign parameter name.
                 config.setSignParam("signature");
                 // custom sign hashing mode.

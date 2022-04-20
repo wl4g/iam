@@ -71,10 +71,10 @@ import org.springframework.web.reactive.function.server.HandlerStrategies;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory;
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.AppIdExtractor;
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.SignAlgorithm;
-import com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.SignHashingMode;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.AppIdExtractor;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.SignAlgorithm;
+import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;

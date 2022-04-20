@@ -84,7 +84,7 @@ spring:
             ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'
@@ -168,7 +168,7 @@ spring:
             ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: RequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'

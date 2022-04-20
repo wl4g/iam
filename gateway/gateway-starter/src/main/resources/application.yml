@@ -138,9 +138,9 @@ spring:
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
       authing:
-        simple-sign:
-          secret-load-store: redis
-          secret-load-prefix: iam:gateway:auth:sign:secret
+        sign:
+          secret-store: redis
+          secret-store-prefix: iam:gateway:auth:sign:secret
           secret-local-cache-seconds: 6 ## Default by 6sec
           ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
           ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
@@ -149,36 +149,39 @@ spring:
           ## authenticated principal name cannot be obtained.
           ignored-authing-in-jvm-debug: false ## Default by false
           sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
-          event:
+          eventRecorder:
             publishEventBusThreads: 1 ## Default by 1
             ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
             ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-            redisEventRecoderLogEnabled: true ## Default by true
-            ## Redis event recorder hits accumulator prefix.
-            redisEventRecoderHitsCumulatorPrefix: iam:gateway:ratelimit:redis:recorder:hits
-            ## Redis event recorder accumulator suffix of date format pattern.
-            redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
+            localLogEnabled: true ## Default by true
+            redis:
+              enabled: true ## Default by true
+              ## Redis event recorder success accumulator prefix.
+              successCumulatorPrefix: iam:gateway:auth:sign:event:success
+              ## Redis event recorder failure accumulator prefix.
+              failureCumulatorPrefix: iam:gateway:auth:sign:event:failure
+              ## Redis event recorder accumulator suffix of date format pattern.
+              cumulatorSuffixOfDatePattern: yyyyMMdd
       ratelimit:
         include-headers: false ## Default by true
         burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
         remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
         replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
         requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
-        token:
+        defaultTokenRateLimiter:
           burstCapacity: 1
           replenishRate: 1
           requestedTokens: 1
-        event:
+        eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
           ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-          redisEventRecoderLogEnabled: true ## Default by true
-          ## Redis event recorder success accumulator prefix.
-          redisEventRecoderSuccessCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:success
-          ## Redis event recorder failure accumulator prefix.
-          redisEventRecoderFailureCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:failure
-          ## Redis event recorder accumulator suffix of date format pattern.
-          redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
+          localLogEnabled: true ## Default by true
+          redis:
+            ## Redis event recorder hits accumulator prefix.
+            hitsCumulatorPrefix: iam:gateway:ratelimit:event:hits
+            ## Redis event recorder accumulator suffix of date format pattern.
+            cumulatorSuffixOfDatePattern: yyyyMMdd
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000
       circuitbreaker:

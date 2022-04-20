@@ -42,7 +42,7 @@ spring:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
             #- StripPrefix=1
-            - name: SimpleSignAuthing
+            - name: SignAuthing
               args:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define
                 ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
@@ -85,7 +85,7 @@ spring:
             ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'
@@ -130,7 +130,7 @@ spring:
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/alimarket/v1/(?<segment>.*),/openapi/alimarket/v1/$\{segment}
-            - name: SimpleSignAuthing
+            - name: SignAuthing
               args:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define
                 ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
@@ -172,7 +172,7 @@ spring:
             ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
               args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.simple.SimpleSignAuthingFilterFactory.bindSignedToContext()
+                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
                 ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
                 ## Note:When the interception takes effect, 403 is returned by default?
                 key-resolver: '#{@principalNameKeyResolver}'

@@ -15,8 +15,9 @@
  */
 package com.wl4g.iam.gateway.ratelimit.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_REDIS_RECORDER_HITS;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
 import javax.validation.constraints.Min;
 
@@ -76,9 +77,9 @@ public class IamRateLimiterProperties {
      */
     private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
 
-    private TokenRateLimitProperties token = new TokenRateLimitProperties();
+    private TokenRateLimitProperties defaultTokenRateLimiter = new TokenRateLimitProperties();
 
-    private RedisRateLimitEventProperties event = new RedisRateLimitEventProperties();
+    private RateLimitEventRecorderProperties eventRecorder = new RateLimitEventRecorderProperties();
 
     /**
      * Token bucket-based current limiting algorithm configuration
@@ -101,29 +102,57 @@ public class IamRateLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RedisRateLimitEventProperties {
+    public static class RateLimitConfigProperties {
 
         /**
-         * Publish event bus threads.
+         * Redis tokens rate limiter configuration key prefix.
+         */
+        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RateLimitEventRecorderProperties {
+
+        /**
+         * Publish eventRecorder bus threads.
          */
         private int publishEventBusThreads = 1;
 
         /**
-         * Based on whether the redis event logger enables logging, if it is
-         * turned on, it can be used as a downgrade recovery strategy when data
-         * is lost due to a catastrophic failure of the persistent accumulator.
+         * Based on whether the redis eventRecorder logger enables logging, if
+         * it is turned on, it can be used as a downgrade recovery strategy when
+         * data is lost due to a catastrophic failure of the persistent
+         * accumulator.
          */
-        private boolean redisEventRecoderLogEnabled = true;
+        private boolean localLogEnabled = true;
+
+        private RedisRateLimitEventRecorderProperties redis = new RedisRateLimitEventRecorderProperties();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RedisRateLimitEventRecorderProperties {
 
         /**
-         * Redis event recorder hits accumulator key.
+         * Redis eventRecorder recorder hits accumulator key.
          */
-        private String redisEventRecoderHitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_REDIS_RECORDER_HITS;
+        private String hitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS;
 
         /**
-         * Redis event recorder accumulator suffix of date format pattern.
+         * Redis eventRecorder recorder accumulator suffix of date format
+         * pattern.
          */
-        private String redisEventRecoderCumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+        private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
     }
 

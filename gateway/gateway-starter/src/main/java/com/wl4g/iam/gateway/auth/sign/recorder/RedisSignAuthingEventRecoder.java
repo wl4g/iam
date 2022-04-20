@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.simple.recorder;
+package com.wl4g.iam.gateway.auth.sign.recorder;
 
 import static java.lang.String.valueOf;
 
@@ -23,8 +23,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.google.common.eventbus.Subscribe;
 import com.wl4g.iam.gateway.auth.config.AuthingProperties;
-import com.wl4g.iam.gateway.auth.simple.event.SignAuthingFailureEvent;
-import com.wl4g.iam.gateway.auth.simple.event.SignAuthingSuccessEvent;
+import com.wl4g.iam.gateway.auth.sign.event.SignAuthingFailureEvent;
+import com.wl4g.iam.gateway.auth.sign.event.SignAuthingSuccessEvent;
 import com.wl4g.infra.common.lang.DateUtils2;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since v3.0.0
  */
 @Slf4j
-public class RedisSimpleSignEventRecoder {
+public class RedisSignAuthingEventRecoder {
     public static final String LOG_SIGN_EVENT_SUCCESS_PREFIX = "SIGN_SUCCESS_EVENT";
     public static final String LOG_SIGN_EVENT_FAILURE_PREFIX = "SIGN_FAILURE_EVENT";
 
@@ -47,12 +47,15 @@ public class RedisSimpleSignEventRecoder {
 
     @Subscribe
     public void onSuccess(SignAuthingSuccessEvent event) {
+        if (!authingConfig.getSign().getEventRecorder().getRedis().isEnabled()) {
+            return;
+        }
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
             incr = getSuccessCumulator().increment(appId, 1);
         } finally {
-            if (authingConfig.getSimpleSign().getEvent().isRedisEventRecoderLogEnabled() && log.isInfoEnabled()) {
+            if (authingConfig.getSign().getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_SUCCESS_PREFIX, appId, incr);
             }
         }
@@ -60,6 +63,9 @@ public class RedisSimpleSignEventRecoder {
 
     @Subscribe
     public void onFailure(SignAuthingFailureEvent event) {
+        if (!authingConfig.getSign().getEventRecorder().getRedis().isEnabled()) {
+            return;
+        }
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
@@ -73,16 +79,14 @@ public class RedisSimpleSignEventRecoder {
 
     private BoundHashOperations<String, Object, Object> getSuccessCumulator() {
         return redisTemplate.boundHashOps(
-                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderSuccessCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(
-                                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+                authingConfig.getSign().getEventRecorder().getRedis().getSuccessCumulatorPrefix().concat(":").concat(DateUtils2
+                        .getDate(authingConfig.getSign().getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern())));
     }
 
     private BoundHashOperations<String, Object, Object> getFailureCumulator() {
         return redisTemplate.boundHashOps(
-                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderFailureCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(
-                                authingConfig.getSimpleSign().getEvent().getRedisEventRecoderCumulatorSuffixOfDatePattern())));
+                authingConfig.getSign().getEventRecorder().getRedis().getFailureCumulatorPrefix().concat(":").concat(DateUtils2
+                        .getDate(authingConfig.getSign().getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern())));
     }
 
 }

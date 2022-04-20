@@ -1,10 +1,10 @@
 package com.wl4g.iam.gateway.auth.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_FAILURE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_SUCCESS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -26,22 +26,22 @@ import lombok.ToString;
 @ToString
 public class AuthingProperties {
 
-    private SimpleSignAuthingProperties simpleSign = new SimpleSignAuthingProperties();
+    private SignAuthingProperties sign = new SignAuthingProperties();
 
     @Getter
     @Setter
     @ToString
-    public static class SimpleSignAuthingProperties {
+    public static class SignAuthingProperties {
 
         /**
          * Load signing keys from that type of stored.
          */
-        private SecretLoadStore secretLoadStore = SecretLoadStore.ENV;
+        private SecretStore secretStore = SecretStore.ENV;
 
         /**
          * Prefix when loading from signing keys stored.
          */
-        private String secretLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
+        private String secretStorePrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET;
 
         /**
          * Local cache expiration time for signing keys.
@@ -59,10 +59,10 @@ public class AuthingProperties {
          */
         private String signReplayVerifyBloomLoadPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM;
 
-        private SimpleSignAuthingEventProperties event = new SimpleSignAuthingEventProperties();
+        private EventRecorderProperties eventRecorder = new EventRecorderProperties();
     }
 
-    public static enum SecretLoadStore {
+    public static enum SecretStore {
         ENV, REDIS;
     }
 
@@ -72,34 +72,53 @@ public class AuthingProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SimpleSignAuthingEventProperties {
+    public static class EventRecorderProperties {
 
         /**
-         * Publish event bus threads.
+         * Publish eventRecorder bus threads.
          */
         private int publishEventBusThreads = 1;
 
         /**
-         * Based on whether the redis event logger enables logging, if it is
-         * turned on, it can be used as a downgrade recovery strategy when data
-         * is lost due to a catastrophic failure of the persistent accumulator.
+         * Based on whether the redis eventRecorder logger enables logging, if
+         * it is turned on, it can be used as a downgrade recovery strategy when
+         * data is lost due to a catastrophic failure of the persistent
+         * accumulator.
          */
-        private boolean redisEventRecoderLogEnabled = true;
+        private boolean localLogEnabled = true;
 
         /**
-         * Redis event recorder success accumulator key.
+         * Redis eventRecorder recorder configuration.
          */
-        private String redisEventRecoderSuccessCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS;
+        private RedisEventRecorderProperties redis = new RedisEventRecorderProperties();
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RedisEventRecorderProperties {
+
+        private boolean enabled = true;
 
         /**
-         * Redis event recorder failure accumulator prefix.
+         * Redis eventRecorder recorder success accumulator key.
          */
-        private String redisEventRecoderFailureCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE;
+        private String successCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_SUCCESS;
 
         /**
-         * Redis event recorder accumulator suffix of date format pattern.
+         * Redis eventRecorder recorder failure accumulator prefix.
          */
-        private String redisEventRecoderCumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER;
+        private String failureCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_FAILURE;
+
+        /**
+         * Redis eventRecorder recorder accumulator suffix of date format
+         * pattern.
+         */
+        private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
     }
 

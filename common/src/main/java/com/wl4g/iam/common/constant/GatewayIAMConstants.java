@@ -42,15 +42,16 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_SECRET = CACHE_PREFIX_IAM_GWTEWAY_AUTH + ":sign:secret";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REPLAY_BLOOM = CACHE_PREFIX_IAM_GWTEWAY_AUTH
             + ":sign:replay:bloom";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_SUCCESS = CACHE_PREFIX_IAM_GWTEWAY_AUTH
-            + ":sign:redis:recorder:success";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_REDIS_RECORDER_FAILURE = CACHE_PREFIX_IAM_GWTEWAY_AUTH
-            + ":sign:redis:recorder:failure";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_SUCCESS = CACHE_PREFIX_IAM_GWTEWAY_AUTH
+            + ":sign:event:success";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_FAILURE = CACHE_PREFIX_IAM_GWTEWAY_AUTH
+            + ":sign:event:failure";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT = CACHE_PREFIX_IAM_GWTEWAY + ":ratelimit";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_REDIS_RECORDER_HITS = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT
-            + ":redis:recorder:hits";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT + ":event:hits";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT
+            + ":config:token";
 
-    public static final String CACHE_SUFFIX_IAM_GATEWAY_REDIS_RECORDER = "yyyyMMdd";
+    public static final String CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD = "yyyyMMdd";
 
 }

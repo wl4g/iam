@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver;
@@ -40,6 +41,8 @@ import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.ratelimit.IamRedisTokenRateLimiter;
 import com.wl4g.iam.gateway.ratelimit.IamRequestRateLimiterGatewayFilterFactory;
+import com.wl4g.iam.gateway.ratelimit.configure.IamRateLimiterConfigure;
+import com.wl4g.iam.gateway.ratelimit.configure.RedisIamRateLimiterConfigure;
 import com.wl4g.iam.gateway.ratelimit.key.HostKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
 import com.wl4g.iam.gateway.ratelimit.recorder.RedisRateLimitEventRecorder;
@@ -78,6 +81,12 @@ public class IamRateLimiterAutoConfiguration {
     @Bean(BEAN_URI_RESOLVER)
     public UriKeyResolver uriKeyResolver() {
         return new UriKeyResolver();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IamRateLimiterConfigure redisIamRateLimiterConfigure() {
+        return new RedisIamRateLimiterConfigure();
     }
 
     /**
@@ -124,7 +133,7 @@ public class IamRateLimiterAutoConfiguration {
 
     @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
     public EventBusSupport redisRateLimiteEventBusSupport(IamRateLimiterProperties rateLimiteConfig) {
-        return new EventBusSupport(rateLimiteConfig.getEvent().getPublishEventBusThreads());
+        return new EventBusSupport(rateLimiteConfig.getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean

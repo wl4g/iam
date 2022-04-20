@@ -86,8 +86,8 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
         this.redisScript = notNullOf(redisScript, "redisScript");
         this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
         this.eventBus = notNullOf(eventBus, "eventBus");
-        this.defaultConfig = new Config(rateLimiterConfig.getToken().getReplenishRate(),
-                rateLimiterConfig.getToken().getBurstCapacity(), rateLimiterConfig.getToken().getRequestedTokens());
+        this.defaultConfig = new Config(rateLimiterConfig.getDefaultTokenRateLimiter().getReplenishRate(),
+                rateLimiterConfig.getDefaultTokenRateLimiter().getBurstCapacity(), rateLimiterConfig.getDefaultTokenRateLimiter().getRequestedTokens());
     }
 
     /**
@@ -131,7 +131,7 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
 
                 Response response = new Response(allowed, getHeaders(routeConfig, tokensLeft));
                 if (log.isDebugEnabled()) {
-                    log.debug("response: " + response);
+                    log.debug("response: {}", response);
                 }
 
                 //
