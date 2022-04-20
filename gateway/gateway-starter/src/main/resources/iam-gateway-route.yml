@@ -65,14 +65,11 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                key-resolver: '#{@hostKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
+              args:
+                keyResolverType: Header ## Usually use the actual IP after getting the proxy
+                statusCode: TOO_MANY_REQUESTS
+                #emptyKeyStatus: ## Default are set(recommended).
                 iam-redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
                   burst-capacity: 100
@@ -80,17 +77,12 @@ spring:
                   ## requests per second that users are allowed to process.
                   replenish-rate: 20
                   requested-tokens: 1
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
-                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+              args:
                 ## Note:When the interception takes effect, 403 is returned by default?
-                key-resolver: '#{@principalNameKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
+                keyResolverType: Principal
+                statusCode: TOO_MANY_REQUESTS
+                #emptyKeyStatus: ## Default are set(recommended).
                 iam-redis-rate-limiter:
                   burst-capacity: 100
                   replenish-rate: 20
@@ -152,14 +144,11 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                key-resolver: '#{@hostKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
+              args:
+                keyResolverType: Header ## Usually use the actual IP after getting the proxy
+                statusCode: TOO_MANY_REQUESTS
+                #emptyKeyStatus: ## Default are set(recommended).
                 iam-redis-rate-limiter:
                   ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
                   burst-capacity: 1
@@ -167,17 +156,12 @@ spring:
                   ## requests per second that users are allowed to process.
                   replenish-rate: 1
                   requested-tokens: 1
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
             - name: IamRequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory.bindSignedToContext()
-                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
+              args:
                 ## Note:When the interception takes effect, 403 is returned by default?
-                key-resolver: '#{@principalNameKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
+                keyResolverType: Principal
+                statusCode: TOO_MANY_REQUESTS
+                #emptyKeyStatus: ## Default are set(recommended).
                 iam-redis-rate-limiter:
                   burst-capacity: 1
                   replenish-rate: 1

@@ -25,7 +25,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link LoggingProperties}
+ * {@link DyeingLoggingProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
@@ -34,7 +34,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoggingProperties {
+public class DyeingLoggingProperties {
 
     /**
      * If this switch is enabled, then check whether the request header and
@@ -58,7 +58,14 @@ public class LoggingProperties {
      * only for the current request, This value takes precedence over
      * {@link #defaultVerboseLevel}
      */
-    private String requestVerboseLevelHeader = "X-Iam-Gateway-Log-Level";
+    private String verboseLevelRequestHeader = "X-Iam-Gateway-Log-Level";
+
+    /**
+     * Set the status header name of the dyed log request, which is used to
+     * notify the back-end services to enable log printing for the current
+     * request.
+     */
+    private String setDyeingLogStateRequestHeader = "X-Iam-Gateway-Log-Dyeing-State";
 
     /**
      * Preferred to enable print flight log match rule definitions.

@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.key;
+package com.wl4g.iam.gateway.requestlimit.event;
 
-import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
-import org.springframework.web.server.ServerWebExchange;
-
-import reactor.core.publisher.Mono;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * {@link HostKeyResolver}
+ * {@link RateLimitHitEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-09-30 v1.0.0
- * @since v1.0.0
+ * @version 2022-04-19 v3.0.0
+ * @since v3.0.0
  */
-public class HostKeyResolver implements KeyResolver {
+public class RateLimitHitEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -7137748823573974641L;
 
-    @Override
-    public Mono<String> resolve(ServerWebExchange exchange) {
-        // TODO use x-forward host header
-        return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
+    public RateLimitHitEvent(String rateLimitId) {
+        super(rateLimitId);
     }
 
 }

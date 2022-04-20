@@ -42,7 +42,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.common.log.SmartLogger;
@@ -53,20 +53,20 @@ import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link AbstractLoggingFilter}
+ * {@link AbstractDyeingLoggingFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
-public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
+public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Ordered {
 
     protected final SmartLogger log = getLogger(getClass());
     protected final TraceProperties traceConfig;
-    protected final LoggingProperties loggingConfig;
+    protected final DyeingLoggingProperties loggingConfig;
     protected final SpelRequestMatcher requestMatcher;
 
-    public AbstractLoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+    public AbstractDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
         this.traceConfig = notNullOf(traceConfig, "traceConfig");
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
         this.requestMatcher = new SpelRequestMatcher(loggingConfig.getMatchRuleDefinitions());
@@ -90,6 +90,7 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
         if (!isFilterLogging(request, headers)) {
             return chain.filter(exchange);
         }
+        // Determine dyeing logs level.
         int verboseLevel = determineRequestVerboseLevel(exchange);
         if (verboseLevel <= 0) { // is disabled?
             return chain.filter(exchange);
@@ -97,6 +98,10 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
         String traceId = headers.getFirst(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME);
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
+
+        // Sets the state of the dyed log request to notify the back-end
+        // services to print the log for the current request.
+        headers.set(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId);
 
         return doFilterInternal(exchange, chain, headers, traceId, requestMethod, requestUri);
     }
@@ -123,7 +128,7 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
 
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {
         Integer requestVerboseLevel = TypeConverts
-                .parseIntOrNull(exchange.getRequest().getHeaders().getFirst(loggingConfig.getRequestVerboseLevelHeader()));
+                .parseIntOrNull(exchange.getRequest().getHeaders().getFirst(loggingConfig.getVerboseLevelRequestHeader()));
         int verboseLevel = isNull(requestVerboseLevel) ? loggingConfig.getDefaultVerboseLevel() : requestVerboseLevel;
         exchange.getAttributes().put(KEY_VERBOSE_LEVEL, verboseLevel);
         return verboseLevel;
@@ -217,8 +222,8 @@ public abstract class AbstractLoggingFilter implements GlobalFilter, Ordered {
     public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway Response> ---\n:: Headers ::\n";
     public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
     public static final String LOG_RESPONSE_END = "\n------------------------------\n";
-    public static final String KEY_START_TIME = AbstractLoggingFilter.class.getName() + ".startTime";
-    public static final String KEY_VERBOSE_LEVEL = AbstractLoggingFilter.class.getName() + ".verboseLevel";
+    public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
+    public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";
     public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;
 
 }

@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.configure;
+package com.wl4g.iam.gateway.requestlimit.configure;
 
+import java.util.List;
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterProperties.TokenRateLimitProperties;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
@@ -36,7 +39,7 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-public interface IamRateLimiterConfigure {
+public interface IamRequestLimiterConfigure {
 
     @NotNull
     Mono<TokenRateLimiterConfig> load(@NotBlank String routeId, @NotBlank String rateLimitId);
@@ -45,7 +48,14 @@ public interface IamRateLimiterConfigure {
     @Setter
     @ToString
     @Validated
-    public static class TokenRateLimiterConfig extends TokenRateLimitProperties {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokenRateLimiterConfig {
+        private @Min(0) Integer burstCapacity;
+        private @Min(1) Integer replenishRate;
+        private @Min(1) Integer requestedTokens;
+        private String intervalKeyResolverDatePattern;
+        private List<String> headerKeyResolverNames;
     }
 
 }

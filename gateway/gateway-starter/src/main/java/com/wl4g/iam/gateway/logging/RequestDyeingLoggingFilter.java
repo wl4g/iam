@@ -34,22 +34,22 @@ import org.springframework.web.reactive.function.server.HandlerStrategies;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RequestLoggingFilter}
+ * {@link RequestDyeingLoggingFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
-public class RequestLoggingFilter extends AbstractLoggingFilter {
+public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
-    public RequestLoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+    public RequestDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
         super(traceConfig, loggingConfig);
     }
 

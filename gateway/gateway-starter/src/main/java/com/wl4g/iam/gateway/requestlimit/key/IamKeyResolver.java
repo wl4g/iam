@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.trace.config;
+package com.wl4g.iam.gateway.requestlimit.key;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import org.springframework.web.server.ServerWebExchange;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.wl4g.infra.core.framework.operator.Operator;
+
+import reactor.core.publisher.Mono;
 
 /**
- * {@link DyeingLoggingProperties}
+ * {@link IamKeyResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-09-02 v3.0.0
+ * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-@Getter
-@Setter
-@ToString
-public class TraceProperties {
+public interface IamKeyResolver extends Operator<IamKeyResolver.KeyResolverType> {
+
+    Mono<String> resolve(ServerWebExchange exchange);
+
+    public static enum KeyResolverType {
+        HOST, HEADER, PATH, PRINCIPAL, INTERVAL
+    }
 
 }

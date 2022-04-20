@@ -168,10 +168,22 @@ spring:
         remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
         replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
         requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
-        defaultTokenRateLimiter:
-          burstCapacity: 1
-          replenishRate: 1
-          requestedTokens: 1
+        rateLimitConfig:
+          prefix: iam:gateway:ratelimit:config:token
+          ## The default token bucket capacity, that is, the total number of concurrency allowed.
+          defaultBurstCapacity: 1
+          ## How many requests per second do you want a user to be allowed to do?
+          defaultReplenishRate: 1
+          ## How many tokens are requested per request?
+          defaultRequestedTokens: 1
+          ## The date pattern of the key get by rate limiting according to the date interval.
+          defaultIntervalKeyResolverDatePattern: yyyyMMdd ## Default by yyyyMMdd
+          ## The according to the list of header names of the request header current limiter, it can usually be used to get the
+          ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
+          defaultHeaderKeyResolverNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+            "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+            "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+            "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
@@ -256,9 +268,14 @@ spring:
         ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
         enabled: true ## Default by true
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        default-verbose-level: 7
-        request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        defaultVerboseLevel: 7
+        ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
+        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        ## Set the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
+        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
+        ## Preferred to enable print flight log match SPEL matchExpression.
         match-expression: '#{$defaultHeaderLogRule.or($defaultQueryLogRule).or($energyOpenApiLogRule).test($request)}'
+        ## Preferred to enable print flight log match rule definitions.
         match-rule-definitions:
           - name: defaultHeaderLogRule
             #method:

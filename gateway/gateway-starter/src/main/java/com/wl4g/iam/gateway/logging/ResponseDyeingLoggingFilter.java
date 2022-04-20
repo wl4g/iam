@@ -38,7 +38,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.LoggingProperties;
+import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
@@ -46,15 +46,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link ResponseLoggingFilter}
+ * {@link ResponseDyeingLoggingFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
-public class ResponseLoggingFilter extends AbstractLoggingFilter {
+public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
-    public ResponseLoggingFilter(TraceProperties traceConfig, LoggingProperties loggingConfig) {
+    public ResponseDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
         super(traceConfig, loggingConfig);
     }
 

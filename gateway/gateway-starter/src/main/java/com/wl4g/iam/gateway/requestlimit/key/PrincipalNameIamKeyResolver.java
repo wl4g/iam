@@ -13,37 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.configure;
-
-import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
-import static java.util.Objects.isNull;
+package com.wl4g.iam.gateway.requestlimit.key;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RedisIamRateLimiterConfigure}
+ * {@link PrincipalNameIamKeyResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
+ * @see {@link org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver}
  */
-public class RedisIamRateLimiterConfigure implements IamRateLimiterConfigure {
+public class PrincipalNameIamKeyResolver implements IamKeyResolver {
 
-    private @Autowired StringRedisTemplate redisTemplate;
+    protected @Autowired IamRequestLimiterProperties rateLimiterConfig;
 
     @Override
-    public Mono<TokenRateLimiterConfig> load(String routeId, String id) {
-        // TODO
-        TokenRateLimiterConfig config = parseJSON(getOperation().get("", ""), TokenRateLimiterConfig.class);
-        return isNull(config) ? Mono.empty() : Mono.just(config);
+    public KeyResolverType kind() {
+        return KeyResolverType.PRINCIPAL;
     }
 
-    private HashOperations<String, String, String> getOperation() {
-        return redisTemplate.opsForHash();
+    /**
+     * {@link com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory#bindSignedToContext()}
+     */
+    @Override
+    public Mono<String> resolve(ServerWebExchange exchange) {
+        return exchange.getPrincipal().flatMap(p -> Mono.justOrEmpty(p.getName()));
     }
 
 }

@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.key;
+package com.wl4g.iam.gateway.requestlimit.key;
 
-import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
 
 /**
- * {@link UriKeyResolver}
+ * {@link PathIamKeyResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class UriKeyResolver implements KeyResolver {
+public class PathIamKeyResolver implements IamKeyResolver {
+
+    @Override
+    public KeyResolverType kind() {
+        return KeyResolverType.PATH;
+    }
 
     @Override
     public Mono<String> resolve(ServerWebExchange exchange) {

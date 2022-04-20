@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.config;
+package com.wl4g.iam.gateway.requestlimit.config;
 
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 import javax.validation.constraints.Min;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+
+import com.wl4g.infra.common.web.WebUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +36,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link IamRateLimiterProperties}
+ * {@link IamRequestLimiterProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-13 v1.0.0
@@ -41,7 +46,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Validated
-public class IamRateLimiterProperties {
+public class IamRequestLimiterProperties {
 
     /**
      * Switch to deny requests if the Key Resolver returns an empty key,
@@ -77,25 +82,15 @@ public class IamRateLimiterProperties {
      */
     private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
 
-    private TokenRateLimitProperties defaultTokenRateLimiter = new TokenRateLimitProperties();
+    private RateLimitConfigProperties rateLimitConfig = new RateLimitConfigProperties();
 
     private RateLimitEventRecorderProperties eventRecorder = new RateLimitEventRecorderProperties();
 
     /**
-     * Token bucket-based current limiting algorithm configuration
+     * User-level current limiting configuration interface (data plane), for
+     * example, the current limiting configuration information can be loaded
+     * according to the currently authenticated principal(rateLimitId).
      */
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class TokenRateLimitProperties {
-        private @Min(1) Integer replenishRate = 1;
-        private @Min(0) Integer burstCapacity = 1;
-        private @Min(1) Integer requestedTokens = 1;
-    }
-
     @Getter
     @Setter
     @ToString
@@ -109,8 +104,43 @@ public class IamRateLimiterProperties {
          */
         private String prefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
 
+        /**
+         * Limit algorithm based on token bucket, The default token bucket
+         * capacity, that is, the total number of concurrency allowed.
+         */
+        private @Min(0) Integer defaultBurstCapacity = 1;
+
+        /**
+         * Limit algorithm based on token bucket, How many requests per second
+         * do you want a user to be allowed to do?
+         */
+        private @Min(1) Integer defaultReplenishRate = 1;
+
+        /**
+         * Limit algorithm based on token bucket, How many tokens are requested
+         * per request?
+         */
+        private @Min(1) Integer defaultRequestedTokens = 1;
+
+        /**
+         * The date pattern of the key get by rate limiting according to the
+         * date interval.
+         */
+        private String defaultIntervalKeyResolverDatePattern = "yyyyMMdd";
+
+        /**
+         * The according to the list of header names of the request header
+         * current limiter, it can usually be used to obtain the actual IP after
+         * being forwarded by the proxy to limit the current, or it can be
+         * flexibly used for other purposes.
+         */
+        private List<String> defaultHeaderKeyResolverNames = asList(WebUtils.HEADER_REAL_IP);
+
     }
 
+    /**
+     * Rate limiter event recorder configuration properties.
+     */
     @Getter
     @Setter
     @ToString

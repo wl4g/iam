@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit.config;
+package com.wl4g.iam.gateway.requestlimit.config;
 
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 
@@ -26,8 +26,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
-import org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.cloud.gateway.support.ConfigurationService;
@@ -39,55 +37,89 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
-import com.wl4g.iam.gateway.ratelimit.IamRedisTokenRateLimiter;
-import com.wl4g.iam.gateway.ratelimit.IamRequestRateLimiterGatewayFilterFactory;
-import com.wl4g.iam.gateway.ratelimit.configure.IamRateLimiterConfigure;
-import com.wl4g.iam.gateway.ratelimit.configure.RedisIamRateLimiterConfigure;
-import com.wl4g.iam.gateway.ratelimit.key.HostKeyResolver;
-import com.wl4g.iam.gateway.ratelimit.key.UriKeyResolver;
-import com.wl4g.iam.gateway.ratelimit.recorder.RedisRateLimitEventRecorder;
+import com.wl4g.iam.gateway.requestlimit.IamRedisTokenRateLimiter;
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
+import com.wl4g.iam.gateway.requestlimit.configure.IamRequestLimiterConfigure;
+import com.wl4g.iam.gateway.requestlimit.configure.RedisIamRequestLimiterConfigure;
+import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverType;
+import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.recorder.RedisRequestLimitEventRecorder;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IamRateLimiterAutoConfiguration}
+ * {@link IamRequestLimiterAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-13 v1.0.0
  * @since v1.0.0
  */
 @Slf4j
-public class IamRateLimiterAutoConfiguration {
+public class IamRequestLimiterAutoConfiguration {
+
+    //
+    // IAM rate limiter configuration.
+    //
 
     @Bean
     @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMIT)
-    public IamRateLimiterProperties iamRateLimiterProperties() {
-        return new IamRateLimiterProperties();
-    }
-
-    @Primary
-    @Bean(BEAN_HOST_RESOLVER)
-    public HostKeyResolver hostKeyResolver() {
-        return new HostKeyResolver();
-    }
-
-    @Bean(PrincipalNameKeyResolver.BEAN_NAME)
-    public PrincipalNameKeyResolver principalNameKeyResolver() {
-        return new PrincipalNameKeyResolver();
-    }
-
-    @Bean(BEAN_URI_RESOLVER)
-    public UriKeyResolver uriKeyResolver() {
-        return new UriKeyResolver();
+    public IamRequestLimiterProperties iamRequestLimiterProperties() {
+        return new IamRequestLimiterProperties();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public IamRateLimiterConfigure redisIamRateLimiterConfigure() {
-        return new RedisIamRateLimiterConfigure();
+    public IamRequestLimiterConfigure redisIamRateLimiterConfigure() {
+        return new RedisIamRequestLimiterConfigure();
     }
+
+    //
+    // IAM Key resolver.
+    //
+
+    @Bean
+    public IamKeyResolver hostIamKeyResolver() {
+        return new HostIamKeyResolver();
+    }
+
+    @Bean
+    public IamKeyResolver pathIamKeyResolver() {
+        return new PathIamKeyResolver();
+    }
+
+    @Bean
+    public IamKeyResolver principalNameIamKeyResolver() {
+        return new PrincipalNameIamKeyResolver();
+    }
+
+    @Bean
+    public IamKeyResolver intervalIamKeyResolver() {
+        return new IntervalIamKeyResolver();
+    }
+
+    @Bean
+    public IamKeyResolver headerIamKeyResolver() {
+        return new HeaderIamKeyResolver();
+    }
+
+    @Bean
+    public GenericOperatorAdapter<KeyResolverType, IamKeyResolver> compositeIamKeyResolverAdapter(
+            List<IamKeyResolver> resolvers) {
+        return new GenericOperatorAdapter<KeyResolverType, IamKeyResolver>(resolvers) {
+        };
+    }
+
+    //
+    // IAM rate limiter CORE.
+    //
 
     /**
      * {@link org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimite}
@@ -108,7 +140,7 @@ public class IamRateLimiterAutoConfiguration {
     @Bean
     @Primary
     public IamRedisTokenRateLimiter iamRedisTokenRateLimiter(
-            IamRateLimiterProperties rateLimiterConfig,
+            IamRequestLimiterProperties rateLimiterConfig,
             ReactiveStringRedisTemplate redisTemplate,
             @Qualifier(RedisRateLimiter.REDIS_SCRIPT_NAME) RedisScript<List<Long>> redisScript,
             IamGatewayMetricsFacade metricsFacade,
@@ -122,24 +154,23 @@ public class IamRateLimiterAutoConfiguration {
      * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration#requestRateLimiterGatewayFilterFactory}
      */
     @Bean
-    public IamRequestRateLimiterGatewayFilterFactory iamRequestRateLimiterGatewayFilterFactory(
-            IamRateLimiterProperties rateLimitConfig,
-            IamRedisTokenRateLimiter rateLimiter,
-            KeyResolver resolver) {
-        return new IamRequestRateLimiterGatewayFilterFactory(rateLimitConfig, rateLimiter, resolver);
+    public IamRequestLimiterGatewayFilterFactory iamRequestLimiterGatewayFilterFactory() {
+        return new IamRequestLimiterGatewayFilterFactory();
     }
 
-    // Redis rate-limit event recorder
+    //
+    // IAM rate limiter event.
+    //
 
     @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
-    public EventBusSupport redisRateLimiteEventBusSupport(IamRateLimiterProperties rateLimiteConfig) {
+    public EventBusSupport redisRateLimiteEventBusSupport(IamRequestLimiterProperties rateLimiteConfig) {
         return new EventBusSupport(rateLimiteConfig.getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean
-    public RedisRateLimitEventRecorder redisRateLimiteEventRecoder(
+    public RedisRequestLimitEventRecorder redisRateLimiteEventRecoder(
             @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus) {
-        RedisRateLimitEventRecorder recorder = new RedisRateLimitEventRecorder();
+        RedisRequestLimitEventRecorder recorder = new RedisRequestLimitEventRecorder();
         eventBus.register(recorder);
         return recorder;
     }
@@ -168,8 +199,6 @@ public class IamRateLimiterAutoConfiguration {
         }
     }
 
-    public static final String BEAN_HOST_RESOLVER = "hostKeyResolver";
-    public static final String BEAN_URI_RESOLVER = "uriKeyResolver";
     public static final String BEAN_REDIS_RATELIMITE_EVENTBUS = "redisRateLimiteEventBusSupport";
     public static final String LOG_MESSAGE_WARNING_REDIS_RATE_LIMITER = "\n[WARNING]: The default redisRateLimiter is deprecated, please use the IAM rate limiter with the configuration key prefix: 'spring.iam.gateway.ratelimit'\n";
 

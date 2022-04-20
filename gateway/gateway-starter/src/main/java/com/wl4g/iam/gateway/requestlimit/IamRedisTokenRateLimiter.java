@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.ratelimit;
+package com.wl4g.iam.gateway.requestlimit;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.System.nanoTime;
@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.validation.constraints.Min;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.ratelimit.AbstractRateLimiter;
 import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
 import org.springframework.cloud.gateway.support.ConfigurationService;
@@ -35,11 +34,10 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
-import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterProperties;
-import com.wl4g.iam.gateway.ratelimit.event.RateLimitHitEvent;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 import lombok.AllArgsConstructor;
@@ -58,11 +56,11 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-19 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter}
+ * @see https://blog.csdn.net/songhaifengshuaige/article/details/93372437
  */
 @Getter
 @Setter
 @Slf4j
-@ConfigurationProperties(GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RATELIMIT)
 public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenRateLimiter.Config> {
 
     /**
@@ -70,14 +68,14 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
      */
     public static final String CONFIGURATION_PROPERTY_NAME = "iam-redis-rate-limiter";
 
-    private final IamRateLimiterProperties rateLimiterConfig;
+    private final IamRequestLimiterProperties rateLimiterConfig;
     private final ReactiveStringRedisTemplate redisTemplate;
     private final RedisScript<List<Long>> redisScript;
     private final EventBusSupport eventBus;
     private final IamGatewayMetricsFacade metricsFacade;
     private final Config defaultConfig;
 
-    public IamRedisTokenRateLimiter(IamRateLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
+    public IamRedisTokenRateLimiter(IamRequestLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
             RedisScript<List<Long>> redisScript, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade,
             ConfigurationService configurationService) {
         super(Config.class, CONFIGURATION_PROPERTY_NAME, configurationService);
@@ -86,8 +84,9 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
         this.redisScript = notNullOf(redisScript, "redisScript");
         this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
         this.eventBus = notNullOf(eventBus, "eventBus");
-        this.defaultConfig = new Config(rateLimiterConfig.getDefaultTokenRateLimiter().getReplenishRate(),
-                rateLimiterConfig.getDefaultTokenRateLimiter().getBurstCapacity(), rateLimiterConfig.getDefaultTokenRateLimiter().getRequestedTokens());
+        this.defaultConfig = new Config(rateLimiterConfig.getRateLimitConfig().getDefaultReplenishRate(),
+                rateLimiterConfig.getRateLimitConfig().getDefaultBurstCapacity(),
+                rateLimiterConfig.getRateLimitConfig().getDefaultRequestedTokens());
     }
 
     /**

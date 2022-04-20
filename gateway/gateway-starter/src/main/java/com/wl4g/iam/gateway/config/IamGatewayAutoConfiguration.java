@@ -27,9 +27,9 @@ import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfig
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
-import com.wl4g.iam.gateway.logging.config.LoggingAutoConfiguration;
+import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
-import com.wl4g.iam.gateway.ratelimit.config.IamRateLimiterAutoConfiguration;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
 import com.wl4g.iam.gateway.server.config.GatewayWebServerAutoConfiguration;
 import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
@@ -45,9 +45,9 @@ import reactor.core.publisher.Mono;
  * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration}
  */
 @Configuration
-@Import({ GatewayWebServerAutoConfiguration.class, IamRateLimiterAutoConfiguration.class,
+@Import({ GatewayWebServerAutoConfiguration.class, IamRequestLimiterAutoConfiguration.class,
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
-        AuthingAutoConfiguration.class, TraceAutoConfiguration.class, LoggingAutoConfiguration.class,
+        AuthingAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
 
