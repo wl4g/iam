@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono;
  */
 public class IntervalIamKeyResolver implements IamKeyResolver {
 
-    private @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    private @Autowired IamRequestLimiterProperties limiterConfig;
 
     @Override
     public KeyResolverType kind() {
@@ -44,12 +44,12 @@ public class IntervalIamKeyResolver implements IamKeyResolver {
     @Override
     public Mono<String> resolve(ServerWebExchange exchange) {
         return Mono.just(DateFormatUtils.format(currentTimeMillis(),
-                rateLimiterConfig.getRateLimitConfig().getDefaultIntervalKeyResolverDatePattern()));
+                limiterConfig.getLimitConfig().getDefaultIntervalKeyResolverDatePattern()));
     }
 
     // public void checkDatePattern() {
     // String datePattern =
-    // rateLimiterConfig.getRateLimitConfig().getDefaultIntervalKeyResolverDatePattern();
+    // limiterConfig.getRateLimitConfig().getDefaultIntervalKeyResolverDatePattern();
     // try {
     // DateFormatUtils.format(currentTimeMillis(), datePattern);
     // } catch (Exception e) {

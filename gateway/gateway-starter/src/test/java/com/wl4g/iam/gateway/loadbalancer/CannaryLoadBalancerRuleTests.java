@@ -72,7 +72,7 @@ public class CannaryLoadBalancerRuleTests {
 
     private List<ServiceInstance> doOnlyFindCandidateInstances(List<String> matchedRuleNames) {
         CanaryLoadBalancerProperties config = new CanaryLoadBalancerProperties();
-        config.getChoose().setFallbackAllToCandidates(true);
+        config.getDefaultChoose().setFallbackAllToCandidates(true);
         config.setCanaryDiscoveryServiceLabelPrefix("Iscg-Canary-Label");
 
         AbstractCanaryLoadBalancerChooser rule = new AbstractCanaryLoadBalancerChooser() {

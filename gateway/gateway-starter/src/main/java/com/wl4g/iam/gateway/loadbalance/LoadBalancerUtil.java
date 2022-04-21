@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 
+import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadBalancerProperties.ChooseProperties;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.Stats;
 
 /**
@@ -36,7 +37,11 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.Stats;
 public abstract class LoadBalancerUtil {
 
     public static boolean isAlive(CanaryLoadBalancerFilterFactory.Config config, Stats stats) {
-        return isNull(stats.getAlive()) ? config.getChoose().isNullPingToReachable() : stats.getAlive();
+        return isAlive(config.getChoose(), stats);
+    }
+
+    public static boolean isAlive(ChooseProperties chooseConfig, Stats stats) {
+        return isNull(stats.getAlive()) ? chooseConfig.isNullPingToReachable() : stats.getAlive();
     }
 
     public static String getInstanceId(ServiceInstance instance) {

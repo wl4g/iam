@@ -15,19 +15,14 @@
  */
 package com.wl4g.iam.gateway.requestlimit.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
-import static java.util.Arrays.asList;
-
-import java.util.List;
-
-import javax.validation.constraints.Min;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.infra.common.web.WebUtils;
+import com.wl4g.iam.gateway.requestlimit.configurer.LimitStrategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,6 +55,11 @@ public class IamRequestLimiterProperties {
     private String emptyKeyStatusCode = HttpStatus.FORBIDDEN.name();
 
     /**
+     * HttpStatus to return when limited is true, defaults to TOO_MANY_REQUESTS.
+     */
+    private String statusCode = HttpStatus.TOO_MANY_REQUESTS.name();
+
+    /**
      * Whether or not to include headers containing rate limiter information,
      * defaults to true.
      */
@@ -82,9 +82,9 @@ public class IamRequestLimiterProperties {
      */
     private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
 
-    private RateLimitConfigProperties rateLimitConfig = new RateLimitConfigProperties();
+    private LimitConfigProperties limitConfig = new LimitConfigProperties();
 
-    private RateLimitEventRecorderProperties eventRecorder = new RateLimitEventRecorderProperties();
+    private LimitEventRecorderProperties eventRecorderConfig = new LimitEventRecorderProperties();
 
     /**
      * User-level current limiting configuration interface (data plane), for
@@ -97,49 +97,21 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RateLimitConfigProperties {
+    public static class LimitConfigProperties {
 
         /**
          * Redis tokens rate limiter configuration key prefix.
          */
-        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN;
+        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF;
 
         /**
-         * Limit algorithm based on token bucket, The default token bucket
-         * capacity, that is, the total number of concurrency allowed.
+         * The default configuration of request limiting strategy.
          */
-        private @Min(0) Integer defaultBurstCapacity = 1;
-
-        /**
-         * Limit algorithm based on token bucket, How many requests per second
-         * do you want a user to be allowed to do?
-         */
-        private @Min(1) Integer defaultReplenishRate = 1;
-
-        /**
-         * Limit algorithm based on token bucket, How many tokens are requested
-         * per request?
-         */
-        private @Min(1) Integer defaultRequestedTokens = 1;
-
-        /**
-         * The date pattern of the key get by rate limiting according to the
-         * date interval.
-         */
-        private String defaultIntervalKeyResolverDatePattern = "yyyyMMdd";
-
-        /**
-         * The according to the list of header names of the request header
-         * current limiter, it can usually be used to obtain the actual IP after
-         * being forwarded by the proxy to limit the current, or it can be
-         * flexibly used for other purposes.
-         */
-        private List<String> defaultHeaderKeyResolverNames = asList(WebUtils.HEADER_REAL_IP);
-
+        private LimitStrategy defaultStrategy = new LimitStrategy();
     }
 
     /**
-     * Rate limiter event recorder configuration properties.
+     * Request limiting event recorder configuration properties.
      */
     @Getter
     @Setter
@@ -147,42 +119,43 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RateLimitEventRecorderProperties {
+    public static class LimitEventRecorderProperties {
 
         /**
-         * Publish eventRecorder bus threads.
+         * Publish eventRecorderConfig bus threads.
          */
         private int publishEventBusThreads = 1;
 
         /**
-         * Based on whether the redis eventRecorder logger enables logging, if
-         * it is turned on, it can be used as a downgrade recovery strategy when
-         * data is lost due to a catastrophic failure of the persistent
-         * accumulator.
+         * Based on whether the redis eventRecorderConfig logger enables
+         * logging, if it is turned on, it can be used as a downgrade recovery
+         * strategy when data is lost due to a catastrophic failure of the
+         * persistent accumulator.
          */
         private boolean localLogEnabled = true;
 
-        private RedisRateLimitEventRecorderProperties redis = new RedisRateLimitEventRecorderProperties();
-    }
+        private RedisLimitEventRecorderProperties redis = new RedisLimitEventRecorderProperties();
 
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RedisRateLimitEventRecorderProperties {
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class RedisLimitEventRecorderProperties {
 
-        /**
-         * Redis eventRecorder recorder hits accumulator key.
-         */
-        private String hitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS;
+            /**
+             * Redis eventRecorderConfig recorder hits accumulator key.
+             */
+            private String hitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
 
-        /**
-         * Redis eventRecorder recorder accumulator suffix of date format
-         * pattern.
-         */
-        private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
+            /**
+             * Redis eventRecorderConfig recorder accumulator suffix of date
+             * format pattern.
+             */
+            private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
+
+        }
 
     }
 

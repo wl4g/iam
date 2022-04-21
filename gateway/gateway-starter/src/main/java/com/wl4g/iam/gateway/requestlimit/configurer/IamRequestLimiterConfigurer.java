@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.configure;
+package com.wl4g.iam.gateway.requestlimit.configurer;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.validation.annotation.Validated;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -39,23 +29,15 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-public interface IamRequestLimiterConfigure {
+public interface IamRequestLimiterConfigurer {
 
     @NotNull
-    Mono<TokenRateLimiterConfig> load(@NotBlank String routeId, @NotBlank String rateLimitId);
+    Mono<LimitStrategy> loadStrategy(@NotBlank String routeId, @NotBlank String limitId);
 
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TokenRateLimiterConfig {
-        private @Min(0) Integer burstCapacity;
-        private @Min(1) Integer replenishRate;
-        private @Min(1) Integer requestedTokens;
-        private String intervalKeyResolverDatePattern;
-        private List<String> headerKeyResolverNames;
-    }
+    // public static String getConfigId(IamRequestLimiterProperties
+    // requestLimitConfig, String routeId, String limitId) {
+    // return
+    // requestLimitConfig.getLimitConfig().getPrefix().concat(":").concat(routeId).concat(":").concat(limitId);
+    // }
 
 }

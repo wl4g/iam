@@ -101,9 +101,9 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new ChooseProperties(), config.getChoose(), loadBalancerConfig.getChoose());
-            ConfigBeanUtils.configureWithDefault(new ProbeProperties(), loadBalancerConfig.getProbe(),
-                    loadBalancerConfig.getProbe());
+            ConfigBeanUtils.configureWithDefault(new ChooseProperties(), config.getChoose(), loadBalancerConfig.getDefaultChoose());
+            ConfigBeanUtils.configureWithDefault(new ProbeProperties(), loadBalancerConfig.getDefaultProbe(),
+                    loadBalancerConfig.getDefaultProbe());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }

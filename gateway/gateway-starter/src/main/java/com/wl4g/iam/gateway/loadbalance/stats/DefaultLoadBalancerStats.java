@@ -25,6 +25,7 @@ import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -46,6 +47,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -251,9 +253,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     }
 
     @Override
-    public List<InstanceStatus> getReachableInstances(ServerWebExchange exchange) {
-        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
+    public List<InstanceStatus> getReachableInstances(String routeId) {
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(routeId, true);
         return safeMap(routeService.getInstances()).values()
                 .stream()
                 .filter(i -> LoadBalancerUtil.isAlive(routeService.getConfig(), i.getStats()))
@@ -261,10 +262,14 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     }
 
     @Override
-    public List<InstanceStatus> getAllInstances(ServerWebExchange exchange) {
-        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(route.getId(), true);
+    public List<InstanceStatus> getAllInstances(String routeId) {
+        RouteServiceStatus routeService = loadBalancerRegistry.getRouteService(routeId, true);
         return safeMap(routeService.getInstances()).values().stream().collect(toList());
+    }
+
+    @Override
+    public @NotNull Map<String, RouteServiceStatus> getAllRouteServices() {
+        return unmodifiableMap(loadBalancerRegistry.getAllRouteServices());
     }
 
     protected Disposable doPing(ProbeProperties probe, InstanceStatus status) {
@@ -429,8 +434,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
      * Add passive probe metrics.
      */
     protected void addCounterMetrics(ServerWebExchange exchange, MetricsName metricsName, ServiceInstance instance) {
-        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.LB_SERVICE_ID, instance.getServiceId(), MetricsTag.LB_INSTANCE_ID,
-                LoadBalancerUtil.getInstanceId(instance));
+        metricsFacade.counter(exchange, metricsName, 1, MetricsTag.LB_SERVICE_ID, instance.getServiceId(),
+                MetricsTag.LB_INSTANCE_ID, LoadBalancerUtil.getInstanceId(instance));
     }
 
 }

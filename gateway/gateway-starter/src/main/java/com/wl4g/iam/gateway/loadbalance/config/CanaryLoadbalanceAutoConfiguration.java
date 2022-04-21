@@ -36,6 +36,7 @@ import com.wl4g.iam.gateway.loadbalance.chooser.WeightLeastConnCanaryLoadBalance
 import com.wl4g.iam.gateway.loadbalance.chooser.WeightLeastTimeCanaryLoadBalancerChooser;
 import com.wl4g.iam.gateway.loadbalance.chooser.WeightRandomCanaryLoadBalancerChooser;
 import com.wl4g.iam.gateway.loadbalance.chooser.WeightRoundRobinCanaryLoadBalancerChooser;
+import com.wl4g.iam.gateway.loadbalance.metrics.CanaryLoadBalancerCollector;
 import com.wl4g.iam.gateway.loadbalance.stats.DefaultLoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.InMemoryLoadBalancerRegistry;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerRegistry;
@@ -44,6 +45,9 @@ import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy.DefaultLatestReachableStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
+
+import io.prometheus.client.Collector;
+import io.prometheus.client.CollectorRegistry;
 
 /**
  * {@link CanaryLoadbalanceAutoConfiguration}
@@ -77,6 +81,17 @@ public class CanaryLoadbalanceAutoConfiguration {
     @Bean
     public LoadBalancerStats defaultLoadBalancerStats(CanaryLoadBalancerProperties loadBalancerConfig) {
         return new DefaultLoadBalancerStats(loadBalancerConfig);
+    }
+
+    // Load-balancer metrics.
+
+    /**
+     * @see {@link org.springframework.boot.actuate.autoconfigure.metrics.export.prometheus.PrometheusMetricsExportAutoConfiguration}
+     */
+    public Collector canaryLoadBalancerCollector(CollectorRegistry registry) {
+        CanaryLoadBalancerCollector collector = new CanaryLoadBalancerCollector();
+        registry.register(collector);
+        return collector;
     }
 
     // Load-balancer rules.

@@ -35,7 +35,7 @@ import reactor.core.publisher.Mono;
  */
 public class HeaderIamKeyResolver implements IamKeyResolver {
 
-    private @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    private @Autowired IamRequestLimiterProperties limiterConfig;
 
     @Override
     public KeyResolverType kind() {
@@ -48,7 +48,7 @@ public class HeaderIamKeyResolver implements IamKeyResolver {
         notNullOf(headers, "requestHeaders");
 
         String host = null;
-        for (String header : rateLimiterConfig.getRateLimitConfig().getDefaultHeaderKeyResolverNames()) {
+        for (String header : limiterConfig.getLimitConfig().getDefaultHeaderKeyResolverNames()) {
             host = headers.getFirst(header);
             if (!isBlank(host) && !"Unknown".equalsIgnoreCase(host)) {
                 break;

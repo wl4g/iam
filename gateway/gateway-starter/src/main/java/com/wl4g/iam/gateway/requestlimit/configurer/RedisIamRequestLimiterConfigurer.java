@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.configure;
+package com.wl4g.iam.gateway.requestlimit.configurer;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.lang.String.valueOf;
@@ -28,22 +28,22 @@ import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RedisIamRequestLimiterConfigure}
+ * {@link RedisIamRequestLimiterConfigurer}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-public class RedisIamRequestLimiterConfigure implements IamRequestLimiterConfigure {
+public class RedisIamRequestLimiterConfigurer implements IamRequestLimiterConfigurer {
 
-    private @Autowired IamRequestLimiterProperties rateLimitConfig;
+    private @Autowired IamRequestLimiterProperties requestLimitConfig;
     private @Autowired StringRedisTemplate redisTemplate;
 
     @Override
-    public Mono<TokenRateLimiterConfig> load(String routeId, String id) {
-        TokenRateLimiterConfig config = parseJSON(
-                getOperation().get(rateLimitConfig.getRateLimitConfig().getPrefix(), getConfigId(routeId, id)),
-                TokenRateLimiterConfig.class);
+    public Mono<LimitStrategy> loadStrategy(String routeId, String limitId) {
+        LimitStrategy config = parseJSON(
+                getOperation().get(requestLimitConfig.getLimitConfig().getPrefix(), getConfigId(routeId, limitId)),
+                LimitStrategy.class);
         return isNull(config) ? Mono.empty() : Mono.just(config);
     }
 

@@ -23,8 +23,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Maps;
@@ -61,9 +65,24 @@ public interface LoadBalancerStats {
 
     int disconnect(ServerWebExchange exchange, ServiceInstance instance);
 
-    List<InstanceStatus> getReachableInstances(ServerWebExchange exchange);
+    default List<InstanceStatus> getReachableInstances(@NotNull ServerWebExchange exchange) {
+        notNullOf(exchange, "exchange");
+        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+        return getReachableInstances(route.getId());
+    }
 
-    List<InstanceStatus> getAllInstances(ServerWebExchange exchange);
+    List<InstanceStatus> getReachableInstances(@NotBlank String routeId);
+
+    default List<InstanceStatus> getAllInstances(@NotNull ServerWebExchange exchange) {
+        notNullOf(exchange, "exchange");
+        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+        return getAllInstances(route.getId());
+    }
+
+    List<InstanceStatus> getAllInstances(@NotBlank String routeId);
+
+    @NotNull
+    Map<String, RouteServiceStatus> getAllRouteServices();
 
     @Getter
     @Setter

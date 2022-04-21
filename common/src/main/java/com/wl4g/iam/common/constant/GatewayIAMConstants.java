@@ -27,7 +27,7 @@ public abstract class GatewayIAMConstants extends IAMConstants {
 
     public static final String CONF_PREFIX_IAM_GATEWAY = CONF_PREFIX_IAM + ".gateway";
     public static final String CONF_PREFIX_IAM_GATEWAY_SERVER = CONF_PREFIX_IAM_GATEWAY + ".server";
-    public static final String CONF_PREFIX_IAM_GATEWAY_RATELIMIT = CONF_PREFIX_IAM_GATEWAY + ".ratelimit";
+    public static final String CONF_PREFIX_IAM_GATEWAY_REQUESTLIMIT = CONF_PREFIX_IAM_GATEWAY + ".requestlimit";
     public static final String CONF_PREFIX_IAM_GATEWAY_ROUTE = CONF_PREFIX_IAM_GATEWAY + ".route";
     public static final String CONF_PREFIX_IAM_GATEWAY_CIRCUITBREAKER = CONF_PREFIX_IAM_GATEWAY + ".circuitbreaker";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOADBANANER = CONF_PREFIX_IAM_GATEWAY + ".loadbalancer";
@@ -47,10 +47,10 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_FAILURE = CACHE_PREFIX_IAM_GWTEWAY_AUTH
             + ":sign:event:failure";
 
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT = CACHE_PREFIX_IAM_GWTEWAY + ":ratelimit";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT + ":event:hits";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT_CONF_TOKEN = CACHE_PREFIX_IAM_GWTEWAY_RATELIMIT
-            + ":config:token";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT = CACHE_PREFIX_IAM_GWTEWAY + ":requestlimit";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT + ":conf";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
+            + ":event:hits";
 
     public static final String CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD = "yyyyMMdd";
 

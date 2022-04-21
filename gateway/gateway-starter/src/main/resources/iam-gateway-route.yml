@@ -42,7 +42,7 @@ spring:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
             #- StripPrefix=1
-            - name: SignAuthing
+            - name: SimpleSignAuthing
               args:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define
                 ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
@@ -65,7 +65,7 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            - name: IamRequestRateLimiter
+            - name: IamRequestLimiter
               args:
                 keyResolverType: Header ## Usually use the actual IP after getting the proxy
                 statusCode: TOO_MANY_REQUESTS
@@ -77,7 +77,7 @@ spring:
                   ## requests per second that users are allowed to process.
                   replenish-rate: 20
                   requested-tokens: 1
-            - name: IamRequestRateLimiter
+            - name: IamRequestLimiter
               args:
                 ## Note:When the interception takes effect, 403 is returned by default?
                 keyResolverType: Principal
@@ -122,7 +122,7 @@ spring:
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/alimarket/v1/(?<segment>.*),/openapi/alimarket/v1/$\{segment}
-            - name: SignAuthing
+            - name: SimpleSignAuthing
               args:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define
                 ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
@@ -144,7 +144,7 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            - name: IamRequestRateLimiter
+            - name: IamRequestLimiter
               args:
                 keyResolverType: Header ## Usually use the actual IP after getting the proxy
                 statusCode: TOO_MANY_REQUESTS
@@ -156,10 +156,11 @@ spring:
                   ## requests per second that users are allowed to process.
                   replenish-rate: 1
                   requested-tokens: 1
-            - name: IamRequestRateLimiter
+            - name: IamRequestLimiter
               args:
                 ## Note:When the interception takes effect, 403 is returned by default?
                 keyResolverType: Principal
+                requestLimiterType: RedisQuotaLimiter ## Optinos(RedisRateLimiter|RedisQuotaLimiter)
                 statusCode: TOO_MANY_REQUESTS
                 #emptyKeyStatus: ## Default are set(recommended).
                 iam-redis-rate-limiter:

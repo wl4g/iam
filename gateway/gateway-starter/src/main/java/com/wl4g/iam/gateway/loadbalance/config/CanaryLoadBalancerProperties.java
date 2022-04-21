@@ -81,14 +81,14 @@ public class CanaryLoadBalancerProperties {
     private int registerRouteServicesDelaySeconds = 60;
 
     /**
-     * LoadBalancer choose properties.
+     * LoadBalancer defaultChoose properties.
      */
-    private ChooseProperties choose = new ChooseProperties();
+    private ChooseProperties defaultChoose = new ChooseProperties();
 
     /**
-     * Health probe properties.
+     * Health defaultProbe properties.
      */
-    private ProbeProperties probe = new ProbeProperties();
+    private ProbeProperties defaultProbe = new ProbeProperties();
 
     @Getter
     @Setter
@@ -113,7 +113,7 @@ public class CanaryLoadBalancerProperties {
 
         /**
          * Whether to consider these instance reachable by default when there is
-         * not enough probe data (such as just started up).
+         * not enough defaultProbe data (such as just started up).
          */
         private boolean nullPingToReachable = true;
 

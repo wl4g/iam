@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono;
  */
 public class PrincipalNameIamKeyResolver implements IamKeyResolver {
 
-    protected @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    protected @Autowired IamRequestLimiterProperties limiterConfig;
 
     @Override
     public KeyResolverType kind() {
@@ -40,7 +40,7 @@ public class PrincipalNameIamKeyResolver implements IamKeyResolver {
     }
 
     /**
-     * {@link com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory#bindSignedToContext()}
+     * {@link com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory#bindSignedToContext()}
      */
     @Override
     public Mono<String> resolve(ServerWebExchange exchange) {

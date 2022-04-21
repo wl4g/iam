@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit;
+package com.wl4g.iam.gateway.requestlimit.limiter;
 
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.System.nanoTime;
 
 import java.time.Instant;
@@ -27,9 +26,8 @@ import java.util.Map;
 
 import javax.validation.constraints.Min;
 
-import org.springframework.cloud.gateway.filter.ratelimit.AbstractRateLimiter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
-import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +48,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IamRedisTokenRateLimiter}
+ * {@link RedisRateIamRequestLimiter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-19 v3.0.0
@@ -61,32 +59,31 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @Slf4j
-public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenRateLimiter.Config> {
+public class RedisRateIamRequestLimiter implements IamRequestLimiter {
 
-    /**
-     * Redis Rate Limiter property name.
-     */
-    public static final String CONFIGURATION_PROPERTY_NAME = "iam-redis-rate-limiter";
+    private @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    private @Autowired ReactiveStringRedisTemplate redisTemplate;
+    private @Autowired RedisScript<List<Long>> redisScript;
+    private @Autowired EventBusSupport eventBus;
+    private @Autowired IamGatewayMetricsFacade metricsFacade;
+    private @Autowired Config defaultConfig;
 
-    private final IamRequestLimiterProperties rateLimiterConfig;
-    private final ReactiveStringRedisTemplate redisTemplate;
-    private final RedisScript<List<Long>> redisScript;
-    private final EventBusSupport eventBus;
-    private final IamGatewayMetricsFacade metricsFacade;
-    private final Config defaultConfig;
+    // public RedisRateIamRequestLimiter( ) {
+    // this.rateLimiterConfig = notNullOf(rateLimiterConfig,
+    // "rateLimiterConfig");
+    // this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
+    // this.redisScript = notNullOf(redisScript, "redisScript");
+    // this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
+    // this.eventBus = notNullOf(eventBus, "eventBus");
+    // this.defaultConfig = new
+    // Config(rateLimiterConfig.getRateLimitConfig().getDefaultReplenishRate(),
+    // rateLimiterConfig.getRateLimitConfig().getDefaultBurstCapacity(),
+    // rateLimiterConfig.getRateLimitConfig().getDefaultRequestedTokens());
+    // }
 
-    public IamRedisTokenRateLimiter(IamRequestLimiterProperties rateLimiterConfig, ReactiveStringRedisTemplate redisTemplate,
-            RedisScript<List<Long>> redisScript, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade,
-            ConfigurationService configurationService) {
-        super(Config.class, CONFIGURATION_PROPERTY_NAME, configurationService);
-        this.rateLimiterConfig = notNullOf(rateLimiterConfig, "rateLimiterConfig");
-        this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
-        this.redisScript = notNullOf(redisScript, "redisScript");
-        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
-        this.eventBus = notNullOf(eventBus, "eventBus");
-        this.defaultConfig = new Config(rateLimiterConfig.getRateLimitConfig().getDefaultReplenishRate(),
-                rateLimiterConfig.getRateLimitConfig().getDefaultBurstCapacity(),
-                rateLimiterConfig.getRateLimitConfig().getDefaultRequestedTokens());
+    @Override
+    public RequestLimiterPrivoder kind() {
+        return RequestLimiterPrivoder.RedisRateLimiter;
     }
 
     /**
@@ -95,7 +92,7 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
      * fetching the count and writing the new count.
      */
     @Override
-    public Mono<Response> isAllowed(String routeId, String id) {
+    public Mono<LimitedResponse> isAllowed(String routeId, String id) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
@@ -114,7 +111,7 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
             List<String> scriptArgs = Arrays.asList(replenishRate + "", burstCapacity + "", Instant.now().getEpochSecond() + "",
                     requestedTokens + "");
             // allowed, tokens_left = redis.eval(SCRIPT, keys, args)
-            Flux<List<Long>> flux = this.redisTemplate.execute(this.redisScript, keys, scriptArgs);
+            Flux<List<Long>> flux = redisTemplate.execute(redisScript, keys, scriptArgs);
             // .log("redisratelimiter", Level.FINER);
             return flux.onErrorResume(throwable -> {
                 if (log.isDebugEnabled()) {
@@ -128,24 +125,20 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
                 boolean allowed = results.get(0) == 1L;
                 Long tokensLeft = results.get(1);
 
-                Response response = new Response(allowed, getHeaders(routeConfig, tokensLeft));
+                LimitedResponse resp = new LimitedResponse(allowed, tokensLeft, createHeaders(routeConfig, tokensLeft));
                 if (log.isDebugEnabled()) {
-                    log.debug("response: {}", response);
+                    log.debug("response: {}", resp);
                 }
 
-                //
                 // [Begin] ADD feature for metrics
-                //
                 metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
                 if (!allowed) { // Total hits metric
                     metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
                     eventBus.post(new RateLimitHitEvent(id));
                 }
-                //
                 // [End] ADD feature for metrics
-                //
 
-                return response;
+                return resp;
             });
         } catch (Exception e) {
             /*
@@ -155,7 +148,7 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
              */
             log.error("Error determining if user allowed from redis", e);
         }
-        return Mono.just(new Response(true, getHeaders(routeConfig, -1L)));
+        return Mono.just(new LimitedResponse(true, -1L, createHeaders(routeConfig, -1L)));
     }
 
     protected List<String> getKeys(String id) {
@@ -173,18 +166,16 @@ public class IamRedisTokenRateLimiter extends AbstractRateLimiter<IamRedisTokenR
 
     protected Config loadConfiguration(String routeId) {
         Config routeConfig = getConfig().getOrDefault(routeId, defaultConfig);
-
         if (routeConfig == null) {
             routeConfig = getConfig().get(RouteDefinitionRouteLocator.DEFAULT_FILTERS);
         }
-
         if (routeConfig == null) {
             throw new IllegalArgumentException("No Configuration found for route " + routeId + " or defaultFilters");
         }
         return routeConfig;
     }
 
-    protected Map<String, String> getHeaders(Config config, Long tokensLeft) {
+    protected Map<String, String> createHeaders(Config config, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
         if (rateLimiterConfig.isIncludeHeaders()) {
             headers.put(rateLimiterConfig.getRemainingHeader(), tokensLeft.toString());

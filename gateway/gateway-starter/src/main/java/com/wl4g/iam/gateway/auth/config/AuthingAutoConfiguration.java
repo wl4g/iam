@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
-import com.wl4g.iam.gateway.auth.sign.SignAuthingFilterFactory;
-import com.wl4g.iam.gateway.auth.sign.recorder.RedisSignAuthingEventRecoder;
+import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory;
+import com.wl4g.iam.gateway.auth.sign.event.RedisSimpleSignAuthingEventRecoder;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
@@ -45,24 +45,24 @@ public class AuthingAutoConfiguration {
 
     @Bean(name = BEAN_SIMPLE_SIGN_EVENTBUS, destroyMethod = "close")
     public EventBusSupport simpleSignAuthingEventBusSupport(AuthingProperties authingConfig) {
-        return new EventBusSupport(authingConfig.getSign().getEventRecorder().getPublishEventBusThreads());
+        return new EventBusSupport(authingConfig.getSimpleSign().getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean
-    public SignAuthingFilterFactory signAuthingFilterFactory(
+    public SimpleSignAuthingFilterFactory simpleSignAuthingFilterFactory(
             AuthingProperties authingConfig,
             StringRedisTemplate stringTemplate,
             IamGatewayMetricsFacade metricsFacade,
             @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {
-        return new SignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade, eventBus);
+        return new SimpleSignAuthingFilterFactory(authingConfig, stringTemplate, metricsFacade, eventBus);
     }
 
     // Simple signature authorizer event recorder
 
     @Bean
-    public RedisSignAuthingEventRecoder redisSignAuthingEventRecoder(
+    public RedisSimpleSignAuthingEventRecoder redisSimpleSignAuthingEventRecoder(
             @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {
-        RedisSignAuthingEventRecoder recorder = new RedisSignAuthingEventRecoder();
+        RedisSimpleSignAuthingEventRecoder recorder = new RedisSimpleSignAuthingEventRecoder();
         eventBus.register(recorder);
         return recorder;
     }

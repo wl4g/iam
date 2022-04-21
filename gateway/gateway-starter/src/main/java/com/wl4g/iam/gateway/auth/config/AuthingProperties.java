@@ -26,12 +26,12 @@ import lombok.ToString;
 @ToString
 public class AuthingProperties {
 
-    private SignAuthingProperties sign = new SignAuthingProperties();
+    private SimpleSignAuthingProperties simpleSign = new SimpleSignAuthingProperties();
 
     @Getter
     @Setter
     @ToString
-    public static class SignAuthingProperties {
+    public static class SimpleSignAuthingProperties {
 
         /**
          * Load signing keys from that type of stored.

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.recorder;
+package com.wl4g.iam.gateway.requestlimit.event;
 
 import static java.lang.String.valueOf;
 
@@ -23,7 +23,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.google.common.eventbus.Subscribe;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
 import com.wl4g.infra.common.lang.DateUtils2;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class RedisRequestLimitEventRecorder {
         try {
             incr = getHitsCumulator().increment(rateLimitId, 1);
         } finally {
-            if (rateLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
+            if (rateLimitConfig.getEventRecorderConfig().isLocalLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, rateLimitId, incr);
             }
         }
@@ -57,8 +56,8 @@ public class RedisRequestLimitEventRecorder {
 
     private BoundHashOperations<String, Object, Object> getHitsCumulator() {
         return redisTemplate
-                .boundHashOps(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix())));
+                .boundHashOps(rateLimitConfig.getEventRecorderConfig().getRedis().getHitsCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(rateLimitConfig.getEventRecorderConfig().getRedis().getHitsCumulatorPrefix())));
     }
 
 }

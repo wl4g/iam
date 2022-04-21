@@ -25,16 +25,18 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
-import org.springframework.cloud.gateway.support.HasRouteId;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.configure.IamRequestLimiterConfigure;
+import com.wl4g.iam.gateway.requestlimit.configurer.IamRequestLimiterConfigurer;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverType;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
@@ -59,12 +61,13 @@ public class IamRequestLimiterGatewayFilterFactory
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
     private @Autowired IamRequestLimiterProperties config;
-    private @Autowired IamRequestLimiterConfigure rateLimiterConfigure;
-    private @Autowired IamRedisTokenRateLimiter iamRateLimiter;
+    private @Autowired IamRequestLimiterConfigurer rateLimiterConfigure;
+    private @Autowired RedisRateIamRequestLimiter iamRateLimiter;
     private @Autowired GenericOperatorAdapter<KeyResolverType, IamKeyResolver> keyResolverAdapter;
+    private @Autowired GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter;
 
     public IamRequestLimiterGatewayFilterFactory() {
-        super(Config.class);
+        super(IamRequestLimiterGatewayFilterFactory.Config.class);
     }
 
     @Override
@@ -73,10 +76,9 @@ public class IamRequestLimiterGatewayFilterFactory
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
         applyDefaultToConfig(config);
-        IamKeyResolver resolver = getKeyResolver(config);
-        return new IamRequestRateLimiterGatewayFilter(config, resolver, iamRateLimiter);
+        return new IamRequestLimiterGatewayFilter(config, getKeyResolver(config), getRequestLimiter(config));
     }
 
     private void applyDefaultToConfig(Config config) {
@@ -90,26 +92,30 @@ public class IamRequestLimiterGatewayFilterFactory
         // }
     }
 
-    private IamKeyResolver getKeyResolver(Config config) {
+    private IamKeyResolver getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
         return keyResolverAdapter.forOperator(config.getKeyResolverType());
+    }
+
+    private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
+        return requestLimiterAdapter.forOperator(config.getLimiterPrivoder());
     }
 
     @Getter
     @Setter
     @ToString
-    public static class Config implements HasRouteId {
+    public static class Config {
         private KeyResolverType keyResolverType;
-        private HttpStatus statusCode = HttpStatus.TOO_MANY_REQUESTS;
+        private RequestLimiterPrivoder limiterPrivoder;
         private Boolean denyEmptyKey;
         private String emptyKeyStatus;
-        private String routeId;
+        private HttpStatus statusCode = HttpStatus.TOO_MANY_REQUESTS;
     }
 
     @AllArgsConstructor
-    public static class IamRequestRateLimiterGatewayFilter implements GatewayFilter {
+    public static class IamRequestLimiterGatewayFilter implements GatewayFilter {
         private final Config config;
         private final IamKeyResolver resolver;
-        private final IamRedisTokenRateLimiter iamRateLimiter;
+        private final IamRequestLimiter iamRequestLimiter;
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -121,12 +127,8 @@ public class IamRequestLimiterGatewayFilterFactory
                     }
                     return chain.filter(exchange);
                 }
-                String routeId = config.getRouteId();
-                if (routeId == null) {
-                    Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-                    routeId = route.getId();
-                }
-                return iamRateLimiter.isAllowed(routeId, key).flatMap(response -> {
+                Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+                return iamRequestLimiter.isAllowed(route.getId(), key).flatMap(response -> {
                     for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
                         exchange.getResponse().getHeaders().add(header.getKey(), header.getValue());
                     }
@@ -140,5 +142,5 @@ public class IamRequestLimiterGatewayFilterFactory
         }
     }
 
-    public static final String BEAN_IAM_RATELIMIT_FILTER = "IamRequestRateLimiter";
+    public static final String BEAN_IAM_RATELIMIT_FILTER = "IamRequestLimiter";
 }

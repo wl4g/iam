@@ -219,7 +219,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String LOG_REQUEST_BEGIN = "\n--- <IAM Gateway Request> -----\n:: Headers ::\n";
     public static final String LOG_REQUEST_BODY = ":: Body    ::\n{}";
     public static final String LOG_REQUEST_END = "\n------------------------------\n";
-    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway Response> ---\n:: Headers ::\n";
+    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway LimitedResponse> ---\n:: Headers ::\n";
     public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
     public static final String LOG_RESPONSE_END = "\n------------------------------\n";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
