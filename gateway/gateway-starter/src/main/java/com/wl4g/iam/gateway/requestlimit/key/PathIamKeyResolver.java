@@ -15,8 +15,12 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -26,16 +30,23 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class PathIamKeyResolver implements IamKeyResolver {
+public class PathIamKeyResolver implements IamKeyResolver<PathIamKeyResolver.PathKeyResolverStrategy> {
 
     @Override
-    public KeyResolverType kind() {
-        return KeyResolverType.PATH;
+    public KeyResolverProvider kind() {
+        return KeyResolverProvider.PATH;
     }
 
     @Override
-    public Mono<String> resolve(ServerWebExchange exchange) {
+    public Mono<String> resolve(PathKeyResolverStrategy strategy, ServerWebExchange exchange) {
         return Mono.just(exchange.getRequest().getURI().getPath());
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    public static class PathKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
     }
 
 }

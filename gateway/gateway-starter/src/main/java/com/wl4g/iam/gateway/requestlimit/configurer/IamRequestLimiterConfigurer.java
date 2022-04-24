@@ -32,12 +32,6 @@ import reactor.core.publisher.Mono;
 public interface IamRequestLimiterConfigurer {
 
     @NotNull
-    Mono<LimitStrategy> loadStrategy(@NotBlank String routeId, @NotBlank String limitId);
-
-    // public static String getConfigId(IamRequestLimiterProperties
-    // requestLimitConfig, String routeId, String limitId) {
-    // return
-    // requestLimitConfig.getLimitConfig().getPrefix().concat(":").concat(routeId).concat(":").concat(limitId);
-    // }
+    Mono<LimitStrategy> loadStrategy(@NotBlank String routeId, @NotBlank String limitKey);
 
 }

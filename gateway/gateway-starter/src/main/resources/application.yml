@@ -163,33 +163,44 @@ spring:
               ## Redis event recorder accumulator suffix of date format pattern.
               cumulatorSuffixOfDatePattern: yyyyMMdd
       requestlimit:
-        include-headers: false ## Default by true
-        burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
-        remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
-        replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
-        requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
-        limitConfig:
-          prefix: iam:gateway:requestlimit:config
-          defaultStrategy:
-            rate:
-              ## The default token bucket capacity, that is, the total number of concurrency allowed.
-              defaultBurstCapacity: 1
-              ## How many requests per second do you want a user to be allowed to do?
-              defaultReplenishRate: 1
-              ## How many tokens are requested per request?
-              defaultRequestedTokens: 1
-              ## The date pattern of the key get by rate limiting according to the date interval.
-              defaultIntervalKeyResolverDatePattern: yyyyMMdd ## Default by yyyyMMdd
-              ## The according to the list of header names of the request header current limiter, it can usually be used to get the
-              ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
-              defaultHeaderKeyResolverNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
-                "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
-                "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
-                "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-            quota:
-              ## The number of total maximum allowed requests capacity.
-              requestCapacity: 1000 ## Default by 1000
-        eventRecorderConfig:
+        denyEmptyKey: true ## Default by true
+        emptyKeyStatusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+        statusCode: TOO_MANY_REQUESTS ## Default by HttpStatus.TOO_MANY_REQUESTS
+        defaultKeyResolver:
+          #host: {}
+          #path: {}
+          #principal: {}
+          interval:
+            ## The date pattern of the key get by limiting according to the date interval.
+            cycleDatePattern: yyyyMMdd
+          header:
+            ## The according to the list of header names of the request header current limiter, it can usually be used to get the
+            ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
+            headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+              "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+              "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+              "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+        defaultLimiter:
+          rate:
+            prefix: iam:gateway:requestlimit:config:rate
+            ## The default token bucket capacity, that is, the total number of concurrency allowed.
+            defaultBurstCapacity: 1
+            ## How many requests per second do you want a user to be allowed to do?
+            defaultReplenishRate: 1
+            ## How many tokens are requested per request?
+            defaultRequestedTokens: 1
+            includeHeaders: false ## Default by true
+            burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+            replenishRateHeader: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+            requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+            remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+          quota:
+            prefix: iam:gateway:requestlimit:config:quota
+            ## The number of total maximum allowed requests capacity.
+            requestCapacity: 1000 ## Default by 1000
+            ## The date pattern of request quota limit calculation cycle.
+            cycleDatePattern: yyyyMMdd
+        eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
           ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
@@ -219,15 +230,15 @@ spring:
         enabled: true ## Default by true
         canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
         # TODO
-        #selectExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
-        selectExpression: '#{$rule.test($request)}'
-        matchRuleDefinitions:
-          # TODO
+        #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
+        canaryChooseExpression: '#{$rule.test($request)}'
+        canaryMatchRuleDefinitions:
+          ## TODO 
           #- name: defaultZoneHeader
           #  query:
-          #    symbol: EQ
-          #    key: __iscg_canary
-          #    value: v1
+          #    symbol: IGNORECASE_EQ
+          #    key: X-Iscg-Zone
+          #    value: cn_south1_a1
           - name: v1-canary-header
             #method:
             #schema:
@@ -235,7 +246,7 @@ spring:
             #port:
             #path: ## Ant path pattern.
             header:
-              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Canary
               value: v1
             #cookie:
@@ -265,14 +276,14 @@ spring:
           null-ping-to-reachable: true ## Default by true
         defaultProbe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
           debug: false ## Default by false
-          initial-seconds: 3 ## Default by 3s
-          delay-seconds: 10 ## Default by 10s
-          timeout-ms: 5_000 ## Default by 5_000ms
-          receive-queue: 8 ## Default by 8
+          initialSeconds: 3 ## Default by 3s
+          delaySeconds: 10 ## Default by 10s
+          timeoutMs: 5_000 ## Default by 5_000ms
+          receiveQueue: 8 ## Default by 8
           path: /healthz ## Default by '/healthz'
           ## Note: only expectBody takes effect when it is set at the same time as expectBody. (As long as any
           ## status code is satisfied)
-          expect-statuses: [200] ## Default by 200
+          expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
       trace: {}
       logging:
@@ -284,20 +295,20 @@ spring:
         defaultVerboseLevel: 7
         ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
         verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
-        ## Set the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
+        ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
         setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
-        ## Preferred to enable print flight log match SPEL matchExpression.
-        matchExpression: '#{$defaultHeaderLogRule.or($defaultQueryLogRule).or($energyOpenApiLogRule).test($request)}'
-        ## Preferred to enable print flight log match rule definitions.
-        matchRuleDefinitions:
-          - name: defaultHeaderLogRule
+        ## Preferred to enable print logs match SPEL match expression.
+        preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
+        ## Preferred to enable print logs match rules definition.
+        preferrdMatchRuleDefinitions:
+          - name: defaultLogHeader
             #method:
             #schema:
             #host:
             #port:
             #path: ## Ant path pattern.
             header:
-              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Log
               value: y
             #cookie:
@@ -308,12 +319,12 @@ spring:
             #  symbol:
             #  key:
             #  value:
-          - name: defaultQueryLogRule
+          - name: defaultLogQuery
             query:
-              symbol: EQ
+              symbol: IGNORECASE_EQ
               key: __iscg_log
               value: y
-          - name: energyOpenApiLogRule
+          - name: energyOpenApiLogWithPath
             path: '/openapi/**'
 
   ## Security configuration.
@@ -328,9 +339,9 @@ spring:
             client-id: portal
             client-secret: a12463984c2f46bdb83d9b1313f3378d
             scope:
-            - email
-            - profile
-            - roles
+              - email
+              - profile
+              - roles
 
 management:
   server:

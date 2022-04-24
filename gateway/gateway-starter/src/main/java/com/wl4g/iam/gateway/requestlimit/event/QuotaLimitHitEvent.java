@@ -27,8 +27,8 @@ import org.springframework.context.ApplicationEvent;
 public class QuotaLimitHitEvent extends ApplicationEvent {
     private static final long serialVersionUID = -7137748823573974641L;
 
-    public QuotaLimitHitEvent(String rateLimitId) {
-        super(rateLimitId);
+    public QuotaLimitHitEvent(String limitKey) {
+        super(limitKey);
     }
 
 }

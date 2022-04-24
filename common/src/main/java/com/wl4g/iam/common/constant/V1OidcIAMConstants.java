@@ -347,7 +347,14 @@ public abstract class V1OidcIAMConstants extends IAMConstants {
          * @since oauth2.1
          */
         @Beta
-        device_code("urn:ietf:params:oauth:grant-type:device_code");
+        device_code("urn:ietf:params:oauth:grant-type:device_code"),
+
+        /**
+         * see:https://openid.net/2021/09/01/openid-connect-client-initiated-backchannel-authentication-ciba-core-is-now-a-final-specification/
+         * see:https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0-final.html
+         */
+        @Beta
+        ciba("urn:openid:params:grant-type:ciba");
 
         private final String value;
         private final boolean isDefault;

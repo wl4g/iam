@@ -15,14 +15,19 @@
  */
 package com.wl4g.iam.gateway.requestlimit.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.gateway.requestlimit.configurer.LimitStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver.HeaderKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver.HostKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver.IntervalKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver.PathKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,41 +60,27 @@ public class IamRequestLimiterProperties {
     private String emptyKeyStatusCode = HttpStatus.FORBIDDEN.name();
 
     /**
-     * HttpStatus to return when limited is true, defaults to TOO_MANY_REQUESTS.
+     * HttpStatus to return when limiter is true, defaults to TOO_MANY_REQUESTS.
      */
     private String statusCode = HttpStatus.TOO_MANY_REQUESTS.name();
 
     /**
-     * Whether or not to include headers containing rate limiter information,
-     * defaults to true.
+     * The default key resolver configuration properties.
      */
-    private boolean includeHeaders = true;
+    private DefaultKeyResolverProperties defaultKeyResolver = new DefaultKeyResolverProperties();
 
     /**
-     * The name of the header that returns number of remaining requests during
-     * the current second.
+     * The default limiter configuration properties.
      */
-    private String remainingHeader = REMAINING_HEADER;
-
-    /** The name of the header that returns the replenish rate configuration. */
-    private String replenishRateHeader = REPLENISH_RATE_HEADER;
-
-    /** The name of the header that returns the burst capacity configuration. */
-    private String burstCapacityHeader = BURST_CAPACITY_HEADER;
+    private DefaultLimiterProperties defaultLimiter = new DefaultLimiterProperties();
 
     /**
-     * The name of the header that returns the requested tokens configuration.
+     * The global event recorder configuration properties.
      */
-    private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
-
-    private LimitConfigProperties limitConfig = new LimitConfigProperties();
-
-    private LimitEventRecorderProperties eventRecorderConfig = new LimitEventRecorderProperties();
+    private EventRecorderProperties eventRecorder = new EventRecorderProperties();
 
     /**
-     * User-level current limiting configuration interface (data plane), for
-     * example, the current limiting configuration information can be loaded
-     * according to the currently authenticated principal(rateLimitId).
+     * The default key resolver configuration properties.
      */
     @Getter
     @Setter
@@ -97,17 +88,58 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LimitConfigProperties {
+    public static class DefaultKeyResolverProperties {
 
         /**
-         * Redis tokens rate limiter configuration key prefix.
+         * The key resolver based on request headers.
          */
-        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF;
+        private HeaderKeyResolverStrategy header = new HeaderKeyResolverStrategy();
 
         /**
-         * The default configuration of request limiting strategy.
+         * The key resolver based on request host.
          */
-        private LimitStrategy defaultStrategy = new LimitStrategy();
+        private HostKeyResolverStrategy host = new HostKeyResolverStrategy();
+
+        /**
+         * The key resolver based on request interval.
+         */
+        private IntervalKeyResolverStrategy interval = new IntervalKeyResolverStrategy();
+
+        /**
+         * The key resolver based on request path.
+         */
+        private PathKeyResolverStrategy path = new PathKeyResolverStrategy();
+
+        /**
+         * The key resolver based on request principal.
+         */
+        private PrincipalNameIamKeyResolver principal = new PrincipalNameIamKeyResolver();
+
+    }
+
+    /**
+     * The Default limiter configuration properties.
+     */
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DefaultLimiterProperties {
+
+        /**
+         * The default rate limiting configuration (E.G: when no configuration
+         * is specified for principal)
+         */
+        private RedisRateLimiterStrategy rate = new RedisRateLimiterStrategy();
+
+        /**
+         * The default quota limiting configuration (E.G: when no configuration
+         * is specified for principal)
+         */
+        private RedisQuotaLimiterStrategy quota = new RedisQuotaLimiterStrategy();
+
     }
 
     /**
@@ -119,18 +151,18 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LimitEventRecorderProperties {
+    public static class EventRecorderProperties {
 
         /**
-         * Publish eventRecorderConfig bus threads.
+         * Publish eventRecorder bus threads.
          */
         private int publishEventBusThreads = 1;
 
         /**
-         * Based on whether the redis eventRecorderConfig logger enables
-         * logging, if it is turned on, it can be used as a downgrade recovery
-         * strategy when data is lost due to a catastrophic failure of the
-         * persistent accumulator.
+         * Based on whether the redis eventRecorder logger enables logging, if
+         * it is turned on, it can be used as a downgrade recovery strategy when
+         * data is lost due to a catastrophic failure of the persistent
+         * accumulator.
          */
         private boolean localLogEnabled = true;
 
@@ -145,38 +177,18 @@ public class IamRequestLimiterProperties {
         public static class RedisLimitEventRecorderProperties {
 
             /**
-             * Redis eventRecorderConfig recorder hits accumulator key.
+             * Redis eventRecorder recorder hits accumulator key.
              */
             private String hitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
 
             /**
-             * Redis eventRecorderConfig recorder accumulator suffix of date
-             * format pattern.
+             * Redis eventRecorder recorder accumulator suffix of date format
+             * pattern.
              */
             private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
         }
 
     }
-
-    /**
-     * Remaining Rate Limit header name.
-     */
-    public static final String REMAINING_HEADER = "X-RateLimit-Remaining";
-
-    /**
-     * Replenish Rate Limit header name.
-     */
-    public static final String REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
-
-    /**
-     * Burst Capacity header name.
-     */
-    public static final String BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
-
-    /**
-     * Requested Tokens header name.
-     */
-    public static final String REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
 
 }

@@ -68,13 +68,13 @@ public class DyeingLoggingProperties {
     private String setDyeingLogStateRequestHeader = "X-Iam-Gateway-Log-Dyeing-State";
 
     /**
-     * Preferred to enable print flight log match rule definitions.
+     * Preferred to enable print logs match SPEL match expression.
      */
-    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
+    private String preferredOpenMatchExpression;
 
     /**
-     * Preferred to enable print flight log match SPEL matchExpression.
+     * Preferred to enable print logs match rule definitions.
      */
-    private String matchExpression;
+    private List<MatchHttpRequestRule> preferrdMatchRuleDefinitions = new ArrayList<>();
 
 }

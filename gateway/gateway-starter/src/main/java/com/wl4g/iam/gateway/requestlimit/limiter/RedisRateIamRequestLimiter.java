@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter;
 
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
 import static java.lang.System.nanoTime;
 
 import java.time.Instant;
@@ -36,6 +37,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 import lombok.AllArgsConstructor;
@@ -59,14 +61,14 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @Slf4j
-public class RedisRateIamRequestLimiter implements IamRequestLimiter {
+public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
 
-    private @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    private @Autowired IamRequestLimiterProperties requestLimiterConfig;
     private @Autowired ReactiveStringRedisTemplate redisTemplate;
     private @Autowired RedisScript<List<Long>> redisScript;
     private @Autowired EventBusSupport eventBus;
     private @Autowired IamGatewayMetricsFacade metricsFacade;
-    private @Autowired Config defaultConfig;
+    private @Autowired RedisRateLimiterStrategy defaultConfig;
 
     // public RedisRateIamRequestLimiter( ) {
     // this.rateLimiterConfig = notNullOf(rateLimiterConfig,
@@ -92,17 +94,17 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
      * fetching the count and writing the new count.
      */
     @Override
-    public Mono<LimitedResponse> isAllowed(String routeId, String id) {
+    public Mono<LimitedResult> isAllowed(String routeId, String id) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
-        Config routeConfig = loadConfiguration(routeId);
+        RedisRateLimiterStrategy strategy = loadConfiguration(routeId);
         // How many requests per second do you want a user to be allowed to do?
-        int replenishRate = routeConfig.getReplenishRate();
+        int replenishRate = strategy.getReplenishRate();
         // How much bursting do you want to allow?
-        int burstCapacity = routeConfig.getBurstCapacity();
+        int burstCapacity = strategy.getBurstCapacity();
         // How many tokens are requested per request?
-        int requestedTokens = routeConfig.getRequestedTokens();
+        int requestedTokens = strategy.getRequestedTokens();
         try {
             List<String> keys = getKeys(id);
 
@@ -125,7 +127,7 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
                 boolean allowed = results.get(0) == 1L;
                 Long tokensLeft = results.get(1);
 
-                LimitedResponse resp = new LimitedResponse(allowed, tokensLeft, createHeaders(routeConfig, tokensLeft));
+                LimitedResult resp = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
                 if (log.isDebugEnabled()) {
                     log.debug("response: {}", resp);
                 }
@@ -148,7 +150,7 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
              */
             log.error("Error determining if user allowed from redis", e);
         }
-        return Mono.just(new LimitedResponse(true, -1L, createHeaders(routeConfig, -1L)));
+        return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
     }
 
     protected List<String> getKeys(String id) {
@@ -164,8 +166,8 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
         return Arrays.asList(tokenKey, timestampKey);
     }
 
-    protected Config loadConfiguration(String routeId) {
-        Config routeConfig = getConfig().getOrDefault(routeId, defaultConfig);
+    protected RedisRateLimiterStrategy loadConfiguration(String routeId) {
+        RedisRateLimiterStrategy routeConfig = getConfig().getOrDefault(routeId, defaultConfig);
         if (routeConfig == null) {
             routeConfig = getConfig().get(RouteDefinitionRouteLocator.DEFAULT_FILTERS);
         }
@@ -175,13 +177,13 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
         return routeConfig;
     }
 
-    protected Map<String, String> createHeaders(Config config, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisRateLimiterStrategy config, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
-        if (rateLimiterConfig.isIncludeHeaders()) {
-            headers.put(rateLimiterConfig.getRemainingHeader(), tokensLeft.toString());
-            headers.put(rateLimiterConfig.getReplenishRateHeader(), String.valueOf(config.getReplenishRate()));
-            headers.put(rateLimiterConfig.getBurstCapacityHeader(), String.valueOf(config.getBurstCapacity()));
-            headers.put(rateLimiterConfig.getRequestedTokensHeader(), String.valueOf(config.getRequestedTokens()));
+        if (requestLimiterConfig.isIncludeHeaders()) {
+            headers.put(requestLimiterConfig.getRemainingHeader(), tokensLeft.toString());
+            headers.put(requestLimiterConfig.getReplenishRateHeader(), String.valueOf(config.getReplenishRate()));
+            headers.put(requestLimiterConfig.getBurstCapacityHeader(), String.valueOf(config.getBurstCapacity()));
+            headers.put(requestLimiterConfig.getRequestedTokensHeader(), String.valueOf(config.getRequestedTokens()));
         }
         return headers;
     }
@@ -192,10 +194,71 @@ public class RedisRateIamRequestLimiter implements IamRequestLimiter {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Config {
-        private @Min(1) int replenishRate = 1;
+    public static class RedisRateLimiterStrategy extends LimiterStrategy {
+
+        /**
+         * Redis tokens rate limiter user-level configuration key prefix.
+         */
+        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
+
+        /**
+         * The default token bucket capacity, that is, the total number of
+         * concurrency allowed.
+         */
         private @Min(0) int burstCapacity = 1;
+
+        /**
+         * How many requests per second do you want a user to be allowed to do?
+         */
+        private @Min(1) int replenishRate = 1;
+
+        /**
+         * How many tokens are requested per request?
+         */
         private @Min(1) int requestedTokens = 1;
+
+        /**
+         * The name of the header that returns the burst capacity configuration.
+         */
+        private String burstCapacityHeader = BURST_CAPACITY_HEADER;
+
+        /**
+         * The name of the header that returns the replenish rate configuration.
+         */
+        private String replenishRateHeader = REPLENISH_RATE_HEADER;
+
+        /**
+         * The name of the header that returns the requested tokens
+         * configuration.
+         */
+        private String requestedTokensHeader = REQUESTED_TOKENS_HEADER;
+
+        /**
+         * The name of the header that returns number of remaining requests
+         * during the current second.
+         */
+        private String remainingHeader = REMAINING_HEADER;
+
     }
+
+    /**
+     * Remaining Rate Limit header name.
+     */
+    public static final String REMAINING_HEADER = "X-RateLimit-Remaining";
+
+    /**
+     * Replenish Rate Limit header name.
+     */
+    public static final String REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
+
+    /**
+     * Burst Capacity header name.
+     */
+    public static final String BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
+
+    /**
+     * Requested Tokens header name.
+     */
+    public static final String REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
 
 }

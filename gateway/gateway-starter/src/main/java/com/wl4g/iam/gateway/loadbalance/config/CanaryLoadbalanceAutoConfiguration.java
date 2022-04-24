@@ -98,7 +98,7 @@ public class CanaryLoadbalanceAutoConfiguration {
 
     @Bean(BEAN_CANARY_LB_REQUEST_MATCHER)
     public SpelRequestMatcher canaryLoadBalancerSpelRequestMatcher(CanaryLoadBalancerProperties loadBalancerConfig) {
-        return new SpelRequestMatcher(loadBalancerConfig.getMatchRuleDefinitions());
+        return new SpelRequestMatcher(loadBalancerConfig.getCanaryMatchRuleDefinitions());
     }
 
     @Bean

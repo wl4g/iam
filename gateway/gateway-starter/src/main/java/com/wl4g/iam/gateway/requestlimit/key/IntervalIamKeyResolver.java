@@ -18,11 +18,14 @@ package com.wl4g.iam.gateway.requestlimit.key;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -32,19 +35,16 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class IntervalIamKeyResolver implements IamKeyResolver {
-
-    private @Autowired IamRequestLimiterProperties limiterConfig;
+public class IntervalIamKeyResolver implements IamKeyResolver<IntervalIamKeyResolver.IntervalKeyResolverStrategy> {
 
     @Override
-    public KeyResolverType kind() {
-        return KeyResolverType.INTERVAL;
+    public KeyResolverProvider kind() {
+        return KeyResolverProvider.INTERVAL;
     }
 
     @Override
-    public Mono<String> resolve(ServerWebExchange exchange) {
-        return Mono.just(DateFormatUtils.format(currentTimeMillis(),
-                limiterConfig.getLimitConfig().getDefaultIntervalKeyResolverDatePattern()));
+    public Mono<String> resolve(IntervalKeyResolverStrategy strategy, ServerWebExchange exchange) {
+        return Mono.just(DateFormatUtils.format(currentTimeMillis(), strategy.getCycleDatePattern()));
     }
 
     // public void checkDatePattern() {
@@ -57,5 +57,21 @@ public class IntervalIamKeyResolver implements IamKeyResolver {
     // ", e.getMessage(), datePattern));
     // }
     // }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IntervalKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
+
+        /**
+         * The date pattern of the key get by rate limiting according to the
+         * date interval.
+         */
+        private String cycleDatePattern = "yyyyMMdd";
+
+    }
 
 }

@@ -71,7 +71,7 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
     }
 
     /**
-     * LimitedResponse logging filtering.
+     * LimitedResult logging filtering.
      * 
      * @param exchange
      * @param chain

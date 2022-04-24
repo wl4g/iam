@@ -21,31 +21,30 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.IamRequestLimiterConfigurer;
-import com.wl4g.iam.gateway.requestlimit.configurer.LimitStrategy;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 import reactor.core.publisher.Mono;
 
 /**
- * {@link AbstractIamRequestLimiter}
+ * {@link AbstractRedisIamRequestLimiter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-21 v3.0.0
  * @since v3.0.0
  */
-public abstract class AbstractIamRequestLimiter implements IamRequestLimiter {
+public abstract class AbstractRedisIamRequestLimiter implements IamRequestLimiter {
 
-    protected @Autowired IamRequestLimiterProperties rateLimiterConfig;
+    protected @Autowired IamRequestLimiterProperties requestLimiterConfig;
     protected @Autowired IamRequestLimiterConfigurer configurer;
     protected @Autowired ReactiveStringRedisTemplate redisTemplate;
     protected @Autowired EventBusSupport eventBus;
     protected @Autowired IamGatewayMetricsFacade metricsFacade;
 
-    protected LimitStrategy loadLimitStrategy(String routeId, String limitId) {
-        Mono<LimitStrategy> strategy = configurer.loadStrategy(routeId, limitId);
+    protected LimitStrategy loadLimitStrategy(String routeId, String limitKey) {
+        Mono<LimitStrategy> strategy = configurer.loadStrategy(routeId, limitKey);
 
         if (strategy.equals(Mono.empty())) {
-            return rateLimiterConfig.getLimitConfig().getDefaultStrategy();
+            return requestLimiterConfig.getLimiter().getDefaultStrategy();
         }
 
         // TODO use reactor mono return

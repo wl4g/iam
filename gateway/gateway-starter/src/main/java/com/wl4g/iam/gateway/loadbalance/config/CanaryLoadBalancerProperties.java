@@ -56,12 +56,12 @@ public class CanaryLoadBalancerProperties {
     /**
      * SPEL expressions that match canary requests.
      */
-    private String selectExpression;
+    private String canaryChooseExpression;
 
     /**
      * Match whether the rule definition for a canary request is satisfied.
      */
-    private List<MatchHttpRequestRule> matchRuleDefinitions = new ArrayList<>();
+    private List<MatchHttpRequestRule> canaryMatchRuleDefinitions = new ArrayList<>();
 
     /**
      * The number of load balancer statistician scheduler worker threads.

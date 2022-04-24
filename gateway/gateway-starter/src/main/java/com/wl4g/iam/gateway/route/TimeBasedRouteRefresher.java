@@ -31,14 +31,13 @@ import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 
 /**
- * Gateway configuration refreshable scheduler coordinator.
+ * Gateway configuration refresh scheduler coordinator.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version 2019年6月2日
  * @since v1.0
  */
-public class TimingRouteRefreshTask extends ApplicationTaskRunner<RunnerProperties>
-        implements ApplicationRunner, DisposableBean {
+public class TimeBasedRouteRefresher extends ApplicationTaskRunner<RunnerProperties> implements ApplicationRunner, DisposableBean {
 
     private @Autowired RouteProperties config;
     private @Autowired IRouteCacheRefresher refresher;
@@ -46,7 +45,7 @@ public class TimingRouteRefreshTask extends ApplicationTaskRunner<RunnerProperti
     /** Refreshing scheduled future */
     protected ScheduledFuture<?> future;
 
-    public TimingRouteRefreshTask() {
+    public TimeBasedRouteRefresher() {
         super(new RunnerProperties().withConcurrency(1));
     }
 

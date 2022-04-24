@@ -15,10 +15,15 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.infra.core.framework.operator.Operator;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -28,12 +33,19 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-public interface IamKeyResolver extends Operator<IamKeyResolver.KeyResolverType> {
+public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<IamKeyResolver.KeyResolverProvider> {
 
-    Mono<String> resolve(ServerWebExchange exchange);
+    Mono<String> resolve(C strategy, ServerWebExchange exchange);
 
-    public static enum KeyResolverType {
+    public static enum KeyResolverProvider {
         HOST, HEADER, PATH, PRINCIPAL, INTERVAL
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    public static abstract class KeyResolverStrategy {
     }
 
 }

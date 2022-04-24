@@ -17,11 +17,15 @@ package com.wl4g.iam.gateway.requestlimit.limiter;
 
 import java.util.Map;
 
+import org.springframework.validation.annotation.Validated;
+
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
 
@@ -34,16 +38,32 @@ import reactor.core.publisher.Mono;
  */
 public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
-    Mono<LimitedResponse> isAllowed(String routeId, String id);
+    Mono<LimitedResult> isAllowed(String routeId, String limitKey);
 
     public static enum RequestLimiterPrivoder {
         RedisRateLimiter, RedisQuotaLimiter
     }
 
     @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static abstract class LimiterStrategy {
+
+        /**
+         * Whether or not to include headers containing rate limiter
+         * information, defaults to true.
+         */
+        private boolean includeHeaders = true;
+
+    }
+
+    @Getter
     @ToString
     @AllArgsConstructor
-    public static class LimitedResponse {
+    public static class LimitedResult {
         private final boolean allowed;
         private final long tokensLeft;
         private final Map<String, String> headers;

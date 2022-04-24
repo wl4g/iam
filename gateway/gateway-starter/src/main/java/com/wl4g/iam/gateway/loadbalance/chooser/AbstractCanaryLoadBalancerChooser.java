@@ -39,6 +39,9 @@ import lombok.Getter;
 /**
  * Abstract Grayscale Load Balancer chooser based on random.
  * 
+ * Canary LB supports zone selection, refer to:
+ * {@link com.netflix.loadbalancer.ZoneAwareLoadBalancer#chooseServer}
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
@@ -68,7 +71,7 @@ public abstract class AbstractCanaryLoadBalancerChooser implements CanaryLoadBal
         // request satisfies the load condition for executing the canary.
         List<ServiceInstance> candidateInstances = null;
         List<MatchHttpRequestRule> rules = requestMatcher.find(new ReactiveRequestExtractor(exchange.getRequest()),
-                getLoadBalancerConfig().getSelectExpression());
+                getLoadBalancerConfig().getCanaryChooseExpression());
         if (isEmpty(rules)) {
             log.warn("The request did not match the canary load balancer instance.");
             addCounterMetrics(config, exchange, MetricsName.CANARY_LB_CHOOSE_MISSING_TOTAL, serviceId);

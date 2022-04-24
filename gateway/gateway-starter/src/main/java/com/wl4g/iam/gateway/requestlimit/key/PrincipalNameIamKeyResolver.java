@@ -15,11 +15,12 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -30,21 +31,26 @@ import reactor.core.publisher.Mono;
  * @since v3.0.0
  * @see {@link org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver}
  */
-public class PrincipalNameIamKeyResolver implements IamKeyResolver {
-
-    protected @Autowired IamRequestLimiterProperties limiterConfig;
+public class PrincipalNameIamKeyResolver implements IamKeyResolver<PrincipalNameIamKeyResolver.PrincipalKeyResolverStrategy> {
 
     @Override
-    public KeyResolverType kind() {
-        return KeyResolverType.PRINCIPAL;
+    public KeyResolverProvider kind() {
+        return KeyResolverProvider.PRINCIPAL;
     }
 
     /**
      * {@link com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory#bindSignedToContext()}
      */
     @Override
-    public Mono<String> resolve(ServerWebExchange exchange) {
+    public Mono<String> resolve(PrincipalKeyResolverStrategy strategy, ServerWebExchange exchange) {
         return exchange.getPrincipal().flatMap(p -> Mono.justOrEmpty(p.getName()));
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    public static class PrincipalKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
     }
 
 }

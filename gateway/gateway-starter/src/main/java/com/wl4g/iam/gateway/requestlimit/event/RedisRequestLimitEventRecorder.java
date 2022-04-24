@@ -43,21 +43,21 @@ public class RedisRequestLimitEventRecorder {
 
     @Subscribe
     public void onRateLimitHit(RateLimitHitEvent event) {
-        String rateLimitId = valueOf(event.getSource());
+        String limiteKey = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = getHitsCumulator().increment(rateLimitId, 1);
+            incr = getHitsCumulator().increment(limiteKey, 1);
         } finally {
-            if (rateLimitConfig.getEventRecorderConfig().isLocalLogEnabled() && log.isInfoEnabled()) {
-                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, rateLimitId, incr);
+            if (rateLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
+                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, limiteKey, incr);
             }
         }
     }
 
     private BoundHashOperations<String, Object, Object> getHitsCumulator() {
         return redisTemplate
-                .boundHashOps(rateLimitConfig.getEventRecorderConfig().getRedis().getHitsCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(rateLimitConfig.getEventRecorderConfig().getRedis().getHitsCumulatorPrefix())));
+                .boundHashOps(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
+                        DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix())));
     }
 
 }

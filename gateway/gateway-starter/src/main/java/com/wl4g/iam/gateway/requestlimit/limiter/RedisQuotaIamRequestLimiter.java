@@ -15,10 +15,14 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter;
 
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
 import static java.lang.System.nanoTime;
+
+import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
@@ -26,6 +30,12 @@ import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.event.QuotaLimitHitEvent;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -35,12 +45,8 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-21 v3.0.0
  * @since v3.0.0
  */
-public class RedisQuotaIamRequestLimiter implements IamRequestLimiter {
-
-    private @Autowired IamRequestLimiterProperties rateLimiterConfig;
-    private @Autowired ReactiveStringRedisTemplate redisTemplate;
-    private @Autowired EventBusSupport eventBus;
-    private @Autowired IamGatewayMetricsFacade metricsFacade;
+@Slf4j
+public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter {
 
     @Override
     public RequestLimiterPrivoder kind() {
@@ -48,20 +54,60 @@ public class RedisQuotaIamRequestLimiter implements IamRequestLimiter {
     }
 
     @Override
-    public Mono<LimitedResponse> isAllowed(String routeId, String id) {
+    public Mono<LimitedResult> isAllowed(String routeId, String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
-        boolean allowed = false;
+        // TODO
+        redisTemplate.opsForValue().increment("TODO", 1).onErrorResume(ex -> {
+            if (log.isDebugEnabled()) {
+                log.debug("Error calling quota limiter redis", ex);
+            }
+            return Mono.empty();
+        }).map(accumulated -> {
+            // TODO use separated config
+            long requestCapacity = requestLimiterConfig.getDefaultLimiter().getQuota().getRequestCapacity();
+            long tokensLeft = requestCapacity - accumulated;
+            boolean allowed = accumulated < requestCapacity;
 
-        metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
-        if (!allowed) { // Total hits metric
-            metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
-            eventBus.post(new QuotaLimitHitEvent(id));
-        }
+            LimitedResult resp = new LimitedResult(allowed, tokensLeft, createHeaders(routeConfig, tokensLeft));
+            if (log.isDebugEnabled()) {
+                log.debug("response: {}", resp);
+            }
+            metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
+            if (!allowed) { // Total hits metric
+                metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
+                eventBus.post(new QuotaLimitHitEvent(limitKey));
+            }
+            return Mono.just(resp);
+        });
 
-        // TODO Auto-generated method stub
-        return null;
+        return Mono.just(new LimitedResult(true, -1L, createHeaders(routeConfig, -1L)));
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Validated
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RedisQuotaLimiterStrategy extends LimiterStrategy {
+
+        /**
+         * Redis quota limiter user-level configuration key prefix.
+         */
+        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
+
+        /**
+         * The number of total maximum allowed requests capacity.
+         */
+        private @Min(0) Long requestCapacity = 1000L;
+
+        /**
+         * The date pattern of request quota limit calculation cycle.
+         */
+        private String cycleDatePattern = "yyyyMMdd";
+
     }
 
 }

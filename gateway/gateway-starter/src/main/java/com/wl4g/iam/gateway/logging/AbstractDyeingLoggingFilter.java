@@ -69,7 +69,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public AbstractDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
         this.traceConfig = notNullOf(traceConfig, "traceConfig");
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
-        this.requestMatcher = new SpelRequestMatcher(loggingConfig.getMatchRuleDefinitions());
+        this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferrdMatchRuleDefinitions());
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      */
     protected boolean isFilterLogging(ServerHttpRequest request, HttpHeaders headers) {
         return loggingConfig.isEnabled()
-                && requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getMatchExpression());
+                && requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getPreferredOpenMatchExpression());
     }
 
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {
@@ -219,7 +219,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String LOG_REQUEST_BEGIN = "\n--- <IAM Gateway Request> -----\n:: Headers ::\n";
     public static final String LOG_REQUEST_BODY = ":: Body    ::\n{}";
     public static final String LOG_REQUEST_END = "\n------------------------------\n";
-    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway LimitedResponse> ---\n:: Headers ::\n";
+    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway LimitedResult> ---\n:: Headers ::\n";
     public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
     public static final String LOG_RESPONSE_END = "\n------------------------------\n";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";

@@ -40,9 +40,9 @@ public class RedisIamRequestLimiterConfigurer implements IamRequestLimiterConfig
     private @Autowired StringRedisTemplate redisTemplate;
 
     @Override
-    public Mono<LimitStrategy> loadStrategy(String routeId, String limitId) {
+    public Mono<LimitStrategy> loadStrategy(String routeId, String limitKey) {
         LimitStrategy config = parseJSON(
-                getOperation().get(requestLimitConfig.getLimitConfig().getPrefix(), getConfigId(routeId, limitId)),
+                getOperation().get(requestLimitConfig.getLimiter().getPrefix(), getConfigId(routeId, limitKey)),
                 LimitStrategy.class);
         return isNull(config) ? Mono.empty() : Mono.just(config);
     }

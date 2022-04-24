@@ -42,7 +42,7 @@ import com.wl4g.iam.gateway.requestlimit.event.RedisRequestLimitEventRecorder;
 import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
-import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverType;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
@@ -112,8 +112,8 @@ public class IamRequestLimiterAutoConfiguration {
     }
 
     @Bean
-    public GenericOperatorAdapter<KeyResolverType, IamKeyResolver> iamKeyResolverAdapter(List<IamKeyResolver> resolvers) {
-        return new GenericOperatorAdapter<KeyResolverType, IamKeyResolver>(resolvers) {
+    public GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver> iamKeyResolverAdapter(List<IamKeyResolver> resolvers) {
+        return new GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver>(resolvers) {
         };
     }
 
@@ -168,7 +168,7 @@ public class IamRequestLimiterAutoConfiguration {
 
     @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
     public EventBusSupport redisRateLimiteEventBusSupport(IamRequestLimiterProperties rateLimiteConfig) {
-        return new EventBusSupport(rateLimiteConfig.getEventRecorderConfig().getPublishEventBusThreads());
+        return new EventBusSupport(rateLimiteConfig.getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean
