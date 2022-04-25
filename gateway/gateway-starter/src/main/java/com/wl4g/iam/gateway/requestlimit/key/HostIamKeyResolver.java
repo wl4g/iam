@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class HostIamKeyResolver implements IamKeyResolver<HostIamKeyResolver.HostKeyResolverStrategy> {
+public class HostIamKeyResolver extends AbstractIamKeyResolver<HostIamKeyResolver.HostKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {

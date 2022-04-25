@@ -19,7 +19,10 @@ import java.util.Map;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
@@ -38,10 +41,25 @@ import reactor.core.publisher.Mono;
  */
 public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
-    Mono<LimitedResult> isAllowed(String routeId, String limitKey);
+    Mono<LimitedResult> isAllowed(IamRequestLimiterGatewayFilterFactory.Config config, String routeId, String limitKey);
 
+    @Getter
+    @ToString
+    @AllArgsConstructor
+    public static class LimitedResult {
+        private final boolean allowed;
+        private final long tokensLeft;
+        private final Map<String, String> headers;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public static enum RequestLimiterPrivoder {
-        RedisRateLimiter, RedisQuotaLimiter
+        RedisRateLimiter(RedisRateLimiterStrategy.class),
+
+        RedisQuotaLimiter(RedisQuotaLimiterStrategy.class);
+
+        private final Class<? extends LimiterStrategy> strategyClass;
     }
 
     @Getter
@@ -58,15 +76,6 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
          */
         private boolean includeHeaders = true;
 
-    }
-
-    @Getter
-    @ToString
-    @AllArgsConstructor
-    public static class LimitedResult {
-        private final boolean allowed;
-        private final long tokensLeft;
-        private final Map<String, String> headers;
     }
 
 }

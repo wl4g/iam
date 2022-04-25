@@ -35,7 +35,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class IntervalIamKeyResolver implements IamKeyResolver<IntervalIamKeyResolver.IntervalKeyResolverStrategy> {
+public class IntervalIamKeyResolver extends AbstractIamKeyResolver<IntervalIamKeyResolver.IntervalKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {

@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class PathIamKeyResolver implements IamKeyResolver<PathIamKeyResolver.PathKeyResolverStrategy> {
+public class PathIamKeyResolver extends AbstractIamKeyResolver<PathIamKeyResolver.PathKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {

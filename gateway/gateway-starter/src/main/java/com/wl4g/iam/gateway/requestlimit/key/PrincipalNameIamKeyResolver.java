@@ -31,7 +31,8 @@ import reactor.core.publisher.Mono;
  * @since v3.0.0
  * @see {@link org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver}
  */
-public class PrincipalNameIamKeyResolver implements IamKeyResolver<PrincipalNameIamKeyResolver.PrincipalKeyResolverStrategy> {
+public class PrincipalNameIamKeyResolver
+        extends AbstractIamKeyResolver<PrincipalNameIamKeyResolver.PrincipalKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {

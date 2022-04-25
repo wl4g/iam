@@ -15,7 +15,11 @@
  */
 package com.wl4g.iam.gateway.requestlimit.config;
 
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
 
 import org.springframework.http.HttpStatus;
@@ -67,12 +71,12 @@ public class IamRequestLimiterProperties {
     /**
      * The default key resolver configuration properties.
      */
-    private DefaultKeyResolverProperties defaultKeyResolver = new DefaultKeyResolverProperties();
+    private KeyResolverProperties defaultKeyResolver = new KeyResolverProperties();
 
     /**
      * The default limiter configuration properties.
      */
-    private DefaultLimiterProperties defaultLimiter = new DefaultLimiterProperties();
+    private LimiterProperties defaultLimiter = new LimiterProperties();
 
     /**
      * The global event recorder configuration properties.
@@ -88,7 +92,7 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class DefaultKeyResolverProperties {
+    public static class KeyResolverProperties {
 
         /**
          * The key resolver based on request headers.
@@ -126,20 +130,58 @@ public class IamRequestLimiterProperties {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class DefaultLimiterProperties {
+    public static class LimiterProperties {
 
         /**
          * The default rate limiting configuration (E.G: when no configuration
          * is specified for principal)
          */
-        private RedisRateLimiterStrategy rate = new RedisRateLimiterStrategy();
+        private RedisRateLimiterStrategyConfig rate = new RedisRateLimiterStrategyConfig();
 
         /**
          * The default quota limiting configuration (E.G: when no configuration
          * is specified for principal)
          */
-        private RedisQuotaLimiterStrategy quota = new RedisQuotaLimiterStrategy();
+        private RedisQuotaLimiterStrategyConfig quota = new RedisQuotaLimiterStrategyConfig();
 
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class RedisRateLimiterStrategyConfig extends RedisRateLimiterStrategy {
+
+            /**
+             * Redis tokens rate limiter user-level configuration key prefix.
+             */
+            private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
+
+            /**
+             * Redis tokens rate limiter user-level token computational key
+             * prefix.
+             */
+            private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
+        }
+
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class RedisQuotaLimiterStrategyConfig extends RedisQuotaLimiterStrategy {
+
+            /**
+             * Redis quota limiter user-level configuration key prefix.
+             */
+            private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
+
+            /**
+             * Redis quota limiter user-level computational key prefix.
+             */
+            private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
+        }
     }
 
     /**

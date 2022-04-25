@@ -36,13 +36,14 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
-import com.wl4g.iam.gateway.requestlimit.configurer.IamRequestLimiterConfigurer;
-import com.wl4g.iam.gateway.requestlimit.configurer.RedisIamRequestLimiterConfigurer;
+import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
+import com.wl4g.iam.gateway.requestlimit.configurer.RedisLimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.event.RedisRequestLimitEventRecorder;
 import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
@@ -78,8 +79,8 @@ public class IamRequestLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public IamRequestLimiterConfigurer redisIamRateLimiterConfigure() {
-        return new RedisIamRequestLimiterConfigurer();
+    public LimiterStrategyConfigurer redisIamRateLimiterConfigure() {
+        return new RedisLimiterStrategyConfigurer();
     }
 
     //
@@ -87,33 +88,34 @@ public class IamRequestLimiterAutoConfiguration {
     //
 
     @Bean
-    public IamKeyResolver hostIamKeyResolver() {
+    public IamKeyResolver<? extends KeyResolverStrategy> hostIamKeyResolver() {
         return new HostIamKeyResolver();
     }
 
     @Bean
-    public IamKeyResolver headerIamKeyResolver() {
+    public IamKeyResolver<? extends KeyResolverStrategy> headerIamKeyResolver() {
         return new HeaderIamKeyResolver();
     }
 
     @Bean
-    public IamKeyResolver pathIamKeyResolver() {
+    public IamKeyResolver<? extends KeyResolverStrategy> pathIamKeyResolver() {
         return new PathIamKeyResolver();
     }
 
     @Bean
-    public IamKeyResolver principalNameIamKeyResolver() {
+    public IamKeyResolver<? extends KeyResolverStrategy> principalNameIamKeyResolver() {
         return new PrincipalNameIamKeyResolver();
     }
 
     @Bean
-    public IamKeyResolver intervalIamKeyResolver() {
+    public IamKeyResolver<? extends KeyResolverStrategy> intervalIamKeyResolver() {
         return new IntervalIamKeyResolver();
     }
 
     @Bean
-    public GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver> iamKeyResolverAdapter(List<IamKeyResolver> resolvers) {
-        return new GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver>(resolvers) {
+    public GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> iamKeyResolverAdapter(
+            List<IamKeyResolver<? extends KeyResolverStrategy>> resolvers) {
+        return new GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>>(resolvers) {
         };
     }
 

@@ -25,6 +25,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEqualCollection;
 import com.wl4g.infra.common.web.WebUtils;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +43,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-30 v1.0.0
  * @since v1.0.0
  */
-public class HeaderIamKeyResolver implements IamKeyResolver<HeaderIamKeyResolver.HeaderKeyResolverStrategy> {
+public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyResolver.HeaderKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {
@@ -82,8 +84,18 @@ public class HeaderIamKeyResolver implements IamKeyResolver<HeaderIamKeyResolver
          * being forwarded by the proxy to limit the current, or it can be
          * flexibly used for other purposes.
          */
-        private List<String> headerNames = asList(WebUtils.HEADER_REAL_IP);
+        private List<String> headerNames = DEFAULT_HEADER_NAMES;
+
+        @Override
+        public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
+            List<String> defaultHeaderNames = config.getDefaultKeyResolver().getHeader().getHeaderNames();
+            if (!isEqualCollection(defaultHeaderNames, DEFAULT_HEADER_NAMES)) {
+                setHeaderNames(defaultHeaderNames);
+            }
+        }
 
     }
+
+    public static final List<String> DEFAULT_HEADER_NAMES = asList(WebUtils.HEADER_REAL_IP);
 
 }

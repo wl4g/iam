@@ -15,20 +15,19 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
 import static java.lang.System.nanoTime;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.constraints.Min;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.event.QuotaLimitHitEvent;
-import com.wl4g.infra.common.eventbus.EventBusSupport;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,7 +45,7 @@ import reactor.core.publisher.Mono;
  * @since v3.0.0
  */
 @Slf4j
-public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter {
+public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisQuotaLimiterStrategy> {
 
     @Override
     public RequestLimiterPrivoder kind() {
@@ -54,35 +53,63 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter 
     }
 
     @Override
-    public Mono<LimitedResult> isAllowed(String routeId, String limitKey) {
+    public Mono<LimitedResult> isAllowed(IamRequestLimiterGatewayFilterFactory.Config config, String routeId, String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
-        // TODO
-        redisTemplate.opsForValue().increment("TODO", 1).onErrorResume(ex -> {
-            if (log.isDebugEnabled()) {
-                log.debug("Error calling quota limiter redis", ex);
-            }
-            return Mono.empty();
-        }).map(accumulated -> {
-            // TODO use separated config
-            long requestCapacity = requestLimiterConfig.getDefaultLimiter().getQuota().getRequestCapacity();
-            long tokensLeft = requestCapacity - accumulated;
-            boolean allowed = accumulated < requestCapacity;
+        return loadStrategy(routeId, limitKey).flatMap(strategy -> {
+            try {
+                String key = getKey(strategy, routeId, limitKey);
+                return redisTemplate.opsForValue().increment(key, 1).onErrorResume(ex -> {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error calling quota limiter redis", ex);
+                    }
+                    return Mono.empty();
+                }).map(accumulated -> {
+                    long requestCapacity = strategy.getRequestCapacity();
+                    long tokensLeft = requestCapacity - accumulated;
+                    boolean allowed = accumulated < requestCapacity;
 
-            LimitedResult resp = new LimitedResult(allowed, tokensLeft, createHeaders(routeConfig, tokensLeft));
-            if (log.isDebugEnabled()) {
-                log.debug("response: {}", resp);
+                    LimitedResult result = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
+                    if (log.isDebugEnabled()) {
+                        log.debug("response: {}", result);
+                    }
+                    metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
+                    if (!allowed) { // Total hits metric
+                        metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
+                        eventBus.post(new QuotaLimitHitEvent(limitKey));
+                    }
+                    return result;
+                });
+            } catch (Exception e) {
+                /*
+                 * We don't want a hard dependency on Redis to allow traffic.
+                 * Make sure to set an alert so you know if this is happening
+                 * too much. Stripe's observed failure rate is 0.01%.
+                 */
+                log.error("Error determining if user allowed quota from redis", e);
             }
-            metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
-            if (!allowed) { // Total hits metric
-                metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
-                eventBus.post(new QuotaLimitHitEvent(limitKey));
-            }
-            return Mono.just(resp);
+
+            return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
         });
+    }
 
-        return Mono.just(new LimitedResult(true, -1L, createHeaders(routeConfig, -1L)));
+    protected Map<String, String> createHeaders(RedisQuotaLimiterStrategy strategy, Long tokensLeft) {
+        Map<String, String> headers = new HashMap<>();
+        if (strategy.isIncludeHeaders()) {
+            headers.put(strategy.getRemainingHeader(), tokensLeft.toString());
+            headers.put(strategy.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
+        }
+        return headers;
+    }
+
+    protected String getKey(RedisQuotaLimiterStrategy strategy, String routeId, String limitKey) {
+        return limitKey;
+    }
+
+    @Override
+    protected LimiterStrategy getDefaultStrategy() {
+        return requestLimiterConfig.getDefaultLimiter().getQuota();
     }
 
     @Getter
@@ -91,12 +118,19 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter 
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RedisQuotaLimiterStrategy extends LimiterStrategy {
+    public static class RedisQuotaLimiterStrategy extends IamRequestLimiter.LimiterStrategy {
 
         /**
-         * Redis quota limiter user-level configuration key prefix.
+         * The name of the header that returns the request capacity
+         * configuration.
          */
-        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
+        private String requestCapacityHeader = REQUEST_CAPACITY_HEADER;
+
+        /**
+         * The name of the header that returns number of remaining requests
+         * during the current second.
+         */
+        private String remainingHeader = REMAINING_HEADER;
 
         /**
          * The number of total maximum allowed requests capacity.
@@ -107,7 +141,16 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter 
          * The date pattern of request quota limit calculation cycle.
          */
         private String cycleDatePattern = "yyyyMMdd";
-
     }
+
+    /**
+     * Request capacity header name.
+     */
+    public static final String REQUEST_CAPACITY_HEADER = "X-QuotaLimit-Request-Capacity";
+
+    /**
+     * Remaining quota Limit header name.
+     */
+    public static final String REMAINING_HEADER = "X-QuotaLimit-Remaining";
 
 }

@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.requestlimit.key;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.infra.core.framework.operator.Operator;
 
@@ -46,6 +47,8 @@ public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<
     @ToString
     @Validated
     public static abstract class KeyResolverStrategy {
+        public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
+        }
     }
 
 }

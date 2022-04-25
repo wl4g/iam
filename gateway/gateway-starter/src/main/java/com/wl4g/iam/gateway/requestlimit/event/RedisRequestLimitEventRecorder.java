@@ -43,13 +43,13 @@ public class RedisRequestLimitEventRecorder {
 
     @Subscribe
     public void onRateLimitHit(RateLimitHitEvent event) {
-        String limiteKey = valueOf(event.getSource());
+        String limitKey = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = getHitsCumulator().increment(limiteKey, 1);
+            incr = getHitsCumulator().increment(limitKey, 1);
         } finally {
             if (rateLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
-                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, limiteKey, incr);
+                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, limitKey, incr);
             }
         }
     }

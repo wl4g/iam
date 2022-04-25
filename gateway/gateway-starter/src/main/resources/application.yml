@@ -163,7 +163,9 @@ spring:
               ## Redis event recorder accumulator suffix of date format pattern.
               cumulatorSuffixOfDatePattern: yyyyMMdd
       requestlimit:
+        ## The get denial of Service when throttling key is empty.
         denyEmptyKey: true ## Default by true
+        ## The status code response when the get current limiting key is empty.
         emptyKeyStatusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
         statusCode: TOO_MANY_REQUESTS ## Default by HttpStatus.TOO_MANY_REQUESTS
         defaultKeyResolver:

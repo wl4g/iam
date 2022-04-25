@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
 import static java.lang.System.nanoTime;
 
 import java.time.Instant;
@@ -28,17 +27,13 @@ import java.util.Map;
 import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator;
-import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
-import com.wl4g.infra.common.eventbus.EventBusSupport;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,27 +56,9 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @Slf4j
-public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
+public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisRateLimiterStrategy> {
 
-    private @Autowired IamRequestLimiterProperties requestLimiterConfig;
-    private @Autowired ReactiveStringRedisTemplate redisTemplate;
     private @Autowired RedisScript<List<Long>> redisScript;
-    private @Autowired EventBusSupport eventBus;
-    private @Autowired IamGatewayMetricsFacade metricsFacade;
-    private @Autowired RedisRateLimiterStrategy defaultConfig;
-
-    // public RedisRateIamRequestLimiter( ) {
-    // this.rateLimiterConfig = notNullOf(rateLimiterConfig,
-    // "rateLimiterConfig");
-    // this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
-    // this.redisScript = notNullOf(redisScript, "redisScript");
-    // this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
-    // this.eventBus = notNullOf(eventBus, "eventBus");
-    // this.defaultConfig = new
-    // Config(rateLimiterConfig.getRateLimitConfig().getDefaultReplenishRate(),
-    // rateLimiterConfig.getRateLimitConfig().getDefaultBurstCapacity(),
-    // rateLimiterConfig.getRateLimitConfig().getDefaultRequestedTokens());
-    // }
 
     @Override
     public RequestLimiterPrivoder kind() {
@@ -94,96 +71,96 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
      * fetching the count and writing the new count.
      */
     @Override
-    public Mono<LimitedResult> isAllowed(String routeId, String id) {
+    public Mono<LimitedResult> isAllowed(IamRequestLimiterGatewayFilterFactory.Config config, String routeId, String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         long beginTime = nanoTime();
 
-        RedisRateLimiterStrategy strategy = loadConfiguration(routeId);
-        // How many requests per second do you want a user to be allowed to do?
-        int replenishRate = strategy.getReplenishRate();
-        // How much bursting do you want to allow?
-        int burstCapacity = strategy.getBurstCapacity();
-        // How many tokens are requested per request?
-        int requestedTokens = strategy.getRequestedTokens();
-        try {
-            List<String> keys = getKeys(id);
+        return loadStrategy(routeId, limitKey).flatMap(strategy -> {
+            // How many requests per second do you want a user to be allowed to
+            // do?
+            int replenishRate = strategy.getReplenishRate();
+            // How much bursting do you want to allow?
+            int burstCapacity = strategy.getBurstCapacity();
+            // How many tokens are requested per request?
+            int requestedTokens = strategy.getRequestedTokens();
+            try {
+                List<String> keys = getKeys(strategy, limitKey);
 
-            // The arguments to the LUA script. time() returns unixtime in
-            // seconds.
-            List<String> scriptArgs = Arrays.asList(replenishRate + "", burstCapacity + "", Instant.now().getEpochSecond() + "",
-                    requestedTokens + "");
-            // allowed, tokens_left = redis.eval(SCRIPT, keys, args)
-            Flux<List<Long>> flux = redisTemplate.execute(redisScript, keys, scriptArgs);
-            // .log("redisratelimiter", Level.FINER);
-            return flux.onErrorResume(throwable -> {
-                if (log.isDebugEnabled()) {
-                    log.debug("Error calling rate limiter lua", throwable);
-                }
-                return Flux.just(Arrays.asList(1L, -1L));
-            }).reduce(new ArrayList<Long>(), (longs, l) -> {
-                longs.addAll(l);
-                return longs;
-            }).map(results -> {
-                boolean allowed = results.get(0) == 1L;
-                Long tokensLeft = results.get(1);
+                // The arguments to the LUA script. time() returns unixtime in
+                // seconds.
+                List<String> scriptArgs = Arrays.asList(replenishRate + "", burstCapacity + "",
+                        Instant.now().getEpochSecond() + "", requestedTokens + "");
 
-                LimitedResult resp = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
-                if (log.isDebugEnabled()) {
-                    log.debug("response: {}", resp);
-                }
+                // allowed, tokens_left = redis.eval(SCRIPT, keys, args)
+                return redisTemplate.execute(redisScript, keys, scriptArgs)
+                        // .log("redisRateIamRequestLimiter", Level.FINER);
+                        .onErrorResume(throwable -> {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Error calling rate limiter lua", throwable);
+                            }
+                            return Flux.just(Arrays.asList(1L, -1L));
+                        })
+                        .reduce(new ArrayList<Long>(), (longs, l) -> {
+                            longs.addAll(l);
+                            return longs;
+                        })
+                        .map(results -> {
+                            boolean allowed = results.get(0) == 1L;
+                            Long tokensLeft = results.get(1);
 
-                // [Begin] ADD feature for metrics
-                metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
-                if (!allowed) { // Total hits metric
-                    metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
-                    eventBus.post(new RateLimitHitEvent(id));
-                }
-                // [End] ADD feature for metrics
+                            LimitedResult result = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
+                            if (log.isDebugEnabled()) {
+                                log.debug("response: {}", result);
+                            }
 
-                return resp;
-            });
-        } catch (Exception e) {
-            /*
-             * We don't want a hard dependency on Redis to allow traffic. Make
-             * sure to set an alert so you know if this is happening too much.
-             * Stripe's observed failure rate is 0.01%.
-             */
-            log.error("Error determining if user allowed from redis", e);
-        }
-        return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
+                            // [Begin] ADD feature for metrics
+                            metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
+                            if (!allowed) { // Total hits metric
+                                metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
+                                eventBus.post(new RateLimitHitEvent(limitKey));
+                            }
+                            // [End] ADD feature for metrics
+
+                            return result;
+                        });
+            } catch (Exception e) {
+                /*
+                 * We don't want a hard dependency on Redis to allow traffic.
+                 * Make sure to set an alert so you know if this is happening
+                 * too much. Stripe's observed failure rate is 0.01%.
+                 */
+                log.error("Error determining if user allowed from redis", e);
+            }
+            return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
+        });
     }
 
-    protected List<String> getKeys(String id) {
+    protected List<String> getKeys(RedisRateLimiterStrategy strategy, String limitKey) {
         // use `{}` around keys to use Redis Key hash tags
         // this allows for using redis cluster
 
         // Make a unique key per user.
-        String prefix = "request_rate_limiter.{" + id;
+        String prefix = "request_rate_limiter.{".concat(limitKey);
 
         // You need two Redis keys for Token Bucket.
-        String tokenKey = prefix + "}.tokens";
-        String timestampKey = prefix + "}.timestamp";
+        String tokenKey = prefix.concat("}.tokens");
+        String timestampKey = prefix.concat("}.timestamp");
+
         return Arrays.asList(tokenKey, timestampKey);
     }
 
-    protected RedisRateLimiterStrategy loadConfiguration(String routeId) {
-        RedisRateLimiterStrategy routeConfig = getConfig().getOrDefault(routeId, defaultConfig);
-        if (routeConfig == null) {
-            routeConfig = getConfig().get(RouteDefinitionRouteLocator.DEFAULT_FILTERS);
-        }
-        if (routeConfig == null) {
-            throw new IllegalArgumentException("No Configuration found for route " + routeId + " or defaultFilters");
-        }
-        return routeConfig;
+    @Override
+    protected LimiterStrategy getDefaultStrategy() {
+        return requestLimiterConfig.getDefaultLimiter().getRate();
     }
 
-    protected Map<String, String> createHeaders(RedisRateLimiterStrategy config, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisRateLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
-        if (requestLimiterConfig.isIncludeHeaders()) {
-            headers.put(requestLimiterConfig.getRemainingHeader(), tokensLeft.toString());
-            headers.put(requestLimiterConfig.getReplenishRateHeader(), String.valueOf(config.getReplenishRate()));
-            headers.put(requestLimiterConfig.getBurstCapacityHeader(), String.valueOf(config.getBurstCapacity()));
-            headers.put(requestLimiterConfig.getRequestedTokensHeader(), String.valueOf(config.getRequestedTokens()));
+        if (strategy.isIncludeHeaders()) {
+            headers.put(strategy.getRemainingHeader(), tokensLeft.toString());
+            headers.put(strategy.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));
+            headers.put(strategy.getBurstCapacityHeader(), String.valueOf(strategy.getBurstCapacity()));
+            headers.put(strategy.getRequestedTokensHeader(), String.valueOf(strategy.getRequestedTokens()));
         }
         return headers;
     }
@@ -194,28 +171,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RedisRateLimiterStrategy extends LimiterStrategy {
-
-        /**
-         * Redis tokens rate limiter user-level configuration key prefix.
-         */
-        private String prefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
-
-        /**
-         * The default token bucket capacity, that is, the total number of
-         * concurrency allowed.
-         */
-        private @Min(0) int burstCapacity = 1;
-
-        /**
-         * How many requests per second do you want a user to be allowed to do?
-         */
-        private @Min(1) int replenishRate = 1;
-
-        /**
-         * How many tokens are requested per request?
-         */
-        private @Min(1) int requestedTokens = 1;
+    public static class RedisRateLimiterStrategy extends IamRequestLimiter.LimiterStrategy {
 
         /**
          * The name of the header that returns the burst capacity configuration.
@@ -239,17 +195,22 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
          */
         private String remainingHeader = REMAINING_HEADER;
 
+        /**
+         * The default token bucket capacity, that is, the total number of
+         * concurrency allowed.
+         */
+        private @Min(0) int burstCapacity = 1;
+
+        /**
+         * How many requests per second do you want a user to be allowed to do?
+         */
+        private @Min(1) int replenishRate = 1;
+
+        /**
+         * How many tokens are requested per request?
+         */
+        private @Min(1) int requestedTokens = 1;
     }
-
-    /**
-     * Remaining Rate Limit header name.
-     */
-    public static final String REMAINING_HEADER = "X-RateLimit-Remaining";
-
-    /**
-     * Replenish Rate Limit header name.
-     */
-    public static final String REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
 
     /**
      * Burst Capacity header name.
@@ -257,8 +218,18 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter {
     public static final String BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
 
     /**
+     * Replenish Rate Limit header name.
+     */
+    public static final String REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
+
+    /**
      * Requested Tokens header name.
      */
     public static final String REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
+
+    /**
+     * Remaining Rate Limit header name.
+     */
+    public static final String REMAINING_HEADER = "X-RateLimit-Remaining";
 
 }

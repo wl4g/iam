@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.configurer;
+package com.wl4g.iam.gateway.requestlimit.key;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import reactor.core.publisher.Mono;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 
 /**
- * User-level current limiting configuration interface (data plane), for
- * example, the current limiting configuration information can be loaded
- * according to the currently authenticated principal(rateLimitId).
+ * {@link AbstractIamKeyResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  */
-public interface IamRequestLimiterConfigurer {
-
-    @NotNull
-    Mono<LimitStrategy> loadStrategy(@NotBlank String routeId, @NotBlank String limitKey);
+public abstract class AbstractIamKeyResolver<C extends KeyResolverStrategy> implements IamKeyResolver<C> {
 
 }

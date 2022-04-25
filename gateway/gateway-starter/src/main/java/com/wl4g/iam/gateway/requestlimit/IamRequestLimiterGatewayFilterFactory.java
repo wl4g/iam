@@ -16,6 +16,9 @@
 
 package com.wl4g.iam.gateway.requestlimit;
 
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +28,15 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimitedProperties;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.configurer.IamRequestLimiterConfigurer;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
-import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
+import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
@@ -60,9 +60,7 @@ public class IamRequestLimiterGatewayFilterFactory
         extends AbstractGatewayFilterFactory<IamRequestLimiterGatewayFilterFactory.Config> {
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
-    private @Autowired IamRequestLimitedProperties config;
-    private @Autowired IamRequestLimiterConfigurer rateLimiterConfigure;
-    private @Autowired RedisRateIamRequestLimiter iamRateLimiter;
+    private @Autowired IamRequestLimiterProperties requsetLimiterConfig;
     private @Autowired GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter;
     private @Autowired GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter;
 
@@ -72,32 +70,37 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @Override
     public String name() {
-        return BEAN_IAM_RATELIMIT_FILTER;
+        return BEAN_FILTER_NAME;
     }
 
     @Override
     public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
-        applyDefaultToConfig(config);
-        return new IamRequestLimiterGatewayFilter(config, getKeyResolver(config), getRequestLimiter(config));
+        // TODO
+        KeyResolverStrategy strategy = null;
+        applyDefaultToConfig(config, strategy);
+        return new IamRequestLimiterGatewayFilter(config, strategy, getKeyResolver(config), getRequestLimiter(config));
     }
 
-    private void applyDefaultToConfig(Config config) {
-        // TODO the requestLimiter includes of rateLimiter and counterLimiter
-
-        // try {
-        // ConfigBeanUtils.configureWithDefault(new ChooseProperties(),
-        // config.getChoose(), loadBalancerConfig.getChoose());
-        // } catch (IllegalArgumentException | IllegalAccessException e) {
-        // throw new IllegalStateException(e);
-        // }
+    private void applyDefaultToConfig(Config config, KeyResolverStrategy strategy) {
+        if (isNull(config.getDenyEmptyKey())) {
+            config.setDenyEmptyKey(requsetLimiterConfig.isDenyEmptyKey());
+        }
+        if (isBlank(config.getEmptyKeyStatusCode())) {
+            config.setEmptyKeyStatusCode(requsetLimiterConfig.getEmptyKeyStatusCode());
+        }
+        if (isBlank(config.getStatusCode())) {
+            config.setStatusCode(requsetLimiterConfig.getStatusCode());
+        }
+        strategy.applyDefaultIfNecessary(requsetLimiterConfig);
     }
 
-    private IamKeyResolver<? extends KeyResolverStrategy> getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return keyResolverAdapter.forOperator(config.getKeyResolverPrivoder());
+    @SuppressWarnings("unchecked")
+    private IamKeyResolver<KeyResolverStrategy> getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
+        return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter.forOperator(config.getKeyResolver().getProvider());
     }
 
     private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return requestLimiterAdapter.forOperator(config.getLimiterPrivoder());
+        return requestLimiterAdapter.forOperator(config.getRequestLimiter().getPrivoder());
     }
 
     @Getter
@@ -109,62 +112,94 @@ public class IamRequestLimiterGatewayFilterFactory
          * Switch to deny requests if the Key Resolver returns an empty key,
          * defaults to true.
          */
-        private boolean denyEmptyKey = true;
+        private Boolean denyEmptyKey;
 
         /**
          * HttpStatus to return when denyEmptyKey is true, defaults to
          * FORBIDDEN.
          */
-        private String emptyKeyStatusCode = HttpStatus.FORBIDDEN.name();
+        private String emptyKeyStatusCode;
 
         /**
          * HttpStatus to return when limiter is true, defaults to
          * TOO_MANY_REQUESTS.
          */
-        private String statusCode = HttpStatus.TOO_MANY_REQUESTS.name();
+        private String statusCode;
 
         /**
-         * Request limiter key resolver provider.
+         * The request limiter key resolver configuration.
          */
-        private KeyResolverProvider keyProvider;
+        private KeyResolverConfig keyResolver = new KeyResolverConfig();
 
         /**
-         * Request limiter provider.
+         * The request limiter provider configuration.
          */
-        private RequestLimiterPrivoder limiterPrivoder;
+        private LimiterConfig requestLimiter = new LimiterConfig();
+
+        @Getter
+        @Setter
+        @ToString
+        public static class KeyResolverConfig extends KeyResolverStrategy {
+
+            /**
+             * Request limiter key resolver provider.
+             */
+            private KeyResolverProvider provider = KeyResolverProvider.HOST;
+            // /**
+            // * Key resolver strategy.
+            // */
+            // private KeyResolverStrategy strategy;
+        }
+
+        @Getter
+        @Setter
+        @ToString
+        public static class LimiterConfig extends LimiterStrategy {
+
+            /**
+             * Request limiter provider.
+             */
+            private RequestLimiterPrivoder privoder = RequestLimiterPrivoder.RedisRateLimiter;
+            // /**
+            // * Request limiter strategy.
+            // */
+            // private LimiterStrategy strategy;
+        }
     }
 
     @AllArgsConstructor
     public static class IamRequestLimiterGatewayFilter implements GatewayFilter {
         private final Config config;
-        private final IamKeyResolver<? extends KeyResolverStrategy> resolver;
+        private final KeyResolverStrategy keyStrategy;
+        private final IamKeyResolver<KeyResolverStrategy> keyResolver;
         private final IamRequestLimiter requestLimiter;
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            // TODO parameter 1
-            return resolver.resolve(null, exchange).defaultIfEmpty(EMPTY_KEY).flatMap(key -> {
+            return keyResolver.resolve(keyStrategy, exchange).defaultIfEmpty(EMPTY_KEY).flatMap(key -> {
                 if (EMPTY_KEY.equals(key)) {
                     if (config.getDenyEmptyKey()) {
-                        setResponseStatus(exchange, HttpStatusHolder.parse(config.getEmptyKeyStatus()));
+                        ServerWebExchangeUtils.setResponseStatus(exchange,
+                                HttpStatusHolder.parse(config.getEmptyKeyStatusCode()));
                         return exchange.getResponse().setComplete();
                     }
                     return chain.filter(exchange);
                 }
                 Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-                return requestLimiter.isAllowed(route.getId(), key).flatMap(response -> {
-                    for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
+                return requestLimiter.isAllowed(config, route.getId(), key).flatMap(result -> {
+                    // Add limited headers.
+                    for (Map.Entry<String, String> header : result.getHeaders().entrySet()) {
                         exchange.getResponse().getHeaders().add(header.getKey(), header.getValue());
                     }
-                    if (response.isAllowed()) {
+                    if (result.isAllowed()) {
                         return chain.filter(exchange);
                     }
-                    setResponseStatus(exchange, config.getStatusCode());
+                    ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                     return exchange.getResponse().setComplete();
                 });
             });
         }
     }
 
-    public static final String BEAN_IAM_RATELIMIT_FILTER = "IamRequestLimiter";
+    public static final String BEAN_FILTER_NAME = "IamRequestLimiter";
 }

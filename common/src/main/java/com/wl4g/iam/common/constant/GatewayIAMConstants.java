@@ -48,10 +48,17 @@ public abstract class GatewayIAMConstants extends IAMConstants {
             + ":sign:event:failure";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT = CACHE_PREFIX_IAM_GWTEWAY + ":requestlimit";
+
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":config:rate";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":config:quota";
+
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
+            + ":token:rate";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
+            + ":token:quota";
+
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":event:hits";
 
