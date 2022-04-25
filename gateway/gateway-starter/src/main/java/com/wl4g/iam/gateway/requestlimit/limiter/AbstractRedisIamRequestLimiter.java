@@ -15,16 +15,17 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
-
-import reactor.core.publisher.Mono;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * {@link AbstractRedisIamRequestLimiter}
@@ -33,19 +34,22 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-21 v3.0.0
  * @since v3.0.0
  */
-public abstract class AbstractRedisIamRequestLimiter<S extends LimiterStrategy> implements IamRequestLimiter {
+public abstract class AbstractRedisIamRequestLimiter<S extends RequestLimiterStrategy> implements IamRequestLimiter {
+    protected final SmartLogger log = getLogger(getClass());
 
-    protected @Autowired IamRequestLimiterProperties requestLimiterConfig;
-    protected @Autowired LimiterStrategyConfigurer configurer;
-    protected @Autowired ReactiveStringRedisTemplate redisTemplate;
-    protected @Autowired EventBusSupport eventBus;
-    protected @Autowired IamGatewayMetricsFacade metricsFacade;
+    protected final IamRequestLimiterProperties requestLimiterConfig;
+    protected final LimiterStrategyConfigurer configurer;
+    protected final ReactiveStringRedisTemplate redisTemplate;
+    protected final EventBusSupport eventBus;
+    protected final IamGatewayMetricsFacade metricsFacade;
 
-    @SuppressWarnings("unchecked")
-    protected Mono<S> loadStrategy(String routeId, String limitKey) {
-        return (Mono<S>) configurer.loadStrategy(this, routeId, limitKey).defaultIfEmpty(getDefaultStrategy());
+    public AbstractRedisIamRequestLimiter(IamRequestLimiterProperties requestLimiterConfig, LimiterStrategyConfigurer configurer,
+            ReactiveStringRedisTemplate redisTemplate, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade) {
+        this.requestLimiterConfig = notNullOf(requestLimiterConfig, "requestLimiterConfig");
+        this.configurer = notNullOf(configurer, "configurer");
+        this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
+        this.eventBus = notNullOf(eventBus, "eventBus");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
     }
-
-    protected abstract LimiterStrategy getDefaultStrategy();
 
 }

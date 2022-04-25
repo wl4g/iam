@@ -153,9 +153,8 @@ spring:
                   headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","Remote-Addr"]
                 limiter:
                   provider: RedisRateLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  burst-capacity: 1
-                  replenish-rate: 1
-                  requested-tokens: 1
+                  ## Whether or not to include headers containing rate limiter information.
+                  includeHeaders: true ## Default by true
             - name: IamRequestLimiter
               args:
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
@@ -164,9 +163,8 @@ spring:
                   provider: Principal ## Options(Host|Path|Pricipal|Header|Interval)
                 limiter:
                   provider: RedisRateLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  burst-capacity: 1
-                  replenish-rate: 1
-                  requested-tokens: 1
+                  ## Whether or not to include headers containing rate limiter information.
+                  includeHeaders: true ## Default by true
             - name: IamRequestLimiter
               args:
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
@@ -175,8 +173,13 @@ spring:
                   provider: Principal ## Options(Host|Path|Pricipal|Header|Interval)
                 limiter:
                   provider: RedisQuotaLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  requestCapacity: 1000
-                  cycleDatePattern: yyyyMMdd
+                  ## Whether or not to include headers containing rate limiter information.
+                  includeHeaders: true ## Default by true
+                  #configurer:
+                  #  provider: StaticLimiterStrategyConfigurer
+                  #  properties:
+                  #    requestCapacity: 1000
+                  #    cycleDatePattern: yyyyMMdd
             - name: Retry
               args:
                 retries: 3
@@ -196,7 +199,7 @@ spring:
                 fallback-uri: forward:/_fallback
                 statusCodes:
                   - 500
-                  - "NOT_FOUND"
+                  - NOT_FOUND
             - name: CanaryLoadBalancer
               args:
                 choose:

@@ -184,7 +184,8 @@ spring:
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
         defaultLimiter:
           rate:
-            prefix: iam:gateway:requestlimit:config:rate
+            configPrefix: iam:gateway:requestlimit:config:rate
+            tokenPrefix: iam:gateway:requestlimit:token:rate
             ## The default token bucket capacity, that is, the total number of concurrency allowed.
             defaultBurstCapacity: 1
             ## How many requests per second do you want a user to be allowed to do?
@@ -197,7 +198,8 @@ spring:
             requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
           quota:
-            prefix: iam:gateway:requestlimit:config:quota
+            configPrefix: iam:gateway:requestlimit:config:quota
+            tokenPrefix: iam:gateway:requestlimit:token:quota
             ## The number of total maximum allowed requests capacity.
             requestCapacity: 1000 ## Default by 1000
             ## The date pattern of request quota limit calculation cycle.

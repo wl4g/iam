@@ -35,7 +35,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
@@ -75,13 +75,13 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @Override
     public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
-        // TODO
-        KeyResolverStrategy strategy = null;
-        applyDefaultToConfig(config, strategy);
-        return new IamRequestLimiterGatewayFilter(config, strategy, getKeyResolver(config), getRequestLimiter(config));
+        // TODO testing tags based yaml parse
+        KeyResolverStrategy keyStrategy = config.getKeyResolver();
+        applyDefaultToConfig(config, keyStrategy);
+        return new IamRequestLimiterGatewayFilter(config, keyStrategy, getKeyResolver(config), getRequestLimiter(config));
     }
 
-    private void applyDefaultToConfig(Config config, KeyResolverStrategy strategy) {
+    private void applyDefaultToConfig(Config config, KeyResolverStrategy keyStrategy) {
         if (isNull(config.getDenyEmptyKey())) {
             config.setDenyEmptyKey(requsetLimiterConfig.isDenyEmptyKey());
         }
@@ -91,7 +91,7 @@ public class IamRequestLimiterGatewayFilterFactory
         if (isBlank(config.getStatusCode())) {
             config.setStatusCode(requsetLimiterConfig.getStatusCode());
         }
-        strategy.applyDefaultIfNecessary(requsetLimiterConfig);
+        keyStrategy.applyDefaultIfNecessary(requsetLimiterConfig);
     }
 
     @SuppressWarnings("unchecked")
@@ -129,42 +129,12 @@ public class IamRequestLimiterGatewayFilterFactory
         /**
          * The request limiter key resolver configuration.
          */
-        private KeyResolverConfig keyResolver = new KeyResolverConfig();
+        private KeyResolverStrategy keyResolver;
 
         /**
          * The request limiter provider configuration.
          */
-        private LimiterConfig requestLimiter = new LimiterConfig();
-
-        @Getter
-        @Setter
-        @ToString
-        public static class KeyResolverConfig extends KeyResolverStrategy {
-
-            /**
-             * Request limiter key resolver provider.
-             */
-            private KeyResolverProvider provider = KeyResolverProvider.HOST;
-            // /**
-            // * Key resolver strategy.
-            // */
-            // private KeyResolverStrategy strategy;
-        }
-
-        @Getter
-        @Setter
-        @ToString
-        public static class LimiterConfig extends LimiterStrategy {
-
-            /**
-             * Request limiter provider.
-             */
-            private RequestLimiterPrivoder privoder = RequestLimiterPrivoder.RedisRateLimiter;
-            // /**
-            // * Request limiter strategy.
-            // */
-            // private LimiterStrategy strategy;
-        }
+        private RequestLimiterStrategy requestLimiter;
     }
 
     @AllArgsConstructor

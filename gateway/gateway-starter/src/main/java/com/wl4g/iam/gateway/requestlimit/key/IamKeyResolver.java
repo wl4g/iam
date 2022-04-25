@@ -47,6 +47,12 @@ public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<
     @ToString
     @Validated
     public static abstract class KeyResolverStrategy {
+
+        /**
+         * Request limiter key resolver provider.
+         */
+        private KeyResolverProvider provider = KeyResolverProvider.HOST;
+
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
         }
     }

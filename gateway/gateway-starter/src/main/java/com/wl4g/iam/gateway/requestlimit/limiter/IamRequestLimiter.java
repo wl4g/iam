@@ -59,7 +59,7 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
         RedisQuotaLimiter(RedisQuotaLimiterStrategy.class);
 
-        private final Class<? extends LimiterStrategy> strategyClass;
+        private final Class<? extends RequestLimiterStrategy> strategyClass;
     }
 
     @Getter
@@ -68,7 +68,12 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static abstract class LimiterStrategy {
+    public static abstract class RequestLimiterStrategy {
+
+        /**
+         * Request limiter provider.
+         */
+        private RequestLimiterPrivoder privoder = RequestLimiterPrivoder.RedisRateLimiter;
 
         /**
          * Whether or not to include headers containing rate limiter

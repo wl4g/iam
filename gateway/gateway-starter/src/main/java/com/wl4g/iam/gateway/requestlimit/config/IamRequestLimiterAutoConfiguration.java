@@ -35,6 +35,7 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.configurer.RedisLimiterStrategyConfigurer;
@@ -140,13 +141,25 @@ public class IamRequestLimiterAutoConfiguration {
      * {@link org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimite}
      */
     @Bean
-    public IamRequestLimiter redisRateIamRequestLimiter() {
-        return new RedisRateIamRequestLimiter();
+    public IamRequestLimiter redisRateIamRequestLimiter(
+            RedisScript<List<Long>> redisScript,
+            IamRequestLimiterProperties requestLimiterConfig,
+            LimiterStrategyConfigurer configurer,
+            ReactiveStringRedisTemplate redisTemplate,
+            @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new RedisRateIamRequestLimiter(redisScript, requestLimiterConfig, configurer, redisTemplate, eventBus,
+                metricsFacade);
     }
 
     @Bean
-    public IamRequestLimiter redisQuotaIamRequestLimiter() {
-        return new RedisQuotaIamRequestLimiter();
+    public IamRequestLimiter redisQuotaIamRequestLimiter(
+            IamRequestLimiterProperties requestLimiterConfig,
+            LimiterStrategyConfigurer configurer,
+            ReactiveStringRedisTemplate redisTemplate,
+            @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new RedisQuotaIamRequestLimiter(requestLimiterConfig, configurer, redisTemplate, eventBus, metricsFacade);
     }
 
     @Bean

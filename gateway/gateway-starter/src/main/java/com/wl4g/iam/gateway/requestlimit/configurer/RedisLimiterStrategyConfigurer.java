@@ -16,18 +16,16 @@
 package com.wl4g.iam.gateway.requestlimit.configurer;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
-import static java.lang.String.valueOf;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ReactiveHashOperations;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.LimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 
 import reactor.core.publisher.Mono;
 
@@ -43,24 +41,22 @@ public class RedisLimiterStrategyConfigurer implements LimiterStrategyConfigurer
     private @Autowired IamRequestLimiterProperties requestLimitConfig;
     private @Autowired ReactiveStringRedisTemplate redisTemplate;
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends IamRequestLimiter, S extends LimiterStrategy> Mono<S> loadStrategy(
-            @NotNull T limiter,
-            @NotBlank String routeId,
-            @NotBlank String limitKey) {
-        // TODO
+    public Mono<RedisRateLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
         String prefix = requestLimitConfig.getDefaultLimiter().getRate().getConfigPrefix();
-        return getOperation().get(prefix, getConfigKey(routeId, limitKey))
-                .map(json -> (S) parseJSON(json, limiter.kind().getStrategyClass()));
+        return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
+                .map(json -> parseJSON(json, RedisRateLimiterStrategy.class));
+    }
+
+    @Override
+    public Mono<RedisQuotaLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
+        String prefix = requestLimitConfig.getDefaultLimiter().getQuota().getConfigPrefix();
+        return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
+                .map(json -> parseJSON(json, RedisQuotaLimiterStrategy.class));
     }
 
     private ReactiveHashOperations<String, String, String> getOperation() {
         return redisTemplate.opsForHash();
-    }
-
-    public static String getConfigKey(String routeId, String limitKey) {
-        return valueOf(routeId).concat(":").concat(limitKey);
     }
 
 }
