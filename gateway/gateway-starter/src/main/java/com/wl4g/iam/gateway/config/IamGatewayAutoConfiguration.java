@@ -44,7 +44,7 @@ import reactor.core.publisher.Mono;
  * @since
  * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration}
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Import({ GatewayWebServerAutoConfiguration.class, IamRequestLimiterAutoConfiguration.class,
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         AuthingAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,

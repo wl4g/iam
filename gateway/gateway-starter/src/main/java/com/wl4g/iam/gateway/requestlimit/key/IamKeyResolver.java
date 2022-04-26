@@ -18,11 +18,20 @@ package com.wl4g.iam.gateway.requestlimit.key;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver.HeaderKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver.HostKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver.IntervalKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver.PathKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver.PrincipalKeyResolverStrategy;
 import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
@@ -39,22 +48,27 @@ public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<
     Mono<String> resolve(C strategy, ServerWebExchange exchange);
 
     public static enum KeyResolverProvider {
-        HOST, HEADER, PATH, PRINCIPAL, INTERVAL
+        HOST, PRINCIPAL, PATH, HEADER, INTERVAL
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "privoder")
+    @JsonSubTypes({ @Type(value = HostKeyResolverStrategy.class, name = "Host"),
+            @Type(value = PrincipalKeyResolverStrategy.class, name = "Principal"),
+            @Type(value = PathKeyResolverStrategy.class, name = "Path"),
+            @Type(value = HeaderKeyResolverStrategy.class, name = "Header"),
+            @Type(value = IntervalKeyResolverStrategy.class, name = "Interval"), })
     @Getter
     @Setter
     @ToString
     @Validated
+    @NoArgsConstructor
     public static abstract class KeyResolverStrategy {
 
-        /**
-         * Request limiter key resolver provider.
-         */
-        private KeyResolverProvider provider = KeyResolverProvider.HOST;
+        public abstract KeyResolverProvider getProvider();
 
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
         }
+
     }
 
 }

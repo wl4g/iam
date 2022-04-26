@@ -84,14 +84,13 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
     @Override
     public Mono<LimitedResult> isAllowed(IamRequestLimiterGatewayFilterFactory.Config config, String routeId, String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
-        long beginTime = nanoTime();
+        final long beginTime = nanoTime();
 
         return configurer.loadRateStrategy(routeId, limitKey)
                 .defaultIfEmpty(requestLimiterConfig.getDefaultLimiter().getRate())
                 .flatMap(strategy -> {
                     // How many requests per second do you want a user to be
-                    // allowed to
-                    // do?
+                    // allowed to do?
                     int replenishRate = strategy.getReplenishRate();
                     // How much bursting do you want to allow?
                     int burstCapacity = strategy.getBurstCapacity();
@@ -158,7 +157,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         // this allows for using redis cluster
 
         // Make a unique key per user.
-        String prefix = "request_rate_limiter.{".concat(limitKey);
+        String prefix = requestLimiterConfig.getDefaultLimiter().getRate().getTokenPrefix().concat(".{").concat(limitKey);
 
         // You need two Redis keys for Token Bucket.
         String tokenKey = prefix.concat("}.tokens");
@@ -202,6 +201,11 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
          * How many tokens are requested per request?
          */
         private @Min(1) int requestedTokens = 1;
+
+        @Override
+        public RequestLimiterPrivoder getProvider() {
+            return RequestLimiterPrivoder.RedisRateLimiter;
+        }
     }
 
 }

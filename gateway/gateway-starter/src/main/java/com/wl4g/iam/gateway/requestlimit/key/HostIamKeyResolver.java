@@ -47,6 +47,10 @@ public class HostIamKeyResolver extends AbstractIamKeyResolver<HostIamKeyResolve
     @ToString
     @Validated
     public static class HostKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
+        @Override
+        public KeyResolverProvider getProvider() {
+            return KeyResolverProvider.HOST;
+        }
     }
 
 }

@@ -52,7 +52,7 @@ public class AuthingProperties {
          * Ignore authentication in JVM debug mode, often used for rapid
          * development and testing environments.
          */
-        private boolean ignoredAuthingInJvmDebug = false;
+        private boolean anonymousAuthingWithJvmDebug = false;
 
         /**
          * Prefix when loading from bloom filter replay keys stored.

@@ -158,7 +158,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
     @Override
     public GatewayFilter apply(SimpleSignAuthingFilterFactory.Config config) {
         return (exchange, chain) -> {
-            if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSimpleSign().isIgnoredAuthingInJvmDebug()) {
+            if (JvmRuntimeTool.isJvmInDebugging && authingConfig.getSimpleSign().isAnonymousAuthingWithJvmDebug()) {
                 return chain.filter(exchange);
             }
 

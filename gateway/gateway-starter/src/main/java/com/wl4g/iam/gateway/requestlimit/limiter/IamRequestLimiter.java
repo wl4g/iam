@@ -19,6 +19,9 @@ import java.util.Map;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
@@ -62,6 +65,9 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
         private final Class<? extends RequestLimiterStrategy> strategyClass;
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "privoder")
+    @JsonSubTypes({ @Type(value = RedisRateLimiterStrategy.class, name = "RedisRateLimiter"),
+            @Type(value = RedisQuotaLimiterStrategy.class, name = "RedisQuotaLimiter"), })
     @Getter
     @Setter
     @ToString
@@ -71,16 +77,12 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
     public static abstract class RequestLimiterStrategy {
 
         /**
-         * Request limiter provider.
-         */
-        private RequestLimiterPrivoder privoder = RequestLimiterPrivoder.RedisRateLimiter;
-
-        /**
          * Whether or not to include headers containing rate limiter
          * information, defaults to true.
          */
         private boolean includeHeaders = true;
 
+        public abstract RequestLimiterPrivoder getProvider();
     }
 
 }

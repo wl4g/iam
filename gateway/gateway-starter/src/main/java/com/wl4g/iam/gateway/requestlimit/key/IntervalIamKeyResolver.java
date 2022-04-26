@@ -72,6 +72,10 @@ public class IntervalIamKeyResolver extends AbstractIamKeyResolver<IntervalIamKe
          */
         private String cycleDatePattern = "yyyyMMdd";
 
+        @Override
+        public KeyResolverProvider getProvider() {
+            return KeyResolverProvider.INTERVAL;
+        }
     }
 
 }

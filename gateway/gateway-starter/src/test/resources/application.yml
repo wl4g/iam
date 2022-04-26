@@ -56,13 +56,14 @@ spring:
           permitted-cross-domain-policies: none ## Default by 'none'
           frame-options: DENY ## Default by 'DENY'
           download-options: noopen ## Default by 'noopen'
+        ## !!! [Deprecated]: use 'spring.iam.gateway.ratelimit' !!!
         ## The default request ratelimiter configuragion.
         ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-        request-rate-limiter:
-          denyEmptyKey: true
-          emptyKeyStatusCode: UNPROCESSABLE_ENTITY
-      ## The default based on redis ratelimiter configuragion.
-      ## [Deprecated]: use 'spring.iam.gateway.ratelimit'
+        ##request-rate-limiter:
+        ##  denyEmptyKey: true
+        ##  emptyKeyStatusCode: UNPROCESSABLE_ENTITY
+      ## !!! [Deprecated]: use 'spring.iam.gateway.ratelimit' !!!
+      ## The default based redis ratelimiter configuragion.
       ## see:org.springframework.cloud.gateway.config.GatewayRedisAutoConfiguration#redisRateLimiter
       ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter
       ##redis-rate-limiter:
@@ -137,47 +138,82 @@ spring:
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
       authing:
-        simple-sign:
-          secret-load-store: redis
-          secret-load-prefix: iam:gateway:auth:sign:secret
-          secret-local-cache-seconds: 6 ## Default by 6sec
+        simpleSign:
+          secretStore: redis
+          secretStorePrefix: iam:gateway:auth:sign:secret
+          secretLocalCacheSeconds: 6 ## Default by 6sec
           ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
           ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
           ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
           ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
           ## authenticated principal name cannot be obtained.
-          ignored-authing-in-jvm-debug: false ## Default by false
-          sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
-          event:
+          anonymousAuthingWithJvmDebug: false ## Default by false
+          signReplayVerifyBloomLoadPrefix: iam:gateway:auth:sign:replay:bloom
+          eventRecorder:
             publishEventBusThreads: 1 ## Default by 1
             ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
             ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-            redisEventRecoderLogEnabled: true ## Default by true
-            ## Redis event recorder hits accumulator prefix.
-            redisEventRecoderHitsCumulatorPrefix: iam:gateway:ratelimit:redis:recorder:hits
-            ## Redis event recorder accumulator suffix of date format pattern.
-            redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
-      ratelimit:
-        include-headers: false ## Default by true
-        burst-capacity-header: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
-        remaining-header: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
-        replenish-rate-header: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
-        requested-tokens-header: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
-        token:
-          replenishRate: 1
-          burstCapacity: 1
-          requestedTokens: 1
-        event:
+            localLogEnabled: true ## Default by true
+            redis:
+              enabled: true ## Default by true
+              ## Redis event recorder success accumulator prefix.
+              successCumulatorPrefix: iam:gateway:auth:sign:event:success
+              ## Redis event recorder failure accumulator prefix.
+              failureCumulatorPrefix: iam:gateway:auth:sign:event:failure
+              ## Redis event recorder accumulator suffix of date format pattern.
+              cumulatorSuffixOfDatePattern: yyyyMMdd
+      requestlimit:
+        ## The get denial of Service when throttling key is empty.
+        denyEmptyKey: true ## Default by true
+        ## The status code response when the get current limiting key is empty.
+        emptyKeyStatusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+        statusCode: TOO_MANY_REQUESTS ## Default by HttpStatus.TOO_MANY_REQUESTS
+        defaultKeyResolver:
+          #host: {}
+          #path: {}
+          #principal: {}
+          interval:
+            ## The date pattern of the key get by limiting according to the date interval.
+            cycleDatePattern: yyyyMMdd
+          header:
+            ## The according to the list of header names of the request header current limiter, it can usually be used to get the
+            ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
+            headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+              "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+              "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+              "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+        defaultLimiter:
+          rate:
+            configPrefix: iam:gateway:requestlimit:config:rate
+            tokenPrefix: iam:gateway:requestlimit:token:rate
+            ## The default token bucket capacity, that is, the total number of concurrency allowed.
+            defaultBurstCapacity: 1
+            ## How many requests per second do you want a user to be allowed to do?
+            defaultReplenishRate: 1
+            ## How many tokens are requested per request?
+            defaultRequestedTokens: 1
+            includeHeaders: false ## Default by true
+            burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+            replenishRateHeader: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+            requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+            remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+          quota:
+            configPrefix: iam:gateway:requestlimit:config:quota
+            tokenPrefix: iam:gateway:requestlimit:token:quota
+            ## The number of total maximum allowed requests capacity.
+            requestCapacity: 1000 ## Default by 1000
+            ## The date pattern of request quota limit calculation cycle.
+            cycleDatePattern: yyyyMMdd
+        eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
           ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-          redisEventRecoderLogEnabled: true ## Default by true
-          ## Redis event recorder success accumulator prefix.
-          redisEventRecoderSuccessCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:success
-          ## Redis event recorder failure accumulator prefix.
-          redisEventRecoderFailureCumulatorPrefix: iam:gateway:auth:sign:redis:recorder:failure
-          ## Redis event recorder accumulator suffix of date format pattern.
-          redisEventRecoderCumulatorSuffixOfDatePattern: yyyyMMdd
+          localLogEnabled: true ## Default by true
+          redis:
+            ## Redis event recorder hits accumulator prefix.
+            hitsCumulatorPrefix: iam:gateway:requestlimit:event:hits
+            ## Redis event recorder accumulator suffix of date format pattern.
+            cumulatorSuffixOfDatePattern: yyyyMMdd
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000
       circuitbreaker:
@@ -196,17 +232,25 @@ spring:
           cancelRunningFuture: true ## Default by true
       loadbalancer:
         enabled: true ## Default by true
-        canary-discovery-service-label-prefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
-        select-expression: '#{$rule.test($request)}'
-        match-rule-definitions:
+        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
+        # TODO
+        #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
+        canaryChooseExpression: '#{$rule.test($request)}'
+        canaryMatchRuleDefinitions:
+          ## TODO 
+          #- name: defaultZoneHeader
+          #  query:
+          #    symbol: IGNORECASE_EQ
+          #    key: X-Iscg-Zone
+          #    value: cn_south1_a1
           - name: v1-canary-header
             #method:
             #schema:
             #host:
             #port:
-            #path: ## support ant path pattern.
+            #path: ## Ant path pattern.
             header:
-              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Canary
               value: v1
             #cookie:
@@ -223,27 +267,27 @@ spring:
               key: __iscg_canary
               value: v1
         ## The number of load balancer statistician scheduler worker threads.
-        stats-scheduler-thread: 2 ## Default by 2
+        statsSchedulerThread: 2 ## Default by 2
         ## The initial interval at which the instance list is periodically pulled update register from the discovery service.
-        register-route-services-initial-seconds: 1 ## Default by 1s
+        registerRouteServicesInitialSeconds: 1 ## Default by 1s
         ## The interval at which the instance list is periodically pulled update register from the discovery server.
-        register-route-services-delay-seconds: 60 ## Default by 60s
-        choose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+        registerRouteServicesDelaySeconds: 60 ## Default by 60s
+        defaultChoose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
           ## When no canary condition is matched, whether all instances of the service are candidates.
           fallback-all-to-candidates: true
-          load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+          load-balancer-algorithm: LC ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
           max-choose-tries: 10 ## Default by 10
           null-ping-to-reachable: true ## Default by true
-        probe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+        defaultProbe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
           debug: false ## Default by false
-          initial-seconds: 3 ## Default by 3s
-          delay-seconds: 10 ## Default by 10s
-          timeout-ms: 5_000 ## Default by 5_000ms
-          receive-queue: 8 ## Default by 8
+          initialSeconds: 3 ## Default by 3s
+          delaySeconds: 10 ## Default by 10s
+          timeoutMs: 5_000 ## Default by 5_000ms
+          receiveQueue: 8 ## Default by 8
           path: /healthz ## Default by '/healthz'
           ## Note: only expectBody takes effect when it is set at the same time as expectBody. (As long as any
           ## status code is satisfied)
-          expect-statuses: [200] ## Default by 200
+          expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
       trace: {}
       logging:
@@ -252,18 +296,23 @@ spring:
         ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
         enabled: true ## Default by true
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        default-verbose-level: 7
-        request-verbose-level-header: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
-        match-expression: '#{$defaultHeaderLogRule.or($defaultQueryLogRule).or($energyOpenApiLogRule).test($request)}'
-        match-rule-definitions:
-          - name: defaultHeaderLogRule
+        defaultVerboseLevel: 7
+        ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
+        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
+        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
+        ## Preferred to enable print logs match SPEL match expression.
+        preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
+        ## Preferred to enable print logs match rules definition.
+        preferrdMatchRuleDefinitions:
+          - name: defaultLogHeader
             #method:
             #schema:
             #host:
             #port:
-            #path: ## support ant path pattern.
+            #path: ## Ant path pattern.
             header:
-              symbol: EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
               key: X-Iscg-Log
               value: y
             #cookie:
@@ -274,12 +323,12 @@ spring:
             #  symbol:
             #  key:
             #  value:
-          - name: defaultQueryLogRule
+          - name: defaultLogQuery
             query:
-              symbol: EQ
+              symbol: IGNORECASE_EQ
               key: __iscg_log
               value: y
-          - name: energyOpenApiLogRule
+          - name: energyOpenApiLogWithPath
             path: '/openapi/**'
 
   ## Security configuration.
@@ -294,9 +343,9 @@ spring:
             client-id: portal
             client-secret: a12463984c2f46bdb83d9b1313f3378d
             scope:
-            - email
-            - profile
-            - roles
+              - email
+              - profile
+              - roles
 
 management:
   server:
@@ -310,6 +359,11 @@ management:
     web:
       exposure:
         include: '*'
+  metrics:
+    export:
+      ## see:org.springframework.boot.actuate.autoconfigure.metrics.export.prometheus.PrometheusMetricsExportAutoConfiguration
+      prometheus:
+        enabled: true ## Default by true
 
 ## Logging configuration.
 logging:

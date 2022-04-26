@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.requestlimit.key;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.List;
@@ -26,7 +27,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import static com.wl4g.infra.common.collection.CollectionUtils2.isEqualCollection;
 import com.wl4g.infra.common.web.WebUtils;
 
 import lombok.AllArgsConstructor;
@@ -87,13 +87,17 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
         private List<String> headerNames = DEFAULT_HEADER_NAMES;
 
         @Override
+        public KeyResolverProvider getProvider() {
+            return KeyResolverProvider.HEADER;
+        }
+
+        @Override
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
             List<String> defaultHeaderNames = config.getDefaultKeyResolver().getHeader().getHeaderNames();
             if (!isEqualCollection(defaultHeaderNames, DEFAULT_HEADER_NAMES)) {
                 setHeaderNames(defaultHeaderNames);
             }
         }
-
     }
 
     public static final List<String> DEFAULT_HEADER_NAMES = asList(WebUtils.HEADER_REAL_IP);

@@ -117,7 +117,13 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
     }
 
     protected String getKey(RedisQuotaLimiterStrategy strategy, String routeId, String limitKey) {
-        return limitKey;
+        return requestLimiterConfig.getDefaultLimiter()
+                .getQuota()
+                .getTokenPrefix()
+                .concat(":")
+                .concat(routeId)
+                .concat(":")
+                .concat(limitKey);
     }
 
     @Getter
@@ -137,6 +143,11 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
          * The date pattern of request quota limit calculation cycle.
          */
         private String cycleDatePattern = "yyyyMMdd";
+
+        @Override
+        public RequestLimiterPrivoder getProvider() {
+            return RequestLimiterPrivoder.RedisQuotaLimiter;
+        }
     }
 
 }

@@ -148,42 +148,63 @@ spring:
               args:
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
                 #statusCode: TOO_MANY_REQUESTS
-                keyResolver:
-                  provider: Header ## Options(Host|Path|Pricipal|Header|Interval)
-                  headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","Remote-Addr"]
-                limiter:
-                  provider: RedisRateLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  ## Whether or not to include headers containing rate limiter information.
-                  includeHeaders: true ## Default by true
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Header",
+                    "headerNames": ["X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP"]
+                  }
+                ## The 'includeHeaders' whether or not to include headers containing rate limiter information. Default by true
+                ## The 'provider' available options are: RedisQuotaLimiter|RedisRateLimiter
+                limiterJson: |-
+                  {
+                    "privoder": "RedisRateLimiter",
+                    "includeHeaders": true,
+                    "burstCapacity": 100,
+                    "replenishRate": 20,
+                    "requestedTokens": 1
+                  }
             - name: IamRequestLimiter
               args:
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
                 #statusCode: TOO_MANY_REQUESTS
-                keyResolver:
-                  provider: Principal ## Options(Host|Path|Pricipal|Header|Interval)
-                limiter:
-                  provider: RedisRateLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  ## Whether or not to include headers containing rate limiter information.
-                  includeHeaders: true ## Default by true
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                ## The 'includeHeaders' whether or not to include headers containing rate limiter information. Default by true
+                ## The 'provider' available options are: RedisQuotaLimiter|RedisRateLimiter
+                limiterJson: |-
+                  {
+                    "privoder": "RedisRateLimiter",
+                    "includeHeaders": true,
+                    "burstCapacity": 100,
+                    "replenishRate": 20,
+                    "requestedTokens": 1
+                  }
             - name: IamRequestLimiter
               args:
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
                 #statusCode: TOO_MANY_REQUESTS
-                keyResolver:
-                  provider: Principal ## Options(Host|Path|Pricipal|Header|Interval)
-                limiter:
-                  provider: RedisQuotaLimiter ## Options(RedisQuotaLimiter|RedisRateLimiter)
-                  ## Whether or not to include headers containing rate limiter information.
-                  includeHeaders: true ## Default by true
-                  #configurer:
-                  #  provider: StaticLimiterStrategyConfigurer
-                  #  properties:
-                  #    requestCapacity: 1000
-                  #    cycleDatePattern: yyyyMMdd
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                ## The 'includeHeaders' whether or not to include headers containing rate limiter information. Default by true
+                ## The 'provider' available options are: RedisQuotaLimiter|RedisRateLimiter
+                limiterJson: |-
+                  {
+                    "privoder": "RedisQuotaLimiter",
+                    "includeHeaders": true,
+                    "requestCapacity": 1000,
+                    "cycleDatePattern": "yyyyMMdd"
+                  }
             - name: Retry
               args:
                 retries: 3
-                statuses: BAD_GATEWAY
+                statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
                 methods: GET,POST
                 backoff:
                   first-backoff: 100ms

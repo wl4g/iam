@@ -55,9 +55,12 @@ public class RedisRequestLimitEventRecorder {
     }
 
     private BoundHashOperations<String, Object, Object> getHitsCumulator() {
-        return redisTemplate
-                .boundHashOps(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
-                        DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix())));
+        String hashKey = rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
+                DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern()));
+        if (log.isDebugEnabled()) {
+            log.debug("hashkey: {}", hashKey);
+        }
+        return redisTemplate.boundHashOps(hashKey);
     }
 
 }

@@ -52,6 +52,11 @@ public class PrincipalNameIamKeyResolver
     @ToString
     @Validated
     public static class PrincipalKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
+
+        @Override
+        public KeyResolverProvider getProvider() {
+            return KeyResolverProvider.PRINCIPAL;
+        }
     }
 
 }

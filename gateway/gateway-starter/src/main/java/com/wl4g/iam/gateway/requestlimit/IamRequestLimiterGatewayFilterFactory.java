@@ -16,6 +16,7 @@
 
 package com.wl4g.iam.gateway.requestlimit;
 
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -75,8 +76,8 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @Override
     public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
-        // TODO testing tags based yaml parse
-        KeyResolverStrategy keyStrategy = config.getKeyResolver();
+        // TODO use based yaml tags parse?
+        KeyResolverStrategy keyStrategy = config.parse().getKeyStrategy();
         applyDefaultToConfig(config, keyStrategy);
         return new IamRequestLimiterGatewayFilter(config, keyStrategy, getKeyResolver(config), getRequestLimiter(config));
     }
@@ -96,11 +97,12 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @SuppressWarnings("unchecked")
     private IamKeyResolver<KeyResolverStrategy> getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter.forOperator(config.getKeyResolver().getProvider());
+        return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter
+                .forOperator(config.parse().getKeyStrategy().getProvider());
     }
 
     private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return requestLimiterAdapter.forOperator(config.getRequestLimiter().getPrivoder());
+        return requestLimiterAdapter.forOperator(config.parse().getLimiterStrategy().getProvider());
     }
 
     @Getter
@@ -127,14 +129,35 @@ public class IamRequestLimiterGatewayFilterFactory
         private String statusCode;
 
         /**
-         * The request limiter key resolver configuration.
+         * The key resolver strategy JSON configuration.
          */
-        private KeyResolverStrategy keyResolver;
+        private String keyResolverJson;
 
         /**
-         * The request limiter provider configuration.
+         * The request limiter strategy JSON configuration.
          */
-        private RequestLimiterStrategy requestLimiter;
+        private String limiterJson;
+
+        //
+        // Temporary fields.
+        //
+
+        @Setter(lombok.AccessLevel.NONE)
+        private KeyResolverStrategy keyStrategy;
+
+        @Setter(lombok.AccessLevel.NONE)
+        private RequestLimiterStrategy limiterStrategy;
+
+        public Config parse() {
+            if (isNull(keyStrategy)) {
+                this.keyStrategy = parseJSON(getKeyResolverJson(), KeyResolverStrategy.class);
+            }
+            if (isNull(limiterStrategy)) {
+                this.limiterStrategy = parseJSON(getLimiterJson(), RequestLimiterStrategy.class);
+            }
+            return this;
+        }
+
     }
 
     @AllArgsConstructor

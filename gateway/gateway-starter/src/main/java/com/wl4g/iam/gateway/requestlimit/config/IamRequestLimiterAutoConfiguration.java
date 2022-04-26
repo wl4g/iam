@@ -80,7 +80,7 @@ public class IamRequestLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public LimiterStrategyConfigurer redisIamRateLimiterConfigure() {
+    public LimiterStrategyConfigurer redisLimiterStrategyConfigurer() {
         return new RedisLimiterStrategyConfigurer();
     }
 
@@ -129,11 +129,9 @@ public class IamRequestLimiterAutoConfiguration {
      */
     @Bean
     public RedisRateLimiter warningDeprecatedRedisRateLimiter(
-            @Lazy RouteDefinitionLocator routeLocator,
             ReactiveStringRedisTemplate redisTemplate,
             @Qualifier(RedisRateLimiter.REDIS_SCRIPT_NAME) RedisScript<List<Long>> redisScript,
             ConfigurationService configurationService) {
-
         return new WarningDeprecatedRedisRateLimiter(redisTemplate, redisScript, configurationService);
     }
 
@@ -182,8 +180,8 @@ public class IamRequestLimiterAutoConfiguration {
     //
 
     @Bean(name = BEAN_REDIS_RATELIMITE_EVENTBUS, destroyMethod = "close")
-    public EventBusSupport redisRateLimiteEventBusSupport(IamRequestLimiterProperties rateLimiteConfig) {
-        return new EventBusSupport(rateLimiteConfig.getEventRecorder().getPublishEventBusThreads());
+    public EventBusSupport redisRateLimiteEventBusSupport(IamRequestLimiterProperties requestLimiteConfig) {
+        return new EventBusSupport(requestLimiteConfig.getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean

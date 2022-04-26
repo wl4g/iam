@@ -139,16 +139,16 @@ spring:
             allow-renegociate: true ## Default by true
       authing:
         simpleSign:
-          secret-store: redis
-          secret-store-prefix: iam:gateway:auth:sign:secret
-          secret-local-cache-seconds: 6 ## Default by 6sec
+          secretStore: redis
+          secretStorePrefix: iam:gateway:auth:sign:secret
+          secretLocalCacheSeconds: 6 ## Default by 6sec
           ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
           ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
           ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
           ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
           ## authenticated principal name cannot be obtained.
-          ignored-authing-in-jvm-debug: false ## Default by false
-          sign-replay-verify-bloom-load-prefix: iam:gateway:auth:sign:replay:bloom
+          anonymousAuthingWithJvmDebug: false ## Default by false
+          signReplayVerifyBloomLoadPrefix: iam:gateway:auth:sign:replay:bloom
           eventRecorder:
             publishEventBusThreads: 1 ## Default by 1
             ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
