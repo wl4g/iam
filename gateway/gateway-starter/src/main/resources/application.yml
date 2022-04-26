@@ -337,6 +337,8 @@ spring:
               value: y
           - name: energyOpenApiLogWithPath
             path: '/openapi/**'
+      trffic:
+        enabled: true ## Default by false
 
   ## Security configuration.
   security:

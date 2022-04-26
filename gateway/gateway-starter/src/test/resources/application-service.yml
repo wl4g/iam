@@ -8,12 +8,12 @@
 # limitations under the License.
 #
 
-# #### Iam Gateway mock service configuration. ####
+# #### Environment(Dev) configuration. ####
 #
 spring:
   redis:
     cluster:
-      nodes: ${IAM_REDIS_NODES:localhost:6379,localhost:6380,localhost:6381,localhost:7379,localhost:7380,localhost:7381}
+      nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
     timeout: 10000ms
     password: ${REDIS_PASSWD:zzx!@#$%}
     lettuce:
@@ -24,36 +24,37 @@ spring:
     discovery:
       client:
         # see:org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient
-        simple: # for mock testing
+        simple: # for testing
           instances:
             default-fallback-service:
               - instanceId: n1.default-fallback-service
+                #uri: https://httpbin.org/
                 uri: http://127.0.0.1:${server.port}/_fallback
                 metadata: {}
-            openapi-service:
-              - instanceId: n1.v1-openapi-service.io:8080
-                uri: http://httpbin.org/
+            energy-openapi-service:
+              - instanceId: n2.v1-energy-openapi-service:28092
+                uri: http://127.0.0.1:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
-              - instanceId: n2.v1-openapi-service.io:8080
-                uri: http://httpbin.org/
+              - instanceId: n3.v1-energy-openapi-service:28092
+                uri: http://localhost:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
-              - instanceId: n1.v2-openapi-service.io:8080
-                uri: https://httpbin.org/
+              - instanceId: n2.v2-energy-openapi-service:28092
+                uri: http://127.0.0.1:28092
                 metadata:
                   Iscg-Canary-Label-Header: v2-canary-header
                   Iscg-Canary-Label-Query: v2-canary-query
-            portal-service:
-              - instanceId: n1.v1-portal-service.io:8080
-                uri: https://httpbin.org/
+            alimarket-openapi-service:
+              - instanceId: n2.v1-alimarket-openapi-service:28092
+                uri: http://127.0.0.1:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
-              - instanceId: n2.v1-portal-service.io:8080
-                uri: http://httpbin.org/
+              - instanceId: n3.v1-alimarket-openapi-service:28092
+                uri: http://localhost:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query

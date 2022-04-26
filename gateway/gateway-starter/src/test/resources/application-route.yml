@@ -65,34 +65,49 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
-            - name: RequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                key-resolver: '#{@hostKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
-                redis-rate-limiter:
-                  ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 2
-                  ## The average rate of token bucket filling per second, which is equivalent to the average number of 
-                  ## requests per second that users are allowed to process.
-                  replenish-rate: 2
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
-            - name: RequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.bindSignedToContext()
-                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
-                ## Note:When the interception takes effect, 403 is returned by default?
-                key-resolver: '#{@principalNameKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
-                redis-rate-limiter:
-                  burst-capacity: 2
-                  replenish-rate: 2
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Header",
+                    "headerNames": ["X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP"]
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisRateLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisRateLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisQuotaLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
             - name: Retry
               args:
                 retries: 3
@@ -115,7 +130,8 @@ spring:
                   - "NOT_FOUND"
             - name: CanaryLoadBalancer
               args:
-                load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                choose:
+                  load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
                 probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
@@ -149,38 +165,53 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
-            - name: RequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                key-resolver: '#{@hostKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
-                redis-rate-limiter:
-                  ## The capacity of the token bucket, the maximum number of requests allowed to complete in one second.
-                  burst-capacity: 2
-                  ## The average rate of token bucket filling per second, which is equivalent to the average number of 
-                  ## requests per second that users are allowed to process.
-                  replenish-rate: 2
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory#apply()
-            ## see:org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter#isAllowed()
-            ## see:https://blog.csdn.net/songhaifengshuaige/article/details/93372437
-            - name: RequestRateLimiter
-              args: ## see:org.springframework.cloud.gateway.filter.factory.RequestRateLimiterGatewayFilterFactory.Config
-                ## see:com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.bindSignedToContext()
-                ## see:org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver#resolve()
-                ## Note:When the interception takes effect, 403 is returned by default?
-                key-resolver: '#{@principalNameKeyResolver}'
-                status-code: TOO_MANY_REQUESTS
-                #empty-key-status: ## Default are set(recommended).
-                redis-rate-limiter:
-                  burst-capacity: 2
-                  replenish-rate: 2
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Header",
+                    "headerNames": ["X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP"]
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisRateLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisRateLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
+            - name: IamRequestLimiter
+              args:
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #statusCode: TOO_MANY_REQUESTS
+                ## The 'provider' available options are: Host|Path|Pricipal|Header|Interval
+                keyResolverJson: |-
+                  {
+                    "privoder": "Principal"
+                  }
+                limiter:
+                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                  provider: RedisQuotaLimiter
+                  ## whether or not to include headers containing rate limiter info. Default by false
+                  includeHeaders: false
             - name: Retry
               args:
                 retries: 3
-                statuses: BAD_GATEWAY
+                statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
                 methods: GET,POST
                 backoff:
                   first-backoff: 100ms
@@ -196,10 +227,11 @@ spring:
                 fallback-uri: forward:/_fallback
                 statusCodes:
                   - 500
-                  - "NOT_FOUND"
+                  - NOT_FOUND
             - name: CanaryLoadBalancer
               args:
-                load-balancer-algorithm: R ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                choose:
+                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
                 probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
