@@ -36,8 +36,8 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
+import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
@@ -102,7 +102,7 @@ public class IamRequestLimiterGatewayFilterFactory
     }
 
     private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return requestLimiterAdapter.forOperator(config.parse().getLimiterStrategy().getProvider());
+        return requestLimiterAdapter.forOperator(config.parse().getLimiter().getProvider());
     }
 
     @Getter
@@ -136,7 +136,7 @@ public class IamRequestLimiterGatewayFilterFactory
         /**
          * The request limiter strategy JSON configuration.
          */
-        private String limiterJson;
+        private RequestLimiterStrategyConfig limiter = new RequestLimiterStrategyConfig();
 
         //
         // Temporary fields.
@@ -145,19 +145,23 @@ public class IamRequestLimiterGatewayFilterFactory
         @Setter(lombok.AccessLevel.NONE)
         private KeyResolverStrategy keyStrategy;
 
-        @Setter(lombok.AccessLevel.NONE)
-        private RequestLimiterStrategy limiterStrategy;
-
         public Config parse() {
             if (isNull(keyStrategy)) {
                 this.keyStrategy = parseJSON(getKeyResolverJson(), KeyResolverStrategy.class);
             }
-            if (isNull(limiterStrategy)) {
-                this.limiterStrategy = parseJSON(getLimiterJson(), RequestLimiterStrategy.class);
-            }
             return this;
         }
 
+        @Getter
+        @Setter
+        @ToString
+        public static class RequestLimiterStrategyConfig extends RequestLimiterStrategy {
+
+            /**
+             * Request limiter provider.
+             */
+            private RequestLimiterPrivoder provider = RequestLimiterPrivoder.RedisRateLimiter;
+        }
     }
 
     @AllArgsConstructor

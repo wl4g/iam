@@ -223,12 +223,12 @@ public class IamRequestLimiterProperties {
     public static class RedisQuotaLimiterStrategyProperties extends RedisQuotaLimiterStrategy {
 
         /**
-         * Redis quota defaultLimiter user-level configuration key prefix.
+         * The quota limiter user-level configuration key prefix.
          */
         private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
 
         /**
-         * Redis quota defaultLimiter user-level computational key prefix.
+         * The quota limiter user-level tokens computational key prefix.
          */
         private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
 

@@ -184,7 +184,9 @@ spring:
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
         defaultLimiter:
           rate:
+            ## The rate limiter user-level configuration key prefix.
             configPrefix: iam:gateway:requestlimit:config:rate
+            ## The rate limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:rate
             ## The default token bucket capacity, that is, the total number of concurrency allowed.
             defaultBurstCapacity: 1
@@ -198,12 +200,17 @@ spring:
             requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
           quota:
+            ## The quota limiter user-level configuration key prefix.
             configPrefix: iam:gateway:requestlimit:config:quota
+            ## The quota limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:quota
             ## The number of total maximum allowed requests capacity.
             requestCapacity: 1000 ## Default by 1000
             ## The date pattern of request quota limit calculation cycle.
             cycleDatePattern: yyyyMMdd
+            includeHeaders: false ## Default by true
+            requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
+            remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade

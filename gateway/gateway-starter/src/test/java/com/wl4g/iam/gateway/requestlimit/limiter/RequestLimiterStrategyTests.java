@@ -40,7 +40,7 @@ public class RequestLimiterStrategyTests {
 
     @Test
     public void testLimiterStrategyParseFromJson() {
-        String json = "{\"privoder\":\"RedisRateLimiter\",\"includeHeaders\":true,\"burstCapacity\":100,\"replenishRate\":20,\"requestedTokens\":1}";
+        String json = "{\"provider\":\"RedisRateLimiter\",\"includeHeaders\":true,\"burstCapacity\":100,\"replenishRate\":20,\"requestedTokens\":1}";
         RequestLimiterStrategy strategy = parseJSON(json, RequestLimiterStrategy.class);
         System.out.println(strategy);
     }

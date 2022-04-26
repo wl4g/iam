@@ -143,11 +143,6 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
          * The date pattern of request quota limit calculation cycle.
          */
         private String cycleDatePattern = "yyyyMMdd";
-
-        @Override
-        public RequestLimiterPrivoder getProvider() {
-            return RequestLimiterPrivoder.RedisQuotaLimiter;
-        }
     }
 
 }

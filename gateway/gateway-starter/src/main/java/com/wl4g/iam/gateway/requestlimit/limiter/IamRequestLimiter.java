@@ -65,7 +65,7 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
         private final Class<? extends RequestLimiterStrategy> strategyClass;
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "privoder")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "provider")
     @JsonSubTypes({ @Type(value = RedisRateLimiterStrategy.class, name = "RedisRateLimiter"),
             @Type(value = RedisQuotaLimiterStrategy.class, name = "RedisQuotaLimiter"), })
     @Getter
@@ -82,7 +82,6 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
          */
         private boolean includeHeaders = true;
 
-        public abstract RequestLimiterPrivoder getProvider();
     }
 
 }

@@ -201,11 +201,6 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
          * How many tokens are requested per request?
          */
         private @Min(1) int requestedTokens = 1;
-
-        @Override
-        public RequestLimiterPrivoder getProvider() {
-            return RequestLimiterPrivoder.RedisRateLimiter;
-        }
     }
 
 }
