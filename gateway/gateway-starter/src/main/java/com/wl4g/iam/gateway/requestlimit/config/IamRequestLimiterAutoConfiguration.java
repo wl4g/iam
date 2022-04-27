@@ -46,6 +46,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.IpRangeIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
@@ -91,6 +92,11 @@ public class IamRequestLimiterAutoConfiguration {
     @Bean
     public IamKeyResolver<? extends KeyResolverStrategy> hostIamKeyResolver() {
         return new HostIamKeyResolver();
+    }
+
+    @Bean
+    public IamKeyResolver<? extends KeyResolverStrategy> ipRangeIamKeyResolver() {
+        return new IpRangeIamKeyResolver();
     }
 
     @Bean

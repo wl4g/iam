@@ -26,6 +26,7 @@ import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
+import com.wl4g.iam.gateway.fault.config.FaultAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
@@ -49,7 +50,8 @@ import reactor.core.publisher.Mono;
 @Import({ GatewayWebServerAutoConfiguration.class, IamRequestLimiterAutoConfiguration.class,
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         AuthingAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
-        ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, TrafficAutoConfiguration.class })
+        ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
+        TrafficAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
 
     @Bean

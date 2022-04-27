@@ -48,7 +48,7 @@ public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<
     Mono<String> resolve(C strategy, ServerWebExchange exchange);
 
     public static enum KeyResolverProvider {
-        HOST, PRINCIPAL, PATH, HEADER, INTERVAL
+        HOST, IPRANGE, PRINCIPAL, PATH, HEADER, INTERVAL
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "privoder")
