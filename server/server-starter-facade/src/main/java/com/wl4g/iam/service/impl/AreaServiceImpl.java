@@ -18,12 +18,15 @@ package com.wl4g.iam.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.iam.common.bean.Area;
 import com.wl4g.iam.data.AreaDao;
 import com.wl4g.iam.service.AreaService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link AreaServiceImpl}
@@ -37,10 +40,12 @@ import com.wl4g.iam.service.AreaService;
 @org.springframework.stereotype.Service
 // @com.alibaba.dubbo.config.annotation.Service(group = "areaService")
 // @org.springframework.web.bind.annotation.RestController
+@Slf4j
 public class AreaServiceImpl implements AreaService {
 
-    @Autowired
-    private AreaDao areaDao;
+    private final ThreadLocal<AtomicInteger> safeHandleCounter = ThreadLocal.withInitial(() -> new AtomicInteger(0));
+
+    private @Autowired AreaDao areaDao;
 
     @Override
     public List<Area> getAreaTree() {
@@ -54,6 +59,10 @@ public class AreaServiceImpl implements AreaService {
 
     private void handleAreaChildren(List<Area> areas, Area top) {
         for (Area area : areas) {
+            if (safeHandleCounter.get().incrementAndGet() > 10000) {
+                log.warn("WARNING: Too many lookup area loops processed more than 10000 times ! area top: {}", top);
+                return;
+            }
             if (top.getId().equals(area.getParentId())) {
                 getOrCreateChildren(top).add(area);
                 handleAreaChildren(areas, area);
