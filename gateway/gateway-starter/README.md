@@ -18,11 +18,11 @@ cd src/main/resources/cert.d/
 reported when executing `curl`: `no alternative certificate subject name matches target host name '192.168.88.3'`,
 Using the above script tool will contain `localhost,127.0.0.1` by default.
 
-## 2. For Testing
+## 2. Testing
 
 - [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html) , The `-Djavax.net.debug` options are `all|ssl|handshake|warning|...`
 
-### 2.1 Simple TLS
+### 2.1 Gateway Simple TLS
 
 - Startup IamGateway(pseudo command-line)
 
@@ -37,7 +37,7 @@ java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NONE
 curl -v -k 'https://localhost:18085/alimarket/v1/hello?response_type=json'
 ```
 
-### 2.2 Mutual TLS
+### 2.2 Gateway mTLS
 
 - Startup IamGateway(pseudo command-line)
 
@@ -53,6 +53,20 @@ curl -v \
 --cert client1.pem \
 --key client1-key.pem \
 'https://localhost:18085/alimarket/v1/hello?response_type=json' | jq
+```
+
+### 2.3 Trffic imager
+
+```bash
+# New terminal start the mock backend http server.
+python3 -m http.server -b 0.0.0.0 8888
+
+# New terminal start the mock traffic http server.
+python3 -m http.server -b 0.0.0.0 29092
+
+# 1. Send a mock request and observe that both terminals have output.
+# 2. Then stop the simulated mirror http service and observe whether the real service still has output.
+curl -v -k 'https://localhost:18085/alimarket/v1/hello?response_type=json'
 ```
 
 ## 3. Admin API

@@ -1,4 +1,4 @@
-package com.wl4g.iam.gateway.trace;
+//package com.wl4g.iam.gateway.trace;
 ///*
 // * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
 // *
@@ -53,17 +53,21 @@ package com.wl4g.iam.gateway.trace;
 //        // java.util.UUID.randomUUID().toString()).build();
 //        // return chain.filter(exchange);
 //
-////        ServerHttpRequest request = exchange.getRequest();
-////        Span span = getServerSpan(openTelemetry.getTracer("appConfig.getApplicationName()"), request);
-////        Scope scope = span.makeCurrent();
-////        exchange.getResponse().getHeaders().add("traceId", span.getSpanContext().getTraceId());
-////        span.setAttribute("params", request.getQueryParams().toString());
-////
-////        return chain.filter(exchange).doFinally((signalType) -> {
-////            scope.close();
-////            span.end();
-////        }).doOnError(span::recordException);
+//        // ServerHttpRequest request = exchange.getRequest();
+//        // Span span =
+//        // getServerSpan(openTelemetry.getTracer("appConfig.getApplicationName()"),
+//        // request);
+//        // Scope scope = span.makeCurrent();
+//        // exchange.getResponse().getHeaders().add("traceId",
+//        // span.getSpanContext().getTraceId());
+//        // span.setAttribute("params", request.getQueryParams().toString());
+//        //
+//        // return chain.filter(exchange).doFinally((signalType) -> {
+//        // scope.close();
+//        // span.end();
+//        // }).doOnError(span::recordException);
 //
+//        // TODO
 //        Span span = getClientSpan(openTelemetry.getTracer("appConfig.getApplicationName()"), exchange);
 //        Scope scope = span.makeCurrent();
 //        inject(exchange);

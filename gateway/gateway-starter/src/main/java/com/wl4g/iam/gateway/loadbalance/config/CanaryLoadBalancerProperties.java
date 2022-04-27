@@ -124,10 +124,8 @@ public class CanaryLoadBalancerProperties {
     @ToString
     public static class ProbeProperties {
 
-        /**
-         * Ping request debug enabled.
-         */
-        private boolean debug = false;
+        /** Enables wiretap debugging for Netty HttpClient. */
+        private boolean wiretap;
 
         /**
          * Ping request on initial delay seconds.

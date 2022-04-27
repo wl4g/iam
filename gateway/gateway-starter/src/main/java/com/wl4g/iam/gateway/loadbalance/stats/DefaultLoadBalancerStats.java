@@ -289,7 +289,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
         log.debug("LoadBalancer stats probe to {}->'{}' ...", status, pingUri);
         if (!isBlank(probe.getExpectBody())) {
             return HttpClient.create()
-                    .wiretap(probe.isDebug())
+                    .wiretap(probe.isWiretap())
                     .get()
                     .uri(pingUri)
                     .responseContent()
@@ -316,7 +316,7 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
                     });
         }
         return HttpClient.create()
-                .wiretap(probe.isDebug())
+                .wiretap(probe.isWiretap())
                 .get()
                 .uri(pingUri)
                 .responseConnection((res, connection) -> Mono.just(res))
