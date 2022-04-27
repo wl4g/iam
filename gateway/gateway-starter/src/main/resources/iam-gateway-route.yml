@@ -228,9 +228,9 @@ spring:
                 statusCodes:
                   - 500
                   - NOT_FOUND
-            #- name: TrafficImager
-            #  args:
-            #    targetUris: ["http://localhost:8888/"]
+            - name: TrafficImager
+              args:
+                targetUris: ["http://localhost:8888/"]
             - name: CanaryLoadBalancer
               args:
                 choose:
