@@ -157,7 +157,7 @@ public class TrafficImagerFilterFactory extends AbstractGatewayFilterFactory<Tra
                 nettyOutbound.withConnection(connection -> log.trace("Image request outbound route: {}, inbound: {}",
                         connection.channel().id().asShortText(), exchange.getLogPrefix()));
             }
-            // TODO use copy read!!!
+            // TODO use copy read???
             return nettyOutbound.send(request.getBody().map(this::getByteBuf));
         }).responseConnection((res, connection) -> {
             // Defer committing the response until all route filters have
@@ -225,7 +225,6 @@ public class TrafficImagerFilterFactory extends AbstractGatewayFilterFactory<Tra
         return headersFilters;
     }
 
-    // TODO use copy read!!!
     private ByteBuf getByteBuf(DataBuffer dataBuffer) {
         if (dataBuffer instanceof NettyDataBuffer) {
             NettyDataBuffer buffer = (NettyDataBuffer) dataBuffer;

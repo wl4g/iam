@@ -101,7 +101,8 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new ChooseProperties(), config.getChoose(), loadBalancerConfig.getDefaultChoose());
+            ConfigBeanUtils.configureWithDefault(new ChooseProperties(), config.getChoose(),
+                    loadBalancerConfig.getDefaultChoose());
             ConfigBeanUtils.configureWithDefault(new ProbeProperties(), loadBalancerConfig.getDefaultProbe(),
                     loadBalancerConfig.getDefaultProbe());
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -168,7 +169,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
          */
         @Override
         public int getOrder() {
-            return RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 10;
+            return ORDER_CANARY_LOADBALANCER_FILTER;
         }
 
         @Override
@@ -239,5 +240,6 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     }
 
     public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadBalancer";
+    public static final int ORDER_CANARY_LOADBALANCER_FILTER = RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 100;
 
 }

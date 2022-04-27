@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.trace.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -88,6 +89,42 @@ public class TraceProperties {
          * Span data addition request headers.
          */
         private Map<String, String> headers = new HashMap<>();
+
+        // TODO Confirm whether to use otlp system property or need to customize
+        // properties configuration??
+
+        /**
+         * Otlp all system properties.
+         * 
+         * see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler
+         * see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#span-limits
+         * see:https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#batch-span-processor
+         */
+        private Properties props = new Properties() {
+            private static final long serialVersionUID = -3373063731653517759L;
+            {
+                put("otlp.resource.attributes", "service.name=cn-south1-a1-iam-gateway,service.namespace=iam-gateway");
+                // zipkin|jaeger
+                put("otlp.traces.exporter", "jaeger");
+                // https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler
+                // always_on|always_off|traceidratio|parentbased_always_on|parentbased_always_off|parentbased_traceidratio
+                put("otlp.traces.sampler", "parentbased_always_on");
+                put("otlp.traces.sampler.arg", "0.99");
+                // https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#span-limits
+                put("otlp.span.attribute.count.limit", "128");
+                put("otlp.span.event.count.limit", "128");
+                put("otlp.span.link.count.limit", "128");
+                // https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#batch-span-processor
+                put("otlp.bsp.schedule.delay", "5000");
+                put("otlp.bsp.max.queue.size", "2048");
+                put("otlp.bsp.max.export.batch.size", "512");
+                put("otlp.bsp.export.timeout", "30000");
+                put("otlp.exporter.jaeger.endpoint", "http://localhost:14250");
+                put("otlp.exporter.jaeger.timeout", "10000");
+                put("otlp.exporter.zipkin.endpoint", "http://localhost:9411/api/v2/spans");
+                put("otlp.exporter.zipkin.timeout", "10000");
+            }
+        };
 
     }
 
