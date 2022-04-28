@@ -68,9 +68,10 @@ public class DyeingLoggingProperties {
     private String setDyeingLogStateRequestHeader = "X-Iam-Gateway-Log-Dyeing-State";
 
     /**
-     * Preferred to enable print logs match SPEL match expression.
+     * Preferred to enable print logs match SPEL match expression. Default by
+     * '#{true}', which means never match.
      */
-    private String preferredOpenMatchExpression;
+    private String preferredOpenMatchExpression = "#{true}";
 
     /**
      * Preferred to enable print logs match rule definitions.

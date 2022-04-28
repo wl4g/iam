@@ -54,7 +54,7 @@ public class CanaryLoadBalancerProperties {
     private String canaryDiscoveryServiceLabelPrefix = DEFAULT_LB_CANARY_LABEL_KEY;
 
     /**
-     * SPEL expressions that match canary requests.
+     * The SPEL expressions that match canary requests.
      */
     private String canaryChooseExpression;
 

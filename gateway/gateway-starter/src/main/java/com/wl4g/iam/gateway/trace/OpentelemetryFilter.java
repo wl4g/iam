@@ -16,10 +16,14 @@
 package com.wl4g.iam.gateway.trace;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -28,11 +32,15 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
+import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -42,6 +50,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -51,14 +60,17 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
+@Slf4j
 public class OpentelemetryFilter implements GlobalFilter, Ordered {
 
     private final TraceProperties traceConfig;
     private final OpenTelemetry openTelemetry;
+    private final SpelRequestMatcher requestMatcher;
 
     public OpentelemetryFilter(TraceProperties traceConfig, OpenTelemetry openTelemetry) {
         this.traceConfig = notNullOf(traceConfig, "traceConfig");
         this.openTelemetry = notNullOf(openTelemetry, "openTelemetry");
+        this.requestMatcher = new SpelRequestMatcher(traceConfig.getPreferrdMatchRuleDefinitions());
     }
 
     /**
@@ -71,15 +83,22 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (!traceConfig.isEnabled()) {
+        if (!isFilterTracing(exchange)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Not to meet the conditional rule to enable tracing. - {}", exchange.getRequest().getURI());
+            }
             return chain.filter(exchange);
         }
 
         Tracer tracer = openTelemetry.getTracer(traceConfig.getServiceName());
         return buildTraceSpan(tracer, exchange).flatMap(span -> {
             ServerHttpRequest request = exchange.getRequest();
-            exchange.getResponse().getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME,
-                    span.getSpanContext().getTraceId());
+            ServerHttpResponse response = exchange.getResponse();
+            String traceId = span.getSpanContext().getTraceId();
+
+            request.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId);
+            response.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId);
+
             span.setAttribute(TRACE_TAG_PARAMETERS, request.getQueryParams().toString());
 
             Scope scope = span.makeCurrent();
@@ -89,6 +108,27 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
                 span.end();
             }).doOnError(span::recordException);
         });
+    }
+
+    /**
+     * Check if enable tracking needs to be filtered.
+     * 
+     * @param exchange
+     * @return
+     */
+    protected boolean isFilterTracing(ServerWebExchange exchange) {
+        if (!traceConfig.isEnabled()) {
+            return false;
+        }
+        // Gets current request route.
+        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+
+        // Add routeId temporary predicates.
+        Map<String, Supplier<Predicate<String>>> routeIdTmpPredicateSuppliers = singletonMap(VAR_ROUTE_ID,
+                () -> Predicates.equalTo(route.getId()));
+
+        return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                traceConfig.getPreferredOpenMatchExpression(), routeIdTmpPredicateSuppliers);
     }
 
     protected void inject(ServerWebExchange exchange) {
@@ -133,6 +173,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
         }
     };
 
+    public static final String VAR_ROUTE_ID = "routeId";
     public static final String TRACE_TAG_ROUTEID = "routeId";
     public static final String TRACE_TAG_PRINCIPAL = "principal";
     public static final String TRACE_TAG_PARAMETERS = "parameters";

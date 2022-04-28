@@ -137,8 +137,7 @@ public class TrafficImagerFilterFactory extends AbstractGatewayFilterFactory<Tra
         HttpMethod method = HttpMethod.valueOf(request.getMethodValue());
 
         HttpHeaders filtered = filterRequest(getHeadersFilters(), exchange);
-
-        final DefaultHttpHeaders httpHeaders = new DefaultHttpHeaders();
+        DefaultHttpHeaders httpHeaders = new DefaultHttpHeaders();
         filtered.forEach(httpHeaders::set);
 
         boolean preserveHost = exchange.getAttributeOrDefault(PRESERVE_HOST_HEADER_ATTRIBUTE, false);
@@ -157,7 +156,7 @@ public class TrafficImagerFilterFactory extends AbstractGatewayFilterFactory<Tra
                 nettyOutbound.withConnection(connection -> log.trace("Image request outbound route: {}, inbound: {}",
                         connection.channel().id().asShortText(), exchange.getLogPrefix()));
             }
-            // TODO use copy read???
+            // use copy read???
             return nettyOutbound.send(request.getBody().map(this::getByteBuf));
         }).responseConnection((res, connection) -> {
             // Defer committing the response until all route filters have

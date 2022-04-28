@@ -15,7 +15,9 @@
  */
 package com.wl4g.iam.gateway.trace.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.Max;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +48,17 @@ import lombok.ToString;
 public class TraceProperties {
 
     private boolean enabled = true;
+
+    /**
+     * Preferred to enable tracing samples match SPEL match expression. Default
+     * by '${false}', which means never no match.
+     */
+    private String preferredOpenMatchExpression = "#{true}";
+
+    /**
+     * Preferred to enable tracing samples match rule definitions.
+     */
+    private List<MatchHttpRequestRule> preferrdMatchRuleDefinitions = new ArrayList<>();
 
     @Value("${spring.application.name:iam-gateway}")
     private @NotBlank String serviceName;
@@ -127,9 +141,27 @@ public class TraceProperties {
     @ToString
     @Validated
     public static class BSPProperties {
+
+        /**
+         * The interval, in milliseconds, between two consecutive exports.
+         * Default is 5000.
+         */
         private long scheduleDelay = 5000;
+
+        /**
+         * The maximum queue size. Default is 2048.
+         */
         private int maxQueueSize = 2048;
+
+        /**
+         * The maximum batch size. Default is 512.
+         */
         private int maxExportBatchSize = 512;
+
+        /**
+         * The maximum allowed time, in milliseconds, to export data. Default is
+         * 30000.
+         */
         private long exportTimeout = 30000;
     }
 
@@ -173,6 +205,9 @@ public class TraceProperties {
         private int maxNumAttributesPerLink = 128;
     }
 
+    /**
+     * @see https://github.com/open-telemetry/opentelemetry-java/tree/v1.3.0/sdk-extensions/autoconfigure#sampler
+     */
     @Getter
     @Setter
     @ToString
@@ -181,6 +216,9 @@ public class TraceProperties {
 
         private SamplerType type = SamplerType.TRACEIDRATIO;
 
+        /**
+         * The traceId ratio based sampler ratio. range of [0.0-1.0]
+         */
         private @Max(1) @Min(0) double radio = 1d;
     }
 

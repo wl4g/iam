@@ -242,6 +242,7 @@ spring:
         canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
         # TODO
         #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
+        ## The SPEL expressions that match canary requests.
         canaryChooseExpression: '#{$rule.test($request)}'
         canaryMatchRuleDefinitions:
           ## TODO 
@@ -298,6 +299,29 @@ spring:
           #expect-body: ## Default by ''
       trace:
         enabled: true ## Default by true
+        ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
+        preferredOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
+        ## Preferred to enable tracing samples match rule definitions.
+        preferrdMatchRuleDefinitions:
+          - name: defaultTraceHeader
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## Ant path pattern.
+            header:
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Trace
+              value: y
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
         serviceName: ${spring.application.name}
         exporter:
           provider: jaeger ## Default by jaeger, Options(otlp|jaeger|zipkin)
@@ -310,12 +334,18 @@ spring:
           zipkin:
             endpoint: http://localhost:9411/api/v2/spans
         samper:
+          ## The samper type, default by traceidratio, Options(always_on|parentbased_always_off|parentbased_always_on|parentbased_traceidratio|traceidratio)
           type: traceidratio
-          ratio: 1d
+          ## The traceId ratio based sampler ratio. range of [0.0-1.0]
+          ratio: 1.0d
         bsp:
+          ## The interval, in milliseconds, between two consecutive exports. Default is 5000ms.
           scheduleDelay: 5000
+          ## The maximum queue size. Default is 2048.
           maxQueueSize: 2048
+          ## The maximum batch size. Default is 512.
           maxExportBatchSize: 512
+          ## The maximum allowed time, in milliseconds, to export data. Default is 30000ms.
           exportTimeout: 30000
         spanLimits:
           ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumEvents
@@ -339,7 +369,8 @@ spring:
         verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
         ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
         setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
-        ## Preferred to enable print logs match SPEL match expression.
+        ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
         preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
         ## Preferred to enable print logs match rules definition.
         preferrdMatchRuleDefinitions:

@@ -17,7 +17,7 @@ package com.wl4g.iam.gateway.logging;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
-import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
@@ -33,23 +33,29 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.TypeConverts;
-import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -59,9 +65,9 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
+@Slf4j
 public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Ordered {
 
-    protected final SmartLogger log = getLogger(getClass());
     protected final TraceProperties traceConfig;
     protected final DyeingLoggingProperties loggingConfig;
     protected final SpelRequestMatcher requestMatcher;
@@ -82,14 +88,17 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // Check if filtering flight logging is enabled.
+        if (!isFilterLogging(exchange)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Not to meet the conditional rule to enable logging. - {}", exchange.getRequest().getURI());
+            }
+            return chain.filter(exchange);
+        }
         exchange.getAttributes().put(KEY_START_TIME, currentTimeMillis());
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
 
-        // Check if filtering flight logging is enabled.
-        if (!isFilterLogging(request, headers)) {
-            return chain.filter(exchange);
-        }
         // Determine dyeing logs level.
         int verboseLevel = determineRequestVerboseLevel(exchange);
         if (verboseLevel <= 0) { // is disabled?
@@ -101,7 +110,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
         // Sets the state of the dyed log request to notify the back-end
         // services to print the log for the current request.
-        headers.set(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId);
+        request.mutate().header(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId).build();
 
         return doFilterInternal(exchange, chain, headers, traceId, requestMethod, requestUri);
     }
@@ -115,15 +124,24 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
             String requestUri);
 
     /**
-     * Check if filtering is required and logging logs.
+     * Check if enable print logs needs to be filtered
      * 
-     * @param request
-     * @param headers
+     * @param exchange
      * @return
      */
-    protected boolean isFilterLogging(ServerHttpRequest request, HttpHeaders headers) {
-        return loggingConfig.isEnabled()
-                && requestMatcher.matches(new ReactiveRequestExtractor(request), loggingConfig.getPreferredOpenMatchExpression());
+    protected boolean isFilterLogging(ServerWebExchange exchange) {
+        if (!loggingConfig.isEnabled()) {
+            return false;
+        }
+        // Gets current request route.
+        Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+
+        // Add routeId temporary predicates.
+        Map<String, Supplier<Predicate<String>>> routeIdTmpPredicateSuppliers = singletonMap(VAR_ROUTE_ID,
+                () -> Predicates.equalTo(route.getId()));
+
+        return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                loggingConfig.getPreferredOpenMatchExpression(), routeIdTmpPredicateSuppliers);
     }
 
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {
@@ -219,9 +237,10 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String LOG_REQUEST_BEGIN = "\n--- <IAM Gateway Request> -----\n:: Headers ::\n";
     public static final String LOG_REQUEST_BODY = ":: Body    ::\n{}";
     public static final String LOG_REQUEST_END = "\n------------------------------\n";
-    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway LimitedResult> ---\n:: Headers ::\n";
+    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway Response> ---\n:: Headers ::\n";
     public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
     public static final String LOG_RESPONSE_END = "\n------------------------------\n";
+    public static final String VAR_ROUTE_ID = "routeId";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
     public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";
     public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;

@@ -37,6 +37,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -47,6 +48,7 @@ import reactor.core.publisher.Mono;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
+@Slf4j
 public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
     public RequestDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
