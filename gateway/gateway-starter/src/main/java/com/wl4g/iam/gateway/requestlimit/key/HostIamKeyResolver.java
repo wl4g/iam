@@ -15,12 +15,8 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -34,7 +30,7 @@ public class HostIamKeyResolver extends AbstractIamKeyResolver<HostIamKeyResolve
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.HOST;
+        return KeyResolverProvider.Host;
     }
 
     @Override
@@ -42,15 +38,7 @@ public class HostIamKeyResolver extends AbstractIamKeyResolver<HostIamKeyResolve
         return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
     }
 
-    @Getter
-    @Setter
-    @ToString
-    @Validated
     public static class HostKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
-        @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.HOST;
-        }
     }
 
 }

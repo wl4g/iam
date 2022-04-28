@@ -47,7 +47,7 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.HEADER;
+        return KeyResolverProvider.Header;
     }
 
     @Override
@@ -87,14 +87,9 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
         private List<String> headerNames = DEFAULT_HEADER_NAMES;
 
         @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.HEADER;
-        }
-
-        @Override
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
             List<String> defaultHeaderNames = config.getDefaultKeyResolver().getHeader().getHeaderNames();
-            if (!isEqualCollection(defaultHeaderNames, DEFAULT_HEADER_NAMES)) {
+            if (!isEqualCollection(defaultHeaderNames, getHeaderNames())) {
                 setHeaderNames(defaultHeaderNames);
             }
         }

@@ -39,7 +39,7 @@ public class IntervalIamKeyResolver extends AbstractIamKeyResolver<IntervalIamKe
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.INTERVAL;
+        return KeyResolverProvider.Interval;
     }
 
     @Override
@@ -71,11 +71,6 @@ public class IntervalIamKeyResolver extends AbstractIamKeyResolver<IntervalIamKe
          * date interval.
          */
         private String cycleDatePattern = "yyyyMMdd";
-
-        @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.INTERVAL;
-        }
     }
 
 }

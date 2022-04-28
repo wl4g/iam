@@ -16,13 +16,15 @@
 
 package com.wl4g.iam.gateway.requestlimit;
 
-import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -76,8 +78,7 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @Override
     public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
-        // TODO use based yaml tags parse?
-        KeyResolverStrategy keyStrategy = config.parse().getKeyStrategy();
+        KeyResolverStrategy keyStrategy = config.getKeyResolver().build();
         applyDefaultToConfig(config, keyStrategy);
         return new IamRequestLimiterGatewayFilter(config, keyStrategy, getKeyResolver(config), getRequestLimiter(config));
     }
@@ -97,12 +98,11 @@ public class IamRequestLimiterGatewayFilterFactory
 
     @SuppressWarnings("unchecked")
     private IamKeyResolver<KeyResolverStrategy> getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter
-                .forOperator(config.parse().getKeyStrategy().getProvider());
+        return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter.forOperator(config.getKeyResolver().getProvider());
     }
 
     private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
-        return requestLimiterAdapter.forOperator(config.parse().getLimiter().getProvider());
+        return requestLimiterAdapter.forOperator(config.getLimiter().getProvider());
     }
 
     @Getter
@@ -129,27 +129,38 @@ public class IamRequestLimiterGatewayFilterFactory
         private String statusCode;
 
         /**
-         * The key resolver strategy JSON configuration.
+         * The key resolver strategy properties.
          */
-        private String keyResolverJson;
+        private KeyResolverStrategyConfig keyResolver = new KeyResolverStrategyConfig();
 
         /**
          * The request limiter strategy JSON configuration.
          */
         private RequestLimiterStrategyConfig limiter = new RequestLimiterStrategyConfig();
 
-        //
-        // Temporary fields.
-        //
+        @Getter
+        @Setter
+        @ToString
+        public static class KeyResolverStrategyConfig extends KeyResolverStrategy {
 
-        @Setter(lombok.AccessLevel.NONE)
-        private KeyResolverStrategy keyStrategy;
+            private KeyResolverProvider provider = KeyResolverProvider.Host;
 
-        public Config parse() {
-            if (isNull(keyStrategy)) {
-                this.keyStrategy = parseJSON(getKeyResolverJson(), KeyResolverStrategy.class);
+            /**
+             * All sub types keyResolver strategy redundancy attributes
+             * properties.
+             */
+            private Map<String, Object> properties = new HashMap<>();
+
+            @Override
+            public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
+                // Ignore
             }
-            return this;
+
+            @SuppressWarnings("unchecked")
+            public <T extends KeyResolverStrategy> T build() {
+                Binder binder = new Binder(new MapConfigurationPropertySource(getProperties()));
+                return (T) binder.bindOrCreate("", getProvider().getStrategyClass());
+            }
         }
 
         @Getter

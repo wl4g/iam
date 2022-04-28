@@ -34,7 +34,7 @@ public class IpRangeIamKeyResolver extends AbstractIamKeyResolver<IpRangeIamKeyR
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.IPRANGE;
+        return KeyResolverProvider.IpRange;
     }
 
     @Override
@@ -47,10 +47,6 @@ public class IpRangeIamKeyResolver extends AbstractIamKeyResolver<IpRangeIamKeyR
     @ToString
     @Validated
     public static class IpRangeKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
-        @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.IPRANGE;
-        }
     }
 
 }

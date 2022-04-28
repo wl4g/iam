@@ -34,7 +34,7 @@ public class PathIamKeyResolver extends AbstractIamKeyResolver<PathIamKeyResolve
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.PATH;
+        return KeyResolverProvider.Path;
     }
 
     @Override
@@ -47,11 +47,6 @@ public class PathIamKeyResolver extends AbstractIamKeyResolver<PathIamKeyResolve
     @ToString
     @Validated
     public static class PathKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
-
-        @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.PATH;
-        }
     }
 
 }

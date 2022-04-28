@@ -18,25 +18,26 @@ package com.wl4g.iam.gateway.requestlimit.key;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link PrincipalNameIamKeyResolver}
+ * {@link PrincipalIamKeyResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-20 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.cloud.gateway.filter.ratelimit.PrincipalNameKeyResolver}
  */
-public class PrincipalNameIamKeyResolver
-        extends AbstractIamKeyResolver<PrincipalNameIamKeyResolver.PrincipalKeyResolverStrategy> {
+public class PrincipalIamKeyResolver extends AbstractIamKeyResolver<PrincipalIamKeyResolver.PrincipalKeyResolverStrategy> {
 
     @Override
     public KeyResolverProvider kind() {
-        return KeyResolverProvider.PRINCIPAL;
+        return KeyResolverProvider.Principal;
     }
 
     /**
@@ -52,10 +53,9 @@ public class PrincipalNameIamKeyResolver
     @ToString
     @Validated
     public static class PrincipalKeyResolverStrategy extends IamKeyResolver.KeyResolverStrategy {
-
         @Override
-        public KeyResolverProvider getProvider() {
-            return KeyResolverProvider.PRINCIPAL;
+        public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
+            // Ignore
         }
     }
 

@@ -28,8 +28,9 @@ import org.springframework.validation.annotation.Validated;
 import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver.HeaderKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver.HostKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver.IntervalKeyResolverStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.IpRangeIamKeyResolver.IpRangeKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver.PathKeyResolverStrategy;
-import com.wl4g.iam.gateway.requestlimit.key.PrincipalNameIamKeyResolver;
+import com.wl4g.iam.gateway.requestlimit.key.PrincipalIamKeyResolver.PrincipalKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 
@@ -118,7 +119,12 @@ public class IamRequestLimiterProperties {
         /**
          * The key resolver based on request principal.
          */
-        private PrincipalNameIamKeyResolver principal = new PrincipalNameIamKeyResolver();
+        private PrincipalKeyResolverStrategy principal = new PrincipalKeyResolverStrategy();
+
+        /**
+         * The key resolver based on request client IPs.
+         */
+        private IpRangeKeyResolverStrategy ipRange = new IpRangeKeyResolverStrategy();
 
     }
 
