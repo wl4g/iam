@@ -292,9 +292,3 @@ spring:
                 #  #key-store-provider:
                 #  #trusted-x509-certificates:
                 #  #use-insecure-trust-manager: true ## Default by false
-        - id: no-secure-forms-httpbin-service-route
-          uri: http://www.httpbin.org/
-          predicates:
-            - Path=/httpbin/nosecure/forms/**
-          filters:
-            - RewritePath=/httpbin/nosecure/forms/(?<segment>.*),/forms/$\{segment}

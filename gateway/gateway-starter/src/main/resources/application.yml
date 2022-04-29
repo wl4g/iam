@@ -11,6 +11,9 @@
 ## #### IAM Gateway Primary configuration. ####
 #
 spring:
+  ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
+  ## but the lower version is invalid. see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+  #codec.max-in-memory-size: 102400000
   cloud:
     ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
     circuitbreaker:

@@ -20,6 +20,7 @@ import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
 import static org.springframework.http.MediaType.APPLICATION_CBOR;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -190,7 +191,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @return
      */
     protected boolean isUploadStreamMedia(MediaType mediaType) {
-        return mediaType.isCompatibleWith(MULTIPART_FORM_DATA);
+        return nonNull(mediaType) && mediaType.isCompatibleWith(MULTIPART_FORM_DATA);
     }
 
     /**
@@ -200,7 +201,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @return
      */
     protected boolean isDownloadStreamMedia(MediaType mediaType) {
-        return mediaType.isCompatibleWith(APPLICATION_OCTET_STREAM);
+        return nonNull(mediaType) && mediaType.isCompatibleWith(APPLICATION_OCTET_STREAM);
     }
 
     /**

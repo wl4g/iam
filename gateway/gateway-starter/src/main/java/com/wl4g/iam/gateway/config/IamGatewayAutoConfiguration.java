@@ -65,6 +65,15 @@ public class IamGatewayAutoConfiguration {
     }
 
     // @Bean
+    // public WebClient webClient() {
+    // final int maxMemorySize = 256 * 1024 * 1024;
+    // final ExchangeStrategies strategies = ExchangeStrategies.builder()
+    // .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(maxMemorySize))
+    // .build();
+    // return WebClient.builder().exchangeStrategies(strategies).build();
+    // }
+
+    // @Bean
     // public WebFilter corsWebFilter() {
     // return (ServerWebExchange ctx, WebFilterChain chain) -> {
     // ServerHttpRequest request = ctx.getRequest();
