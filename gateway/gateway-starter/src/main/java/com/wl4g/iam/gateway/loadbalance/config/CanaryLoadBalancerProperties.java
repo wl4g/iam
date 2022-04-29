@@ -171,6 +171,6 @@ public class CanaryLoadBalancerProperties {
 
     }
 
-    public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iam-Gateway-Canary-Label";
+    public static final String DEFAULT_LB_CANARY_LABEL_KEY = "Iscg-Canary-Label";
 
 }

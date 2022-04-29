@@ -223,6 +223,26 @@ spring:
                 statusCodes:
                   - 500
                   - NOT_FOUND
+            - name: CanaryLoadBalancer
+              args:
+                choose:
+                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+                  timeout-ms: 5_000 ## Default by 5_000ms
+                  path: /healthz ## Default by '/healthz'
+                  expect-statuses: [200,404] ## Default by 200
+        - id: secure-httpbin-service-route
+          uri: https://www.httpbin.org/
+          predicates:
+            - Path=/httpbin/secure/**
+          filters:
+            - RewritePath=/httpbin/secure/(?<segment>.*),/$\{segment}
+        - id: no-secure-httpbin-service-route
+          uri: http://www.httpbin.org/
+          predicates:
+            - Path=/httpbin/nosecure/**
+          filters:
+            - RewritePath=/httpbin/nosecure/(?<segment>.*),/$\{segment}
             - name: TrafficReplicator
               ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
               args:
@@ -260,19 +280,3 @@ spring:
                 #  #key-store-provider:
                 #  #trusted-x509-certificates:
                 #  #use-insecure-trust-manager: true ## Default by false
-            - name: CanaryLoadBalancer
-              args:
-                choose:
-                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
-                  timeout-ms: 5_000 ## Default by 5_000ms
-                  path: /healthz ## Default by '/healthz'
-                  expect-statuses: [200,404] ## Default by 200
-        #- id: portal
-        #  uri: https://www.httpbin.org/
-        #  predicates:
-        #    - Path=/**
-        #  filters:
-        #    #- TokenRelay
-        #    - TokenRelayRefresh
-        #    - RemoveRequestHeader=Cookie, Set-Cookie

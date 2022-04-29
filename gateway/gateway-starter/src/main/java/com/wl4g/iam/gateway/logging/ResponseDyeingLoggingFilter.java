@@ -39,7 +39,6 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
-import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +55,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
-    public ResponseDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
-        super(traceConfig, loggingConfig);
+    public ResponseDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+        super(loggingConfig);
     }
 
     @Override

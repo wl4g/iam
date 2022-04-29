@@ -240,7 +240,7 @@ spring:
           cancelRunningFuture: true ## Default by true
       loadbalancer:
         enabled: true ## Default by true
-        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
+        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iscg-Canary-Label'
         # TODO
         #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
         ## The SPEL expressions that match canary requests.
@@ -408,9 +408,9 @@ spring:
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         defaultVerboseLevel: 7
         ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
-        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iscg-Log-Level'
         ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
-        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
+        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iscg-Log-Dyeing-State'
         ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
         preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'

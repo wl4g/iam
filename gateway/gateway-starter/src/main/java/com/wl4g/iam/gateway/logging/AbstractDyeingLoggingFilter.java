@@ -49,7 +49,6 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
-import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
@@ -68,12 +67,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Ordered {
 
-    protected final TraceProperties traceConfig;
     protected final DyeingLoggingProperties loggingConfig;
     protected final SpelRequestMatcher requestMatcher;
 
-    public AbstractDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
-        this.traceConfig = notNullOf(traceConfig, "traceConfig");
+    public AbstractDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
         this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferrdMatchRuleDefinitions());
     }

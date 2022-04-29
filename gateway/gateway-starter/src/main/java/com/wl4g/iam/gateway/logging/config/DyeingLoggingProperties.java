@@ -58,14 +58,14 @@ public class DyeingLoggingProperties {
      * only for the current request, This value takes precedence over
      * {@link #defaultVerboseLevel}
      */
-    private String verboseLevelRequestHeader = "X-Iam-Gateway-Log-Level";
+    private String verboseLevelRequestHeader = "X-Iscg-Log-Level";
 
     /**
      * Set the status header name of the dyed log request, which is used to
      * notify the back-end services to enable log printing for the current
      * request.
      */
-    private String setDyeingLogStateRequestHeader = "X-Iam-Gateway-Log-Dyeing-State";
+    private String setDyeingLogStateRequestHeader = "X-Iscg-Log-Dyeing-State";
 
     /**
      * Preferred to enable print logs match SPEL match expression. Default by

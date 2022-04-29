@@ -34,7 +34,7 @@ java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NONE
 - Clients for `curl` testing
 
 ```bash
-curl -v -k 'https://localhost:18085/alimarket/v1/hello?response_type=json'
+curl -v -k 'https://localhost:18085/httpbin/secure/get'
 ```
 
 ### 2.2 Gateway mTLS
@@ -52,21 +52,26 @@ curl -v \
 --cacert ca.pem \
 --cert client1.pem \
 --key client1-key.pem \
-'https://localhost:18085/alimarket/v1/hello?response_type=json' | jq
+'https://localhost:18085/httpbin/secure/get' | jq
 ```
 
-### 2.3 Trffic imager
+### 2.3 Traffic replication
 
 ```bash
-# New terminal start the mock backend http server.
+# Mock actual upstream http server.
 python3 -m http.server -b 0.0.0.0 8888
 
-# New terminal start the mock traffic http server.
-python3 -m http.server -b 0.0.0.0 29092
+# Mock traffic mirror upstream http server. see: iam-gateway-route.yaml#secure-httpbin-service-route
+# Online by default: http://httpbin.org/
+# [Optional] You can also use docker to local build an httpbin server.
+#docker run -d --name=httpbin -p 8889:80 kennethreitz/httpbin
 
 # 1. Send a mock request and observe that both terminals have output.
-# 2. Then stop the simulated mirror http service and observe whether the real service still has output.
-curl -v -k 'https://localhost:18085/alimarket/v1/hello?response_type=json'
+# 2. Then observe the output of the simulated mirror http server, and the response of the simulated real http server.
+
+curl -vsSkL -XGET -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' 'http://localhost:18085/httpbin/nosecure/get'
+
+curl -vsSkL -XPOST -H 'Content-Type: application/json' -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' -d '{"name":"jack"}' 'http://localhost:18085/httpbin/nosecure/post'
 ```
 
 ## 3. Admin API

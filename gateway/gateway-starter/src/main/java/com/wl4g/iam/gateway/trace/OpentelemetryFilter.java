@@ -97,7 +97,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
             ServerHttpResponse response = exchange.getResponse();
             String traceId = span.getSpanContext().getTraceId();
 
-            request.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId);
+            request.mutate().header(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId).build();
             response.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId);
 
             span.setAttribute(TRACE_TAG_PARAMETERS, request.getQueryParams().toString());

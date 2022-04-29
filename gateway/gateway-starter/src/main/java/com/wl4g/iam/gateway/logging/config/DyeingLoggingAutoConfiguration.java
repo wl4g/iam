@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter;
 import com.wl4g.iam.gateway.logging.ResponseDyeingLoggingFilter;
-import com.wl4g.iam.gateway.trace.config.TraceProperties;
 
 /**
  * {@link DyeingLoggingAutoConfiguration}
@@ -40,13 +39,13 @@ public class DyeingLoggingAutoConfiguration {
     }
 
     @Bean
-    public RequestDyeingLoggingFilter requestDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
-        return new RequestDyeingLoggingFilter(traceConfig, loggingConfig);
+    public RequestDyeingLoggingFilter requestDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+        return new RequestDyeingLoggingFilter(loggingConfig);
     }
 
     @Bean
-    public ResponseDyeingLoggingFilter responseDyeingLoggingFilter(TraceProperties traceConfig, DyeingLoggingProperties loggingConfig) {
-        return new ResponseDyeingLoggingFilter(traceConfig, loggingConfig);
+    public ResponseDyeingLoggingFilter responseDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+        return new ResponseDyeingLoggingFilter(loggingConfig);
     }
 
 }

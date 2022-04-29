@@ -174,6 +174,8 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
                             connection.channel().id().asShortText(), exchange.getLogPrefix()));
                 }
                 // TODO use copy read???
+                // TODO use copy read???
+                // TODO use copy read???
                 return nettyOutbound.send(request.getBody().map(this::getByteBuf));
             }).responseConnection((res, connection) -> {
                 //
