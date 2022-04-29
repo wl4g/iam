@@ -26,6 +26,8 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_XML;
 import static org.springframework.http.MediaType.APPLICATION_RSS_XML;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_MARKDOWN;
@@ -169,7 +171,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @param mediaType
      * @return
      */
-    protected boolean hasBody(MediaType mediaType) {
+    protected boolean isCompatibleWithPlainBody(MediaType mediaType) {
         if (isNull(mediaType)) {
             return false;
         }
@@ -179,6 +181,26 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the media type is binary, i.e. file upload.
+     * 
+     * @param mediaType
+     * @return
+     */
+    protected boolean isUploadStreamMedia(MediaType mediaType) {
+        return mediaType.isCompatibleWith(MULTIPART_FORM_DATA);
+    }
+
+    /**
+     * Check if the media type is binary, i.e. file download.
+     * 
+     * @param mediaType
+     * @return
+     */
+    protected boolean isDownloadStreamMedia(MediaType mediaType) {
+        return mediaType.isCompatibleWith(APPLICATION_OCTET_STREAM);
     }
 
     /**
@@ -232,12 +254,12 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         }
     });
 
-    public static final String LOG_REQUEST_BEGIN = "\n--- <IAM Gateway Request> -----\n:: Headers ::\n";
-    public static final String LOG_REQUEST_BODY = ":: Body    ::\n{}";
-    public static final String LOG_REQUEST_END = "\n------------------------------\n";
-    public static final String LOG_RESPONSE_BEGIN = "\n--- <IAM Gateway Response> ---\n:: Headers ::\n";
-    public static final String LOG_RESPONSE_BODY = ":: Body    ::\n{}";
-    public static final String LOG_RESPONSE_END = "\n------------------------------\n";
+    public static final String LOG_REQUEST_BEGIN = "\n--- <Iscg Request> -------\n";
+    public static final String LOG_REQUEST_BODY = "\\r\\n\n{}";
+    public static final String LOG_REQUEST_END = "\nEOF ----------------------\n";
+    public static final String LOG_RESPONSE_BEGIN = "\n--- <Iscg Response> ------\n";
+    public static final String LOG_RESPONSE_BODY = "\\r\\n\n{}";
+    public static final String LOG_RESPONSE_END = "\nEOF ----------------------\n";
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
     public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";

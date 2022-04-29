@@ -116,11 +116,21 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             });
         }
         // When the request has no body, print the end flag directly.
-        boolean logReqBody = hasBody(headers.getContentType());
-        if (!logReqBody) {
-            requestLog.append(LOG_REQUEST_END);
-            log.info(requestLog.toString(), requestLogArgs.toArray());
+        boolean processBodyIfNeed = isCompatibleWithPlainBody(headers.getContentType());
+        if (!processBodyIfNeed) {
+            // If it is a file upload, direct printing does not display binary.
+            if (isUploadStreamMedia(headers.getContentType())) {
+                processBodyIfNeed = false;
+                requestLog.append(LOG_REQUEST_BODY);
+                requestLog.append(LOG_REQUEST_END);
+                requestLogArgs.add("[Upload Binary Data] ...");
+                log.info(requestLog.toString(), requestLogArgs.toArray());
+            } else {
+                requestLog.append(LOG_REQUEST_END);
+                log.info(requestLog.toString(), requestLogArgs.toArray());
+            }
         }
+        final boolean _processBodyIfNeed = processBodyIfNeed;
 
         // // Print request body.
         // // [problem]:https://www.codercto.com/a/52970.html
@@ -153,28 +163,23 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
         return decorateRequest(exchange, chain, requestBodySegment -> {
             if (transformCount.incrementAndGet() <= 1) {
                 // Add request body.
-                if (log8_10 && logReqBody) {
-                    requestLog.append(LOG_REQUEST_BODY);
-                    requestLog.append(LOG_REQUEST_END);
-                    // Note: Only get the first small part of the data of the
-                    // request body, which has prevented the amount of data from
-                    // being too large.
-                    int length = Math.min(requestBodySegment.length, loggingConfig.getMaxPrintRequestBodyLength());
-                    requestLogArgs.add(new String(requestBodySegment, 0, length, UTF_8));
-                    // log.info(requestLog.toString(),
-                    // requestLogArgs.toArray());
-                } else if (log3_10) {
-                    requestLog.append(LOG_REQUEST_END);
-                    // log.info(requestLog.toString(),
-                    // requestLogArgs.toArray());
+                if (_processBodyIfNeed) {
+                    if (log8_10) {
+                        requestLog.append(LOG_REQUEST_BODY);
+                        requestLog.append(LOG_REQUEST_END);
+                        // Note: Only get the first small part of the data of
+                        // the request body, which has prevented the amount of
+                        // data from being too large.
+                        int length = Math.min(requestBodySegment.length, loggingConfig.getMaxPrintRequestBodyLength());
+                        requestLogArgs.add(new String(requestBodySegment, 0, length, UTF_8));
+                        log.info(requestLog.toString(), requestLogArgs.toArray());
+                    } else if (log3_10) {
+                        requestLog.append(LOG_REQUEST_END);
+                        log.info(requestLog.toString(), requestLogArgs.toArray());
+                    }
                 }
             }
             return Mono.just(requestBodySegment);
-        }).doFinally(signal -> {
-            // Print request body.
-            if (log3_10) {
-                log.info(requestLog.toString(), requestLogArgs.toArray());
-            }
         });
     }
 

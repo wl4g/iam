@@ -142,18 +142,25 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
         AtomicInteger transformCount = new AtomicInteger(0);
         return decorateResponse(exchange, chain, responseBodySegment -> {
             if (transformCount.incrementAndGet() <= 1) {
-                // When the response has no body, print the end flag directly.
-                boolean isLogResBody = log9_10 && hasBody(response.getHeaders().getContentType());
-                // Print response body.
-                if (isLogResBody) {
-                    // Full print response body.
+                // If it is a file download, direct printing does not display
+                // binary.
+                if (isDownloadStreamMedia(headers.getContentType())) {
                     responseLog.append(LOG_RESPONSE_BODY);
-                    // Note: Only get the first small part of the data of the
-                    // response body, which has prevented the amount of data
-                    // from
-                    // being too large.
-                    int length = Math.min(responseBodySegment.length, loggingConfig.getMaxPrintResponseBodyLength());
-                    responseLogArgs.add(new String(responseBodySegment, 0, length, UTF_8));
+                    responseLogArgs.add("[Download Binary Data] ...");
+                } else {
+                    // When the response has no body, print the end flag
+                    // directly.
+                    boolean processBodyIfNeed = log9_10 && isCompatibleWithPlainBody(response.getHeaders().getContentType());
+                    // Print response body.
+                    if (processBodyIfNeed) {
+                        // Full print response body.
+                        responseLog.append(LOG_RESPONSE_BODY);
+                        // Note: Only get the first small part of the data of
+                        // the response body, which has prevented the amount of
+                        // data from being too large.
+                        int length = Math.min(responseBodySegment.length, loggingConfig.getMaxPrintResponseBodyLength());
+                        responseLogArgs.add(new String(responseBodySegment, 0, length, UTF_8));
+                    }
                 }
                 if (log3_10) {
                     responseLog.append(LOG_RESPONSE_END);
