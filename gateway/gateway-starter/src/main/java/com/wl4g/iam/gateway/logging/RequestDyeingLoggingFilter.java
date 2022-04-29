@@ -20,6 +20,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -121,10 +122,10 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             log.info(requestLog.toString(), requestLogArgs.toArray());
         }
 
-        // Print request body.
+        // // Print request body.
+        // // [problem]:https://www.codercto.com/a/52970.html
+        // // [problem]:https://blog.csdn.net/kk380446/article/details/119537443
         // if (logReqBody) {
-        // // [issue]:https://www.codercto.com/a/52970.html
-        // // [issue]:https://blog.csdn.net/kk380446/article/details/119537443
         // // Note: In this way, only the first piece of data can be
         // // obtained when the data packet is too large.
         // exchange.getRequest().getBody().subscribe(dataBuffer -> {
@@ -144,41 +145,59 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
         // }
         // return chain.filter(exchange);
 
-        return decorateRequest(exchange, chain, body -> {
+        // Note: The following transform function may be executed multiple
+        // times. For the time being, we only print the first segment of data in
+        // the request body. We think that printing too much data may be
+        // meaningless and waste resources.
+        AtomicInteger transformCount = new AtomicInteger(0);
+        return decorateRequest(exchange, chain, requestBodySegment -> {
+            if (transformCount.incrementAndGet() <= 1) {
+                // Add request body.
+                if (log8_10 && logReqBody) {
+                    requestLog.append(LOG_REQUEST_BODY);
+                    requestLog.append(LOG_REQUEST_END);
+                    // Note: Only get the first small part of the data of the
+                    // request body, which has prevented the amount of data from
+                    // being too large.
+                    int length = Math.min(requestBodySegment.length, loggingConfig.getMaxPrintRequestBodyLength());
+                    requestLogArgs.add(new String(requestBodySegment, 0, length, UTF_8));
+                    // log.info(requestLog.toString(),
+                    // requestLogArgs.toArray());
+                } else if (log3_10) {
+                    requestLog.append(LOG_REQUEST_END);
+                    // log.info(requestLog.toString(),
+                    // requestLogArgs.toArray());
+                }
+            }
+            return Mono.just(requestBodySegment);
+        }).doFinally(signal -> {
             // Print request body.
-            if (log8_10 && logReqBody) {
-                requestLog.append(LOG_REQUEST_BODY);
-                requestLog.append(LOG_REQUEST_END);
-                // Note: Only get the first small part of the data of the
-                // request body, which has prevented the amount of data from
-                // being too large.
-                requestLogArgs.add(new String(body, 0, loggingConfig.getMaxPrintRequestBodyLength(), UTF_8));
-                log.info(requestLog.toString(), requestLogArgs.toArray());
-            } else if (log3_10) {
-                requestLog.append(LOG_REQUEST_END);
+            if (log3_10) {
                 log.info(requestLog.toString(), requestLogArgs.toArray());
             }
-            return Mono.just(body);
         });
     }
 
     /**
-     * Wraps the HTTP request for body edited. </br>
-     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
-     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
+     * The request object decorated as an editable request body to solve the
+     * problem that the request body can only be read once.
      * 
      * @param exchange
      * @param chain
      * @param transformer
      * @return
      * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
+     * @see https://blog.csdn.net/kk380446/article/details/119537443
+     * @see https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html
      */
     private Mono<Void> decorateRequest(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
             Function<? super byte[], ? extends Mono<? extends byte[]>> transformer) {
 
-        // TODO Preferably ByteBuf should be used???
+        // Tip: String type can also be used.
+        // Class<String> inClass = String.class;
+        // Class<String> outClass = String.class;
         Class<byte[]> inClass = byte[].class;
         Class<byte[]> outClass = byte[].class;
 

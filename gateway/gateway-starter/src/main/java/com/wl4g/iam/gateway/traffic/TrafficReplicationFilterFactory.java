@@ -266,17 +266,29 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
         }
 
         /**
+         * The request object decorated as an editable request body to solve the
+         * problem that the request body can only be read once.
+         * 
          * @see {@link com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter#decorateRequest()}
          * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
+         *
+         * @param exchange
+         * @param chain
+         * @param transformer
+         * @return
          */
         private Mono<Void> decorateRequest(
                 ServerWebExchange exchange,
                 GatewayFilterChain chain,
                 Function<? super byte[], ? extends Mono<? extends byte[]>> transformer) {
 
+            // Tip: String type can also be used.
+            // Class<String> inClass = String.class;
+            // Class<String> outClass = String.class;
             Class<byte[]> inClass = byte[].class;
             Class<byte[]> outClass = byte[].class;
             ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
+
             // ServerRequest serverRequest = new
             // org.springframework.cloud.gateway.support.DefaultServerRequest(exchange);
             Mono<byte[]> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);

@@ -21,6 +21,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
@@ -73,7 +74,7 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
     }
 
     /**
-     * LimitedResult logging filtering.
+     * Logging response processes.
      * 
      * @param exchange
      * @param chain
@@ -134,38 +135,46 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             });
         }
 
-        return decorateResponse(exchange, chain, originalBody -> {
-            // When the response has no body, print the end flag directly.
-            boolean isLogResBody = log9_10 && hasBody(response.getHeaders().getContentType());
-            // Print response body.
-            if (isLogResBody) {
-                // Full print response body.
-                responseLog.append(LOG_RESPONSE_BODY);
-                // Note: Only get the first small part of the data of the
-                // response body, which has prevented the amount of data from
-                // being too large.
-                responseLogArgs.add(new String(originalBody, 0, loggingConfig.getMaxPrintResponseBodyLength(), UTF_8));
+        // Note: The following transform function may be executed multiple
+        // times. For the time being, we only print the first segment of data in
+        // the response body. We think that printing too much data may be
+        // meaningless and waste resources.
+        AtomicInteger transformCount = new AtomicInteger(0);
+        return decorateResponse(exchange, chain, responseBodySegment -> {
+            if (transformCount.incrementAndGet() <= 1) {
+                // When the response has no body, print the end flag directly.
+                boolean isLogResBody = log9_10 && hasBody(response.getHeaders().getContentType());
+                // Print response body.
+                if (isLogResBody) {
+                    // Full print response body.
+                    responseLog.append(LOG_RESPONSE_BODY);
+                    // Note: Only get the first small part of the data of the
+                    // response body, which has prevented the amount of data
+                    // from
+                    // being too large.
+                    int length = Math.min(responseBodySegment.length, loggingConfig.getMaxPrintResponseBodyLength());
+                    responseLogArgs.add(new String(responseBodySegment, 0, length, UTF_8));
+                }
+                if (log3_10) {
+                    responseLog.append(LOG_RESPONSE_END);
+                    log.info(responseLog.toString(), responseLogArgs.toArray());
+                }
             }
-            if (log3_10) {
-                responseLog.append(LOG_RESPONSE_END);
-                log.info(responseLog.toString(), responseLogArgs.toArray());
-            }
-            return Mono.just(originalBody);
+            return Mono.just(responseBodySegment);
         });
-
     }
 
     /**
-     * Wraps the HTTP response for body edited. </br>
-     * 
-     * see: https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html </br>
-     * see: https://blog.csdn.net/kk380446/article/details/119537443 </br>
+     * The response object decorated as an editable response body to solve the
+     * problem that the response body can only be read once.
      * 
      * @param exchange
      * @param chain
      * @param transformer
      * @return
      * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyResponseBodyGatewayFilterFactory#apply()}
+     * @see https://www.cnblogs.com/hyf-huangyongfei/p/12849406.html
+     * @see https://blog.csdn.net/kk380446/article/details/119537443
      */
     private ServerHttpResponse decorateResponse(
             ServerWebExchange exchange,
@@ -174,7 +183,9 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
         return new ServerHttpResponseDecorator(exchange.getResponse()) {
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // Mono<NettyDataBuffer>
-                // TODO Preferably ByteBuf should be used???
+                // Tip: String type can also be used.
+                // Class<String> inClass = String.class;
+                // Class<String> outClass = String.class;
                 Class<byte[]> inClass = byte[].class;
                 Class<byte[]> outClass = byte[].class;
 
