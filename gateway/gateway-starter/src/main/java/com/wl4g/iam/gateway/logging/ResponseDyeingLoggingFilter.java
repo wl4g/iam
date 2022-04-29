@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.logging;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
@@ -140,7 +141,10 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             if (isLogResBody) {
                 // Full print response body.
                 responseLog.append(LOG_RESPONSE_BODY);
-                responseLogArgs.add(originalBody);
+                // Note: Only get the first small part of the data of the
+                // response body, which has prevented the amount of data from
+                // being too large.
+                responseLogArgs.add(new String(originalBody, 0, loggingConfig.getMaxPrintResponseBodyLength(), UTF_8));
             }
             if (log3_10) {
                 responseLog.append(LOG_RESPONSE_END);
@@ -166,12 +170,13 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
     private ServerHttpResponse decorateResponse(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
-            Function<? super String, ? extends Mono<? extends String>> transformer) {
+            Function<? super byte[], ? extends Mono<? extends byte[]>> transformer) {
         return new ServerHttpResponseDecorator(exchange.getResponse()) {
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // Mono<NettyDataBuffer>
-                Class<String> inClass = String.class;
-                Class<String> outClass = String.class;
+                // TODO Preferably ByteBuf should be used???
+                Class<byte[]> inClass = byte[].class;
+                Class<byte[]> outClass = byte[].class;
 
                 String responseContentType = exchange.getAttribute(ServerWebExchangeUtils.ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);
                 HttpHeaders newHeaders = new HttpHeaders();
@@ -182,8 +187,8 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
                         .body(Flux.from(body))
                         .build();
 
-                Mono<String> modifiedBody = clientResponse.bodyToMono(inClass).flatMap(transformer);
-                BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
+                Mono<byte[]> modifiedBody = clientResponse.bodyToMono(inClass).flatMap(transformer);
+                BodyInserter<Mono<byte[]>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
                         outClass);
 
                 // [FIX]: If the order of this filter is set to be executed

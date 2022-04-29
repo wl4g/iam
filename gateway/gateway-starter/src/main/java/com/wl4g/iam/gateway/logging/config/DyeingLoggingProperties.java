@@ -68,6 +68,18 @@ public class DyeingLoggingProperties {
     private String setDyeingLogStateRequestHeader = "X-Iscg-Log-Dyeing-State";
 
     /**
+     * In order to prevent the request body data from being too large, only the
+     * first small part of the body data is obtained.
+     */
+    private int maxPrintRequestBodyLength = 1024;
+
+    /**
+     * In order to prevent the response body data from being too large, only the
+     * first small part of the body data is obtained.
+     */
+    private int maxPrintResponseBodyLength = 1024;
+
+    /**
      * Preferred to enable print logs match SPEL match expression. Default by
      * '#{true}', which means never match. </br>
      * </br>

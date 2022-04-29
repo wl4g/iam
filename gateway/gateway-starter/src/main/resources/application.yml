@@ -12,6 +12,7 @@
 #
 spring:
   cloud:
+    ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
     circuitbreaker:
       ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
       ## see:org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration
@@ -224,6 +225,7 @@ spring:
             cumulatorSuffixOfDatePattern: yyyyMMdd
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000
+      ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
       circuitbreaker:
         failureRateThreshold: 40 ## Default by 50
         permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
@@ -411,6 +413,12 @@ spring:
         verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iscg-Log-Level'
         ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
         setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iscg-Log-Dyeing-State'
+        ## In order to prevent the request body data from being too large, only the
+        ## first small part of the body data is obtained.
+        maxPrintRequestBodyLength: 1024 ## Default by 1024
+        ## In order to prevent the response body data from being too large, only the
+        ## first small part of the body data is obtained.
+        maxPrintResponseBodyLength: 1024 ## Default by 1024
         ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
         preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'

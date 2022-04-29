@@ -28,23 +28,30 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.P
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.gateway.config.HttpClientCustomizer;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
 import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter;
 import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter.Type;
 import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.BodyInserterContext;
 import org.springframework.cloud.gateway.support.TimeoutException;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DefaultDataBuffer;
-import org.springframework.core.io.buffer.NettyDataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.HandlerStrategies;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -53,8 +60,6 @@ import com.wl4g.iam.gateway.traffic.config.TrafficProperties.ReplicationProperti
 import com.wl4g.iam.gateway.util.http.ReactiveHttpClientBuilder;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
@@ -124,32 +129,40 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
         private final Config config;
         private final HttpClient customizedRouteBasedHttpClient;
 
-        @SuppressWarnings("finally")
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            try {
-                URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
-                String scheme = requestUrl.getScheme();
-                if ((!"http".equals(scheme) && !"https".equals(scheme))) {
-                    return chain.filter(exchange);
-                }
-                // Replication image requests.
-                safeList(config.getTargetUris()).forEach(targetUri -> {
-                    try {
-                        doReplicationRequest(exchange, targetUri);
-                    } catch (Exception e) {
-                        log.warn(format("Failed to replication image requests for targetUri: {}", targetUri), e);
-                    }
-                });
-            } finally {
-                // see:https://stackoverflow.com/questions/17481251/finally-block-does-not-complete-normally-eclipse-warning
-                // Ensure that traffic mirroring request exceptions should not
-                // affect real traffic forwarding.
+            URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
+            String scheme = requestUrl.getScheme();
+            if ((!"http".equals(scheme) && !"https".equals(scheme))) {
                 return chain.filter(exchange);
             }
+
+            return decorateRequest(exchange, chain, body -> {
+                // Replication image requests.
+                try {
+                    safeList(config.getTargetUris()).forEach(targetUri -> {
+                        try {
+                            doAsyncReplicationRequest(exchange, body, targetUri);
+                        } catch (Exception e) {
+                            log.warn(format("Failed to replication traffic mirror for request uri: '{}' to target uri: '{}'",
+                                    exchange.getRequest().getURI(), targetUri), e);
+                        }
+                    });
+                } catch (Exception e) {
+                    log.warn(format("Failed to replication traffic mirror for request uri: '%s'", exchange.getRequest().getURI()),
+                            e);
+                }
+                return Mono.just(body);
+            });
         }
 
-        private void doReplicationRequest(ServerWebExchange exchange, String targetUri) {
+        /**
+         * Refer to
+         * {@link org.springframework.cloud.gateway.filter.NettyRoutingFilter#filter()},
+         * the request forwarding logic of mirror traffic should be consistent
+         * with it.
+         */
+        private void doAsyncReplicationRequest(ServerWebExchange exchange, byte[] body, String targetUri) {
             ServerHttpRequest request = exchange.getRequest();
             HttpMethod method = HttpMethod.valueOf(request.getMethodValue());
 
@@ -173,10 +186,13 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
                     nettyOutbound.withConnection(connection -> log.trace("Image request outbound route: {}, inbound: {}",
                             connection.channel().id().asShortText(), exchange.getLogPrefix()));
                 }
-                // TODO use copy read???
-                // TODO use copy read???
-                // TODO use copy read???
-                return nettyOutbound.send(request.getBody().map(this::getByteBuf));
+                //
+                // Note: Solve the problem that the byte stream data of the
+                // request body can only be read once.
+                //
+                // return
+                // nettyOutbound.send(request.getBody().map(this::getByteBuf));
+                return nettyOutbound.sendByteArray(Mono.just(body));
             }).responseConnection((res, connection) -> {
                 //
                 // Note: Non actual forwarding requests, no need to set response
@@ -201,7 +217,6 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
                     //
                     // exchange.getAttributes().put(ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR,contentTypeValue);
                 }
-
                 int statusCode = getResponseStatusCode(res, targetUri);
 
                 // make sure headers filters run after setting status so it is
@@ -250,24 +265,59 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
             });
         }
 
+        /**
+         * @see {@link com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter#decorateRequest()}
+         * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
+         */
+        private Mono<Void> decorateRequest(
+                ServerWebExchange exchange,
+                GatewayFilterChain chain,
+                Function<? super byte[], ? extends Mono<? extends byte[]>> transformer) {
+
+            Class<byte[]> inClass = byte[].class;
+            Class<byte[]> outClass = byte[].class;
+            ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
+            // ServerRequest serverRequest = new
+            // org.springframework.cloud.gateway.support.DefaultServerRequest(exchange);
+            Mono<byte[]> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
+
+            BodyInserter<Mono<byte[]>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
+                    outClass);
+            HttpHeaders newHeaders = new HttpHeaders();
+            newHeaders.putAll(exchange.getRequest().getHeaders());
+            newHeaders.remove(HttpHeaders.CONTENT_LENGTH);
+
+            CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, newHeaders);
+            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                @Override
+                public HttpHeaders getHeaders() {
+                    long contentLength = newHeaders.getContentLength();
+                    HttpHeaders _newHeaders = new HttpHeaders();
+                    _newHeaders.putAll(newHeaders);
+                    if (contentLength > 0) {
+                        _newHeaders.setContentLength(contentLength);
+                    } else {
+                        _newHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
+                    }
+                    return _newHeaders;
+                }
+
+                @Override
+                public Flux<DataBuffer> getBody() {
+                    return outputMessage.getBody();
+                }
+            };
+
+            return bodyInserter.insert(outputMessage, new BodyInserterContext())
+                    .then(Mono.defer(() -> chain.filter(exchange.mutate().request(decorator).build())))
+                    .onErrorResume((Function<Throwable, Mono<Void>>) ex -> Mono.error(ex));
+        }
+
         private List<HttpHeadersFilter> getHeadersFilters() {
             if (headersFilters == null) {
                 headersFilters = headersFiltersProvider.getIfAvailable();
             }
             return headersFilters;
-        }
-
-        private ByteBuf getByteBuf(DataBuffer dataBuffer) {
-            if (dataBuffer instanceof NettyDataBuffer) {
-                NettyDataBuffer buffer = (NettyDataBuffer) dataBuffer;
-                return buffer.getNativeBuffer();
-            }
-            // MockServerHttpResponse creates these
-            else if (dataBuffer instanceof DefaultDataBuffer) {
-                DefaultDataBuffer buffer = (DefaultDataBuffer) dataBuffer;
-                return Unpooled.wrappedBuffer(buffer.getNativeBuffer());
-            }
-            throw new IllegalArgumentException("Unable to handle DataBuffer of type " + dataBuffer.getClass());
         }
 
         private int getResponseStatusCode(HttpClientResponse clientResponse, String targetUri) {

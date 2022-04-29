@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.logging;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import java.util.ArrayList;
@@ -122,9 +123,8 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
         // Print request body.
         // if (logReqBody) {
-        // // [issue-see]:https://www.codercto.com/a/52970.html
-        // //
-        // //[issue-see]:https://blog.csdn.net/kk380446/article/details/119537443
+        // // [issue]:https://www.codercto.com/a/52970.html
+        // // [issue]:https://blog.csdn.net/kk380446/article/details/119537443
         // // Note: In this way, only the first piece of data can be
         // // obtained when the data packet is too large.
         // exchange.getRequest().getBody().subscribe(dataBuffer -> {
@@ -149,7 +149,10 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             if (log8_10 && logReqBody) {
                 requestLog.append(LOG_REQUEST_BODY);
                 requestLog.append(LOG_REQUEST_END);
-                requestLogArgs.add(body);
+                // Note: Only get the first small part of the data of the
+                // request body, which has prevented the amount of data from
+                // being too large.
+                requestLogArgs.add(new String(body, 0, loggingConfig.getMaxPrintRequestBodyLength(), UTF_8));
                 log.info(requestLog.toString(), requestLogArgs.toArray());
             } else if (log3_10) {
                 requestLog.append(LOG_REQUEST_END);
@@ -173,16 +176,18 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
     private Mono<Void> decorateRequest(
             ServerWebExchange exchange,
             GatewayFilterChain chain,
-            Function<? super String, ? extends Mono<? extends String>> transformer) {
+            Function<? super byte[], ? extends Mono<? extends byte[]>> transformer) {
 
-        Class<String> inClass = String.class;
-        Class<String> outClass = String.class;
+        // TODO Preferably ByteBuf should be used???
+        Class<byte[]> inClass = byte[].class;
+        Class<byte[]> outClass = byte[].class;
+
         ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
         // ServerRequest serverRequest = new
         // org.springframework.cloud.gateway.support.DefaultServerRequest(exchange);
-        Mono<String> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
+        Mono<byte[]> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(transformer);
 
-        BodyInserter<Mono<String>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
+        BodyInserter<Mono<byte[]>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
         HttpHeaders newHeaders = new HttpHeaders();
         newHeaders.putAll(exchange.getRequest().getHeaders());
         newHeaders.remove(HttpHeaders.CONTENT_LENGTH);

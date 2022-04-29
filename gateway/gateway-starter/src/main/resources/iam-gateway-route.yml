@@ -33,11 +33,16 @@ spring:
                 root-cause-exception-type-header-name: X-Iscg-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
                 root-cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
                 cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Irregular setter method naming?? bug??
-        - id: energy-openapi-service-route
+        - id: v2-energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
             - Path=/openapi/v2/**,/v2/**
-            #- Weight=energy-openapi-service,5
+            ## Note: Use the built-in weight-based router to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v2-energy-openapi-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
@@ -61,7 +66,7 @@ spring:
                 sign-hashing-required-include-params: [appId, timestamp, nonce] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
             ## Limit for request content-length
-            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
+            ## see:org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
@@ -132,10 +137,16 @@ spring:
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-statuses: [200,404] ## Default by 200
-        - id: alimarket-openapi-service-route
+        - id: v1-alimarket-openapi-service-route
           uri: lb://alimarket-openapi-service
           predicates:
             - Path=/alimarket/v1/**
+            ## Note: Use the built-in weight-based router to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-alimarket-openapi-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             - RewritePath=/alimarket/v1/(?<segment>.*),/openapi/alimarket/v1/$\{segment}
@@ -216,6 +227,7 @@ spring:
             ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
             ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
             - name: CircuitBreaker
               args:
                 name: alimarket-openapi-service-circuitbreaker

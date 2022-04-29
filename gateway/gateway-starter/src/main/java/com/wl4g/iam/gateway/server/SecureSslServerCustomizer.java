@@ -87,21 +87,36 @@ import reactor.netty.tcp.SslProvider.Builder;
 /**
  * {@link SecureWebServerFactoryCustomizer}
  * 
- * https://www.saoniuhuo.com/article/detail-374589.html </br>
- * </br>
- * https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
- * </br>
- * https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
- * </br>
+ * <p>
+ * https://www.saoniuhuo.com/article/detail-374589.html
+ * </p>
  * 
- * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
- * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
- * see:{@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
+ * <p>
+ * https://github.com/apache/servicecomb-java-chassis/blob/master/foundations/foundation-ssl/src/main/java/org/apache/servicecomb/foundation/ssl/TrustManagerExt.java#L168
+ * </p>
+ * 
+ * <p>
+ * JDK ssl SNIMatcher sources:
+ * https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52/src/share/classes/javax/net/ssl/SNIMatcher.java
+ * </p>
+ * 
+ * <p>
+ * Enable hostname verification by default:
+ * https://github.com/netty/netty/issues/8537)
+ * </p>
+ * 
+ * <p>
+ * TLS performance optimization:
+ * https://github.com/reactor/reactor-netty/issues/344
+ * </p>
+ * 
+ * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
+ * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
+ * @see {@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-09 v3.0.0
  * @since v3.0.0
- * @see https://github.com/netty/netty/issues/8537
  */
 @Slf4j
 @SuppressWarnings("unused")
