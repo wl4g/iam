@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.sign;
+package com.wl4g.iam.gateway.security.sign;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.cache.CacheBuilder.newBuilder;
@@ -59,13 +59,13 @@ import org.springframework.web.server.ServerWebExchange;
 import com.google.common.cache.Cache;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;
-import com.wl4g.iam.gateway.auth.config.AuthingProperties;
-import com.wl4g.iam.gateway.auth.config.AuthingProperties.SecretStore;
-import com.wl4g.iam.gateway.auth.sign.event.SimpleSignAuthingFailureEvent;
-import com.wl4g.iam.gateway.auth.sign.event.SimpleSignAuthingSuccessEvent;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
+import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
+import com.wl4g.iam.gateway.security.config.IamSecurityProperties.SecretStore;
+import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingFailureEvent;
+import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingSuccessEvent;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
@@ -113,14 +113,14 @@ import reactor.core.publisher.Mono;
 public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory<SimpleSignAuthingFilterFactory.Config> {
 
     private final SmartLogger log = getLogger(getClass());
-    private final AuthingProperties authingConfig;
+    private final IamSecurityProperties authingConfig;
     private final StringRedisTemplate redisTemplate;
     private final Cache<String, String> secretCacheStore;
     private final IamGatewayMetricsFacade metricsFacade;
     private final EventBusSupport eventBus;
     private final Map<String, RedisBloomFilter<String>> cachedBloomFilters = new ConcurrentHashMap<>(8);
 
-    public SimpleSignAuthingFilterFactory(@NotNull AuthingProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
+    public SimpleSignAuthingFilterFactory(@NotNull IamSecurityProperties authingConfig, @NotNull StringRedisTemplate redisTemplate,
             @NotNull IamGatewayMetricsFacade metricsFacade, EventBusSupport eventBus) {
         super(SimpleSignAuthingFilterFactory.Config.class);
         this.authingConfig = notNullOf(authingConfig, "authingConfig");

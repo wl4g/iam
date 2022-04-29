@@ -76,11 +76,12 @@ spring:
         wiretap: false ## Default by false
       httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
         compression: false ## Default by false
-        connect-timeout: 45_000 ## Default by 45s
-        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
-        response-timeout: 60_000 ## Default by 60s
-        max-header-size: 65535 ## Default no set.
         wiretap: false ## Default by false
+        connectTimeout: 45_000 ## Default by 45s
+        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+        responseTimeout: 60_000 ## Default by 60s
+        maxHeaderSize: 65535 ## Default no set.
+        #maxInitialLineLength: ## Default by null
         #proxy:
         # host:
         # port:
@@ -137,7 +138,7 @@ spring:
             check-cn-white-file: classpath:/cert.d/cn_white.list ## Default no-set(disabled)
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
-      authing:
+      security:
         simpleSign:
           secretStore: redis
           secretStorePrefix: iam:gateway:auth:sign:secret
@@ -297,6 +298,44 @@ spring:
           ## status code is satisfied)
           expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
+      trffic:
+        defaultReplication:
+          targetUrls: ["http://localhost:8080/", "https://localhost:8080/"]
+          wiretap: false ## Default by false
+          connectTimeout: 45_000 ## Default by 45s
+          ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+          responseTimeout: 60_000 ## Default by 60s
+          maxHeaderSize: 65535 ## Default no set.
+          #maxInitialLineLength: ## Default by null
+          #proxy:
+          # host:
+          # port:
+          # username:
+          # password:
+          # non-proxy-hosts-pattern:
+          pool:
+            name: proxy ## Default by proxy
+            #metrics: true ## Default by false
+            #max-idle-time: 
+            #acquire-timeout: 45000 # Default by 45000ms
+          websocket:
+            proxy-ping: true ## Default by true
+            max-frame-payload-length: 65535 ## Default no set.
+            #max-connections: ## Default by: max(availableProcessors(),8)*2)
+          ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+            default-configuration-type: TCP ## Default by 'TCP'
+            handshake-timeout: 10000ms ## Default by 10000ms
+            close-notify-flush-timeout: 3000ms ## Default by 3000ms
+            close-notify-read-timeout: 0 ## Default by 0
+            #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+            #key-store: ## Keystore path for Netty HttpClient.
+            #key-store-type:
+            #key-store-password:
+            #key-store-provider:
+            #trusted-x509-certificates:
+            #use-insecure-trust-manager: true ## Default by false
+      fault:
+        #TODO
       trace:
         enabled: true ## Default by true
         ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
@@ -326,12 +365,15 @@ spring:
         exporter:
           provider: jaeger ## Default by jaeger, Options(otlp|jaeger|zipkin)
           otlp:
+            ## Otlp gRPC/http receiver server endpoint. Default by 'http://localhost:4317'
             endpoint: http://localhost:4317
             timeoutMs: 10_000 ## Default by 10000ms
-            headers: {} ## Default by null
+            headers: {} ## Default by {}
           jaeger:
+            ## Jaeger gRPC/http receiver server endpoint. Default by 'http://localhost:14250'
             endpoint: http://localhost:14250
           zipkin:
+            ## Zipkin gRPC/http receiver server endpoint. Default by 'http://localhost:9411/api/v2/spans'
             endpoint: http://localhost:9411/api/v2/spans
         samper:
           ## The samper type, default by traceidratio, Options(always_on|parentbased_always_off|parentbased_always_on|parentbased_traceidratio|traceidratio)
@@ -399,8 +441,6 @@ spring:
               value: y
           - name: energyOpenApiLogWithPath
             path: '/openapi/**'
-      trffic:
-        enabled: true ## Default by false
 
   ## Security configuration.
   security:

@@ -28,11 +28,11 @@ spring:
           filters:
             - name: FallbackHeaders
               args:
-                execution-exception-type-header-name: X-Iam-Gateway-Fail-Type ## Default by 'Execution-Exception-Type'
-                execution-exception-message-header-name: X-Iam-Gateway-Fail-Msg ## Default by 'Execution-Exception-Message'
-                root-cause-exception-type-header-name: X-Iam-Gateway-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
-                root-cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
-                cause-exception-message-header-name: X-Iam-Gateway-Fail-Root-Msg ## Irregular setter method naming?? bug??
+                execution-exception-type-header-name: X-Iscg-Fail-Type ## Default by 'Execution-Exception-Type'
+                execution-exception-message-header-name: X-Iscg-Fail-Msg ## Default by 'Execution-Exception-Message'
+                root-cause-exception-type-header-name: X-Iscg-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
+                root-cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
+                cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Irregular setter method naming?? bug??
         - id: energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
@@ -163,7 +163,8 @@ spring:
                 max-size: 10485760 ## Default by 5MB
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Header ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -178,7 +179,8 @@ spring:
                   includeHeaders: false
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -190,7 +192,8 @@ spring:
                   includeHeaders: false
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -220,9 +223,43 @@ spring:
                 statusCodes:
                   - 500
                   - NOT_FOUND
-            - name: TrafficImager
+            - name: TrafficReplicator
+              ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
               args:
                 targetUris: ["http://localhost:8888/"]
+                #wiretap: false ## Default by false
+                #connectTimeout: 45_000 ## Default by 45s
+                ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+                #responseTimeout: 60_000 ## Default by 60s
+                #maxHeaderSize: 65535 ## Default no set.
+                ##maxInitialLineLength: ## Default by null
+                ##proxy:
+                ## host:
+                ## port:
+                ## username:
+                ## password:
+                ## non-proxy-hosts-pattern:
+                #pool:
+                #  name: proxy ## Default by proxy
+                #  #metrics: true ## Default by false
+                #  #max-idle-time: 
+                #  #acquire-timeout: 45000 # Default by 45000ms
+                #websocket:
+                #  proxy-ping: true ## Default by true
+                #  max-frame-payload-length: 65535 ## Default no set.
+                #  #max-connections: ## Default by: max(availableProcessors(),8)*2)
+                #ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+                #  default-configuration-type: TCP ## Default by 'TCP'
+                #  handshake-timeout: 10000ms ## Default by 10000ms
+                #  close-notify-flush-timeout: 3000ms ## Default by 3000ms
+                #  close-notify-read-timeout: 0 ## Default by 0
+                #  #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+                #  #key-store: ## Keystore path for Netty HttpClient.
+                #  #key-store-type:
+                #  #key-store-password:
+                #  #key-store-provider:
+                #  #trusted-x509-certificates:
+                #  #use-insecure-trust-manager: true ## Default by false
             - name: CanaryLoadBalancer
               args:
                 choose:

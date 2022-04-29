@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.sign.event;
+package com.wl4g.iam.gateway.security.sign.event;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.AppIdExtractor;
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.SignAlgorithm;
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.AppIdExtractor;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignAlgorithm;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
 
 import lombok.Getter;
 
 /**
- * {@link SimpleSignAuthingFailureEvent}
+ * {@link SimpleSignAuthingSuccessEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-18 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class SimpleSignAuthingFailureEvent extends ApplicationEvent {
+public class SimpleSignAuthingSuccessEvent extends ApplicationEvent {
     private static final long serialVersionUID = -7291654693102770442L;
 
     private final AppIdExtractor extractor;
     private final SignAlgorithm algorithm;
     private final SignHashingMode mode;
 
-    public SimpleSignAuthingFailureEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode) {
+    public SimpleSignAuthingSuccessEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode) {
         super(appId);
         this.extractor = extractor;
         this.algorithm = algorithm;

@@ -22,7 +22,6 @@ import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
-import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfiguration;
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
@@ -32,6 +31,7 @@ import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
+import com.wl4g.iam.gateway.security.config.IamSecurityAutoConfiguration;
 import com.wl4g.iam.gateway.server.config.GatewayWebServerAutoConfiguration;
 import com.wl4g.iam.gateway.trace.config.TraceAutoConfiguration;
 import com.wl4g.iam.gateway.traffic.config.TrafficAutoConfiguration;
@@ -49,7 +49,7 @@ import reactor.core.publisher.Mono;
 @Configuration(proxyBeanMethods = false)
 @Import({ GatewayWebServerAutoConfiguration.class, IamRequestLimiterAutoConfiguration.class,
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
-        AuthingAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
+        IamSecurityAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
         TrafficAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {

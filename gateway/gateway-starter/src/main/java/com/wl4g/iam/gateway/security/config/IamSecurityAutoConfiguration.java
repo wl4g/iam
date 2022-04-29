@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.config;
+package com.wl4g.iam.gateway.security.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,36 +21,36 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory;
-import com.wl4g.iam.gateway.auth.sign.event.RedisSimpleSignAuthingEventRecoder;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
+import com.wl4g.iam.gateway.security.sign.event.RedisSimpleSignAuthingEventRecoder;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
- * {@link AuthingAutoConfiguration}
+ * {@link IamSecurityAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-01 v3.0.0
  * @since v3.0.0
  */
-public class AuthingAutoConfiguration {
+public class IamSecurityAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_AUTHING)
-    public AuthingProperties authingProperties() {
-        return new AuthingProperties();
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_SECURITY)
+    public IamSecurityProperties iamSecurityProperties() {
+        return new IamSecurityProperties();
     }
 
     // Simple signature authorizer configuration.
 
     @Bean(name = BEAN_SIMPLE_SIGN_EVENTBUS, destroyMethod = "close")
-    public EventBusSupport simpleSignAuthingEventBusSupport(AuthingProperties authingConfig) {
+    public EventBusSupport simpleSignAuthingEventBusSupport(IamSecurityProperties authingConfig) {
         return new EventBusSupport(authingConfig.getSimpleSign().getEventRecorder().getPublishEventBusThreads());
     }
 
     @Bean
     public SimpleSignAuthingFilterFactory simpleSignAuthingFilterFactory(
-            AuthingProperties authingConfig,
+            IamSecurityProperties authingConfig,
             StringRedisTemplate stringTemplate,
             IamGatewayMetricsFacade metricsFacade,
             @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {

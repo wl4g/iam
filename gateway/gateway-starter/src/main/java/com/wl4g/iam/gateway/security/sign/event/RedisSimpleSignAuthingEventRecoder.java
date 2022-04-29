@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.sign.event;
+package com.wl4g.iam.gateway.security.sign.event;
 
 import static java.lang.String.valueOf;
 
@@ -22,7 +22,7 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.google.common.eventbus.Subscribe;
-import com.wl4g.iam.gateway.auth.config.AuthingProperties;
+import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
 import com.wl4g.infra.common.lang.DateUtils2;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class RedisSimpleSignAuthingEventRecoder {
     public static final String LOG_SIGN_EVENT_SUCCESS_PREFIX = "SIGN_SUCCESS_EVENT";
     public static final String LOG_SIGN_EVENT_FAILURE_PREFIX = "SIGN_FAILURE_EVENT";
 
-    private @Autowired AuthingProperties authingConfig;
+    private @Autowired IamSecurityProperties authingConfig;
     private @Autowired StringRedisTemplate redisTemplate;
 
     @Subscribe

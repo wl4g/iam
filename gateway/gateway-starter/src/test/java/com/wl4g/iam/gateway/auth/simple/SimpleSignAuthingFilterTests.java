@@ -37,10 +37,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.wl4g.iam.gateway.auth.config.AuthingProperties;
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory;
-import com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
@@ -66,7 +66,7 @@ public class SimpleSignAuthingFilterTests {
 
     @TestConfiguration
     public static class TestEnvParameterSimpleParamsBytesSortedHashingS256Configuration {
-        private @Autowired AuthingProperties authingConfig;
+        private @Autowired IamSecurityProperties authingConfig;
         private @Autowired StringRedisTemplate redisTemplate;
         private @Autowired IamGatewayMetricsFacade metricsFacade;
         private EventBusSupport eventBus = EventBusSupport.getDefault();
@@ -75,8 +75,8 @@ public class SimpleSignAuthingFilterTests {
         //
         // @Bean
         // @Primary
-        // public AuthingProperties authingProperties() {
-        // AuthingProperties config = new AuthingProperties();
+        // public IamSecurityProperties authingProperties() {
+        // IamSecurityProperties config = new IamSecurityProperties();
         // // custom secret store type.
         // config.getSimpleSign().setSecretLoadStore(SecretStore.REDIS);
         // return config;
@@ -90,7 +90,7 @@ public class SimpleSignAuthingFilterTests {
 
             return builder.routes().route(p -> p.path(TEST_ROUTE_PATH).filters(f -> {
                 // for Add simple sign filter.
-                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new AuthingProperties(), redisTemplate,
+                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new IamSecurityProperties(), redisTemplate,
                         metricsFacade, eventBus);
                 SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
                 // custom sign parameter name.

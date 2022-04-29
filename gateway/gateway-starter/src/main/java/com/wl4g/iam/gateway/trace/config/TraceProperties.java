@@ -51,7 +51,10 @@ public class TraceProperties {
 
     /**
      * Preferred to enable tracing samples match SPEL match expression. Default
-     * by '${false}', which means never no match.
+     * by '${false}', which means never no match. </br>
+     * </br>
+     * Tip: The built-in support to get the current routeId, such as:
+     * '#{routeId.get().test($request)}'
      */
     private String preferredOpenMatchExpression = "#{true}";
 

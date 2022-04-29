@@ -91,7 +91,8 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         // Check if filtering flight logging is enabled.
         if (!isFilterLogging(exchange)) {
             if (log.isDebugEnabled()) {
-                log.debug("Not to meet the conditional rule to enable logging. - {}", exchange.getRequest().getURI());
+                log.debug("Not to meet the conditional rule to enable logging. - headers: {}, queryParams: {}",
+                        exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
             }
             return chain.filter(exchange);
         }
@@ -137,11 +138,11 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
 
         // Add routeId temporary predicates.
-        Map<String, Supplier<Predicate<String>>> routeIdTmpPredicateSuppliers = singletonMap(VAR_ROUTE_ID,
+        Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
                 () -> Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                loggingConfig.getPreferredOpenMatchExpression(), routeIdTmpPredicateSuppliers);
+                loggingConfig.getPreferredOpenMatchExpression(), routeIdPredicateSupplier);
     }
 
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {

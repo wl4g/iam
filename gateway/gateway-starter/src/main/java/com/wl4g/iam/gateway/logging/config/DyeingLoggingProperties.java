@@ -69,7 +69,10 @@ public class DyeingLoggingProperties {
 
     /**
      * Preferred to enable print logs match SPEL match expression. Default by
-     * '#{true}', which means never match.
+     * '#{true}', which means never match. </br>
+     * </br>
+     * Tip: The built-in support to get the current routeId, such as:
+     * '#{routeId.get().test($request)}'
      */
     private String preferredOpenMatchExpression = "#{true}";
 

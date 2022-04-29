@@ -20,6 +20,7 @@ import static java.util.Arrays.asList;
 import java.time.Duration;
 import java.util.List;
 
+import org.springframework.cloud.gateway.config.HttpClientProperties;
 import org.springframework.cloud.gateway.config.HttpClientProperties.Pool;
 import org.springframework.cloud.gateway.config.HttpClientProperties.Proxy;
 import org.springframework.cloud.gateway.config.HttpClientProperties.Ssl;
@@ -43,13 +44,13 @@ import lombok.ToString;
 @Validated
 public class TrafficProperties {
 
-    private ImagerProperties imager = new ImagerProperties();
+    private ReplicationProperties defaultReplication = new ReplicationProperties();
 
     @Getter
     @Setter
     @ToString
     @Validated
-    public static class ImagerProperties {
+    public static class ReplicationProperties {
 
         /**
          * The URIs to clone request data traffic to multiple target servers.
@@ -80,6 +81,18 @@ public class TrafficProperties {
         /** SSL configuration for Netty HttpClient. */
         private Ssl ssl = new Ssl();
 
+        public HttpClientProperties toHttpClientProperties() {
+            HttpClientProperties hcp = new HttpClientProperties();
+            hcp.setWiretap(isWiretap());
+            hcp.setConnectTimeout(getConnectTimeout());
+            hcp.setResponseTimeout(getResponseTimeout());
+            hcp.setMaxHeaderSize(getMaxHeaderSize());
+            hcp.setMaxInitialLineLength(getMaxInitialLineLength());
+            hcp.setPool(getPool());
+            hcp.setProxy(getProxy());
+            hcp.setSsl(getSsl());
+            return hcp;
+        }
     }
 
 }

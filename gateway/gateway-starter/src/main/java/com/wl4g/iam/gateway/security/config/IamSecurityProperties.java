@@ -1,4 +1,4 @@
-package com.wl4g.iam.gateway.auth.config;
+package com.wl4g.iam.gateway.security.config;
 
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_FAILURE;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_AUTH_SIGN_EVENT_SUCCESS;
@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link AuthingProperties}
+ * {@link IamSecurityProperties}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
@@ -24,7 +24,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AuthingProperties {
+public class IamSecurityProperties {
 
     private SimpleSignAuthingProperties simpleSign = new SimpleSignAuthingProperties();
 

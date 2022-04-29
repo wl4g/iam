@@ -85,7 +85,8 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         if (!isFilterTracing(exchange)) {
             if (log.isDebugEnabled()) {
-                log.debug("Not to meet the conditional rule to enable tracing. - {}", exchange.getRequest().getURI());
+                log.debug("Not to meet the conditional rule to enable tracing. - headers: {}, queryParams: {}",
+                        exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
             }
             return chain.filter(exchange);
         }
@@ -124,11 +125,11 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
         Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
 
         // Add routeId temporary predicates.
-        Map<String, Supplier<Predicate<String>>> routeIdTmpPredicateSuppliers = singletonMap(VAR_ROUTE_ID,
+        Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
                 () -> Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                traceConfig.getPreferredOpenMatchExpression(), routeIdTmpPredicateSuppliers);
+                traceConfig.getPreferredOpenMatchExpression(), routeIdPredicateSupplier);
     }
 
     protected void inject(ServerWebExchange exchange) {

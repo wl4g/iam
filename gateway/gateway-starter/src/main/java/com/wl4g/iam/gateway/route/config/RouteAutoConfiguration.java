@@ -25,15 +25,15 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
-import com.wl4g.iam.gateway.auth.config.AuthingAutoConfiguration;
 import com.wl4g.iam.gateway.route.RefreshRouteApplicationListener;
 import com.wl4g.iam.gateway.route.TimeBasedRouteRefresher;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory.IgnoreGatewayFilter;
 import com.wl4g.iam.gateway.route.repository.RedisRouteDefinitionRepository;
+import com.wl4g.iam.gateway.security.config.IamSecurityAutoConfiguration;
 
 /**
- * {@link AuthingAutoConfiguration}
+ * {@link IamSecurityAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-10-13 v1.0.0

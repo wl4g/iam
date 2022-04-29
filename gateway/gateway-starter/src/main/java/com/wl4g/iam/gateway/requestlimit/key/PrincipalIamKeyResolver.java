@@ -41,7 +41,7 @@ public class PrincipalIamKeyResolver extends AbstractIamKeyResolver<PrincipalIam
     }
 
     /**
-     * {@link com.wl4g.iam.gateway.auth.sign.SimpleSignAuthingFilterFactory#bindSignedToContext()}
+     * {@link com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory#bindSignedToContext()}
      */
     @Override
     public Mono<String> resolve(PrincipalKeyResolverStrategy strategy, ServerWebExchange exchange) {

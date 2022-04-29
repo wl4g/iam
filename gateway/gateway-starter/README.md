@@ -1,4 +1,4 @@
-# IAM Gateway
+# ISCG (IAM Spring Cloud Gateway)
 
 ## 1. Generate self-certificate
 
