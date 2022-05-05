@@ -36,7 +36,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
-import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.configurer.RedisLimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.event.RedisRequestLimitEventRecorder;
@@ -177,8 +177,8 @@ public class IamRequestLimiterAutoConfiguration {
      * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration#requestRateLimiterGatewayFilterFactory}
      */
     @Bean
-    public IamRequestLimiterGatewayFilterFactory iamRequestLimiterGatewayFilterFactory() {
-        return new IamRequestLimiterGatewayFilterFactory();
+    public IamRequestLimiterFilterFactory iamRequestLimiterFilterFactory() {
+        return new IamRequestLimiterFilterFactory();
     }
 
     //

@@ -184,6 +184,7 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
     }
 
     private HttpServer createHttpServer() {
+        // see:https://developer.aliyun.com/article/319181
         HttpServer server = HttpServer.create();
         if (this.resourceFactory != null) {
             LoopResources resources = this.resourceFactory.getLoopResources();

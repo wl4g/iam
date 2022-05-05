@@ -25,6 +25,10 @@ package com.wl4g.iam.common.constant;
  */
 public abstract class GatewayIAMConstants extends IAMConstants {
 
+    //
+    // (Static) configuration properties prefix definitions.
+    //
+
     public static final String CONF_PREFIX_IAM_GATEWAY = CONF_PREFIX_IAM + ".gateway";
     public static final String CONF_PREFIX_IAM_GATEWAY_SERVER = CONF_PREFIX_IAM_GATEWAY + ".server";
     public static final String CONF_PREFIX_IAM_GATEWAY_REQUESTLIMIT = CONF_PREFIX_IAM_GATEWAY + ".requestlimit";
@@ -35,9 +39,18 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CONF_PREFIX_IAM_GATEWAY_TRACE = CONF_PREFIX_IAM_GATEWAY + ".trace";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOGGING = CONF_PREFIX_IAM_GATEWAY + ".logging";
     public static final String CONF_PREFIX_IAM_GATEWAY_FAULT = CONF_PREFIX_IAM_GATEWAY + ".fault";
+    public static final String CONF_PREFIX_IAM_GATEWAY_IPFILTER = CONF_PREFIX_IAM_GATEWAY + ".ipfilter";
     public static final String CONF_PREFIX_IAM_GATEWAY_TRAFFIC = CONF_PREFIX_IAM_GATEWAY + ".traffic";
 
+    //
+    // (Dynamic) configuration cache prefix definitions.
+    //
+
     public static final String CACHE_PREFIX_IAM_GWTEWAY = CACHE_PREFIX_IAM + ":gateway";
+
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_IPFILTER = CACHE_PREFIX_IAM_GWTEWAY + ":ipfilter";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_IPFILTER_CONF = CACHE_PREFIX_IAM_GWTEWAY_IPFILTER + ":config";
+
     public static final String CACHE_PREFIX_IAM_GWTEWAY_ROUTES = CACHE_PREFIX_IAM_GWTEWAY + ":routes";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_AUTH = CACHE_PREFIX_IAM_GWTEWAY + ":auth";
@@ -50,17 +63,14 @@ public abstract class GatewayIAMConstants extends IAMConstants {
             + ":sign:event:failure";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT = CACHE_PREFIX_IAM_GWTEWAY + ":requestlimit";
-
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":config:rate";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":config:quota";
-
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":token:rate";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":token:quota";
-
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":event:hits";
 

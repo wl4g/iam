@@ -11,7 +11,11 @@
 ## #### IAM Gateway Primary configuration. ####
 #
 spring:
+  ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
+  ## but the lower version is invalid. see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+  #codec.max-in-memory-size: 102400000
   cloud:
+    ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
     circuitbreaker:
       ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
       ## see:org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JAutoConfiguration
@@ -76,11 +80,12 @@ spring:
         wiretap: false ## Default by false
       httpclient: ## see:org.springframework.cloud.gateway.config.HttpClientProperties
         compression: false ## Default by false
-        connect-timeout: 45_000 ## Default by 45s
-        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
-        response-timeout: 60_000 ## Default by 60s
-        max-header-size: 65535 ## Default no set.
         wiretap: false ## Default by false
+        connectTimeout: 45_000 ## Default by 45s
+        ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+        responseTimeout: 60_000 ## Default by 60s
+        maxHeaderSize: 65535 ## Default no set.
+        #maxInitialLineLength: ## Default by null
         #proxy:
         # host:
         # port:
@@ -137,7 +142,7 @@ spring:
             check-cn-white-file: classpath:/cert.d/cn_white.list ## Default no-set(disabled)
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
-      authing:
+      security:
         simpleSign:
           secretStore: redis
           secretStorePrefix: iam:gateway:auth:sign:secret
@@ -223,6 +228,7 @@ spring:
             cumulatorSuffixOfDatePattern: yyyyMMdd
       route:
         refresh-delay-ms: 30_000 ## Default by 30_000
+      ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
       circuitbreaker:
         failureRateThreshold: 40 ## Default by 50
         permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
@@ -239,9 +245,10 @@ spring:
           cancelRunningFuture: true ## Default by true
       loadbalancer:
         enabled: true ## Default by true
-        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iam-Gateway-Canary-Label'
+        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iscg-Canary-Label'
         # TODO
         #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
+        ## The SPEL expressions that match canary requests.
         canaryChooseExpression: '#{$rule.test($request)}'
         canaryMatchRuleDefinitions:
           ## TODO 
@@ -296,26 +303,96 @@ spring:
           ## status code is satisfied)
           expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
+      traffic:
+        defaultReplication:
+          targetUrls: ["http://localhost:8080/", "https://localhost:8080/"]
+          wiretap: false ## Default by false
+          connectTimeout: 45_000 ## Default by 45s
+          ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+          responseTimeout: 60_000 ## Default by 60s
+          maxHeaderSize: 65535 ## Default no set.
+          #maxInitialLineLength: ## Default by null
+          #proxy:
+          # host:
+          # port:
+          # username:
+          # password:
+          # non-proxy-hosts-pattern:
+          pool:
+            name: proxy ## Default by proxy
+            #metrics: true ## Default by false
+            #max-idle-time: 
+            #acquire-timeout: 45000 # Default by 45000ms
+          websocket:
+            proxy-ping: true ## Default by true
+            max-frame-payload-length: 65535 ## Default no set.
+            #max-connections: ## Default by: max(availableProcessors(),8)*2)
+          ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+            default-configuration-type: TCP ## Default by 'TCP'
+            handshake-timeout: 10000ms ## Default by 10000ms
+            close-notify-flush-timeout: 3000ms ## Default by 3000ms
+            close-notify-read-timeout: 0 ## Default by 0
+            #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+            #key-store: ## Keystore path for Netty HttpClient.
+            #key-store-type:
+            #key-store-password:
+            #key-store-provider:
+            #trusted-x509-certificates:
+            #use-insecure-trust-manager: true ## Default by false
+      fault:
+        #TODO
       trace:
         enabled: true ## Default by true
+        ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
+        preferredOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
+        ## Preferred to enable tracing samples match rule definitions.
+        preferrdMatchRuleDefinitions:
+          - name: defaultTraceHeader
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## Ant path pattern.
+            header:
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Trace
+              value: y
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
         serviceName: ${spring.application.name}
         exporter:
           provider: jaeger ## Default by jaeger, Options(otlp|jaeger|zipkin)
           otlp:
+            ## Otlp gRPC/http receiver server endpoint. Default by 'http://localhost:4317'
             endpoint: http://localhost:4317
             timeoutMs: 10_000 ## Default by 10000ms
-            headers: {} ## Default by null
+            headers: {} ## Default by {}
           jaeger:
+            ## Jaeger gRPC/http receiver server endpoint. Default by 'http://localhost:14250'
             endpoint: http://localhost:14250
           zipkin:
+            ## Zipkin gRPC/http receiver server endpoint. Default by 'http://localhost:9411/api/v2/spans'
             endpoint: http://localhost:9411/api/v2/spans
         samper:
+          ## The samper type, default by traceidratio, Options(always_on|parentbased_always_off|parentbased_always_on|parentbased_traceidratio|traceidratio)
           type: traceidratio
-          ratio: 1d
+          ## The traceId ratio based sampler ratio. range of [0.0-1.0]
+          ratio: 1.0d
         bsp:
+          ## The interval, in milliseconds, between two consecutive exports. Default is 5000ms.
           scheduleDelay: 5000
+          ## The maximum queue size. Default is 2048.
           maxQueueSize: 2048
+          ## The maximum batch size. Default is 512.
           maxExportBatchSize: 512
+          ## The maximum allowed time, in milliseconds, to export data. Default is 30000ms.
           exportTimeout: 30000
         spanLimits:
           ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumEvents
@@ -336,10 +413,17 @@ spring:
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
         defaultVerboseLevel: 7
         ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
-        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iam-Gateway-Log-Level'
+        verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iscg-Log-Level'
         ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.
-        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iam-Gateway-Log-Dyeing-State'
-        ## Preferred to enable print logs match SPEL match expression.
+        setDyeingLogStateRequestHeader: X-Iscg-Log-Dyeing-State ## Default by 'X-Iscg-Log-Dyeing-State'
+        ## In order to prevent the request body data from being too large, only the
+        ## first small part of the body data is obtained.
+        maxPrintRequestBodyLength: 1024 ## Default by 1024
+        ## In order to prevent the response body data from being too large, only the
+        ## first small part of the body data is obtained.
+        maxPrintResponseBodyLength: 1024 ## Default by 1024
+        ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
         preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
         ## Preferred to enable print logs match rules definition.
         preferrdMatchRuleDefinitions:
@@ -368,8 +452,6 @@ spring:
               value: y
           - name: energyOpenApiLogWithPath
             path: '/openapi/**'
-      trffic:
-        enabled: true ## Default by false
 
   ## Security configuration.
   security:

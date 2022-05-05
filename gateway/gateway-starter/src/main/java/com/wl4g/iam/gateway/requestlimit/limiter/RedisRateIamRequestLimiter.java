@@ -33,7 +33,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
-import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterGatewayFilterFactory;
+import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.RedisRateLimiterStrategyProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
@@ -82,7 +82,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
      * fetching the count and writing the new count.
      */
     @Override
-    public Mono<LimitedResult> isAllowed(IamRequestLimiterGatewayFilterFactory.Config config, String routeId, String limitKey) {
+    public Mono<LimitedResult> isAllowed(IamRequestLimiterFilterFactory.Config config, String routeId, String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         final long beginTime = nanoTime();
 

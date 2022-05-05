@@ -52,7 +52,9 @@ public abstract class AbstractDataBufferDecoder<T> extends AbstractDecoder<T> {
 
     //
     // [ADD] feature for
-    // https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+    // see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+    // see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1793
+    // see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1596
     //
     private int maxInMemorySize = 300 * 1024 * 1024;
 

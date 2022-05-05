@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -53,20 +52,14 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
     @Override
     public Mono<String> resolve(HeaderKeyResolverStrategy strategy, ServerWebExchange exchange) {
         HttpHeaders headers = exchange.getRequest().getHeaders();
-        notNullOf(headers, "requestHeaders");
-
         String host = null;
         for (String header : strategy.getHeaderNames()) {
             host = headers.getFirst(header);
             if (!isBlank(host) && !"Unknown".equalsIgnoreCase(host)) {
-                break;
+                return Mono.just(host);
             }
         }
         // Fall-back
-        if (isBlank(host)) {
-            host = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
-        }
-
         return Mono.just(exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
     }
 
@@ -84,7 +77,7 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
          * being forwarded by the proxy to limit the current, or it can be
          * flexibly used for other purposes.
          */
-        private List<String> headerNames = DEFAULT_HEADER_NAMES;
+        private List<String> headerNames = asList(WebUtils.HEADER_REAL_IP);
 
         @Override
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
@@ -94,7 +87,5 @@ public class HeaderIamKeyResolver extends AbstractIamKeyResolver<HeaderIamKeyRes
             }
         }
     }
-
-    public static final List<String> DEFAULT_HEADER_NAMES = asList(WebUtils.HEADER_REAL_IP);
 
 }

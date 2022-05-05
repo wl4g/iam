@@ -49,7 +49,7 @@ import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IamRequestLimiterGatewayFilterFactory}
+ * {@link IamRequestLimiterFilterFactory}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-19 v3.0.0
@@ -59,16 +59,16 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @ToString
-public class IamRequestLimiterGatewayFilterFactory
-        extends AbstractGatewayFilterFactory<IamRequestLimiterGatewayFilterFactory.Config> {
+public class IamRequestLimiterFilterFactory
+        extends AbstractGatewayFilterFactory<IamRequestLimiterFilterFactory.Config> {
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
     private @Autowired IamRequestLimiterProperties requsetLimiterConfig;
     private @Autowired GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter;
     private @Autowired GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter;
 
-    public IamRequestLimiterGatewayFilterFactory() {
-        super(IamRequestLimiterGatewayFilterFactory.Config.class);
+    public IamRequestLimiterFilterFactory() {
+        super(IamRequestLimiterFilterFactory.Config.class);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class IamRequestLimiterGatewayFilterFactory
     }
 
     @Override
-    public GatewayFilter apply(IamRequestLimiterGatewayFilterFactory.Config config) {
+    public GatewayFilter apply(IamRequestLimiterFilterFactory.Config config) {
         KeyResolverStrategy keyStrategy = config.getKeyResolver().build();
         applyDefaultToConfig(config, keyStrategy);
         return new IamRequestLimiterGatewayFilter(config, keyStrategy, getKeyResolver(config), getRequestLimiter(config));
@@ -97,11 +97,11 @@ public class IamRequestLimiterGatewayFilterFactory
     }
 
     @SuppressWarnings("unchecked")
-    private IamKeyResolver<KeyResolverStrategy> getKeyResolver(IamRequestLimiterGatewayFilterFactory.Config config) {
+    private IamKeyResolver<KeyResolverStrategy> getKeyResolver(IamRequestLimiterFilterFactory.Config config) {
         return (IamKeyResolver<KeyResolverStrategy>) keyResolverAdapter.forOperator(config.getKeyResolver().getProvider());
     }
 
-    private IamRequestLimiter getRequestLimiter(IamRequestLimiterGatewayFilterFactory.Config config) {
+    private IamRequestLimiter getRequestLimiter(IamRequestLimiterFilterFactory.Config config) {
         return requestLimiterAdapter.forOperator(config.getLimiter().getProvider());
     }
 

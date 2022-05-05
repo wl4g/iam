@@ -26,6 +26,7 @@ import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfig
 //import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.fault.config.FaultAutoConfiguration;
+import com.wl4g.iam.gateway.ipfilter.config.IpFilterAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
@@ -51,7 +52,7 @@ import reactor.core.publisher.Mono;
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         IamSecurityAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
-        TrafficAutoConfiguration.class })
+        IpFilterAutoConfiguration.class, TrafficAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
 
     @Bean

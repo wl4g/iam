@@ -12,7 +12,10 @@
 #
 spring:
   ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
-  ## but the lower version is invalid. see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+  ## but the lower version is invalid.
+  ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924
+  ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1793
+  ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1596
   #codec.max-in-memory-size: 102400000
   cloud:
     ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
@@ -303,7 +306,7 @@ spring:
           ## status code is satisfied)
           expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
-      trffic:
+      traffic:
         defaultReplication:
           targetUrls: ["http://localhost:8080/", "https://localhost:8080/"]
           wiretap: false ## Default by false
@@ -341,6 +344,19 @@ spring:
             #use-insecure-trust-manager: true ## Default by false
       fault:
         #TODO
+      ipfilter:
+        configPrefix: iam:gateway:ipfilter:config
+        defaultFilter:
+          ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
+          preferRejectOnCidrConflict: true ## Default by true
+          statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+          forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+              "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+              "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+              "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+          strategy:
+            allow: true ## Default by null
+            cidrs: ['192.168.0.0/16','10.0.0.0/8'] ## Default by '127.0.0.1'
       trace:
         enabled: true ## Default by true
         ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
