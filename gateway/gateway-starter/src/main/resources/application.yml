@@ -349,6 +349,8 @@ spring:
         defaultFilter:
           ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
+          ## The allow all local addresses to pass.
+          anyLocalAddressAllowed: true ## Default by true
           statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
           forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
               "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",

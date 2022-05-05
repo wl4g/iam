@@ -113,7 +113,8 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
 
         // The local address is allowed to pass by default.
         InetAddress address = remoteAddress.getAddress();
-        if (address.isAnyLocalAddress() || address.isLinkLocalAddress() || address.isLoopbackAddress()) {
+        if (config.isAnyLocalAddressAllowed()
+                && (address.isAnyLocalAddress() || address.isLinkLocalAddress() || address.isLoopbackAddress())) {
             return true;
         }
 
@@ -179,6 +180,11 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
          * conflict, whether the black-list (deny) has a higher priority.
          */
         private boolean preferRejectOnCidrConflict = true;
+
+        /**
+         * The allow all local addresses to pass.
+         */
+        private boolean anyLocalAddressAllowed = true;
 
         /**
          * HttpStatus to return when IpList is true, defaults to FORBIDDEN.
