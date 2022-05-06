@@ -48,7 +48,9 @@ import com.wl4g.infra.common.web.WebUtils;
 
 import io.netty.handler.ipfilter.IpFilterRuleType;
 import io.netty.handler.ipfilter.IpSubnetFilterRule;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import reactor.netty.tcp.InetSocketAddressUtil;
@@ -171,6 +173,8 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
     @Setter
     @Validated
     @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Config {
 
         /**
