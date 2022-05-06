@@ -126,23 +126,21 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
                 .flatMap(s -> safeList(s.getCidrs()).stream())
                 .anyMatch(cidr -> buildRule(cidr, IpFilterRuleType.ACCEPT).matches(remoteAddress));
 
-        // matching black-list
+        // matching blacklist
         boolean isReject = safeList(strategys).stream()
                 .filter(s -> (nonNull(s.getAllow()) && !s.getAllow()))
                 .flatMap(s -> safeList(s.getCidrs()).stream())
                 .anyMatch(cidr -> buildRule(cidr, IpFilterRuleType.REJECT).matches(remoteAddress));
 
-        // If none of the conditions are met, allow access
-        boolean allowed = isAccept;
-        if (isAccept && isAccept == isReject) { // all-meet-the-conditions
-            // Whether to use the blacklist first in case of
-            // conflict?
-            // if(ipListConfig.isPreferRejectOnCidrConflict()){
-            // allowed = false;
-            // } else {
-            // allowed = true;
-            // }
+        // If none of the conditions are met, allow access.
+        boolean allowed = isAccept && !isReject;
+        if (!isAccept && isReject) {
+            allowed = false;
+        } else if (isAccept && isReject) {
+            // Whether to use the blacklist first in case of conflict?
             allowed = !config.isPreferRejectOnCidrConflict();
+        } else if (!isAccept && !isReject) {
+            allowed = config.isAcceptOnBothNotMatch();
         }
         return allowed;
     }
@@ -176,10 +174,16 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
     public static class Config {
 
         /**
-         * When the white-list (allow) and the CIDR of the black-list (deny)
-         * conflict, whether the black-list (deny) has a higher priority.
+         * When the white-list (allow) and the CIDRs of the blacklist (deny)
+         * conflict, whether the blacklist (deny) has a higher priority.
          */
         private boolean preferRejectOnCidrConflict = true;
+
+        /**
+         * Whether to accept the request when neither the white-list nor the
+         * blacklist CIDRs match.
+         */
+        private boolean acceptOnBothNotMatch = true;
 
         /**
          * The allow all local addresses to pass.

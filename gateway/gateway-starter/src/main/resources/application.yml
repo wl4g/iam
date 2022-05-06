@@ -349,6 +349,8 @@ spring:
         defaultFilter:
           ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
+          ## Whether to accept the request when neither the whitelist nor the blacklist match.
+          acceptOnBothNotMatch: true ## Default by true
           ## The allow all local addresses to pass.
           anyLocalAddressAllowed: true ## Default by true
           statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
