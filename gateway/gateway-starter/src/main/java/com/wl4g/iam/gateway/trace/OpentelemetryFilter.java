@@ -70,7 +70,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
     public OpentelemetryFilter(TraceProperties traceConfig, OpenTelemetry openTelemetry) {
         this.traceConfig = notNullOf(traceConfig, "traceConfig");
         this.openTelemetry = notNullOf(openTelemetry, "openTelemetry");
-        this.requestMatcher = new SpelRequestMatcher(traceConfig.getPreferrdMatchRuleDefinitions());
+        this.requestMatcher = new SpelRequestMatcher(traceConfig.getPreferMatchRuleDefinitions());
     }
 
     /**
@@ -129,7 +129,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
                 () -> Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                traceConfig.getPreferredOpenMatchExpression(), routeIdPredicateSupplier);
+                traceConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
     }
 
     protected void inject(ServerWebExchange exchange) {

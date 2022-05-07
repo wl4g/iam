@@ -86,11 +86,11 @@ public class DyeingLoggingProperties {
      * Tip: The built-in support to get the current routeId, such as:
      * '#{routeId.get().test($request)}'
      */
-    private String preferredOpenMatchExpression = "#{true}";
+    private String preferOpenMatchExpression = "#{true}";
 
     /**
      * Preferred to enable print logs match rule definitions.
      */
-    private List<MatchHttpRequestRule> preferrdMatchRuleDefinitions = new ArrayList<>();
+    private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
 
 }

@@ -15,7 +15,12 @@
  */
 package com.wl4g.iam.gateway.fault.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
+
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +38,20 @@ import lombok.ToString;
 @Validated
 @ToString
 public class FaultProperties {
+
+    /**
+     * Preferred to enable fault injection match SPEL match expression. Default
+     * by '#{true}', which means never match. </br>
+     * </br>
+     * Tip: The built-in support to get the current routeId, such as:
+     * '#{routeId.get().test($request)}'
+     */
+    private String preferredOpenMatchExpression = "#{true}";
+
+    /**
+     * Preferred to enable fault injection match rule definitions.
+     */
+    private List<MatchHttpRequestRule> preferrdMatchRuleDefinitions = new ArrayList<>();
 
     private InjectorProperties injector = new InjectorProperties();
 

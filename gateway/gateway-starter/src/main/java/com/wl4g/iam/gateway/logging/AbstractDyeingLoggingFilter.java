@@ -75,7 +75,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
     public AbstractDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
-        this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferrdMatchRuleDefinitions());
+        this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferMatchRuleDefinitions());
     }
 
     /**
@@ -142,7 +142,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
                 () -> Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                loggingConfig.getPreferredOpenMatchExpression(), routeIdPredicateSupplier);
+                loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
     }
 
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {

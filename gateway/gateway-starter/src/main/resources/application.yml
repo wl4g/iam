@@ -347,10 +347,10 @@ spring:
       ipfilter:
         configPrefix: iam:gateway:ipfilter:config
         defaultFilter:
-          ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
+          ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
           ## Whether to accept the request when neither the whitelist nor the blacklist match.
-          acceptOnBothNotMatch: true ## Default by true
+          acceptNotMatchCidr: true ## Default by true
           ## The allow all local addresses to pass.
           anyLocalAddressAllowed: true ## Default by true
           statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
@@ -365,9 +365,9 @@ spring:
         enabled: true ## Default by true
         ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
-        preferredOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
+        preferOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
         ## Preferred to enable tracing samples match rule definitions.
-        preferrdMatchRuleDefinitions:
+        preferMatchRuleDefinitions:
           - name: defaultTraceHeader
             #method:
             #schema:
@@ -444,9 +444,9 @@ spring:
         maxPrintResponseBodyLength: 1024 ## Default by 1024
         ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
-        preferredOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
+        preferOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
         ## Preferred to enable print logs match rules definition.
-        preferrdMatchRuleDefinitions:
+        preferMatchRuleDefinitions:
           - name: defaultLogHeader
             #method:
             #schema:

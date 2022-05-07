@@ -142,7 +142,7 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
             // Whether to use the blacklist first in case of conflict?
             allowed = !config.isPreferRejectOnCidrConflict();
         } else if (!isAccept && !isReject) {
-            allowed = config.isAcceptOnBothNotMatch();
+            allowed = config.isAcceptNotMatchCidr();
         }
         return allowed;
     }
@@ -187,7 +187,7 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
          * Whether to accept the request when neither the white-list nor the
          * blacklist CIDRs match.
          */
-        private boolean acceptOnBothNotMatch = true;
+        private boolean acceptNotMatchCidr = true;
 
         /**
          * The allow all local addresses to pass.
