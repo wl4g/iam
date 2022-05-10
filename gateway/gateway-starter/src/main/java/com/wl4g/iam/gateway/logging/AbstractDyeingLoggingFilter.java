@@ -265,6 +265,6 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
     public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";
-    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 20;
+    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 100;
 
 }

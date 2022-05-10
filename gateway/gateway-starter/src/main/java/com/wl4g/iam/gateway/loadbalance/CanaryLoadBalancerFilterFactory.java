@@ -240,6 +240,11 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     }
 
     public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadBalancer";
+
+    /**
+     * @see {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER}
+     * @see {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#ROUTE_TO_URL_FILTER_ORDER}
+     */
     public static final int ORDER_CANARY_LOADBALANCER_FILTER = RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 100;
 
 }

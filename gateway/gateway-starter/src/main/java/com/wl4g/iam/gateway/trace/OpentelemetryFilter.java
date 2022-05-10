@@ -20,7 +20,6 @@ import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -36,8 +35,9 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
-import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
+import com.wl4g.iam.gateway.logging.AbstractDyeingLoggingFilter;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -144,7 +144,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
 
     public static Mono<Span> buildTraceSpan(Tracer tracer, ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
-        return exchange.getPrincipal().defaultIfEmpty(UNKNOWN_PRINCIPAL).flatMap(principal -> {
+        return exchange.getPrincipal().defaultIfEmpty(IamGatewayUtil.UNKNOWN_PRINCIPAL).flatMap(principal -> {
             Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
             String routeId = isNull(route) ? "Unknown" : route.getId();
             URI uri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
@@ -163,16 +163,8 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
         });
     }
 
-    /**
-     * @see {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER}
-     */
-    public static final int ORDER_FILTER = CanaryLoadBalancerFilterFactory.ORDER_CANARY_LOADBALANCER_FILTER - 10;
-    public static final Principal UNKNOWN_PRINCIPAL = new Principal() {
-        @Override
-        public String getName() {
-            return "Unknown";
-        }
-    };
+    // for logging print traceId.
+    public static final int ORDER_FILTER = AbstractDyeingLoggingFilter.ORDER_FILTER - 10;
 
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String TRACE_TAG_ROUTEID = "routeId";
