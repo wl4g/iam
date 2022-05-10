@@ -21,14 +21,19 @@ import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
+import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -56,8 +61,7 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new FaultInjectorFilterFactory.Config(), config,
-                    faultConfig.getDefaultInjector());
+            ConfigBeanUtils.configureWithDefault(new FaultInjectorFilterFactory.Config(), config, faultConfig.getDefaultInject());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException("Unable apply defaults to traffic imager gateway config", e);
         }
@@ -66,12 +70,22 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
     @Override
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
-        return (exchange, chain) -> {
-            // The enable fault injection for the current request based on a
-            // random percentage.
-            double percentage = ThreadLocalRandom.current().nextDouble();
-            boolean needInject = percentage < config.getPreferMatchPercentage();
-            if (!needInject) {
+        return new FaultInjectorGatewayFilter(config, new SpelRequestMatcher(config.getPreferMatchRuleDefinitions()));
+    }
+
+    public static class Config extends InjectorProperties {
+
+    }
+
+    @AllArgsConstructor
+    public static class FaultInjectorGatewayFilter implements GatewayFilter {
+
+        private final Config config;
+        private final SpelRequestMatcher requestMatcher;
+
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+            if (!isFilterFault(exchange)) {
                 return chain.filter(exchange);
             }
 
@@ -90,11 +104,21 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
                 log.warn("Failed to inject fault because injector provider '{}' is not recognized.", config.getProvider());
                 return chain.filter(exchange);
             }
-        };
-    }
+        }
 
-    public static class Config extends InjectorProperties {
+        private boolean isFilterFault(ServerWebExchange exchange) {
+            // Determine if fault injection is required based on request
+            // matcher.
+            if (!requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    config.getPreferOpenMatchExpression())) {
+                return false;
+            }
 
+            // Determine if fault injection is required based on random
+            // percentage.
+            double percentage = ThreadLocalRandom.current().nextDouble();
+            return percentage < config.getPreferMatchPercentage();
+        }
     }
 
     public static final String BEAN_NAME = "FaultInjector";

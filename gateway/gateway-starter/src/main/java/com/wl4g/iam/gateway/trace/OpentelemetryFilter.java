@@ -83,7 +83,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (!isFilterTracing(exchange)) {
+        if (!isTraceRequest(exchange)) {
             if (log.isDebugEnabled()) {
                 log.debug("Not to meet the conditional rule to enable tracing. - headers: {}, queryParams: {}",
                         exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
@@ -117,7 +117,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
      * @param exchange
      * @return
      */
-    protected boolean isFilterTracing(ServerWebExchange exchange) {
+    protected boolean isTraceRequest(ServerWebExchange exchange) {
         if (!traceConfig.isEnabled()) {
             return false;
         }

@@ -28,7 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.gateway.trace.OpentelemetryFilter;
-import com.wl4g.iam.gateway.trace.SimpleTraceFilter;
+//import com.wl4g.iam.gateway.trace.SimpleTraceFilter;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
@@ -63,10 +63,10 @@ public class TraceAutoConfiguration {
         return new TraceProperties();
     }
 
-    @Bean
-    public SimpleTraceFilter simpleTraceFilter() {
-        return new SimpleTraceFilter();
-    }
+    // @Bean
+    // public SimpleTraceFilter simpleTraceFilter() {
+    // return new SimpleTraceFilter();
+    // }
 
     @Bean
     public OpentelemetryFilter opentelemetryFilter(TraceProperties traceConfig, OpenTelemetry openTelemetry) {

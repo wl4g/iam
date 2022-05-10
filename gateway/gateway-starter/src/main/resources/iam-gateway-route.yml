@@ -305,3 +305,43 @@ spring:
                     "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
                     "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
                     "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+            - name: FaultInjector
+              args:
+                ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+                preferOpenMatchExpression: '#{$defaultFaultHeader.test($request)}'
+                ## Prefer to enable tracing samples match rule definitions.
+                preferMatchRuleDefinitions:
+                  - name: defaultFaultHeader
+                    #method:
+                    #schema:
+                    #host:
+                    #port:
+                    #path: ## Ant path pattern.
+                    header:
+                      symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+                      key: X-Iscg-Fault
+                      value: y
+                    #cookie:
+                    #  symbol:
+                    #  key:
+                    #  value:
+                    #query:
+                    #  symbol:
+                    #  key:
+                    #  value:
+                ## Prefer percentage of requests that require fault injection match enabled.
+                ## which is equivalent to another and condition after match the SPEL expression.
+                preferMatchPercentage: 0.5d ## Default by 1.0d
+                ## The enabled fault injector providers.
+                provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
+                ## The request to abort fault injector configuration.
+                abort:
+                  ## The HttpStatus returned when the fault strategy is meet.
+                  statusCode: 500 ## Default by 500
+                ## The request to fixed delay fault injector configuration.
+                fixedDelay:
+                  delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
+                ## The request to random range delay fault injector configuration.
+                rangeDelay:
+                  minDelayMs: 1000 ## Default by 1000
+                  maxDelayMs: 5000 ## Default by 5000

@@ -377,8 +377,7 @@ spring:
             statusCode: 500 ## Default by 500
           ## The request to fixed delay fault injector configuration.
           fixedDelay:
-            ## Fixed delay in milliseconds.
-            delayMs: 1000## Default by 1000
+            delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
           ## The request to random range delay fault injector configuration.
           rangeDelay:
             minDelayMs: 1000 ## Default by 1000

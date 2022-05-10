@@ -41,7 +41,7 @@ import lombok.ToString;
 @ToString
 public class FaultProperties {
 
-    private InjectorProperties defaultInjector = new InjectorProperties();
+    private InjectorProperties defaultInject = new InjectorProperties();
 
     @Getter
     @Setter

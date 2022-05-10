@@ -89,7 +89,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // Check if filtering flight logging is enabled.
-        if (!isFilterLogging(exchange)) {
+        if (!isLoggingRequest(exchange)) {
             if (log.isDebugEnabled()) {
                 log.debug("Not to meet the conditional rule to enable logging. - headers: {}, queryParams: {}",
                         exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
@@ -130,7 +130,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @param exchange
      * @return
      */
-    protected boolean isFilterLogging(ServerWebExchange exchange) {
+    protected boolean isLoggingRequest(ServerWebExchange exchange) {
         if (!loggingConfig.isEnabled()) {
             return false;
         }
