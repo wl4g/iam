@@ -29,6 +29,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
+import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
@@ -92,20 +93,29 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            if (!isFilterFault(exchange)) {
+            if (!isFaultRequest(exchange)) {
                 return chain.filter(exchange);
             }
 
             switch (config.getProvider()) {
             case Abort:
-                ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getAbort().getStatusCode()));
-                return exchange.getResponse().setComplete();
+                if (isFaultWithPercentage(config.getAbort())) {
+                    ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getAbort().getStatusCode()));
+                    return exchange.getResponse().setComplete();
+                }
+                return chain.filter(exchange);
             case FixedDelay:
-                return Mono.delay(Duration.ofMillis(config.getFixedDelay().getDelayMs())).then(chain.filter(exchange));
+                if (isFaultWithPercentage(config.getFixedDelay())) {
+                    return Mono.delay(Duration.ofMillis(config.getFixedDelay().getDelayMs())).then(chain.filter(exchange));
+                }
+                return chain.filter(exchange);
             case RangeDelay:
-                long delayMs = ThreadLocalRandom.current().nextLong(config.getRangeDelay().getMinDelayMs(),
-                        config.getRangeDelay().getMaxDelayMs());
-                return Mono.delay(Duration.ofMillis(delayMs)).then(chain.filter(exchange));
+                if (isFaultWithPercentage(config.getRangeDelay())) {
+                    long delayMs = ThreadLocalRandom.current().nextLong(config.getRangeDelay().getMinDelayMs(),
+                            config.getRangeDelay().getMaxDelayMs());
+                    return Mono.delay(Duration.ofMillis(delayMs)).then(chain.filter(exchange));
+                }
+                return chain.filter(exchange);
             default:
                 // throw new Error("Shouldn't be here");
                 log.warn("Failed to inject fault because injector provider '{}' is not recognized.", config.getProvider());
@@ -113,17 +123,17 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             }
         }
 
-        private boolean isFilterFault(ServerWebExchange exchange) {
+        private boolean isFaultRequest(ServerWebExchange exchange) {
             // Determine if fault injection is required based on request
             // matcher.
-            if (requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    faultConfig.getPreferOpenMatchExpression())) {
-                // if fault injection is required based on random
-                // percentage.
-                double percentage = ThreadLocalRandom.current().nextDouble();
-                return percentage < faultConfig.getPercentage();
-            }
-            return false;
+            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    faultConfig.getPreferOpenMatchExpression());
+        }
+
+        private boolean isFaultWithPercentage(AbstractInjectorProperties injectorConfig) {
+            // if fault injection is required based on random percentage.
+            double per = ThreadLocalRandom.current().nextDouble();
+            return per < injectorConfig.getPercentage();
         }
     }
 

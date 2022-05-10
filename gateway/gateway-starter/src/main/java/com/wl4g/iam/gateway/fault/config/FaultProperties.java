@@ -55,12 +55,6 @@ public class FaultProperties {
      */
     private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
 
-    /**
-     * The percentage of requests that require fault injection enabled. which is
-     * equivalent to another and condition after match the SPEL expression.
-     */
-    private double percentage = 1d;
-
     private InjectorProperties defaultInject = new InjectorProperties();
 
     @Getter
@@ -105,6 +99,13 @@ public class FaultProperties {
     @Validated
     @ToString
     public static abstract class AbstractInjectorProperties {
+
+        /**
+         * The percentage of requests that require fault injection enabled.
+         * which is equivalent to another and condition after match the SPEL
+         * expression.
+         */
+        private double percentage = 1d;
     }
 
     @Getter

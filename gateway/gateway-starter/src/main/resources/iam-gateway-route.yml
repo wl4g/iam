@@ -307,7 +307,6 @@ spring:
                     "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
             - name: FaultInjector
               args:
-                ## The percentage of requests that require fault injection match enabled.
                 ## which is equivalent to another and condition after match the SPEL expression.
                 percentage: 0.5d ## Default by 1.0d
                 ## The enabled fault injector providers.
