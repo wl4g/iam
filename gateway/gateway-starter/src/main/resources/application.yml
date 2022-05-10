@@ -308,7 +308,9 @@ spring:
           #expect-body: ## Default by ''
       traffic:
         defaultReplication:
-          targetUrls: ["http://localhost:8080/", "https://localhost:8080/"]
+          targetUrls: ["http://localhost:8888/"]
+          ## The sampling percentage rate of traffic that needs to be replication.
+          percentage: 1d ## Default by 1d
           wiretap: false ## Default by false
           connectTimeout: 45_000 ## Default by 45s
           ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout

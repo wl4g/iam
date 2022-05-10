@@ -57,6 +57,11 @@ public class TrafficProperties {
          */
         private List<String> targetUris = asList("http://localhost:8080/", "https://localhost:8080/");
 
+        /**
+         * The sampling percentage rate of traffic that needs to be replication.
+         */
+        private double percentage = 1d;
+
         /** Enables wiretap debugging for Netty HttpClient. */
         private boolean wiretap = false;
 

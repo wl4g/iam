@@ -19,6 +19,7 @@
  */
 
 import static com.wl4g.infra.common.lang.ClassUtils2.isPresent
+import static com.wl4g.infra.common.runtime.JvmRuntimeTool.isJvmInDebugging
 import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
 
 import org.springframework.boot.Banner
@@ -52,6 +53,12 @@ class IamGatewayBootstrappingConfigurer implements IBootstrappingConfigurer {
         if (isPresent("com.alibaba.cloud.nacos.NacosConfigAutoConfiguration")) {
             configName.append(",iam-gateway-nacos");
             //location.append(",classpath:/nacos/")
+        }
+
+        // for demo environment.
+        if (isJvmInDebugging) {
+            configName.append(",example");
+            location.append(",classpath:/example/");
         }
 
         defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())

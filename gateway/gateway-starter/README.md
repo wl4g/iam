@@ -99,5 +99,12 @@ curl -v 'http://localhost:18086/actuator/prometheus'
 ## 4. Performace
 
 ```bash
-ab -n 10000 -c 1000 -H 'X-Iscg-Log: y' -H 'X-Iscg-Log-Level: 0' -H 'X-Iscg-Canary: v1' 'http://localhost:18085/alimarket/v1/createInstance?action=createInstance&aliUid=1221&orderBizId=12345&orderId=123456789&productCode=121&skuId=yuncode215700000&trial=1&token=ada175ba95d1fc2585b9da0bcb5de663&response_type=json'
+ab -n 10000 -c 1000 \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 0' \
+-H 'X-Iscg-Fault: y' \
+-H 'X-Iscg-Canary: v1' \
+-m POST \
+'http://localhost:18085/productpage/post?action=createInstance&aliUid=1221&orderBizId=12345&orderId=123456789&productCode=121&skuId=yuncode215700000&trial=1&token=ada175ba95d1fc2585b9da0bcb5de663&response_type=json'
 ```

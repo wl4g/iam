@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.trace;
 
-import static java.lang.System.out;
 
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class SimpleTraceFilterTests {
 
     @Test
     public void testGenerateTraceId() {
-        out.println(new SimpleTraceFilter().generateTraceId());
+        // System.out.println(new SimpleTraceFilter().generateTraceId());
     }
 
 }

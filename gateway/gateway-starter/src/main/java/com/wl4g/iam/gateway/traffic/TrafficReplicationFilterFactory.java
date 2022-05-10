@@ -28,6 +28,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.P
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -134,6 +135,10 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
             URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
             String scheme = requestUrl.getScheme();
             if ((!"http".equals(scheme) && !"https".equals(scheme))) {
+            }
+
+            // Check the sampling percentage.
+            if (!isReplicationWithPercentage(config)) {
                 return chain.filter(exchange);
             }
 
@@ -154,6 +159,12 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
                 }
                 return Mono.just(body);
             });
+        }
+
+        private boolean isReplicationWithPercentage(Config config) {
+            // if fault injection is required based on random percentage.
+            double per = ThreadLocalRandom.current().nextDouble();
+            return per < config.getPercentage();
         }
 
         /**

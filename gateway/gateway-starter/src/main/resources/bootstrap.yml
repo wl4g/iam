@@ -13,7 +13,20 @@
 spring:
   application.name: iam-gateway
   profiles:
-    include: route
+    ## For example configurations.
+    #include: service-discovery
+    #include: route-filter-ALL
+    #include: route-filter-CanaryLoadBalancer
+    #include: route-filter-CircuitBreaker
+    include: route-filter-FaultInjector
+    #include: route-filter-IamRequestLimiter
+    #include: route-filter-IpFilter
+    #include: route-filter-RequestSize
+    #include: route-filter-Retry
+    #include: route-filter-SimpleSignAuthing
+    #include: route-filter-TrafficReplicator
+    ## For standard configurations.
+    #include: route
     active: dev
   banner:
       location: classpath:META-INF/banner.txt

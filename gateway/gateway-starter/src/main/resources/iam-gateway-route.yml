@@ -259,6 +259,8 @@ spring:
               ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
               args:
                 targetUris: ["http://localhost:8888/"]
+                ## The sampling percentage rate of traffic that needs to be replication.
+                percentage: 1d ## Default by 1d
                 #wiretap: false ## Default by false
                 #connectTimeout: 45_000 ## Default by 45s
                 ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout

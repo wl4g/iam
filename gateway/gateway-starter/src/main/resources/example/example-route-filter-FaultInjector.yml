@@ -1,0 +1,50 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# #### IAM Gateway Example routes-filter configuration. ####
+#
+spring:
+  cloud:
+    ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration
+    ## see:https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.0.0.RELEASE/single/spring-cloud-gateway.html#_requestratelimiter_gatewayfilter_factory
+    ## see:https://github.com/eugenp/tutorials/blob/master/spring-cloud/spring-cloud-gateway/src/main/resources/application-webfilters.yml
+    ## see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/appendix.html
+    gateway:
+      routes:
+        - id: productpage-service-route
+          uri: lb://productpage-service
+          predicates:
+            - Path=/productpage/**
+            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-productpage-service,5
+          filters:
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/productpage/(?<segment>.*),/$\{segment}
+            - name: FaultInjector
+              args:
+                ## which is equivalent to another and condition after match the SPEL expression.
+                percentage: 0.5d ## Default by 1.0d
+                ## The enabled fault injector providers.
+                provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
+                ## The request to abort fault injector configuration.
+                abort:
+                  ## The HttpStatus returned when the fault strategy is meet.
+                  statusCode: 500 ## Default by 500
+                ## The request to fixed delay fault injector configuration.
+                fixedDelay:
+                  delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
+                ## The request to random range delay fault injector configuration.
+                rangeDelay:
+                  minDelayMs: 1000 ## Default by 1000
+                  maxDelayMs: 5000 ## Default by 5000
