@@ -31,6 +31,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
+import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProvider;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -100,17 +101,20 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             switch (config.getProvider()) {
             case Abort:
                 if (isFaultWithPercentage(config.getAbort())) {
+                    setResponseHeaders(exchange, InjectorProvider.Abort);
                     ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getAbort().getStatusCode()));
                     return exchange.getResponse().setComplete();
                 }
                 return chain.filter(exchange);
             case FixedDelay:
                 if (isFaultWithPercentage(config.getFixedDelay())) {
+                    setResponseHeaders(exchange, InjectorProvider.FixedDelay);
                     return Mono.delay(Duration.ofMillis(config.getFixedDelay().getDelayMs())).then(chain.filter(exchange));
                 }
                 return chain.filter(exchange);
             case RangeDelay:
                 if (isFaultWithPercentage(config.getRangeDelay())) {
+                    setResponseHeaders(exchange, InjectorProvider.RangeDelay);
                     long delayMs = ThreadLocalRandom.current().nextLong(config.getRangeDelay().getMinDelayMs(),
                             config.getRangeDelay().getMaxDelayMs());
                     return Mono.delay(Duration.ofMillis(delayMs)).then(chain.filter(exchange));
@@ -128,6 +132,10 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             // matcher.
             return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                     faultConfig.getPreferOpenMatchExpression());
+        }
+
+        private void setResponseHeaders(ServerWebExchange exchange, InjectorProvider provider) {
+            exchange.getResponse().getHeaders().add(faultConfig.getFaultInjectedHeader(), provider.name());
         }
 
         private boolean isFaultWithPercentage(AbstractInjectorProperties injectorConfig) {

@@ -55,6 +55,11 @@ public class FaultProperties {
      */
     private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
 
+    /**
+     * The name of the header that returns the fault injected configuration.
+     */
+    private String faultInjectedHeader = FAULT_INJECTED_HEADER;
+
     private InjectorProperties defaultInject = new InjectorProperties();
 
     @Getter
@@ -150,4 +155,5 @@ public class FaultProperties {
         private long maxDelayMs = 5000L;
     }
 
+    public static String FAULT_INJECTED_HEADER = "X-Iscg-Fault-Injected";
 }
