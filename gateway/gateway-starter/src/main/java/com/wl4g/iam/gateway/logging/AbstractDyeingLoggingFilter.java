@@ -96,6 +96,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
             }
             return chain.filter(exchange);
         }
+
         exchange.getAttributes().put(KEY_START_TIME, currentTimeMillis());
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();

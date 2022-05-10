@@ -84,6 +84,7 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             String traceId,
             String requestMethod,
             String requestUri) {
+
         boolean log1_2 = isLoglevelRange(exchange, 1, 2);
         boolean log3_10 = isLoglevelRange(exchange, 3, 10);
         boolean log5_10 = isLoglevelRange(exchange, 5, 10);

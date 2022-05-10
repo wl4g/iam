@@ -21,6 +21,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -69,27 +70,7 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             String traceId,
             String requestMethod,
             String requestUri) {
-        return chain.filter(
-                exchange.mutate().response(logResponse(exchange, chain, headers, traceId, requestMethod, requestUri)).build());
-    }
 
-    /**
-     * Logging response processes.
-     * 
-     * @param exchange
-     * @param chain
-     * @param traceId
-     * @param requestMethod
-     * @param requestUri
-     * @return
-     */
-    private ServerHttpResponse logResponse(
-            ServerWebExchange exchange,
-            GatewayFilterChain chain,
-            HttpHeaders headers,
-            String traceId,
-            String requestMethod,
-            String requestUri) {
         boolean log1_2 = isLoglevelRange(exchange, 1, 2);
         boolean log3_10 = isLoglevelRange(exchange, 3, 10);
         boolean log6_10 = isLoglevelRange(exchange, 6, 10);
@@ -123,25 +104,28 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             responseLogArgs.add(traceId);
             responseLogArgs.add(costTime + "ms");
         }
-        // Print response headers.
-        if (log6_10) {
-            HttpHeaders httpHeaders = response.getHeaders();
-            httpHeaders.forEach((headerName, headerValue) -> {
-                if (log8_10 || LOG_GENERIC_HEADERS.stream().anyMatch(h -> containsIgnoreCase(h, headerName))) {
-                    responseLog.append("{}: {}\n");
-                    responseLogArgs.add(headerName);
-                    responseLogArgs.add(headerValue.toString());
-                }
-            });
-        }
 
+        AtomicBoolean addedResponseHeaders = new AtomicBoolean(false);
         // Note: The following transform function may be executed multiple
         // times. For the time being, we only print the first segment of data in
         // the response body. We think that printing too much data may be
         // meaningless and waste resources.
         AtomicInteger transformCount = new AtomicInteger(0);
-        return decorateResponse(exchange, chain, responseBodySegment -> {
+        ServerHttpResponse newRespnose = decorateResponse(exchange, chain, responseBodySegment -> {
             if (transformCount.incrementAndGet() <= 1) {
+                // Print response headers.
+                if (log6_10) {
+                    addedResponseHeaders.set(true);
+                    HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+                    httpHeaders.forEach((headerName, headerValue) -> {
+                        if (log8_10 || LOG_GENERIC_HEADERS.stream().anyMatch(h -> containsIgnoreCase(h, headerName))) {
+                            responseLog.append("{}: {}\n");
+                            responseLogArgs.add(headerName);
+                            responseLogArgs.add(headerValue.toString());
+                        }
+                    });
+                }
+
                 // If it is a file download, direct printing does not display
                 // binary.
                 if (isDownloadStreamMedia(headers.getContentType())) {
@@ -162,12 +146,27 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
                         responseLogArgs.add(new String(responseBodySegment, 0, length, UTF_8));
                     }
                 }
-                if (log3_10) {
-                    responseLog.append(LOG_RESPONSE_END);
-                    log.info(responseLog.toString(), responseLogArgs.toArray());
-                }
             }
             return Mono.just(responseBodySegment);
+        });
+
+        return chain.filter(exchange.mutate().response(newRespnose).build()).doFinally(signal -> {
+            // If there is a response body, the response header has been added
+            // before, no need to add.
+            if (!addedResponseHeaders.get() && log6_10) {
+                HttpHeaders httpHeaders = newRespnose.getHeaders();
+                httpHeaders.forEach((headerName, headerValue) -> {
+                    if (log8_10 || LOG_GENERIC_HEADERS.stream().anyMatch(h -> containsIgnoreCase(h, headerName))) {
+                        responseLog.append("{}: {}\n");
+                        responseLogArgs.add(headerName);
+                        responseLogArgs.add(headerValue.toString());
+                    }
+                });
+            }
+            if (log3_10) {
+                responseLog.append(LOG_RESPONSE_END);
+                log.info(responseLog.toString(), responseLogArgs.toArray());
+            }
         });
     }
 
