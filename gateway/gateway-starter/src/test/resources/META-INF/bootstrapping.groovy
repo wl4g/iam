@@ -55,6 +55,12 @@ class IamGatewayBootstrappingConfigurer implements IBootstrappingConfigurer {
             //location.append(",classpath:/nacos/")
         }
 
+        // for example environment configuration.
+        if (isJvmInDebugging) {
+            configName.append(",example");
+            location.append(",classpath:/example/");
+        }
+
         defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
         defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 
