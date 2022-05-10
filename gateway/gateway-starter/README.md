@@ -22,7 +22,7 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 
 - [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html) , The `-Djavax.net.debug` options are `all|ssl|handshake|warning|...`
 
-### 2.1 Gateway Simple TLS
+### 2.1 Ingress Gateway Simple TLS
 
 - Startup IamGateway(pseudo command-line)
 
@@ -30,14 +30,13 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NONE
 ```
 
-
 - Clients for `curl` testing
 
 ```bash
 curl -v -k 'https://localhost:18085/httpbin/secure/get'
 ```
 
-### 2.2 Gateway mTLS
+### 2.2 Ingress Gateway mTLS
 
 - Startup IamGateway(pseudo command-line)
 
@@ -55,7 +54,45 @@ curl -v \
 'https://localhost:18085/httpbin/secure/get' | jq
 ```
 
-### 2.3 Traffic replication
+### 2.3 IpFilter
+
+- The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
+
+```yaml
+spring:
+  profiles:
+    include: "service-discovery,route-filter-splitting"
+```
+
+```bash
+export localIp=$(ifconfig|grep -A 4 -E '^em*|^eno*|^enp*|^ens*|^eth*|^wlp*'|grep 'inet'|awk '{print $2}'|head -1 2>/dev/null)
+
+# for get (failed)
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'RemoteAddr: 1.1.1.1' \
+"http://$localIp:18085/productpage-with-IpFilter/get"
+
+# for post (success)
+curl -vsSkL -XPOST \
+-H 'Content-Type: application/json' \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'RemoteAddr: 10.1.1.1' \
+-d '{"name":"jack"}' \
+"http://$localIp:18085/productpage-with-IpFilter/post"
+```
+
+### 2.4 Traffic replication
+
+- The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
+
+```yaml
+spring:
+  profiles:
+    include: "service-discovery,route-filter-splitting"
+```
 
 ```bash
 # Mock actual upstream http server.
@@ -69,9 +106,44 @@ python3 -m http.server -b 0.0.0.0 8888
 # 1. Send a mock request and observe that both terminals have output.
 # 2. Then observe the output of the simulated mirror http server, and the response of the simulated real http server.
 
-curl -vsSkL -XGET -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' 'http://localhost:18085/httpbin/nosecure/get'
+# for get (success)
+curl -vsSkL -XGET -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' 'http://localhost:18085/productpage-with-TrafficReplicator/get'
 
-curl -vsSkL -XPOST -H 'Content-Type: application/json' -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' -d '{"name":"jack"}' 'http://localhost:18085/httpbin/nosecure/post'
+# for post (success)
+curl -vsSkL -XPOST \
+-H 'Content-Type: application/json' \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-d '{"name":"jack"}' \
+'http://localhost:18085/productpage-with-TrafficReplicator/post'
+```
+
+### 2.5 Fault Injector
+
+- The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
+
+```yaml
+spring:
+  profiles:
+    include: "service-discovery,route-filter-splitting"
+```
+
+```bash
+# for get (success)
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Fault: y' \
+'http://localhost:18085/productpage-with-FaultInjector/get'
+
+# for post (success)
+curl -vsSkL -XPOST \
+-H 'Content-Type: application/json' \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Fault: y' \
+-d '{"name":"jack"}' \
+'http://localhost:18085/productpage-with-FaultInjector/post'
 ```
 
 ## 3. Admin API

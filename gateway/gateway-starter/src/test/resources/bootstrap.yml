@@ -14,18 +14,8 @@ spring:
   application.name: test-iam-gateway
   profiles:
     active: dev
-    ## For example configurations.
-    include: "service-discovery,\
-      route-filter-ALL,\
-      route-filter-CanaryLoadBalancer,\
-      route-filter-CircuitBreaker,\
-      route-filter-FaultInjector,\
-      route-filter-IamRequestLimiter,\
-      route-filter-IpFilter,\
-      route-filter-RequestSize,\
-      route-filter-Retry,\
-      route-filter-SimpleSignAuthing,\
-      route-filter-TrafficReplicator"
+    include: "service-discovery,route-filter-splitting"
+    #include: "service-discovery,route-filter-composite"
   banner:
       location: classpath:META-INF/banner.txt
   freemarker:

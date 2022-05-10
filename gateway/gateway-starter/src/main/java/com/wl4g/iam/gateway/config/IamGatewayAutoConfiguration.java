@@ -23,7 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
 import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfiguration;
-//import com.wl4g.iam.gateway.auth.TokenRelayRefreshGatewayFilterFactory;
+//import com.wl4g.iam.gateway.security.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
 import com.wl4g.iam.gateway.fault.config.FaultAutoConfiguration;
 import com.wl4g.iam.gateway.ipfilter.config.IpFilterAutoConfiguration;

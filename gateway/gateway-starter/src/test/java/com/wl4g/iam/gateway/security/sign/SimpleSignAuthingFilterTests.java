@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.auth.simple;
+package com.wl4g.iam.gateway.security.sign;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -88,21 +88,25 @@ public class SimpleSignAuthingFilterTests {
             // custom store secret.
             System.setProperty(authingConfig.getSimpleSign().getSecretStorePrefix() + ":" + TEST_APPID, TEST_APPSECRET);
 
-            return builder.routes().route(p -> p.path(TEST_ROUTE_PATH).filters(f -> {
-                // for Add simple sign filter.
-                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(new IamSecurityProperties(), redisTemplate,
-                        metricsFacade, eventBus);
-                SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
-                // custom sign parameter name.
-                config.setSignParam("signature");
-                // custom sign hashing mode.
-                config.setSignHashingMode(SignHashingMode.SimpleParamsBytesSortedHashing);
-                // custom sign hashing include parameters.
-                config.setSignHashingIncludeParams(asList("appId", "timestamp", "nonce"));
-                // custom sign hashing required include parameters.
-                config.setSignHashingRequiredIncludeParams(asList("appId", "timestamp", "nonce"));
-                return f.filter(filter.apply(config), Ordered.HIGHEST_PRECEDENCE);
-            }).uri("http://httpbin.org:80")).build();
+            return builder.routes()
+                    .route("test-route-with-" + SimpleSignAuthingFilterFactory.class.getSimpleName(),
+                            p -> p.path(TEST_ROUTE_PATH).filters(f -> {
+                                // for Add simple sign filter.
+                                SimpleSignAuthingFilterFactory filter = new SimpleSignAuthingFilterFactory(
+                                        new IamSecurityProperties(), redisTemplate, metricsFacade, eventBus);
+                                SimpleSignAuthingFilterFactory.Config config = new SimpleSignAuthingFilterFactory.Config();
+                                // custom sign parameter name.
+                                config.setSignParam("signature");
+                                // custom sign hashing mode.
+                                config.setSignHashingMode(SignHashingMode.SimpleParamsBytesSortedHashing);
+                                // custom sign hashing include parameters.
+                                config.setSignHashingIncludeParams(asList("appId", "timestamp", "nonce"));
+                                // custom sign hashing required include
+                                // parameters.
+                                config.setSignHashingRequiredIncludeParams(asList("appId", "timestamp", "nonce"));
+                                return f.filter(filter.apply(config), Ordered.HIGHEST_PRECEDENCE);
+                            }).uri("http://httpbin.org:80"))
+                    .build();
         }
     }
 

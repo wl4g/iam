@@ -127,7 +127,6 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     }
 
     @Getter
-    @ToString
     public static class CanaryLoadBalancerGatewayFilter implements GatewayFilter, Ordered {
         private final SmartLogger log = getLogger(getClass());
         private final GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;

@@ -406,8 +406,8 @@ spring:
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
           strategy:
-            allow: true ## Default by false
-            cidrs: ['192.168.0.0/16','10.0.0.0/8'] ## Default by '127.0.0.1'
+            allow: false ## Default by false
+            cidrs: ['1.1.1.0/24'] ## Default by []
       trace:
         enabled: true ## Default by true
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.

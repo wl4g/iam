@@ -1,5 +1,5 @@
 package com.wl4g.iam.gateway.security.oauth2;
-//package com.wl4g.iam.gateway.auth;
+//package com.wl4g.iam.gateway.security;
 //
 //import java.time.Duration;
 //
