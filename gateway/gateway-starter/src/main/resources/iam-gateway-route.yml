@@ -112,7 +112,7 @@ spring:
             - name: Retry
               args:
                 retries: 3
-                statuses: BAD_GATEWAY
+                statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
                 methods: GET,POST
                 backoff:
                   first-backoff: 100ms
@@ -296,7 +296,7 @@ spring:
               args:
                 ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
                 preferRejectOnCidrConflict: true ## Default by true
-                ## Whether to accept the request when neither the whitelist nor the blacklist match.
+                ## The accept the request when neither the whitelist nor the blacklist match.
                 acceptNotMatchCidr: true ## Default by true
                 ## The allow all local addresses to pass.
                 anyLocalAddressAllowed: true ## Default by true
@@ -305,4 +305,3 @@ spring:
                     "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
                     "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
                     "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-

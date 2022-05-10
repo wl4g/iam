@@ -59,8 +59,7 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @ToString
-public class IamRequestLimiterFilterFactory
-        extends AbstractGatewayFilterFactory<IamRequestLimiterFilterFactory.Config> {
+public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory<IamRequestLimiterFilterFactory.Config> {
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
     private @Autowired IamRequestLimiterProperties requsetLimiterConfig;
@@ -78,7 +77,7 @@ public class IamRequestLimiterFilterFactory
 
     @Override
     public GatewayFilter apply(IamRequestLimiterFilterFactory.Config config) {
-        KeyResolverStrategy keyStrategy = config.getKeyResolver().build();
+        KeyResolverStrategy keyStrategy = config.getKeyResolver().parseStrategy();
         applyDefaultToConfig(config, keyStrategy);
         return new IamRequestLimiterGatewayFilter(config, keyStrategy, getKeyResolver(config), getRequestLimiter(config));
     }
@@ -157,7 +156,7 @@ public class IamRequestLimiterFilterFactory
             }
 
             @SuppressWarnings("unchecked")
-            public <T extends KeyResolverStrategy> T build() {
+            public <T extends KeyResolverStrategy> T parseStrategy() {
                 Binder binder = new Binder(new MapConfigurationPropertySource(getProperties()));
                 return (T) binder.bindOrCreate("", getProvider().getStrategyClass());
             }

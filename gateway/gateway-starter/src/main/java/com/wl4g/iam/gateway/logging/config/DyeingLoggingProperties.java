@@ -84,7 +84,7 @@ public class DyeingLoggingProperties {
      * '#{true}', which means never match. </br>
      * </br>
      * Tip: The built-in support to get the current routeId, such as:
-     * '#{routeId.get().test($request)}'
+     * '#{routeId.get().test('my-service-route')}'
      */
     private String preferOpenMatchExpression = "#{true}";
 

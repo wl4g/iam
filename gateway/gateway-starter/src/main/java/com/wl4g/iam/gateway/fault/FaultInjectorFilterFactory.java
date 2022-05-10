@@ -17,12 +17,20 @@ package com.wl4g.iam.gateway.fault;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
+import java.time.Duration;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.support.HttpStatusHolder;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 /**
  * {@link FaultInjectorFilterFactory}
@@ -31,6 +39,7 @@ import com.wl4g.infra.common.bean.ConfigBeanUtils;
  * @version 2022-04-27 v3.0.0
  * @since v3.0.0
  */
+@Slf4j
 public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<FaultInjectorFilterFactory.Config> {
 
     private final FaultProperties faultConfig;
@@ -47,7 +56,8 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new FaultInjectorFilterFactory.Config(), config, faultConfig.getInjector());
+            ConfigBeanUtils.configureWithDefault(new FaultInjectorFilterFactory.Config(), config,
+                    faultConfig.getDefaultInjector());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException("Unable apply defaults to traffic imager gateway config", e);
         }
@@ -57,9 +67,29 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
         return (exchange, chain) -> {
-            // TODO Auto-generated method stub
-            //
-            return chain.filter(exchange);
+            // The enable fault injection for the current request based on a
+            // random percentage.
+            double percentage = ThreadLocalRandom.current().nextDouble();
+            boolean needInject = percentage < config.getPreferMatchPercentage();
+            if (!needInject) {
+                return chain.filter(exchange);
+            }
+
+            switch (config.getProvider()) {
+            case Abort:
+                ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getAbort().getStatusCode()));
+                return exchange.getResponse().setComplete();
+            case FixedDelay:
+                return Mono.delay(Duration.ofMillis(config.getFixedDelay().getDelayMs())).then(chain.filter(exchange));
+            case RangeDelay:
+                long delayMs = ThreadLocalRandom.current().nextLong(config.getRangeDelay().getMinDelayMs(),
+                        config.getRangeDelay().getMaxDelayMs());
+                return Mono.delay(Duration.ofMillis(delayMs)).then(chain.filter(exchange));
+            default:
+                // throw new Error("Shouldn't be here");
+                log.warn("Failed to inject fault because injector provider '{}' is not recognized.", config.getProvider());
+                return chain.filter(exchange);
+            }
         };
     }
 

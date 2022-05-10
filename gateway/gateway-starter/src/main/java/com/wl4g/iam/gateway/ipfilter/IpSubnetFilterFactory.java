@@ -20,7 +20,6 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.net.InetAddress;
@@ -124,13 +123,13 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
         //
         // matching white-list
         boolean isAccept = safeList(strategys).stream()
-                .filter(s -> (nonNull(s.getAllow()) && s.getAllow()))
+                .filter(s -> s.isAllow())
                 .flatMap(s -> safeList(s.getCidrs()).stream())
                 .anyMatch(cidr -> buildRule(cidr, IpFilterRuleType.ACCEPT).matches(remoteAddress));
 
         // matching blacklist
         boolean isReject = safeList(strategys).stream()
-                .filter(s -> (nonNull(s.getAllow()) && !s.getAllow()))
+                .filter(s -> !s.isAllow())
                 .flatMap(s -> safeList(s.getCidrs()).stream())
                 .anyMatch(cidr -> buildRule(cidr, IpFilterRuleType.REJECT).matches(remoteAddress));
 
@@ -195,7 +194,8 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
         private boolean anyLocalAddressAllowed = true;
 
         /**
-         * HttpStatus to return when IpList is true, defaults to FORBIDDEN.
+         * The HttpStatus returned when the IpFilter blacklist is met, the
+         * default is FORBIDDEN.
          */
         private String statusCode = HttpStatus.FORBIDDEN.name();
 

@@ -25,7 +25,6 @@ import org.springframework.validation.annotation.Validated;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
@@ -54,10 +53,13 @@ public interface IpFilterConfigurer {
     @With
     @SuperBuilder
     @AllArgsConstructor
-    @NoArgsConstructor
     public static class FilterStrategy {
-        private Boolean allow;
+        private boolean allow;
         private List<String> cidrs;
+
+        public FilterStrategy() {
+            this.allow = false;
+        }
     }
 
 }

@@ -343,13 +343,52 @@ spring:
             #trusted-x509-certificates:
             #use-insecure-trust-manager: true ## Default by false
       fault:
-        #TODO
+        defaultInject:
+          ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+          preferOpenMatchExpression: '#{$defaultFaultHeader.test($request)}'
+          ## Prefer to enable tracing samples match rule definitions.
+          preferMatchRuleDefinitions:
+            - name: defaultFaultHeader
+              #method:
+              #schema:
+              #host:
+              #port:
+              #path: ## Ant path pattern.
+              header:
+                symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+                key: X-Iscg-Fault
+                value: y
+              #cookie:
+              #  symbol:
+              #  key:
+              #  value:
+              #query:
+              #  symbol:
+              #  key:
+              #  value:
+          ## Prefer percentage of requests that require fault injection match enabled.
+          ## which is equivalent to another and condition after match the SPEL expression.
+          preferMatchPercentage: 1d ## Default by 1.0d
+          ## The enabled fault injector providers.
+          provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
+          ## The request to abort fault injector configuration.
+          abort:
+            ## The HttpStatus returned when the fault strategy is meet.
+            statusCode: 500 ## Default by 500
+          ## The request to fixed delay fault injector configuration.
+          fixedDelay:
+            ## Fixed delay in milliseconds.
+            delayMs: 1000## Default by 1000
+          ## The request to random range delay fault injector configuration.
+          rangeDelay:
+            minDelayMs: 1000 ## Default by 1000
+            maxDelayMs: 5000 ## Default by 5000
       ipfilter:
         configPrefix: iam:gateway:ipfilter:config
         defaultFilter:
           ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
-          ## Whether to accept the request when neither the whitelist nor the blacklist match.
+          ## The accept the request when neither the whitelist nor the blacklist match.
           acceptNotMatchCidr: true ## Default by true
           ## The allow all local addresses to pass.
           anyLocalAddressAllowed: true ## Default by true
@@ -359,14 +398,14 @@ spring:
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
           strategy:
-            allow: true ## Default by null
+            allow: true ## Default by false
             cidrs: ['192.168.0.0/16','10.0.0.0/8'] ## Default by '127.0.0.1'
       trace:
         enabled: true ## Default by true
-        ## Preferred to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
-        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
+        ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
         preferOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
-        ## Preferred to enable tracing samples match rule definitions.
+        ## Prefer to enable tracing samples match rule definitions.
         preferMatchRuleDefinitions:
           - name: defaultTraceHeader
             #method:
@@ -442,10 +481,10 @@ spring:
         ## In order to prevent the response body data from being too large, only the
         ## first small part of the body data is obtained.
         maxPrintResponseBodyLength: 1024 ## Default by 1024
-        ## Preferred to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
-        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test($request)}
+        ## Prefer to enable print logs match SPEL match expression. Default by '#{true}', which means never match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
         preferOpenMatchExpression: '#{$defaultLogHeader.or($defaultLogQuery).or($energyOpenApiLogWithPath).test($request)}'
-        ## Preferred to enable print logs match rules definition.
+        ## Prefer to enable print logs match rules definition.
         preferMatchRuleDefinitions:
           - name: defaultLogHeader
             #method:
