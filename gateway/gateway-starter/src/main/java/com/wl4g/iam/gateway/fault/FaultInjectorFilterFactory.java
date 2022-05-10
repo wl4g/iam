@@ -16,18 +16,24 @@
 package com.wl4g.iam.gateway.fault;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.util.Collections.singletonMap;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
@@ -127,15 +133,22 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             }
         }
 
+        /**
+         * Determine if fault injection is required based on request matcher.
+         * 
+         * @param exchange
+         * @return
+         */
         private boolean isFaultRequest(ServerWebExchange exchange) {
-            // Determine if fault injection is required based on request
-            // matcher.
-            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    faultConfig.getPreferOpenMatchExpression());
-        }
+            // Gets current request route.
+            Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
 
-        private void setResponseHeaders(ServerWebExchange exchange, InjectorProvider provider) {
-            exchange.getResponse().getHeaders().add(faultConfig.getFaultInjectedHeader(), provider.name());
+            // Add routeId temporary predicates.
+            Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
+                    () -> Predicates.equalTo(route.getId()));
+
+            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    faultConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
         }
 
         private boolean isFaultWithPercentage(AbstractInjectorProperties injectorConfig) {
@@ -143,8 +156,13 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             double per = ThreadLocalRandom.current().nextDouble();
             return per < injectorConfig.getPercentage();
         }
+
+        private void setResponseHeaders(ServerWebExchange exchange, InjectorProvider provider) {
+            exchange.getResponse().getHeaders().add(faultConfig.getFaultInjectedHeader(), provider.name());
+        }
     }
 
     public static final String BEAN_NAME = "FaultInjector";
+    public static final String VAR_ROUTE_ID = "routeId";
 
 }
