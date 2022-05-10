@@ -1,7 +1,7 @@
 {
     "errcode": 200,
     "errmsg": "ok",
-    "requestId": "asdgshs",
+    "requestId": "0",
     "data": {
         "gateway_routes_schema": {
             "predicates": [

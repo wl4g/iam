@@ -104,19 +104,26 @@ spring:
             - RewritePath=/productpage-with-FaultInjector/(?<segment>.*),/$\{segment}
             - name: FaultInjector
               args:
-                ## which is equivalent to another and condition after match the SPEL expression.
-                percentage: 0.5d ## Default by 1.0d
                 ## The enabled fault injector providers.
-                provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
+                provider: FixedDelay ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
                 ## The request to abort fault injector configuration.
                 abort:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
                   ## The HttpStatus returned when the fault strategy is meet.
                   statusCode: 500 ## Default by 500
                 ## The request to fixed delay fault injector configuration.
                 fixedDelay:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
                   delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
                 ## The request to random range delay fault injector configuration.
                 rangeDelay:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
                   minDelayMs: 1000 ## Default by 1000
                   maxDelayMs: 5000 ## Default by 5000
         - id: productpage-service-route-with-TrafficReplicator
