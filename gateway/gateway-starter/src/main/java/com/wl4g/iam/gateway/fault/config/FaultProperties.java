@@ -41,6 +41,26 @@ import lombok.ToString;
 @ToString
 public class FaultProperties {
 
+    /**
+     * Preferred to enable fault injection match SPEL match expression. Default
+     * by '#{true}', which means never match. </br>
+     * </br>
+     * Tip: The built-in support to get the current routeId, such as:
+     * '#{routeId.get().test('my-service-route')}'
+     */
+    private String preferOpenMatchExpression = "#{true}";
+
+    /**
+     * Prefer to enable fault injection match rule definitions.
+     */
+    private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
+
+    /**
+     * The percentage of requests that require fault injection enabled. which is
+     * equivalent to another and condition after match the SPEL expression.
+     */
+    private double percentage = 1d;
+
     private InjectorProperties defaultInject = new InjectorProperties();
 
     @Getter
@@ -48,27 +68,6 @@ public class FaultProperties {
     @Validated
     @ToString
     public static class InjectorProperties {
-
-        /**
-         * Preferred to enable fault injection match SPEL match expression.
-         * Default by '#{true}', which means never match. </br>
-         * </br>
-         * Tip: The built-in support to get the current routeId, such as:
-         * '#{routeId.get().test('my-service-route')}'
-         */
-        private String preferOpenMatchExpression = "#{true}";
-
-        /**
-         * Prefer to enable fault injection match rule definitions.
-         */
-        private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
-
-        /**
-         * Prefer percentage of requests that require fault injection enabled.
-         * which is equivalent to another and condition after match the SPEL
-         * expression.
-         */
-        private double preferMatchPercentage = 1d;
 
         /**
          * The enabled fault injector providers.
@@ -105,21 +104,27 @@ public class FaultProperties {
     @Setter
     @Validated
     @ToString
-    public static class AbortInjectorProperties {
-
-        /**
-         * The HttpStatus returned when the fault strategy is meet, the default
-         * is INTERNAL_SERVER_ERROR.
-         */
-        private String statusCode = HttpStatus.INTERNAL_SERVER_ERROR.name();
-
+    public static abstract class AbstractInjectorProperties {
     }
 
     @Getter
     @Setter
     @Validated
     @ToString
-    public static class FixedDelayInjectorProperties {
+    public static class AbortInjectorProperties extends AbstractInjectorProperties {
+
+        /**
+         * The HttpStatus returned when the fault strategy is meet, the default
+         * is INTERNAL_SERVER_ERROR.
+         */
+        private String statusCode = HttpStatus.INTERNAL_SERVER_ERROR.name();
+    }
+
+    @Getter
+    @Setter
+    @Validated
+    @ToString
+    public static class FixedDelayInjectorProperties extends AbstractInjectorProperties {
 
         /**
          * Fixed delay in milliseconds
@@ -131,7 +136,7 @@ public class FaultProperties {
     @Setter
     @Validated
     @ToString
-    public static class RangeDelayInjectorProperties {
+    public static class RangeDelayInjectorProperties extends AbstractInjectorProperties {
 
         /**
          * Minimum delay in milliseconds

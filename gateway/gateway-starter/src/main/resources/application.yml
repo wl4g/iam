@@ -343,32 +343,33 @@ spring:
             #trusted-x509-certificates:
             #use-insecure-trust-manager: true ## Default by false
       fault:
+        ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
+        preferOpenMatchExpression: '#{$defaultFaultHeader.test($request)}'
+        ## Prefer to enable tracing samples match rule definitions.
+        preferMatchRuleDefinitions:
+          - name: defaultFaultHeader
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## Ant path pattern.
+            header:
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Fault
+              value: y
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+        ## The percentage of requests that require fault injection match enabled.
+        ## which is equivalent to another and condition after match the SPEL expression.
+        percentage: 1d ## Default by 1.0d
         defaultInject:
-          ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
-          preferOpenMatchExpression: '#{$defaultFaultHeader.test($request)}'
-          ## Prefer to enable tracing samples match rule definitions.
-          preferMatchRuleDefinitions:
-            - name: defaultFaultHeader
-              #method:
-              #schema:
-              #host:
-              #port:
-              #path: ## Ant path pattern.
-              header:
-                symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-                key: X-Iscg-Fault
-                value: y
-              #cookie:
-              #  symbol:
-              #  key:
-              #  value:
-              #query:
-              #  symbol:
-              #  key:
-              #  value:
-          ## Prefer percentage of requests that require fault injection match enabled.
-          ## which is equivalent to another and condition after match the SPEL expression.
-          preferMatchPercentage: 1d ## Default by 1.0d
           ## The enabled fault injector providers.
           provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
           ## The request to abort fault injector configuration.

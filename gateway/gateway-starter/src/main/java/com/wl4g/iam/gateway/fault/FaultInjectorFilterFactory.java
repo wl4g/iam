@@ -25,6 +25,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.fault.config.FaultProperties;
@@ -34,6 +35,9 @@ import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -70,15 +74,18 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
     @Override
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
-        return new FaultInjectorGatewayFilter(config, new SpelRequestMatcher(config.getPreferMatchRuleDefinitions()));
+        return new FaultInjectorGatewayFilter(config, new SpelRequestMatcher(faultConfig.getPreferMatchRuleDefinitions()));
     }
 
+    @Getter
+    @Setter
+    @Validated
+    @ToString
     public static class Config extends InjectorProperties {
-
     }
 
     @AllArgsConstructor
-    public static class FaultInjectorGatewayFilter implements GatewayFilter {
+    class FaultInjectorGatewayFilter implements GatewayFilter {
 
         private final Config config;
         private final SpelRequestMatcher requestMatcher;
@@ -109,15 +116,14 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
         private boolean isFilterFault(ServerWebExchange exchange) {
             // Determine if fault injection is required based on request
             // matcher.
-            if (!requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    config.getPreferOpenMatchExpression())) {
-                return false;
+            if (requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    faultConfig.getPreferOpenMatchExpression())) {
+                // if fault injection is required based on random
+                // percentage.
+                double percentage = ThreadLocalRandom.current().nextDouble();
+                return percentage < faultConfig.getPercentage();
             }
-
-            // Determine if fault injection is required based on random
-            // percentage.
-            double percentage = ThreadLocalRandom.current().nextDouble();
-            return percentage < config.getPreferMatchPercentage();
+            return false;
         }
     }
 
