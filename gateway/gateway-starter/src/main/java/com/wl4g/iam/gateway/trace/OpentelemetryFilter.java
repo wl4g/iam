@@ -35,9 +35,9 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
-import com.wl4g.iam.gateway.logging.AbstractDyeingLoggingFilter;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -78,7 +78,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return ORDER_FILTER;
+        return SafeDefaultFilterOrdered.ORDER_TRACE_FILTER;
     }
 
     @Override
@@ -162,9 +162,6 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
             return Mono.just(span);
         });
     }
-
-    // for logging print traceId.
-    public static final int ORDER_FILTER = AbstractDyeingLoggingFilter.ORDER_FILTER - 10;
 
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String TRACE_TAG_ROUTEID = "routeId";

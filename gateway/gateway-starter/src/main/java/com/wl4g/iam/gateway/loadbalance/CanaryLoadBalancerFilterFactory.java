@@ -37,7 +37,6 @@ import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
-import org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -53,6 +52,7 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
@@ -168,7 +168,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
          */
         @Override
         public int getOrder() {
-            return ORDER_CANARY_LOADBALANCER_FILTER;
+            return SafeDefaultFilterOrdered.ORDER_CANARY_LOADBALANCER;
         }
 
         @Override
@@ -208,6 +208,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
             }
             exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, newRequestUri);
 
+            // PreFilter and PostFilter, https://blogs.wl4g.com/archives/3401
             return chain.filter(exchange).doOnRequest(v -> {
                 loadBalancerStats.connect(exchange, instance);
             }).doFinally(signal -> {
@@ -239,11 +240,5 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
     }
 
     public static final String NAME_CANARY_LOADBALANCER_FILTER = "CanaryLoadBalancer";
-
-    /**
-     * @see {@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER}
-     * @see {@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#ROUTE_TO_URL_FILTER_ORDER}
-     */
-    public static final int ORDER_CANARY_LOADBALANCER_FILTER = RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 100;
 
 }

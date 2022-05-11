@@ -15,14 +15,18 @@
  */
 package com.wl4g.iam.gateway.circuitbreaker.config;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.DispatcherHandler;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.circuitbreaker.DefaultCircuitBreakerCustomizer;
+import com.wl4g.iam.gateway.circuitbreaker.IamSpringCloudCircuitBreakerResilience4JFilterFactory;
 
 /**
  * {@link CircuitBreakerAutoConfiguration}
@@ -33,12 +37,21 @@ import com.wl4g.iam.gateway.circuitbreaker.DefaultCircuitBreakerCustomizer;
  * @see https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html#auto-configuration
  * @see https://resilience4j.readme.io/docs/examples
  */
-public class CustomCircuitBreakerAutoConfiguration {
+public class IamCircuitBreakerAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_CIRCUITBREAKER)
-    public CustomCircuitBreakerProperties customCircuitBreakerProperties() {
-        return new CustomCircuitBreakerProperties();
+    public IamCircuitBreakerProperties iamCircuitBreakerProperties() {
+        return new IamCircuitBreakerProperties();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Bean
+    public IamSpringCloudCircuitBreakerResilience4JFilterFactory iamSpringCloudCircuitBreakerResilience4JFilterFactory(
+            ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory,
+            ObjectProvider<DispatcherHandler> dispatcherHandlerProvider) {
+        return new IamSpringCloudCircuitBreakerResilience4JFilterFactory(reactiveCircuitBreakerFactory,
+                dispatcherHandlerProvider);
     }
 
     @Bean
@@ -51,7 +64,7 @@ public class CustomCircuitBreakerAutoConfiguration {
      */
     @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultReactiveResilience4JCircuitBreakerCustomizer(
-            CustomCircuitBreakerProperties config,
+            IamCircuitBreakerProperties config,
             DefaultCircuitBreakerCustomizer customizer) {
         return factory -> {
             factory.configureDefault(id -> new Resilience4JConfigBuilder(id).circuitBreakerConfig(config.toCircuitBreakerConfig())

@@ -31,6 +31,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
@@ -40,6 +41,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
@@ -175,11 +177,16 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
     }
 
     @AllArgsConstructor
-    public static class IamRequestLimiterGatewayFilter implements GatewayFilter {
+    public static class IamRequestLimiterGatewayFilter implements GatewayFilter, Ordered {
         private final Config config;
         private final KeyResolverStrategy keyStrategy;
         private final IamKeyResolver<KeyResolverStrategy> keyResolver;
         private final IamRequestLimiter requestLimiter;
+
+        @Override
+        public int getOrder() {
+            return SafeDefaultFilterOrdered.ORDER_REQUEST_LIMITER;
+        }
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -206,6 +213,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
                 });
             });
         }
+
     }
 
     public static final String BEAN_FILTER_NAME = "IamRequestLimiter";

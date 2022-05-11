@@ -52,6 +52,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
@@ -83,7 +84,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      */
     @Override
     public int getOrder() {
-        return ORDER_FILTER;
+        return SafeDefaultFilterOrdered.ORDER_LOGGING_FILTER;
     }
 
     @Override
@@ -265,6 +266,5 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
     public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";
-    public static final int ORDER_FILTER = Ordered.HIGHEST_PRECEDENCE + 100;
 
 }

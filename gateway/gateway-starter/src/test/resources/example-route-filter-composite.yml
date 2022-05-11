@@ -178,7 +178,7 @@ spring:
                   provider: RedisQuotaLimiter
                   ## whether or not to include headers containing rate limiter info. Default by false
                   includeHeaders: false
-            - name: Retry
+            - name: IamRetry
               args:
                 retries: 3
                 statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
@@ -188,11 +188,12 @@ spring:
                   max-backoff: 500ms
                   factor: 2
                   based-on-previous-value: false
-            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            ## see:com.wl4g.iam.gateway.circuitbreaker.IamReactiveResilience4JCircuitBreaker
             ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
+            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
-            - name: CircuitBreaker
+            - name: IamCircuitBreaker
               args:
                 name: productpage-service-circuitbreaker
                 fallback-uri: forward:/_fallback

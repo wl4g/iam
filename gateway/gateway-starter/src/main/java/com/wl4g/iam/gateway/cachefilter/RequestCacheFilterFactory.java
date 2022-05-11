@@ -20,11 +20,13 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.Ordered;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.cachefilter.config.CacheFilterProperties;
 import com.wl4g.iam.gateway.cachefilter.config.CacheFilterProperties.CachedProperties;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -36,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RequestCacheFilterFactory}
+ * {@link IamRetryFilterFactory}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-11 v3.0.0
@@ -62,7 +64,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
             ConfigBeanUtils.configureWithDefault(new RequestCacheFilterFactory.Config(), config,
                     cacheFilterConfig.getDefaultCache());
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IllegalStateException("Unable apply defaults to traffic imager gateway config", e);
+            throw new IllegalStateException("Unable apply defaults to cache filter config", e);
         }
     }
 
@@ -80,9 +82,14 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
     }
 
     @AllArgsConstructor
-    class RequestCacheGatewayFilter implements GatewayFilter {
+    class RequestCacheGatewayFilter implements GatewayFilter, Ordered {
         private final Config config;
         private final SpelRequestMatcher requestMatcher;
+
+        @Override
+        public int getOrder() {
+            return SafeDefaultFilterOrdered.ORDER_CACHE_FILTER;
+        }
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -90,6 +97,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
 
             return chain.filter(exchange);
         }
+
     }
 
     public static final String BEAN_NAME = "CacheFilter";

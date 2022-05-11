@@ -30,6 +30,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -38,6 +39,7 @@ import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProvider;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -75,7 +77,7 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
         try {
             ConfigBeanUtils.configureWithDefault(new FaultInjectorFilterFactory.Config(), config, faultConfig.getDefaultInject());
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IllegalStateException("Unable apply defaults to traffic imager gateway config", e);
+            throw new IllegalStateException("Unable apply defaults to fault config", e);
         }
     }
 
@@ -93,10 +95,15 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
     }
 
     @AllArgsConstructor
-    class FaultInjectorGatewayFilter implements GatewayFilter {
+    class FaultInjectorGatewayFilter implements GatewayFilter, Ordered {
 
         private final Config config;
         private final SpelRequestMatcher requestMatcher;
+
+        @Override
+        public int getOrder() {
+            return SafeDefaultFilterOrdered.ORDER_FAULT_FILTER;
+        }
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -160,6 +167,7 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
         private void setResponseHeaders(ServerWebExchange exchange, InjectorProvider provider) {
             exchange.getResponse().getHeaders().add(faultConfig.getFaultInjectedHeader(), provider.name());
         }
+
     }
 
     public static final String BEAN_NAME = "FaultInjector";

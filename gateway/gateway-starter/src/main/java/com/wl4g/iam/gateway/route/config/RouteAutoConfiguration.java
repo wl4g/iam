@@ -25,6 +25,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.route.Https2HttpGlobalFilter;
 import com.wl4g.iam.gateway.route.RefreshRouteApplicationListener;
 import com.wl4g.iam.gateway.route.TimeBasedRouteRefresher;
 //import com.wl4g.iam.gateway.route.ignore.IgnoreGatewayFilterFactory;
@@ -45,6 +46,11 @@ public class RouteAutoConfiguration {
     @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_ROUTE)
     public RouteProperties routeProperties() {
         return new RouteProperties();
+    }
+
+    @Bean
+    public Https2HttpGlobalFilter https2HttpGlobalFilter() {
+        return new Https2HttpGlobalFilter();
     }
 
     @Bean

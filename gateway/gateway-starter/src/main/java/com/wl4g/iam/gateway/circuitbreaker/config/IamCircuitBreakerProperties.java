@@ -26,7 +26,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link CustomCircuitBreakerProperties}
+ * {@link IamCircuitBreakerProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-16 v3.0.0
@@ -35,7 +35,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CustomCircuitBreakerProperties {
+public class IamCircuitBreakerProperties {
 
     private TimeLimiterProperties timeLimiter = new TimeLimiterProperties();
     // 在单位时间窗口内调用失败率达到50%后会启动断路器

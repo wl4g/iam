@@ -34,6 +34,7 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CONF_PREFIX_IAM_GATEWAY_REQUESTLIMIT = CONF_PREFIX_IAM_GATEWAY + ".requestlimit";
     public static final String CONF_PREFIX_IAM_GATEWAY_ROUTE = CONF_PREFIX_IAM_GATEWAY + ".route";
     public static final String CONF_PREFIX_IAM_GATEWAY_SECURITY = CONF_PREFIX_IAM_GATEWAY + ".security";
+    public static final String CONF_PREFIX_IAM_GATEWAY_RETRY = CONF_PREFIX_IAM_GATEWAY + ".retry";
     public static final String CONF_PREFIX_IAM_GATEWAY_CIRCUITBREAKER = CONF_PREFIX_IAM_GATEWAY + ".circuitbreaker";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOADBANANER = CONF_PREFIX_IAM_GATEWAY + ".loadbalancer";
     public static final String CONF_PREFIX_IAM_GATEWAY_CACHEFILTER = CONF_PREFIX_IAM_GATEWAY + ".cachefilter";

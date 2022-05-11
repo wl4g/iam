@@ -251,10 +251,10 @@ spring:
                   provider: RedisQuotaLimiter
                   ## whether or not to include headers containing rate limiter info. Default by false
                   includeHeaders: false
-        - id: productpage-service-route-with-Retry
+        - id: productpage-service-route-with-IamRetry
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-Retry/**
+            - Path=/productpage-with-IamRetry/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -263,8 +263,8 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-Retry/(?<segment>.*),/$\{segment}
-            - name: Retry
+            - RewritePath=/productpage-with-IamRetry/(?<segment>.*),/$\{segment}
+            - name: IamRetry
               args:
                 retries: 3
                 statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
@@ -274,10 +274,10 @@ spring:
                   max-backoff: 500ms
                   factor: 2
                   based-on-previous-value: false
-        - id: productpage-service-route-with-CircuitBreaker
+        - id: productpage-service-route-with-IamCircuitBreaker
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-CircuitBreaker/**
+            - Path=/productpage-with-IamCircuitBreaker/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -286,12 +286,13 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-CircuitBreaker/(?<segment>.*),/$\{segment}
-            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            - RewritePath=/productpage-with-IamCircuitBreaker/(?<segment>.*),/$\{segment}
+            ## see:com.wl4g.iam.gateway.circuitbreaker.IamReactiveResilience4JCircuitBreaker
             ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
+            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
-            - name: CircuitBreaker
+            - name: IamCircuitBreaker
               args:
                 name: productpage-service-circuitbreaker
                 fallback-uri: forward:/_fallback

@@ -28,10 +28,12 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +43,7 @@ import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.net.CIDR;
 import com.wl4g.infra.common.web.WebUtils;
@@ -52,6 +55,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import reactor.core.publisher.Mono;
 import reactor.netty.tcp.InetSocketAddressUtil;
 
 /**
@@ -81,21 +85,7 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
     @Override
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
-        return (exchange, chain) -> {
-            return exchange.getPrincipal().defaultIfEmpty(IamGatewayUtil.UNKNOWN_PRINCIPAL).flatMap(p -> {
-                // Load strategy by routeId and principal.
-                Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-                return configurer.loadStrategy(route.getId(), p.getName())
-                        .defaultIfEmpty(singletonList(ipFilterConfig.getDefaultFilter().getStrategy()))
-                        .flatMap(strategys -> {
-                            if (isAllowed(config, exchange, strategys)) {
-                                return chain.filter(exchange);
-                            }
-                            ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
-                            return exchange.getResponse().setComplete();
-                        });
-            });
-        };
+        return new IpSubnetGatewayFilter(config);
     }
 
     private void applyDefaultToConfig(Config config) {
@@ -207,6 +197,33 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
          */
         private List<String> forwardHeaderNames = asList(WebUtils.HEADER_REAL_IP);
 
+    }
+
+    @AllArgsConstructor
+    class IpSubnetGatewayFilter implements GatewayFilter, Ordered {
+        private final Config config;
+
+        @Override
+        public int getOrder() {
+            return SafeDefaultFilterOrdered.ORDER_IPFILTER;
+        }
+
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+            return exchange.getPrincipal().defaultIfEmpty(IamGatewayUtil.UNKNOWN_PRINCIPAL).flatMap(p -> {
+                // Load strategy by routeId and principal.
+                Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+                return configurer.loadStrategy(route.getId(), p.getName())
+                        .defaultIfEmpty(singletonList(ipFilterConfig.getDefaultFilter().getStrategy()))
+                        .flatMap(strategys -> {
+                            if (isAllowed(config, exchange, strategys)) {
+                                return chain.filter(exchange);
+                            }
+                            ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
+                            return exchange.getResponse().setComplete();
+                        });
+            });
+        }
     }
 
     public static final String BEAN_NAME = "IpFilter";

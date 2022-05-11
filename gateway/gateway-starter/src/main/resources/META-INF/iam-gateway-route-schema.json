@@ -27,16 +27,6 @@
                     }
                 },
                 {
-                    "type": "RewritePath",
-                    "help": "",
-                    "repeat": "false",
-                    "value": {
-                        "type": "string",
-                        "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
-                        "help": ""
-                    }
-                },
-                {
                     "type": "Query",
                     "help": "",
                     "repeat": "false",
@@ -613,6 +603,20 @@
                     "args": [
                         {
                             "name": "RemoveResponseHeader",
+                            "type": "stringWithNamedConfig",
+                            "repeat": "false",
+                            "defaultValue": null,
+                            "help": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RewritePath",
+                    "repeat": "false",
+                    "help": "",
+                    "args": [
+                        {
+                            "name": "RewritePath",
                             "type": "stringWithNamedConfig",
                             "repeat": "false",
                             "defaultValue": null,
