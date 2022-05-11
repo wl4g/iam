@@ -39,7 +39,7 @@ import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorPropert
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProvider;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
-import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import lombok.AllArgsConstructor;

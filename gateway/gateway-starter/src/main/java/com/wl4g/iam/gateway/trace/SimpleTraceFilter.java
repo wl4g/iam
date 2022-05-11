@@ -15,7 +15,7 @@
 // */
 //package com.wl4g.iam.gateway.trace;
 //
-//import static com.wl4g.infra.core.constant.CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME;
+//import static com.wl4g.infra.core.constant.CoreInfraConstants.TRACE_REQUEST_ID_HEADER;
 //
 //import java.util.UUID;
 //
@@ -60,7 +60,7 @@
 //
 //    @Override
 //    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        exchange.getRequest().mutate().header(TRACE_REQUEST_ID_HEADER_NAME, generateTraceId()).build();
+//        exchange.getRequest().mutate().header(TRACE_REQUEST_ID_HEADER, generateTraceId()).build();
 //        return chain.filter(exchange);
 //    }
 //

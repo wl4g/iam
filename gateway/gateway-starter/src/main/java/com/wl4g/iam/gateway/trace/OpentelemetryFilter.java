@@ -39,7 +39,7 @@ import com.wl4g.iam.gateway.logging.AbstractDyeingLoggingFilter;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
-import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import io.opentelemetry.api.OpenTelemetry;
@@ -97,8 +97,8 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
             ServerHttpResponse response = exchange.getResponse();
             String traceId = span.getSpanContext().getTraceId();
 
-            request.mutate().header(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId).build();
-            response.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME, traceId);
+            request.mutate().header(CoreInfraConstants.TRACE_REQUEST_ID_HEADER, traceId).build();
+            response.getHeaders().add(CoreInfraConstants.TRACE_REQUEST_ID_HEADER, traceId);
 
             span.setAttribute(TRACE_TAG_PARAMETERS, request.getQueryParams().toString());
 

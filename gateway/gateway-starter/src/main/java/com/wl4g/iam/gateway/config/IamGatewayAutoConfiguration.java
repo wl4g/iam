@@ -15,13 +15,17 @@
  */
 package com.wl4g.iam.gateway.config;
 
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
+import com.wl4g.iam.gateway.cachefilter.config.CacheFilterAutoConfiguration;
 import com.wl4g.iam.gateway.circuitbreaker.config.CustomCircuitBreakerAutoConfiguration;
 //import com.wl4g.iam.gateway.security.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
@@ -52,7 +56,7 @@ import reactor.core.publisher.Mono;
         CustomCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         IamSecurityAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
-        IpFilterAutoConfiguration.class, TrafficAutoConfiguration.class })
+        IpFilterAutoConfiguration.class, TrafficAutoConfiguration.class, CacheFilterAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
 
     @Bean
@@ -62,6 +66,16 @@ public class IamGatewayAutoConfiguration {
             public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
                 return chain.filter(exchange);
             }
+        };
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE + 10)
+    public GlobalFilter https2HttpGlobalFilter() {
+        return (exchange, chain) -> {
+            // TODO
+            // TODO
+            return chain.filter(exchange);
         };
     }
 

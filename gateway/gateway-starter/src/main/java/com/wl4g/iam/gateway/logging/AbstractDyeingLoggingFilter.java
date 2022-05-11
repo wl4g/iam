@@ -25,11 +25,11 @@ import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
 import static org.springframework.http.MediaType.APPLICATION_CBOR;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_XML;
 import static org.springframework.http.MediaType.APPLICATION_RSS_XML;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_MARKDOWN;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
@@ -54,7 +54,7 @@ import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
-import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
+import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +106,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         if (verboseLevel <= 0) { // is disabled?
             return chain.filter(exchange);
         }
-        String traceId = headers.getFirst(CoreInfraConstants.TRACE_REQUEST_ID_HEADER_NAME);
+        String traceId = headers.getFirst(CoreInfraConstants.TRACE_REQUEST_ID_HEADER);
         String requestMethod = request.getMethodValue();
         String requestUri = request.getURI().getRawPath();
 

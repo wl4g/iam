@@ -96,7 +96,7 @@ public class FaultProperties {
     public static enum InjectorProvider {
         Abort(AbortInjectorProperties.class), FixedDelay(FixedDelayInjectorProperties.class), RangeDelay(
                 RangeDelayInjectorProperties.class);
-        private final Class<?> injectorClass;
+        private final Class<?> providerClass;
     }
 
     @Getter

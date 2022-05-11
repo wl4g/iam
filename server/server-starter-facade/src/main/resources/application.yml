@@ -37,7 +37,7 @@ logging:
     max-history: 30 # By default: 7
   pattern:
     #console: ${logging.pattern.file.name}
-    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
     #dateformat: yyyy-MM-dd HH:mm:ss.SSS
     #level: '%5p'
     #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz

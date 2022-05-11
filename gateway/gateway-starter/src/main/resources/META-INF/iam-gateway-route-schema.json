@@ -1,13 +1,15 @@
 {
     "errcode": 200,
     "errmsg": "ok",
-    "requestId": "0",
+    "timestamp": 1652235124000,
+    "requestId": "0000000000000000",
     "data": {
         "gateway_routes_schema": {
             "predicates": [
                 {
                     "type": "Path",
                     "help": "",
+                    "repeat": "true",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -17,6 +19,7 @@
                 {
                     "type": "StripPrefix",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "int",
                         "regex": "(^[\\d]+)",
@@ -26,6 +29,7 @@
                 {
                     "type": "RewritePath",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -35,6 +39,7 @@
                 {
                     "type": "Query",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -44,6 +49,7 @@
                 {
                     "type": "Before",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -53,6 +59,7 @@
                 {
                     "type": "After",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -62,6 +69,7 @@
                 {
                     "type": "Between",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -71,6 +79,7 @@
                 {
                     "type": "Cookie",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -80,6 +89,7 @@
                 {
                     "type": "Header",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -89,6 +99,7 @@
                 {
                     "type": "Host",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -98,6 +109,7 @@
                 {
                     "type": "Method",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(^/[\\S_-]+)(^,/[\\S_-]+)*",
@@ -107,6 +119,7 @@
                 {
                     "type": "RemoteAddr",
                     "help": "",
+                    "repeat": "false",
                     "value": {
                         "type": "string",
                         "regex": "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$",
@@ -118,11 +131,13 @@
                 {
                     "type": "SimpleSignAuthing",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "appIdExtractor",
                             "type": "enum",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "Parameter",
                             "help": "",
                             "options": [
@@ -140,6 +155,7 @@
                             "name": "appIdParam",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "appId",
                             "help": ""
                         },
@@ -147,6 +163,7 @@
                             "name": "secretParam",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "appSecret",
                             "help": ""
                         },
@@ -154,6 +171,7 @@
                             "name": "signReplayVerifyEnabled",
                             "type": "boolean",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "true",
                             "help": ""
                         },
@@ -161,6 +179,7 @@
                             "name": "signReplayVerifyBloomExpireSeconds",
                             "type": "int",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "604800",
                             "help": ""
                         },
@@ -168,6 +187,7 @@
                             "name": "signParam",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "sign",
                             "help": ""
                         },
@@ -175,6 +195,7 @@
                             "name": "signAlgorithm",
                             "type": "enum",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "Parameter",
                             "help": "",
                             "options": [
@@ -220,6 +241,7 @@
                             "name": "signHashingMode",
                             "type": "enum",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "UriParamsKeySortedHashing",
                             "help": "",
                             "options": [
@@ -237,6 +259,7 @@
                             "name": "signHashingIncludeParams",
                             "type": "array",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -244,6 +267,7 @@
                             "name": "signHashingExcludeParams",
                             "type": "array",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -251,6 +275,7 @@
                             "name": "signHashingRequiredIncludeParams",
                             "type": "array",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -258,6 +283,7 @@
                             "name": "addSignAuthClientIdHeader",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "X-Sign-Auth-AppId",
                             "help": ""
                         }
@@ -266,11 +292,13 @@
                 {
                     "type": "RequestSize",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "maxSize",
                             "type": "int",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "10485760",
                             "help": ""
                         }
@@ -279,11 +307,13 @@
                 {
                     "type": "IamRequestLimiter",
                     "repeat": "true",
+                    "help": "",
                     "args": [
                         {
                             "name": "emptyKeyStatus",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "FORBIDDEN",
                             "help": ""
                         },
@@ -291,6 +321,7 @@
                             "name": "statusCode",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": "TOO_MANY_REQUESTS",
                             "help": ""
                         },
@@ -298,11 +329,13 @@
                             "name": "keyResolver",
                             "type": "object",
                             "multi": "false",
+                            "repeat": "false",
                             "childrens": [
                                 {
                                     "name": "provider",
                                     "type": "string",
                                     "multi": "false",
+                                    "repeat": "false",
                                     "defaultValue": "Host",
                                     "help": "",
                                     "options": [
@@ -332,12 +365,14 @@
                                     "name": "properties",
                                     "type": "int",
                                     "multi": "false",
+                                    "repeat": "false",
                                     "defaultValue": "500",
                                     "help": "",
                                     "childrens": [
                                         {
                                             "name": "headerNames",
                                             "type": "string",
+                                            "repeat": "false",
                                             "defaultValue": "['X-Forwarded-For','Proxy-Client-IP','WL-Proxy-Client-IP']",
                                             "help": ""
                                         }
@@ -350,11 +385,13 @@
                             "name": "limiter",
                             "multi": "false",
                             "type": "object",
+                            "repeat": "false",
                             "childrens": [
                                 {
                                     "name": "provider",
                                     "type": "string",
                                     "multi": "false",
+                                    "repeat": "false",
                                     "defaultValue": "RedisRateLimiter",
                                     "help": "",
                                     "options": [
@@ -372,6 +409,7 @@
                                     "name": "includeHeaders",
                                     "type": "boolean",
                                     "multi": "false",
+                                    "repeat": "false",
                                     "defaultValue": "true",
                                     "help": ""
                                 }
@@ -383,11 +421,13 @@
                 {
                     "type": "CircuitBreaker",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "name",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -395,6 +435,7 @@
                             "name": "fallbackUri",
                             "type": "string",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -402,6 +443,7 @@
                             "name": "statusCodes",
                             "type": "array",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -410,15 +452,18 @@
                 {
                     "type": "CanaryLoadBalancer",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "choose",
                             "type": "object",
                             "multi": "false",
+                            "repeat": "false",
                             "childrens": [
                                 {
                                     "name": "loadBalancerAlgorithm",
                                     "type": "enum",
+                                    "repeat": "false",
                                     "defaultValue": null,
                                     "help": "",
                                     "options": [
@@ -472,11 +517,13 @@
                 {
                     "type": "Retry",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "retries",
                             "type": "int",
                             "multi": "false",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         },
@@ -484,6 +531,7 @@
                             "name": "statuses",
                             "type": "array",
                             "multi": "true",
+                            "repeat": "false",
                             "defaultValue": [
                                 "BAD_GATEWAY",
                                 "SERVICE_UNAVAILABLE",
@@ -509,28 +557,33 @@
                             "name": "backoff",
                             "type": "object",
                             "multi": "false",
+                            "repeat": "false",
                             "childrens": [
                                 {
                                     "name": "firstBackoff",
                                     "type": "int",
+                                    "repeat": "false",
                                     "defaultValue": "100",
                                     "help": ""
                                 },
                                 {
                                     "name": "maxBackoff",
                                     "type": "int",
+                                    "repeat": "false",
                                     "defaultValue": "500",
                                     "help": ""
                                 },
                                 {
                                     "name": "factor",
                                     "type": "int",
+                                    "repeat": "false",
                                     "defaultValue": "2",
                                     "help": ""
                                 },
                                 {
                                     "name": "basedOnPreviousValue",
                                     "type": "boolean",
+                                    "repeat": "false",
                                     "defaultValue": "false",
                                     "help": ""
                                 }
@@ -542,10 +595,12 @@
                 {
                     "type": "RemoveRequestHeader",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "RemoveRequestHeader",
                             "type": "stringWithNamedConfig",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -554,10 +609,12 @@
                 {
                     "type": "RemoveResponseHeader",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "RemoveResponseHeader",
                             "type": "stringWithNamedConfig",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -566,10 +623,12 @@
                 {
                     "type": "SetResponseHeader",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "SetResponseHeader",
                             "type": "stringWithNamedConfig",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -578,10 +637,12 @@
                 {
                     "type": "SetStatus",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "SetStatus",
                             "type": "stringWithNamedConfig",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -590,10 +651,12 @@
                 {
                     "type": "RedirectTo",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "RedirectTo",
                             "type": "stringWithNamedConfig",
+                            "repeat": "false",
                             "defaultValue": null,
                             "help": ""
                         }
@@ -602,54 +665,419 @@
                 {
                     "type": "SecureHeaders",
                     "repeat": "false",
+                    "help": "",
                     "args": [
                         {
                             "name": "xssProtectionHeader",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "X-Xss-Protection:1; mode=block",
                             "help": ""
                         },
                         {
                             "name": "strictTransportSecurity",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "Strict-Transport-Security:max-age=631138519",
                             "help": ""
                         },
                         {
                             "name": "frameOptions",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "DENY",
                             "help": ""
                         },
                         {
                             "name": "contentTypeOptions",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "nosniff",
                             "help": ""
                         },
                         {
                             "name": "referrerPolicy",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "no-referrer",
                             "help": ""
                         },
                         {
                             "name": "contentSecurityPolicy",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "default-src 'self' https:; font-src 'self' https: data:; img-src 'self' https: data:; object-src 'none'; script-src https:; style-src 'self' https: 'unsafe-inline'",
                             "help": ""
                         },
                         {
                             "name": "downloadOptions",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "noopen",
                             "help": ""
                         },
                         {
                             "name": "permittedCrossDomainPolicies",
                             "type": "string",
+                            "repeat": "false",
                             "defaultValue": "none",
                             "help": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "IpFilter",
+                    "repeat": "false",
+                    "help": "",
+                    "args": [
+                        {
+                            "name": "preferRejectOnCidrConflict",
+                            "type": "boolean",
+                            "repeat": "false",
+                            "multi": "false",
+                            "defaultValue": "true",
+                            "help": "When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority."
+                        },
+                        {
+                            "name": "acceptNotMatchCidr",
+                            "type": "boolean",
+                            "repeat": "false",
+                            "multi": "false",
+                            "defaultValue": "true",
+                            "help": "The accept the request when neither the whitelist nor the blacklist match."
+                        },
+                        {
+                            "name": "anyLocalAddressAllowed",
+                            "type": "boolean",
+                            "repeat": "false",
+                            "multi": "false",
+                            "defaultValue": "true",
+                            "help": "The allow all local addresses to pass."
+                        },
+                        {
+                            "name": "statusCode",
+                            "type": "string",
+                            "repeat": "false",
+                            "multi": "false",
+                            "defaultValue": "FORBIDDEN"
+                        },
+                        {
+                            "name": "forwardHeaderNames",
+                            "type": "array",
+                            "repeat": "false",
+                            "multi": "true",
+                            "help": "",
+                            "defaultValue": [
+                                "X-Forwarded-For",
+                                "Proxy-Client-IP",
+                                "WL-Proxy-Client-IP"
+                            ],
+                            "options": [
+                                {
+                                    "name": "X-Forwarded-For",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Proxy-Client-IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "WL-Proxy-Client-IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "X-Real-IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "REMOTE_ADDR",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Remote-Addr",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "RemoteAddr",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "REMOTE_IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Remote-Ip",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "RemoteIp",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_X_FORWARDED_FOR",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-X-Forwarded-For",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpXForwardedFor",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_X_FORWARDED",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-X-Forwarded",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpXForwarded",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_Client_IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-Client-Ip",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpClientIp",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_X_CLUSTER_CLIENT_IP",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-X-Cluster-Client-Ip",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpXClusterClientIp",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_FORWARDED_FOR",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-Forwarded-For",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpForwardedFor",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HTTP_VIA",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "Http-Via",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "HttpVia",
+                                    "help": ""
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "FaultInjector",
+                    "repeat": "false",
+                    "multi": "false",
+                    "help": "",
+                    "args": [
+                        {
+                            "name": "provider",
+                            "type": "enum",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "The which is equivalent to another and condition after match the SPEL expression.",
+                            "options": [
+                                {
+                                    "name": "Abort",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "FixedDelay",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "RangeDelay",
+                                    "help": ""
+                                }
+                            ]
+                        },
+                        {
+                            "name": "abort",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "The request to abort fault injector configuration.",
+                            "childrens": [
+                                {
+                                    "name": "percentage",
+                                    "type": "double",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "1.00",
+                                    "help": "The percentage of requests that require fault injection match enabled."
+                                },
+                                {
+                                    "name": "statusCode",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "500",
+                                    "help": "The HttpStatus returned when the fault strategy is meet."
+                                }
+                            ]
+                        },
+                        {
+                            "name": "fixedDelay",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "The request to fixed delay fault injector configuration.",
+                            "childrens": [
+                                {
+                                    "name": "percentage",
+                                    "type": "double",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "1.00",
+                                    "help": "The percentage of requests that require fault injection match enabled."
+                                },
+                                {
+                                    "name": "delayMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "1000",
+                                    "help": "fixed delay in milliseconds"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "rangeDelay",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "The request to random range delay fault injector configuration.",
+                            "childrens": [
+                                {
+                                    "name": "percentage",
+                                    "type": "double",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "1.00",
+                                    "help": "The percentage of requests that require fault injection match enabled."
+                                },
+                                {
+                                    "name": "minDelayMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "1000",
+                                    "help": "fixed delay in milliseconds"
+                                },
+                                {
+                                    "name": "maxDelayMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "5000",
+                                    "help": "fixed delay in milliseconds"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "CacheFilter",
+                    "repeat": "false",
+                    "multi": "false",
+                    "help": "",
+                    "args": [
+                        {
+                            "name": "provider",
+                            "type": "enum",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "",
+                            "options": [
+                                {
+                                    "name": "localCache",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "redisCache",
+                                    "help": ""
+                                }
+                            ]
+                        },
+                        {
+                            "name": "localCache",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "",
+                            "childrens": [
+                                {
+                                    "name": "expireMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "120000",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "eliminationAlg",
+                                    "type": "enum",
+                                    "repeat": "false",
+                                    "multi": "false",
+                                    "help": "",
+                                    "options": [
+                                        {
+                                            "name": "LFU",
+                                            "help": "Least Frequently Used"
+                                        },
+                                        {
+                                            "name": "LRU",
+                                            "help": ""
+                                        },
+                                        {
+                                            "name": "FIFO",
+                                            "help": ""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "redisCache",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "",
+                            "childrens": [
+                                {
+                                    "name": "expireMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "120000",
+                                    "help": ""
+                                }
+                            ]
                         }
                     ]
                 }
