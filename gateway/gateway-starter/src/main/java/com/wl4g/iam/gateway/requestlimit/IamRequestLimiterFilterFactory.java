@@ -40,7 +40,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 

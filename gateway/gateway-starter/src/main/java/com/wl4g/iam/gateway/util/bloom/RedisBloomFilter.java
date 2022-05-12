@@ -85,6 +85,7 @@ import com.wl4g.infra.common.log.SmartLogger;
 public class RedisBloomFilter<T> {
 
     private final SmartLogger log = getLogger(getClass());
+    // TODO use ReactiveStringRedisTemplate
     private final StringRedisTemplate redisTemplate;
     private final BloomConfig<T> bloomConfig;
 

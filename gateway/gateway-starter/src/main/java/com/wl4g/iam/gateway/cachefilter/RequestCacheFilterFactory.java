@@ -15,7 +15,9 @@
  */
 package com.wl4g.iam.gateway.cachefilter;
 
+import static com.google.common.cache.CacheBuilder.newBuilder;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -24,6 +26,7 @@ import org.springframework.core.Ordered;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.google.common.cache.Cache;
 import com.wl4g.iam.gateway.cachefilter.config.CacheFilterProperties;
 import com.wl4g.iam.gateway.cachefilter.config.CacheFilterProperties.CachedProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
@@ -71,7 +74,23 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
     @Override
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
-        return new RequestCacheGatewayFilter(config, new SpelRequestMatcher(cacheFilterConfig.getPreferMatchRuleDefinitions()));
+
+        SpelRequestMatcher requestMatcher = new SpelRequestMatcher(cacheFilterConfig.getPreferMatchRuleDefinitions());
+
+        switch (config.getProvider()) {
+        case LocalCache:
+            Cache<String, Object> localCache = newBuilder()
+                    .expireAfterAccess(config.getLocal().getExpireAfterAccess(), MILLISECONDS)
+                    .expireAfterWrite(config.getLocal().getExpireAfterWrite(), MILLISECONDS)
+                    .concurrencyLevel(4)// TODO
+                    .build();
+            return new RequestCacheGatewayFilter(config, requestMatcher);
+        case RedisCache:
+            break;
+        default:
+            break;
+        }
+        return new RequestCacheGatewayFilter(config, requestMatcher);
     }
 
     @Getter

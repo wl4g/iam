@@ -23,7 +23,7 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
-import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.log.SmartLogger;
 

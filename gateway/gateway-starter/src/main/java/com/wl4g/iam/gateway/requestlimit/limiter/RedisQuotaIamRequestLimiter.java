@@ -132,7 +132,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RedisQuotaLimiterStrategy extends IamRequestLimiter.RequestLimiterStrategy {
+    public static class RedisQuotaLimiterStrategy extends RequestLimiterStrategy {
 
         /**
          * The number of total maximum allowed requests capacity.

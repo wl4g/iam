@@ -1036,11 +1036,11 @@
                             "help": "",
                             "childrens": [
                                 {
-                                    "name": "expireMs",
+                                    "name": "maxExpireMs",
                                     "type": "int",
                                     "multi": "false",
                                     "repeat": "false",
-                                    "defaultValue": "120000",
+                                    "defaultValue": "300000",
                                     "help": ""
                                 },
                                 {
@@ -1078,7 +1078,7 @@
                                     "type": "int",
                                     "multi": "false",
                                     "repeat": "false",
-                                    "defaultValue": "120000",
+                                    "defaultValue": "60000",
                                     "help": ""
                                 }
                             ]

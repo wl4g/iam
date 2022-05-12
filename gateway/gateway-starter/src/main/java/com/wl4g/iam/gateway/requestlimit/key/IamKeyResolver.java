@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.requestlimit.key;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
@@ -30,9 +29,6 @@ import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -71,12 +67,7 @@ public interface IamKeyResolver<C extends KeyResolverStrategy> extends Operator<
     // @Type(value = PathKeyResolverStrategy.class, name = "Path"),
     // @Type(value = HeaderKeyResolverStrategy.class, name = "Header"),
     // @Type(value = IntervalKeyResolverStrategy.class, name = "Interval"),
-    // @Type(value = IpRangeKeyResolverStrategy.class, name = "IpRange"), })
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @NoArgsConstructor
+    // @Type(value = IpRangeKeyResolverStrategy.class, name = "IpRange")})
     public static abstract class KeyResolverStrategy {
         public void applyDefaultIfNecessary(IamRequestLimiterProperties config) {
         }

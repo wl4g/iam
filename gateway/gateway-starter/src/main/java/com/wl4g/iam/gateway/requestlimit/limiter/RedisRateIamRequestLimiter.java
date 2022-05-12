@@ -184,7 +184,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
     @Validated
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RedisRateLimiterStrategy extends IamRequestLimiter.RequestLimiterStrategy {
+    public static class RedisRateLimiterStrategy extends RequestLimiterStrategy {
 
         /**
          * The default token bucket capacity, that is, the total number of

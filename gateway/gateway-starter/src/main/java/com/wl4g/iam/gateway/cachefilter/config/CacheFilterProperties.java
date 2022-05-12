@@ -90,12 +90,18 @@ public class CacheFilterProperties {
         private final Class<?> providerClass;
     }
 
+    public static enum EliminationAlgorithm {
+        LFU, LRU, FIFO;
+    }
+
     @Getter
     @Setter
     @Validated
     @ToString
     public static class LocalCacheProperties {
-
+        private EliminationAlgorithm eliminationAlg = EliminationAlgorithm.LFU;
+        private long expireAfterWrite = 300_000L;
+        private long expireAfterAccess = 300_000L;
     }
 
     @Getter
@@ -103,7 +109,7 @@ public class CacheFilterProperties {
     @Validated
     @ToString
     public static class RedisCacheProperties {
-
+        private long expireMs = 60_000L;
     }
 
     public static String REQUEST_CACHED_HEADER = "X-Iscg-Cached";

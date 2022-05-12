@@ -17,11 +17,6 @@ package com.wl4g.iam.gateway.requestlimit.limiter;
 
 import java.util.Map;
 
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
@@ -30,8 +25,6 @@ import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
 
@@ -57,31 +50,12 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
     @Getter
     @AllArgsConstructor
-    public static enum RequestLimiterPrivoder {
+    public static enum RequestLimiterPrivoder { 
         RedisRateLimiter(RedisRateLimiterStrategy.class),
 
         RedisQuotaLimiter(RedisQuotaLimiterStrategy.class);
 
         private final Class<? extends RequestLimiterStrategy> strategyClass;
-    }
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "provider")
-    @JsonSubTypes({ @Type(value = RedisRateLimiterStrategy.class, name = "RedisRateLimiter"),
-            @Type(value = RedisQuotaLimiterStrategy.class, name = "RedisQuotaLimiter"), })
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static abstract class RequestLimiterStrategy {
-
-        /**
-         * Whether or not to include headers containing rate limiter
-         * information, defaults to true.
-         */
-        private boolean includeHeaders = true;
-
     }
 
 }
