@@ -18,11 +18,11 @@ package com.wl4g.iam.gateway.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
-import com.wl4g.iam.gateway.cachefilter.config.CacheFilterAutoConfiguration;
 import com.wl4g.iam.gateway.circuitbreaker.config.IamCircuitBreakerAutoConfiguration;
 //import com.wl4g.iam.gateway.security.TokenRelayRefreshGatewayFilterFactory;
 import com.wl4g.iam.gateway.console.ConsoleAutoConfiguration;
@@ -31,7 +31,9 @@ import com.wl4g.iam.gateway.ipfilter.config.IpFilterAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.CustomMetricsAutoConfiguration;
+import com.wl4g.iam.gateway.requestcache.config.RequestCacheAutoConfiguration;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterAutoConfiguration;
+import com.wl4g.iam.gateway.retry.config.IamRetryAutoConfiguration;
 import com.wl4g.iam.gateway.route.config.RouteAutoConfiguration;
 import com.wl4g.iam.gateway.security.config.IamSecurityAutoConfiguration;
 import com.wl4g.iam.gateway.server.config.GatewayWebServerAutoConfiguration;
@@ -53,8 +55,13 @@ import reactor.core.publisher.Mono;
         IamCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class, CanaryLoadbalanceAutoConfiguration.class,
         IamSecurityAutoConfiguration.class, TraceAutoConfiguration.class, DyeingLoggingAutoConfiguration.class,
         ConsoleAutoConfiguration.class, CustomMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
-        TrafficAutoConfiguration.class, CacheFilterAutoConfiguration.class })
+        IamRetryAutoConfiguration.class, TrafficAutoConfiguration.class, RequestCacheAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
+
+    @Bean
+    public ReactiveByteArrayRedisTemplate reactiveByteArrayRedisTemplate(ReactiveRedisConnectionFactory connectionFactory) {
+        return new ReactiveByteArrayRedisTemplate(connectionFactory);
+    }
 
     @Bean
     public HiddenHttpMethodFilter hiddenHttpMethodFilter() {

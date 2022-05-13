@@ -25,7 +25,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 
 import reactor.core.publisher.Mono;
 
@@ -41,7 +41,7 @@ public class Https2HttpGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return SafeDefaultFilterOrdered.ORDER_HTTPS_TO_HTTP_FILTER;
+        return SafeFilterOrdered.ORDER_HTTPS_TO_HTTP;
     }
 
     @Override

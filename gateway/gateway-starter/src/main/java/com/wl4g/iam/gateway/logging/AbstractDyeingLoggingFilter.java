@@ -52,7 +52,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
@@ -76,6 +76,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
     public AbstractDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
+        // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferMatchRuleDefinitions());
     }
 
@@ -84,7 +85,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      */
     @Override
     public int getOrder() {
-        return SafeDefaultFilterOrdered.ORDER_LOGGING_FILTER;
+        return SafeFilterOrdered.ORDER_LOGGING;
     }
 
     @Override

@@ -67,7 +67,7 @@ import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties.SecretStore;
 import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingFailureEvent;
 import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingSuccessEvent;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
@@ -501,7 +501,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_SIMPLE_SIGN_FILTER;
+            return SafeFilterOrdered.ORDER_SIMPLE_SIGN;
         }
 
         @Override

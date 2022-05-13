@@ -43,7 +43,7 @@ import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.net.CIDR;
 import com.wl4g.infra.common.web.WebUtils;
@@ -205,7 +205,7 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_IPFILTER;
+            return SafeFilterOrdered.ORDER_IPFILTER;
         }
 
         @Override

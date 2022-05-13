@@ -328,3 +328,36 @@ spring:
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-statuses: [200,404] ## Default by 200
+        - id: productpage-service-route-with-RequestCache
+          uri: lb://productpage-service
+          predicates:
+            - Path=/productpage-with-RequestCache/**
+            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-productpage-service,5
+          filters:
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/productpage-with-RequestCache/(?<segment>.*),/$\{segment}
+            - name: RequestCache
+              args:
+                provider: SimpleCache ## Options(SimpleCache|EhCache|RedisCache)
+                simple:
+                  ## The cached data elimination algorithm.
+                  eliminationAlg: LRU ## Default LRU, options(LRU|LFU|FIFO)
+                  ## If you wish the cache should not exceed this number of entries, the cache will evict recently or infrequently
+                  ## used entries when it does, WARNING: the cache may evict entries before this limit is exceeded - usually
+                  ## when the cache size is close to the limit.
+                  maximumSize: 100_000 ## Default by 100_000B
+                  ## The expiration interval based on write time, all cache entry reads and writes are updated.
+                  expireAfterAccessMs: 60_000 ## Default by 60_000
+                  ## The expiration interval based on access time, all cache entries are updated only by write operations.
+                  expireAfterWriteMs: 600_000 ## Default by 600_000
+                  ## The number of concurrent cache operations, that is, the number of underlying cache block/segment locks.
+                  concurrencyLevel: 4 ## Default by 4;
+                redis:
+                  cachePrefix: iam:gateway:cachefilter:data
+                  expireMs: 60_000
+

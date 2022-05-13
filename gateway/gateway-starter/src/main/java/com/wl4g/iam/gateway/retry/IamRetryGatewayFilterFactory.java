@@ -43,7 +43,7 @@ import org.springframework.http.HttpStatus.Series;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -66,6 +66,11 @@ public class IamRetryGatewayFilterFactory extends AbstractGatewayFilterFactory<I
 
     public IamRetryGatewayFilterFactory() {
         super(RetryConfig.class);
+    }
+
+    @Override
+    public String name() {
+        return BEAN_NAME;
     }
 
     private static <T> List<T> toList(T... items) {
@@ -446,7 +451,7 @@ public class IamRetryGatewayFilterFactory extends AbstractGatewayFilterFactory<I
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_RETRY_FILTER;
+            return SafeFilterOrdered.ORDER_RETRY;
         }
 
         @Override
@@ -474,5 +479,7 @@ public class IamRetryGatewayFilterFactory extends AbstractGatewayFilterFactory<I
         }
 
     }
+
+    public static final String BEAN_NAME = "IamRetry";
 
 }

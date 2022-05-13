@@ -39,7 +39,7 @@ import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProvider;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -62,10 +62,13 @@ import reactor.core.publisher.Mono;
 public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<FaultInjectorFilterFactory.Config> {
 
     private final FaultProperties faultConfig;
+    private final SpelRequestMatcher requestMatcher;
 
     public FaultInjectorFilterFactory(FaultProperties faultConfig) {
         super(FaultInjectorFilterFactory.Config.class);
         this.faultConfig = notNullOf(faultConfig, "faultConfig");
+        // Build gray request matcher.
+        this.requestMatcher = new SpelRequestMatcher(faultConfig.getPreferMatchRuleDefinitions());
     }
 
     @Override
@@ -84,7 +87,7 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
     @Override
     public GatewayFilter apply(Config config) {
         applyDefaultToConfig(config);
-        return new FaultInjectorGatewayFilter(config, new SpelRequestMatcher(faultConfig.getPreferMatchRuleDefinitions()));
+        return new FaultInjectorGatewayFilter(config);
     }
 
     @Getter
@@ -96,13 +99,11 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
 
     @AllArgsConstructor
     class FaultInjectorGatewayFilter implements GatewayFilter, Ordered {
-
         private final Config config;
-        private final SpelRequestMatcher requestMatcher;
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_FAULT_FILTER;
+            return SafeFilterOrdered.ORDER_FAULT;
         }
 
         @Override

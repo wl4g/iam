@@ -48,7 +48,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -258,7 +258,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_CIRCUITBREAKER;
+            return SafeFilterOrdered.ORDER_CIRCUITBREAKER;
         }
 
         @Override

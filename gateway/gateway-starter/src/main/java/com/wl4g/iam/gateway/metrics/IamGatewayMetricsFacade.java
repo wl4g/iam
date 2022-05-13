@@ -34,14 +34,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.commons.util.InetUtils;
-import org.springframework.cloud.gateway.route.Route;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.collect.Lists;
 import com.wl4g.iam.gateway.loadbalance.LoadBalancerUtil;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.InstanceStatus;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -105,9 +104,8 @@ public class IamGatewayMetricsFacade implements InitializingBean {
         try {
             notNullOf(exchange, "exchange");
             notNullOf(metricsName, "metricsName");
-            Object route = exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-            if (nonNull(route)) {
-                String routeId = ((Route) route).getId();
+            String routeId = IamGatewayUtil.getRouteId(exchange);
+            if (nonNull(routeId)) {
                 List<String> _tags = Lists.newArrayList(tags);
                 _tags.add(MetricsTag.ROUTE_ID);
                 _tags.add(routeId);
@@ -173,9 +171,8 @@ public class IamGatewayMetricsFacade implements InitializingBean {
         notNullOf(metricsName, "metricsName");
         Duration cost = Duration.ofNanos(nanoTime() - beginNanoTime);
         try {
-            Object route = exchange.getAttributes().get(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-            if (nonNull(route)) {
-                String routeId = ((Route) route).getId();
+            String routeId = IamGatewayUtil.getRouteId(exchange);
+            if (nonNull(routeId)) {
                 List<String> _tags = Lists.newArrayList(tags);
                 _tags.add(MetricsTag.SELF_INSTANCE_ID);
                 _tags.add(LoadBalancerUtil.getInstanceId(localInstance));

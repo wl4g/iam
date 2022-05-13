@@ -41,7 +41,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
@@ -185,7 +185,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
 
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_REQUEST_LIMITER;
+            return SafeFilterOrdered.ORDER_REQUEST_LIMITER;
         }
 
         @Override

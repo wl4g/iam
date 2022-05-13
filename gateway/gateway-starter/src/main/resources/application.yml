@@ -145,205 +145,25 @@ spring:
             check-cn-white-file: classpath:/cert.d/cn_white.list ## Default no-set(disabled)
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
-      security:
-        simpleSign:
-          secretStore: redis
-          secretStorePrefix: iam:gateway:auth:sign:secret
-          secretLocalCacheSeconds: 6 ## Default by 6sec
-          ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
-          ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
-          ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
-          ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
-          ## authenticated principal name cannot be obtained.
-          anonymousAuthingWithJvmDebug: false ## Default by false
-          signReplayVerifyBloomLoadPrefix: iam:gateway:auth:sign:replay:bloom
-          eventRecorder:
-            publishEventBusThreads: 1 ## Default by 1
-            ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
-            ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-            localLogEnabled: true ## Default by true
-            redis:
-              enabled: true ## Default by true
-              ## Redis event recorder success accumulator prefix.
-              successCumulatorPrefix: iam:gateway:auth:sign:event:success
-              ## Redis event recorder failure accumulator prefix.
-              failureCumulatorPrefix: iam:gateway:auth:sign:event:failure
-              ## Redis event recorder accumulator suffix of date format pattern.
-              cumulatorSuffixOfDatePattern: yyyyMMdd
-      requestlimit:
-        ## The get denial of Service when throttling key is empty.
-        denyEmptyKey: true ## Default by true
-        ## The status code response when the get current limiting key is empty.
-        emptyKeyStatusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
-        statusCode: TOO_MANY_REQUESTS ## Default by HttpStatus.TOO_MANY_REQUESTS
-        defaultKeyResolver:
-          #host: {}
-          #path: {}
-          #principal: {}
-          interval:
-            ## The date pattern of the key get by limiting according to the date interval.
-            cycleDatePattern: yyyyMMdd
-          header:
-            ## The according to the list of header names of the request header current limiter, it can usually be used to get the
-            ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
-            headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+      route:
+        refresh-delay-ms: 30_000 ## Default by 30_000
+      ipfilter:
+        configPrefix: iam:gateway:ipfilter:config
+        defaultFilter:
+          ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
+          preferRejectOnCidrConflict: true ## Default by true
+          ## The accept the request when neither the whitelist nor the blacklist match.
+          acceptNotMatchCidr: true ## Default by true
+          ## The allow all local addresses to pass.
+          anyLocalAddressAllowed: true ## Default by true
+          statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+          forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
               "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-        defaultLimiter:
-          rate:
-            ## The rate limiter user-level configuration key prefix.
-            configPrefix: iam:gateway:requestlimit:config:rate
-            ## The rate limiter user-level tokens computational key prefix.
-            tokenPrefix: iam:gateway:requestlimit:token:rate
-            ## The default token bucket capacity, that is, the total number of concurrency allowed.
-            defaultBurstCapacity: 1
-            ## How many requests per second do you want a user to be allowed to do?
-            defaultReplenishRate: 1
-            ## How many tokens are requested per request?
-            defaultRequestedTokens: 1
-            includeHeaders: false ## Default by true
-            burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
-            replenishRateHeader: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
-            requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
-            remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
-          quota:
-            ## The quota limiter user-level configuration key prefix.
-            configPrefix: iam:gateway:requestlimit:config:quota
-            ## The quota limiter user-level tokens computational key prefix.
-            tokenPrefix: iam:gateway:requestlimit:token:quota
-            ## The number of total maximum allowed requests capacity.
-            requestCapacity: 1000 ## Default by 1000
-            ## The date pattern of request quota limit calculation cycle.
-            cycleDatePattern: yyyyMMdd
-            includeHeaders: false ## Default by true
-            requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
-            remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
-        eventRecorder:
-          publishEventBusThreads: 1 ## Default by 1
-          ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
-          ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
-          localLogEnabled: true ## Default by true
-          redis:
-            ## Redis event recorder hits accumulator prefix.
-            hitsCumulatorPrefix: iam:gateway:requestlimit:event:hits
-            ## Redis event recorder accumulator suffix of date format pattern.
-            cumulatorSuffixOfDatePattern: yyyyMMdd
-      route:
-        refresh-delay-ms: 30_000 ## Default by 30_000
-      ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
-      circuitbreaker:
-        failureRateThreshold: 40 ## Default by 50
-        permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
-        slidingWindowSize: 100 ## Default by 100
-        slidingWindowType: COUNT_BASED ## Default by COUNT_BASED, Optional(TIME_BASED|COUNT_BASED)
-        minimumNumberOfCalls: 100 ## Default by 100
-        writableStackTraceEnabled: true ## Default by true
-        automaticTransitionFromOpenToHalfOpenEnabled: false ## Default by false
-        waitIntervalFunctionInOpenState: 60 ## Default by 60s
-        slowCallRateThreshold: 100 ## Default by 100
-        slowCallDurationThreshold: 60 ## Default by 60
-        timeLimiter:
-          timeoutDuration: 3_000 ## Default by 1000ms
-          cancelRunningFuture: true ## Default by true
-      loadbalancer:
-        enabled: true ## Default by true
-        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iscg-Canary-Label'
-        # TODO
-        #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
-        ## The SPEL expressions that match canary requests.
-        canaryChooseExpression: '#{$rule.test($request)}'
-        canaryMatchRuleDefinitions:
-          ## TODO 
-          #- name: defaultZoneHeader
-          #  query:
-          #    symbol: IGNORECASE_EQ
-          #    key: X-Iscg-Zone
-          #    value: cn_south1_a1
-          - name: v1-canary-header
-            #method:
-            #schema:
-            #host:
-            #port:
-            #path: ## Ant path pattern.
-            header:
-              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
-              key: X-Iscg-Canary
-              value: v1
-            #cookie:
-            #  symbol:
-            #  key:
-            #  value:
-            #query:
-            #  symbol:
-            #  key:
-            #  value:
-          - name: v1-canary-query
-            query:
-              symbol: EQ
-              key: __iscg_canary
-              value: v1
-        ## The number of load balancer statistician scheduler worker threads.
-        statsSchedulerThread: 2 ## Default by 2
-        ## The initial interval at which the instance list is periodically pulled update register from the discovery service.
-        registerRouteServicesInitialSeconds: 1 ## Default by 1s
-        ## The interval at which the instance list is periodically pulled update register from the discovery server.
-        registerRouteServicesDelaySeconds: 60 ## Default by 60s
-        defaultChoose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
-          ## When no canary condition is matched, whether all instances of the service are candidates.
-          fallback-all-to-candidates: true
-          load-balancer-algorithm: LC ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-          max-choose-tries: 10 ## Default by 10
-          null-ping-to-reachable: true ## Default by true
-        defaultProbe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
-          debug: false ## Default by false
-          initialSeconds: 3 ## Default by 3s
-          delaySeconds: 10 ## Default by 10s
-          timeoutMs: 5_000 ## Default by 5_000ms
-          receiveQueue: 8 ## Default by 8
-          path: /healthz ## Default by '/healthz'
-          ## Note: only expectBody takes effect when it is set at the same time as expectBody. (As long as any
-          ## status code is satisfied)
-          expectStatuses: [200] ## Default by 200
-          #expect-body: ## Default by ''
-      traffic:
-        defaultReplication:
-          targetUrls: ["http://localhost:8888/"]
-          ## The sampling percentage rate of traffic that needs to be replication.
-          percentage: 1d ## Default by 1d
-          wiretap: false ## Default by false
-          connectTimeout: 45_000 ## Default by 45s
-          ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
-          responseTimeout: 60_000 ## Default by 60s
-          maxHeaderSize: 65535 ## Default no set.
-          #maxInitialLineLength: ## Default by null
-          #proxy:
-          # host:
-          # port:
-          # username:
-          # password:
-          # non-proxy-hosts-pattern:
-          pool:
-            name: proxy ## Default by proxy
-            #metrics: true ## Default by false
-            #max-idle-time: 
-            #acquire-timeout: 45000 # Default by 45000ms
-          websocket:
-            proxy-ping: true ## Default by true
-            max-frame-payload-length: 65535 ## Default no set.
-            #max-connections: ## Default by: max(availableProcessors(),8)*2)
-          ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
-            default-configuration-type: TCP ## Default by 'TCP'
-            handshake-timeout: 10000ms ## Default by 10000ms
-            close-notify-flush-timeout: 3000ms ## Default by 3000ms
-            close-notify-read-timeout: 0 ## Default by 0
-            #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
-            #key-store: ## Keystore path for Netty HttpClient.
-            #key-store-type:
-            #key-store-password:
-            #key-store-provider:
-            #trusted-x509-certificates:
-            #use-insecure-trust-manager: true ## Default by false
+          strategy:
+            allow: false ## Default by false
+            cidrs: ['1.1.1.0/24'] ## Default by []
       fault:
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
@@ -393,23 +213,31 @@ spring:
             percentage: 1d ## Default by 1.0d
             minDelayMs: 1000 ## Default by 1000
             maxDelayMs: 5000 ## Default by 5000
-      ipfilter:
-        configPrefix: iam:gateway:ipfilter:config
-        defaultFilter:
-          ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
-          preferRejectOnCidrConflict: true ## Default by true
-          ## The accept the request when neither the whitelist nor the blacklist match.
-          acceptNotMatchCidr: true ## Default by true
-          ## The allow all local addresses to pass.
-          anyLocalAddressAllowed: true ## Default by true
-          statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
-          forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
-              "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
-              "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
-              "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-          strategy:
-            allow: false ## Default by false
-            cidrs: [] ## Default by []
+      security:
+        simpleSign:
+          secretStore: redis
+          secretStorePrefix: iam:gateway:auth:sign:secret
+          secretLocalCacheSeconds: 6 ## Default by 6sec
+          ## Ignore authentication in JVM debug mode, often used for rapid development and testing environments.
+          ## [NOTICE]: that this switch is only for dev testing and definitely not for production, known issue:
+          ## when set to true, an error will be returned due to the rate-limiter filter this filter if the
+          ## 'principalNameKeyResolver' is used (The default is 403 or 422), the reason is because the current
+          ## authenticated principal name cannot be obtained.
+          anonymousAuthingWithJvmDebug: false ## Default by false
+          signReplayVerifyBloomLoadPrefix: iam:gateway:auth:sign:replay:bloom
+          eventRecorder:
+            publishEventBusThreads: 1 ## Default by 1
+            ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
+            ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
+            localLogEnabled: true ## Default by true
+            redis:
+              enabled: true ## Default by true
+              ## Redis event recorder success accumulator prefix.
+              successCumulatorPrefix: iam:gateway:auth:sign:event:success
+              ## Redis event recorder failure accumulator prefix.
+              failureCumulatorPrefix: iam:gateway:auth:sign:event:failure
+              ## Redis event recorder accumulator suffix of date format pattern.
+              cumulatorSuffixOfDatePattern: yyyyMMdd
       trace:
         enabled: true ## Default by true
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
@@ -521,6 +349,226 @@ spring:
               value: y
           - name: energyOpenApiLogWithPath
             path: '/openapi/**'
+      requestlimit:
+        ## The get denial of Service when throttling key is empty.
+        denyEmptyKey: true ## Default by true
+        ## The status code response when the get current limiting key is empty.
+        emptyKeyStatusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+        statusCode: TOO_MANY_REQUESTS ## Default by HttpStatus.TOO_MANY_REQUESTS
+        defaultKeyResolver:
+          #host: {}
+          #path: {}
+          #principal: {}
+          interval:
+            ## The date pattern of the key get by limiting according to the date interval.
+            cycleDatePattern: yyyyMMdd
+          header:
+            ## The according to the list of header names of the request header current limiter, it can usually be used to get the
+            ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
+            headerNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+              "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+              "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+              "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+        defaultLimiter:
+          rate:
+            ## The rate limiter user-level configuration key prefix.
+            configPrefix: iam:gateway:requestlimit:config:rate
+            ## The rate limiter user-level tokens computational key prefix.
+            tokenPrefix: iam:gateway:requestlimit:token:rate
+            ## The default token bucket capacity, that is, the total number of concurrency allowed.
+            defaultBurstCapacity: 1
+            ## How many requests per second do you want a user to be allowed to do?
+            defaultReplenishRate: 1
+            ## How many tokens are requested per request?
+            defaultRequestedTokens: 1
+            includeHeaders: false ## Default by true
+            burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+            replenishRateHeader: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+            requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+            remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+          quota:
+            ## The quota limiter user-level configuration key prefix.
+            configPrefix: iam:gateway:requestlimit:config:quota
+            ## The quota limiter user-level tokens computational key prefix.
+            tokenPrefix: iam:gateway:requestlimit:token:quota
+            ## The number of total maximum allowed requests capacity.
+            requestCapacity: 1000 ## Default by 1000
+            ## The date pattern of request quota limit calculation cycle.
+            cycleDatePattern: yyyyMMdd
+            includeHeaders: false ## Default by true
+            requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
+            remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
+        eventRecorder:
+          publishEventBusThreads: 1 ## Default by 1
+          ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
+          ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
+          localLogEnabled: true ## Default by true
+          redis:
+            ## Redis event recorder hits accumulator prefix.
+            hitsCumulatorPrefix: iam:gateway:requestlimit:event:hits
+            ## Redis event recorder accumulator suffix of date format pattern.
+            cumulatorSuffixOfDatePattern: yyyyMMdd
+      traffic:
+        defaultReplication:
+          targetUrls: ["http://localhost:8888/"]
+          ## The sampling percentage rate of traffic that needs to be replication.
+          percentage: 1d ## Default by 1d
+          wiretap: false ## Default by false
+          connectTimeout: 45_000 ## Default by 45s
+          ## see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+          responseTimeout: 60_000 ## Default by 60s
+          maxHeaderSize: 65535 ## Default no set.
+          #maxInitialLineLength: ## Default by null
+          #proxy:
+          # host:
+          # port:
+          # username:
+          # password:
+          # non-proxy-hosts-pattern:
+          pool:
+            name: proxy ## Default by proxy
+            #metrics: true ## Default by false
+            #max-idle-time: 
+            #acquire-timeout: 45000 # Default by 45000ms
+          websocket:
+            proxy-ping: true ## Default by true
+            max-frame-payload-length: 65535 ## Default no set.
+            #max-connections: ## Default by: max(availableProcessors(),8)*2)
+          ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+            default-configuration-type: TCP ## Default by 'TCP'
+            handshake-timeout: 10000ms ## Default by 10000ms
+            close-notify-flush-timeout: 3000ms ## Default by 3000ms
+            close-notify-read-timeout: 0 ## Default by 0
+            #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+            #key-store: ## Keystore path for Netty HttpClient.
+            #key-store-type:
+            #key-store-password:
+            #key-store-provider:
+            #trusted-x509-certificates:
+            #use-insecure-trust-manager: true ## Default by false
+      requestcache:
+        ## The name of the header that returns the request cached configuration.
+        requestCachedHeader: X-Iscg-Cached ## Default by 'X-Iscg-Cached'
+        ## The initial capacity of the temporary buffer size.
+        tmpBufferInitialCapacity: 1024 ## Default by 1024
+        ## The maximum capacity of the temporary buffer size.
+        tmpBufferMaxCapacity: 1048576 ## Default by 1048576
+        ## Prefer to enable request cache samples match SPEL match expression. Default by '#{true}', which means never no match.
+        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
+        preferOpenMatchExpression: '#{$defaultCacheHeader.test($request)}'
+        ## Prefer to enable tracing samples match rule definitions.
+        preferMatchRuleDefinitions:
+          - name: defaultCacheHeader
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## Ant path pattern.
+            header:
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Cache
+              value: y
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+        defaultCache:
+          provider: LocalCache ## Options(LocalCache|RedisCache)
+          local:
+            ## The cached data elimination algorithm.
+            eliminationAlg: LRU ## Default LRU, options(LRU|LFU|FIFO)
+            ## If you wish the cache should not exceed this number of entries, the cache will evict recently or infrequently
+            ## used entries when it does, WARNING: the cache may evict entries before this limit is exceeded - usually
+            ## when the cache size is close to the limit.
+            maximumSize: 1_000_000 ## Default by 1_000_000
+            ## The expiration interval based on write time, all cache entry reads and writes are updated.
+            expireAfterAccessMs: 60_000 ## Default by 60_000
+            ## The expiration interval based on access time, all cache entries are updated only by write operations.
+            expireAfterWriteMs: 600_000 ## Default by 600_000
+            ## The number of concurrent cache operations, that is, the number of underlying cache block/segment locks.
+            concurrencyLevel: 4 ## Default by 4
+          redis:
+            cachePrefix: iam:gateway:cachefilter:data
+            expireMs: 60_000
+      ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
+      circuitbreaker:
+        failureRateThreshold: 40 ## Default by 50
+        permittedNumberOfCallsInHalfOpenState: 10 ## Default by 10
+        slidingWindowSize: 100 ## Default by 100
+        slidingWindowType: COUNT_BASED ## Default by COUNT_BASED, Optional(TIME_BASED|COUNT_BASED)
+        minimumNumberOfCalls: 100 ## Default by 100
+        writableStackTraceEnabled: true ## Default by true
+        automaticTransitionFromOpenToHalfOpenEnabled: false ## Default by false
+        waitIntervalFunctionInOpenState: 60 ## Default by 60s
+        slowCallRateThreshold: 100 ## Default by 100
+        slowCallDurationThreshold: 60 ## Default by 60
+        timeLimiter:
+          timeoutDuration: 3_000 ## Default by 1000ms
+          cancelRunningFuture: true ## Default by true
+      loadbalancer:
+        enabled: true ## Default by true
+        canaryDiscoveryServiceLabelPrefix: Iscg-Canary-Label ## Default by 'Iscg-Canary-Label'
+        # TODO
+        #canaryChooseExpression: '#{$rule.and($defaultZoneHeader).test($request)}'
+        ## The SPEL expressions that match canary requests.
+        canaryChooseExpression: '#{$rule.test($request)}'
+        canaryMatchRuleDefinitions:
+          ## TODO 
+          #- name: defaultZoneHeader
+          #  query:
+          #    symbol: IGNORECASE_EQ
+          #    key: X-Iscg-Zone
+          #    value: cn_south1_a1
+          - name: v1-canary-header
+            #method:
+            #schema:
+            #host:
+            #port:
+            #path: ## Ant path pattern.
+            header:
+              symbol: IGNORECASE_EQ ## Options(eq|prefix|suffix|include|ignorecase_eq|ignorecase_prefix|ignorecase_suffix|ignorecase_include)
+              key: X-Iscg-Canary
+              value: v1
+            #cookie:
+            #  symbol:
+            #  key:
+            #  value:
+            #query:
+            #  symbol:
+            #  key:
+            #  value:
+          - name: v1-canary-query
+            query:
+              symbol: EQ
+              key: __iscg_canary
+              value: v1
+        ## The number of load balancer statistician scheduler worker threads.
+        statsSchedulerThread: 2 ## Default by 2
+        ## The initial interval at which the instance list is periodically pulled update register from the discovery service.
+        registerRouteServicesInitialSeconds: 1 ## Default by 1s
+        ## The interval at which the instance list is periodically pulled update register from the discovery server.
+        registerRouteServicesDelaySeconds: 60 ## Default by 60s
+        defaultChoose: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+          ## When no canary condition is matched, whether all instances of the service are candidates.
+          fallback-all-to-candidates: true
+          load-balancer-algorithm: LC ## Optional(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+          max-choose-tries: 10 ## Default by 10
+          null-ping-to-reachable: true ## Default by true
+        defaultProbe: ## see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyGlobalToConfig()
+          debug: false ## Default by false
+          initialSeconds: 3 ## Default by 3s
+          delaySeconds: 10 ## Default by 10s
+          timeoutMs: 5_000 ## Default by 5_000ms
+          receiveQueue: 8 ## Default by 8
+          path: /healthz ## Default by '/healthz'
+          ## Note: only expectBody takes effect when it is set at the same time as expectBody. (As long as any
+          ## status code is satisfied)
+          expectStatuses: [200] ## Default by 200
+          #expect-body: ## Default by ''
 
   ## Security configuration.
   security:
@@ -569,7 +617,7 @@ logging:
   pattern:
     #console: ${logging.pattern.file.name}
     #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
-    #dateformat: yy-MM-dd HH:mm:ss.SSS
+    #dateformat: yyyy-MM-dd HH:mm:ss.SSS
     #level: '%5p'
     #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
   root: INFO
@@ -577,8 +625,8 @@ logging:
     de.codecentric.boot.admin: INFO
     reactor.netty.http.client: INFO
     org:
-      springframework: INFO
-        #boot.context.config: DEBUG ## Print load config
+      springframework:
+        boot.context.config: DEBUG ## Print load config
       apache: INFO
     feign: DEBUG
     com:

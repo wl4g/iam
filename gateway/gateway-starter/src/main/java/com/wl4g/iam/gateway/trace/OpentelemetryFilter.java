@@ -37,7 +37,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.trace.config.TraceProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
@@ -70,6 +70,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
     public OpentelemetryFilter(TraceProperties traceConfig, OpenTelemetry openTelemetry) {
         this.traceConfig = notNullOf(traceConfig, "traceConfig");
         this.openTelemetry = notNullOf(openTelemetry, "openTelemetry");
+        // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(traceConfig.getPreferMatchRuleDefinitions());
     }
 
@@ -78,7 +79,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return SafeDefaultFilterOrdered.ORDER_TRACE_FILTER;
+        return SafeFilterOrdered.ORDER_TRACE;
     }
 
     @Override

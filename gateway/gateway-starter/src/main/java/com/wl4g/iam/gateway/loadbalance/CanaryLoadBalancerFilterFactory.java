@@ -52,7 +52,7 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
-import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeDefaultFilterOrdered;
+import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
@@ -168,7 +168,7 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
          */
         @Override
         public int getOrder() {
-            return SafeDefaultFilterOrdered.ORDER_CANARY_LOADBALANCER;
+            return SafeFilterOrdered.ORDER_CANARY_LOADBALANCER;
         }
 
         @Override
