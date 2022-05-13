@@ -54,10 +54,12 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
         CacheConfigurationBuilder<String, byte[]> ccBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
                 byte[].class,
                 ResourcePoolsBuilder.heap(config.getOffHeapEntries()).offheap(config.getOffHeapSize().toMegabytes(), MB));
-        //TODO use disk strategy config
+        // TODO use disk strategy config
         this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(config.getCacheNamePrefix().concat("-").concat(routeId), ccBuilder)
                 .build(true);
+        
+        // TODO getCache return null???
         this.originalCache = cacheManager.getCache("defaultLocalCache", String.class, byte[].class);
     }
 
@@ -72,18 +74,21 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     }
 
     @Override
-    public void put(String key, byte[] value) {
+    public Mono<Boolean> put(String key, byte[] value) {
         originalCache.put(key, value);
+        return Mono.just(true);
     }
 
     @Override
-    public void invalidate(String key) {
+    public Mono<Long> invalidate(String key) {
         originalCache.remove(key);
+        return Mono.just(1L);
     }
 
     @Override
-    public void invalidateAll() {
+    public Mono<Boolean> invalidateAll() {
         originalCache.clear();
+        return Mono.just(true);
     }
 
     @Override
@@ -92,8 +97,9 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     }
 
     @Override
-    public void cleanUp() {
+    public Mono<Boolean> cleanUp() {
         originalCache.clear();
+        return Mono.just(true);
     }
 
     @Override

@@ -57,19 +57,19 @@ public class RedisResponseCache implements ResponseCache {
     }
 
     @Override
-    public void put(String key, byte[] value) {
-        hashOperation.put(getBytes(config.getCachePrefix()), getBytes(key), value);
-        redisTemplate.expire(getBytes(key), Duration.ofMillis(config.getExpireMs()));
+    public Mono<Boolean> put(String key, byte[] value) {
+        return hashOperation.put(getBytes(config.getCachePrefix()), getBytes(key), value)
+                .then(redisTemplate.expire(getBytes(key), Duration.ofMillis(config.getExpireMs())));
     }
 
     @Override
-    public void invalidate(String key) {
-        hashOperation.remove(getBytes(config.getCachePrefix()), getBytes(key));
+    public Mono<Long> invalidate(String key) {
+        return hashOperation.remove(getBytes(config.getCachePrefix()), getBytes(key));
     }
 
     @Override
-    public void invalidateAll() {
-        hashOperation.delete(getBytes(config.getCachePrefix()));
+    public Mono<Boolean> invalidateAll() {
+        return hashOperation.delete(getBytes(config.getCachePrefix()));
     }
 
     @Override
@@ -78,8 +78,8 @@ public class RedisResponseCache implements ResponseCache {
     }
 
     @Override
-    public void cleanUp() {
-        hashOperation.delete(getBytes(config.getCachePrefix()));
+    public Mono<Boolean> cleanUp() {
+        return hashOperation.delete(getBytes(config.getCachePrefix()));
     }
 
 }

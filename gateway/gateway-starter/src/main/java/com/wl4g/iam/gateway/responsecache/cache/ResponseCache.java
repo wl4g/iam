@@ -48,15 +48,15 @@ public interface ResponseCache {
      *
      * @since 11.0
      */
-    void put(String key, byte[] value);
+    Mono<Boolean> put(String key, byte[] value);
 
     /** Discards any cached value for key {@code key}. */
-    void invalidate(String key);
+    Mono<Long> invalidate(String key);
 
     /**
      * Discards all entries in the cache.
      */
-    void invalidateAll();
+    Mono<Boolean> invalidateAll();
 
     /** Returns the approximate number of entries in this cache. */
     Mono<Long> size();
@@ -65,5 +65,5 @@ public interface ResponseCache {
      * Performs any pending maintenance operations needed by the cache. Exactly
      * which activities are performed -- if any -- is implementation-dependent.
      */
-    void cleanUp();
+    Mono<Boolean> cleanUp();
 }

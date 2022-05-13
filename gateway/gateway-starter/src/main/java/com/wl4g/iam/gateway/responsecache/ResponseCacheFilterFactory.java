@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.responsecache;
 import static com.google.common.cache.CacheBuilder.newBuilder;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.lang.String.valueOf;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -155,8 +156,8 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
             // Calculate the request unique hash key.
             String hashKey = getRequestHashKey(config, exchange);
 
-            // Gets or create response cache.
-            ResponseCache responseCache = obtainResponseCache(exchange);
+            // Gets or create response cache by route.
+            ResponseCache responseCache = obtainRouteResponseCache(exchange);
 
             // First get the response data from the cache.
             return responseCache.get(hashKey).defaultIfEmpty(new byte[0]).flatMap(cachedResponseBytes -> {
@@ -175,6 +176,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
                     return Mono.just(responseBodySegment);
                 });
 
+                // TODO reactive RedisResponseCache non-wait completed???
                 return chain.filter(exchange.mutate().response(newResponse).build()).doFinally(signal -> {
                     try {
                         byte[] newResponseBytes = respBuf.array();
@@ -213,7 +215,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
          * @param exchange
          * @return
          */
-        private ResponseCache obtainResponseCache(ServerWebExchange exchange) {
+        private ResponseCache obtainRouteResponseCache(ServerWebExchange exchange) {
             String routeId = IamGatewayUtil.getRouteId(exchange);
             ResponseCache responseCache = responseCaches.get(routeId);
             if (isNull(responseCache)) {
@@ -319,7 +321,9 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
          */
         private Mono<Void> responseWithCached(ServerWebExchange exchange, String hashKey, byte[] cachedResponseBytes) {
             // see:https://github.com/spring-cloud/spring-cloud-gateway/issues/268
-            exchange.getResponse().getHeaders().add(responseCacheConfig.getResponseCachedHeader(), hashKey);
+            HttpHeaders headers = exchange.getResponse().getHeaders();
+            headers.add(responseCacheConfig.getResponseCachedHeader(), hashKey);
+            headers.add(HttpHeaders.CONTENT_LENGTH, valueOf(cachedResponseBytes.length));
             return exchange.getResponse().writeWith(Flux.just(exchange.getResponse().bufferFactory().wrap(cachedResponseBytes)));
         }
 

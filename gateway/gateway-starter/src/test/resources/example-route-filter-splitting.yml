@@ -343,7 +343,7 @@ spring:
             - RewritePath=/productpage-with-ResponseCache/(?<segment>.*),/$\{segment}
             - name: ResponseCache
               args:
-                provider: SimpleCache ## Options(SimpleCache|EhCache|RedisCache)
+                provider: EhCache ## Options(SimpleCache|EhCache|RedisCache)
                 simple:
                   ## The cached data elimination algorithm.
                   eliminationAlg: LRU ## Default LRU, options(LRU|LFU|FIFO)

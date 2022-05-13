@@ -44,18 +44,21 @@ public class SimpleResponseCache implements ResponseCache {
     }
 
     @Override
-    public void put(String key, byte[] value) {
+    public Mono<Boolean> put(String key, byte[] value) {
         memoryCache.put(key, value);
+        return Mono.just(true);
     }
 
     @Override
-    public void invalidate(String key) {
+    public Mono<Long> invalidate(String key) {
         memoryCache.invalidate(key);
+        return Mono.just(1L);
     }
 
     @Override
-    public void invalidateAll() {
+    public Mono<Boolean> invalidateAll() {
         memoryCache.invalidateAll();
+        return Mono.just(true);
     }
 
     @Override
@@ -64,8 +67,9 @@ public class SimpleResponseCache implements ResponseCache {
     }
 
     @Override
-    public void cleanUp() {
+    public Mono<Boolean> cleanUp() {
         memoryCache.cleanUp();
+        return Mono.just(true);
     }
 
 }
