@@ -270,103 +270,145 @@ public class IamGatewayMetricsFacade implements InitializingBean {
     @AllArgsConstructor
     public static enum MetricsName {
 
+        //
         // Simple signature authorizer.
+        //
 
-        SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL("iam_gw_simple_sign_bloom_success_total",
+        SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL("iscg_simple_sign_bloom_success_total",
                 "The total number of success bloom validate for simple signature authenticator"),
 
-        SIMPLE_SIGN_BLOOM_FAIL_TOTAL("iam_gw_simple_sign_bloom_fail_total",
+        SIMPLE_SIGN_BLOOM_FAIL_TOTAL("iscg_simple_sign_bloom_fail_total",
                 "The total number of failed bloom validate for simple signature authenticator"),
 
-        SIMPLE_SIGN_SUCCCESS_TOTAL("iam_gw_simple_sign_success_total",
+        SIMPLE_SIGN_SUCCCESS_TOTAL("iscg_simple_sign_success_total",
                 "The total number of successful authentication by the simple signature authenticator"),
 
-        SIMPLE_SIGN_FAIL_TOTAL("iam_gw_simple_sign_fail_total",
+        SIMPLE_SIGN_FAIL_TOTAL("iscg_simple_sign_fail_total",
                 "The total number of failure authentication by the simple sign authenticator"),
 
-        SIMPLE_SIGN_TIME("iam_gw_simple_sign_time", "The number of simple signature execution cost time"),
+        SIMPLE_SIGN_TIME("iscg_simple_sign_time", "The number of simple signature execution cost time"),
 
+        //
         // Canary LoadBalacner.
+        //
 
         // current instance status.
-        CANARY_LB_STATS_CURRENT_INSTANCE("iam_gw_canary_lb_stats_current_instance",
+        CANARY_LB_STATS_CURRENT_INSTANCE("iscg_canary_lb_stats_current_instance",
                 "The current state instance of the canary load balancer statistic"),
 
-        CANARY_LB_STATS_CURRENT_INSTANCE_CONNECTIONS("iam_gw_canary_lb_stats_current_instance_connections",
+        CANARY_LB_STATS_CURRENT_INSTANCE_CONNECTIONS("iscg_canary_lb_stats_current_instance_connections",
                 "The number of instance connections of the canary load balancer statistic"),
 
         // chooser statistic
 
-        CANARY_LB_CHOOSE_TOTAL("iam_gw_canary_lb_choose_total",
+        CANARY_LB_CHOOSE_TOTAL("iscg_canary_lb_choose_total",
                 "The total number of instances selected by the canary LoadBalancer"),
 
-        CANARY_LB_CHOOSE_FALLBACK_TOTAL("iam_gw_canary_lb_choose_fallback_total",
+        CANARY_LB_CHOOSE_FALLBACK_TOTAL("iscg_canary_lb_choose_fallback_total",
                 "The total number of times that Canary LoadBalancer chose to fallback on instances"),
 
-        CANARY_LB_CHOOSE_MISSING_TOTAL("iam_gw_canary_lb_choose_missing_total", "Total number of canary load balancing misses"),
+        CANARY_LB_CHOOSE_MISSING_TOTAL("iscg_canary_lb_choose_missing_total", "Total number of canary load balancing misses"),
 
-        CANARY_LB_CHOOSE_MAX_TRIES_TOTAL("iam_gw_canary_lb_choose_max_tries_total",
+        CANARY_LB_CHOOSE_MAX_TRIES_TOTAL("iscg_canary_lb_choose_max_tries_total",
                 "The total number of times the canary load balancer selects a reachable instance to retry"),
 
-        CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL("iam_gw_canary_lb_choose_empty_instances_total",
+        CANARY_LB_CHOOSE_EMPTY_INSTANCES_TOTAL("iscg_canary_lb_choose_empty_instances_total",
                 "The total number of times the available instances was not found by canary load balancer"),
 
         // active probe statistic.
 
-        CANARY_LB_STATS_TOTAL("iam_gw_canary_lb_stats_total", "The total number of active probes of the canary load balancer"),
+        CANARY_LB_STATS_TOTAL("iscg_canary_lb_stats_total", "The total number of active probes of the canary load balancer"),
 
-        CANARY_LB_STATS_TIMEOUT_TOTAL("iam_gw_canary_lb_stats_timeout_total",
+        CANARY_LB_STATS_TIMEOUT_TOTAL("iscg_canary_lb_stats_timeout_total",
                 "The total number of active probe timeouts of the canary load balancing statistic"),
 
-        CANARY_LB_STATS_CANCEL_ERROR_TOTAL("iam_gw_canary_lb_stats_cancel_error_total",
+        CANARY_LB_STATS_CANCEL_ERROR_TOTAL("iscg_canary_lb_stats_cancel_error_total",
                 "The total number of active probe cancel or error of the canary load balancing statistic"),
 
         // passive probe statistic.
 
-        CANARY_LB_STATS_CONNECT_OPEN_TOTAL("iam_gw_canary_lb_stats_connect_open_total",
+        CANARY_LB_STATS_CONNECT_OPEN_TOTAL("iscg_canary_lb_stats_connect_open_total",
                 "The total number of connections opened by the canary load balancer passive probe"),
 
-        CANARY_LB_STATS_CONNECT_CLOSE_TOTAL("iam_gw_canary_lb_stats_connect_close_total",
+        CANARY_LB_STATS_CONNECT_CLOSE_TOTAL("iscg_canary_lb_stats_connect_close_total",
                 "The total number of connections closed by the canary load balancer passive probe"),
 
-        CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL("iam_gw_canary_lb_stats_register_all_services_total",
+        CANARY_LB_STATS_REGISTER_ALL_SERVICES_TOTAL("iscg_canary_lb_stats_register_all_services_total",
                 "The total number of times the canary load balancer stats is updated and registered according to the router service instance"),
 
-        CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL("iam_gw_canary_lb_stats_restart_probe_task_total",
+        CANARY_LB_STATS_RESTART_PROBE_TASK_TOTAL("iscg_canary_lb_stats_restart_probe_task_total",
                 "The total number of detection tasks based on router update or restart canary load balancer"),
 
-        CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL("iam_gw_canary_lb_stats_restart_probe_task_fail_total",
+        CANARY_LB_STATS_RESTART_PROBE_TASK_FAIL_TOTAL("iscg_canary_lb_stats_restart_probe_task_fail_total",
                 "The total number of detection tasks based on router update or restart canary load balancer"),
 
-        CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("iam_gw_canary_lb_stats_instance_state_changed_total",
+        CANARY_LB_STATS_INSTANCE_STATE_CHANGED_TOTAL("iscg_canary_lb_stats_instance_state_changed_total",
                 "The total number of failed restart or update loadbalancer probe tasks"),
 
-        CANARY_LB_CHOOSE_TIME("iam_gw_canary_lb_choose_time", "The number of canary loadbalancer choose cost time"),
+        CANARY_LB_CHOOSE_TIME("iscg_canary_lb_choose_time", "The number of canary loadbalancer choose cost time"),
 
+        //
         // Request limiter.
+        //
 
-        REDIS_RATELIMIT_TOTAL("iam_gw_redis_ratelimit_total", "The number of total processing in the redis rate limiter"),
+        REDIS_RATELIMIT_TOTAL("iscg_redis_ratelimit_total", "The number of total processing in the redis rate limiter"),
 
-        REDIS_RATELIMIT_HITS_TOTAL("iam_gw_redis_ratelimit_hits_total", "The number of total hits in the redis rate limiter"),
+        REDIS_RATELIMIT_HITS_TOTAL("iscg_redis_ratelimit_hits_total", "The number of total hits in the redis rate limiter"),
 
-        REDIS_RATELIMIT_TIME("iam_gw_redis_ratelimit_time", "The number of redis ratelimit cost time"),
+        REDIS_RATELIMIT_TIME("iscg_redis_ratelimit_time", "The number of redis ratelimit cost time"),
 
-        REDIS_QUOTALIMIT_TOTAL("iam_gw_redis_quotalimit_total", "The number of total processing in the redis quota limiter"),
+        REDIS_QUOTALIMIT_TOTAL("iscg_redis_quotalimit_total", "The number of total processing in the redis quota limiter"),
 
-        REDIS_QUOTALIMIT_HITS_TOTAL("iam_gw_redis_quotalimit_hits_total", "The number of total hits in the redis quota limiter"),
+        REDIS_QUOTALIMIT_HITS_TOTAL("iscg_redis_quotalimit_hits_total", "The number of total hits in the redis quota limiter"),
 
-        REDIS_QUOTALIMIT_TIME("iam_gw_redis_quotalimit_time", "The number of redis quota limit cost time");
+        REDIS_QUOTALIMIT_TIME("iscg_redis_quotalimit_time", "The number of redis quota limit cost time"),
+
+        //
+        // Response cache.
+        //
+
+        RESPONSE_CACHE_TOTAL("iscg_responsecache_total", "The number of total processing in the response cache"),
+
+        RESPONSE_CACHE_HITS_TOTAL("iscg_responsecache_hits_total", "The number of total hits in the response cache"),
+
+        //
+        // IpFilter.
+        //
+
+        IPFILTER_TOTAL("iscg_ipfilter_total", "The number of total processing in the ipfilter"),
+
+        IPFILTER_HITS_TOTAL("iscg_ipfilter_hits_total", "The number of total hits in the ipfilter"),
+
+        //
+        // Fault.
+        //
+
+        FAULT_TOTAL("iscg_fault_total", "The number of total processing in the fault injected"),
+
+        //
+        // Traffic.
+        //
+
+        TRAFFIC_REPLICATION_TOTAL("iscg_traffic_replication_total", "The number of total processing in the traffic replication");
 
         private final String name;
         private final String help;
     }
 
     public static abstract class MetricsTag {
-        public static final String SELF_INSTANCE_ID = "self";
+
+        // for Common tags.
+
         public static final String ROUTE_ID = "routeId";
+
+        public static final String SELF_INSTANCE_ID = "self";
+
+        // for Security tags.
 
         public static final String SIGN_ALG = "alg";
         public static final String SIGN_HASH = "hash";
+
+        // for LoadBalancer tags.
 
         public static final String LB = "lb";
         public static final String LB_SERVICE_ID = "serviceId";
@@ -374,6 +416,11 @@ public class IamGatewayMetricsFacade implements InitializingBean {
         public static final String LB_ROUTE_IDS = "routeIds";
         public static final String LB_MAX_TRIES = "maxTries";
         public static final String LB_FAIL_ROUTE_SERVICE = "failRouteService";
+
+        // for Fault tags.
+
+        public static final String FAULT_INJECTOR = "injector";
+
     }
 
 }

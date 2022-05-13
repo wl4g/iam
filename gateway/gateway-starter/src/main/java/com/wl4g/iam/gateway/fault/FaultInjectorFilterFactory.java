@@ -39,6 +39,10 @@ import com.wl4g.iam.gateway.fault.config.FaultProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.AbstractInjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProperties;
 import com.wl4g.iam.gateway.fault.config.FaultProperties.InjectorProvider;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
@@ -63,12 +67,15 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
 
     private final FaultProperties faultConfig;
     private final SpelRequestMatcher requestMatcher;
+    private final IamGatewayMetricsFacade metricsFacade;
 
-    public FaultInjectorFilterFactory(FaultProperties faultConfig) {
+    public FaultInjectorFilterFactory(FaultProperties faultConfig, IamGatewayMetricsFacade metricsFacade) {
         super(FaultInjectorFilterFactory.Config.class);
         this.faultConfig = notNullOf(faultConfig, "faultConfig");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
         // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(faultConfig.getPreferMatchRuleDefinitions());
+
     }
 
     @Override
@@ -111,6 +118,10 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
             if (!isFaultRequest(exchange)) {
                 return chain.filter(exchange);
             }
+
+            // Add metrics of total.
+            metricsFacade.counter(exchange, MetricsName.FAULT_TOTAL, 1, MetricsTag.ROUTE_ID, IamGatewayUtil.getRouteId(exchange),
+                    MetricsTag.FAULT_INJECTOR, config.getProvider().name());
 
             switch (config.getProvider()) {
             case Abort:

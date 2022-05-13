@@ -14,6 +14,7 @@
 
 package com.wl4g.iam.gateway.responsecache.cache;
 
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 import reactor.core.publisher.Mono;
@@ -66,4 +67,10 @@ public interface ResponseCache {
      * which activities are performed -- if any -- is implementation-dependent.
      */
     Mono<Boolean> cleanUp();
+
+    static String copyHeadToString(byte[] value) {
+        byte[] head = new byte[64];
+        System.arraycopy(value, 0, head, 0, Math.min(value.length, head.length));
+        return new String(head, StandardCharsets.UTF_8);
+    }
 }

@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.config.ReactiveByteArrayRedisTemplate;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.responsecache.ResponseCacheFilterFactory;
 
 /**
@@ -32,7 +33,7 @@ import com.wl4g.iam.gateway.responsecache.ResponseCacheFilterFactory;
 public class ResponseCacheAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_REQUESTCACHE)
+    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_RESPONSECACHE)
     public ResponseCacheProperties responseCacheProperties() {
         return new ResponseCacheProperties();
     }
@@ -40,8 +41,9 @@ public class ResponseCacheAutoConfiguration {
     @Bean
     public ResponseCacheFilterFactory responseCacheFilterFactory(
             ResponseCacheProperties config,
-            ReactiveByteArrayRedisTemplate redisTemplate) {
-        return new ResponseCacheFilterFactory(config, redisTemplate);
+            ReactiveByteArrayRedisTemplate redisTemplate,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new ResponseCacheFilterFactory(config, redisTemplate, metricsFacade);
     }
 
 }

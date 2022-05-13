@@ -177,8 +177,11 @@ public class IamRequestLimiterAutoConfiguration {
      * @see {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration#requestRateLimiterGatewayFilterFactory}
      */
     @Bean
-    public IamRequestLimiterFilterFactory iamRequestLimiterFilterFactory() {
-        return new IamRequestLimiterFilterFactory();
+    public IamRequestLimiterFilterFactory iamRequestLimiterFilterFactory(
+            IamRequestLimiterProperties requsetLimiterConfig,
+            GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter,
+            GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter) {
+        return new IamRequestLimiterFilterFactory(requsetLimiterConfig, keyResolverAdapter, requestLimiterAdapter);
     }
 
     //

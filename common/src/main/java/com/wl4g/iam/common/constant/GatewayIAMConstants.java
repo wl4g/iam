@@ -37,7 +37,7 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CONF_PREFIX_IAM_GATEWAY_RETRY = CONF_PREFIX_IAM_GATEWAY + ".retry";
     public static final String CONF_PREFIX_IAM_GATEWAY_CIRCUITBREAKER = CONF_PREFIX_IAM_GATEWAY + ".circuitbreaker";
     public static final String CONF_PREFIX_IAM_GATEWAY_LOADBANANER = CONF_PREFIX_IAM_GATEWAY + ".loadbalancer";
-    public static final String CONF_PREFIX_IAM_GATEWAY_REQUESTCACHE = CONF_PREFIX_IAM_GATEWAY + ".requestcache";
+    public static final String CONF_PREFIX_IAM_GATEWAY_RESPONSECACHE = CONF_PREFIX_IAM_GATEWAY + ".responsecache";
     public static final String CONF_PREFIX_IAM_GATEWAY_IPFILTER = CONF_PREFIX_IAM_GATEWAY + ".ipfilter";
     public static final String CONF_PREFIX_IAM_GATEWAY_FAULT = CONF_PREFIX_IAM_GATEWAY + ".fault";
     public static final String CONF_PREFIX_IAM_GATEWAY_TRAFFIC = CONF_PREFIX_IAM_GATEWAY + ".traffic";
@@ -76,7 +76,7 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":event:hits";
 
-    public static final String CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE = CACHE_PREFIX_IAM_GWTEWAY + ":responsecache.data";
+    public static final String CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE = CACHE_PREFIX_IAM_GWTEWAY + ":responsecache:data";
 
     public static final String CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD = "yyyyMMdd";
 

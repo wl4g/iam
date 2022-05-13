@@ -28,7 +28,6 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.a
 import java.net.URI;
 import java.time.Duration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.EmptyResponse;
@@ -79,13 +78,19 @@ import reactor.core.publisher.SignalType;
 @ToString
 public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactory<CanaryLoadBalancerFilterFactory.Config> {
 
-    private @Autowired CanaryLoadBalancerProperties loadBalancerConfig;
-    private @Autowired GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
-    private @Autowired LoadBalancerStats loadBalancerStats;
-    private @Autowired IamGatewayMetricsFacade metricsFacade;
+    private final CanaryLoadBalancerProperties loadBalancerConfig;
+    private final GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter;
+    private final LoadBalancerStats loadBalancerStats;
+    private final IamGatewayMetricsFacade metricsFacade;
 
-    public CanaryLoadBalancerFilterFactory() {
+    public CanaryLoadBalancerFilterFactory(CanaryLoadBalancerProperties loadBalancerConfig,
+            GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter,
+            LoadBalancerStats loadBalancerStats, IamGatewayMetricsFacade metricsFacade) {
         super(CanaryLoadBalancerFilterFactory.Config.class);
+        this.loadBalancerConfig = notNullOf(loadBalancerConfig, "loadBalancerConfig");
+        this.ruleAdapter = notNullOf(ruleAdapter, "ruleAdapter");
+        this.loadBalancerStats = notNullOf(loadBalancerStats, "loadBalancerStats");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
     }
 
     @Override

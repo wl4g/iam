@@ -42,6 +42,9 @@ import org.springframework.web.server.ServerWebExchange;
 import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
@@ -70,11 +73,14 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
 
     private final IpFilterProperties ipFilterConfig;
     private final IpFilterConfigurer configurer;
+    private final IamGatewayMetricsFacade metricsFacade;
 
-    public IpSubnetFilterFactory(IpFilterProperties ipListConfig, IpFilterConfigurer configurer) {
+    public IpSubnetFilterFactory(IpFilterProperties ipListConfig, IpFilterConfigurer configurer,
+            IamGatewayMetricsFacade metricsFacade) {
         super(IpSubnetFilterFactory.Config.class);
         this.ipFilterConfig = notNullOf(ipListConfig, "ipListConfig");
         this.configurer = notNullOf(configurer, "configurer");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
     }
 
     @Override
@@ -210,8 +216,13 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+            // Add metrics of total.
+            metricsFacade.counter(exchange, MetricsName.IPFILTER_TOTAL, 1, MetricsTag.ROUTE_ID,
+                    IamGatewayUtil.getRouteId(exchange));
+
+            // TODO 不能使用 principal？？
             return exchange.getPrincipal().defaultIfEmpty(IamGatewayUtil.UNKNOWN_PRINCIPAL).flatMap(p -> {
-                // Load strategy by routeId and principal.
+                // Load filter strategy by routeId and principal.
                 Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
                 return configurer.loadStrategy(route.getId(), p.getName())
                         .defaultIfEmpty(singletonList(ipFilterConfig.getDefaultFilter().getStrategy()))
@@ -219,6 +230,10 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
                             if (isAllowed(config, exchange, strategys)) {
                                 return chain.filter(exchange);
                             }
+                            // Add metrics of hits total.
+                            metricsFacade.counter(exchange, MetricsName.IPFILTER_HITS_TOTAL, 1, MetricsTag.ROUTE_ID,
+                                    IamGatewayUtil.getRouteId(exchange));
+                            // Response of reject.
                             ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                             return exchange.getResponse().setComplete();
                         });

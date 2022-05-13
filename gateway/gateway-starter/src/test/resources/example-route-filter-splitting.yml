@@ -343,10 +343,8 @@ spring:
             - RewritePath=/productpage-with-ResponseCache/(?<segment>.*),/$\{segment}
             - name: ResponseCache
               args:
-                provider: EhCache ## Options(SimpleCache|EhCache|RedisCache)
+                provider: SimpleCache ## Options(SimpleCache|EhCache|RedisCache)
                 simple:
-                  ## The cached data elimination algorithm.
-                  eliminationAlg: LRU ## Default LRU, options(LRU|LFU|FIFO)
                   ## If you wish the cache should not exceed this number of entries, the cache will evict recently or infrequently
                   ## used entries when it does, WARNING: the cache may evict entries before this limit is exceeded - usually
                   ## when the cache size is close to the limit.
@@ -357,7 +355,14 @@ spring:
                   expireAfterWriteMs: 600_000 ## Default by 600_000
                   ## The number of concurrent cache operations, that is, the number of underlying cache block/segment locks.
                   concurrencyLevel: 4 ## Default by 4;
+                ehcache:
+                  ## The cached data elimination algorithm.
+                  eliminationAlg: LRU ## Default by LRU, options(LRU|LFU|FIFO)
+                  ## The cache name prefix.
+                  cacheNamePrefix: ResponseCache ## Default by 'requestCache'
+                  offHeapEntries: 100_000 ## Default by 100_000
+                  offHeapSize: 128MB ## Default by 128MB
                 redis:
-                  cachePrefix: iam:gateway:cachefilter:data
+                  cachePrefix: iam:gateway:responsecache:data
                   expireMs: 60_000
 

@@ -43,6 +43,7 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerRegistry;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy.DefaultLatestReachableStrategy;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -161,8 +162,12 @@ public class CanaryLoadbalanceAutoConfiguration {
     // Load-balancer filters.
 
     @Bean
-    public CanaryLoadBalancerFilterFactory canaryLoadBalancerFilterFactory() {
-        return new CanaryLoadBalancerFilterFactory();
+    public CanaryLoadBalancerFilterFactory canaryLoadBalancerFilterFactory(
+            CanaryLoadBalancerProperties loadBalancerConfig,
+            GenericOperatorAdapter<LoadBalancerAlgorithm, CanaryLoadBalancerChooser> ruleAdapter,
+            LoadBalancerStats loadBalancerStats,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new CanaryLoadBalancerFilterFactory(loadBalancerConfig, ruleAdapter, loadBalancerStats, metricsFacade);
     }
 
     public static final String BEAN_CANARY_LB_REQUEST_MATCHER = "canaryLoadBalancerSpelRequestMatcher";

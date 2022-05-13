@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.traffic;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter.filterRequest;
 import static org.springframework.cloud.gateway.support.RouteMetadataUtils.CONNECT_TIMEOUT_ATTR;
 import static org.springframework.cloud.gateway.support.RouteMetadataUtils.RESPONSE_TIMEOUT_ATTR;
@@ -56,8 +57,12 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.traffic.config.TrafficProperties;
 import com.wl4g.iam.gateway.traffic.config.TrafficProperties.ReplicationProperties;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.http.ReactiveHttpClientBuilder;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 
@@ -88,14 +93,17 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
     private final TrafficProperties trafficConfig;
     private final ObjectProvider<List<HttpHeadersFilter>> headersFiltersProvider;
     private final List<HttpClientCustomizer> customizers;
+    private final IamGatewayMetricsFacade metricsFacade;
     private volatile List<HttpHeadersFilter> headersFilters;
 
     public TrafficReplicationFilterFactory(TrafficProperties trafficConfig,
-            ObjectProvider<List<HttpHeadersFilter>> headersFiltersProvider, List<HttpClientCustomizer> customizers) {
+            ObjectProvider<List<HttpHeadersFilter>> headersFiltersProvider, List<HttpClientCustomizer> customizers,
+            IamGatewayMetricsFacade metricsFacade) {
         super(TrafficReplicationFilterFactory.Config.class);
         this.trafficConfig = notNullOf(trafficConfig, "trafficConfig");
         this.headersFiltersProvider = notNullOf(headersFiltersProvider, "headersFiltersProvider");
         this.customizers = notNullOf(customizers, "customizers");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
     }
 
     @Override
@@ -134,13 +142,15 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
             String scheme = requestUrl.getScheme();
-            if ((!"http".equals(scheme) && !"https".equals(scheme))) {
-            }
 
-            // Check the sampling percentage.
-            if (!isReplicationWithPercentage(config)) {
+            // Check if request traffic needs to be replicated.
+            if (!equalsAnyIgnoreCase(scheme, "http", "https") || !isReplicationWithPercentage(config)) {
                 return chain.filter(exchange);
             }
+
+            // Add metrics of total.
+            metricsFacade.counter(exchange, MetricsName.TRAFFIC_REPLICATION_TOTAL, 1, MetricsTag.ROUTE_ID,
+                    IamGatewayUtil.getRouteId(exchange));
 
             return decorateRequest(exchange, chain, body -> {
                 // Replication image requests.

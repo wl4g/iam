@@ -57,6 +57,9 @@ import com.google.common.base.Predicates;
 import com.google.common.cache.Cache;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.config.ReactiveByteArrayRedisTemplate;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.responsecache.cache.EhCacheResponseCache;
 import com.wl4g.iam.gateway.responsecache.cache.RedisResponseCache;
 import com.wl4g.iam.gateway.responsecache.cache.ResponseCache;
@@ -89,13 +92,16 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
 
     private final ResponseCacheProperties responseCacheConfig;
     private final ReactiveByteArrayRedisTemplate redisTemplate;
+    private final IamGatewayMetricsFacade metricsFacade;
     private final SpelRequestMatcher requestMatcher;
     private final ConcurrentMap<String, ResponseCache> responseCaches = new ConcurrentHashMap<>(4);
 
-    public ResponseCacheFilterFactory(ResponseCacheProperties responseCacheConfig, ReactiveByteArrayRedisTemplate redisTemplate) {
+    public ResponseCacheFilterFactory(ResponseCacheProperties responseCacheConfig, ReactiveByteArrayRedisTemplate redisTemplate,
+            IamGatewayMetricsFacade metricsFacade) {
         super(ResponseCacheFilterFactory.Config.class);
         this.responseCacheConfig = notNullOf(responseCacheConfig, "responseCacheConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
+        this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
         // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(responseCacheConfig.getPreferMatchRuleDefinitions());
     }
@@ -153,6 +159,11 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
                 }
                 return chain.filter(exchange);
             }
+
+            // Add metrics of total.
+            metricsFacade.counter(exchange, MetricsName.RESPONSE_CACHE_TOTAL, 1, MetricsTag.ROUTE_ID,
+                    IamGatewayUtil.getRouteId(exchange));
+
             // Calculate the request unique hash key.
             String hashKey = getRequestHashKey(config, exchange);
 
@@ -163,6 +174,9 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
             return responseCache.get(hashKey).defaultIfEmpty(new byte[0]).flatMap(cachedResponseBytes -> {
                 // Response cached data.
                 if (nonNull(cachedResponseBytes) && cachedResponseBytes.length > 0) {
+                    // Add metrics of hits total.
+                    metricsFacade.counter(exchange, MetricsName.RESPONSE_CACHE_HITS_TOTAL, 1, MetricsTag.ROUTE_ID,
+                            IamGatewayUtil.getRouteId(exchange));
                     return responseWithCached(exchange, hashKey, cachedResponseBytes);
                 }
 
@@ -176,12 +190,16 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
                     return Mono.just(responseBodySegment);
                 });
 
-                // TODO reactive RedisResponseCache non-wait completed???
+                // The doFinally() method does not block the response to write
+                // data to the remote client.
                 return chain.filter(exchange.mutate().response(newResponse).build()).doFinally(signal -> {
                     try {
-                        byte[] newResponseBytes = respBuf.array();
-                        if (nonNull(newResponseBytes) && newResponseBytes.length > 0) {
-                            responseCache.put(hashKey, newResponseBytes);
+                        byte[] respBytes = new byte[respBuf.readableBytes()];
+                        respBuf.readBytes(respBytes);
+                        if (nonNull(respBytes) && respBytes.length > 0) {
+                            // Use a subscribe() to prevent reactive
+                            // RedisResponseCache from not completing.
+                            responseCache.put(hashKey, respBytes).subscribe();
                             log.debug("Cached response body of hashKey: {}, uri: {}", hashKey, exchange.getRequest().getURI());
                         }
                     } finally {

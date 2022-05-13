@@ -24,6 +24,7 @@ import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory;
 
 /**
@@ -45,8 +46,9 @@ public class TrafficAutoConfiguration {
     public TrafficReplicationFilterFactory trafficReplicationFilterFactory(
             TrafficProperties trafficConfig,
             ObjectProvider<List<HttpHeadersFilter>> headersFilters,
-            List<HttpClientCustomizer> customizers) {
-        return new TrafficReplicationFilterFactory(trafficConfig, headersFilters, customizers);
+            List<HttpClientCustomizer> customizers,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new TrafficReplicationFilterFactory(trafficConfig, headersFilters, customizers, metricsFacade);
     }
 
 }

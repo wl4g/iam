@@ -23,6 +23,7 @@ import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.ipfilter.IpSubnetFilterFactory;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
 import com.wl4g.iam.gateway.ipfilter.configurer.RedisIpFilterConfigurer;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
 /**
  * {@link IpFilterAutoConfiguration}
@@ -46,8 +47,11 @@ public class IpFilterAutoConfiguration {
     }
 
     @Bean
-    public IpSubnetFilterFactory ipSubnetFilterFactory(IpFilterProperties ipListConfig, IpFilterConfigurer configurer) {
-        return new IpSubnetFilterFactory(ipListConfig, configurer);
+    public IpSubnetFilterFactory ipSubnetFilterFactory(
+            IpFilterProperties ipListConfig,
+            IpFilterConfigurer configurer,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new IpSubnetFilterFactory(ipListConfig, configurer, metricsFacade);
     }
 
 }

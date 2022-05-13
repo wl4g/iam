@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.fault.FaultInjectorFilterFactory;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
 /**
  * {@link FaultAutoConfiguration}
@@ -37,8 +38,10 @@ public class FaultAutoConfiguration {
     }
 
     @Bean
-    public FaultInjectorFilterFactory faultInjectorFilterFactory(FaultProperties faultConfig) {
-        return new FaultInjectorFilterFactory(faultConfig);
+    public FaultInjectorFilterFactory faultInjectorFilterFactory(
+            FaultProperties faultConfig,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new FaultInjectorFilterFactory(faultConfig, metricsFacade);
     }
 
 }

@@ -16,13 +16,13 @@
 
 package com.wl4g.iam.gateway.requestlimit;
 
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -64,12 +64,17 @@ import reactor.core.publisher.Mono;
 public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory<IamRequestLimiterFilterFactory.Config> {
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
-    private @Autowired IamRequestLimiterProperties requsetLimiterConfig;
-    private @Autowired GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter;
-    private @Autowired GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter;
+    private final IamRequestLimiterProperties requsetLimiterConfig;
+    private final GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter;
+    private final GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter;
 
-    public IamRequestLimiterFilterFactory() {
+    public IamRequestLimiterFilterFactory(IamRequestLimiterProperties requsetLimiterConfig,
+            GenericOperatorAdapter<KeyResolverProvider, IamKeyResolver<? extends KeyResolverStrategy>> keyResolverAdapter,
+            GenericOperatorAdapter<RequestLimiterPrivoder, IamRequestLimiter> requestLimiterAdapter) {
         super(IamRequestLimiterFilterFactory.Config.class);
+        this.requsetLimiterConfig = notNullOf(requsetLimiterConfig, "requsetLimiterConfig");
+        this.keyResolverAdapter = notNullOf(keyResolverAdapter, "keyResolverAdapter");
+        this.requestLimiterAdapter = notNullOf(requestLimiterAdapter, "requestLimiterAdapter");
     }
 
     @Override

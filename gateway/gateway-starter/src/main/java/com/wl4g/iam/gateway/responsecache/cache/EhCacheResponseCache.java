@@ -16,6 +16,7 @@
 package com.wl4g.iam.gateway.responsecache.cache;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static java.lang.String.format;
 import static org.ehcache.config.units.MemoryUnit.MB;
 
 import java.io.Closeable;
@@ -32,6 +33,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties.EhCacheProperties;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -42,6 +44,7 @@ import reactor.core.publisher.Mono;
  * @since v3.0.0
  */
 @Getter
+@Slf4j
 public class EhCacheResponseCache implements ResponseCache, Closeable {
 
     private final CacheManager cacheManager;
@@ -58,7 +61,7 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
         this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(config.getCacheNamePrefix().concat("-").concat(routeId), ccBuilder)
                 .build(true);
-        
+
         // TODO getCache return null???
         this.originalCache = cacheManager.getCache("defaultLocalCache", String.class, byte[].class);
     }
@@ -69,20 +72,39 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     }
 
     @Override
-    public Mono<byte[]> get(String key) {
-        return Mono.justOrEmpty(originalCache.get(key));
+    public Mono<byte[]> get(@NotNull String key) {
+        notNullOf(key, "key");
+        try {
+            return Mono.justOrEmpty(originalCache.get(key));
+        } catch (Exception e) {
+            log.error(format("Cannot to get response cache of '%s'", key), e);
+        }
+        return Mono.empty();
     }
 
     @Override
-    public Mono<Boolean> put(String key, byte[] value) {
-        originalCache.put(key, value);
-        return Mono.just(true);
+    public Mono<Boolean> put(@NotNull String key, @NotNull byte[] value) {
+        notNullOf(key, "key");
+        notNullOf(value, "value");
+        try {
+            originalCache.put(key, value);
+            return Mono.just(true);
+        } catch (Exception e) {
+            log.error(format("Cannot to put response cache of '%s' -> %s ...", key, ResponseCache.copyHeadToString(value)), e);
+        }
+        return Mono.just(false);
     }
 
     @Override
     public Mono<Long> invalidate(String key) {
-        originalCache.remove(key);
-        return Mono.just(1L);
+        notNullOf(key, "key");
+        try {
+            originalCache.remove(key);
+            return Mono.just(1L);
+        } catch (Exception e) {
+            log.error(format("Cannot to invalidate response cache of '%s'", key), e);
+        }
+        return Mono.just(0L);
     }
 
     @Override
