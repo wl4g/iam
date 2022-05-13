@@ -54,6 +54,7 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
         CacheConfigurationBuilder<String, byte[]> ccBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
                 byte[].class,
                 ResourcePoolsBuilder.heap(config.getOffHeapEntries()).offheap(config.getOffHeapSize().toMegabytes(), MB));
+        //TODO use disk strategy config
         this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(config.getCacheNamePrefix().concat("-").concat(routeId), ccBuilder)
                 .build(true);
@@ -67,7 +68,7 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
 
     @Override
     public Mono<byte[]> get(String key) {
-        return Mono.just(originalCache.get(key));
+        return Mono.justOrEmpty(originalCache.get(key));
     }
 
     @Override

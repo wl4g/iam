@@ -331,7 +331,7 @@ spring:
         - id: productpage-service-route-with-RequestCache
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-RequestCache/**
+            - Path=/productpage-with-ResponseCache/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 

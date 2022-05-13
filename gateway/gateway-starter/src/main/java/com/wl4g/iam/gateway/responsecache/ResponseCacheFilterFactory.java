@@ -89,6 +89,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
     private final ResponseCacheProperties responseCacheConfig;
     private final ReactiveByteArrayRedisTemplate redisTemplate;
     private final SpelRequestMatcher requestMatcher;
+    private final ConcurrentMap<String, ResponseCache> responseCaches = new ConcurrentHashMap<>(4);
 
     public ResponseCacheFilterFactory(ResponseCacheProperties responseCacheConfig, ReactiveByteArrayRedisTemplate redisTemplate) {
         super(ResponseCacheFilterFactory.Config.class);
@@ -136,7 +137,6 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
     @AllArgsConstructor
     class RequestCacheGatewayFilter implements GatewayFilter, Ordered {
         private final Config config;
-        private final ConcurrentMap<String, ResponseCache> responseCaches = new ConcurrentHashMap<>(4);
 
         @Override
         public int getOrder() {
@@ -159,13 +159,13 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
             ResponseCache responseCache = obtainResponseCache(exchange);
 
             // First get the response data from the cache.
-            return responseCache.get(hashKey).flatMap(cachedResponseBytes -> {
-                if (nonNull(cachedResponseBytes)) { // Use cached response
+            return responseCache.get(hashKey).defaultIfEmpty(new byte[0]).flatMap(cachedResponseBytes -> {
+                // Response cached data.
+                if (nonNull(cachedResponseBytes) && cachedResponseBytes.length > 0) {
                     return responseWithCached(exchange, hashKey, cachedResponseBytes);
                 }
-                return Mono.empty();
-            }).thenEmpty(Mono.defer(() -> {
-                // Extract response headers and body data and cache.
+
+                // Extract new response data to cache.
                 ByteBuf respBuf = Unpooled.buffer(responseCacheConfig.getTmpBufferInitialCapacity(),
                         responseCacheConfig.getTmpBufferMaxCapacity());
                 ServerHttpResponse newResponse = decorateResponse(exchange, chain, responseBodySegment -> {
@@ -177,13 +177,16 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
 
                 return chain.filter(exchange.mutate().response(newResponse).build()).doFinally(signal -> {
                     try {
-                        responseCache.put(hashKey, respBuf.array());
-                        log.debug("Cached response body of hashKey: {}, uri: {}", hashKey, exchange.getRequest().getURI());
+                        byte[] newResponseBytes = respBuf.array();
+                        if (nonNull(newResponseBytes) && newResponseBytes.length > 0) {
+                            responseCache.put(hashKey, newResponseBytes);
+                            log.debug("Cached response body of hashKey: {}, uri: {}", hashKey, exchange.getRequest().getURI());
+                        }
                     } finally {
                         ReferenceCountUtil.safeRelease(respBuf);
                     }
                 });
-            }));
+            });
         }
 
         /**
@@ -234,6 +237,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
                             responseCache = new RedisResponseCache(config.getRedis(), redisTemplate);
                             break;
                         }
+                        responseCaches.put(routeId, responseCache);
                     }
                 }
             }
@@ -306,7 +310,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
         }
 
         /**
-         * Respond directly to the last cached response data.
+         * Respond directly to the last cached response bytes data.
          * 
          * @param exchange
          * @param hashKey
@@ -314,50 +318,9 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
          * @return
          */
         private Mono<Void> responseWithCached(ServerWebExchange exchange, String hashKey, byte[] cachedResponseBytes) {
-            ServerHttpResponseDecorator cachedResponse = new ServerHttpResponseDecorator(exchange.getResponse()) {
-                @Override
-                public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // Mono<NettyDataBuffer>
-                    Class<byte[]> inClass = byte[].class;
-                    Class<byte[]> outClass = byte[].class;
-
-                    String responseContentType = exchange
-                            .getAttribute(ServerWebExchangeUtils.ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);
-                    HttpHeaders newHeaders = new HttpHeaders();
-                    newHeaders.add(HttpHeaders.CONTENT_TYPE, responseContentType);
-
-                    ClientResponse clientResponse = ClientResponse.create(exchange.getResponse().getStatusCode())
-                            .headers(headers -> headers.putAll(newHeaders))
-                            .body(Flux.from(body))
-                            .build();
-
-                    Mono<byte[]> modifiedBody = clientResponse.bodyToMono(inClass);
-                    BodyInserter<Mono<byte[]>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
-                            outClass);
-
-                    HttpHeaders editableHeaders = new HttpHeaders(new LinkedMultiValueMap<>(exchange.getResponse().getHeaders()));
-                    editableHeaders.add(responseCacheConfig.getResponseCachedHeader(), hashKey);
-                    // TODO
-                    // CachedBodyOutputMessage outputMessage = new
-                    // CachedBodyOutputMessage(exchange, editableHeaders);
-                    CachedServerHttpResponse outputMessage = new CachedServerHttpResponse(editableHeaders);
-                    outputMessage.bufferFactory().wrap(cachedResponseBytes);
-
-                    return bodyInserter.insert(outputMessage, new BodyInserterContext()).then(Mono.defer(() -> {
-                        Flux<DataBuffer> messageBody = outputMessage.getBody();
-                        HttpHeaders headers = getDelegate().getHeaders();
-                        if (!headers.containsKey(HttpHeaders.TRANSFER_ENCODING)) {
-                            messageBody = messageBody.doOnNext(data -> headers.setContentLength(data.readableByteCount()));
-                        }
-                        return getDelegate().writeWith(messageBody);
-                    }));
-                }
-
-                @Override
-                public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-                    return writeWith(Flux.from(body).flatMapSequential(p -> p));
-                }
-            };
-            return exchange.mutate().response(cachedResponse).build().getResponse().setComplete();
+            // see:https://github.com/spring-cloud/spring-cloud-gateway/issues/268
+            exchange.getResponse().getHeaders().add(responseCacheConfig.getResponseCachedHeader(), hashKey);
+            return exchange.getResponse().writeWith(Flux.just(exchange.getResponse().bufferFactory().wrap(cachedResponseBytes)));
         }
 
     }

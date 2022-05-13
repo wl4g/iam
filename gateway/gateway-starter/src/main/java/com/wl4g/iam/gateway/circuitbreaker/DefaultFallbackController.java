@@ -50,7 +50,7 @@ public class DefaultFallbackController {
                 () -> request.getRemoteAddress().getHostString(), () -> request.getMethod(), () -> request.getHeaders(),
                 () -> request.getQueryParams());
 
-        return Mono.just(RespBase.create().withMessage("This is fallback respnose !"));
+        return Mono.justOrEmpty(RespBase.create().withMessage("This is fallback respnose !"));
     }
 
 }

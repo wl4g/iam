@@ -69,6 +69,7 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
 
     /**
      * Request logging filtering.
+     * see:https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/#the-cacherequestbody-gatewayfilter-factory
      * 
      * @param exchange
      * @param chain

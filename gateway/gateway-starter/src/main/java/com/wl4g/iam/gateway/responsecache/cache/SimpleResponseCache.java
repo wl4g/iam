@@ -39,9 +39,8 @@ public class SimpleResponseCache implements ResponseCache {
 
     @Override
     public Mono<byte[]> get(String key) {
-        // return Mono.just(memoryCache.getIfPresent(key));
-        // TODO for testing
-        return Mono.just("testtesttesttest".getBytes());
+        // return Mono.just("mybody mybody...".getBytes()); // for testing
+        return Mono.justOrEmpty(memoryCache.getIfPresent(key));
     }
 
     @Override
