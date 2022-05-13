@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestcache.cache;
+package com.wl4g.iam.gateway.responsecache.cache;
 
 import com.google.common.cache.Cache;
 
@@ -21,14 +21,14 @@ import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link SimpleRequestCache}
+ * {@link SimpleResponseCache}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-12 v3.0.0
  * @since v3.0.0
  */
 @AllArgsConstructor
-public class SimpleRequestCache implements RequestCache {
+public class SimpleResponseCache implements ResponseCache {
 
     private final Cache<String, byte[]> memoryCache;
 
@@ -39,7 +39,9 @@ public class SimpleRequestCache implements RequestCache {
 
     @Override
     public Mono<byte[]> get(String key) {
-        return Mono.just(memoryCache.getIfPresent(key));
+        // return Mono.just(memoryCache.getIfPresent(key));
+        // TODO for testing
+        return Mono.just("testtesttesttest".getBytes());
     }
 
     @Override

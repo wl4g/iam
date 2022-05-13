@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestcache.config;
+package com.wl4g.iam.gateway.responsecache.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_REQUESTCACHE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link RequestCacheProperties}
+ * {@link ResponseCacheProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-11 v3.0.0
@@ -42,7 +42,7 @@ import lombok.ToString;
 @Setter
 @Validated
 @ToString
-public class RequestCacheProperties {
+public class ResponseCacheProperties {
 
     /**
      * Preferred to enable request cache match SPEL match expression. Default by
@@ -59,9 +59,9 @@ public class RequestCacheProperties {
     private List<MatchHttpRequestRule> preferMatchRuleDefinitions = new ArrayList<>();
 
     /**
-     * The name of the header that returns the request cached configuration.
+     * The name of the header that returns the response cached configuration.
      */
-    private String requestCachedHeader = REQUEST_CACHED_HEADER;
+    private String responseCachedHeader = RESPONSE_CACHED_HEADER;
 
     /**
      * The initial capacity of the temporary buffer size.
@@ -179,9 +179,9 @@ public class RequestCacheProperties {
     @Validated
     @ToString
     public static class RedisCacheProperties {
-        private String cachePrefix = CACHE_SUFFIX_IAM_GATEWAY_REQUESTCACHE;
+        private String cachePrefix = CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE;
         private long expireMs = 60_000L;
     }
 
-    public static String REQUEST_CACHED_HEADER = "X-Iscg-Cached";
+    public static String RESPONSE_CACHED_HEADER = "X-Iscg-Cached";
 }

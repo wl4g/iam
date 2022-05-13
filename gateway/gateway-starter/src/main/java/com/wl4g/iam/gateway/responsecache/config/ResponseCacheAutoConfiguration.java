@@ -13,35 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestcache.config;
+package com.wl4g.iam.gateway.responsecache.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.config.ReactiveByteArrayRedisTemplate;
-import com.wl4g.iam.gateway.requestcache.RequestCacheFilterFactory;
+import com.wl4g.iam.gateway.responsecache.ResponseCacheFilterFactory;
 
 /**
- * {@link RequestCacheAutoConfiguration}
+ * {@link ResponseCacheAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-11 v3.0.0
  * @since v3.0.0
  */
-public class RequestCacheAutoConfiguration {
+public class ResponseCacheAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_REQUESTCACHE)
-    public RequestCacheProperties requestCacheProperties() {
-        return new RequestCacheProperties();
+    public ResponseCacheProperties responseCacheProperties() {
+        return new ResponseCacheProperties();
     }
 
     @Bean
-    public RequestCacheFilterFactory requestCacheFilterFactory(
-            RequestCacheProperties config,
+    public ResponseCacheFilterFactory responseCacheFilterFactory(
+            ResponseCacheProperties config,
             ReactiveByteArrayRedisTemplate redisTemplate) {
-        return new RequestCacheFilterFactory(config, redisTemplate);
+        return new ResponseCacheFilterFactory(config, redisTemplate);
     }
 
 }

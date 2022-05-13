@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestcache.cache;
+package com.wl4g.iam.gateway.responsecache.cache;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.ehcache.config.units.MemoryUnit.MB;
@@ -29,25 +29,25 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 
-import com.wl4g.iam.gateway.requestcache.config.RequestCacheProperties.EhCacheProperties;
+import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties.EhCacheProperties;
 
 import lombok.Getter;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link EhCacheRequestCache}
+ * {@link EhCacheResponseCache}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-13 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class EhCacheRequestCache implements RequestCache, Closeable {
+public class EhCacheResponseCache implements ResponseCache, Closeable {
 
     private final CacheManager cacheManager;
     private final Cache<String, byte[]> originalCache;
 
-    public EhCacheRequestCache(@NotNull EhCacheProperties config, String routeId) {
+    public EhCacheResponseCache(@NotNull EhCacheProperties config, String routeId) {
         notNullOf(config, "config");
         // see:https://www.ehcache.org/documentation/3.10/
         // see:https://github.com/ehcache/ehcache3-samples

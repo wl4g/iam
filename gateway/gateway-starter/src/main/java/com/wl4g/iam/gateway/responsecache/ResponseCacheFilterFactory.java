@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestcache;
+package com.wl4g.iam.gateway.responsecache;
 
 import static com.google.common.cache.CacheBuilder.newBuilder;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
@@ -56,12 +56,12 @@ import com.google.common.base.Predicates;
 import com.google.common.cache.Cache;
 import com.google.common.hash.Hashing;
 import com.wl4g.iam.gateway.config.ReactiveByteArrayRedisTemplate;
-import com.wl4g.iam.gateway.requestcache.cache.EhCacheRequestCache;
-import com.wl4g.iam.gateway.requestcache.cache.RedisRequestCache;
-import com.wl4g.iam.gateway.requestcache.cache.RequestCache;
-import com.wl4g.iam.gateway.requestcache.cache.SimpleRequestCache;
-import com.wl4g.iam.gateway.requestcache.config.RequestCacheProperties;
-import com.wl4g.iam.gateway.requestcache.config.RequestCacheProperties.CachedProperties;
+import com.wl4g.iam.gateway.responsecache.cache.EhCacheResponseCache;
+import com.wl4g.iam.gateway.responsecache.cache.RedisResponseCache;
+import com.wl4g.iam.gateway.responsecache.cache.ResponseCache;
+import com.wl4g.iam.gateway.responsecache.cache.SimpleResponseCache;
+import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties;
+import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties.CachedProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
@@ -77,25 +77,25 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link IamRetryFilterFactory}
+ * {@link ResponseCacheFilterFactory}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-11 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<RequestCacheFilterFactory.Config> {
+public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<ResponseCacheFilterFactory.Config> {
 
-    private final RequestCacheProperties requestCacheConfig;
+    private final ResponseCacheProperties responseCacheConfig;
     private final ReactiveByteArrayRedisTemplate redisTemplate;
     private final SpelRequestMatcher requestMatcher;
 
-    public RequestCacheFilterFactory(RequestCacheProperties requestCacheConfig, ReactiveByteArrayRedisTemplate redisTemplate) {
-        super(RequestCacheFilterFactory.Config.class);
-        this.requestCacheConfig = notNullOf(requestCacheConfig, "requestCacheConfig");
+    public ResponseCacheFilterFactory(ResponseCacheProperties responseCacheConfig, ReactiveByteArrayRedisTemplate redisTemplate) {
+        super(ResponseCacheFilterFactory.Config.class);
+        this.responseCacheConfig = notNullOf(responseCacheConfig, "responseCacheConfig");
         this.redisTemplate = notNullOf(redisTemplate, "redisTemplate");
         // Build gray request matcher.
-        this.requestMatcher = new SpelRequestMatcher(requestCacheConfig.getPreferMatchRuleDefinitions());
+        this.requestMatcher = new SpelRequestMatcher(responseCacheConfig.getPreferMatchRuleDefinitions());
     }
 
     @Override
@@ -105,8 +105,8 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new RequestCacheFilterFactory.Config(), config,
-                    requestCacheConfig.getDefaultCache());
+            ConfigBeanUtils.configureWithDefault(new ResponseCacheFilterFactory.Config(), config,
+                    responseCacheConfig.getDefaultCache());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException("Unable apply defaults to cache filter config", e);
         }
@@ -136,7 +136,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
     @AllArgsConstructor
     class RequestCacheGatewayFilter implements GatewayFilter, Ordered {
         private final Config config;
-        private final ConcurrentMap<String, RequestCache> requestCaches = new ConcurrentHashMap<>(4);
+        private final ConcurrentMap<String, ResponseCache> responseCaches = new ConcurrentHashMap<>(4);
 
         @Override
         public int getOrder() {
@@ -155,19 +155,19 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
             // Calculate the request unique hash key.
             String hashKey = getRequestHashKey(config, exchange);
 
-            // Gets or create request cache.
-            RequestCache requestCache = obtainRequestCache(exchange);
+            // Gets or create response cache.
+            ResponseCache responseCache = obtainResponseCache(exchange);
 
             // First get the response data from the cache.
-            return requestCache.get(hashKey).flatMap(cachedResponseBytes -> {
+            return responseCache.get(hashKey).flatMap(cachedResponseBytes -> {
                 if (nonNull(cachedResponseBytes)) { // Use cached response
-                    return responseWithCached(exchange, cachedResponseBytes);
+                    return responseWithCached(exchange, hashKey, cachedResponseBytes);
                 }
                 return Mono.empty();
             }).thenEmpty(Mono.defer(() -> {
                 // Extract response headers and body data and cache.
-                ByteBuf respBuf = Unpooled.buffer(requestCacheConfig.getTmpBufferInitialCapacity(),
-                        requestCacheConfig.getTmpBufferMaxCapacity());
+                ByteBuf respBuf = Unpooled.buffer(responseCacheConfig.getTmpBufferInitialCapacity(),
+                        responseCacheConfig.getTmpBufferMaxCapacity());
                 ServerHttpResponse newResponse = decorateResponse(exchange, chain, responseBodySegment -> {
                     if (respBuf.isWritable(responseBodySegment.length)) {
                         respBuf.writeBytes(responseBodySegment);
@@ -177,7 +177,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
 
                 return chain.filter(exchange.mutate().response(newResponse).build()).doFinally(signal -> {
                     try {
-                        requestCache.put(hashKey, respBuf.array());
+                        responseCache.put(hashKey, respBuf.array());
                         log.debug("Cached response body of hashKey: {}, uri: {}", hashKey, exchange.getRequest().getURI());
                     } finally {
                         ReferenceCountUtil.safeRelease(respBuf);
@@ -201,7 +201,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
                     () -> Predicates.equalTo(route.getId()));
 
             return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    requestCacheConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
+                    responseCacheConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
         }
 
         /**
@@ -210,13 +210,13 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
          * @param exchange
          * @return
          */
-        private RequestCache obtainRequestCache(ServerWebExchange exchange) {
+        private ResponseCache obtainResponseCache(ServerWebExchange exchange) {
             String routeId = IamGatewayUtil.getRouteId(exchange);
-            RequestCache requestCache = requestCaches.get(routeId);
-            if (isNull(requestCache)) {
+            ResponseCache responseCache = responseCaches.get(routeId);
+            if (isNull(responseCache)) {
                 synchronized (this) {
-                    requestCache = requestCaches.get(routeId);
-                    if (isNull(requestCache)) {
+                    responseCache = responseCaches.get(routeId);
+                    if (isNull(responseCache)) {
                         switch (config.getProvider()) {
                         case SimpleCache:
                             // see:https://github.com/google/guava/wiki/CachesExplained#eviction
@@ -225,19 +225,19 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
                                     .expireAfterWrite(config.getSimple().getExpireAfterWriteMs(), MILLISECONDS)
                                     .concurrencyLevel(config.getSimple().getConcurrencyLevel())
                                     .build();
-                            requestCache = new SimpleRequestCache(localCache);
+                            responseCache = new SimpleResponseCache(localCache);
                             break;
                         case EhCache:
-                            requestCache = new EhCacheRequestCache(config.getEhcache(), routeId);
+                            responseCache = new EhCacheResponseCache(config.getEhcache(), routeId);
                             break;
                         case RedisCache:
-                            requestCache = new RedisRequestCache(config.getRedis(), redisTemplate);
+                            responseCache = new RedisResponseCache(config.getRedis(), redisTemplate);
                             break;
                         }
                     }
                 }
             }
-            return notNull(requestCache, "Cannot obtain request cache, Shouldn't be here!");
+            return notNull(responseCache, "Cannot obtain request cache, Shouldn't be here!");
         }
 
         /**
@@ -309,10 +309,11 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
          * Respond directly to the last cached response data.
          * 
          * @param exchange
+         * @param hashKey
          * @param cachedResponseBytes
          * @return
          */
-        private Mono<Void> responseWithCached(ServerWebExchange exchange, byte[] cachedResponseBytes) {
+        private Mono<Void> responseWithCached(ServerWebExchange exchange, String hashKey, byte[] cachedResponseBytes) {
             ServerHttpResponseDecorator cachedResponse = new ServerHttpResponseDecorator(exchange.getResponse()) {
                 @Override
                 public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // Mono<NettyDataBuffer>
@@ -333,8 +334,9 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
                     BodyInserter<Mono<byte[]>, ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody,
                             outClass);
 
-                    // TODO
                     HttpHeaders editableHeaders = new HttpHeaders(new LinkedMultiValueMap<>(exchange.getResponse().getHeaders()));
+                    editableHeaders.add(responseCacheConfig.getResponseCachedHeader(), hashKey);
+                    // TODO
                     // CachedBodyOutputMessage outputMessage = new
                     // CachedBodyOutputMessage(exchange, editableHeaders);
                     CachedServerHttpResponse outputMessage = new CachedServerHttpResponse(editableHeaders);
@@ -360,7 +362,7 @@ public class RequestCacheFilterFactory extends AbstractGatewayFilterFactory<Requ
 
     }
 
-    public static final String BEAN_NAME = "RequestCache";
+    public static final String BEAN_NAME = "ResponseCache";
     public static final String VAR_ROUTE_ID = "routeId";
 
 }

@@ -446,9 +446,9 @@ spring:
             #key-store-provider:
             #trusted-x509-certificates:
             #use-insecure-trust-manager: true ## Default by false
-      requestcache:
+      responsecache:
         ## The name of the header that returns the request cached configuration.
-        requestCachedHeader: X-Iscg-Cached ## Default by 'X-Iscg-Cached'
+        responseCachedHeader: X-Iscg-Cached ## Default by 'X-Iscg-Cached'
         ## The initial capacity of the temporary buffer size.
         tmpBufferInitialCapacity: 1024 ## Default by 1024
         ## The maximum capacity of the temporary buffer size.

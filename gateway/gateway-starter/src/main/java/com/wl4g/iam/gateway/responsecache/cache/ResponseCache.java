@@ -12,20 +12,20 @@
  * the License.
  */
 
-package com.wl4g.iam.gateway.requestcache.cache;
+package com.wl4g.iam.gateway.responsecache.cache;
 
 import java.util.concurrent.Callable;
 
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RequestCache}
+ * {@link ResponseCache}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-12 v3.0.0
  * @since v3.0.0
  */
-public interface RequestCache {
+public interface ResponseCache {
 
     Object getOriginalCache();
 

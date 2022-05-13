@@ -340,8 +340,8 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-RequestCache/(?<segment>.*),/$\{segment}
-            - name: RequestCache
+            - RewritePath=/productpage-with-ResponseCache/(?<segment>.*),/$\{segment}
+            - name: ResponseCache
               args:
                 provider: SimpleCache ## Options(SimpleCache|EhCache|RedisCache)
                 simple:

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wl4g.iam.gateway.requestcache;
+package com.wl4g.iam.gateway.responsecache;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
