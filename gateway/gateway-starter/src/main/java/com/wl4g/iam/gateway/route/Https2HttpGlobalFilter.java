@@ -25,8 +25,10 @@ import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.wl4g.iam.gateway.route.config.RouteProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 
+import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 /**
@@ -37,7 +39,10 @@ import reactor.core.publisher.Mono;
  * @since v3.0.0
  * @see https://www.jianshu.com/p/5a36129399f2
  */
+@AllArgsConstructor
 public class Https2HttpGlobalFilter implements GlobalFilter, Ordered {
+
+    private final RouteProperties routeConfig;
 
     @Override
     public int getOrder() {
@@ -46,6 +51,9 @@ public class Https2HttpGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!routeConfig.isForwaredHttpsToHttp()) {
+            return chain.filter(exchange);
+        }
         Object uriObj = exchange.getAttributes().get(GATEWAY_REQUEST_URL_ATTR);
         if (uriObj != null) {
             URI uri = (URI) uriObj;

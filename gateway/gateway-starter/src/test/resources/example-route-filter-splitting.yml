@@ -329,7 +329,7 @@ spring:
                   path: /healthz ## Default by '/healthz'
                   expect-statuses: [200,404] ## Default by 200
         - id: productpage-service-route-with-RequestCache
-          uri: lb://productpage-service
+          uri: lb://details-service
           predicates:
             - Path=/productpage-with-ResponseCache/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 

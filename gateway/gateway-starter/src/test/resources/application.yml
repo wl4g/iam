@@ -147,6 +147,8 @@ spring:
             #check-crl-file: classpath:/cert.d/revoked.crl ## Default no-set(disabled)
             allow-renegociate: true ## Default by true
       route:
+        ## Enabled to https to http forward filter.
+        forwaredHttpsToHttp: true ## Default by true
         refresh-delay-ms: 30_000 ## Default by 30_000
       ipfilter:
         configPrefix: iam:gateway:ipfilter:config

@@ -49,8 +49,8 @@ public class RouteAutoConfiguration {
     }
 
     @Bean
-    public Https2HttpGlobalFilter https2HttpGlobalFilter() {
-        return new Https2HttpGlobalFilter();
+    public Https2HttpGlobalFilter https2HttpGlobalFilter(RouteProperties config) {
+        return new Https2HttpGlobalFilter(config);
     }
 
     @Bean
