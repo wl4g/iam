@@ -640,7 +640,7 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   compression:
     enabled: true
   http2:
-    enabled: true ## Default by false
+    enabled: ${server.ssl.enabled} ## Default by false
   #netty:
   #  connection-timeout: 
   ## see:https://github.com/netty/netty/issues/832
