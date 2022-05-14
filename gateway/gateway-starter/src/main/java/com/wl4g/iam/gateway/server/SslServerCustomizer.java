@@ -54,21 +54,20 @@ import org.springframework.util.ResourceUtils;
 /**
  * {@link NettyServerCustomizer} that configures SSL for the given Reactor Netty
  * server instance.
+ * 
+ * [deprecated] this class is meant for Spring Boot internal use only.
  *
  * @author Brian Clozel
  * @author Raheela Aslam
  * @author Chris Bono
  * @since 2.0.0
- * @deprecated this class is meant for Spring Boot internal use only.
  * @see {@link org.springframework.boot.web.embedded.netty.SslServerCustomizer}
  */
 public class SslServerCustomizer implements NettyServerCustomizer {
 
-    private final Ssl ssl;
-
-    private final Http2 http2;
-
-    private final SslStoreProvider sslStoreProvider;
+    protected final Ssl ssl;
+    protected final Http2 http2;
+    protected final SslStoreProvider sslStoreProvider;
 
     public SslServerCustomizer(Ssl ssl, Http2 http2, SslStoreProvider sslStoreProvider) {
         this.ssl = ssl;

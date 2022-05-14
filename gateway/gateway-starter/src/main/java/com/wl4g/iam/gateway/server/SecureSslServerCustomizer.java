@@ -47,6 +47,7 @@ import java.security.Provider;
 import java.security.cert.CRL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,6 +77,7 @@ import com.wl4g.iam.gateway.server.config.GatewayWebServerProperties;
 import com.wl4g.iam.gateway.util.cert.CertificateUtil;
 import com.wl4g.iam.gateway.util.cert.KeyStoreUtil;
 
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.internal.tcnative.CertificateVerifier;
 import lombok.AllArgsConstructor;
@@ -146,7 +148,7 @@ public class SecureSslServerCustomizer extends com.wl4g.iam.gateway.server.SslSe
                         .sslProvider(io.netty.handler.ssl.SslProvider.OPENSSL_REFCNT);
 
                 SslProvider.DefaultConfigurationSpec spec = contextSpec.sslContext(contextBuilder);
-                if (getHttp2() != null && getHttp2().isEnabled()) {
+                if (http2 != null && http2.isEnabled()) {
                     Builder builder = spec.defaultConfiguration(SslProvider.DefaultConfigurationType.H2);
                     //
                     // [Begin] ADD for SSL subject verifier.
@@ -203,16 +205,21 @@ public class SecureSslServerCustomizer extends com.wl4g.iam.gateway.server.SslSe
         }
     }
 
-    private Ssl getSsl() {
-        return getField(findField(SslServerCustomizer.class, "ssl", Ssl.class), this, true);
-    }
-
-    private Http2 getHttp2() {
-        return getField(findField(SslServerCustomizer.class, "http2", Http2.class), this, true);
-    }
-
-    private SslStoreProvider getSslStoreProvider() {
-        return getField(findField(SslServerCustomizer.class, "sslStoreProvider", SslStoreProvider.class), this, true);
+    protected SslContextBuilder getContextBuilder() {
+        SslContextBuilder builder = SslContextBuilder.forServer(getKeyManagerFactory(this.ssl, this.sslStoreProvider))
+                .trustManager(getTrustManagerFactory(this.ssl, this.sslStoreProvider));
+        if (this.ssl.getEnabledProtocols() != null) {
+            builder.protocols(this.ssl.getEnabledProtocols());
+        }
+        if (this.ssl.getCiphers() != null) {
+            builder.ciphers(Arrays.asList(this.ssl.getCiphers()));
+        }
+        if (this.ssl.getClientAuth() == Ssl.ClientAuth.NEED) {
+            builder.clientAuth(ClientAuth.REQUIRE);
+        } else if (this.ssl.getClientAuth() == Ssl.ClientAuth.WANT) {
+            builder.clientAuth(ClientAuth.OPTIONAL);
+        }
+        return builder;
     }
 
     @Override

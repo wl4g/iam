@@ -11,6 +11,7 @@
 ## #### IAM Gateway Primary configuration. ####
 #
 spring:
+  main.allow-circular-references: true
   ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
   ## but the lower version is invalid.
   ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924

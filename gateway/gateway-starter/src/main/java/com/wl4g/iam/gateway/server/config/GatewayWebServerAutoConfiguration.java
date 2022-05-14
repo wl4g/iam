@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.reactive.ReactorResourceFactory;
+import org.springframework.http.codec.ServerCodecConfigurer;
 
 import com.wl4g.iam.gateway.server.SecureNettyReactiveWebServerFactory;
 
@@ -55,6 +56,11 @@ public class GatewayWebServerAutoConfiguration {
     @ConditionalOnMissingBean
     public ReactorResourceFactory reactorServerResourceFactory() {
         return new ReactorResourceFactory();
+    }
+
+    @Bean
+    public ServerCodecConfigurer serverCodecConfigurer() {
+        return ServerCodecConfigurer.create();
     }
 
     // @Bean

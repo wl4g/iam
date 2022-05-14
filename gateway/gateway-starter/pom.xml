@@ -116,6 +116,12 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-infra-core</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-web</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Core Foundation -->
 		<dependency>
@@ -456,7 +462,10 @@
 							<imageName>${project.artifactId}</imageName>
 							<mainClass>${bootstrap-classname}</mainClass>
 							<buildArgs>
+								--verbose
+								--static
 								--no-fallback
+								-H:+ReportExceptionStackTraces
 							</buildArgs>
 						</configuration>
 						<extensions>true</extensions>
