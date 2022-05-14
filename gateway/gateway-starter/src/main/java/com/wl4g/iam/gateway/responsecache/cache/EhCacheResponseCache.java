@@ -17,22 +17,30 @@ package com.wl4g.iam.gateway.responsecache.cache;
 
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
+import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
 import static org.ehcache.config.units.MemoryUnit.MB;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.PersistentCacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.EntryUnit;
+import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.impl.config.persistence.CacheManagerPersistenceConfiguration;
 
 import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties.EhCacheProperties;
+import com.wl4g.infra.common.io.FileIOUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -55,20 +63,9 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     public EhCacheResponseCache(@NotNull EhCacheProperties config, @NotBlank String routeId) {
         notNullOf(config, "config");
         hasTextOf(routeId, "routeId");
-
-        // see:https://www.ehcache.org/documentation/3.10/
-        // see:https://github.com/ehcache/ehcache3-samples
-        CacheConfigurationBuilder<String, byte[]> ccBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
-                byte[].class,
-                ResourcePoolsBuilder.heap(config.getOffHeapEntries()).offheap(config.getOffHeapSize().toMegabytes(), MB));
-
-        // TODO use disk strategy config
-        this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache(config.getCacheNamePrefix().concat("-").concat(routeId), ccBuilder)
-                .build(true);
-
-        // TODO getCache return null???
-        this.originalCache = cacheManager.getCache("defaultLocalCache", String.class, byte[].class);
+        this.cacheManager = buildRouteCacheManager(config, routeId);
+        this.originalCache = cacheManager.getCache(config.getCacheNamePrefix().concat("-").concat(routeId), String.class,
+                byte[].class);
     }
 
     @Override
@@ -132,6 +129,37 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     @Override
     public void close() throws IOException {
         cacheManager.close();
+    }
+
+    /**
+     * Build EhCache cache manager for route.
+     * 
+     * see:https://www.ehcache.org/documentation/3.10/
+     * see:https://github.com/ehcache/ehcache3-samples
+     * see:https://github1s.com/ehcache/ehcache3/blob/HEAD/ehcache-impl/src/test/java/org/ehcache/config/builders/PersistentCacheManagerTest.java#L92-L100
+     * 
+     * @param config
+     * @param routeId
+     * @return
+     */
+    public static PersistentCacheManager buildRouteCacheManager(EhCacheProperties config, String routeId) {
+        try {
+            String prefix = "iscg-responsecache-tmp-";
+            File rootDir = new File(SystemUtils.JAVA_IO_TMPDIR, prefix + currentTimeMillis());
+            FileIOUtils.forceMkdir(rootDir);
+            rootDir.toPath().toFile().deleteOnExit();
+            String cacheAlias = config.getCacheNamePrefix().concat("-").concat(routeId);
+            return newCacheManagerBuilder().with(new CacheManagerPersistenceConfiguration(rootDir))
+                    .withCache(cacheAlias,
+                            CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, byte[].class,
+                                    ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                            .heap(config.getOffHeapEntries(), EntryUnit.ENTRIES)
+                                            .offheap(config.getOffHeapSize().toMegabytes(), MB)
+                                            .disk(512, MemoryUnit.MB, true)))
+                    .build(true);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 }
