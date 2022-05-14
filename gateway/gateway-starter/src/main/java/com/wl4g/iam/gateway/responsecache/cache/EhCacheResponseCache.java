@@ -20,7 +20,6 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.lang.String.format;
 import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
-import static org.ehcache.config.units.MemoryUnit.MB;
 
 import java.io.Closeable;
 import java.io.File;
@@ -154,8 +153,8 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
                             CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, byte[].class,
                                     ResourcePoolsBuilder.newResourcePoolsBuilder()
                                             .heap(config.getOffHeapEntries(), EntryUnit.ENTRIES)
-                                            .offheap(config.getOffHeapSize().toMegabytes(), MB)
-                                            .disk(512, MemoryUnit.MB, true)))
+                                            .offheap(config.getOffHeapSize().toBytes(), MemoryUnit.B)
+                                            .disk(config.getDiskSize().toBytes(), MemoryUnit.B, true)))
                     .build(true);
         } catch (IOException e) {
             throw new IllegalStateException(e);

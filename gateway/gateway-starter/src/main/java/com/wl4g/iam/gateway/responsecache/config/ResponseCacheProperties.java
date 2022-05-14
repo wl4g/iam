@@ -166,11 +166,21 @@ public class ResponseCacheProperties {
         private String cacheNamePrefix = "requestCache";
 
         /**
-         * 
+         * The number of entries not persisted to keep in memory.
          */
         private long offHeapEntries = 100_000L;
 
+        /**
+         * The number of data size not persisted to keep in memory. must be less
+         * than {@link #diskSize}
+         */
         private DataSize offHeapSize = DataSize.ofMegabytes(128);
+
+        /**
+         * The number of total data size not persisted to keep in disk. must be
+         * greater than {@link #offHeapSize}
+         */
+        private DataSize diskSize = DataSize.ofMegabytes(512);
 
     }
 
