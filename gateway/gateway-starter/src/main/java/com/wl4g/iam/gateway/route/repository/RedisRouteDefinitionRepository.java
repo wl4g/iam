@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.route.repository;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_ROUTES;
+import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_ROUTES;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.util.stream.Collectors.toList;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.loadbalance.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOADBANANER;
+import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOADBANANER;
 
 import java.util.List;
 

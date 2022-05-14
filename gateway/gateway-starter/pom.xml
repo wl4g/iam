@@ -5,26 +5,55 @@
 	<packaging>jar</packaging>
 	<name>DoPaaS IAM Gateway Starter</name>
 	<url>http://iam.dopaas.wl4g.com</url>
+	<version>3.0.0</version>
+	<!-- <parent> -->
+	<!-- <groupId>com.wl4g</groupId> -->
+	<!-- <artifactId>dopaas-iam-gateway</artifactId> -->
+	<!-- <version>3.0.0</version> -->
+	<!-- </parent> -->
 	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam-gateway</artifactId>
-		<version>3.0.0</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.7</version>
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
 		<opentelemetry.version>1.1.0</opentelemetry.version>
+		<spring-cloud-gateway.version>3.1.2</spring-cloud-gateway.version>
+		<graalvm.version>21.3.0</graalvm.version>
+		<spring-native.version>0.11.3</spring-native.version>
+		<native-maven-plugin.version>0.9.11</native-maven-plugin.version>
+		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
 		<final.name>iam-gateway</final.name>
 	</properties>
+	<repositories>
+		<!-- <repository> -->
+		<!-- <id>spring-release</id> -->
+		<!-- <name>Spring release</name> -->
+		<!-- <url>https://repo.spring.io/release</url> -->
+		<!-- </repository> -->
+		<!-- <repository> -->
+		<!-- <id>alimaven-grails-core</id> -->
+		<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
+		<!-- </repository> -->
+	</repositories>
+	<!-- <pluginRepositories> -->
+	<!-- <pluginRepository> -->
+	<!-- <id>spring-release</id> -->
+	<!-- <name>Spring release</name> -->
+	<!-- <url>https://repo.spring.io/release</url> -->
+	<!-- </pluginRepository> -->
+	<!-- </pluginRepositories> -->
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-bom</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>com.wl4g</groupId> -->
+			<!-- <artifactId>dopaas-iam-bom</artifactId> -->
+			<!-- <version>${project.version}</version> -->
+			<!-- <type>pom</type> -->
+			<!-- <scope>import</scope> -->
+			<!-- </dependency> -->
 			<!-- Tracing -->
 			<dependency>
 				<groupId>io.opentelemetry</groupId>
@@ -33,58 +62,60 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- Trying upgrade spring-cloud-gateway-3.1.1 -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework.cloud</groupId> -->
-			<!-- <artifactId>spring-cloud-starter-gateway</artifactId> -->
-			<!-- <version>${spring-cloud-gateway.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework.cloud</groupId> -->
-			<!-- <artifactId>spring-cloud-gateway-server</artifactId> -->
-			<!-- <version>${spring-cloud-gateway.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework.boot</groupId> -->
-			<!-- <artifactId>spring-boot-starter-webflux</artifactId> -->
-			<!-- <version>2.6.3</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework.boot</groupId> -->
-			<!-- <artifactId>spring-boot-starter-reactor-netty</artifactId> -->
-			<!-- <version>2.6.3</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.projectreactor.addons</groupId> -->
-			<!-- <artifactId>reactor-extra</artifactId> -->
-			<!-- <version>3.4.6</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.projectreactor</groupId> -->
-			<!-- <artifactId>reactor-core</artifactId> -->
-			<!-- <version>3.4.13</version> -->
-			<!-- </dependency> -->
+			<!-- Trying upgrade spring-cloud-gateway-3.1.2 -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-gateway</artifactId>
+				<version>${spring-cloud-gateway.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-gateway-server</artifactId>
+				<version>${spring-cloud-gateway.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-reactor-netty</artifactId>
+				<version>2.6.7</version>
+			</dependency>
+			<dependency>
+				<groupId>io.projectreactor.addons</groupId>
+				<artifactId>reactor-extra</artifactId>
+				<version>3.4.8</version>
+			</dependency>
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-core</artifactId>
+				<version>3.4.17</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-iam-common</artifactId> -->
+		<!-- <exclusions> -->
+		<!-- Must excludes web-mvc -->
+		<!-- <exclusion> -->
+		<!-- <groupId>org.springframework.boot</groupId> -->
+		<!-- <artifactId>spring-boot-starter-web</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-shell-cli</artifactId> -->
+		<!-- <version>${project.version}</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-shell-springboot</artifactId> -->
+		<!-- <version>${project.version}</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-iam-common</artifactId>
-			<exclusions>
-				<!-- Must excludes web-mvc -->
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-web</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-springboot</artifactId>
+			<artifactId>dopaas-infra-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- Core Foundation -->
 		<dependency>
@@ -185,10 +216,12 @@
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
+			<version>1.46.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
+			<version>1.46.0</version>
 		</dependency>
 		<!-- Metrics -->
 		<dependency>
@@ -199,16 +232,19 @@
 		<dependency>
 			<groupId>io.github.resilience4j</groupId>
 			<artifactId>resilience4j-micrometer</artifactId>
+			<version>1.7.1</version>
 		</dependency>
 		<!-- Loadbalancer -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+			<version>3.1.2</version>
 		</dependency>
 		<!-- Circuitbreaker -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
+			<version>2.1.2</version>
 		</dependency>
 		<!-- Netflix -->
 		<!-- <dependency> -->
@@ -232,6 +268,16 @@
 		<!-- <groupId>com.alibaba.cloud</groupId> -->
 		<!-- <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId> -->
 		<!-- </dependency> -->
+		<!-- Native image -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-indexer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.experimental</groupId>
+			<artifactId>spring-native</artifactId>
+			<version>${spring-native.version}</version>
+		</dependency>
 		<!-- Tests -->
 		<dependency>
 			<groupId>io.projectreactor</groupId>
@@ -342,7 +388,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>mvnAssTar</id>
+			<id>build:mvnAssTar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -372,7 +418,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>springExecJar</id>
+			<id>build:springExecJar</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -398,7 +444,65 @@
 			</build>
 		</profile>
 		<profile>
-			<id>docker:build:mvnAssTar</id>
+			<id>build:image:native</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.graalvm.buildtools</groupId>
+						<artifactId>native-maven-plugin</artifactId>
+						<version>${native-maven-plugin.version}</version>
+						<configuration>
+							<skip>false</skip>
+							<imageName>${project.artifactId}</imageName>
+							<mainClass>${bootstrap-classname}</mainClass>
+							<buildArgs>
+								--no-fallback
+							</buildArgs>
+						</configuration>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.experimental</groupId>
+						<artifactId>spring-aot-maven-plugin</artifactId>
+						<version>${spring-native.version}</version>
+						<configuration>
+							<!-- 切换插件实际提供给本机图像编译器的配置 - native （默认）生成 AOT Spring 工厂、应用程序上下文引导程序、本机配置、本机图像.properties 以及替换。 - native-agent 旨在与跟踪代理生成的配置一起使用。生成 AOT Spring 
+								工厂、应用程序上下文引导程序、native-image.properties 以及替换。 -->
+							<mode>native</mode>
+						</configuration>
+						<executions>
+							<execution>
+								<id>generate</id>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<buildpacks>
+									<buildpack>gcr.io/paketo-buildpacks/java-native-image:${graalvm.version}</buildpack>
+								</buildpacks>
+							</image>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build:image:docker:mvnAssTar</id>
 			<build>
 				<plugins>
 					<plugin>

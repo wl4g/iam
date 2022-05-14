@@ -376,6 +376,7 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
          *            the current GatewayFilterChain.
          * @return
          */
+        @SuppressWarnings("deprecation")
         private HttpClient getCustomizedRouteBasedHttpClient(Route route, ServerWebExchange exchange) {
             Object connectTimeoutAttr = route.getMetadata().get(CONNECT_TIMEOUT_ATTR);
             if (connectTimeoutAttr != null) {

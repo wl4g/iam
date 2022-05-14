@@ -18,11 +18,11 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.shell.springboot.annotation.EnableShellServer;
+//import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 //@EnableIamClient
 //@EnableUcmClient
-@EnableShellServer
+//@EnableShellServer
 @SpringBootApplication
 public class IamGateway {
 

@@ -215,13 +215,14 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
          * @param exchange
          * @return
          */
+        @SuppressWarnings("unchecked")
         private boolean isCachedRequest(ServerWebExchange exchange) {
             // Gets current request route.
             Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
 
             // Add routeId temporary predicates.
             Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
-                    () -> Predicates.equalTo(route.getId()));
+                    () -> (Predicate<String>) Predicates.equalTo(route.getId()));
 
             return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                     responseCacheConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);

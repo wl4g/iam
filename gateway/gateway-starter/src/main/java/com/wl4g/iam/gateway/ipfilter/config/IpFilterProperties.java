@@ -19,7 +19,7 @@ import static java.util.Arrays.asList;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.ipfilter.IpSubnetFilterFactory;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
 

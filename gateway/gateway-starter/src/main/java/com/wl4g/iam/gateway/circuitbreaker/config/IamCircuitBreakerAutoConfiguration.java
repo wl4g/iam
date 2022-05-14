@@ -24,7 +24,7 @@ import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFac
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.DispatcherHandler;
 
-import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.circuitbreaker.DefaultCircuitBreakerCustomizer;
 import com.wl4g.iam.gateway.circuitbreaker.IamSpringCloudCircuitBreakerResilience4JFilterFactory;
 

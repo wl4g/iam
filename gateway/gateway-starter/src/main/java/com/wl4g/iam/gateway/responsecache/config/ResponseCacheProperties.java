@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.responsecache.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE;
+import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE;
 
 import java.time.Duration;
 import java.util.ArrayList;

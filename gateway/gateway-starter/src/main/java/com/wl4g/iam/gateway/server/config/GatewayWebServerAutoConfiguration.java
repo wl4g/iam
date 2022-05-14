@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.server.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_SERVER;
+import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_SERVER;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;

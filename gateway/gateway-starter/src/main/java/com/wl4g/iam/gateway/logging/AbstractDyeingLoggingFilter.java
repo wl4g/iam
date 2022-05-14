@@ -133,6 +133,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @param exchange
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected boolean isLoggingRequest(ServerWebExchange exchange) {
         if (!loggingConfig.isEnabled()) {
             return false;
@@ -142,7 +143,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
         // Add routeId temporary predicates.
         Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
-                () -> Predicates.equalTo(route.getId()));
+                () -> (Predicate<String>) Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                 loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);

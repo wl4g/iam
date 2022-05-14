@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.logging.config;
 
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOGGING;
+import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_LOGGING;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

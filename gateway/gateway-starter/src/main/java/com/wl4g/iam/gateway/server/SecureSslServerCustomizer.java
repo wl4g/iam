@@ -110,17 +110,18 @@ import reactor.netty.tcp.SslProvider.Builder;
  * https://github.com/reactor/reactor-netty/issues/344
  * </p>
  * 
- * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
- * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
- * @see {@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
+ * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#newSessionContext()}￬
+ * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
+ * see:{@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-09 v3.0.0
  * @since v3.0.0
+ * @see {@link org.springframework.boot.web.embedded.netty.SslServerCustomizer}
  */
 @Slf4j
-@SuppressWarnings("unused")
-public class SecureSslServerCustomizer extends SslServerCustomizer {
+@SuppressWarnings({ "unused", "deprecation" })
+public class SecureSslServerCustomizer extends com.wl4g.iam.gateway.server.SslServerCustomizer {
 
     private final GatewayWebServerProperties secureWebServerConfig;
 

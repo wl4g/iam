@@ -23,7 +23,7 @@ import org.springframework.cloud.gateway.config.HttpClientCustomizer;
 import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.common.constant.GatewayIAMConstants;
+import com.wl4g.iam.gateway.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory;
 

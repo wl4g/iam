@@ -22,6 +22,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -53,13 +55,13 @@ import com.wl4g.infra.common.web.WebUtils;
 
 import io.netty.handler.ipfilter.IpFilterRuleType;
 import io.netty.handler.ipfilter.IpSubnetFilterRule;
+import io.netty.util.NetUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import reactor.core.publisher.Mono;
-import reactor.netty.tcp.InetSocketAddressUtil;
 
 /**
  * {@link IpSubnetFilterFactory}
@@ -105,8 +107,7 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
     protected boolean isAllowed(Config config, ServerWebExchange exchange, List<FilterStrategy> strategys) {
         // Determine remote client address.
         // Note:This method does not send network resolutions
-        InetSocketAddress remoteAddress = InetSocketAddressUtil.createInetSocketAddress(getClientAddress(config, exchange), 0,
-                false);
+        InetSocketAddress remoteAddress = createInetSocketAddress(getClientAddress(config, exchange), 0, false);
 
         // The local address is allowed to pass by default.
         InetAddress address = remoteAddress.getAddress();
@@ -140,6 +141,39 @@ public class IpSubnetFilterFactory extends AbstractGatewayFilterFactory<IpSubnet
             allowed = config.isAcceptNotMatchCidr();
         }
         return allowed;
+    }
+
+    /**
+     * Creates InetSocketAddress instance. Numeric IP addresses will be detected
+     * and resolved without doing reverse DNS lookups.
+     *
+     * @param hostname
+     *            ip-address or hostname
+     * @param port
+     *            port number
+     * @param resolve
+     *            when true, resolve given hostname at instance creation time
+     * @return InetSocketAddress for given parameters
+     */
+    public static InetSocketAddress createInetSocketAddress(String hostname, int port, boolean resolve) {
+        InetAddress inetAddressForIpString = null;
+        byte[] ipAddressBytes = NetUtil.createByteArrayFromIpAddressString(hostname);
+        if (ipAddressBytes != null) {
+            try {
+                if (ipAddressBytes.length == 4) {
+                    inetAddressForIpString = Inet4Address.getByAddress(ipAddressBytes);
+                } else {
+                    inetAddressForIpString = Inet6Address.getByAddress(null, ipAddressBytes, -1);
+                }
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e); // Should never happen
+            }
+        }
+        if (inetAddressForIpString != null) {
+            return new InetSocketAddress(inetAddressForIpString, port);
+        } else {
+            return resolve ? new InetSocketAddress(hostname, port) : InetSocketAddress.createUnresolved(hostname, port);
+        }
     }
 
     private IpSubnetFilterRule buildRule(String cidr, IpFilterRuleType ruleType) {

@@ -88,9 +88,17 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
     public WebServer getWebServer(HttpHandler httpHandler) {
         HttpServer httpServer = createHttpServer();
         ReactorHttpHandlerAdapter handlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
-        NettyWebServer webServer = new NettyWebServer(httpServer, handlerAdapter, this.lifecycleTimeout, getShutdown());
+        NettyWebServer webServer = createNettyWebServer(httpServer, handlerAdapter, this.lifecycleTimeout, getShutdown());
         webServer.setRouteProviders(this.routeProviders);
         return webServer;
+    }
+
+    NettyWebServer createNettyWebServer(
+            HttpServer httpServer,
+            ReactorHttpHandlerAdapter handlerAdapter,
+            Duration lifecycleTimeout,
+            Shutdown shutdown) {
+        return new NettyWebServer(httpServer, handlerAdapter, lifecycleTimeout, shutdown);
     }
 
     /**
@@ -189,9 +197,9 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
         if (this.resourceFactory != null) {
             LoopResources resources = this.resourceFactory.getLoopResources();
             Assert.notNull(resources, "No LoopResources: is ReactorResourceFactory not initialized yet?");
-            server = server.tcpConfiguration((tcpServer) -> tcpServer.runOn(resources).bindAddress(this::getListenAddress));
+            server = server.runOn(resources).bindAddress(this::getListenAddress);
         } else {
-            server = server.tcpConfiguration((tcpServer) -> tcpServer.bindAddress(this::getListenAddress));
+            server = server.bindAddress(this::getListenAddress);
         }
         if (getSsl() != null && getSsl().isEnabled()) {
             //
@@ -249,7 +257,7 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
      * @author Brian Clozel
      * @see {@link org.springframework.boot.web.embedded.netty.CompressionCustomizer}
      */
-    final static class CompressionCustomizer implements NettyServerCustomizer {
+    static class CompressionCustomizer implements NettyServerCustomizer {
         private static final CompressionPredicate ALWAYS_COMPRESS = (request, response) -> true;
 
         private final Compression compression;
@@ -277,7 +285,7 @@ public class SecureNettyReactiveWebServerFactory extends AbstractReactiveWebServ
                     Collectors.toList());
             return (request, response) -> {
                 String contentType = response.responseHeaders().get(HttpHeaderNames.CONTENT_TYPE);
-                if (StringUtils.isEmpty(contentType)) {
+                if (StringUtils.hasLength(contentType)) {
                     return false;
                 }
                 try {

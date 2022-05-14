@@ -45,7 +45,6 @@ import com.wl4g.iam.gateway.mock.MockGatewayFilterChain;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import reactor.core.publisher.Mono;
-import reactor.netty.tcp.InetSocketAddressUtil;
 import reactor.test.StepVerifier;
 
 /**
@@ -112,7 +111,7 @@ public class IpSubnetFilterFactoryTests {
         AtomicBoolean acceptedFlag = new AtomicBoolean(false);
 
         MockServerHttpRequest request = MockServerHttpRequest.get("http://httpbin.org/hello")
-                .remoteAddress(InetSocketAddressUtil.createUnresolved(remoteIp, 0))
+                .remoteAddress(IpSubnetFilterFactory.createInetSocketAddress(remoteIp, 0, false))
                 .build();
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
 

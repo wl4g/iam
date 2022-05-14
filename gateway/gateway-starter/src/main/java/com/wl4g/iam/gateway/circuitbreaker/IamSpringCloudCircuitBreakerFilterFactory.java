@@ -219,7 +219,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
         }
 
         public String getId() {
-            if (StringUtils.isEmpty(name) && !StringUtils.isEmpty(routeId)) {
+            if (StringUtils.hasLength(name) && !StringUtils.hasLength(routeId)) {
                 return routeId;
             }
             return name;

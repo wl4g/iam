@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.common.constant;
+package com.wl4g.iam.gateway.constant;
+
+import com.wl4g.infra.core.constant.BaseConstants;
 
 /**
  * IAM for gateway constants.
@@ -23,7 +25,11 @@ package com.wl4g.iam.common.constant;
  * @date 2018年11月13日
  * @since
  */
-public abstract class GatewayIAMConstants extends IAMConstants {
+public abstract class GatewayIAMConstants extends BaseConstants {
+
+    // TODO rename to spring.gateway
+    public static final String CONF_PREFIX_IAM = "spring.iam";
+    public static final String CACHE_PREFIX_IAM = "iam";
 
     //
     // (Static) configuration properties prefix definitions.

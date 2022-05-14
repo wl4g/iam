@@ -54,7 +54,7 @@ import reactor.retry.RepeatContext;
 import reactor.retry.Retry;
 import reactor.retry.RetryContext;
 
-@SuppressWarnings({ "unchecked", "deprecation", "unused" })
+@SuppressWarnings({ "unchecked", "unused", "deprecation" })
 public class IamRetryGatewayFilterFactory extends AbstractGatewayFilterFactory<IamRetryGatewayFilterFactory.RetryConfig> {
 
     /**
@@ -467,7 +467,8 @@ public class IamRetryGatewayFilterFactory extends AbstractGatewayFilterFactory<I
             if (retry != null) {
                 // retryWhen returns a Mono<Void>
                 // retry needs to go before repeat
-                publisher = ((Mono<Void>) publisher).retryWhen(retry.withApplicationContext(exchange));
+                publisher = ((Mono<Void>) publisher)
+                        .retryWhen(reactor.util.retry.Retry.withThrowable(retry.withApplicationContext(exchange)));
             }
             if (repeat != null) {
                 // repeatWhen returns a Flux<Void>

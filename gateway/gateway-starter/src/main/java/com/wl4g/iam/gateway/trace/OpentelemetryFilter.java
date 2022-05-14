@@ -118,6 +118,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
      * @param exchange
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected boolean isTraceRequest(ServerWebExchange exchange) {
         if (!traceConfig.isEnabled()) {
             return false;
@@ -127,7 +128,7 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
 
         // Add routeId temporary predicates.
         Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
-                () -> Predicates.equalTo(route.getId()));
+                () -> (Predicate<String>) Predicates.equalTo(route.getId()));
 
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                 traceConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
