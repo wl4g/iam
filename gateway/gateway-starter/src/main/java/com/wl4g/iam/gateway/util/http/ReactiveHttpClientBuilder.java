@@ -17,6 +17,8 @@ package com.wl4g.iam.gateway.util.http;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cloud.gateway.config.HttpClientCustomizer;
 import org.springframework.cloud.gateway.config.HttpClientFactory;
@@ -42,9 +44,11 @@ public abstract class ReactiveHttpClientBuilder {
     public static HttpClient build(
             HttpClientProperties httpCilentProperties,
             ServerProperties serverProperties,
-            List<HttpClientCustomizer> customizers) {
+            @Nullable List<HttpClientCustomizer> customizers) {
         try {
-            return new HttpClientFactory(httpCilentProperties, serverProperties, customizers).getObject();
+            HttpClientFactory factory = new HttpClientFactory(httpCilentProperties, serverProperties, customizers);
+            factory.setSingleton(false);
+            return factory.getObject();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -56,7 +60,7 @@ public abstract class ReactiveHttpClientBuilder {
      * @see refer to:
      *      {@link org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient}
      */
-    public static HttpClient build(HttpClientProperties httpCilentProperties, List<HttpClientCustomizer> customizers) {
+    public static HttpClient build(HttpClientProperties httpCilentProperties, @Nullable List<HttpClientCustomizer> customizers) {
         return build(httpCilentProperties, new ServerProperties(), customizers);
     }
 

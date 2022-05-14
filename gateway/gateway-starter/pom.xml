@@ -27,17 +27,17 @@
 		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
 		<final.name>iam-gateway</final.name>
 	</properties>
-	<repositories>
-		<!-- <repository> -->
-		<!-- <id>spring-release</id> -->
-		<!-- <name>Spring release</name> -->
-		<!-- <url>https://repo.spring.io/release</url> -->
-		<!-- </repository> -->
-		<!-- <repository> -->
-		<!-- <id>alimaven-grails-core</id> -->
-		<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
-		<!-- </repository> -->
-	</repositories>
+	<!-- <repositories> -->
+	<!-- <repository> -->
+	<!-- <id>spring-release</id> -->
+	<!-- <name>Spring release</name> -->
+	<!-- <url>https://repo.spring.io/release</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <id>alimaven-grails-core</id> -->
+	<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
+	<!-- </repository> -->
+	<!-- </repositories> -->
 	<!-- <pluginRepositories> -->
 	<!-- <pluginRepository> -->
 	<!-- <id>spring-release</id> -->

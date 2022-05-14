@@ -58,7 +58,6 @@ class IamGatewayBootstrappingConfigurer implements IBootstrappingConfigurer {
         // for example environment configuration.
         if (isJvmInDebugging) {
             configName.append(",example");
-            location.append(",classpath:/example/");
         }
 
         defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())

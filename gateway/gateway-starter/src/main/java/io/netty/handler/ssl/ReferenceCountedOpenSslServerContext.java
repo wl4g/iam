@@ -56,6 +56,7 @@ public final class ReferenceCountedOpenSslServerContext extends ReferenceCounted
     private static final byte[] ID = { 'n', 'e', 't', 't', 'y' };
     private final OpenSslServerSessionContext sessionContext;
 
+    @SuppressWarnings("unchecked")
     ReferenceCountedOpenSslServerContext(X509Certificate[] trustCertCollection, TrustManagerFactory trustManagerFactory,
             X509Certificate[] keyCertChain, PrivateKey key, String keyPassword, KeyManagerFactory keyManagerFactory,
             Iterable<String> ciphers, CipherSuiteFilter cipherFilter, ApplicationProtocolConfig apn, long sessionCacheSize,
@@ -66,7 +67,7 @@ public final class ReferenceCountedOpenSslServerContext extends ReferenceCounted
                 options);
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "unchecked" })
     ReferenceCountedOpenSslServerContext(X509Certificate[] trustCertCollection, TrustManagerFactory trustManagerFactory,
             X509Certificate[] keyCertChain, PrivateKey key, String keyPassword, KeyManagerFactory keyManagerFactory,
             Iterable<String> ciphers, CipherSuiteFilter cipherFilter, OpenSslApplicationProtocolNegotiator apn,
