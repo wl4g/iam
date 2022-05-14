@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.responsecache.cache;
 
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static org.ehcache.config.units.MemoryUnit.MB;
@@ -22,6 +23,7 @@ import static org.ehcache.config.units.MemoryUnit.MB;
 import java.io.Closeable;
 import java.io.IOException;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.ehcache.Cache;
@@ -37,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link EhCacheResponseCache}
+ * {@link EhCacheResponseCacheTests}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-13 v3.0.0
@@ -50,13 +52,16 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     private final CacheManager cacheManager;
     private final Cache<String, byte[]> originalCache;
 
-    public EhCacheResponseCache(@NotNull EhCacheProperties config, String routeId) {
+    public EhCacheResponseCache(@NotNull EhCacheProperties config, @NotBlank String routeId) {
         notNullOf(config, "config");
+        hasTextOf(routeId, "routeId");
+
         // see:https://www.ehcache.org/documentation/3.10/
         // see:https://github.com/ehcache/ehcache3-samples
         CacheConfigurationBuilder<String, byte[]> ccBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class,
                 byte[].class,
                 ResourcePoolsBuilder.heap(config.getOffHeapEntries()).offheap(config.getOffHeapSize().toMegabytes(), MB));
+
         // TODO use disk strategy config
         this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(config.getCacheNamePrefix().concat("-").concat(routeId), ccBuilder)
@@ -128,4 +133,5 @@ public class EhCacheResponseCache implements ResponseCache, Closeable {
     public void close() throws IOException {
         cacheManager.close();
     }
+
 }

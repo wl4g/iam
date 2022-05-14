@@ -60,7 +60,7 @@ import com.wl4g.iam.gateway.config.ReactiveByteArrayRedisTemplate;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
-import com.wl4g.iam.gateway.responsecache.cache.EhCacheResponseCache;
+import com.wl4g.iam.gateway.responsecache.cache.EhCacheResponseCacheTests;
 import com.wl4g.iam.gateway.responsecache.cache.RedisResponseCache;
 import com.wl4g.iam.gateway.responsecache.cache.ResponseCache;
 import com.wl4g.iam.gateway.responsecache.cache.SimpleResponseCache;
@@ -251,7 +251,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
                             responseCache = new SimpleResponseCache(localCache);
                             break;
                         case EhCache:
-                            responseCache = new EhCacheResponseCache(config.getEhcache(), routeId);
+                            responseCache = new EhCacheResponseCacheTests(config.getEhcache(), routeId);
                             break;
                         case RedisCache:
                             responseCache = new RedisResponseCache(config.getRedis(), redisTemplate);

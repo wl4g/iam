@@ -30,8 +30,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.core.env.Environment;
@@ -68,19 +69,26 @@ public class IamGatewayMetricsFacade implements InitializingBean {
 
     private final Map<String, MetricFamilySamples> sampleRegistry = new ConcurrentHashMap<>(16);
 
-    private @Autowired PrometheusMeterRegistry meterRegistry;
+    private final PrometheusMeterRegistry meterRegistry;
 
     /**
      * see:{@link org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration#simpleDiscoveryProperties}
      */
-    private @Autowired InetUtils inet;
+    private final InetUtils inet;
 
-    private @Autowired Environment environment;
+    private final Environment environment;
 
     /**
      * see:{@link org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperties#local}
      */
     private DefaultServiceInstance localInstance;
+
+    public IamGatewayMetricsFacade(@NotNull PrometheusMeterRegistry meterRegistry, @NotNull InetUtils inet,
+            @NotNull Environment environment) {
+        this.meterRegistry = notNullOf(meterRegistry, "meterRegistry");
+        this.inet = notNullOf(inet, "inet");
+        this.environment = notNullOf(environment, "environment");
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

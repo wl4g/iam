@@ -146,6 +146,22 @@ curl -vsSkL -XPOST \
 'http://localhost:18085/productpage-with-FaultInjector/post'
 ```
 
+### 2.6 Response Cache
+
+```bash
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Cache: y' \
+"http://localhost:18085/productpage-with-ResponseCache/get"
+
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Cache: n' \
+"http://localhost:18085/productpage-with-ResponseCache/get"
+```
+
 ## 3. Admin API
 
 - [docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api](https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api)

@@ -26,18 +26,24 @@ import javax.validation.constraints.NotBlank;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.handler.AsyncPredicate;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 
 import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
 import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
+import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.mock.MockGatewayFilterChain;
 
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import reactor.core.publisher.Mono;
 import reactor.netty.tcp.InetSocketAddressUtil;
 import reactor.test.StepVerifier;
@@ -50,6 +56,14 @@ import reactor.test.StepVerifier;
  * @since v3.0.0
  */
 public class IpSubnetFilterFactoryTests {
+
+    static IamGatewayMetricsFacade defaultMetricsFacade = new IamGatewayMetricsFacade(
+            new PrometheusMeterRegistry(new PrometheusConfig() {
+                @Override
+                public String get(String key) {
+                    return null;
+                }
+            }), new InetUtils(new InetUtilsProperties()), new MockEnvironment());
 
     @Test
     public void testAllowedWithAcceptAndNotReject() {
@@ -94,7 +108,7 @@ public class IpSubnetFilterFactoryTests {
         Assertions.assertTrue(result);
     }
 
-    public boolean doTestIpFilter(IpSubnetFilterFactory.Config config, String remoteIp, List<FilterStrategy> strategys) {
+    boolean doTestIpFilter(IpSubnetFilterFactory.Config config, String remoteIp, List<FilterStrategy> strategys) {
         AtomicBoolean acceptedFlag = new AtomicBoolean(false);
 
         MockServerHttpRequest request = MockServerHttpRequest.get("http://httpbin.org/hello")
@@ -116,7 +130,7 @@ public class IpSubnetFilterFactoryTests {
             public Mono<List<FilterStrategy>> loadStrategy(@NotBlank String routeId, @NotBlank String principalName) {
                 return Mono.just(strategys);
             }
-        });
+        }, defaultMetricsFacade);
 
         GatewayFilter tailFilter = (_exchange, chain) -> {
             System.out.println(">>>>> Accpeted !");

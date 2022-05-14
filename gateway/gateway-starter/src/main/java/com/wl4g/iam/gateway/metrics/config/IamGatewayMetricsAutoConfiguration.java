@@ -15,22 +15,29 @@
  */
 package com.wl4g.iam.gateway.metrics.config;
 
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
+import io.micrometer.prometheus.PrometheusMeterRegistry;
+
 /**
- * {@link CustomMetricsAutoConfiguration}
+ * {@link IamGatewayMetricsAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-16 v3.0.0
  * @since v3.0.0
  */
-public class CustomMetricsAutoConfiguration {
+public class IamGatewayMetricsAutoConfiguration {
 
     @Bean
-    public IamGatewayMetricsFacade iamGatewayMetricsFacade() {
-        return new IamGatewayMetricsFacade();
+    public IamGatewayMetricsFacade iamGatewayMetricsFacade(
+            PrometheusMeterRegistry meterRegistry,
+            InetUtils inet,
+            Environment environment) {
+        return new IamGatewayMetricsFacade(meterRegistry, inet, environment);
     }
 
 }
