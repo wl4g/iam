@@ -106,14 +106,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-springboot</artifactId>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-shell-cli</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>dopaas-shell-springboot</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-infra-core</artifactId>
@@ -393,7 +393,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>build:mvnAssTar</id>
+			<id>build:tar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -423,7 +423,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>build:springExecJar</id>
+			<id>build:springjar</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -449,7 +449,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>build:image:native</id>
+			<id>build:native</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -536,7 +536,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>build:image:docker:mvnAssTar</id>
+			<id>build:tar:docker</id>
 			<build>
 				<plugins>
 					<plugin>
