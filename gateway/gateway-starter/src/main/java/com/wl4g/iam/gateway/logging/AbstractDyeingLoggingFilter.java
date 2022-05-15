@@ -133,7 +133,6 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
      * @param exchange
      * @return
      */
-    @SuppressWarnings("unchecked")
     protected boolean isLoggingRequest(ServerWebExchange exchange) {
         if (!loggingConfig.isEnabled()) {
             return false;

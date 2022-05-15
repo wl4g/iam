@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.trace.config;
 
-import static com.wl4g.iam.gateway.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_TRACE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_TRACE;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static java.lang.String.format;
 

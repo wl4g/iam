@@ -158,7 +158,6 @@ public class FaultInjectorFilterFactory extends AbstractGatewayFilterFactory<Fau
          * @param exchange
          * @return
          */
-        @SuppressWarnings("unchecked")
         private boolean isFaultRequest(ServerWebExchange exchange) {
             // Gets current request route.
             Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);

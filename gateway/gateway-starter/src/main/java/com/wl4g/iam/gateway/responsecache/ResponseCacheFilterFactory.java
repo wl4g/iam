@@ -215,7 +215,6 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
          * @param exchange
          * @return
          */
-        @SuppressWarnings("unchecked")
         private boolean isCachedRequest(ServerWebExchange exchange) {
             // Gets current request route.
             Route route = exchange.getRequiredAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);

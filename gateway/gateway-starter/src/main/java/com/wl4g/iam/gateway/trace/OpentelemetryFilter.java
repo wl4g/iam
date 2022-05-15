@@ -118,7 +118,6 @@ public class OpentelemetryFilter implements GlobalFilter, Ordered {
      * @param exchange
      * @return
      */
-    @SuppressWarnings("unchecked")
     protected boolean isTraceRequest(ServerWebExchange exchange) {
         if (!traceConfig.isEnabled()) {
             return false;

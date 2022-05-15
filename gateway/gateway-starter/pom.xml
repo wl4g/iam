@@ -5,55 +5,53 @@
 	<packaging>jar</packaging>
 	<name>DoPaaS IAM Gateway Starter</name>
 	<url>http://iam.dopaas.wl4g.com</url>
-	<version>3.0.0</version>
-	<!-- <parent> -->
-	<!-- <groupId>com.wl4g</groupId> -->
-	<!-- <artifactId>dopaas-iam-gateway</artifactId> -->
-	<!-- <version>3.0.0</version> -->
-	<!-- </parent> -->
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.7</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<groupId>com.wl4g</groupId>
+		<artifactId>dopaas-iam-gateway</artifactId>
+		<version>3.0.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<opentelemetry.version>1.1.0</opentelemetry.version>
 		<spring-cloud-gateway.version>3.1.2</spring-cloud-gateway.version>
+		<reactor-netty.version>2.6.7</reactor-netty.version>
+		<reactor-extra.version>3.4.8</reactor-extra.version>
+		<reactor-core.version>3.4.17</reactor-core.version>
+		<opentelemetry.version>1.1.0</opentelemetry.version>
+		<opentelemetry-semconv.version>1.1.0-alpha</opentelemetry-semconv.version>
+		<grpc-protobuf.version>1.46.0</grpc-protobuf.version>
 		<graalvm.version>21.3.0</graalvm.version>
 		<spring-native.version>0.11.3</spring-native.version>
 		<native-maven-plugin.version>0.9.11</native-maven-plugin.version>
 		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
 		<final.name>iam-gateway</final.name>
 	</properties>
-	<!-- <repositories> -->
-	<!-- <repository> -->
-	<!-- <id>spring-release</id> -->
-	<!-- <name>Spring release</name> -->
-	<!-- <url>https://repo.spring.io/release</url> -->
-	<!-- </repository> -->
-	<!-- <repository> -->
-	<!-- <id>alimaven-grails-core</id> -->
-	<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
-	<!-- </repository> -->
-	<!-- </repositories> -->
-	<!-- <pluginRepositories> -->
-	<!-- <pluginRepository> -->
-	<!-- <id>spring-release</id> -->
-	<!-- <name>Spring release</name> -->
-	<!-- <url>https://repo.spring.io/release</url> -->
-	<!-- </pluginRepository> -->
-	<!-- </pluginRepositories> -->
+	<repositories>
+		<!-- <repository> -->
+		<!-- <id>spring-release</id> -->
+		<!-- <name>Spring release</name> -->
+		<!-- <url>https://repo.spring.io/release</url> -->
+		<!-- </repository> -->
+		<!-- <repository> -->
+		<!-- <id>alimaven-grails-core</id> -->
+		<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
+		<!-- </repository> -->
+	</repositories>
+	<pluginRepositories>
+		<!-- <pluginRepository> -->
+		<!-- <id>spring-release</id> -->
+		<!-- <name>Spring release</name> -->
+		<!-- <url>https://repo.spring.io/release</url> -->
+		<!-- </pluginRepository> -->
+	</pluginRepositories>
 	<dependencyManagement>
 		<dependencies>
-			<!-- <dependency> -->
-			<!-- <groupId>com.wl4g</groupId> -->
-			<!-- <artifactId>dopaas-iam-bom</artifactId> -->
-			<!-- <version>${project.version}</version> -->
-			<!-- <type>pom</type> -->
-			<!-- <scope>import</scope> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>dopaas-iam-bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- Tracing -->
 			<dependency>
 				<groupId>io.opentelemetry</groupId>
@@ -62,7 +60,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- Trying upgrade spring-cloud-gateway-3.1.2 -->
+			<!-- Upgrade to spring-cloud-gateway-3.1.2 -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-gateway</artifactId>
@@ -76,46 +74,43 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-reactor-netty</artifactId>
-				<version>2.6.7</version>
+				<version>${reactor-netty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.projectreactor.addons</groupId>
 				<artifactId>reactor-extra</artifactId>
-				<version>3.4.8</version>
+				<version>${reactor-extra.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.projectreactor</groupId>
 				<artifactId>reactor-core</artifactId>
-				<version>3.4.17</version>
+				<version>${reactor-core.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-iam-common</artifactId> -->
-		<!-- <exclusions> -->
-		<!-- Must excludes web-mvc -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.springframework.boot</groupId> -->
-		<!-- <artifactId>spring-boot-starter-web</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-shell-cli</artifactId> -->
-		<!-- <version>${project.version}</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-shell-springboot</artifactId> -->
-		<!-- <version>${project.version}</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-iam-common</artifactId>
+			<exclusions>
+				<!-- Must excludes web-mvc -->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-web</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-shell-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-shell-springboot</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-infra-core</artifactId>
-			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -212,22 +207,22 @@
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-zipkin</artifactId>
-			<optional>true</optional>
+			<!-- <optional>true</optional> -->
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-semconv</artifactId>
-			<version>1.1.0-alpha</version>
+			<version>${opentelemetry-semconv.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
-			<version>1.46.0</version>
+			<version>${grpc-protobuf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
-			<version>1.46.0</version>
+			<version>${grpc-protobuf.version}</version>
 		</dependency>
 		<!-- Metrics -->
 		<dependency>
@@ -238,19 +233,19 @@
 		<dependency>
 			<groupId>io.github.resilience4j</groupId>
 			<artifactId>resilience4j-micrometer</artifactId>
-			<version>1.7.1</version>
+			<!-- <version>1.7.1</version> -->
 		</dependency>
 		<!-- Loadbalancer -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
-			<version>3.1.2</version>
+			<!-- <version>3.1.2</version> -->
 		</dependency>
 		<!-- Circuitbreaker -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-			<version>2.1.2</version>
+			<!-- <version>2.1.2</version> -->
 		</dependency>
 		<!-- Netflix -->
 		<!-- <dependency> -->
@@ -462,10 +457,12 @@
 							<imageName>${project.artifactId}</imageName>
 							<mainClass>${bootstrap-classname}</mainClass>
 							<buildArgs>
+								-H:+ReportExceptionStackTraces
 								--verbose
 								--static
 								--no-fallback
-								-H:+ReportExceptionStackTraces
+								--report-unsupported-elements-at-runtime
+								--initialize-at-build-time=org.springframework.util.unit.DataSize
 							</buildArgs>
 						</configuration>
 						<extensions>true</extensions>
@@ -473,6 +470,30 @@
 							<execution>
 								<goals>
 									<goal>build</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.graalvm.nativeimage</groupId>
+						<artifactId>native-image-maven-plugin</artifactId>
+						<version>21.0.0.2</version>
+						<configuration>
+							<mainClass>${bootstrap-classname}</mainClass>
+							<buildArgs>
+								-H:+ReportExceptionStackTraces
+								--verbose
+								--static
+								--no-fallback
+								--report-unsupported-elements-at-runtime
+								--initialize-at-build-time=org.springframework.util.unit.DataSize
+							</buildArgs>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>native-image</goal>
 								</goals>
 								<phase>package</phase>
 							</execution>
