@@ -20,28 +20,75 @@
 		<opentelemetry-semconv.version>1.1.0-alpha</opentelemetry-semconv.version>
 		<grpc-protobuf.version>1.46.0</grpc-protobuf.version>
 		<graalvm.version>21.3.0</graalvm.version>
-		<spring-native.version>0.11.3</spring-native.version>
+		<spring-native.version>0.11.5</spring-native.version>
 		<native-maven-plugin.version>0.9.11</native-maven-plugin.version>
 		<bootstrap-classname>com.wl4g.IamGateway</bootstrap-classname>
 		<final.name>iam-gateway</final.name>
 	</properties>
+	<!-- see:https://swenfang.github.io/2018/06/03/Maven-Priority/ -->
 	<repositories>
-		<!-- <repository> -->
-		<!-- <id>spring-release</id> -->
-		<!-- <name>Spring release</name> -->
-		<!-- <url>https://repo.spring.io/release</url> -->
-		<!-- </repository> -->
-		<!-- <repository> -->
-		<!-- <id>alimaven-grails-core</id> -->
-		<!-- <url>https://maven.aliyun.com/repository/grails-core</url> -->
-		<!-- </repository> -->
+		<repository>
+			<id>public</id>
+			<name>Aliyun maven public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
+		<repository>
+			<id>grails-core</id>
+			<name>Aliyun maven grails core</name>
+			<url>https://maven.aliyun.com/repository/grails-core</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Aliyun maven central</name>
+			<url>https://maven.aliyun.com/repository/central</url>
+		</repository>
+		<repository>
+			<id>spring</id>
+			<name>Aliyun maven spring</name>
+			<url>https://maven.aliyun.com/repository/spring</url>
+		</repository>
+		<repository>
+			<id>spring-release</id>
+			<name>Spring release</name>
+			<url>https://repo.spring.io/release</url>
+		</repository>
+		<repository>
+			<id>google</id>
+			<name>Aliyun maven google</name>
+			<url>https://maven.aliyun.com/repository/google</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
-		<!-- <pluginRepository> -->
-		<!-- <id>spring-release</id> -->
-		<!-- <name>Spring release</name> -->
-		<!-- <url>https://repo.spring.io/release</url> -->
-		<!-- </pluginRepository> -->
+		<pluginRepository>
+			<id>public</id>
+			<name>Aliyun maven public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>grails-core</id>
+			<name>Aliyun maven grails core</name>
+			<url>https://maven.aliyun.com/repository/grails-core</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>central</id>
+			<name>Aliyun maven central</name>
+			<url>https://maven.aliyun.com/repository/central</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring</id>
+			<name>Aliyun maven spring</name>
+			<url>https://maven.aliyun.com/repository/spring</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-release</id>
+			<name>Spring release</name>
+			<url>https://repo.spring.io/release</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>google</id>
+			<name>Aliyun maven google</name>
+			<url>https://maven.aliyun.com/repository/google</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<dependencyManagement>
 		<dependencies>
@@ -482,16 +529,24 @@
 					<plugin>
 						<groupId>org.graalvm.nativeimage</groupId>
 						<artifactId>native-image-maven-plugin</artifactId>
-						<version>21.0.0.2</version>
+						<version>21.2.0</version>
 						<configuration>
 							<mainClass>${bootstrap-classname}</mainClass>
+							<!-- see:https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/#native-image-options-useful -->
+							<!-- Unsupported options: -initialize-at-build-time=org.springframework.util.unit.DataSize, without class or package specified is not 
+								supported since Spring Native for GraalVM is designed to work with runtime class initialization by default (a selected set of classes are enabled 
+								at buildtime). -->
 							<buildArgs>
 								-H:+ReportExceptionStackTraces
+								-H:+PrintAnalysisCallTree
+								-H:+PrintClassInitialization
+								-H:Log=registerResource:3
 								--verbose
 								--static
 								--no-fallback
+								--allow-incomplete-classpath
 								--report-unsupported-elements-at-runtime
-								--initialize-at-build-time=org.springframework.util.unit.DataSize
+								--install-exit-handlers
 							</buildArgs>
 						</configuration>
 						<executions>
@@ -503,14 +558,15 @@
 							</execution>
 						</executions>
 					</plugin>
+					<!-- see:https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/#aot-build-setup-configuration -->
 					<plugin>
 						<groupId>org.springframework.experimental</groupId>
 						<artifactId>spring-aot-maven-plugin</artifactId>
 						<version>${spring-native.version}</version>
 						<configuration>
-							<!-- 切换插件实际提供给本机图像编译器的配置 - native （默认）生成 AOT Spring 工厂、应用程序上下文引导程序、本机配置、本机图像.properties 以及替换。 - native-agent 旨在与跟踪代理生成的配置一起使用。生成 AOT Spring 
-								工厂、应用程序上下文引导程序、native-image.properties 以及替换。 -->
+							<mainClass>${bootstrap-classname}</mainClass>
 							<mode>native</mode>
+							<removeSpelSupport>false</removeSpelSupport>
 						</configuration>
 						<executions>
 							<execution>
