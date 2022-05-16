@@ -59,7 +59,7 @@ public class RoundRobinCanaryLoadBalancerChooser extends AbstractCanaryLoadBalan
                 return null;
             }
 
-            int nextInstanceIndex = incrementAndGetModulo(allCount);
+            int nextInstanceIndex = incrementAndGetModulo(avaCount);
             chosenInstance = availableInstances.get(nextInstanceIndex);
 
             if (isNull(chosenInstance)) {

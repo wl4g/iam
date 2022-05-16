@@ -64,12 +64,13 @@ public class IamCircuitBreakerAutoConfiguration {
      */
     @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultReactiveResilience4JCircuitBreakerCustomizer(
-            IamCircuitBreakerProperties config,
+            IamCircuitBreakerProperties circuitBreakerConfig,
             DefaultCircuitBreakerCustomizer customizer) {
         return factory -> {
-            factory.configureDefault(id -> new Resilience4JConfigBuilder(id).circuitBreakerConfig(config.toCircuitBreakerConfig())
-                    .timeLimiterConfig(config.toTimeLimiterConfig())
-                    .build());
+            factory.configureDefault(
+                    id -> new Resilience4JConfigBuilder(id).circuitBreakerConfig(circuitBreakerConfig.toCircuitBreakerConfig())
+                            .timeLimiterConfig(circuitBreakerConfig.toTimeLimiterConfig())
+                            .build());
             factory.addCircuitBreakerCustomizer(customizer, customizer.getClass().getSimpleName());
         };
     }

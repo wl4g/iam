@@ -37,24 +37,60 @@ import lombok.ToString;
 @ToString
 public class IamCircuitBreakerProperties {
 
+    /**
+     * 
+     */
     private TimeLimiterProperties timeLimiter = new TimeLimiterProperties();
-    // 在单位时间窗口内调用失败率达到50%后会启动断路器
+
+    /**
+     * 在单位时间窗口内调用失败率达到50%后会启动断路器
+     */
     private float failureRateThreshold = CircuitBreakerConfig.DEFAULT_FAILURE_RATE_THRESHOLD;
-    // 在半开状态下允许进行正常调用的次数
+
+    /**
+     * 在半开状态下允许进行正常调用的次数
+     */
     private int permittedNumberOfCallsInHalfOpenState = CircuitBreakerConfig.DEFAULT_PERMITTED_CALLS_IN_HALF_OPEN_STATE;
-    // 时间窗口的大小默认60秒
+
+    /**
+     * 时间窗口的大小默认60秒
+     */
     private int slidingWindowSize = CircuitBreakerConfig.DEFAULT_SLIDING_WINDOW_SIZE;
-    // 滑动窗口的类型
+
+    /**
+     * 滑动窗口的类型
+     */
     private SlidingWindowType slidingWindowType = CircuitBreakerConfig.DEFAULT_SLIDING_WINDOW_TYPE;
-    // 在单位时间窗口内最少需要几次调用才能开始进行统计计算
+
+    /**
+     * 在单位时间窗口内最少需要几次调用才能开始进行统计计算
+     */
     private int minimumNumberOfCalls = CircuitBreakerConfig.DEFAULT_MINIMUM_NUMBER_OF_CALLS;
+
+    /**
+     * 
+     */
     private boolean writableStackTraceEnabled = CircuitBreakerConfig.DEFAULT_WRITABLE_STACK_TRACE_ENABLED;
-    // 在半开状态下允许进行正常调用的次数
+
+    /**
+     * 在半开状态下允许进行正常调用的次数
+     */
     private boolean automaticTransitionFromOpenToHalfOpenEnabled = false;
-    // 断路器打开状态转换为半开状态需要等待时间(秒)
+
+    /**
+     * 断路器打开状态转换为半开状态需要等待时间(秒)
+     */
     private Duration waitIntervalFunctionInOpenState = Duration
             .ofSeconds(CircuitBreakerConfig.DEFAULT_WAIT_DURATION_IN_OPEN_STATE);
+
+    /**
+     * 
+     */
     private float slowCallRateThreshold = CircuitBreakerConfig.DEFAULT_SLOW_CALL_RATE_THRESHOLD;
+
+    /**
+     * 
+     */
     private Duration slowCallDurationThreshold = Duration.ofSeconds(CircuitBreakerConfig.DEFAULT_SLOW_CALL_DURATION_THRESHOLD);
 
     public TimeLimiterConfig toTimeLimiterConfig() {

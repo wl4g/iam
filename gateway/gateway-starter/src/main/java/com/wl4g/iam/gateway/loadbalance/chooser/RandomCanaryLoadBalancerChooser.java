@@ -54,7 +54,7 @@ public class RandomCanaryLoadBalancerChooser extends AbstractCanaryLoadBalancerC
                 return null;
             }
 
-            int nextInstanceIndex = current().nextInt(0, availableInstances.size());
+            int nextInstanceIndex = current().nextInt(0, avaCount);
             chosenInstance = availableInstances.get(nextInstanceIndex);
 
             if (isNull(chosenInstance)) {
