@@ -103,7 +103,15 @@ public class IpFilterProperties {
     @SuperBuilder
     @AllArgsConstructor
     public static class IPSubnet {
+
+        /**
+         * The allow or deny IP sub-net segments.
+         */
         private boolean allow;
+
+        /**
+         * The matching sub-net CIDRs
+         */
         private List<String> cidrs;
 
         public IPSubnet() {

@@ -67,6 +67,7 @@ spring:
                     "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
                 subnets:
                   - allow: false ## Default by false
+                    ## The matching sub-net CIDRs
                     cidrs: ['1.1.1.0/24'] ## Default by []
             ##
             ## ------------------------------------------------------

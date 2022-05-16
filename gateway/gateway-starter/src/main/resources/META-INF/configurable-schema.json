@@ -5,6 +5,7 @@
     "requestId": "0000000000000000",
     "data": {
         "gateway_routes_schema": {
+            "version": "3.0.0-RC3",
             "predicates": [
                 {
                     "type": "Path",
@@ -888,6 +889,31 @@
                                 {
                                     "name": "HttpVia",
                                     "help": ""
+                                }
+                            ]
+                        },
+                        {
+                            "name": "subnets",
+                            "type": "array",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "",
+                            "childrens": [
+                                {
+                                    "name": "allow",
+                                    "type": "boolean",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "false",
+                                    "help": "The allow or deny IP subnet segments."
+                                },
+                                {
+                                    "name": "cidrs",
+                                    "type": "array",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": [],
+                                    "help": "The matching subnet CIDRs"
                                 }
                             ]
                         }
