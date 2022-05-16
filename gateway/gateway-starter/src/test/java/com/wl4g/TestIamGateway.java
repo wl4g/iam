@@ -15,19 +15,8 @@
  */
 package com.wl4g;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-//import com.wl4g.shell.springboot.annotation.EnableShellServer;
-
-//@EnableIamClient
-//@EnableUcmClient
-//@EnableShellServer
-@SpringBootApplication
 public class TestIamGateway {
-
     public static void main(String[] args) {
-        SpringApplication.run(TestIamGateway.class, args);
+        IamGateway.main(args);
     }
-
 }

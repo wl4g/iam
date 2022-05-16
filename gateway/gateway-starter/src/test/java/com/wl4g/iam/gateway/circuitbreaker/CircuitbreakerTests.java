@@ -48,7 +48,7 @@ public class CircuitbreakerTests {
 
     @Test
     @RepeatedTest(100)
-    public void testHelloPredicates() throws InterruptedException {
+    public void testRequestWithCircuitbreaker() throws InterruptedException {
         // 低于50次时，在0和1之间切换，也就是一次正常一次超时，
         // 超过50次时，固定为0，此时每个请求都不会超时
         int gen = (i < 50) ? (i % 2) : 0;
