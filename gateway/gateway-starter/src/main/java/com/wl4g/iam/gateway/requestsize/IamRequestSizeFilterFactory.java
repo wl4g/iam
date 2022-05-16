@@ -29,6 +29,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestsize.config.IamRequestSizeProperties;
+import com.wl4g.iam.gateway.requestsize.config.IamRequestSizeProperties.RequestSizeProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 
@@ -90,7 +91,7 @@ public class IamRequestSizeFilterFactory extends AbstractGatewayFilterFactory<Ia
         }
     }
 
-    public static class Config extends IamRequestSizeProperties {
+    public static class Config extends RequestSizeProperties {
     }
 
     @AllArgsConstructor

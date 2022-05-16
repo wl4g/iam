@@ -38,12 +38,22 @@ import lombok.ToString;
 @ToString
 public class IamRequestSizeProperties {
 
-    private DataSize maxBodySize = DataSize.ofBytes(5000000L);
+    private RequestSizeProperties requestSize = new RequestSizeProperties();
 
-    public IamRequestSizeProperties validate() {
-        notNull(getMaxBodySize(), "maxBodySize may not be null");
-        isTrue(getMaxBodySize().toBytes() > 0, "maxBodySize must be greater than 0");
-        return this;
+    @Getter
+    @Setter
+    @Validated
+    @ToString
+    public static class RequestSizeProperties {
+
+        private DataSize maxBodySize = DataSize.ofBytes(5000000L);
+
+        public RequestSizeProperties validate() {
+            notNull(getMaxBodySize(), "maxBodySize may not be null");
+            isTrue(getMaxBodySize().toBytes() > 0, "maxBodySize must be greater than 0");
+            return this;
+        }
+
     }
 
 }
