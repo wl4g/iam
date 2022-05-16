@@ -409,7 +409,7 @@
                     ]
                 },
                 {
-                    "type": "CircuitBreaker",
+                    "type": "IamCircuitBreaker",
                     "repeat": "false",
                     "help": "",
                     "args": [
@@ -505,7 +505,7 @@
                     ]
                 },
                 {
-                    "type": "Retry",
+                    "type": "IamRetry",
                     "repeat": "false",
                     "help": "",
                     "args": [
@@ -1006,7 +1006,7 @@
                     ]
                 },
                 {
-                    "name": "CacheFilter",
+                    "name": "ResponseCache",
                     "repeat": "false",
                     "multi": "false",
                     "help": "",
@@ -1019,36 +1019,74 @@
                             "help": "",
                             "options": [
                                 {
-                                    "name": "localCache",
+                                    "name": "SimpleCache",
                                     "help": ""
                                 },
                                 {
-                                    "name": "redisCache",
+                                    "name": "EhCache",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "RedisCache",
                                     "help": ""
                                 }
                             ]
                         },
                         {
-                            "name": "localCache",
+                            "name": "simple",
                             "type": "object",
                             "repeat": "false",
                             "multi": "false",
                             "help": "",
                             "childrens": [
                                 {
-                                    "name": "maxExpireMs",
+                                    "name": "maximumSize",
                                     "type": "int",
                                     "multi": "false",
                                     "repeat": "false",
-                                    "defaultValue": "300000",
+                                    "defaultValue": "100_000",
                                     "help": ""
                                 },
+                                {
+                                    "name": "expireAfterAccessMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "60_000",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "expireAfterWriteMs",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "600_000",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "concurrencyLevel",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "4",
+                                    "help": ""
+                                }
+                            ]
+                        },
+                        {
+                            "name": "ehcache",
+                            "type": "object",
+                            "repeat": "false",
+                            "multi": "false",
+                            "help": "",
+                            "childrens": [
                                 {
                                     "name": "eliminationAlg",
                                     "type": "enum",
                                     "repeat": "false",
                                     "multi": "false",
-                                    "help": "",
+                                    "defaultValue": "LRU",
+                                    "help": "The cached data elimination algorithm.",
                                     "options": [
                                         {
                                             "name": "LFU",
@@ -1063,16 +1101,56 @@
                                             "help": ""
                                         }
                                     ]
+                                },
+                                {
+                                    "name": "cacheNamePrefix",
+                                    "type": "string",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "ResponseCache",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "offHeapEntries",
+                                    "type": "int",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "100_000",
+                                    "help": ""
+                                },
+                                {
+                                    "name": "offHeapSize",
+                                    "type": "string",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "128MB",
+                                    "help": "The number of data size not persisted to keep in memory. must be less than diskSize"
+                                },
+                                {
+                                    "name": "diskSize",
+                                    "type": "string",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "512MB",
+                                    "help": "The number of total data size not persisted to keep in disk. must be greater than offHeapSize"
                                 }
                             ]
                         },
                         {
-                            "name": "redisCache",
+                            "name": "redis",
                             "type": "object",
                             "repeat": "false",
                             "multi": "false",
                             "help": "",
                             "childrens": [
+                                {
+                                    "name": "cachePrefix",
+                                    "type": "string",
+                                    "multi": "false",
+                                    "repeat": "false",
+                                    "defaultValue": "iam:gateway:responsecache:data",
+                                    "help": ""
+                                },
                                 {
                                     "name": "expireMs",
                                     "type": "int",

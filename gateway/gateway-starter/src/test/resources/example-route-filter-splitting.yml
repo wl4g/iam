@@ -343,7 +343,7 @@ spring:
             - RewritePath=/productpage-with-ResponseCache/(?<segment>.*),/$\{segment}
             - name: ResponseCache
               args:
-                provider: SimpleCache ## Options(SimpleCache|EhCache|RedisCache)
+                provider: SimpleCache ## Default by SimpleCache, options(SimpleCache|EhCache|RedisCache)
                 simple:
                   ## If you wish the cache should not exceed this number of entries, the cache will evict recently or infrequently
                   ## used entries when it does, WARNING: the cache may evict entries before this limit is exceeded - usually
@@ -354,7 +354,7 @@ spring:
                   ## The expiration interval based on access time, all cache entries are updated only by write operations.
                   expireAfterWriteMs: 600_000 ## Default by 600_000
                   ## The number of concurrent cache operations, that is, the number of underlying cache block/segment locks.
-                  concurrencyLevel: 4 ## Default by 4;
+                  concurrencyLevel: 4 ## Default by 4
                 ehcache:
                   ## The cached data elimination algorithm.
                   eliminationAlg: LRU ## Default by LRU, options(LRU|LFU|FIFO)
