@@ -85,7 +85,7 @@ public class IamRequestSizeFilterFactory extends AbstractGatewayFilterFactory<Ia
 
     private void applyDefaultToConfig(Config config) {
         try {
-            ConfigBeanUtils.configureWithDefault(new Config(), config, requestSizeConfig);
+            ConfigBeanUtils.configureWithDefault(new Config(), config, requestSizeConfig.getRequestSize());
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
