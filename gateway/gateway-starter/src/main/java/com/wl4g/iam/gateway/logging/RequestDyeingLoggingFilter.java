@@ -17,7 +17,9 @@ package com.wl4g.iam.gateway.logging;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,7 +85,9 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             HttpHeaders headers,
             String traceId,
             String requestMethod) {
-        String requestUri = exchange.getRequest().getURI().toString();
+
+        URI uri = exchange.getRequest().getURI();
+        String requestUri = uri.getPath();
 
         boolean log1_2 = isLoglevelRange(exchange, 1, 2);
         boolean log3_10 = isLoglevelRange(exchange, 3, 10);
@@ -103,7 +107,7 @@ public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             // GET /example/foo/bar)
             requestLog.append("{} {} :: {}\n");
             requestLogArgs.add(requestMethod);
-            requestLogArgs.add(requestUri);
+            requestLogArgs.add(requestUri.concat("?").concat(trimToEmpty(uri.getQuery())));
             requestLogArgs.add(traceId);
         }
         // Print request headers.
