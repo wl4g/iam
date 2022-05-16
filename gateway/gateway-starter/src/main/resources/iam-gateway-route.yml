@@ -38,7 +38,7 @@ spring:
         ## Openapi for energy data
         ## -------------------------------------------------
         ##
-        - id: v2-energy-openapi-service-route
+        - id: energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
             - Path=/openapi/v2/**,/v2/**
@@ -87,8 +87,7 @@ spring:
                 sign-hashing-required-include-params: [appId, timestamp, nonce] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
             ## Limit for request content-length
-            ## see:org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
-            - name: RequestSize
+            - name: IamRequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
             - name: FaultInjector
@@ -231,7 +230,7 @@ spring:
         ## Openapi for aliyun iot marketing 
         ## -------------------------------------------------
         ##
-        - id: v1-alimarket-openapi-service-route
+        - id: alimarket-openapi-service-route
           uri: lb://alimarket-openapi-service
           predicates:
             - Path=/alimarket/v1/**
@@ -262,10 +261,9 @@ spring:
                 sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
             ## Limit for request content-length
-            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
-            - name: RequestSize
+            - name: IamRequestSize
               args:
-                max-size: 10485760 ## Default by 5MB
+                max-body-size: 10485760 ## Default by 5MB
             - name: IamRequestLimiter
               args:
                 #denyEmptyKey: true ## Default are set(recommended)

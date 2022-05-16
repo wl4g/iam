@@ -140,7 +140,7 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            URI requestUrl = exchange.getRequiredAttribute(GATEWAY_REQUEST_URL_ATTR);
+            URI requestUrl = exchange.getAttributeOrDefault(GATEWAY_REQUEST_URL_ATTR, exchange.getRequest().getURI());
             String scheme = requestUrl.getScheme();
 
             // Check if request traffic needs to be replicated.

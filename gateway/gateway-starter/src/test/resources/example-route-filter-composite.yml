@@ -71,14 +71,13 @@ spring:
                     cidrs: ['1.1.1.0/24'] ## Default by []
             ##
             ## ------------------------------------------------------
-            ## Filter configuration for testing RequestSize
+            ## Filter configuration for testing IamRequestSize
             ## ------------------------------------------------------
             ##
             ## Limit for request content-length
-            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
-            - name: RequestSize
+            - name: IamRequestSize
               args:
-                max-size: 10485760 ## Default by 5MB
+                max-body-size: 10485760 ## Default by 5MB
             ##
             ## ------------------------------------------------------
             ## Filter configuration for testing IamRequestLimiter

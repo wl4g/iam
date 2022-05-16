@@ -425,7 +425,6 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
     @AllArgsConstructor
     public static enum SignHashingMode {
 
-        @Deprecated
         SimpleParamsBytesSortedHashing(args -> {
             Config config = (Config) args[0];
             byte[] storedAppSecret = (byte[]) args[1];

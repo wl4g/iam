@@ -70,13 +70,13 @@ spring:
                     cidrs: ['1.1.1.0/24'] ## Default by []
         ##
         ## ------------------------------------------------------
-        ## Routing configuration for testing filter RequestSize
+        ## Routing configuration for testing filter IamRequestSize
         ## ------------------------------------------------------
         ##
-        - id: productpage-service-route-with-RequestSize
+        - id: productpage-service-route-with-IamRequestSize
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-RequestSize/**
+            - Path=/productpage-with-IamRequestSize/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -85,12 +85,11 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-RequestSize/(?<segment>.*),/$\{segment}
+            - RewritePath=/productpage-with-IamRequestSize/(?<segment>.*),/$\{segment}
             ## Limit for request content-length
-            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
-            - name: RequestSize
+            - name: IamRequestSize
               args:
-                max-size: 10485760 ## Default by 5MB
+                max-body-size: 10485760 ## Default by 5MB
         ##
         ## ------------------------------------------------------
         ## Routing configuration for testing filter FaultInjector

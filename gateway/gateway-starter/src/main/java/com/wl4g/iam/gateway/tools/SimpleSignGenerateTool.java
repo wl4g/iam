@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.security.sign;
+package com.wl4g.iam.gateway.tools;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -26,13 +26,13 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * {@link SimpleSignTests}
+ * {@link SimpleSignGenerateTool}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-04
  * @since
  */
-public class SimpleSignTests {
+public class SimpleSignGenerateTool {
 
     /**
      * Generate IAM open API signature.
@@ -117,28 +117,45 @@ public class SimpleSignTests {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        String appId = "oi554a94bc416e4edd9ff963ed0e9e25e6c10545";
-        String appSecret = "5aUpyX5X7wzC8iLgFNJuxqj3xJdNQw8yS";
-        String nonce = generateNonce(16);
+        if (args.length == 1 && args[0].endsWith("help")) {
+            System.out.println("Usage: java -jar iam-gateway-{version}.jar <myAppId> <myAppSecret>");
+            System.exit(0);
+        }
+
+        String appId = "oi".concat(generateNonce(32)).toLowerCase();
+        String appSecret = generateNonce(32).toLowerCase();
+        if (args.length >= 2) {
+            appId = args[0];
+            appSecret = args[1];
+        }
+        String nonce = generateNonce(32);
         long timestamp = currentTimeMillis();
         String signature = generateSign(appId, appSecret, nonce, timestamp);
 
-        out.println("===== :: Generated simple signature :: =====");
-        out.println(format("appId=%s", appId));
-        out.println(format("nonce=%s", nonce));
-        out.println(format("timestamp=%s", timestamp));
-        out.println(format("signature=%s", signature));
+        out.println("--- ::: Generated Simple Signature Parameters ::: ---\n");
+        out.println(format("appId:     %s", appId));
+        out.println(format("appSecret: %s", appSecret));
+        out.println(format("nonce:     %s", nonce));
+        out.println(format("timestamp: %s", timestamp));
+        out.println(format("signature: %s", signature));
         out.println();
 
-        out.println(format(
-                "curl -v 'http://localhost:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s&response_type=json'",
-                appId, nonce, timestamp, signature));
-
+        out.println(format("--- HTTP Request: ---\n"));
+        out.println("export remoteIp=127.0.0.1");
+        out.println(format("curl -vL \\\n"
+                + "-H 'X-Iscg-Trace: y' \\\n-H 'X-Iscg-Log: y' \\\n-H 'X-Iscg-Log-Level: 10' \\\n-H 'X-Response-Type: 10' \\\n"
+                + "\"http://$remoteIp:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s\"", appId, nonce,
+                timestamp, signature));
+        out.println();
+        out.println("----------------------");
         out.println();
 
-        out.println(format(
-                "curl -v --cacert ca.pem --cert client1.pem --key client1-key.pem 'https://localhost:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s&response_type=json'",
-                appId, nonce, timestamp, signature));
+        out.println(format("--- HTTPs Request: ---\n"));
+        out.println("export remoteIp=127.0.0.1");
+        out.println(format("curl -vsSkL \\\n--cacert a.pem \\\n--cert client1.pem \\\n--key client1-key.pem \\\n"
+                + "-H 'X-Iscg-Trace: y' \\\n-H 'X-Iscg-Log: y' \\\n-H 'X-Iscg-Log-Level: 10' \\\n-H 'X-Response-Type: 10' \\\n"
+                + "\"https://$remoteIp:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s\"", appId, nonce,
+                timestamp, signature));
     }
 
 }

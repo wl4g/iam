@@ -56,7 +56,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author Ryan Baxter
  */
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({ "rawtypes" })
 public abstract class IamSpringCloudCircuitBreakerFilterFactory
         extends AbstractGatewayFilterFactory<IamSpringCloudCircuitBreakerFilterFactory.Config> {
 
@@ -95,7 +95,10 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
 
     @Override
     public GatewayFilter apply(Config config) {
-        ReactiveCircuitBreaker cb = reactiveCircuitBreakerFactory.create(config.getId());
+        //
+        // [FIXED] ADD Use member variables
+        //
+        this.cb = reactiveCircuitBreakerFactory.create(config.getId());
         Set<HttpStatus> statuses = config.getStatusCodes()
                 .stream()
                 .map(HttpStatusHolder::parse)

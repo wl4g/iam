@@ -260,10 +260,10 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
 
     public static final String LOG_REQUEST_BEGIN = "\n--- <Iscg Request> -------\n";
     public static final String LOG_REQUEST_BODY = "\\r\\n\n{}";
-    public static final String LOG_REQUEST_END = "\nEOF ----------------------\n";
+    public static final String LOG_REQUEST_END = "EOF\n";
     public static final String LOG_RESPONSE_BEGIN = "\n--- <Iscg Response> ------\n";
     public static final String LOG_RESPONSE_BODY = "\\r\\n\n{}";
-    public static final String LOG_RESPONSE_END = "\nEOF ----------------------\n";
+    public static final String LOG_RESPONSE_END = "EOF\n";
     public static final String VAR_ROUTE_ID = "routeId";
     public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
     public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";

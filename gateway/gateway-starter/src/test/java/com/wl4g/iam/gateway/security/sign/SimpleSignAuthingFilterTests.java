@@ -41,6 +41,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
+import com.wl4g.iam.gateway.tools.SimpleSignGenerateTool;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
@@ -82,7 +83,6 @@ public class SimpleSignAuthingFilterTests {
         // return config;
         // }
 
-        @SuppressWarnings("deprecation")
         @Bean
         public RouteLocator configureTestRoutes(RouteLocatorBuilder builder) {
             // custom store secret.
@@ -111,10 +111,10 @@ public class SimpleSignAuthingFilterTests {
     }
 
     @Test
-    public void testEnvParameterSimpleParamsBytesSortedHashingS256() throws Exception {
-        String nonce = SimpleSignTests.generateNonce(16);
+    public void testEnvStoreSimpleParamsBytesSortedHashingS256() throws Exception {
+        String nonce = SimpleSignGenerateTool.generateNonce(16);
         long timestamp = currentTimeMillis();
-        String sign = SimpleSignTests.generateSign(TEST_APPID, TEST_APPSECRET, nonce, timestamp);
+        String sign = SimpleSignGenerateTool.generateSign(TEST_APPID, TEST_APPSECRET, nonce, timestamp);
 
         // String uri =
         // format("http://localhost:%s%s?appId=%s&appSecret=%s&nonce=%s&timestamp=%s&signature=%s",

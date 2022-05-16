@@ -281,12 +281,12 @@
                     ]
                 },
                 {
-                    "type": "RequestSize",
+                    "type": "IamRequestSize",
                     "repeat": "false",
                     "help": "",
                     "args": [
                         {
-                            "name": "maxSize",
+                            "name": "maxBodySize",
                             "type": "int",
                             "multi": "false",
                             "repeat": "false",
