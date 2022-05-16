@@ -68,8 +68,8 @@ public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
             GatewayFilterChain chain,
             HttpHeaders headers,
             String traceId,
-            String requestMethod,
-            String requestUri) {
+            String requestMethod) {
+        String requestUri = exchange.getRequest().getURI().toString();
 
         boolean log1_2 = isLoglevelRange(exchange, 1, 2);
         boolean log3_10 = isLoglevelRange(exchange, 3, 10);

@@ -89,7 +89,7 @@ spring:
             ## Limit for request content-length
             - name: IamRequestSize
               args:
-                max-body-size: 10485760 ## Default by 5MB
+                max-body-size: 5MB ## Default by 5MB
         ##
         ## ------------------------------------------------------
         ## Routing configuration for testing filter FaultInjector

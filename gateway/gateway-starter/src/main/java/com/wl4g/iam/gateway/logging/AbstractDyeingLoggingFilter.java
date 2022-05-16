@@ -110,13 +110,12 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         }
         String traceId = headers.getFirst(CoreInfraConstants.TRACE_REQUEST_ID_HEADER);
         String requestMethod = request.getMethodValue();
-        String requestUri = request.getURI().getRawPath();
 
         // Sets the state of the dyed log request to notify the back-end
         // services to print the log for the current request.
         request.mutate().header(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId).build();
 
-        return doFilterInternal(exchange, chain, headers, traceId, requestMethod, requestUri);
+        return doFilterInternal(exchange, chain, headers, traceId, requestMethod);
     }
 
     protected abstract Mono<Void> doFilterInternal(
@@ -124,8 +123,7 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
             GatewayFilterChain chain,
             HttpHeaders headers,
             String traceId,
-            String requestMethod,
-            String requestUri);
+            String requestMethod);
 
     /**
      * Check if enable print logs needs to be filtered

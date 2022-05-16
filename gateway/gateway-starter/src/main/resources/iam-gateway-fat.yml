@@ -8,12 +8,12 @@
 # limitations under the License.
 #
 
-# #### Environment(FAT Test) configuration. ####
+# #### Environment(Dev) configuration. ####
 #
 spring:
   redis:
     cluster:
-      nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.fat:6379,redis.iam.wl4g.fat:6380,redis.iam.wl4g.fat:6381,redis.iam.wl4g.fat:7379,redis.iam.wl4g.fat:7380,redis.iam.wl4g.fat:7381}
+      nodes: ${IAM_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
     timeout: 10000ms
     password: ${REDIS_PASSWD:zzx!@#$%}
     lettuce:
@@ -27,12 +27,12 @@ spring:
         simple: # for testing
           instances:
             default-fallback-service:
-              - instanceId: n1.default-fallback-service:${server.port}
-                uri: http://127.0.0.1:${server.port}/_fallback
+              - instanceId: default-fallback-service
+                uri: http://localhost:${server.port}/_fallback
                 metadata: {}
             energy-openapi-service:
               - instanceId: n2.v1-energy-openapi-service:28092
-                uri: http://127.0.0.1:28092
+                uri: http://localhost:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
@@ -41,18 +41,13 @@ spring:
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
-              - instanceId: n2.v2-energy-openapi-service:28092
-                uri: http://127.0.0.1:28092
-                metadata:
-                  Iscg-Canary-Label-Header: v2-canary-header
-                  Iscg-Canary-Label-Query: v2-canary-query
             alimarket-openapi-service:
-              - instanceId: n2.v1-energy-openapi-service:28092
+              - instanceId: n2.v1-alimarket-openapi-service:28092
                 uri: http://127.0.0.1:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
                   Iscg-Canary-Label-Query: v1-canary-query
-              - instanceId: n3.v1-energy-openapi-service:28092
+              - instanceId: n3.v1-alimarket-openapi-service:28092
                 uri: http://localhost:28092
                 metadata:
                   Iscg-Canary-Label-Header: v1-canary-header
