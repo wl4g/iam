@@ -90,7 +90,7 @@ public abstract class IamGatewayUtil {
 
         public static final int ORDER_TRAFFIC_REPLICATION = getIntegerProperty("ISCG_ORDER_TRAFFIC_REPLICATION", -30);
 
-        public static final int ORDER_REQUEST_CACHE = getIntegerProperty("ISCG_ORDER_REQUEST_CACHE", -20);
+        public static final int ORDER_RESPONSE_CACHE = getIntegerProperty("ISCG_ORDER_RESPONSE_CACHE", -20);
 
         public static final int ORDER_RETRY = getIntegerProperty("ISCG_ORDER_RETRY", -10);
 

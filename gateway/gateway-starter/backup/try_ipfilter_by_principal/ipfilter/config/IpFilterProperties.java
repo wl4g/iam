@@ -15,31 +15,41 @@
  */
 package com.wl4g.iam.gateway.ipfilter.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
+import static java.util.Arrays.asList;
+
+import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.ipfilter.IpSubnetFilterFactory;
-import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
+import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * {@link IpFilterAutoConfiguration}
+ * {@link IpFilterProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-05 v3.0.0
  * @since v3.0.0
  */
-public class IpFilterAutoConfiguration {
+@Getter
+@Setter
+@Validated
+@ToString
+public class IpFilterProperties {
 
-    @Bean
-    @ConfigurationProperties(prefix = GatewayIAMConstants.CONF_PREFIX_IAM_GATEWAY_IPFILTER)
-    public IpFilterProperties ipFilterProperties() {
-        return new IpFilterProperties();
-    }
+    private String configPrefix = GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_IPFILTER_CONF;
 
-    @Bean
-    public IpSubnetFilterFactory ipSubnetFilterFactory(IpFilterProperties ipListConfig, IamGatewayMetricsFacade metricsFacade) {
-        return new IpSubnetFilterFactory(ipListConfig, metricsFacade);
+    private DefaultFilterProperties defaultFilter = new DefaultFilterProperties();
+
+    @Getter
+    @Setter
+    @Validated
+    @ToString
+    public static class DefaultFilterProperties extends IpSubnetFilterFactory.Config {
+        private FilterStrategy strategy = FilterStrategy.builder().allow(true).cidrs(asList("127.0.0.1")).build();
     }
 
 }

@@ -33,6 +33,11 @@ spring:
                 root-cause-exception-type-header-name: X-Iscg-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
                 root-cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
                 cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Irregular setter method naming?? bug??
+        ##
+        ## -------------------------------------------------
+        ## Openapi for energy data
+        ## -------------------------------------------------
+        ##
         - id: v2-energy-openapi-service-route
           uri: lb://energy-openapi-service ## E.g: http://openapi.example-internal.com
           predicates:
@@ -44,6 +49,22 @@ spring:
             ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
             #- Weight=v2-energy-openapi-service,5
           filters:
+            - name: IpFilter
+              args:
+                ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
+                preferRejectOnCidrConflict: true ## Default by true
+                ## The accept the request when neither the whitelist nor the blacklist match.
+                acceptNotMatchCidr: true ## Default by true
+                ## The allow all local addresses to pass.
+                anyLocalAddressAllowed: true ## Default by true
+                statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
+                forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
+                    "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
+                    "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
+                    "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
+                subnets:
+                  - allow: false ## Default by false
+                    cidrs: ['1.1.1.0/24'] ## Default by []
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
             #- RewritePath=/openapi/v2/(?<segment>.*), /openapi/v2/$\{segment}
             #- StripPrefix=1
@@ -70,9 +91,34 @@ spring:
             - name: RequestSize
               args:
                 max-size: 10485760 ## Default by 5MB
+            - name: FaultInjector
+              args:
+                ## The enabled fault injector providers.
+                provider: FixedDelay ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
+                ## The request to abort fault injector configuration.
+                abort:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
+                  ## The HttpStatus returned when the fault strategy is meet.
+                  statusCode: 500 ## Default by 500
+                ## The request to fixed delay fault injector configuration.
+                fixedDelay:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
+                  delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
+                ## The request to random range delay fault injector configuration.
+                rangeDelay:
+                  ## The percentage of requests that require fault injection match enabled.
+                  ## which is equivalent to another and condition after match the SPEL expression.
+                  percentage: 0.5d ## Default by 1.0d
+                  minDelayMs: 1000 ## Default by 1000
+                  maxDelayMs: 5000 ## Default by 5000
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Header ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -87,7 +133,8 @@ spring:
                   includeHeaders: false
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -99,7 +146,8 @@ spring:
                   includeHeaders: false
             - name: IamRequestLimiter
               args:
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended).
+                #denyEmptyKey: true ## Default are set(recommended)
+                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
@@ -109,6 +157,45 @@ spring:
                   provider: RedisQuotaLimiter
                   ## whether or not to include headers containing rate limiter info. Default by false
                   includeHeaders: false
+            - name: TrafficReplicator
+              ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
+              args:
+                targetUris: ["http://localhost:8888/"]
+                ## The sampling percentage rate of traffic that needs to be replication.
+                percentage: 1d ## Default by 1d
+                #wiretap: false ## Default by false
+                #connectTimeout: 45_000 ## Default by 45s
+                ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+                #responseTimeout: 60_000 ## Default by 60s
+                #maxHeaderSize: 65535 ## Default no set.
+                ##maxInitialLineLength: ## Default by null
+                ##proxy:
+                ## host:
+                ## port:
+                ## username:
+                ## password:
+                ## non-proxy-hosts-pattern:
+                #pool:
+                #  name: proxy ## Default by proxy
+                #  #metrics: true ## Default by false
+                #  #max-idle-time: 
+                #  #acquire-timeout: 45000 # Default by 45000ms
+                #websocket:
+                #  proxy-ping: true ## Default by true
+                #  max-frame-payload-length: 65535 ## Default no set.
+                #  #max-connections: ## Default by: max(availableProcessors(),8)*2)
+                #ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+                #  default-configuration-type: TCP ## Default by 'TCP'
+                #  handshake-timeout: 10000ms ## Default by 10000ms
+                #  close-notify-flush-timeout: 3000ms ## Default by 3000ms
+                #  close-notify-read-timeout: 0 ## Default by 0
+                #  #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+                #  #key-store: ## Keystore path for Netty HttpClient.
+                #  #key-store-type:
+                #  #key-store-password:
+                #  #key-store-provider:
+                #  #trusted-x509-certificates:
+                #  #use-insecure-trust-manager: true ## Default by false
             - name: IamRetry
               args:
                 retries: 3
@@ -139,6 +226,11 @@ spring:
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-statuses: [200,404] ## Default by 200
+        ##
+        ## -------------------------------------------------
+        ## Openapi for aliyun iot marketing 
+        ## -------------------------------------------------
+        ##
         - id: v1-alimarket-openapi-service-route
           uri: lb://alimarket-openapi-service
           predicates:
@@ -216,7 +308,7 @@ spring:
                   provider: RedisQuotaLimiter
                   ## whether or not to include headers containing rate limiter info. Default by false
                   includeHeaders: false
-            - name: Retry
+            - name: IamRetry
               args:
                 retries: 3
                 statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
@@ -230,7 +322,7 @@ spring:
             ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
             ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
             ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
-            - name: CircuitBreaker
+            - name: IamCircuitBreaker
               args:
                 name: alimarket-openapi-service-circuitbreaker
                 fallback-uri: forward:/_fallback
@@ -245,84 +337,3 @@ spring:
                   timeout-ms: 5_000 ## Default by 5_000ms
                   path: /healthz ## Default by '/healthz'
                   expect-statuses: [200,404] ## Default by 200
-        - id: secure-httpbin-service-route
-          uri: https://www.httpbin.org/
-          predicates:
-            - Path=/httpbin/secure/**
-          filters:
-            - RewritePath=/httpbin/secure/(?<segment>.*),/$\{segment}
-        - id: no-secure-httpbin-service-route
-          uri: http://www.httpbin.org/
-          predicates:
-            - Path=/httpbin/nosecure/**
-          filters:
-            - RewritePath=/httpbin/nosecure/(?<segment>.*),/$\{segment}
-            - name: TrafficReplicator
-              ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
-              args:
-                targetUris: ["http://localhost:8888/"]
-                ## The sampling percentage rate of traffic that needs to be replication.
-                percentage: 1d ## Default by 1d
-                #wiretap: false ## Default by false
-                #connectTimeout: 45_000 ## Default by 45s
-                ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
-                #responseTimeout: 60_000 ## Default by 60s
-                #maxHeaderSize: 65535 ## Default no set.
-                ##maxInitialLineLength: ## Default by null
-                ##proxy:
-                ## host:
-                ## port:
-                ## username:
-                ## password:
-                ## non-proxy-hosts-pattern:
-                #pool:
-                #  name: proxy ## Default by proxy
-                #  #metrics: true ## Default by false
-                #  #max-idle-time: 
-                #  #acquire-timeout: 45000 # Default by 45000ms
-                #websocket:
-                #  proxy-ping: true ## Default by true
-                #  max-frame-payload-length: 65535 ## Default no set.
-                #  #max-connections: ## Default by: max(availableProcessors(),8)*2)
-                #ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
-                #  default-configuration-type: TCP ## Default by 'TCP'
-                #  handshake-timeout: 10000ms ## Default by 10000ms
-                #  close-notify-flush-timeout: 3000ms ## Default by 3000ms
-                #  close-notify-read-timeout: 0 ## Default by 0
-                #  #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
-                #  #key-store: ## Keystore path for Netty HttpClient.
-                #  #key-store-type:
-                #  #key-store-password:
-                #  #key-store-provider:
-                #  #trusted-x509-certificates:
-                #  #use-insecure-trust-manager: true ## Default by false
-            - name: IpFilter
-              args:
-                ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list (deny) has a higher priority.
-                preferRejectOnCidrConflict: true ## Default by true
-                ## The accept the request when neither the whitelist nor the blacklist match.
-                acceptNotMatchCidr: true ## Default by true
-                ## The allow all local addresses to pass.
-                anyLocalAddressAllowed: true ## Default by true
-                statusCode: FORBIDDEN ## Default by HttpStatus.FORBIDDEN
-                forwardHeaderNames: ["X-Forwarded-For","Proxy-Client-IP","WL-Proxy-Client-IP","X-Real-IP","REMOTE_ADDR","Remote-Addr","RemoteAddr",
-                    "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
-                    "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
-                    "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-            - name: FaultInjector
-              args:
-                ## which is equivalent to another and condition after match the SPEL expression.
-                percentage: 0.5d ## Default by 1.0d
-                ## The enabled fault injector providers.
-                provider: Abort ## Default by Abort, Optional(Abort|FixedDelay|RangeDelay)
-                ## The request to abort fault injector configuration.
-                abort:
-                  ## The HttpStatus returned when the fault strategy is meet.
-                  statusCode: 500 ## Default by 500
-                ## The request to fixed delay fault injector configuration.
-                fixedDelay:
-                  delayMs: 1000 ## fixed delay in milliseconds, Default by 1000
-                ## The request to random range delay fault injector configuration.
-                rangeDelay:
-                  minDelayMs: 1000 ## Default by 1000
-                  maxDelayMs: 5000 ## Default by 5000

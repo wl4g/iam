@@ -33,6 +33,11 @@ spring:
                 root-cause-exception-type-header-name: X-Iscg-Fail-Root-Type ## Default by 'Root-Cause-Exception-Type'
                 root-cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Default by 'Root-Cause-Exception-Message'
                 cause-exception-message-header-name: X-Iscg-Fail-Root-Msg ## Irregular setter method naming?? bug??
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter IpFilter
+        ## ------------------------------------------------------
+        ##
         - id: productpage-service-route-with-IpFilter
           uri: lb://productpage-service
           predicates:
@@ -59,10 +64,18 @@ spring:
                     "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
                     "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
                     "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-        - id: productpage-service-route-with-SimpleSignAuthing
+                subnets:
+                  - allow: false ## Default by false
+                    cidrs: ['1.1.1.0/24'] ## Default by []
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter RequestSize
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-RequestSize
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-SimpleSignAuthing/**
+            - Path=/productpage-with-RequestSize/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -71,24 +84,17 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-SimpleSignAuthing/(?<segment>.*),/$\{segment}
-            - name: SimpleSignAuthing
+            - RewritePath=/productpage-with-RequestSize/(?<segment>.*),/$\{segment}
+            ## Limit for request content-length
+            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
+            - name: RequestSize
               args:
-                ## Note: In some special business platform scenarios, the signature authentication protocol may not define
-                ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
-                ## application can only be determined according to the request route ID.
-                app-id-extractor: RouteId ## Default by 'Parameter', Options(Parameter|RouteId)
-                ## Only valid when appId extract mode is parameter.
-                app-id-param: appId
-                secret-param: key ## Default by 'appSecret'
-                sign-replay-verify-enabled: true ## Default by true
-                sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
-                sign-param: token ## Default by 'sign'
-                sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
-                sign-hashing-mode: UriParamsKeySortedHashing ## Default by 'UriParamsKeySortedHashing'
-                sign-hashing-include-params: ['*'] ## Default by []
-                sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
-                add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+                max-size: 10485760 ## Default by 5MB
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter FaultInjector
+        ## ------------------------------------------------------
+        ##
         - id: productpage-service-route-with-FaultInjector
           uri: lb://productpage-service
           predicates:
@@ -126,10 +132,15 @@ spring:
                   percentage: 0.5d ## Default by 1.0d
                   minDelayMs: 1000 ## Default by 1000
                   maxDelayMs: 5000 ## Default by 5000
-        - id: productpage-service-route-with-TrafficReplicator
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter SimpleSignAuthing
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-SimpleSignAuthing
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-TrafficReplicator/**
+            - Path=/productpage-with-SimpleSignAuthing/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -138,64 +149,29 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-TrafficReplicator/(?<segment>.*),/$\{segment}
-            - name: TrafficReplicator
-              ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
+            - RewritePath=/productpage-with-SimpleSignAuthing/(?<segment>.*),/$\{segment}
+            - name: SimpleSignAuthing
               args:
-                targetUris: ["http://localhost:8888/"]
-                ## The sampling percentage rate of traffic that needs to be replication.
-                percentage: 1d ## Default by 1d
-                #wiretap: false ## Default by false
-                #connectTimeout: 45_000 ## Default by 45s
-                ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
-                #responseTimeout: 60_000 ## Default by 60s
-                #maxHeaderSize: 65535 ## Default no set.
-                ##maxInitialLineLength: ## Default by null
-                ##proxy:
-                ## host:
-                ## port:
-                ## username:
-                ## password:
-                ## non-proxy-hosts-pattern:
-                #pool:
-                #  name: proxy ## Default by proxy
-                #  #metrics: true ## Default by false
-                #  #max-idle-time: 
-                #  #acquire-timeout: 45000 # Default by 45000ms
-                #websocket:
-                #  proxy-ping: true ## Default by true
-                #  max-frame-payload-length: 65535 ## Default no set.
-                #  #max-connections: ## Default by: max(availableProcessors(),8)*2)
-                #ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
-                #  default-configuration-type: TCP ## Default by 'TCP'
-                #  handshake-timeout: 10000ms ## Default by 10000ms
-                #  close-notify-flush-timeout: 3000ms ## Default by 3000ms
-                #  close-notify-read-timeout: 0 ## Default by 0
-                #  #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
-                #  #key-store: ## Keystore path for Netty HttpClient.
-                #  #key-store-type:
-                #  #key-store-password:
-                #  #key-store-provider:
-                #  #trusted-x509-certificates:
-                #  #use-insecure-trust-manager: true ## Default by false
-        - id: productpage-service-route-with-RequestSize
-          uri: lb://productpage-service
-          predicates:
-            - Path=/productpage-with-RequestSize/**
-            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
-            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
-            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
-            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
-            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
-            #- Weight=v1-productpage-service,5
-          filters:
-            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-RequestSize/(?<segment>.*),/$\{segment}
-            ## Limit for request content-length
-            ## see;org.springframework.cloud.gateway.filter.factory.RequestSizeGatewayFilterFactory
-            - name: RequestSize
-              args:
-                max-size: 10485760 ## Default by 5MB
+                ## Note: In some special business platform scenarios, the signature authentication protocol may not define
+                ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
+                ## application can only be determined according to the request route ID.
+                app-id-extractor: RouteId ## Default by 'Parameter', Options(Parameter|RouteId)
+                ## Only valid when appId extract mode is parameter.
+                app-id-param: appId
+                secret-param: key ## Default by 'appSecret'
+                sign-replay-verify-enabled: true ## Default by true
+                sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
+                sign-param: token ## Default by 'sign'
+                sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
+                sign-hashing-mode: UriParamsKeySortedHashing ## Default by 'UriParamsKeySortedHashing'
+                sign-hashing-include-params: ['*'] ## Default by []
+                sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
+                add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter IamRequestLimiter
+        ## ------------------------------------------------------
+        ##
         - id: productpage-service-route-with-IamRequestLimiter
           uri: lb://productpage-service
           predicates:
@@ -251,10 +227,15 @@ spring:
                   provider: RedisQuotaLimiter
                   ## whether or not to include headers containing rate limiter info. Default by false
                   includeHeaders: false
-        - id: productpage-service-route-with-IamRetry
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter TrafficReplicator
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-TrafficReplicator
           uri: lb://productpage-service
           predicates:
-            - Path=/productpage-with-IamRetry/**
+            - Path=/productpage-with-TrafficReplicator/**
             ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
             ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
             ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
@@ -263,72 +244,52 @@ spring:
             #- Weight=v1-productpage-service,5
           filters:
             ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-IamRetry/(?<segment>.*),/$\{segment}
-            - name: IamRetry
+            - RewritePath=/productpage-with-TrafficReplicator/(?<segment>.*),/$\{segment}
+            - name: TrafficReplicator
+              ## More configurations see:com.wl4g.iam.gateway.traffic.TrafficReplicationFilterFactory#applyDefaultToConfig() and prefix: 'spring.iam.gateway.traffic.defaultReplication'
               args:
-                retries: 3
-                statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
-                methods: GET,POST
-                backoff:
-                  first-backoff: 100ms
-                  max-backoff: 500ms
-                  factor: 2
-                  based-on-previous-value: false
-        - id: productpage-service-route-with-IamCircuitBreaker
-          uri: lb://productpage-service
-          predicates:
-            - Path=/productpage-with-IamCircuitBreaker/**
-            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
-            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
-            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
-            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
-            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
-            #- Weight=v1-productpage-service,5
-          filters:
-            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-IamCircuitBreaker/(?<segment>.*),/$\{segment}
-            ## see:com.wl4g.iam.gateway.circuitbreaker.IamReactiveResilience4JCircuitBreaker
-            ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
-            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
-            ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
-            ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
-            - name: IamCircuitBreaker
-              args:
-                name: productpage-service-circuitbreaker
-                fallback-uri: forward:/_fallback
-                statusCodes:
-                  - 500
-                  - NOT_FOUND
-            - name: CanaryLoadBalancer
-              args:
-                choose:
-                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
-                  timeout-ms: 5_000 ## Default by 5_000ms
-                  path: /healthz ## Default by '/healthz'
-                  expect-statuses: [200,404] ## Default by 200
-        - id: productpage-service-route-with-CanaryLoadBalancer
-          uri: lb://productpage-service
-          predicates:
-            - Path=/productpage-with-CanaryLoadBalancer/**
-            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
-            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
-            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
-            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
-            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
-            #- Weight=v1-productpage-service,5
-          filters:
-            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
-            - RewritePath=/productpage-with-CanaryLoadBalancer/(?<segment>.*),/$\{segment}
-            - name: CanaryLoadBalancer
-              args:
-                choose:
-                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
-                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
-                  timeout-ms: 5_000 ## Default by 5_000ms
-                  path: /healthz ## Default by '/healthz'
-                  expect-statuses: [200,404] ## Default by 200
-        - id: productpage-service-route-with-RequestCache
+                targetUris: ["http://localhost:8888/"]
+                ## The sampling percentage rate of traffic that needs to be replication.
+                percentage: 1d ## Default by 1d
+                #wiretap: false ## Default by false
+                #connectTimeout: 45_000 ## Default by 45s
+                ### see:org.springframework.cloud.gateway.filter.NettyRoutingFilter#getResponseTimeout
+                #responseTimeout: 60_000 ## Default by 60s
+                #maxHeaderSize: 65535 ## Default no set.
+                ##maxInitialLineLength: ## Default by null
+                ##proxy:
+                ## host:
+                ## port:
+                ## username:
+                ## password:
+                ## non-proxy-hosts-pattern:
+                #pool:
+                #  name: proxy ## Default by proxy
+                #  #metrics: true ## Default by false
+                #  #max-idle-time: 
+                #  #acquire-timeout: 45000 # Default by 45000ms
+                #websocket:
+                #  proxy-ping: true ## Default by true
+                #  max-frame-payload-length: 65535 ## Default no set.
+                #  #max-connections: ## Default by: max(availableProcessors(),8)*2)
+                #ssl: ## see:org.springframework.cloud.gateway.config.GatewayAutoConfiguration.NettyConfiguration#gatewayHttpClient()
+                #  default-configuration-type: TCP ## Default by 'TCP'
+                #  handshake-timeout: 10000ms ## Default by 10000ms
+                #  close-notify-flush-timeout: 3000ms ## Default by 3000ms
+                #  close-notify-read-timeout: 0 ## Default by 0
+                #  #key-password: ${spring.cloud.gateway.httpclient.ssl.key-store-password}
+                #  #key-store: ## Keystore path for Netty HttpClient.
+                #  #key-store-type:
+                #  #key-store-password:
+                #  #key-store-provider:
+                #  #trusted-x509-certificates:
+                #  #use-insecure-trust-manager: true ## Default by false
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter ResponseCache
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-ResponseCache
           uri: lb://productpage-service
           predicates:
             - Path=/productpage-with-ResponseCache/**
@@ -369,4 +330,96 @@ spring:
                 redis:
                   cachePrefix: iam:gateway:responsecache:data
                   expireMs: 60_000
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter IamRetry
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-IamRetry
+          uri: lb://productpage-service
+          predicates:
+            - Path=/productpage-with-IamRetry/**
+            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-productpage-service,5
+          filters:
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/productpage-with-IamRetry/(?<segment>.*),/$\{segment}
+            - name: IamRetry
+              args:
+                retries: 3
+                statuses: [BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT]
+                methods: GET,POST
+                backoff:
+                  first-backoff: 100ms
+                  max-backoff: 500ms
+                  factor: 2
+                  based-on-previous-value: false
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter IamCircuitBreaker
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-IamCircuitBreaker
+          uri: lb://productpage-service
+          predicates:
+            - Path=/productpage-with-IamCircuitBreaker/**
+            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-productpage-service,5
+          filters:
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/productpage-with-IamCircuitBreaker/(?<segment>.*),/$\{segment}
+            ## see:com.wl4g.iam.gateway.circuitbreaker.IamReactiveResilience4JCircuitBreaker
+            ## see:org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreaker
+            ## see:org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory
+            ## see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
+            - name: IamCircuitBreaker
+              args:
+                name: productpage-service-circuitbreaker
+                fallback-uri: forward:/_fallback
+                statusCodes:
+                  - 500
+                  - NOT_FOUND
+            - name: CanaryLoadBalancer
+              args:
+                choose:
+                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+                  timeout-ms: 5_000 ## Default by 5_000ms
+                  path: /healthz ## Default by '/healthz'
+                  expect-statuses: [200,404] ## Default by 200
+        ##
+        ## ------------------------------------------------------
+        ## Routing configuration for testing filter CanaryLoadBalancer
+        ## ------------------------------------------------------
+        ##
+        - id: productpage-service-route-with-CanaryLoadBalancer
+          uri: lb://productpage-service
+          predicates:
+            - Path=/productpage-with-CanaryLoadBalancer/**
+            ## Note: Use the built-in 'WeightCalculatorWebFilter' to implement canary publishing. This should not be the most elegant 
+            ## choice. For example, in some scenarios, the client request URL will not change, so it is impossible to implement
+            ## canary traffic based on this router. Instead, Iscg's dedicated 'CanaryLoadBalancerFilter' should be used, 
+            ## which supports dynamic matching of any HTTP request based on SPEL expressions, which is very flexible.
+            ## see:https://github.com/spring-cloud/spring-cloud-gateway/pull/215
+            #- Weight=v1-productpage-service,5
+          filters:
+            ## see: org.springframework.cloud.gateway.filter.factory.RewritePathGatewayFilterFactory#apply
+            - RewritePath=/productpage-with-CanaryLoadBalancer/(?<segment>.*),/$\{segment}
+            - name: CanaryLoadBalancer
+              args:
+                choose:
+                  load-balancer-algorithm: RR ## Options(R|RR|WR|WRR|DH|SH|LC|LT|WLC|WLT)
+                probe: ## Default load-balancer configuration. see:com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory#applyDefault()
+                  timeout-ms: 5_000 ## Default by 5_000ms
+                  path: /healthz ## Default by '/healthz'
+                  expect-statuses: [200,404] ## Default by 200
 

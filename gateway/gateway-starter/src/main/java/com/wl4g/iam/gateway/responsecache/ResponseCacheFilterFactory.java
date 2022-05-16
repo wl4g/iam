@@ -147,7 +147,7 @@ public class ResponseCacheFilterFactory extends AbstractGatewayFilterFactory<Res
 
         @Override
         public int getOrder() {
-            return SafeFilterOrdered.ORDER_REQUEST_CACHE;
+            return SafeFilterOrdered.ORDER_RESPONSE_CACHE;
         }
 
         @Override

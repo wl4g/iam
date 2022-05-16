@@ -151,8 +151,7 @@ spring:
         forwaredHttpsToHttp: true ## Default by true
         refresh-delay-ms: 30_000 ## Default by 30_000
       ipfilter:
-        configPrefix: iam:gateway:ipfilter:config
-        defaultFilter:
+        defaultStrategy:
           ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
           ## The accept the request when neither the whitelist nor the blacklist match.
@@ -164,9 +163,9 @@ spring:
               "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-          strategy:
-            allow: false ## Default by false
-            cidrs: ['1.1.1.0/24'] ## Default by []
+          subnets:
+            - allow: false ## Default by false
+              cidrs: ['1.1.1.0/24'] ## Default by []
       fault:
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
@@ -449,9 +448,9 @@ spring:
             #key-store-provider:
             #trusted-x509-certificates:
             #use-insecure-trust-manager: true ## Default by false
-      requestcache:
+      responsecache:
         ## The name of the header that returns the request cached configuration.
-        requestCachedHeader: X-Iscg-Cached ## Default by 'X-Iscg-Cached'
+        responseCachedHeader: X-Iscg-Cached ## Default by 'X-Iscg-Cached'
         ## The initial capacity of the temporary buffer size.
         tmpBufferInitialCapacity: 1024 ## Default by 1024
         ## The maximum capacity of the temporary buffer size.
@@ -480,22 +479,31 @@ spring:
             #  key:
             #  value:
         defaultCache:
-          provider: LocalCache ## Options(LocalCache|RedisCache)
-          local:
-            ## The cached data elimination algorithm.
-            eliminationAlg: LRU ## Default LRU, options(LRU|LFU|FIFO)
+          provider: SimpleCache ## Default by SimpleCache, options(SimpleCache|EhCache|RedisCache)
+          simple:
             ## If you wish the cache should not exceed this number of entries, the cache will evict recently or infrequently
             ## used entries when it does, WARNING: the cache may evict entries before this limit is exceeded - usually
             ## when the cache size is close to the limit.
-            maximumSize: 1_000_000 ## Default by 1_000_000
+            maximumSize: 100_000 ## Default by 100_000
             ## The expiration interval based on write time, all cache entry reads and writes are updated.
             expireAfterAccessMs: 60_000 ## Default by 60_000
             ## The expiration interval based on access time, all cache entries are updated only by write operations.
             expireAfterWriteMs: 600_000 ## Default by 600_000
             ## The number of concurrent cache operations, that is, the number of underlying cache block/segment locks.
             concurrencyLevel: 4 ## Default by 4
+          ehcache:
+            ## The cached data elimination algorithm.
+            eliminationAlg: LRU ## Default by LRU, options(LRU|LFU|FIFO)
+            ## The cache name prefix.
+            cacheNamePrefix: ResponseCache ## Default by 'requestCache'
+            ## The number of entries not persisted to keep in memory.
+            offHeapEntries: 100_000 ## Default by 100_000
+            ## The number of data size not persisted to keep in memory. must be less than diskSize
+            offHeapSize: 128MB ## Default by 128MB
+            ## The number of total data size not persisted to keep in disk. must be greater than offHeapSize
+            diskSize: 512MB ## Default by 512MB
           redis:
-            cachePrefix: iam:gateway:cachefilter:data
+            cachePrefix: iam:gateway:responsecache:data
             expireMs: 60_000
       ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1370
       circuitbreaker:

@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.validation.constraints.NotBlank;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.cloud.commons.util.InetUtils;
@@ -37,8 +36,7 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 
 import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties;
-import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
-import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
+import com.wl4g.iam.gateway.ipfilter.config.IpFilterProperties.IPSubnet;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.mock.MockGatewayFilterChain;
 
@@ -56,59 +54,71 @@ import reactor.test.StepVerifier;
  */
 public class IpSubnetFilterFactoryTests {
 
-    static IamGatewayMetricsFacade defaultMetricsFacade = new IamGatewayMetricsFacade(
-            new PrometheusMeterRegistry(new PrometheusConfig() {
-                @Override
-                public String get(String key) {
-                    return null;
-                }
-            }), new InetUtils(new InetUtilsProperties()), new MockEnvironment());
+    private IamGatewayMetricsFacade mockMetricsFacade;
 
-    @Test
-    public void testAllowedWithAcceptAndNotReject() {
-        List<FilterStrategy> strategys = new ArrayList<>();
-        strategys.add(new FilterStrategy(false, asList("192.168.8.0/24")));
-        strategys.add(new FilterStrategy(true, asList("192.168.3.0/24")));
-        strategys.add(new FilterStrategy(true, asList("10.88.3.0/24")));
+    @Before
+    public void init() throws Exception {
+        MockEnvironment env = new MockEnvironment();
+        env.setProperty("spring.application.name", "test-iam-gateway");
+        env.setProperty("server.port", "12345");
 
-        IpSubnetFilterFactory.Config config = new IpSubnetFilterFactory.Config();
-
-        boolean result = doTestIpFilter(config, "192.168.3.2", strategys);
-
-        Assertions.assertTrue(result);
+        this.mockMetricsFacade = new IamGatewayMetricsFacade(new PrometheusMeterRegistry(new PrometheusConfig() {
+            @Override
+            public String get(String key) {
+                return null;
+            }
+        }), new InetUtils(new InetUtilsProperties()), env);
+        mockMetricsFacade.afterPropertiesSet();
     }
 
     @Test
-    public void testNotAllowedWithAcceptAndReject() {
-        List<FilterStrategy> strategys = new ArrayList<>();
-        strategys.add(new FilterStrategy(false, asList("192.168.0.0/16")));
-        strategys.add(new FilterStrategy(true, asList("192.168.3.0/24")));
-        strategys.add(new FilterStrategy(true, asList("10.88.3.0/24")));
+    public void testAllowedWithAcceptAndNotReject() {
+        List<IPSubnet> subnets = new ArrayList<>();
+        subnets.add(new IPSubnet(false, asList("192.168.8.0/24")));
+        subnets.add(new IPSubnet(true, asList("192.168.3.0/24")));
+        subnets.add(new IPSubnet(true, asList("10.88.3.0/24")));
 
         IpSubnetFilterFactory.Config config = new IpSubnetFilterFactory.Config();
+        config.setIPSubnets(subnets);
 
-        boolean result = doTestIpFilter(config, "192.168.3.2", strategys);
+        boolean allowed = doTestIpFilter(config, "192.168.3.2");
 
-        Assertions.assertFalse(result);
+        Assertions.assertTrue(allowed);
     }
 
     @Test
     public void testAllowedWithAcceptAndRejectAndPreferAcceptOnCidrConflict() {
-        List<FilterStrategy> strategys = new ArrayList<>();
-        strategys.add(new FilterStrategy(false, asList("192.168.0.0/16")));
-        strategys.add(new FilterStrategy(true, asList("192.168.3.0/24")));
-        strategys.add(new FilterStrategy(true, asList("10.88.3.0/24")));
+        List<IPSubnet> subnets = new ArrayList<>();
+        subnets.add(new IPSubnet(false, asList("192.168.0.0/16")));
+        subnets.add(new IPSubnet(true, asList("192.168.3.0/24")));
+        subnets.add(new IPSubnet(true, asList("10.88.3.0/24")));
 
         IpSubnetFilterFactory.Config config = new IpSubnetFilterFactory.Config();
         config.setPreferRejectOnCidrConflict(false);
+        config.setIPSubnets(subnets);
 
-        boolean result = doTestIpFilter(config, "192.168.3.2", strategys);
+        boolean allowed = doTestIpFilter(config, "192.168.3.2");
 
-        Assertions.assertTrue(result);
+        Assertions.assertTrue(allowed);
     }
 
-    boolean doTestIpFilter(IpSubnetFilterFactory.Config config, String remoteIp, List<FilterStrategy> strategys) {
-        AtomicBoolean acceptedFlag = new AtomicBoolean(false);
+    @Test
+    public void testNotAllowedWithAcceptAndReject() {
+        List<IPSubnet> subnets = new ArrayList<>();
+        subnets.add(new IPSubnet(false, asList("192.168.0.0/16")));
+        subnets.add(new IPSubnet(true, asList("192.168.3.0/24")));
+        subnets.add(new IPSubnet(true, asList("10.88.3.0/24")));
+
+        IpSubnetFilterFactory.Config config = new IpSubnetFilterFactory.Config();
+        config.setIPSubnets(subnets);
+
+        boolean allowed = doTestIpFilter(config, "192.168.3.2");
+
+        Assertions.assertFalse(allowed);
+    }
+
+    boolean doTestIpFilter(IpSubnetFilterFactory.Config config, String remoteIp) {
+        AtomicBoolean allowedFlag = new AtomicBoolean(false);
 
         MockServerHttpRequest request = MockServerHttpRequest.get("http://httpbin.org/hello")
                 .remoteAddress(IpSubnetFilterFactory.createInetSocketAddress(remoteIp, 0, false))
@@ -124,26 +134,21 @@ public class IpSubnetFilterFactoryTests {
                 .build();
         exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR, route);
 
-        IpSubnetFilterFactory factory = new IpSubnetFilterFactory(new IpFilterProperties(), new IpFilterConfigurer() {
-            @Override
-            public Mono<List<FilterStrategy>> loadStrategy(@NotBlank String routeId, @NotBlank String principalName) {
-                return Mono.just(strategys);
-            }
-        }, defaultMetricsFacade);
+        IpSubnetFilterFactory factory = new IpSubnetFilterFactory(new IpFilterProperties(), mockMetricsFacade);
 
         GatewayFilter tailFilter = (_exchange, chain) -> {
             System.out.println(">>>>> Accpeted !");
-            acceptedFlag.set(true);
+            allowedFlag.set(true);
             return chain.filter(_exchange);
         };
 
-        GatewayFilter filter = factory.apply(config);
-        Mono<Void> mono = new MockGatewayFilterChain(asList(filter, tailFilter)).filter(exchange);
+        GatewayFilter ipFilter = factory.apply(config);
+        Mono<Void> mono = new MockGatewayFilterChain(asList(ipFilter, tailFilter)).filter(exchange);
 
         System.out.println(">>>>> Await ...");
         StepVerifier.create(mono).expectComplete().verify(Duration.ofSeconds(10));
 
-        return acceptedFlag.get();
+        return allowedFlag.get();
     }
 
 }

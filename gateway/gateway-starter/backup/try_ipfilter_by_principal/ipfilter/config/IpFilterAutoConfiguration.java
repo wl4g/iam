@@ -15,11 +15,14 @@
  */
 package com.wl4g.iam.gateway.ipfilter.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.ipfilter.IpSubnetFilterFactory;
+import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer;
+import com.wl4g.iam.gateway.ipfilter.configurer.RedisIpFilterConfigurer;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 
 /**
@@ -38,8 +41,17 @@ public class IpFilterAutoConfiguration {
     }
 
     @Bean
-    public IpSubnetFilterFactory ipSubnetFilterFactory(IpFilterProperties ipListConfig, IamGatewayMetricsFacade metricsFacade) {
-        return new IpSubnetFilterFactory(ipListConfig, metricsFacade);
+    @ConditionalOnMissingBean
+    public IpFilterConfigurer redisIpListConfigurer() {
+        return new RedisIpFilterConfigurer();
+    }
+
+    @Bean
+    public IpSubnetFilterFactory ipSubnetFilterFactory(
+            IpFilterProperties ipListConfig,
+            IpFilterConfigurer configurer,
+            IamGatewayMetricsFacade metricsFacade) {
+        return new IpSubnetFilterFactory(ipListConfig, configurer, metricsFacade);
     }
 
 }

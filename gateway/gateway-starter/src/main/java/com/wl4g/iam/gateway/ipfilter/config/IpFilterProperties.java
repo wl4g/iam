@@ -16,16 +16,23 @@
 package com.wl4g.iam.gateway.ipfilter.config;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.nonNull;
 
+import java.net.UnknownHostException;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.common.constant.GatewayIAMConstants;
-import com.wl4g.iam.gateway.ipfilter.IpSubnetFilterFactory;
-import com.wl4g.iam.gateway.ipfilter.configurer.IpFilterConfigurer.FilterStrategy;
+import com.wl4g.infra.common.net.CIDR;
+import com.wl4g.infra.common.web.WebUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
+import lombok.experimental.SuperBuilder;
 
 /**
  * {@link IpFilterProperties}
@@ -40,16 +47,81 @@ import lombok.ToString;
 @ToString
 public class IpFilterProperties {
 
-    private String configPrefix = GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_IPFILTER_CONF;
-
-    private DefaultFilterProperties defaultFilter = new DefaultFilterProperties();
+    /**
+     * The default IP filter strategy configuration.
+     */
+    private StrategyProperties defaultStrategy = new StrategyProperties();
 
     @Getter
     @Setter
     @Validated
     @ToString
-    public static class DefaultFilterProperties extends IpSubnetFilterFactory.Config {
-        private FilterStrategy strategy = FilterStrategy.builder().cidrs(asList("127.0.0.1")).build();
+    public static class StrategyProperties {
+
+        /**
+         * When the white-list (allow) and the CIDRs of the blacklist (deny)
+         * conflict, whether the blacklist (deny) has a higher priority.
+         */
+        private boolean preferRejectOnCidrConflict = true;
+
+        /**
+         * Whether to accept the request when neither the white-list nor the
+         * blacklist CIDRs match.
+         */
+        private boolean acceptNotMatchCidr = true;
+
+        /**
+         * The allow all local addresses to pass.
+         */
+        private boolean anyLocalAddressAllowed = true;
+
+        /**
+         * The HttpStatus returned when the IpFilter blacklist is met, the
+         * default is FORBIDDEN.
+         */
+        private String statusCode = HttpStatus.FORBIDDEN.name();
+
+        /**
+         * The according to the list of header names of the request header
+         * current limiter, it can usually be used to obtain the actual IP after
+         * being forwarded by the proxy to limit the current, or it can be
+         * flexibly used for other purposes.
+         */
+        private List<String> forwardHeaderNames = asList(WebUtils.HEADER_REAL_IP);
+
+        /**
+         * The IP sub-net restriction strategy configuration.
+         */
+        private List<IPSubnet> iPSubnets;
+    }
+
+    @Getter
+    @Setter
+    @Validated
+    @ToString
+    @With
+    @SuperBuilder
+    @AllArgsConstructor
+    public static class IPSubnet {
+        private boolean allow;
+        private List<String> cidrs;
+
+        public IPSubnet() {
+            this.allow = false;
+        }
+
+        public IPSubnet validate() {
+            if (nonNull(cidrs)) {
+                cidrs.forEach(cidr -> {
+                    try {
+                        CIDR.newCIDR(cidr);
+                    } catch (UnknownHostException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                });
+            }
+            return this;
+        }
     }
 
 }

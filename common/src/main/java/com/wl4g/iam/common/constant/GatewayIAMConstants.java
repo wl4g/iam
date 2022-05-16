@@ -51,7 +51,6 @@ public abstract class GatewayIAMConstants extends IAMConstants {
     public static final String CACHE_PREFIX_IAM_GWTEWAY = CACHE_PREFIX_IAM + ":gateway";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_IPFILTER = CACHE_PREFIX_IAM_GWTEWAY + ":ipfilter";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_IPFILTER_CONF = CACHE_PREFIX_IAM_GWTEWAY_IPFILTER + ":config";
 
     public static final String CACHE_PREFIX_IAM_GWTEWAY_ROUTES = CACHE_PREFIX_IAM_GWTEWAY + ":routes";
 

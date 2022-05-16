@@ -151,8 +151,7 @@ spring:
         forwaredHttpsToHttp: true ## Default by true
         refresh-delay-ms: 30_000 ## Default by 30_000
       ipfilter:
-        configPrefix: iam:gateway:ipfilter:config
-        defaultFilter:
+        defaultStrategy:
           ## When the white-list (allow) and the CIDR of the black-list (deny) conflict, whether the black-list(deny) has a higher priority.
           preferRejectOnCidrConflict: true ## Default by true
           ## The accept the request when neither the whitelist nor the blacklist match.
@@ -164,9 +163,9 @@ spring:
               "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-          strategy:
-            allow: false ## Default by false
-            cidrs: ['1.1.1.0/24'] ## Default by []
+          subnets:
+            - allow: false ## Default by false
+              cidrs: ['1.1.1.0/24'] ## Default by []
       fault:
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
         ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
