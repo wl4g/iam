@@ -15,7 +15,8 @@
  */
 package com.wl4g.iam.gateway.requestsize.config;
 
-import javax.validation.constraints.Min;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
 
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +38,12 @@ import lombok.ToString;
 @ToString
 public class IamRequestSizeProperties {
 
-    private @Min(0) DataSize maxBodySize = DataSize.ofBytes(5000000L);
+    private DataSize maxBodySize = DataSize.ofBytes(5000000L);
+
+    public IamRequestSizeProperties validate() {
+        notNull(getMaxBodySize(), "maxBodySize may not be null");
+        isTrue(getMaxBodySize().toBytes() > 0, "maxBodySize must be greater than 0");
+        return this;
+    }
 
 }

@@ -78,6 +78,7 @@ public class IamRequestSizeFilterFactory extends AbstractGatewayFilterFactory<Ia
     @Override
     public GatewayFilter apply(IamRequestSizeFilterFactory.Config config) {
         applyDefaultToConfig(config);
+        config.validate();
         return new IamRequestSizeGatewayFilter(config);
     }
 
@@ -121,8 +122,7 @@ public class IamRequestSizeFilterFactory extends AbstractGatewayFilterFactory<Ia
 
         @Override
         public String toString() {
-            return filterToStringCreator(IamRequestSizeFilterFactory.this).append("max", config.getMaxBodySize())
-                    .toString();
+            return filterToStringCreator(IamRequestSizeFilterFactory.this).append("max", config.getMaxBodySize()).toString();
         }
 
     }
