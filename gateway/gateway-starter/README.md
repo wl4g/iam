@@ -27,13 +27,20 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 - Startup IamGateway(pseudo command-line)
 
 ```bash
-java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NONE
+java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NONE
 ```
 
 - Clients for `curl` testing
 
 ```bash
-curl -v -k 'https://localhost:18085/httpbin/secure/get'
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+--cacert ca.pem \
+--cert client1.pem \
+--key client1-key.pem \
+'https://localhost:18085/_fallback' | jq
 ```
 
 ### 2.2 Ingress mTLS
@@ -41,17 +48,20 @@ curl -v -k 'https://localhost:18085/httpbin/secure/get'
 - Startup IamGateway(pseudo command-line)
 
 ```bash
-java -Djavax.net.debug=all -jar iam-gateway.jar --server.ssl.client-auth=NEED
+java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NEED
 ```
 
 - Clients for `curl` testing
 
 ```bash
-curl -v \
+curl -vsSkL -XGET \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
 --cacert ca.pem \
 --cert client1.pem \
 --key client1-key.pem \
-'https://localhost:18085/httpbin/secure/get' | jq
+'https://localhost:18085/_fallback' | jq
 ```
 
 ### 2.3 IP Filter
