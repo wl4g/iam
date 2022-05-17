@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.tools;
+package com.wl4g.iam.gateway.security.sign;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -46,7 +46,7 @@ public class SimpleSignGenerateTool {
      * @throws NoSuchAlgorithmException
      * @throws Exception
      */
-    public static String generateSign(String appId, String appSecret, String nonce, long timestamp)
+    public static String generateSign(String appId, String appSecret, String nonce, long timestamp, String alg)
             throws UnsupportedEncodingException, NoSuchAlgorithmException {
         // Join token parts
         StringBuffer signtext = new StringBuffer();
@@ -61,7 +61,7 @@ public class SimpleSignGenerateTool {
 
         // Signature.
         // Hex.encodeHexString(Hashing.sha256().hashBytes(signInput).asBytes());
-        return hashing(new String(signInput, "UTF-8"));
+        return hashing(signInput, alg);
     }
 
     /**
@@ -85,14 +85,15 @@ public class SimpleSignGenerateTool {
     /**
      * Digesting hashing with sha256
      * 
-     * @param str
+     * @param signInput
+     * @param alg
      * @return
      * @throws UnsupportedEncodingException
      * @throws NoSuchAlgorithmException
      */
-    public static String hashing(String str) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update(str.getBytes("UTF-8"));
+    public static String hashing(byte[] signInput, String alg) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance(alg);
+        messageDigest.update(signInput);
         return byte2Hex(messageDigest.digest());
     }
 
@@ -118,44 +119,47 @@ public class SimpleSignGenerateTool {
 
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (args.length == 1 && args[0].endsWith("help")) {
-            System.out.println("Usage: java -jar iam-gateway-{version}.jar <myAppId> <myAppSecret>");
+            System.out.println(
+                    "Usage: java -jar iam-gateway-{version}.jar <myAppId> <myAppSecret> <hashingAlg, e.g: MD5|SHA-256|SHA-384|..>");
             System.exit(0);
         }
 
         String appId = "oi".concat(generateNonce(32)).toLowerCase();
         String appSecret = generateNonce(32).toLowerCase();
-        if (args.length >= 2) {
+        String alg = "SHA-256";
+        if (args.length >= 3) {
             appId = args[0];
             appSecret = args[1];
+            alg = args[2];
         }
         String nonce = generateNonce(32);
         long timestamp = currentTimeMillis();
-        String signature = generateSign(appId, appSecret, nonce, timestamp);
+        String sign = generateSign(appId, appSecret, nonce, timestamp, alg);
 
-        out.println("--- ::: Generated Simple Signature Parameters ::: ---\n");
-        out.println(format("appId:     %s", appId));
-        out.println(format("appSecret: %s", appSecret));
-        out.println(format("nonce:     %s", nonce));
-        out.println(format("timestamp: %s", timestamp));
-        out.println(format("signature: %s", signature));
+        out.println("## Generated Simple Signature Mock Request (Shell Edition):\n");
+        out.println(format("## Using: hashing algorithm is '%s'", alg));
+        out.println(format("export APPID=%s", appId));
+        out.println(format("export APPSECRET=%s", appSecret));
+        out.println(format("export NONCE=%s", nonce));
+        out.println(format("export TIMESTAMP=%s", timestamp));
+        out.println(format("export SIGN=%s", sign));
+        out.println(format("export REMOTE_IP=127.0.0.1"));
         out.println();
 
-        out.println(format("--- HTTP Request: ---\n"));
-        out.println("export remoteIp=127.0.0.1");
+        out.println(format("## HTTP Request:\n"));
         out.println(format("curl -vL \\\n"
                 + "-H 'X-Iscg-Trace: y' \\\n-H 'X-Iscg-Log: y' \\\n-H 'X-Iscg-Log-Level: 10' \\\n-H 'X-Response-Type: 10' \\\n"
-                + "\"http://$remoteIp:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s\"", appId, nonce,
-                timestamp, signature));
+                + "\"http://${REMOTE_IP}:18085/openapi/v2/hello?appId=${APPID}&nonce=${NONCE}&timestamp=${TIMESTAMP}&sign=${SIGN}\"",
+                appId, nonce, timestamp, sign));
         out.println();
-        out.println("----------------------");
+        out.println("## -------------");
         out.println();
 
-        out.println(format("--- HTTPs Request: ---\n"));
-        out.println("export remoteIp=127.0.0.1");
+        out.println(format("## HTTPs Request:\n"));
         out.println(format("curl -vsSkL \\\n--cacert a.pem \\\n--cert client1.pem \\\n--key client1-key.pem \\\n"
                 + "-H 'X-Iscg-Trace: y' \\\n-H 'X-Iscg-Log: y' \\\n-H 'X-Iscg-Log-Level: 10' \\\n-H 'X-Response-Type: 10' \\\n"
-                + "\"https://$remoteIp:18085/openapi/v2/hello?appId=%s&nonce=%s&timestamp=%s&signature=%s\"", appId, nonce,
-                timestamp, signature));
+                + "\"https://${REMOTE_IP}:18085/openapi/v2/hello?appId=${APPID}&nonce=${NONCE}&timestamp=${TIMESTAMP}&sign=${SIGN}\"",
+                appId, nonce, timestamp, sign));
     }
 
 }

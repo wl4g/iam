@@ -24,7 +24,7 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 
 ### 2.1 Ingress TLS
 
-- Startup arguments example:
+- Preconditions (startup configuration)
 
 ```bash
 java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NONE
@@ -45,7 +45,7 @@ curl -vsSkL -XGET \
 
 ### 2.2 Ingress mTLS
 
-- Startup IamGateway(pseudo command-line)
+- Preconditions (startup configuration)
 
 ```bash
 java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NEED
@@ -66,7 +66,7 @@ curl -vsSkL -XGET \
 
 ### 2.3 IP Filter
 
-- The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
+- Preconditions(`src/test/resources/bootstrap.yml`)
 
 ```yaml
 spring:
@@ -131,11 +131,67 @@ curl -vsSkL -XPOST \
 
 ### 2.6 Simple Sign Authing
 
-TODO
+- Preconditions1 (startup configuration, `src/test/resources/example-route-filter-splitting.yml`)
+
+```yaml
+...
+filters:
+  - RewritePath=/productpage-with-SimpleSignAuthing/(?<segment>.*),/$\{segment}
+  - name: SimpleSignAuthing
+    args:
+      app-id-extractor: Parameter
+      app-id-param: appId
+      secret-param: appSecret
+      sign-replay-verify-enabled: true
+      sign-replay-verify-bloom-expire-seconds: 604800
+      sign-param: sign
+      sign-algorithm: S256
+      sign-hashing-mode: SimpleParamsBytesSortedHashing
+      sign-hashing-include-params: ['*']
+      sign-hashing-exclude-params: ['response_type','__iscg_log']
+      add-sign-auth-client-id-header: X-Sign-Auth-AppId
+...
+```
+
+- Preconditions2 (generate mock sign request)
+
+Run the test harness class in Idea/Eclipse/VsCode: `com.wl4g.iam.gateway.security.sign.SimpleSignGenerateTool` to generate test request parameters.
+
+- Preconditions3 (setup secret to redis example)
+
+```bash
+redis-cli -c -h localhost -p 6379 -a '123456'
+# Note: The configuration 'app-id-extractor' is 'Parameter'
+set iam:gateway:auth:sign:secret:oijvin6crxu2qdqvpgls9jmijz4t6istxs <myAppSecret>
+```
+
+```bash
+# for testing positive example
+export APPID=oijvin6crxu2qdqvpgls9jmijz4t6istxs
+export APPSECRET=njbbaiocxsbzzmtfsnenfvupzjyoioyu
+export NONCE=nxFCAq0qrzFwqHcwfX0xvainRmQk6FvO
+export TIMESTAMP=1652777325198
+export SIGN=aa9c39efe90ef44bbcae258bb0b40653489186ac58266e092e3e420f1caa1573
+export REMOTE_IP=127.0.0.1
+
+curl -vL \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Response-Type: 10' \
+"http://${REMOTE_IP}:18085/productpage-with-SimpleSignAuthing/get?appId=${APPID}&nonce=${NONCE}&timestamp=${TIMESTAMP}&sign=${SIGN}"
+```
+
+- Tip: Cleanup the auth key of the replay sign in redis
+
+```bash
+redis-cli -c -h localhost -p 6379 -a '123456'
+del iam:gateway:auth:sign:replay:bloom:productpage-service-route-with-SimpleSignAuthing
+```
 
 ### 2.7 Request Limiter
 
-- Startup arguments example:
+- - Preconditions (startup arguments example):
 
 ```bash
 java -jar iam-gateway-3.0.0-bin.jar \
@@ -232,23 +288,23 @@ TODO
 
 TODO
 
-## 3. Admin API
+## 3. Admin & operation APIs
 
 - [docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api](https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api)
 
-- Routes(for example):
+- Routes:
 
 ```bash
 curl -v 'http://localhost:18086/actuator/gateway/routes' | jq
 ```
 
-- Actuator Metrics(for example):
+- Actuator metrics:
 
 ```bash
 curl -v 'http://localhost:18086/actuator/metrics' | jq
 ```
 
-- Prometheus Metrics(for example):
+- Prometheus metrics:
 
 ```bash
 curl -v 'http://localhost:18086/actuator/prometheus'

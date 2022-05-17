@@ -80,27 +80,6 @@ spring:
                 max-body-size: 5MB ## Default by 5MB
             ##
             ## ------------------------------------------------------
-            ## Filter configuration for testing IamRequestLimiter
-            ## ------------------------------------------------------
-            ##
-            - name: IamRequestLimiter
-              args:
-                #denyEmptyKey: true ## Default are set(recommended)
-                #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
-                #statusCode: TOO_MANY_REQUESTS
-                keyResolver:
-                  provider: Header ## Default by Host, options are: Host|Path|Principal|Header|Interval
-                  properties:
-                    ## Note: Be sure to enclose the entire array string in double quotes (to be processed as list<string>),
-                    ## otherwise it will be processed as map<string,string>
-                    headerNames: "['X-Forwarded-For','Proxy-Client-IP','WL-Proxy-Client-IP']"
-                limiter:
-                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
-                  provider: RedisRateLimiter
-                  ## whether or not to include headers containing rate limiter info. Default by false
-                  includeHeaders: false
-            ##
-            ## ------------------------------------------------------
             ## Filter configuration for testing FaultInjector
             ## ------------------------------------------------------
             ##
@@ -131,15 +110,15 @@ spring:
                 ## Note: In some special business platform scenarios, the signature authentication protocol may not define
                 ## appId (such as Alibaba Cloud Market SaaS product authentication API), then the uniqueness of the client
                 ## application can only be determined according to the request route ID.
-                app-id-extractor: RouteId ## Default by 'Parameter', Options(Parameter|RouteId)
+                app-id-extractor: Parameter ## Default by 'Parameter', Options(Parameter|RouteId)
                 ## Only valid when appId extract mode is parameter.
                 app-id-param: appId
-                secret-param: key ## Default by 'appSecret'
+                secret-param: appSecret ## Default by 'appSecret'
                 sign-replay-verify-enabled: true ## Default by true
                 sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
-                sign-param: token ## Default by 'sign'
-                sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
-                sign-hashing-mode: UriParamsKeySortedHashing ## Default by 'UriParamsKeySortedHashing'
+                sign-param: sign ## Default by 'sign'
+                sign-algorithm: S256 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
+                sign-hashing-mode: SimpleParamsBytesSortedHashing ## Default by 'UriParamsKeySortedHashing'
                 sign-hashing-include-params: ['*'] ## Default by []
                 sign-hashing-exclude-params: ['response_type','__iscg_log'] ## Default by []
                 add-sign-auth-client-id-header: X-Sign-Auth-AppId ## Default by 'X-Sign-Auth-AppId'
