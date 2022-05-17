@@ -19,8 +19,8 @@ import java.util.Map;
 
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaRequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
 import com.wl4g.infra.core.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
@@ -50,10 +50,10 @@ public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
     @Getter
     @AllArgsConstructor
-    public static enum RequestLimiterPrivoder { 
-        RedisRateLimiter(RedisRateLimiterStrategy.class),
+    public static enum RequestLimiterPrivoder {
+        RedisRateLimiter(RedisRateRequestLimiterStrategy.class),
 
-        RedisQuotaLimiter(RedisQuotaLimiterStrategy.class);
+        RedisQuotaLimiter(RedisQuotaRequestLimiterStrategy.class);
 
         private final Class<? extends RequestLimiterStrategy> strategyClass;
     }

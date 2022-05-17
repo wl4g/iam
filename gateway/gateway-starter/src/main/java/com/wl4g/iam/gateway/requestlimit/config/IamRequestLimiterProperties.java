@@ -31,8 +31,8 @@ import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver.IntervalKeyR
 import com.wl4g.iam.gateway.requestlimit.key.IpRangeIamKeyResolver.IpRangeKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver.PathKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalIamKeyResolver.PrincipalKeyResolverStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaRequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -150,115 +150,119 @@ public class IamRequestLimiterProperties {
          * is specified for principal)
          */
         private RedisQuotaLimiterStrategyProperties quota = new RedisQuotaLimiterStrategyProperties();
-    }
-
-    /**
-     * The request rate defaultLimiter strategy configuration properties.
-     */
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RedisRateLimiterStrategyProperties extends RedisRateLimiterStrategy {
 
         /**
-         * Redis tokens rate defaultLimiter user-level configuration key prefix.
+         * The request rate defaultLimiter strategy configuration properties.
          */
-        private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class RedisRateLimiterStrategyProperties extends RedisRateRequestLimiterStrategy {
+
+            /**
+             * Redis tokens rate defaultLimiter user-level configuration key
+             * prefix.
+             */
+            private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
+
+            /**
+             * Redis tokens rate defaultLimiter user-level token computational
+             * key prefix.
+             */
+            private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
+
+            /**
+             * The name of the header that returns the burst capacity
+             * configuration.
+             */
+            private String burstCapacityHeader = RATE_BURST_CAPACITY_HEADER;
+
+            /**
+             * The name of the header that returns the replenish rate
+             * configuration.
+             */
+            private String replenishRateHeader = RATE_REPLENISH_RATE_HEADER;
+
+            /**
+             * The name of the header that returns the requested tokens
+             * configuration.
+             */
+            private String requestedTokensHeader = RATE_REQUESTED_TOKENS_HEADER;
+
+            /**
+             * The name of the header that returns number of remaining requests
+             * during the current second.
+             */
+            private String remainingHeader = RATE_REMAINING_HEADER;
+
+            /**
+             * Burst Capacity header name.
+             */
+            public static final String RATE_BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
+
+            /**
+             * Replenish Rate Limit header name.
+             */
+            public static final String RATE_REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
+
+            /**
+             * Requested Tokens header name.
+             */
+            public static final String RATE_REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
+
+            /**
+             * Remaining Rate Limit header name.
+             */
+            public static final String RATE_REMAINING_HEADER = "X-RateLimit-Remaining";
+        }
 
         /**
-         * Redis tokens rate defaultLimiter user-level token computational key
-         * prefix.
+         * The request quota defaultLimiter strategy configuration properties.
          */
-        private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class RedisQuotaLimiterStrategyProperties extends RedisQuotaRequestLimiterStrategy {
 
-        /**
-         * The name of the header that returns the burst capacity configuration.
-         */
-        private String burstCapacityHeader = RATE_BURST_CAPACITY_HEADER;
+            /**
+             * The quota limiter user-level configuration key prefix.
+             */
+            private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
 
-        /**
-         * The name of the header that returns the replenish rate configuration.
-         */
-        private String replenishRateHeader = RATE_REPLENISH_RATE_HEADER;
+            /**
+             * The quota limiter user-level tokens computational key prefix.
+             */
+            private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
 
-        /**
-         * The name of the header that returns the requested tokens
-         * configuration.
-         */
-        private String requestedTokensHeader = RATE_REQUESTED_TOKENS_HEADER;
+            /**
+             * The name of the header that returns the request capacity
+             * configuration.
+             */
+            private String requestCapacityHeader = QUOTA_REQUEST_CAPACITY_HEADER;
 
-        /**
-         * The name of the header that returns number of remaining requests
-         * during the current second.
-         */
-        private String remainingHeader = RATE_REMAINING_HEADER;
+            /**
+             * The name of the header that returns number of remaining requests
+             * during the current second.
+             */
+            private String remainingHeader = QUOTA_REMAINING_HEADER;
 
-        /**
-         * Burst Capacity header name.
-         */
-        public static final String RATE_BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
+            /**
+             * Request capacity header name.
+             */
+            public static final String QUOTA_REQUEST_CAPACITY_HEADER = "X-QuotaLimit-Request-Capacity";
 
-        /**
-         * Replenish Rate Limit header name.
-         */
-        public static final String RATE_REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
+            /**
+             * Remaining quota Limit header name.
+             */
+            public static final String QUOTA_REMAINING_HEADER = "X-QuotaLimit-Remaining";
+        }
 
-        /**
-         * Requested Tokens header name.
-         */
-        public static final String RATE_REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
-
-        /**
-         * Remaining Rate Limit header name.
-         */
-        public static final String RATE_REMAINING_HEADER = "X-RateLimit-Remaining";
-    }
-
-    /**
-     * The request quota defaultLimiter strategy configuration properties.
-     */
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RedisQuotaLimiterStrategyProperties extends RedisQuotaLimiterStrategy {
-
-        /**
-         * The quota limiter user-level configuration key prefix.
-         */
-        private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
-
-        /**
-         * The quota limiter user-level tokens computational key prefix.
-         */
-        private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
-
-        /**
-         * The name of the header that returns the request capacity
-         * configuration.
-         */
-        private String requestCapacityHeader = QUOTA_REQUEST_CAPACITY_HEADER;
-
-        /**
-         * The name of the header that returns number of remaining requests
-         * during the current second.
-         */
-        private String remainingHeader = QUOTA_REMAINING_HEADER;
-
-        /**
-         * Request capacity header name.
-         */
-        public static final String QUOTA_REQUEST_CAPACITY_HEADER = "X-QuotaLimit-Request-Capacity";
-
-        /**
-         * Remaining quota Limit header name.
-         */
-        public static final String QUOTA_REMAINING_HEADER = "X-QuotaLimit-Remaining";
     }
 
     /**

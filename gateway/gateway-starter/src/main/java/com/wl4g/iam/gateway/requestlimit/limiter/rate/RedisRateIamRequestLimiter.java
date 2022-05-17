@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.limiter;
+package com.wl4g.iam.gateway.requestlimit.limiter.rate;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.System.nanoTime;
@@ -25,27 +25,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.constraints.Min;
-
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.RedisRateLimiterStrategyProperties;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.RedisRateLimiterStrategyProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.AbstractRedisIamRequestLimiter;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -60,7 +54,7 @@ import reactor.core.publisher.Mono;
  */
 @Getter
 @Setter
-public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisRateLimiterStrategy> {
+public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisRateRequestLimiterStrategy> {
 
     private final RedisScript<List<Long>> redisScript;
 
@@ -152,7 +146,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                 });
     }
 
-    protected List<String> getKeys(RedisRateLimiterStrategy strategy, String limitKey) {
+    protected List<String> getKeys(RedisRateRequestLimiterStrategy strategy, String limitKey) {
         // use `{}` around keys to use Redis Key hash tags
         // this allows for using redis cluster
 
@@ -166,41 +160,16 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         return Arrays.asList(tokenKey, timestampKey);
     }
 
-    protected Map<String, String> createHeaders(RedisRateLimiterStrategy strategy, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisRateRequestLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
+        RedisRateLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
         if (strategy.isIncludeHeaders()) {
-            RedisRateLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
             headers.put(config.getRemainingHeader(), tokensLeft.toString());
             headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));
             headers.put(config.getBurstCapacityHeader(), String.valueOf(strategy.getBurstCapacity()));
             headers.put(config.getRequestedTokensHeader(), String.valueOf(strategy.getRequestedTokens()));
         }
         return headers;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RedisRateLimiterStrategy extends RequestLimiterStrategy {
-
-        /**
-         * The default token bucket capacity, that is, the total number of
-         * concurrency allowed.
-         */
-        private @Min(0) int burstCapacity = 1;
-
-        /**
-         * How many requests per second do you want a user to be allowed to do?
-         */
-        private @Min(1) int replenishRate = 1;
-
-        /**
-         * How many tokens are requested per request?
-         */
-        private @Min(1) int requestedTokens = 1;
     }
 
 }

@@ -51,8 +51,8 @@ import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter;
+import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaIamRequestLimiter;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateIamRequestLimiter;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 

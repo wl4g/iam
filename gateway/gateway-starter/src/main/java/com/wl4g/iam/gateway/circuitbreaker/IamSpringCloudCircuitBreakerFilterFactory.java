@@ -65,7 +65,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
 
     private ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory;
 
-    private ReactiveCircuitBreaker cb;
+    private ReactiveCircuitBreaker circuitBreaker;
 
     private final ObjectProvider<DispatcherHandler> dispatcherHandlerProvider;
 
@@ -98,7 +98,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
         //
         // [FIXED] ADD Use member variables
         //
-        this.cb = reactiveCircuitBreakerFactory.create(config.getId());
+        this.circuitBreaker = reactiveCircuitBreakerFactory.create(config.getId());
         Set<HttpStatus> statuses = config.getStatusCodes()
                 .stream()
                 .map(HttpStatusHolder::parse)
@@ -163,7 +163,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
         //
         // [Begin] Modified to Ordered gateway filter.
         //
-        return new CustomSpringCloudCircuitBreakerGatewayFilter(config, statuses);
+        return new IamSpringCloudCircuitBreakerGatewayFilter(config, statuses);
         //
         // [End] Modified to Ordered gateway filter.
         //
@@ -254,7 +254,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
     }
 
     @AllArgsConstructor
-    class CustomSpringCloudCircuitBreakerGatewayFilter implements GatewayFilter, Ordered {
+    class IamSpringCloudCircuitBreakerGatewayFilter implements GatewayFilter, Ordered {
 
         private final Config config;
         private final Set<HttpStatus> statuses;
@@ -266,7 +266,7 @@ public abstract class IamSpringCloudCircuitBreakerFilterFactory
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            return cb.run(chain.filter(exchange).doOnSuccess(v -> {
+            return circuitBreaker.run(chain.filter(exchange).doOnSuccess(v -> {
                 if (statuses.contains(exchange.getResponse().getStatusCode())) {
                     HttpStatus status = exchange.getResponse().getStatusCode();
                     exchange.getResponse().setStatusCode(null);

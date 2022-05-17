@@ -19,8 +19,8 @@ import static java.lang.String.valueOf;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaRequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
 
 import reactor.core.publisher.Mono;
 
@@ -35,9 +35,9 @@ import reactor.core.publisher.Mono;
  */
 public interface LimiterStrategyConfigurer {
 
-    Mono<RedisRateLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey);
+    Mono<RedisRateRequestLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey);
 
-    Mono<RedisQuotaLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey);
+    Mono<RedisQuotaRequestLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey);
 
     public static String getConfigKey(String routeId, String limitKey) {
         return valueOf(routeId).concat(":").concat(limitKey);

@@ -21,7 +21,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import org.junit.Test;
 
 import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
 
 /**
  * {@link KeyStrategyTests}
@@ -34,7 +34,7 @@ public class RequestLimiterStrategyTests {
 
     @Test
     public void testLimiterStrategySerialToJson() {
-        RedisRateLimiterStrategy strategy = new RedisRateLimiterStrategy(100, 20, 1);
+        RedisRateRequestLimiterStrategy strategy = new RedisRateRequestLimiterStrategy(100, 20, 1);
         System.out.println(toJSONString(strategy));
     }
 

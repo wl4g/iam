@@ -383,10 +383,15 @@ spring:
             defaultReplenishRate: 1
             ## How many tokens are requested per request?
             defaultRequestedTokens: 1
-            includeHeaders: false ## Default by true
+            ## The add the properties info of the current limiter to the response header.
+            includeHeaders: true ## Default by true
+            ## The name of the header that returns the burst capacity configuration.
             burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
+            ## The name of the header that returns the replenish rate configuration.
             replenishRateHeader: X-Iscg-RateLimit-Replenish-Rate ## Default by 'X-RateLimit-Replenish-Rate'
+            ## The name of the header that returns the requested tokens configuration.
             requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
+            ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
           quota:
             ## The quota limiter user-level configuration key prefix.
@@ -397,8 +402,11 @@ spring:
             requestCapacity: 1000 ## Default by 1000
             ## The date pattern of request quota limit calculation cycle.
             cycleDatePattern: yyyyMMdd
-            includeHeaders: false ## Default by true
+            ## The add the properties info of the current limiter to the response header.
+            includeHeaders: true ## Default by true
+            ## The name of the header that returns the request capacity configuration.
             requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
+            ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
@@ -633,15 +641,15 @@ logging:
     #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
   root: INFO
   level:
-    de.codecentric.boot.admin: INFO
-    reactor.netty.http.client: INFO
+    reactor:
+      netty.http.client: INFO
     org:
-      springframework:
-        boot.context.config: DEBUG ## Print load config
+      springframework: INFO
+        #boot:context.config: DEBUG ## Print load config
       apache: INFO
     feign: DEBUG
     com:
-      wl4g.iam.gateway: INFO
+      wl4g.iam.gateway: DEBUG
 
 ## Server configuration.
 server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties

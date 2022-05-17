@@ -13,31 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.limiter;
+package com.wl4g.iam.gateway.requestlimit.limiter.quota;
+
+import javax.validation.constraints.Min;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * {@link RequestLimiterStrategy}
- * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-12 v3.0.0
- * @since v3.0.0
- */
 @Getter
 @Setter
 @ToString
 @Validated
-public abstract class RequestLimiterStrategy {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RedisQuotaRequestLimiterStrategy extends RequestLimiterStrategy {
 
     /**
-     * The add the properties info of the current limiter to the response
-     * header. defaults to true.
+     * The number of total maximum allowed requests capacity.
      */
-    private boolean includeHeaders = true;
+    private @Min(0) Long requestCapacity = 1000L;
+
+    /**
+     * The date pattern of request quota limit calculation cycle.
+     */
+    private String cycleDatePattern = "yyyyMMdd";
 
 }

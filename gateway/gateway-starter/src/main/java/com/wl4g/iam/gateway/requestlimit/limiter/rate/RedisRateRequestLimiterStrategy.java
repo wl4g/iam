@@ -13,31 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.limiter;
+package com.wl4g.iam.gateway.requestlimit.limiter.rate;
+
+import javax.validation.constraints.Min;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * {@link RequestLimiterStrategy}
- * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-12 v3.0.0
- * @since v3.0.0
- */
 @Getter
 @Setter
 @ToString
 @Validated
-public abstract class RequestLimiterStrategy {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RedisRateRequestLimiterStrategy extends RequestLimiterStrategy {
 
     /**
-     * The add the properties info of the current limiter to the response
-     * header. defaults to true.
+     * The default token bucket capacity, that is, the total number of
+     * concurrency allowed.
      */
-    private boolean includeHeaders = true;
+    private @Min(0) int burstCapacity = 1;
 
+    /**
+     * How many requests per second do you want a user to be allowed to do?
+     */
+    private @Min(1) int replenishRate = 1;
+
+    /**
+     * How many tokens are requested per request?
+     */
+    private @Min(1) int requestedTokens = 1;
 }

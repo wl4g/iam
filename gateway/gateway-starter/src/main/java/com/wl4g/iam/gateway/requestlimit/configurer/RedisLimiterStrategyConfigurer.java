@@ -24,8 +24,8 @@ import org.springframework.data.redis.core.ReactiveHashOperations;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaRequestLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
 
 import reactor.core.publisher.Mono;
 
@@ -42,17 +42,17 @@ public class RedisLimiterStrategyConfigurer implements LimiterStrategyConfigurer
     private @Autowired ReactiveStringRedisTemplate redisTemplate;
 
     @Override
-    public Mono<RedisRateLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
+    public Mono<RedisRateRequestLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
         String prefix = requestLimitConfig.getDefaultLimiter().getRate().getConfigPrefix();
         return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
-                .map(json -> parseJSON(json, RedisRateLimiterStrategy.class));
+                .map(json -> parseJSON(json, RedisRateRequestLimiterStrategy.class));
     }
 
     @Override
-    public Mono<RedisQuotaLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
+    public Mono<RedisQuotaRequestLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
         String prefix = requestLimitConfig.getDefaultLimiter().getQuota().getConfigPrefix();
         return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
-                .map(json -> parseJSON(json, RedisQuotaLimiterStrategy.class));
+                .map(json -> parseJSON(json, RedisQuotaRequestLimiterStrategy.class));
     }
 
     private ReactiveHashOperations<String, String, String> getOperation() {

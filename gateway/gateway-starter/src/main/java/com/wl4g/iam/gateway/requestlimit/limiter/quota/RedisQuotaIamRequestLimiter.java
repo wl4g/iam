@@ -13,33 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.limiter;
+package com.wl4g.iam.gateway.requestlimit.limiter.quota;
 
 import static java.lang.System.nanoTime;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.constraints.Min;
-
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
-import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.RedisQuotaLimiterStrategyProperties;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.RedisQuotaLimiterStrategyProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.event.QuotaLimitHitEvent;
-import com.wl4g.iam.gateway.requestlimit.limiter.RedisQuotaIamRequestLimiter.RedisQuotaLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.limiter.AbstractRedisIamRequestLimiter;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import reactor.core.publisher.Mono;
 
 /**
@@ -49,7 +41,7 @@ import reactor.core.publisher.Mono;
  * @version 2022-04-21 v3.0.0
  * @since v3.0.0
  */
-public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisQuotaLimiterStrategy> {
+public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<RedisQuotaRequestLimiterStrategy> {
 
     public RedisQuotaIamRequestLimiter(IamRequestLimiterProperties requestLimiterConfig, LimiterStrategyConfigurer configurer,
             ReactiveStringRedisTemplate redisTemplate, EventBusSupport eventBus, IamGatewayMetricsFacade metricsFacade) {
@@ -86,6 +78,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                                 log.debug("response: {}", result);
                             }
                             metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
+
                             if (!allowed) { // Total hits metric
                                 metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
                                 eventBus.post(new QuotaLimitHitEvent(limitKey));
@@ -106,7 +99,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 });
     }
 
-    protected Map<String, String> createHeaders(RedisQuotaLimiterStrategy strategy, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
         if (strategy.isIncludeHeaders()) {
             RedisQuotaLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getQuota();
@@ -116,7 +109,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
         return headers;
     }
 
-    protected String getKey(RedisQuotaLimiterStrategy strategy, String routeId, String limitKey) {
+    protected String getKey(RedisQuotaRequestLimiterStrategy strategy, String routeId, String limitKey) {
         return requestLimiterConfig.getDefaultLimiter()
                 .getQuota()
                 .getTokenPrefix()
@@ -124,25 +117,6 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 .concat(routeId)
                 .concat(":")
                 .concat(limitKey);
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    @Validated
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RedisQuotaLimiterStrategy extends RequestLimiterStrategy {
-
-        /**
-         * The number of total maximum allowed requests capacity.
-         */
-        private @Min(0) Long requestCapacity = 1000L;
-
-        /**
-         * The date pattern of request quota limit calculation cycle.
-         */
-        private String cycleDatePattern = "yyyyMMdd";
     }
 
 }

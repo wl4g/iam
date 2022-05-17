@@ -16,6 +16,7 @@
 
 package com.wl4g.iam.gateway.requestlimit;
 
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -32,6 +33,7 @@ import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.HttpStatusHolder;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
@@ -45,6 +47,7 @@ import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -61,6 +64,7 @@ import reactor.core.publisher.Mono;
 @Getter
 @Setter
 @ToString
+@CustomLog
 public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory<IamRequestLimiterFilterFactory.Config> {
     private static final String EMPTY_KEY = "____EMPTY_KEY__";
 
@@ -182,7 +186,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
     }
 
     @AllArgsConstructor
-    public static class IamRequestLimiterGatewayFilter implements GatewayFilter, Ordered {
+    class IamRequestLimiterGatewayFilter implements GatewayFilter, Ordered {
         private final Config config;
         private final KeyResolverStrategy keyStrategy;
         private final IamKeyResolver<KeyResolverStrategy> keyResolver;
@@ -197,6 +201,8 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             return keyResolver.resolve(keyStrategy, exchange).defaultIfEmpty(EMPTY_KEY).flatMap(key -> {
                 if (EMPTY_KEY.equals(key)) {
+                    log.debug("Got empty limiting key. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
+                            requestLimiter.kind(), exchange.getRequest().getURI().getPath());
                     if (config.getDenyEmptyKey()) {
                         ServerWebExchangeUtils.setResponseStatus(exchange,
                                 HttpStatusHolder.parse(config.getEmptyKeyStatusCode()));
@@ -206,13 +212,17 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
                 }
                 Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
                 return requestLimiter.isAllowed(config, route.getId(), key).flatMap(result -> {
-                    // Add limited headers.
-                    for (Map.Entry<String, String> header : result.getHeaders().entrySet()) {
-                        exchange.getResponse().getHeaders().add(header.getKey(), header.getValue());
-                    }
+                    // ADD limited response headers.
+                    HttpHeaders respHeaders = exchange.getResponse().getHeaders();
+                    safeMap(result.getHeaders()).forEach((headerName, headerValue) -> respHeaders.add(headerName, headerValue));
+                    // Allow the request to execute the next filter.
                     if (result.isAllowed()) {
+                        log.debug("Allowed the request. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
+                                requestLimiter.kind(), exchange.getRequest().getURI().getPath());
                         return chain.filter(exchange);
                     }
+                    log.debug("Rejected the request. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
+                            requestLimiter.kind(), exchange.getRequest().getURI().getPath());
                     ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                     return exchange.getResponse().setComplete();
                 });
