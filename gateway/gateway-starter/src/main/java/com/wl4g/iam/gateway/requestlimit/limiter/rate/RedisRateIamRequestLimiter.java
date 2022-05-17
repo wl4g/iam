@@ -163,10 +163,10 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         Map<String, String> headers = new HashMap<>();
         RedisRateLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
         if (strategy.isIncludeHeaders()) {
-            headers.put(config.getRemainingHeader(), tokensLeft.toString());
-            headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));
             headers.put(config.getBurstCapacityHeader(), String.valueOf(strategy.getBurstCapacity()));
+            headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));
             headers.put(config.getRequestedTokensHeader(), String.valueOf(strategy.getRequestedTokens()));
+            headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
         }
         return headers;
     }

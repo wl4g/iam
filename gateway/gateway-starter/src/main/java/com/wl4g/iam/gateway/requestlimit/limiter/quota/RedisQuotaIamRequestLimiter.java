@@ -74,8 +74,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                             boolean allowed = accumulated < requestCapacity;
 
                             LimitedResult result = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
-                            if (log.isDebugEnabled()) {
-                                log.debug("response: {}", result);
+                            if (log.isTraceEnabled()) {
+                                log.trace("response: {}", result);
                             }
                             metricsFacade.timer(MetricsName.REDIS_QUOTALIMIT_TIME, routeId, beginTime);
 
@@ -99,16 +99,6 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 });
     }
 
-    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
-        Map<String, String> headers = new HashMap<>();
-        if (strategy.isIncludeHeaders()) {
-            RedisQuotaLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getQuota();
-            headers.put(config.getRemainingHeader(), tokensLeft.toString());
-            headers.put(config.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
-        }
-        return headers;
-    }
-
     protected String getKey(RedisQuotaRequestLimiterStrategy strategy, String routeId, String limitKey) {
         return requestLimiterConfig.getDefaultLimiter()
                 .getQuota()
@@ -117,6 +107,16 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 .concat(routeId)
                 .concat(":")
                 .concat(limitKey);
+    }
+
+    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
+        Map<String, String> headers = new HashMap<>();
+        if (strategy.isIncludeHeaders()) {
+            RedisQuotaLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getQuota();
+            headers.put(config.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
+            headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
+        }
+        return headers;
     }
 
 }
