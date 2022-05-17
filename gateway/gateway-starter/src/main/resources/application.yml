@@ -657,7 +657,7 @@ logging:
       apache: INFO
     feign: DEBUG
     com:
-      wl4g.iam.gateway: DEBUG
+      wl4g.iam.gateway: INFO
 
 ## Server configuration.
 server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
