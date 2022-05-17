@@ -18,6 +18,7 @@ package com.wl4g.iam.gateway.requestlimit.limiter;
 import java.util.Map;
 
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.AbstractLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaRequestLimiterStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
@@ -38,6 +39,8 @@ import reactor.core.publisher.Mono;
 public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
     Mono<LimitedResult> isAllowed(IamRequestLimiterFilterFactory.Config config, String routeId, String limitKey);
+
+    AbstractLimiterProperties getDefaultLimiter();
 
     @Getter
     @ToString

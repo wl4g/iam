@@ -32,7 +32,8 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties;
-import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.RedisRateLimiterStrategyProperties;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.AbstractLimiterProperties;
+import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.RedisRateLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.event.RateLimitHitEvent;
 import com.wl4g.iam.gateway.requestlimit.limiter.AbstractRedisIamRequestLimiter;
@@ -81,7 +82,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         final long beginTime = nanoTime();
 
         return configurer.loadRateStrategy(routeId, limitKey)
-                .defaultIfEmpty(requestLimiterConfig.getDefaultLimiter().getRate())
+                .defaultIfEmpty(((RedisRateLimiterProperties) getDefaultLimiter()).getStrategy())
                 .flatMap(strategy -> {
                     // How many requests per second do you want a user to be
                     // allowed to do?
@@ -145,6 +146,11 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                 });
     }
 
+    @Override
+    public AbstractLimiterProperties getDefaultLimiter() {
+        return requestLimiterConfig.getDefaultLimiter().getRate();
+    }
+
     protected List<String> getKeys(RedisRateRequestLimiterStrategy strategy, String limitKey) {
         // use `{}` around keys to use Redis Key hash tags
         // this allows for using redis cluster
@@ -161,7 +167,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
 
     protected Map<String, String> createHeaders(RedisRateRequestLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
-        RedisRateLimiterStrategyProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
+        RedisRateLimiterProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
         if (strategy.isIncludeHeaders()) {
             headers.put(config.getBurstCapacityHeader(), String.valueOf(strategy.getBurstCapacity()));
             headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));

@@ -24,7 +24,7 @@ Using the above script tool will contain `localhost,127.0.0.1` by default.
 
 ### 2.1 Ingress TLS
 
-- Startup IamGateway(pseudo command-line)
+- Startup arguments example:
 
 ```bash
 java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NONE
@@ -135,7 +135,34 @@ TODO
 
 ### 2.7 Request Limiter
 
-TODO
+- Startup arguments example:
+
+```bash
+java -jar iam-gateway-3.0.0-bin.jar \
+--spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultBurstCapacity=1000 \
+--spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultReplenishRate=10 \
+--spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultRequestedTokens=1 \
+--spring.iam.gateway.requestlimit.defaultLimiter.quota.requestCapacity=1000 \
+--spring.iam.gateway.requestlimit.defaultLimiter.quota.cycleDatePattern=yyyyMMdd
+```
+
+```bash
+# for testing positive example(non limited)
+ab -n 500 -c 5 \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-m POST \
+'http://localhost:18085/productpage-with-IamRequestLimiter/get?response_type=json'
+
+# for testing negative example(limited)
+ab -n 2000 -c 15 \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-m POST \
+'http://localhost:18085/productpage-with-IamRequestLimiter/get?response_type=json'
+```
 
 ### 2.8 Traffic Replication
 

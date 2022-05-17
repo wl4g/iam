@@ -143,13 +143,31 @@ public class IamRequestLimiterProperties {
          * The default rate limiting configuration (E.G: when no configuration
          * is specified for principal)
          */
-        private RedisRateLimiterStrategyProperties rate = new RedisRateLimiterStrategyProperties();
+        private RedisRateLimiterProperties rate = new RedisRateLimiterProperties();
 
         /**
          * The default quota limiting configuration (E.G: when no configuration
          * is specified for principal)
          */
-        private RedisQuotaLimiterStrategyProperties quota = new RedisQuotaLimiterStrategyProperties();
+        private RedisQuotaLimiterProperties quota = new RedisQuotaLimiterProperties();
+
+        @Getter
+        @Setter
+        @ToString
+        @Validated
+        public static abstract class AbstractLimiterProperties {
+
+            /**
+             * The name of the header that returns number of remaining requests
+             * during the current second.
+             */
+            private String remainingHeader;
+
+            /**
+             * The name of the deny header that empty key got obtained.
+             */
+            private String denyEmptyKeyHeader;
+        }
 
         /**
          * The request rate defaultLimiter strategy configuration properties.
@@ -159,8 +177,7 @@ public class IamRequestLimiterProperties {
         @ToString
         @Validated
         @AllArgsConstructor
-        @NoArgsConstructor
-        public static class RedisRateLimiterStrategyProperties extends RedisRateRequestLimiterStrategy {
+        public static class RedisRateLimiterProperties extends AbstractLimiterProperties {
 
             /**
              * Redis tokens rate defaultLimiter user-level configuration key
@@ -193,30 +210,40 @@ public class IamRequestLimiterProperties {
             private String requestedTokensHeader = RATE_REQUESTED_TOKENS_HEADER;
 
             /**
-             * The name of the header that returns number of remaining requests
-             * during the current second.
+             * The strategy configuration of request current limiter based on
+             * redis rate.
              */
-            private String remainingHeader = RATE_REMAINING_HEADER;
+            private RedisRateRequestLimiterStrategy strategy = new RedisRateRequestLimiterStrategy();
+
+            public RedisRateLimiterProperties() {
+                setRemainingHeader(RATE_REMAINING_HEADER);
+                setDenyEmptyKeyHeader(RATE_DENY_EMPTYKEY_HEADER);
+            }
 
             /**
              * Burst Capacity header name.
              */
-            public static final String RATE_BURST_CAPACITY_HEADER = "X-RateLimit-Burst-Capacity";
+            public static final String RATE_BURST_CAPACITY_HEADER = "X-Iscg-RateLimit-Burst-Capacity";
 
             /**
              * Replenish Rate Limit header name.
              */
-            public static final String RATE_REPLENISH_RATE_HEADER = "X-RateLimit-Replenish-Rate";
+            public static final String RATE_REPLENISH_RATE_HEADER = "X-Iscg-RateLimit-Replenish-Rate";
 
             /**
              * Requested Tokens header name.
              */
-            public static final String RATE_REQUESTED_TOKENS_HEADER = "X-RateLimit-Requested-Tokens";
+            public static final String RATE_REQUESTED_TOKENS_HEADER = "X-Iscg-RateLimit-Requested-Tokens";
 
             /**
              * Remaining Rate Limit header name.
              */
-            public static final String RATE_REMAINING_HEADER = "X-RateLimit-Remaining";
+            public static final String RATE_REMAINING_HEADER = "X-Iscg-RateLimit-Remaining";
+
+            /**
+             * The name of the deny header that empty key got obtained.
+             */
+            public static final String RATE_DENY_EMPTYKEY_HEADER = "X-Iscg-RateLimit-Deny-EmptyKey";
         }
 
         /**
@@ -227,8 +254,7 @@ public class IamRequestLimiterProperties {
         @ToString
         @Validated
         @AllArgsConstructor
-        @NoArgsConstructor
-        public static class RedisQuotaLimiterStrategyProperties extends RedisQuotaRequestLimiterStrategy {
+        public static class RedisQuotaLimiterProperties extends AbstractLimiterProperties {
 
             /**
              * The quota limiter user-level configuration key prefix.
@@ -247,20 +273,30 @@ public class IamRequestLimiterProperties {
             private String requestCapacityHeader = QUOTA_REQUEST_CAPACITY_HEADER;
 
             /**
-             * The name of the header that returns number of remaining requests
-             * during the current second.
+             * The strategy configuration of request current limiter based on
+             * redis quota.
              */
-            private String remainingHeader = QUOTA_REMAINING_HEADER;
+            private RedisQuotaRequestLimiterStrategy strategy = new RedisQuotaRequestLimiterStrategy();
+
+            public RedisQuotaLimiterProperties() {
+                setRemainingHeader(QUOTA_REMAINING_HEADER);
+                setDenyEmptyKeyHeader(QUOTA_DENY_EMPTYKEY_HEADER);
+            }
 
             /**
              * Request capacity header name.
              */
-            public static final String QUOTA_REQUEST_CAPACITY_HEADER = "X-QuotaLimit-Request-Capacity";
+            public static final String QUOTA_REQUEST_CAPACITY_HEADER = "X-Iscg-QuotaLimit-Request-Capacity";
 
             /**
-             * Remaining quota Limit header name.
+             * Remaining Rate Limit header name.
              */
-            public static final String QUOTA_REMAINING_HEADER = "X-QuotaLimit-Remaining";
+            public static final String QUOTA_REMAINING_HEADER = "X-Iscg-QuotaLimit-Remaining";
+
+            /**
+             * The name of the deny header that empty key got obtained.
+             */
+            public static final String QUOTA_DENY_EMPTYKEY_HEADER = "X-Iscg-QuotaLimit-Deny-EmptyKey";
         }
 
     }

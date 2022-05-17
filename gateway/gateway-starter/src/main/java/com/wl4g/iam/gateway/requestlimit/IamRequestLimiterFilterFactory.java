@@ -20,6 +20,7 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.setResponseStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -204,8 +205,10 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
                     log.debug("Got empty limiting key. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
                             requestLimiter.kind(), exchange.getRequest().getURI().getPath());
                     if (config.getDenyEmptyKey()) {
-                        ServerWebExchangeUtils.setResponseStatus(exchange,
-                                HttpStatusHolder.parse(config.getEmptyKeyStatusCode()));
+                        setResponseStatus(exchange, HttpStatusHolder.parse(config.getEmptyKeyStatusCode()));
+                        // ADD deny empty key response headers.
+                        exchange.getResponse().getHeaders().add(requestLimiter.getDefaultLimiter().getDenyEmptyKeyHeader(),
+                                keyResolver.kind().name());
                         return exchange.getResponse().setComplete();
                     }
                     return chain.filter(exchange);
@@ -225,7 +228,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
 
                     log.debug("Rejected the request. keyResolver: {}, limiter: {}, path: {}, headers: {}", keyResolver.kind(),
                             requestLimiter.kind(), exchange.getRequest().getURI().getPath(), result.getHeaders());
-                    ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
+                    setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                     return exchange.getResponse().setComplete();
                 });
             });

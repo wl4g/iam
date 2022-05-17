@@ -378,11 +378,11 @@ spring:
             ## The rate limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:rate
             ## The default token bucket capacity, that is, the total number of concurrency allowed.
-            defaultBurstCapacity: 1
+            burstCapacity: 1 ## Default by 1
             ## How many requests per second do you want a user to be allowed to do?
-            defaultReplenishRate: 1
+            replenishRate: 1 ## Default by 1
             ## How many tokens are requested per request?
-            defaultRequestedTokens: 1
+            requestedTokens: 1 ## Default by 1
             ## The add the properties info of the current limiter to the response header.
             includeHeaders: true ## Default by true
             ## The name of the header that returns the burst capacity configuration.
@@ -393,6 +393,8 @@ spring:
             requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
+            ## The name of the deny header that empty key got obtained.
+            denyEmptyKeyHeader: X-Iscg-RateLimit-Deny-EmptyKey ## Default by 'X-Iscg-RateLimit-Deny-EmptyKey'
           quota:
             ## The quota limiter user-level configuration key prefix.
             configPrefix: iam:gateway:requestlimit:config:quota
@@ -408,6 +410,8 @@ spring:
             requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
+            ## The name of the deny header that empty key got obtained.
+            denyEmptyKeyHeader: X-Iscg-QuotaLimit-Deny-EmptyKey ## Default by 'X-Iscg-QuotaLimit-Deny-EmptyKey'
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
