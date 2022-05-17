@@ -240,7 +240,27 @@ hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-Simpl
 
 ### 2.7 Request Limiter
 
-- - Preconditions (startup arguments example):
+- Request
+
+```bash
+# for testing positive example(non limited)
+ab -n 500 -c 5 \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-m POST \
+'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
+
+# for testing negative example(limited)
+ab -n 2000 -c 15 \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-m POST \
+'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
+```
+
+- Configure the limiting configuration for global default.
 
 ```bash
 java -jar iam-gateway-3.0.0-bin.jar \
@@ -251,22 +271,30 @@ java -jar iam-gateway-3.0.0-bin.jar \
 --spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyyyMMdd
 ```
 
-```bash
-# for testing positive example(non limited)
-ab -n 500 -c 5 \
--H 'X-Iscg-Trace: y' \
--H 'X-Iscg-Log: y' \
--H 'X-Iscg-Log-Level: 10' \
--m POST \
-'http://localhost:18085/productpage-with-IamRequestLimiter/get?response_type=json'
+- Configure the limiting configuration for routeId + limitKey (e.g: Principal/Header(X-Forward-Ip)/Path/...).
 
-# for testing negative example(limited)
-ab -n 2000 -c 15 \
--H 'X-Iscg-Trace: y' \
--H 'X-Iscg-Log: y' \
--H 'X-Iscg-Log-Level: 10' \
--m POST \
-'http://localhost:18085/productpage-with-IamRequestLimiter/get?response_type=json'
+```bash
+# The cache key format is(example): 'iam:gateway:requestlimit:config:rate:<routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
+
+#
+# The keyResolver is Header(X-Forward-Ip)
+hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:127.0.0.1  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+
+#
+# The keyResolver is Path
+hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+
+#
+# The keyResolver is Principal(appId)
+hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+
+# ...
 ```
 
 - View Limiting Events
