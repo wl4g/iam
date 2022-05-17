@@ -215,14 +215,16 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
                     // ADD limited response headers.
                     HttpHeaders respHeaders = exchange.getResponse().getHeaders();
                     safeMap(result.getHeaders()).forEach((headerName, headerValue) -> respHeaders.add(headerName, headerValue));
+
                     // Allow the request to execute the next filter.
                     if (result.isAllowed()) {
                         log.debug("Allowed the request. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
                                 requestLimiter.kind(), exchange.getRequest().getURI().getPath());
                         return chain.filter(exchange);
                     }
-                    log.debug("Rejected the request. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
-                            requestLimiter.kind(), exchange.getRequest().getURI().getPath());
+
+                    log.debug("Rejected the request. keyResolver: {}, limiter: {}, path: {}, headers: {}", keyResolver.kind(),
+                            requestLimiter.kind(), exchange.getRequest().getURI().getPath(), result.getHeaders());
                     ServerWebExchangeUtils.setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                     return exchange.getResponse().setComplete();
                 });

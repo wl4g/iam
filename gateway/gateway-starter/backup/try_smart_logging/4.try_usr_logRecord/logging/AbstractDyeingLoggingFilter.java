@@ -53,6 +53,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.model.LogRecord;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
@@ -117,6 +118,9 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         // services to print the log for the current request.
         request.mutate().header(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId).build();
 
+        // ADD log record.
+        obtainLogRecord(exchange).withBeginTime(beginTime).withTraceId(traceId).withVerboseLevel(verboseLevel);
+
         return doFilterInternal(exchange, chain, headers, traceId, requestMethod);
     }
 
@@ -167,6 +171,18 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     protected boolean isLoglevelRange(ServerWebExchange exchange, int lower, int upper) {
         int verboseLevel = exchange.getAttribute(KEY_VERBOSE_LEVEL);
         return verboseLevel >= lower && verboseLevel <= upper;
+    }
+
+    /**
+     * Obtain current request log record.
+     * 
+     * @param exchange
+     * @return
+     */
+    protected LogRecord obtainLogRecord(ServerWebExchange exchange) {
+        LogRecord record = new LogRecord();
+        exchange.getAttributes().put(KEY_LOG_RECORD, record);
+        return record;
     }
 
     /**

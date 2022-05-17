@@ -20,8 +20,8 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import org.junit.Test;
 
-import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
-import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateIamRequestLimiter.RedisRateLimiterStrategy;
+import com.wl4g.iam.gateway.requestlimit.key.KeyStrategyTests;
+import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateRequestLimiterStrategy;
 
 /**
  * {@link KeyStrategyTests}

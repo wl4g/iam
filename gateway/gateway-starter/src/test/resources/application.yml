@@ -310,7 +310,7 @@ spring:
         ## permanently disabled (regardless of the request header). and whether the parameters meet the conditions).
         enabled: true ## Default by true
         ## The output default level of flight log printing, similar to kubectl design value range: 1-10, 1 is coarse-grained log, 10 is the most fine-grained log.
-        defaultVerboseLevel: 7
+        defaultVerboseLevel: 10
         ## The request header name used to set the log output verbose level valid only for the current request, This value takes precedence over '#defaultVerboseLevel'
         verboseLevelRequestHeader: X-Iscg-Log-Level ## Default by 'X-Iscg-Log-Level'
         ## Sets the status header name of the dyed log request, which is used to notify the back-end services to enable log printing for the current request.

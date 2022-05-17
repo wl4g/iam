@@ -119,8 +119,8 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
 
                                     LimitedResult result = new LimitedResult(allowed, tokensLeft,
                                             createHeaders(strategy, tokensLeft));
-                                    if (log.isDebugEnabled()) {
-                                        log.debug("response: {}", result);
+                                    if (log.isTraceEnabled()) {
+                                        log.trace("response: {}", result);
                                     }
 
                                     // [Begin] ADD feature for metrics
@@ -130,7 +130,6 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                                         eventBus.post(new RateLimitHitEvent(limitKey));
                                     }
                                     // [End] ADD feature for metrics
-
                                     return result;
                                 });
                     } catch (Exception e) {
