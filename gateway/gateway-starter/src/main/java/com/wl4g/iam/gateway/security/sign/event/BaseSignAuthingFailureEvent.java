@@ -24,25 +24,30 @@ import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHas
 import lombok.Getter;
 
 /**
- * {@link SimpleSignAuthingFailureEvent}
+ * {@link BaseSignAuthingFailureEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-18 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class SimpleSignAuthingFailureEvent extends ApplicationEvent {
+public class BaseSignAuthingFailureEvent extends ApplicationEvent {
     private static final long serialVersionUID = -7291654693102770442L;
 
     private final AppIdExtractor extractor;
     private final SignAlgorithm algorithm;
     private final SignHashingMode mode;
+    private final String routeId;
+    private final String requsetPath;
 
-    public SimpleSignAuthingFailureEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode) {
+    public BaseSignAuthingFailureEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode,
+            String routeId, String requsetPath) {
         super(appId);
         this.extractor = extractor;
         this.algorithm = algorithm;
         this.mode = mode;
+        this.routeId = routeId;
+        this.requsetPath = requsetPath;
     }
 
 }

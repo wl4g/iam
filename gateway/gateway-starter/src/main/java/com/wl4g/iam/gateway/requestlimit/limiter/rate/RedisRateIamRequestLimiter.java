@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
@@ -77,7 +78,11 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
      * fetching the count and writing the new count.
      */
     @Override
-    public Mono<LimitedResult> isAllowed(IamRequestLimiterFilterFactory.Config config, String routeId, String limitKey) {
+    public Mono<LimitedResult> isAllowed(
+            IamRequestLimiterFilterFactory.Config config,
+            ServerWebExchange exchange,
+            String routeId,
+            String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_TOTAL, routeId, 1);
         final long beginTime = nanoTime();
 
@@ -128,7 +133,8 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                                     metricsFacade.timer(MetricsName.REDIS_RATELIMIT_TIME, routeId, beginTime);
                                     if (!allowed) { // Total hits metric
                                         metricsFacade.counter(MetricsName.REDIS_RATELIMIT_HITS_TOTAL, routeId, 1);
-                                        eventBus.post(new RateLimitHitEvent(limitKey));
+                                        eventBus.post(new RateLimitHitEvent(routeId, limitKey,
+                                                exchange.getRequest().getURI().getPath()));
                                     }
                                     // [End] ADD feature for metrics
                                     return result;

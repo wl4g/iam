@@ -23,6 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.google.common.eventbus.Subscribe;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
+import com.wl4g.iam.gateway.security.config.IamSecurityProperties.RedisEventRecorderProperties;
 import com.wl4g.infra.common.lang.DateUtils2;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since v3.0.0
  */
 @Slf4j
-public class RedisSimpleSignAuthingEventRecoder {
+public class DefaultRedisSignAuthingEventRecoder {
     public static final String LOG_SIGN_EVENT_SUCCESS_PREFIX = "SIGN_SUCCESS_EVENT";
     public static final String LOG_SIGN_EVENT_FAILURE_PREFIX = "SIGN_FAILURE_EVENT";
 
@@ -44,14 +45,14 @@ public class RedisSimpleSignAuthingEventRecoder {
     private @Autowired StringRedisTemplate redisTemplate;
 
     @Subscribe
-    public void onSuccess(SimpleSignAuthingSuccessEvent event) {
+    public void onSuccess(SignAuthingSuccessEvent event) {
         if (!authingConfig.getSimpleSign().getEventRecorder().getRedis().isEnabled()) {
             return;
         }
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = getSuccessCumulator().increment(appId, 1);
+            incr = getSuccessCumulator(event).increment(appId, 1);
         } finally {
             if (authingConfig.getSimpleSign().getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_SUCCESS_PREFIX, appId, incr);
@@ -60,31 +61,35 @@ public class RedisSimpleSignAuthingEventRecoder {
     }
 
     @Subscribe
-    public void onFailure(SimpleSignAuthingFailureEvent event) {
+    public void onFailure(SignAuthingFailureEvent event) {
         if (!authingConfig.getSimpleSign().getEventRecorder().getRedis().isEnabled()) {
             return;
         }
         String appId = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = getFailureCumulator().increment(appId, 1);
+            incr = getFailureCumulator(event).increment(appId, 1);
         } finally {
-            if (log.isInfoEnabled()) {
+            if (authingConfig.getSimpleSign().getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
                 log.info("{} {}->{}", LOG_SIGN_EVENT_FAILURE_PREFIX, appId, incr);
             }
         }
     }
 
-    private BoundHashOperations<String, Object, Object> getSuccessCumulator() {
-        return redisTemplate.boundHashOps(
-                authingConfig.getSimpleSign().getEventRecorder().getRedis().getSuccessCumulatorPrefix().concat(":").concat(DateUtils2
-                        .getDate(authingConfig.getSimpleSign().getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern())));
+    private BoundHashOperations<String, Object, Object> getSuccessCumulator(BaseSignAuthingFailureEvent event) {
+        RedisEventRecorderProperties redis = authingConfig.getSimpleSign().getEventRecorder().getRedis();
+        String prefix = redis.getSuccessCumulatorPrefix();
+        String suffix = redis.getCumulatorSuffixOfDatePattern();
+        String key = prefix.concat(":").concat(event.getRouteId()).concat(":").concat(DateUtils2.getDate(suffix));
+        return redisTemplate.boundHashOps(key);
     }
 
-    private BoundHashOperations<String, Object, Object> getFailureCumulator() {
-        return redisTemplate.boundHashOps(
-                authingConfig.getSimpleSign().getEventRecorder().getRedis().getFailureCumulatorPrefix().concat(":").concat(DateUtils2
-                        .getDate(authingConfig.getSimpleSign().getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern())));
+    private BoundHashOperations<String, Object, Object> getFailureCumulator(BaseSignAuthingFailureEvent event) {
+        RedisEventRecorderProperties redis = authingConfig.getSimpleSign().getEventRecorder().getRedis();
+        String prefix = redis.getFailureCumulatorPrefix();
+        String suffix = redis.getCumulatorSuffixOfDatePattern();
+        String key = prefix.concat(":").concat(event.getRouteId()).concat(":").concat(DateUtils2.getDate(suffix));
+        return redisTemplate.boundHashOps(key);
     }
 
 }

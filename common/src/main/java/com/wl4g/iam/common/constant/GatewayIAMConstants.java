@@ -73,8 +73,10 @@ public abstract class GatewayIAMConstants extends IAMConstants {
             + ":token:rate";
     public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
             + ":token:quota";
-    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
-            + ":event:hits";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_RATE = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
+            + ":event:hits:rate";
+    public static final String CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_QUOTA = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT
+            + ":event:hits:quota";
 
     public static final String CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE = CACHE_PREFIX_IAM_GWTEWAY + ":responsecache:data";
 

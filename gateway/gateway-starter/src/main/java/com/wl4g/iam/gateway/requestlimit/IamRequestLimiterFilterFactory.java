@@ -214,7 +214,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
                     return chain.filter(exchange);
                 }
                 Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-                return requestLimiter.isAllowed(config, route.getId(), key).flatMap(result -> {
+                return requestLimiter.isAllowed(config, exchange, route.getId(), key).flatMap(result -> {
                     // ADD limited response headers.
                     HttpHeaders respHeaders = exchange.getResponse().getHeaders();
                     safeMap(result.getHeaders()).forEach((headerName, headerValue) -> respHeaders.add(headerName, headerValue));

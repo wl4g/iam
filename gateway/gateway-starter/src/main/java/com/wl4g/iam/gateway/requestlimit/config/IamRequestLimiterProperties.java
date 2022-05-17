@@ -17,7 +17,8 @@ package com.wl4g.iam.gateway.requestlimit.config;
 
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_QUOTA;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_RATE;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_QUOTA;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
@@ -321,6 +322,9 @@ public class IamRequestLimiterProperties {
          */
         private boolean localLogEnabled = true;
 
+        /**
+         * Limited event recorder based on redis properties.
+         */
         private RedisLimitEventRecorderProperties redis = new RedisLimitEventRecorderProperties();
 
         @Getter
@@ -332,16 +336,20 @@ public class IamRequestLimiterProperties {
         public static class RedisLimitEventRecorderProperties {
 
             /**
-             * Redis eventRecorder recorder hits accumulator key.
+             * Event logging key prefix for redis based rate limiter
              */
-            private String hitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS;
+            private String rateHitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_RATE;
 
             /**
-             * Redis eventRecorder recorder accumulator suffix of date format
+             * Event logging key prefix for redis based quota limiter
+             */
+            private String quotaHitsCumulatorPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_QUOTA;
+
+            /**
+             * Redis event recorder recorder accumulator suffix of date format
              * pattern.
              */
             private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
-
         }
 
     }

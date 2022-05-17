@@ -17,6 +17,8 @@ package com.wl4g.iam.gateway.requestlimit.limiter;
 
 import java.util.Map;
 
+import org.springframework.web.server.ServerWebExchange;
+
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterProperties.LimiterProperties.AbstractLimiterProperties;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
@@ -38,7 +40,11 @@ import reactor.core.publisher.Mono;
  */
 public interface IamRequestLimiter extends Operator<RequestLimiterPrivoder> {
 
-    Mono<LimitedResult> isAllowed(IamRequestLimiterFilterFactory.Config config, String routeId, String limitKey);
+    Mono<LimitedResult> isAllowed(
+            IamRequestLimiterFilterFactory.Config config,
+            ServerWebExchange exchange,
+            String routeId,
+            String limitKey);
 
     AbstractLimiterProperties getDefaultLimiter();
 

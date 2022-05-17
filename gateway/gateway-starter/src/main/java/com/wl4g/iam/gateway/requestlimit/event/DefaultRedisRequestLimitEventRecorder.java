@@ -28,17 +28,18 @@ import com.wl4g.infra.common.lang.DateUtils2;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * {@link RedisRequestLimitEventRecorder}
+ * {@link DefaultRedisRequestLimitEventRecorder}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-19 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public class RedisRequestLimitEventRecorder {
-    public static final String LOG_SIGN_EVENT_HITS_PREFIX = "RATELIMIT_HITS_EVENT";
+public class DefaultRedisRequestLimitEventRecorder {
+    public static final String LOG_RATELIMIT_HITS_EVENT = "RATELIMIT_HITS_EVENT";
+    public static final String LOG_QUOTALIMIT_HITS_EVENT = "QUOTALIMIT_HITS_EVENT";
 
-    private @Autowired IamRequestLimiterProperties rateLimitConfig;
+    private @Autowired IamRequestLimiterProperties requestLimitConfig;
     private @Autowired StringRedisTemplate redisTemplate;
 
     @Subscribe
@@ -46,17 +47,32 @@ public class RedisRequestLimitEventRecorder {
         String limitKey = valueOf(event.getSource());
         Long incr = null;
         try {
-            incr = getHitsCumulator().increment(limitKey, 1);
+            String prefix = requestLimitConfig.getEventRecorder().getRedis().getRateHitsCumulatorPrefix();
+            incr = getHitsCumulator(prefix, event.getRouteId()).increment(limitKey, 1);
         } finally {
-            if (rateLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
-                log.info("{} {}->{}", LOG_SIGN_EVENT_HITS_PREFIX, limitKey, incr);
+            if (requestLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
+                log.info("{} {}->{}", LOG_RATELIMIT_HITS_EVENT, limitKey, incr);
             }
         }
     }
 
-    private BoundHashOperations<String, Object, Object> getHitsCumulator() {
-        String hashKey = rateLimitConfig.getEventRecorder().getRedis().getHitsCumulatorPrefix().concat(":").concat(
-                DateUtils2.getDate(rateLimitConfig.getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern()));
+    @Subscribe
+    public void onQuotaLimitHit(QuotaLimitHitEvent event) {
+        String limitKey = valueOf(event.getSource());
+        Long incr = null;
+        try {
+            String prefix = requestLimitConfig.getEventRecorder().getRedis().getQuotaHitsCumulatorPrefix();
+            incr = getHitsCumulator(prefix, event.getRouteId()).increment(limitKey, 1);
+        } finally {
+            if (requestLimitConfig.getEventRecorder().isLocalLogEnabled() && log.isInfoEnabled()) {
+                log.info("{} {}->{}", LOG_QUOTALIMIT_HITS_EVENT, limitKey, incr);
+            }
+        }
+    }
+
+    private BoundHashOperations<String, Object, Object> getHitsCumulator(String configPrefix, String routeId) {
+        String suffix = requestLimitConfig.getEventRecorder().getRedis().getCumulatorSuffixOfDatePattern();
+        String hashKey = configPrefix.concat(":").concat(routeId).concat(":").concat(DateUtils2.getDate(suffix));
         if (log.isDebugEnabled()) {
             log.debug("hashkey: {}", hashKey);
         }

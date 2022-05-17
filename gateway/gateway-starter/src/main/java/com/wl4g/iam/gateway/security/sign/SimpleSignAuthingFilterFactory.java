@@ -65,8 +65,9 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties.SecretStore;
-import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingFailureEvent;
-import com.wl4g.iam.gateway.security.sign.event.SimpleSignAuthingSuccessEvent;
+import com.wl4g.iam.gateway.security.sign.event.SignAuthingFailureEvent;
+import com.wl4g.iam.gateway.security.sign.event.SignAuthingSuccessEvent;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter;
 import com.wl4g.iam.gateway.util.bloom.RedisBloomFilter.BloomConfig;
@@ -295,14 +296,19 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 MetricsTag.SIGN_HASH, config.getSignHashingMode().name());
     }
 
-    private void publishSuccessEvent(String appId, SimpleSignAuthingFilterFactory.Config config) {
-        eventBus.post(new SimpleSignAuthingSuccessEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
-                config.getSignHashingMode()));
+    private void publishSuccessEvent(String appId, SimpleSignAuthingFilterFactory.Config config, ServerWebExchange exchange) {
+        eventBus.post(new SignAuthingSuccessEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                config.getSignHashingMode(), IamGatewayUtil.getRouteId(exchange), exchange.getRequest().getURI().getPath()));
     }
 
-    private void publishFailureEvent(String appId, SimpleSignAuthingFilterFactory.Config config) {
-        eventBus.post(new SimpleSignAuthingFailureEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
-                config.getSignHashingMode()));
+    private void publishFailureEvent(
+            String appId,
+            SimpleSignAuthingFilterFactory.Config config,
+            ServerWebExchange exchange,
+            String cause) {
+        eventBus.post(new SignAuthingFailureEvent(appId, config.getAppIdExtractor(), config.getSignAlgorithm(),
+                config.getSignHashingMode(), IamGatewayUtil.getRouteId(exchange), exchange.getRequest().getURI().getPath(),
+                cause));
     }
 
     @Getter
@@ -515,6 +521,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 sign = hasText(exchange.getRequest().getQueryParams().getFirst(config.getSignParam()), "%s missing",
                         config.getSignParam());
             } catch (IllegalArgumentException e) {
+                publishFailureEvent("null", config, exchange, "bad_request");
                 log.warn("Bad request missing signature. - {}", exchange.getRequest().getURI());
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
@@ -523,6 +530,7 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
             try {
                 appId = getRequestAppId(config, exchange);
             } catch (IllegalArgumentException e) {
+                publishFailureEvent(appId, config, exchange, "bad_request");
                 log.warn("Bad request missing the appId. - {}", exchange.getRequest().getURI());
                 return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
@@ -532,8 +540,8 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                 if (obtainBloomFilter(exchange, config).bloomExist(getBloomKey(exchange), sign)) {
                     log.warn("Illegal signature locked. - sign={}, appId={}", sign, appId);
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_FAIL_TOTAL, config);
-                    // Publish failure event.
-                    publishFailureEvent(appId, config);
+
+                    publishFailureEvent(appId, config, exchange, "illegal_signature");
                     return writeResponse(HttpStatus.LOCKED, exchange, "illegal_signature");
                 }
             }
@@ -545,22 +553,24 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                     log.warn("Invalid request sign='{}', sign='{}'", sign, Hex.encodeHexString(_sign));
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_FAIL_TOTAL, config);
                     // Publish failure event.
-                    publishFailureEvent(appId, config);
+                    publishFailureEvent(appId, config, exchange, "invalid_signature");
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
-                log.info("Verified request appId='{}', sign='{}'", appId, sign);
+                log.info("Verified request of path: '', appId='{}', sign='{}'", exchange.getRequest().getPath(), appId, sign);
 
                 metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
                 if (config.isSignReplayVerifyEnabled()) {
                     obtainBloomFilter(exchange, config).bloomAdd(getBloomKey(exchange), sign);
                     addCounterMetrics(exchange, MetricsName.SIMPLE_SIGN_BLOOM_SUCCESS_TOTAL, config);
                 }
-                // Publish success event.
-                publishSuccessEvent(appId, config);
+
+                publishSuccessEvent(appId, config, exchange);
             } catch (DecoderException e) {
+                publishFailureEvent(appId, config, exchange, "unavailable");
                 return writeResponse(HttpStatus.INTERNAL_SERVER_ERROR, exchange, "unavailable");
             } catch (IllegalArgumentException e) {
-                return writeResponse(HttpStatus.BAD_REQUEST, exchange, "invalid_signature - hint '%s'", e.getMessage());
+                publishFailureEvent(appId, config, exchange, "bad_request");
+                return writeResponse(HttpStatus.BAD_REQUEST, exchange, "bad_request - hint '%s'", e.getMessage());
             }
 
             return bindSignedToContext(exchange, chain, config, appId);

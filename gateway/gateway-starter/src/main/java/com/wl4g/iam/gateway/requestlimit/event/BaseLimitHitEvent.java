@@ -15,20 +15,32 @@
  */
 package com.wl4g.iam.gateway.requestlimit.event;
 
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+
+import org.springframework.context.ApplicationEvent;
+
 import lombok.Getter;
 
 /**
- * {@link QuotaLimitHitEvent}
+ * {@link BaseLimitHitEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-19 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class QuotaLimitHitEvent extends BaseLimitHitEvent {
-    private static final long serialVersionUID = -7137748123573974641L;
+public class BaseLimitHitEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -7137748823573974641L;
 
-    public QuotaLimitHitEvent(String routeId, String limitKey, String requsetPath) {
-        super(routeId, limitKey, requsetPath);
+    private final String routeId;
+    private final String limitKey;
+    private final String requsetPath;
+
+    public BaseLimitHitEvent(String routeId, String limitKey, String requsetPath) {
+        super(limitKey);
+        this.routeId = hasTextOf(routeId, "routeId");
+        this.limitKey = hasTextOf(limitKey, "limitKey");
+        this.requsetPath = hasTextOf(requsetPath, "requsetPath");
     }
+
 }

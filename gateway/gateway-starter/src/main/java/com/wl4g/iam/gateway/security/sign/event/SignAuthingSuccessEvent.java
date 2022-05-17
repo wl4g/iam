@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.gateway.requestlimit.event;
+package com.wl4g.iam.gateway.security.sign.event;
+
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.AppIdExtractor;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignAlgorithm;
+import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
 
 import lombok.Getter;
 
 /**
- * {@link QuotaLimitHitEvent}
+ * {@link SignAuthingSuccessEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-04-19 v3.0.0
+ * @version 2022-04-18 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class QuotaLimitHitEvent extends BaseLimitHitEvent {
-    private static final long serialVersionUID = -7137748123573974641L;
+public class SignAuthingSuccessEvent extends BaseSignAuthingFailureEvent {
+    private static final long serialVersionUID = -7291654693102770442L;
 
-    public QuotaLimitHitEvent(String routeId, String limitKey, String requsetPath) {
-        super(routeId, limitKey, requsetPath);
+    public SignAuthingSuccessEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode,
+            String routeId, String requsetPath) {
+        super(appId, extractor, algorithm, mode, routeId, requsetPath);
     }
+
 }

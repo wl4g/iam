@@ -39,7 +39,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.requestlimit.IamRequestLimiterFilterFactory;
 import com.wl4g.iam.gateway.requestlimit.configurer.LimiterStrategyConfigurer;
 import com.wl4g.iam.gateway.requestlimit.configurer.RedisLimiterStrategyConfigurer;
-import com.wl4g.iam.gateway.requestlimit.event.RedisRequestLimitEventRecorder;
+import com.wl4g.iam.gateway.requestlimit.event.DefaultRedisRequestLimitEventRecorder;
 import com.wl4g.iam.gateway.requestlimit.key.HeaderIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.HostIamKeyResolver;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver;
@@ -194,9 +194,9 @@ public class IamRequestLimiterAutoConfiguration {
     }
 
     @Bean
-    public RedisRequestLimitEventRecorder redisRateLimiteEventRecoder(
+    public DefaultRedisRequestLimitEventRecorder redisRateLimiteEventRecoder(
             @Qualifier(BEAN_REDIS_RATELIMITE_EVENTBUS) EventBusSupport eventBus) {
-        RedisRequestLimitEventRecorder recorder = new RedisRequestLimitEventRecorder();
+        DefaultRedisRequestLimitEventRecorder recorder = new DefaultRedisRequestLimitEventRecorder();
         eventBus.register(recorder);
         return recorder;
     }

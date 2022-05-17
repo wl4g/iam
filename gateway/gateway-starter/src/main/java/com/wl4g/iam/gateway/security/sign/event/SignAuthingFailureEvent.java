@@ -15,8 +15,6 @@
  */
 package com.wl4g.iam.gateway.security.sign.event;
 
-import org.springframework.context.ApplicationEvent;
-
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.AppIdExtractor;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignAlgorithm;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
@@ -24,25 +22,22 @@ import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHas
 import lombok.Getter;
 
 /**
- * {@link SimpleSignAuthingSuccessEvent}
+ * {@link SignAuthingFailureEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-04-18 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class SimpleSignAuthingSuccessEvent extends ApplicationEvent {
+public class SignAuthingFailureEvent extends BaseSignAuthingFailureEvent {
     private static final long serialVersionUID = -7291654693102770442L;
 
-    private final AppIdExtractor extractor;
-    private final SignAlgorithm algorithm;
-    private final SignHashingMode mode;
+    private final String cause;
 
-    public SimpleSignAuthingSuccessEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode) {
-        super(appId);
-        this.extractor = extractor;
-        this.algorithm = algorithm;
-        this.mode = mode;
+    public SignAuthingFailureEvent(String appId, AppIdExtractor extractor, SignAlgorithm algorithm, SignHashingMode mode,
+            String routeId, String requsetPath, String cause) {
+        super(appId, extractor, algorithm, mode, routeId, requsetPath);
+        this.cause = cause;
     }
 
 }

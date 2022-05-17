@@ -422,8 +422,10 @@ spring:
           ## recovery strategy when data is lost due to a catastrophic failure of the persistent accumulator.
           localLogEnabled: true ## Default by true
           redis:
-            ## Redis event recorder hits accumulator prefix.
-            hitsCumulatorPrefix: iam:gateway:requestlimit:event:hits
+            ## Event logging key prefix for redis based rate limiter.
+            rateHitsCumulatorPrefix: iam:gateway:requestlimit:event:hits:rate
+            ## Event logging key prefix for redis based quota limiter.
+            quotaHitsCumulatorPrefix: iam:gateway:requestlimit:event:hits:quota
             ## Redis event recorder accumulator suffix of date format pattern.
             cumulatorSuffixOfDatePattern: yyyyMMdd
       traffic:

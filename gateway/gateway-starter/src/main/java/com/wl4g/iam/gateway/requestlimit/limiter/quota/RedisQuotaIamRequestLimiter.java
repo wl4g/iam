@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
@@ -55,7 +56,11 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
     }
 
     @Override
-    public Mono<LimitedResult> isAllowed(IamRequestLimiterFilterFactory.Config config, String routeId, String limitKey) {
+    public Mono<LimitedResult> isAllowed(
+            IamRequestLimiterFilterFactory.Config config,
+            ServerWebExchange exchange,
+            String routeId,
+            String limitKey) {
         metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_TOTAL, routeId, 1);
         final long beginTime = nanoTime();
 
@@ -82,7 +87,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
 
                             if (!allowed) { // Total hits metric
                                 metricsFacade.counter(MetricsName.REDIS_QUOTALIMIT_HITS_TOTAL, routeId, 1);
-                                eventBus.post(new QuotaLimitHitEvent(limitKey));
+                                eventBus.post(
+                                        new QuotaLimitHitEvent(routeId, limitKey, exchange.getRequest().getURI().getPath()));
                             }
                             return result;
                         });
@@ -106,13 +112,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
     }
 
     protected String getKey(RedisQuotaRequestLimiterStrategy strategy, String routeId, String limitKey) {
-        return requestLimiterConfig.getLimiter()
-                .getQuota()
-                .getTokenPrefix()
-                .concat(":")
-                .concat(routeId)
-                .concat(":")
-                .concat(limitKey);
+        return requestLimiterConfig.getLimiter().getQuota().getTokenPrefix().concat(":").concat(routeId).concat(":").concat(
+                limitKey);
     }
 
     protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {

@@ -165,6 +165,8 @@ redis-cli -c -h localhost -p 6379 -a '123456'
 set iam:gateway:auth:sign:secret:oijvin6crxu2qdqvpgls9jmijz4t6istxs <myAppSecret>
 ```
 
+- Request
+
 ```bash
 # for testing positive example
 export APPID=oijvin6crxu2qdqvpgls9jmijz4t6istxs
@@ -182,11 +184,58 @@ curl -vL \
 "http://${REMOTE_IP}:18085/productpage-with-SimpleSignAuthing/get?appId=${APPID}&nonce=${NONCE}&timestamp=${TIMESTAMP}&sign=${SIGN}"
 ```
 
+- Response(correct)
+
+```json
+{
+  "args": {
+    "appId": "oijvin6crxu2qdqvpgls9jmijz4t6istxs", 
+    "nonce": "nxFCAq0qrzFwqHcwfX0xvainRmQk6FvO", 
+    "sign": "aa9c39efe90ef44bbcae258bb0b40653489186ac58266e092e3e420f1caa1573", 
+    "timestamp": "1652777325198"
+  }, 
+  "headers": {
+    "Accept": "*/*", 
+    "Content-Length": "0", 
+    "Forwarded": "proto=http;host=\"127.0.0.1:18085\";for=\"127.0.0.1:50442\"", 
+    "Host": "httpbin.org", 
+    "Traceparent": "00-b9072cb8bcff2b47082b2f53199ef1a8-c02cf95da1747fb9-01", 
+    "User-Agent": "curl/7.68.0", 
+    "X-Amzn-Trace-Id": "Root=1-6283728d-27e55d6370e6b361627c5ea8", 
+    "X-Forwarded-Host": "127.0.0.1:18085", 
+    "X-Forwarded-Prefix": "/productpage-with-SimpleSignAuthing", 
+    "X-Iscg-Log": "y", 
+    "X-Iscg-Log-Dyeing-State": "b9072cb8bcff2b47082b2f53199ef1a8", 
+    "X-Iscg-Log-Level": "10", 
+    "X-Iscg-Trace": "y", 
+    "X-Response-Type": "10", 
+    "X-Sign-Auth-Appid": "oijvin6crxu2qdqvpgls9jmijz4t6istxs"
+  }, 
+  "origin": "127.0.0.1, 61.140.45.61", 
+  "url": "http://127.0.0.1:18085/get?appId=oijvin6crxu2qdqvpgls9jmijz4t6istxs&nonce=nxFCAq0qrzFwqHcwfX0xvainRmQk6FvO&timestamp=1652777325198&sign=aa9c39efe90ef44bbcae258bb0b40653489186ac58266e092e3e420f1caa1573"
+}
+
+```
+
+- Response(incorrect)
+
+```json
+{"code":423,"status":"Normal","requestId":null,"timestamp":1652781711036,"message":"[TEST-423] illegal_signature","data":{}}
+```
+
 - Tip: Cleanup the auth key of the replay sign in redis
 
 ```bash
 redis-cli -c -h localhost -p 6379 -a '123456'
 del iam:gateway:auth:sign:replay:bloom:productpage-service-route-with-SimpleSignAuthing
+```
+
+- View Authing Events
+
+```bash
+# The cache key format is(example): 'iam:gateway:auth:sign:event:failure:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+hgetall iam:gateway:auth:sign:event:success:productpage-service-route-with-SimpleSignAuthing:20220517
+hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-SimpleSignAuthing:20220517
 ```
 
 ### 2.7 Request Limiter
@@ -218,6 +267,14 @@ ab -n 2000 -c 15 \
 -H 'X-Iscg-Log-Level: 10' \
 -m POST \
 'http://localhost:18085/productpage-with-IamRequestLimiter/get?response_type=json'
+```
+
+- View Limiting Events
+
+```bash
+# The cache key format is(example): 'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+hgetall iam:gateway:requestlimit:event:hits:rate:productpage-service-route-with-IamRequestLimiter:20220517
+hgetall iam:gateway:requestlimit:event:hits:quota:productpage-service-route-with-IamRequestLimiter:20220517
 ```
 
 ### 2.8 Traffic Replication

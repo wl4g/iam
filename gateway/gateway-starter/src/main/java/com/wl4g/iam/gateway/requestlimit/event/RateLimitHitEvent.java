@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.gateway.requestlimit.event;
 
-import org.springframework.context.ApplicationEvent;
+import lombok.Getter;
 
 /**
  * {@link RateLimitHitEvent}
@@ -24,11 +24,11 @@ import org.springframework.context.ApplicationEvent;
  * @version 2022-04-19 v3.0.0
  * @since v3.0.0
  */
-public class RateLimitHitEvent extends ApplicationEvent {
+@Getter
+public class RateLimitHitEvent extends BaseLimitHitEvent {
     private static final long serialVersionUID = -7137748823573974641L;
 
-    public RateLimitHitEvent(String limitKey) {
-        super(limitKey);
+    public RateLimitHitEvent(String routeId, String limitKey, String requsetPath) {
+        super(routeId, limitKey, requsetPath);
     }
-
 }

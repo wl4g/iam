@@ -23,7 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import com.wl4g.iam.common.constant.GatewayIAMConstants;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
-import com.wl4g.iam.gateway.security.sign.event.RedisSimpleSignAuthingEventRecoder;
+import com.wl4g.iam.gateway.security.sign.event.DefaultRedisSignAuthingEventRecoder;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
 /**
@@ -60,9 +60,9 @@ public class IamSecurityAutoConfiguration {
     // Simple signature authorizer event recorder
 
     @Bean
-    public RedisSimpleSignAuthingEventRecoder redisSimpleSignAuthingEventRecoder(
+    public DefaultRedisSignAuthingEventRecoder defaultRedisSignAuthingEventRecoder(
             @Qualifier(BEAN_SIMPLE_SIGN_EVENTBUS) EventBusSupport eventBus) {
-        RedisSimpleSignAuthingEventRecoder recorder = new RedisSimpleSignAuthingEventRecoder();
+        DefaultRedisSignAuthingEventRecoder recorder = new DefaultRedisSignAuthingEventRecoder();
         eventBus.register(recorder);
         return recorder;
     }
