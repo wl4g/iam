@@ -60,7 +60,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
         final long beginTime = nanoTime();
 
         return configurer.loadQuotaStrategy(routeId, limitKey)
-                .defaultIfEmpty(((RedisQuotaLimiterProperties) getDefaultLimiter()).getStrategy())
+                .defaultIfEmpty(((RedisQuotaLimiterProperties) getDefaultLimiter()).getDefaultStrategy())
                 .flatMap(strategy -> {
                     try {
                         String key = getKey(strategy, routeId, limitKey);
@@ -102,11 +102,11 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
 
     @Override
     public AbstractLimiterProperties getDefaultLimiter() {
-        return requestLimiterConfig.getDefaultLimiter().getQuota();
+        return requestLimiterConfig.getLimiter().getQuota();
     }
 
     protected String getKey(RedisQuotaRequestLimiterStrategy strategy, String routeId, String limitKey) {
-        return requestLimiterConfig.getDefaultLimiter()
+        return requestLimiterConfig.getLimiter()
                 .getQuota()
                 .getTokenPrefix()
                 .concat(":")
@@ -118,7 +118,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
     protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
         if (strategy.isIncludeHeaders()) {
-            RedisQuotaLimiterProperties config = requestLimiterConfig.getDefaultLimiter().getQuota();
+            RedisQuotaLimiterProperties config = requestLimiterConfig.getLimiter().getQuota();
             headers.put(config.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
             headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
         }

@@ -65,8 +65,7 @@ public class IamRequestLimiterProperties {
     private String emptyKeyStatusCode = HttpStatus.FORBIDDEN.name();
 
     /**
-     * HttpStatus to return when defaultLimiter is true, defaults to
-     * TOO_MANY_REQUESTS.
+     * HttpStatus to return when limiter is true, defaults to TOO_MANY_REQUESTS.
      */
     private String statusCode = HttpStatus.TOO_MANY_REQUESTS.name();
 
@@ -76,9 +75,9 @@ public class IamRequestLimiterProperties {
     private KeyResolverProperties defaultKeyResolver = new KeyResolverProperties();
 
     /**
-     * The default defaultLimiter configuration properties.
+     * The default limiter configuration properties.
      */
-    private LimiterProperties defaultLimiter = new LimiterProperties();
+    private LimiterProperties limiter = new LimiterProperties();
 
     /**
      * The global event recorder configuration properties.
@@ -129,7 +128,7 @@ public class IamRequestLimiterProperties {
     }
 
     /**
-     * The request defaultLimiter configuration properties.
+     * The request limiter configuration properties.
      */
     @Getter
     @Setter
@@ -140,14 +139,12 @@ public class IamRequestLimiterProperties {
     public static class LimiterProperties {
 
         /**
-         * The default rate limiting configuration (E.G: when no configuration
-         * is specified for principal)
+         * The default rate limiting configuration.
          */
         private RedisRateLimiterProperties rate = new RedisRateLimiterProperties();
 
         /**
-         * The default quota limiting configuration (E.G: when no configuration
-         * is specified for principal)
+         * The default quota limiting configuration.
          */
         private RedisQuotaLimiterProperties quota = new RedisQuotaLimiterProperties();
 
@@ -170,7 +167,7 @@ public class IamRequestLimiterProperties {
         }
 
         /**
-         * The request rate defaultLimiter strategy configuration properties.
+         * The request rate limiter properties.
          */
         @Getter
         @Setter
@@ -180,14 +177,13 @@ public class IamRequestLimiterProperties {
         public static class RedisRateLimiterProperties extends AbstractLimiterProperties {
 
             /**
-             * Redis tokens rate defaultLimiter user-level configuration key
-             * prefix.
+             * Redis tokens rate limiter user-level configuration key prefix.
              */
             private String configPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_CONF_RATE;
 
             /**
-             * Redis tokens rate defaultLimiter user-level token computational
-             * key prefix.
+             * Redis tokens rate limiter user-level token computational key
+             * prefix.
              */
             private String tokenPrefix = CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
 
@@ -210,10 +206,10 @@ public class IamRequestLimiterProperties {
             private String requestedTokensHeader = RATE_REQUESTED_TOKENS_HEADER;
 
             /**
-             * The strategy configuration of request current limiter based on
-             * redis rate.
+             * The default strategy configuration of request current limiter
+             * based on redis rate.
              */
-            private RedisRateRequestLimiterStrategy strategy = new RedisRateRequestLimiterStrategy();
+            private RedisRateRequestLimiterStrategy defaultStrategy = new RedisRateRequestLimiterStrategy();
 
             public RedisRateLimiterProperties() {
                 setRemainingHeader(RATE_REMAINING_HEADER);
@@ -247,7 +243,7 @@ public class IamRequestLimiterProperties {
         }
 
         /**
-         * The request quota defaultLimiter strategy configuration properties.
+         * The request quota limiter properties.
          */
         @Getter
         @Setter
@@ -273,10 +269,10 @@ public class IamRequestLimiterProperties {
             private String requestCapacityHeader = QUOTA_REQUEST_CAPACITY_HEADER;
 
             /**
-             * The strategy configuration of request current limiter based on
-             * redis quota.
+             * The defaultStrategy configuration of request current limiter
+             * based on redis quota.
              */
-            private RedisQuotaRequestLimiterStrategy strategy = new RedisQuotaRequestLimiterStrategy();
+            private RedisQuotaRequestLimiterStrategy defaultStrategy = new RedisQuotaRequestLimiterStrategy();
 
             public RedisQuotaLimiterProperties() {
                 setRemainingHeader(QUOTA_REMAINING_HEADER);
@@ -319,9 +315,9 @@ public class IamRequestLimiterProperties {
 
         /**
          * Based on whether the redis eventRecorder logger enables logging, if
-         * it is turned on, it can be used as a downgrade recovery strategy when
-         * data is lost due to a catastrophic failure of the persistent
-         * accumulator.
+         * it is turned on, it can be used as a downgrade recovery
+         * defaultStrategy when data is lost due to a catastrophic failure of
+         * the persistent accumulator.
          */
         private boolean localLogEnabled = true;
 

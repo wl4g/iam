@@ -139,11 +139,11 @@ TODO
 
 ```bash
 java -jar iam-gateway-3.0.0-bin.jar \
---spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultBurstCapacity=1000 \
---spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultReplenishRate=10 \
---spring.iam.gateway.requestlimit.defaultLimiter.rate.defaultRequestedTokens=1 \
---spring.iam.gateway.requestlimit.defaultLimiter.quota.requestCapacity=1000 \
---spring.iam.gateway.requestlimit.defaultLimiter.quota.cycleDatePattern=yyyyMMdd
+--spring.iam.gateway.requestlimit.limiter.rate.defaultStrategy.defaultBurstCapacity=1000 \
+--spring.iam.gateway.requestlimit.limiter.rate.defaultStrategy.defaultReplenishRate=10 \
+--spring.iam.gateway.requestlimit.limiter.rate.defaultStrategy.defaultRequestedTokens=1 \
+--spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.requestCapacity=1000 \
+--spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyyyMMdd
 ```
 
 ```bash

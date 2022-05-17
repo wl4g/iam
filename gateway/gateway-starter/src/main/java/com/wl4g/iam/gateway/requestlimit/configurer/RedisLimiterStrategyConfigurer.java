@@ -43,14 +43,14 @@ public class RedisLimiterStrategyConfigurer implements LimiterStrategyConfigurer
 
     @Override
     public Mono<RedisRateRequestLimiterStrategy> loadRateStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
-        String prefix = requestLimitConfig.getDefaultLimiter().getRate().getConfigPrefix();
+        String prefix = requestLimitConfig.getLimiter().getRate().getConfigPrefix();
         return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
                 .map(json -> parseJSON(json, RedisRateRequestLimiterStrategy.class));
     }
 
     @Override
     public Mono<RedisQuotaRequestLimiterStrategy> loadQuotaStrategy(@NotBlank String routeId, @NotBlank String limitKey) {
-        String prefix = requestLimitConfig.getDefaultLimiter().getQuota().getConfigPrefix();
+        String prefix = requestLimitConfig.getLimiter().getQuota().getConfigPrefix();
         return getOperation().get(prefix, LimiterStrategyConfigurer.getConfigKey(routeId, limitKey))
                 .map(json -> parseJSON(json, RedisQuotaRequestLimiterStrategy.class));
     }

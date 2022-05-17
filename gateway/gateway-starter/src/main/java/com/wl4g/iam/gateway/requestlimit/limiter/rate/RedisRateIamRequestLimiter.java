@@ -82,7 +82,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         final long beginTime = nanoTime();
 
         return configurer.loadRateStrategy(routeId, limitKey)
-                .defaultIfEmpty(((RedisRateLimiterProperties) getDefaultLimiter()).getStrategy())
+                .defaultIfEmpty(((RedisRateLimiterProperties) getDefaultLimiter()).getDefaultStrategy())
                 .flatMap(strategy -> {
                     // How many requests per second do you want a user to be
                     // allowed to do?
@@ -148,7 +148,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
 
     @Override
     public AbstractLimiterProperties getDefaultLimiter() {
-        return requestLimiterConfig.getDefaultLimiter().getRate();
+        return requestLimiterConfig.getLimiter().getRate();
     }
 
     protected List<String> getKeys(RedisRateRequestLimiterStrategy strategy, String limitKey) {
@@ -156,7 +156,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         // this allows for using redis cluster
 
         // Make a unique key per user.
-        String prefix = requestLimiterConfig.getDefaultLimiter().getRate().getTokenPrefix().concat(".{").concat(limitKey);
+        String prefix = requestLimiterConfig.getLimiter().getRate().getTokenPrefix().concat(".{").concat(limitKey);
 
         // You need two Redis keys for Token Bucket.
         String tokenKey = prefix.concat("}.tokens");
@@ -167,7 +167,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
 
     protected Map<String, String> createHeaders(RedisRateRequestLimiterStrategy strategy, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
-        RedisRateLimiterProperties config = requestLimiterConfig.getDefaultLimiter().getRate();
+        RedisRateLimiterProperties config = requestLimiterConfig.getLimiter().getRate();
         if (strategy.isIncludeHeaders()) {
             headers.put(config.getBurstCapacityHeader(), String.valueOf(strategy.getBurstCapacity()));
             headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));

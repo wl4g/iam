@@ -371,20 +371,12 @@ spring:
               "REMOTE_IP","Remote-Ip","RemoteIp","HTTP_X_FORWARDED_FOR","Http-X-Forwarded-For","HttpXForwardedFor","HTTP_X_FORWARDED","Http-X-Forwarded","HttpXForwarded",
               "HTTP_Client_IP","Http-Client-Ip","HttpClientIp","HTTP_X_CLUSTER_CLIENT_IP","Http-X-Cluster-Client-Ip","HttpXClusterClientIp","HTTP_FORWARDED_FOR",
               "Http-Forwarded-For","HttpForwardedFor","HTTP_VIA","Http-Via","HttpVia"]
-        defaultLimiter:
+        limiter:
           rate:
             ## The rate limiter user-level configuration key prefix.
             configPrefix: iam:gateway:requestlimit:config:rate
             ## The rate limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:rate
-            ## The default token bucket capacity, that is, the total number of concurrency allowed.
-            burstCapacity: 1 ## Default by 1
-            ## How many requests per second do you want a user to be allowed to do?
-            replenishRate: 1 ## Default by 1
-            ## How many tokens are requested per request?
-            requestedTokens: 1 ## Default by 1
-            ## The add the properties info of the current limiter to the response header.
-            includeHeaders: true ## Default by true
             ## The name of the header that returns the burst capacity configuration.
             burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
             ## The name of the header that returns the replenish rate configuration.
@@ -395,23 +387,35 @@ spring:
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
             ## The name of the deny header that empty key got obtained.
             denyEmptyKeyHeader: X-Iscg-RateLimit-Deny-EmptyKey ## Default by 'X-Iscg-RateLimit-Deny-EmptyKey'
+            ## The default strategy configuration of request limiter based on redis rate.
+            defaultStrategy:
+              ## The add the properties info of the current limiter to the response header.
+              includeHeaders: true ## Default by true
+              ## The default token bucket capacity, that is, the total number of concurrency allowed.
+              burstCapacity: 1 ## Default by 1
+              ## How many requests per second do you want a user to be allowed to do?
+              replenishRate: 1 ## Default by 1
+              ## How many tokens are requested per request?
+              requestedTokens: 1 ## Default by 1
           quota:
             ## The quota limiter user-level configuration key prefix.
             configPrefix: iam:gateway:requestlimit:config:quota
             ## The quota limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:quota
-            ## The number of total maximum allowed requests capacity.
-            requestCapacity: 1000 ## Default by 1000
-            ## The date pattern of request quota limit calculation cycle.
-            cycleDatePattern: yyyyMMdd
-            ## The add the properties info of the current limiter to the response header.
-            includeHeaders: true ## Default by true
             ## The name of the header that returns the request capacity configuration.
             requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
             ## The name of the deny header that empty key got obtained.
             denyEmptyKeyHeader: X-Iscg-QuotaLimit-Deny-EmptyKey ## Default by 'X-Iscg-QuotaLimit-Deny-EmptyKey'
+            ## The default strategy configuration of request limiter based on redis quota.
+            defaultStrategy:
+              ## The add the properties info of the current limiter to the response header.
+              includeHeaders: true ## Default by true
+              ## The number of total maximum allowed requests capacity.
+              requestCapacity: 1000 ## Default by 1000
+              ## The date pattern of request quota limit calculation cycle.
+              cycleDatePattern: yyyyMMdd
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
