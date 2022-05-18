@@ -245,9 +245,9 @@ del iam:gateway:auth:sign:replay:bloom:productpage-service-route-with-SimpleSign
 - View Authing Events
 
 ```bash
-# The cache key format example is:'iam:gateway:auth:sign:event:failure:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
-hgetall iam:gateway:auth:sign:event:success:productpage-service-route-with-SimpleSignAuthing:20220517
-hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-SimpleSignAuthing:20220517
+# The cache key format example is:'iam:gateway:auth:sign:event:failure:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
+hgetall iam:gateway:auth:sign:event:success:productpage-service-route-with-SimpleSignAuthing:220517
+hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-SimpleSignAuthing:220517
 ```
 
 ### 2.8 Request Limiter
@@ -280,7 +280,7 @@ java -jar iam-gateway-3.0.0-bin.jar \
 --spring.iam.gateway.requestlimit.limiter.rate.defaultStrategy.defaultReplenishRate=10 \
 --spring.iam.gateway.requestlimit.limiter.rate.defaultStrategy.defaultRequestedTokens=1 \
 --spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.requestCapacity=1000 \
---spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyyyMMdd
+--spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyMMdd
 ```
 
 - Configure for routeId + limitKey(e.g: Principal/Header(X-Forward-Ip)/Path/...).
@@ -292,19 +292,19 @@ java -jar iam-gateway-3.0.0-bin.jar \
 #
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
-hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
 # The keyResolver is Path
 #
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
-hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
 # The keyResolver is Principal(appId)
 #
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
-hset iam:gateway:requestlimit:config:quota productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+hset iam:gateway:requestlimit:config:quota productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
 # ...
 ```
@@ -312,19 +312,19 @@ hset iam:gateway:requestlimit:config:quota productpage-service-route-with-IamReq
 - View request tokens
 
 ```bash
-# The cache key format example is:'iam:gateway:requestlimit:token:quota:<yyyyMMdd>  <routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
+# The cache key format example is:'iam:gateway:requestlimit:token:quota:<yyMMdd>  <routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
 #
-hgetall iam:gateway:requestlimit:token:quota:20220517
-hget iam:gateway:requestlimit:token:quota:20220517 productpage-service-route-with-IamRequestLimiter:127.0.0.1
+hgetall iam:gateway:requestlimit:token:quota:220517
+hget iam:gateway:requestlimit:token:quota:220517 productpage-service-route-with-IamRequestLimiter:127.0.0.1
 ```
 
 - View limited Events
 
 ```bash
-# The cache key format example is:'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+# The cache key format example is:'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
 #
-hgetall iam:gateway:requestlimit:event:hits:rate:productpage-service-route-with-IamRequestLimiter:20220517
-hgetall iam:gateway:requestlimit:event:hits:quota:productpage-service-route-with-IamRequestLimiter:20220517
+hgetall iam:gateway:requestlimit:event:hits:rate:productpage-service-route-with-IamRequestLimiter:220517
+hgetall iam:gateway:requestlimit:event:hits:quota:productpage-service-route-with-IamRequestLimiter:220517
 ```
 
 ### 2.9 Traffic Replication

@@ -70,7 +70,7 @@ public class IntervalIamKeyResolver extends AbstractIamKeyResolver<IntervalIamKe
          * The date pattern of the key get by rate limiting according to the
          * date interval.
          */
-        private String cycleDatePattern = "yyyyMMdd";
+        private String cycleDatePattern = "yyMMdd";
     }
 
 }

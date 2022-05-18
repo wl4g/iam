@@ -43,6 +43,5 @@ public class RedisQuotaRequestLimiterStrategy extends RequestLimiterStrategy {
     /**
      * The date pattern of request quota limit calculation cycle.
      */
-    private String cycleDatePattern = "yyyyMMdd";
-
+    private String cycleDatePattern = "yyMMdd";
 }

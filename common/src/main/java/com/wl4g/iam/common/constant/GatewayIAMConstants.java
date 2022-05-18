@@ -80,6 +80,6 @@ public abstract class GatewayIAMConstants extends IAMConstants {
 
     public static final String CACHE_SUFFIX_IAM_GATEWAY_RESPONSECACHE = CACHE_PREFIX_IAM_GWTEWAY + ":responsecache:data";
 
-    public static final String CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD = "yyyyMMdd";
+    public static final String CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYMMDD = "yyMMdd";
 
 }

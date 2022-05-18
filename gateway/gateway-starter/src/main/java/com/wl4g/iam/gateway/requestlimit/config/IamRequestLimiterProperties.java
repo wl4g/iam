@@ -21,7 +21,7 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_EVENT_HITS_QUOTA;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_QUOTA;
 import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_PREFIX_IAM_GWTEWAY_REQUESTLIMIT_TOKEN_RATE;
-import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
+import static com.wl4g.iam.common.constant.GatewayIAMConstants.CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYMMDD;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -270,6 +270,12 @@ public class IamRequestLimiterProperties {
             private String requestCapacityHeader = QUOTA_REQUEST_CAPACITY_HEADER;
 
             /**
+             * The name of the header that returns the time cycle pattern of the
+             * request limiting.
+             */
+            private String cyclePatternHeader = QUOTA_CYCLE_HEADER;
+
+            /**
              * The defaultStrategy configuration of request current limiter
              * based on redis quota.
              */
@@ -289,6 +295,12 @@ public class IamRequestLimiterProperties {
              * Remaining Rate Limit header name.
              */
             public static final String QUOTA_REMAINING_HEADER = "X-Iscg-QuotaLimit-Remaining";
+
+            /**
+             * The name of the header that returns the time cycle pattern of the
+             * request limiting.
+             */
+            public static final String QUOTA_CYCLE_HEADER = "X-Iscg-QuotaLimit-Cycle";
 
             /**
              * The name of the deny header that empty key got obtained.
@@ -349,7 +361,7 @@ public class IamRequestLimiterProperties {
              * Redis event recorder recorder accumulator suffix of date format
              * pattern.
              */
-            private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYYYMMDD;
+            private String cumulatorSuffixOfDatePattern = CACHE_SUFFIX_IAM_GATEWAY_EVENT_YYMMDD;
         }
 
     }

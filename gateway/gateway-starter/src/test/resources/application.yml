@@ -239,7 +239,7 @@ spring:
               ## Redis event recorder failure accumulator prefix.
               failureCumulatorPrefix: iam:gateway:auth:sign:event:failure
               ## Redis event recorder accumulator suffix of date format pattern.
-              cumulatorSuffixOfDatePattern: yyyyMMdd
+              cumulatorSuffixOfDatePattern: yyMMdd
       trace:
         enabled: true ## Default by true
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
@@ -363,7 +363,7 @@ spring:
           #principal: {}
           interval:
             ## The date pattern of the key get by limiting according to the date interval.
-            cycleDatePattern: yyyyMMdd
+            cycleDatePattern: yyMMdd ## Default by 'yyMMdd'
           header:
             ## The according to the list of header names of the request header current limiter, it can usually be used to get the
             ## actual IP after being forwarded by the proxy to limit the current, or it can be flexibly used for other purposes.
@@ -406,6 +406,8 @@ spring:
             requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
+            ## The name of the header that returns the time cycle pattern of the request limiting.
+            cyclePatternHeader: X-Iscg-QuotaLimit-Cycle ## Default by 'X-Iscg-QuotaLimit-Cycle'
             ## The name of the deny header that empty key got obtained.
             denyEmptyKeyHeader: X-Iscg-QuotaLimit-Deny-EmptyKey ## Default by 'X-Iscg-QuotaLimit-Deny-EmptyKey'
             ## The default strategy configuration of request limiter based on redis quota.
@@ -415,7 +417,7 @@ spring:
               ## The number of total maximum allowed requests capacity.
               requestCapacity: 1000 ## Default by 1000
               ## The date pattern of request quota limit calculation cycle.
-              cycleDatePattern: yyyyMMdd
+              cycleDatePattern: yyMMdd ## Default by 'yyMMdd'
         eventRecorder:
           publishEventBusThreads: 1 ## Default by 1
           ## Based on whether the redis event logger enables logging, if it is turned on, it can be used as a downgrade
@@ -427,7 +429,7 @@ spring:
             ## Event logging key prefix for redis based quota limiter.
             quotaHitsCumulatorPrefix: iam:gateway:requestlimit:event:hits:quota
             ## Redis event recorder accumulator suffix of date format pattern.
-            cumulatorSuffixOfDatePattern: yyyyMMdd
+            cumulatorSuffixOfDatePattern: yyMMdd ## Default by 'yyMMdd'
       traffic:
         defaultReplication:
           targetUrls: ["http://localhost:8888/"]

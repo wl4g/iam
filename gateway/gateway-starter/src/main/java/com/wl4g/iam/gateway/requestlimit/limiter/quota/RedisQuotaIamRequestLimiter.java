@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.gateway.requestlimit.limiter.quota;
 
+import static com.wl4g.infra.common.lang.DateUtils2.getDate;
 import static java.lang.System.nanoTime;
 
 import java.util.HashMap;
@@ -68,7 +69,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 .defaultIfEmpty(((RedisQuotaLimiterProperties) getDefaultLimiter()).getDefaultStrategy())
                 .flatMap(strategy -> {
                     try {
-                        String prefix = getPrefixKey(strategy);
+                        String cyclePattern = getDate(strategy.getCycleDatePattern());
+                        String prefix = getPrefixKey(strategy, cyclePattern);
                         String hashKey = getHashKey(routeId, limitKey);
                         return redisTemplate.opsForHash().increment(prefix, hashKey, 1).onErrorResume(ex -> {
                             if (log.isDebugEnabled()) {
@@ -80,7 +82,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                             long tokensLeft = requestCapacity - accumulated;
                             boolean allowed = accumulated < requestCapacity;
 
-                            LimitedResult result = new LimitedResult(allowed, tokensLeft, createHeaders(strategy, tokensLeft));
+                            LimitedResult result = new LimitedResult(allowed, tokensLeft,
+                                    createHeaders(strategy, cyclePattern, tokensLeft));
                             if (log.isTraceEnabled()) {
                                 log.trace("response: {}", result);
                             }
@@ -103,7 +106,9 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                         log.error("Error determining if user allowed quota from redis", e);
                     }
 
-                    return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
+                    // When getting the time period mode error, only the mode
+                    // raw string can be returned. e.g: yyyyMMdd
+                    return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, strategy.getCycleDatePattern(), -1L)));
                 });
     }
 
@@ -112,20 +117,21 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
         return requestLimiterConfig.getLimiter().getQuota();
     }
 
-    protected String getPrefixKey(RedisQuotaRequestLimiterStrategy strategy) {
-        return requestLimiterConfig.getLimiter().getQuota().getTokenPrefix().concat(":").concat(strategy.getCycleDatePattern());
+    protected String getPrefixKey(RedisQuotaRequestLimiterStrategy strategy, String cyclePattern) {
+        return requestLimiterConfig.getLimiter().getQuota().getTokenPrefix().concat(":").concat(cyclePattern);
     }
 
     protected String getHashKey(String routeId, String limitKey) {
         return routeId.concat(":").concat(limitKey);
     }
 
-    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, String cyclePattern, Long tokensLeft) {
         Map<String, String> headers = new HashMap<>();
         if (strategy.isIncludeHeaders()) {
             RedisQuotaLimiterProperties config = requestLimiterConfig.getLimiter().getQuota();
             headers.put(config.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
             headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
+            headers.put(config.getCyclePatternHeader(), String.valueOf(cyclePattern));
         }
         return headers;
     }
