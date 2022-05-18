@@ -1,6 +1,20 @@
 # ISCG (IAM Spring Cloud Gateway)
 
-## 1. Generate self-certificate
+## 1. Developer's Guide
+
+- Building
+
+```bash
+git clone https://github.com/wl4g/dopaas-iam.git
+cd dopaas-iam/gateway/gateway-starter
+
+# The profiles supports: -Pbuild:tar, -Pbuild:springjar, -Pbuild:docker, -Pbuild:native
+mvn -U install -DskipTests -Pbuild:tar
+```
+
+## 2. Integration Testing
+
+### 2.1 Generating self-certificate
 
 ```bash
 cd src/main/resources/cert.d/
@@ -18,13 +32,11 @@ cd src/main/resources/cert.d/
 reported when executing `curl`: `no alternative certificate subject name matches target host name '192.168.88.3'`,
 Using the above script tool will contain `localhost,127.0.0.1` by default.
 
-## 2. Testing
-
-- [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html) , The `-Djavax.net.debug` options are `all|ssl|handshake|warning|...`
-
-### 2.1 Ingress TLS
+### 2.2 Ingress TLS
 
 - Preconditions (startup configuration)
+
+  - [docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html) , The `-Djavax.net.debug` options are `all|ssl|handshake|warning|...`
 
 ```bash
 java -Djavax.net.debug=all -jar iam-gateway-3.0.0-bin.jar --server.ssl.enabled=true --server.ssl.client-auth=NONE
@@ -43,7 +55,7 @@ curl -vsSkL -XGET \
 'https://localhost:18085/_fallback' | jq
 ```
 
-### 2.2 Ingress mTLS
+### 2.3 Ingress mTLS
 
 - Preconditions (startup configuration)
 
@@ -64,7 +76,7 @@ curl -vsSkL -XGET \
 'https://localhost:18085/_fallback' | jq
 ```
 
-### 2.3 IP Filter
+### 2.4 IP Filter
 
 - Preconditions(`src/test/resources/bootstrap.yml`)
 
@@ -95,11 +107,11 @@ curl -vsSkL -XPOST \
 "http://$localIp:18085/productpage-with-IpFilter/post"
 ```
 
-### 2.4 Request Size
+### 2.5 Request Size
 
 TODO
 
-### 2.5 Fault Injection
+### 2.6 Fault Injection
 
 - The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
 
@@ -129,7 +141,7 @@ curl -vsSkL -XPOST \
 'http://localhost:18085/productpage-with-FaultInjector/post'
 ```
 
-### 2.6 Simple Sign Authing
+### 2.7 Simple Sign Authing
 
 - Preconditions1 (startup configuration, `src/test/resources/example-route-filter-splitting.yml`)
 
@@ -233,12 +245,12 @@ del iam:gateway:auth:sign:replay:bloom:productpage-service-route-with-SimpleSign
 - View Authing Events
 
 ```bash
-# The cache key format is(example): 'iam:gateway:auth:sign:event:failure:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+# The cache key format example is:'iam:gateway:auth:sign:event:failure:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
 hgetall iam:gateway:auth:sign:event:success:productpage-service-route-with-SimpleSignAuthing:20220517
 hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-SimpleSignAuthing:20220517
 ```
 
-### 2.7 Request Limiter
+### 2.8 Request Limiter
 
 - Request
 
@@ -260,7 +272,7 @@ ab -n 2000 -c 15 \
 'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
 ```
 
-- Configure the limiting configuration for global default.
+- Configure for global default.
 
 ```bash
 java -jar iam-gateway-3.0.0-bin.jar \
@@ -271,41 +283,51 @@ java -jar iam-gateway-3.0.0-bin.jar \
 --spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyyyMMdd
 ```
 
-- Configure the limiting configuration for routeId + limitKey (e.g: Principal/Header(X-Forward-Ip)/Path/...).
+- Configure for routeId + limitKey(e.g: Principal/Header(X-Forward-Ip)/Path/...).
 
 ```bash
-# The cache key format is(example): 'iam:gateway:requestlimit:config:rate:<routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
+# The cache key format example is:'iam:gateway:requestlimit:config:rate:<routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
 
-#
 # The keyResolver is Header(X-Forward-Ip)
-hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:127.0.0.1  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
-
-hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
-
 #
+hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+
+hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+
 # The keyResolver is Path
-hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+#
+hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
 hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
 
-#
 # The keyResolver is Principal(appId)
-hset iam:gateway:requestlimit:config:rate  productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
+#
+hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
-hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs  '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
+hset iam:gateway:requestlimit:config:quota productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"requestCapacity":1000,"cycleDatePattern":"yyyyMMddHH","includeHeaders":true}'
 
 # ...
 ```
 
-- View Limiting Events
+- View request tokens
 
 ```bash
-# The cache key format is(example): 'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+# The cache key format example is:'iam:gateway:requestlimit:token:quota:<yyyyMMdd>  <routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
+#
+hgetall iam:gateway:requestlimit:token:quota:20220517
+hget iam:gateway:requestlimit:token:quota:20220517 productpage-service-route-with-IamRequestLimiter:127.0.0.1
+```
+
+- View limited Events
+
+```bash
+# The cache key format example is:'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyyyMMdd>', of course, both prefixes and suffixes can be configured globally.
+#
 hgetall iam:gateway:requestlimit:event:hits:rate:productpage-service-route-with-IamRequestLimiter:20220517
 hgetall iam:gateway:requestlimit:event:hits:quota:productpage-service-route-with-IamRequestLimiter:20220517
 ```
 
-### 2.8 Traffic Replication
+### 2.9 Traffic Replication
 
 - The following example requires startup corresponding configuration file: `src/test/resources/bootstrap.yml`
 
@@ -340,7 +362,7 @@ curl -vsSkL -XPOST \
 'http://localhost:18085/productpage-with-TrafficReplicator/post'
 ```
 
-### 2.9 Response Cache
+### 2.10 Response Cache
 
 ```bash
 
@@ -361,19 +383,19 @@ curl -vsSkL -XGET \
 "http://localhost:18085/productpage-with-ResponseCache/get"
 ```
 
-### 2.10 Retry
+### 2.11 Retry
 
 TODO
 
-### 2.11 Circuit Breaker
+### 2.12 Circuit Breaker
 
 TODO
 
-### 2.12 Canary LoadBalancer
+### 2.13 Canary LoadBalancer
 
 TODO
 
-## 3. Admin & operation APIs
+## 3. Admin & Operation APIs
 
 - [docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api](https://docs.spring.io/spring-cloud-gateway/docs/2.2.6.RELEASE/reference/html/#actuator-api)
 

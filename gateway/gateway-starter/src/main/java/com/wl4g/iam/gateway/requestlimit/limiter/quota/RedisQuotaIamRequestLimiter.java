@@ -68,8 +68,9 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                 .defaultIfEmpty(((RedisQuotaLimiterProperties) getDefaultLimiter()).getDefaultStrategy())
                 .flatMap(strategy -> {
                     try {
-                        String key = getKey(strategy, routeId, limitKey);
-                        return redisTemplate.opsForValue().increment(key, 1).onErrorResume(ex -> {
+                        String prefix = getPrefixKey(strategy);
+                        String hashKey = getHashKey(routeId, limitKey);
+                        return redisTemplate.opsForHash().increment(prefix, hashKey, 1).onErrorResume(ex -> {
                             if (log.isDebugEnabled()) {
                                 log.debug("Error calling quota limiter redis", ex);
                             }
@@ -111,9 +112,12 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
         return requestLimiterConfig.getLimiter().getQuota();
     }
 
-    protected String getKey(RedisQuotaRequestLimiterStrategy strategy, String routeId, String limitKey) {
-        return requestLimiterConfig.getLimiter().getQuota().getTokenPrefix().concat(":").concat(routeId).concat(":").concat(
-                limitKey);
+    protected String getPrefixKey(RedisQuotaRequestLimiterStrategy strategy) {
+        return requestLimiterConfig.getLimiter().getQuota().getTokenPrefix().concat(":").concat(strategy.getCycleDatePattern());
+    }
+
+    protected String getHashKey(String routeId, String limitKey) {
+        return routeId.concat(":").concat(limitKey);
     }
 
     protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, Long tokensLeft) {
