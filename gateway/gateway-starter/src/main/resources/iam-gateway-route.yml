@@ -243,7 +243,7 @@ spring:
                 ## Only valid when appId extract mode is parameter.
                 app-id-param: appId
                 secret-param: key ## Default by 'appSecret'
-                sign-replay-verify-enabled: true ## Default by true
+                sign-replay-verify-enabled: false ## Default by true
                 sign-replay-verify-bloom-expire-seconds: 604800 ## Default by 7*24*60*60
                 sign-param: token ## Default by 'sign'
                 sign-algorithm: MD5 ## Default by 'S256', Options(MD5|S1|S256|S384|S512|HMD5|HS1|HS256|HS512)
