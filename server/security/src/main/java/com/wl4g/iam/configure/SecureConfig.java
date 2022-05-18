@@ -15,10 +15,12 @@
  */
 package com.wl4g.iam.configure;
 
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Securer configuration properties
@@ -75,30 +77,26 @@ public final class SecureConfig implements Serializable {
         this.applyPubkeyExpireMs = applyPubkeyExpireMs;
     }
 
-    final public String[] getHashAlgorithms() {
+    public String[] getHashAlgorithms() {
         Assert.state(hashAlgorithms != null, "No configuration item 'hashAlgorithms' that is not empty is allowed");
         return hashAlgorithms;
     }
 
-    final public String getPrivateSalt() {
-        Assert.state(!StringUtils.isEmpty(privateSalt), "No configuration item 'privateSalt' that is not empty is allowed");
-        return privateSalt;
+    public String getPrivateSalt() {
+        return hasText(privateSalt, "No configuration item 'privateSalt' that is not empty is allowed");
     }
 
-    final public int getPreCryptPoolSize() {
+    public int getPreCryptPoolSize() {
         Assert.state(preCryptPoolSize != null, "No configuration item 'preCryptSize' that is not empty is allowed");
         return preCryptPoolSize;
     }
 
-    final public long getCryptosExpireMs() {
-        Assert.state(cryptosExpireMs != null, "No configuration item 'cryptosExpireMs' that is not empty is allowed");
-        return cryptosExpireMs;
+    public long getCryptosExpireMs() {
+        return notNull(cryptosExpireMs, "No configuration item 'cryptosExpireMs' that is not empty is allowed");
     }
 
-    final public long getApplyPubkeyExpireMs() {
-        Assert.state(!StringUtils.isEmpty(applyPubkeyExpireMs),
-                "No configuration item 'applyPubkeyExpireMs' that is not empty is allowed");
-        return applyPubkeyExpireMs;
+    public long getApplyPubkeyExpireMs() {
+        return notNull(applyPubkeyExpireMs, "No configuration item 'applyPubkeyExpireMs' that is not empty is allowed");
     }
 
 }
