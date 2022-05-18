@@ -377,6 +377,8 @@ spring:
             configPrefix: iam:gateway:requestlimit:config:rate
             ## The rate limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:rate
+            ## The name of the deny header that empty key got obtained.
+            denyEmptyKeyHeader: X-Iscg-RateLimit-Deny-EmptyKey ## Default by 'X-Iscg-RateLimit-Deny-EmptyKey'
             ## The name of the header that returns the burst capacity configuration.
             burstCapacityHeader: X-Iscg-RateLimit-Burst-Capacity ## Default by 'X-RateLimit-Burst-Capacity'
             ## The name of the header that returns the replenish rate configuration.
@@ -385,8 +387,8 @@ spring:
             requestedTokensHeader: X-Iscg-RateLimit-Requested-Tokens ## Default by 'X-RateLimit-Requested-Tokens'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-RateLimit-Remaining ## Default by 'X-RateLimit-Remaining'
-            ## The name of the deny header that empty key got obtained.
-            denyEmptyKeyHeader: X-Iscg-RateLimit-Deny-EmptyKey ## Default by 'X-Iscg-RateLimit-Deny-EmptyKey'
+            ## The name of the header that returns number of limited key the current request.
+            limitKeyHeader: X-Iscg-RateLimit-LimitKey ## Default by 'X-Iscg-RateLimit-LimitKey'
             ## The default strategy configuration of request limiter based on redis rate.
             defaultStrategy:
               ## The add the properties info of the current limiter to the response header.
@@ -402,14 +404,16 @@ spring:
             configPrefix: iam:gateway:requestlimit:config:quota
             ## The quota limiter user-level tokens computational key prefix.
             tokenPrefix: iam:gateway:requestlimit:token:quota
+            ## The name of the deny header that empty key got obtained.
+            denyEmptyKeyHeader: X-Iscg-QuotaLimit-Deny-EmptyKey ## Default by 'X-Iscg-QuotaLimit-Deny-EmptyKey'
             ## The name of the header that returns the request capacity configuration.
             requestCapacityHeader: X-Iscg-QuotaLimit-Request-Capacity ## Default by 'X-QuotaLimit-Request-Capacity'
             ## The name of the header that returns number of remaining requests during the current second.
             remainingHeader: X-Iscg-QuotaLimit-Remaining ## Default by 'X-QuotaLimit-Remaining'
             ## The name of the header that returns the time cycle pattern of the request limiting.
             cyclePatternHeader: X-Iscg-QuotaLimit-Cycle ## Default by 'X-Iscg-QuotaLimit-Cycle'
-            ## The name of the deny header that empty key got obtained.
-            denyEmptyKeyHeader: X-Iscg-QuotaLimit-Deny-EmptyKey ## Default by 'X-Iscg-QuotaLimit-Deny-EmptyKey'
+            ## The name of the header that returns number of limited key the current request.
+            limitKeyHeader: X-Iscg-QuotaLimit-LimitKey ## Default by 'X-Iscg-QuotaLimit-LimitKey'
             ## The default strategy configuration of request limiter based on redis quota.
             defaultStrategy:
               ## The add the properties info of the current limiter to the response header.

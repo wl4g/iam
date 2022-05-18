@@ -287,10 +287,10 @@
                     "args": [
                         {
                             "name": "maxBodySize",
-                            "type": "int",
+                            "type": "string",
                             "multi": "false",
                             "repeat": "false",
-                            "defaultValue": "10485760",
+                            "defaultValue": "5MB",
                             "help": ""
                         }
                     ]
@@ -321,10 +321,11 @@
                             "type": "object",
                             "multi": "false",
                             "repeat": "false",
+                            "help": "",
                             "childrens": [
                                 {
                                     "name": "provider",
-                                    "type": "string",
+                                    "type": "enum",
                                     "multi": "false",
                                     "repeat": "false",
                                     "defaultValue": "Host",
@@ -354,7 +355,7 @@
                                 },
                                 {
                                     "name": "properties",
-                                    "type": "int",
+                                    "type": "object",
                                     "multi": "false",
                                     "repeat": "false",
                                     "defaultValue": "500",
@@ -362,50 +363,32 @@
                                     "childrens": [
                                         {
                                             "name": "headerNames",
-                                            "type": "string",
+                                            "type": "array",
                                             "repeat": "false",
                                             "defaultValue": "['X-Forwarded-For','Proxy-Client-IP','WL-Proxy-Client-IP']",
                                             "help": ""
                                         }
                                     ]
                                 }
-                            ],
-                            "help": ""
+                            ]
                         },
                         {
-                            "name": "limiter",
+                            "name": "provider",
+                            "type": "enum",
                             "multi": "false",
-                            "type": "object",
                             "repeat": "false",
-                            "childrens": [
+                            "defaultValue": "RedisRateLimiter",
+                            "help": "The request limiter provider",
+                            "options": [
                                 {
-                                    "name": "provider",
-                                    "type": "string",
-                                    "multi": "false",
-                                    "repeat": "false",
-                                    "defaultValue": "RedisRateLimiter",
-                                    "help": "",
-                                    "options": [
-                                        {
-                                            "name": "RedisRateLimiter",
-                                            "help": ""
-                                        },
-                                        {
-                                            "name": "RedisQuotaLimiter",
-                                            "help": ""
-                                        }
-                                    ]
+                                    "name": "RedisRateLimiter",
+                                    "help": ""
                                 },
                                 {
-                                    "name": "includeHeaders",
-                                    "type": "boolean",
-                                    "multi": "false",
-                                    "repeat": "false",
-                                    "defaultValue": "true",
+                                    "name": "RedisQuotaLimiter",
                                     "help": ""
                                 }
-                            ],
-                            "help": ""
+                            ]
                         }
                     ]
                 },

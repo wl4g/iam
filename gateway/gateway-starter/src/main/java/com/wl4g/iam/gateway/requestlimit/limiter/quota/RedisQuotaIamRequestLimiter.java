@@ -83,7 +83,7 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
                             boolean allowed = accumulated < requestCapacity;
 
                             LimitedResult result = new LimitedResult(allowed, tokensLeft,
-                                    createHeaders(strategy, cyclePattern, tokensLeft));
+                                    createHeaders(strategy, cyclePattern, tokensLeft, limitKey));
                             if (log.isTraceEnabled()) {
                                 log.trace("response: {}", result);
                             }
@@ -108,7 +108,8 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
 
                     // When getting the time period mode error, only the mode
                     // raw string can be returned. e.g: yyyyMMdd
-                    return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, strategy.getCycleDatePattern(), -1L)));
+                    return Mono.just(
+                            new LimitedResult(true, -1L, createHeaders(strategy, strategy.getCycleDatePattern(), -1L, limitKey)));
                 });
     }
 
@@ -125,13 +126,18 @@ public class RedisQuotaIamRequestLimiter extends AbstractRedisIamRequestLimiter<
         return routeId.concat(":").concat(limitKey);
     }
 
-    protected Map<String, String> createHeaders(RedisQuotaRequestLimiterStrategy strategy, String cyclePattern, Long tokensLeft) {
+    protected Map<String, String> createHeaders(
+            RedisQuotaRequestLimiterStrategy strategy,
+            String cyclePattern,
+            Long tokensLeft,
+            String limitKey) {
         Map<String, String> headers = new HashMap<>();
         if (strategy.isIncludeHeaders()) {
             RedisQuotaLimiterProperties config = requestLimiterConfig.getLimiter().getQuota();
             headers.put(config.getRequestCapacityHeader(), String.valueOf(strategy.getRequestCapacity()));
             headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
             headers.put(config.getCyclePatternHeader(), String.valueOf(cyclePattern));
+            headers.put(config.getLimitKeyHeader(), String.valueOf(limitKey));
         }
         return headers;
     }

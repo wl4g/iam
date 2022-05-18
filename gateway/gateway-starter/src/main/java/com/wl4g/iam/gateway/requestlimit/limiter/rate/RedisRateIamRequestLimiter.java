@@ -124,7 +124,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                                     Long tokensLeft = results.get(1);
 
                                     LimitedResult result = new LimitedResult(allowed, tokensLeft,
-                                            createHeaders(strategy, tokensLeft));
+                                            createHeaders(strategy, tokensLeft, limitKey));
                                     if (log.isTraceEnabled()) {
                                         log.trace("response: {}", result);
                                     }
@@ -148,7 +148,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
                          */
                         log.error("Error determining if user allowed from redis", e);
                     }
-                    return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L)));
+                    return Mono.just(new LimitedResult(true, -1L, createHeaders(strategy, -1L, limitKey)));
                 });
     }
 
@@ -171,7 +171,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
         return Arrays.asList(tokenKey, timestampKey);
     }
 
-    protected Map<String, String> createHeaders(RedisRateRequestLimiterStrategy strategy, Long tokensLeft) {
+    protected Map<String, String> createHeaders(RedisRateRequestLimiterStrategy strategy, Long tokensLeft, String limitKey) {
         Map<String, String> headers = new HashMap<>();
         RedisRateLimiterProperties config = requestLimiterConfig.getLimiter().getRate();
         if (strategy.isIncludeHeaders()) {
@@ -179,6 +179,7 @@ public class RedisRateIamRequestLimiter extends AbstractRedisIamRequestLimiter<R
             headers.put(config.getReplenishRateHeader(), String.valueOf(strategy.getReplenishRate()));
             headers.put(config.getRequestedTokensHeader(), String.valueOf(strategy.getRequestedTokens()));
             headers.put(config.getRemainingHeader(), String.valueOf(tokensLeft));
+            headers.put(config.getLimitKeyHeader(), String.valueOf(limitKey));
         }
         return headers;
     }

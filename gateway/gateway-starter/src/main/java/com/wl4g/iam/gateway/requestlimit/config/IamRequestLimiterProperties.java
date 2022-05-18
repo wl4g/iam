@@ -162,6 +162,12 @@ public class IamRequestLimiterProperties {
             private String remainingHeader;
 
             /**
+             * The name of the header that returns number of limited key the
+             * current request.
+             */
+            private String limitKeyHeader;
+
+            /**
              * The name of the deny header that empty key got obtained.
              */
             private String denyEmptyKeyHeader;
@@ -214,6 +220,7 @@ public class IamRequestLimiterProperties {
 
             public RedisRateLimiterProperties() {
                 setRemainingHeader(RATE_REMAINING_HEADER);
+                setLimitKeyHeader(RATE_LIMITKEY_HEADER);
                 setDenyEmptyKeyHeader(RATE_DENY_EMPTYKEY_HEADER);
             }
 
@@ -236,6 +243,11 @@ public class IamRequestLimiterProperties {
              * Remaining Rate Limit header name.
              */
             public static final String RATE_REMAINING_HEADER = "X-Iscg-RateLimit-Remaining";
+
+            /**
+             * The limit key Rate Limit header name.
+             */
+            public static final String RATE_LIMITKEY_HEADER = "X-Iscg-RateLimit-LimitKey";
 
             /**
              * The name of the deny header that empty key got obtained.
@@ -283,6 +295,7 @@ public class IamRequestLimiterProperties {
 
             public RedisQuotaLimiterProperties() {
                 setRemainingHeader(QUOTA_REMAINING_HEADER);
+                setLimitKeyHeader(QUOTA_LIMITKEY_HEADER);
                 setDenyEmptyKeyHeader(QUOTA_DENY_EMPTYKEY_HEADER);
             }
 
@@ -295,6 +308,11 @@ public class IamRequestLimiterProperties {
              * Remaining Rate Limit header name.
              */
             public static final String QUOTA_REMAINING_HEADER = "X-Iscg-QuotaLimit-Remaining";
+
+            /**
+             * The limit key Rate Limit header name.
+             */
+            public static final String QUOTA_LIMITKEY_HEADER = "X-Iscg-QuotaLimit-LimitKey";
 
             /**
              * The name of the header that returns the time cycle pattern of the

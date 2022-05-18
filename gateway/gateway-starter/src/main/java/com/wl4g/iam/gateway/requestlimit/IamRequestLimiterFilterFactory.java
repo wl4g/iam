@@ -43,7 +43,6 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverProvider;
 import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
-import com.wl4g.iam.gateway.requestlimit.limiter.RequestLimiterStrategy;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
@@ -113,7 +112,7 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
     }
 
     private IamRequestLimiter getRequestLimiter(IamRequestLimiterFilterFactory.Config config) {
-        return requestLimiterAdapter.forOperator(config.getLimiter().getProvider());
+        return requestLimiterAdapter.forOperator(config.getProvider());
     }
 
     @Getter
@@ -145,15 +144,18 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
         private KeyResolverStrategyConfig keyResolver = new KeyResolverStrategyConfig();
 
         /**
-         * The request limiter strategy JSON configuration.
+         * The request limiter provider.
          */
-        private RequestLimiterStrategyConfig limiter = new RequestLimiterStrategyConfig();
+        private RequestLimiterPrivoder provider = RequestLimiterPrivoder.RedisRateLimiter;
 
         @Getter
         @Setter
         @ToString
         public static class KeyResolverStrategyConfig extends KeyResolverStrategy {
 
+            /**
+             * The request limit key resolver provider.
+             */
             private KeyResolverProvider provider = KeyResolverProvider.Host;
 
             /**
@@ -174,16 +176,6 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
             }
         }
 
-        @Getter
-        @Setter
-        @ToString
-        public static class RequestLimiterStrategyConfig extends RequestLimiterStrategy {
-
-            /**
-             * Request limiter provider.
-             */
-            private RequestLimiterPrivoder provider = RequestLimiterPrivoder.RedisRateLimiter;
-        }
     }
 
     @AllArgsConstructor

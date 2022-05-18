@@ -132,43 +132,34 @@ spring:
                 #denyEmptyKey: true ## Default are set(recommended)
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
+                ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                provider: RedisRateLimiter
                 keyResolver:
                   provider: Header ## Default by Host, options are: Host|Path|Principal|Header|Interval
                   properties:
                     ## Note: Be sure to enclose the entire array string in double quotes (to be processed as list<string>),
                     ## otherwise it will be processed as map<string,string>
                     headerNames: "['X-Forwarded-For','Proxy-Client-IP','WL-Proxy-Client-IP']"
-                limiter:
-                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
-                  provider: RedisRateLimiter
-                  ## whether or not to include headers containing rate limiter info. Default by false
-                  includeHeaders: false
             - name: IamRequestLimiter
               args:
                 #denyEmptyKey: true ## Default are set(recommended)
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
+                ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                provider: RedisRateLimiter
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
                   properties: {}
-                limiter:
-                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
-                  provider: RedisRateLimiter
-                  ## whether or not to include headers containing rate limiter info. Default by false
-                  includeHeaders: false
             - name: IamRequestLimiter
               args:
                 #denyEmptyKey: true ## Default are set(recommended)
                 #emptyKeyStatus: FORBIDDEN ## Default are set(recommended)
                 #statusCode: TOO_MANY_REQUESTS
+                ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
+                provider: RedisQuotaLimiter
                 keyResolver:
                   provider: Principal ## Default by Host, options are: Host|Path|Principal|Header|Interval
                   properties: {}
-                limiter:
-                  ## The available options are: (RedisQuotaLimiter|RedisRateLimiter)
-                  provider: RedisQuotaLimiter
-                  ## whether or not to include headers containing rate limiter info. Default by false
-                  includeHeaders: false
             ##
             ## ------------------------------------------------------
             ## Filter configuration for testing TrafficReplicator
