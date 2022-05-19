@@ -213,12 +213,12 @@ public class IamRequestLimiterFilterFactory extends AbstractGatewayFilterFactory
 
                     // Allow the request to execute the next filter.
                     if (result.isAllowed()) {
-                        log.debug("Allowed the request. keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(),
-                                requestLimiter.kind(), exchange.getRequest().getURI().getPath());
+                        log.debug("Allowed of keyResolver: {}, limiter: {}, path: {}", keyResolver.kind(), requestLimiter.kind(),
+                                exchange.getRequest().getURI().getPath());
                         return chain.filter(exchange);
                     }
 
-                    log.debug("Rejected the request. keyResolver: {}, limiter: {}, path: {}, headers: {}", keyResolver.kind(),
+                    log.info("Rejected of keyResolver: {}, limiter: {}, path: {}, headers: {}", keyResolver.kind(),
                             requestLimiter.kind(), exchange.getRequest().getURI().getPath(), result.getHeaders());
                     setResponseStatus(exchange, HttpStatusHolder.parse(config.getStatusCode()));
                     return exchange.getResponse().setComplete();

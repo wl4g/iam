@@ -122,7 +122,7 @@ spring:
 ```
 
 ```bash
-# for testing positive example1
+## for testing positive example1
 curl -vsSkL -XGET \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \
@@ -130,7 +130,7 @@ curl -vsSkL -XGET \
 -H 'X-Iscg-Fault: y' \
 'http://localhost:18085/productpage-with-FaultInjector/get'
 
-# for testing positive example2
+## for testing positive example2
 curl -vsSkL -XPOST \
 -H 'Content-Type: application/json' \
 -H 'X-Iscg-Trace: y' \
@@ -173,14 +173,14 @@ Run the test harness class in Idea/Eclipse/VsCode: `com.wl4g.iam.gateway.securit
 
 ```bash
 redis-cli -c -h localhost -p 6379 -a '123456'
-# Note: The configuration 'app-id-extractor' is 'Parameter'
+## Note: The configuration 'app-id-extractor' is 'Parameter'
 set iam:gateway:auth:sign:secret:oijvin6crxu2qdqvpgls9jmijz4t6istxs <myAppSecret>
 ```
 
 - Request
 
 ```bash
-# for testing positive example
+## for testing positive example
 export APPID=oijvin6crxu2qdqvpgls9jmijz4t6istxs
 export APPSECRET=njbbaiocxsbzzmtfsnenfvupzjyoioyu
 export NONCE=nxFCAq0qrzFwqHcwfX0xvainRmQk6FvO
@@ -226,7 +226,6 @@ curl -vL \
   "origin": "127.0.0.1, 61.140.45.61", 
   "url": "http://127.0.0.1:18085/get?appId=oijvin6crxu2qdqvpgls9jmijz4t6istxs&nonce=nxFCAq0qrzFwqHcwfX0xvainRmQk6FvO&timestamp=1652777325198&sign=aa9c39efe90ef44bbcae258bb0b40653489186ac58266e092e3e420f1caa1573"
 }
-
 ```
 
 - Response(incorrect)
@@ -245,25 +244,17 @@ del iam:gateway:auth:sign:replay:bloom:productpage-service-route-with-SimpleSign
 - View Authing Events
 
 ```bash
-# The cache key format example is:'iam:gateway:auth:sign:event:failure:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
+## The cache key format example is:'iam:gateway:auth:sign:event:failure:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
 hgetall iam:gateway:auth:sign:event:success:productpage-service-route-with-SimpleSignAuthing:220517
 hgetall iam:gateway:auth:sign:event:failure:productpage-service-route-with-SimpleSignAuthing:220517
 ```
 
 ### 2.8 Request Limiter
 
-- Request
+- 2.8.1 Concurrent requests
 
 ```bash
-# for testing positive example(non limited)
-ab -n 500 -c 5 \
--H 'X-Iscg-Trace: y' \
--H 'X-Iscg-Log: y' \
--H 'X-Iscg-Log-Level: 10' \
--m POST \
-'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
-
-# for testing negative example(limited)
+## for testing negative example(limited)
 ab -n 2000 -c 15 \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \
@@ -272,7 +263,35 @@ ab -n 2000 -c 15 \
 'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
 ```
 
-- Configure for global default.
+- 2.8.2 Debug limited headers
+
+> Preconditions: Please make sure that the global default setup is: `spring.iam.gateway.requestlimit.limiter.[rate|quota].defaultStrategy.includeHeaders=true`,
+or configure by routeId+limitKey: `{"includeHeaders":true, ...}`, refer to follower `2.8.4`
+
+```bash
+curl -vsSkL -XPOST \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-m POST \
+'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
+
+HTTP/1.1 200 OK
+X-Request-Id: 643603ccd11aadf5a705191e5c11b2a4
+X-Iscg-RateLimit-Requested-Tokens: 1
+X-Iscg-RateLimit-Replenish-Rate: 10
+X-Iscg-RateLimit-LimitKey: 127.0.0.1
+X-Iscg-RateLimit-Burst-Capacity: 200
+X-Iscg-RateLimit-Remaining: 199
+X-Iscg-QuotaLimit-Remaining: 474
+X-Iscg-QuotaLimit-Cycle: 220518
+X-Iscg-QuotaLimit-LimitKey: /productpage-with-IamRequestLimiter/post
+X-Iscg-QuotaLimit-Request-Capacity: 1000
+...
+...
+```
+
+- 2.8.3 Configure for global default.
 
 ```bash
 java -jar iam-gateway-3.0.0-bin.jar \
@@ -283,46 +302,41 @@ java -jar iam-gateway-3.0.0-bin.jar \
 --spring.iam.gateway.requestlimit.limiter.quota.defaultStrategy.cycleDatePattern=yyMMdd
 ```
 
-- Configure for routeId + limitKey(e.g: Principal/Header(X-Forward-Ip)/Path/...).
+- 2.8.4 Configure for routeId + limitKey(e.g: Principal/Header(X-Forward-Ip)/Path/...).
 
 ```bash
-# The cache key format example is:'iam:gateway:requestlimit:config:rate:<routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
+## The cache key format example is:'iam:gateway:requestlimit:config:rate:<routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
 
-# The keyResolver is Header(X-Forward-Ip)
-#
+## The keyResolver is Header(X-Forward-Ip)
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
 hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:127.0.0.1 '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
-# The keyResolver is Path
-#
+## The keyResolver is Path
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
 hset iam:gateway:requestlimit:config:quota  productpage-service-route-with-IamRequestLimiter:/productpage-with-IamRequestLimiter/get  '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
-# The keyResolver is Principal(appId)
-#
+## The keyResolver is Principal(appId)
 hset iam:gateway:requestlimit:config:rate productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"includeHeaders":true,"burstCapacity":1000,"replenishRate":1,"requestedTokens":1}'
 
 hset iam:gateway:requestlimit:config:quota productpage-service-route-with-IamRequestLimiter:oijvin6crxu2qdqvpgls9jmijz4t6istxs '{"requestCapacity":1000,"cycleDatePattern":"yyMMddHH","includeHeaders":true}'
 
-# ...
+## ...
 ```
 
-- View request tokens
+- 2.8.5 View request tokens
 
 ```bash
-# The cache key format example is:'iam:gateway:requestlimit:token:quota:<yyMMdd>  <routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
-#
+## The cache key format example is:'iam:gateway:requestlimit:token:quota:<yyMMdd>  <routeId>:<limitKey>', of course, both prefixes and suffixes can be configured globally.
 hgetall iam:gateway:requestlimit:token:quota:220517
 hget iam:gateway:requestlimit:token:quota:220517 productpage-service-route-with-IamRequestLimiter:127.0.0.1
 ```
 
-- View limited Events
+- 2.8.6 View limited Events
 
 ```bash
-# The cache key format example is:'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
-#
+## The cache key format example is:'iam:gateway:requestlimit:event:hits:rate:<routeId>:<yyMMdd>', of course, both prefixes and suffixes can be configured globally.
 hgetall iam:gateway:requestlimit:event:hits:rate:productpage-service-route-with-IamRequestLimiter:220517
 hgetall iam:gateway:requestlimit:event:hits:quota:productpage-service-route-with-IamRequestLimiter:220517
 ```
@@ -338,21 +352,21 @@ spring:
 ```
 
 ```bash
-# Mock actual upstream http server.
+## Mock actual upstream http server.
 python3 -m http.server -b 0.0.0.0 8888
 
-# Mock traffic mirror upstream http server. see: iam-gateway-route.yaml#secure-httpbin-service-route
-# Online by default: http://httpbin.org/
-# [Optional] You can also use docker to local build an httpbin server.
+## Mock traffic mirror upstream http server. see: iam-gateway-route.yaml#secure-httpbin-service-route
+## Online by default: http://httpbin.org/
+## [Optional] You can also use docker to local build an httpbin server.
 #docker run -d --name=httpbin -p 8889:80 kennethreitz/httpbin
 
-# 1. Send a mock request and observe that both terminals have output.
-# 2. Then observe the output of the simulated mirror http server, and the response of the simulated real http server.
+## 1. Send a mock request and observe that both terminals have output.
+## 2. Then observe the output of the simulated mirror http server, and the response of the simulated real http server.
 
-# for testing positive example1
+## for testing positive example1
 curl -vsSkL -XGET -H 'X-Iscg-Trace: y' -H 'X-Iscg-Log-Level: 10' 'http://localhost:18085/productpage-with-TrafficReplicator/get'
 
-# for testing positive example2
+## for testing positive example2
 curl -vsSkL -XPOST \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \
@@ -365,8 +379,7 @@ curl -vsSkL -XPOST \
 ### 2.10 Response Cache
 
 ```bash
-
-# for testing positive example
+## for testing positive example
 curl -vsSkL -XGET \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \
@@ -374,7 +387,7 @@ curl -vsSkL -XGET \
 -H 'X-Iscg-Cache: y' \
 "http://localhost:18085/productpage-with-ResponseCache/get"
 
-# for testing negative example
+## for testing negative example
 curl -vsSkL -XGET \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \

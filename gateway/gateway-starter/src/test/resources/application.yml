@@ -11,6 +11,11 @@
 ## #### IAM Gateway Primary configuration. ####
 #
 spring:
+  sleuth:
+    otel:
+      exporter:
+        jaeger:
+          endpoint: http://localhost:14250
   main.allow-circular-references: true
   ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
   ## but the lower version is invalid.
@@ -243,7 +248,6 @@ spring:
       trace:
         enabled: true ## Default by true
         ## Prefer to enable tracing samples match SPEL match expression. Default by '#{true}', which means never no match.
-        ## Tip: The built-in support to get the current routeId, such as: #{routeId.get().test('my-service-route')}
         preferOpenMatchExpression: '#{$defaultTraceHeader.test($request)}'
         ## Prefer to enable tracing samples match rule definitions.
         preferMatchRuleDefinitions:
@@ -640,28 +644,43 @@ management:
         enabled: true ## Default by true
 
 ## Logging configuration.
+## see:https://docs.spring.io/spring-boot/docs/2.6.7/reference/htmlsingle/#features.logging.custom-log-configuration
+## see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer
 logging:
-  file:
-    ## see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
-    ## see:org.springframework.boot.logging.LogFile#toString
+  register-shutdown-hook: false
+  charset.file: UTF-8
+  ## Log levels belonging to this group will take effect synchronously.(TRACE|DEBUG|INFO|WARN|ERROR|FATAL|OFF)
+  ## see:https://docs.spring.io/spring-boot/docs/2.6.7/reference/htmlsingle/#features.logging.log-groups
+  group:
+    config: "org.springframework.boot.context.config"
+    tomcat: "org.apache.catalina,org.apache.coyote,org.apache.tomcat"
+  file: ## see:org.springframework.boot.logging.LogFile#toString
     name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
-    clean-history-on-start: false # By default: false
-    total-size-cap: 200GB # By default: 200GB
-    max-size: 1GB # By default: 500MB
-    max-history: 30 # By default: 7
   pattern:
-    #console: ${logging.pattern.file.name}
-    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
-    #dateformat: yyyy-MM-dd HH:mm:ss.SSS
-    #level: '%5p'
-    #rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
-  root: INFO
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} [%-32.32X{requestId}] [%-8.8X{requestSeq}] %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{requestId} %5p] [%-8.8X{requestSeq} %5p] --- [%t] %-40.40logger{39} : %m%n%wEx'
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS
+    level: '%5p'
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+      clean-history-on-start: false ## Default by false
+      max-file-size: 1GB ## Default by 200MB
+      max-history: 30 ## Default by 7
+      total-size-cap: 100GB ## Default by 10GB
   level:
+    root: INFO
+    tomcat: INFO
+    config: INFO
+    ## The built-in log groups:
+    ## web(org.springframework.core.codec,org.springframework.http,org.springframework.web,org.springframework.boot.actuate.endpoint.web,org.springframework.boot.web.servlet.ServletContextInitializerBeans)
+    ## sql(org.springframework.jdbc.core,org.hibernate.SQL,org.jooq.tools.LoggerListener)
+    web: INFO
+    sql: INFO
     reactor:
       netty.http.client: INFO
     org:
       springframework: INFO
-        #boot:context.config: DEBUG ## Print load config
       apache: INFO
     feign: DEBUG
     com:
@@ -704,11 +723,11 @@ server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
     #  - TLS_DHE_DSS_WITH_AES_128_CBC_SHA
     #  - TLS_RSA_WITH_AES_128_CBC_SHA
     key-password: ${server.ssl.key-store-password}
-    key-store: 'classpath:cert.d/wl4g.io.p12'
+    key-store: classpath:cert.d/wl4g.io.p12
     key-store-password: '123456'
     key-store-type: PKCS12 ## Default no-set by JKS. Options(JKS|PKCS12|DER|CER|..)
     #key-store-provider:
-    trust-store: 'classpath:cert.d/ca.p12'
+    trust-store: classpath:cert.d/ca.p12
     trust-store-password: '123456'
     trust-store-type: PKCS12
     #trust-store-provider:

@@ -556,7 +556,8 @@ public class SimpleSignAuthingFilterFactory extends AbstractGatewayFilterFactory
                     publishFailureEvent(appId, config, exchange, "invalid_signature");
                     return writeResponse(HttpStatus.UNAUTHORIZED, exchange, "invalid_signature");
                 }
-                log.info("Verified request of path: '', appId='{}', sign='{}'", exchange.getRequest().getPath(), appId, sign);
+                log.info("Verified request of path: '{}', appId='{}', sign='{}'", exchange.getRequest().getURI().getPath(), appId,
+                        sign);
 
                 metricsFacade.counter(exchange, MetricsName.SIMPLE_SIGN_SUCCCESS_TOTAL, 1);
                 if (config.isSignReplayVerifyEnabled()) {

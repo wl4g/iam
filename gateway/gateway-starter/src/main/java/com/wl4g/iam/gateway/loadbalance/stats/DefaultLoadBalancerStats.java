@@ -71,7 +71,6 @@ import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
 import com.wl4g.infra.core.task.ApplicationTaskRunner;
 
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -86,7 +85,6 @@ import reactor.netty.http.client.HttpClient;
  * @since v3.0.0
  */
 @Slf4j
-@ToString
 public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProperties> implements LoadBalancerStats {
 
     private final CanaryLoadBalancerProperties loadBalancerConfig;
@@ -270,6 +268,15 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     @Override
     public @NotNull Map<String, RouteServiceStatus> getAllRouteServices() {
         return unmodifiableMap(loadBalancerRegistry.getAllRouteServices());
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultLoadBalancerStats [loadBalancerConfig=" + loadBalancerConfig + ", loadBalancerRegistry="
+                + loadBalancerRegistry + ", reachableStrategy=" + reachableStrategy + ", routeRlocator=" + routeRlocator
+                + ", discoveryClient=" + discoveryClient + ", metricsFacade=" + metricsFacade
+                + ", initRegisterAllRouteServicesCompleted=" + initRegisterAllRouteServicesCompleted
+                + ", routeServicesProbeFutures=" + routeServicesProbeFutures + "]";
     }
 
     protected Disposable doPing(ProbeProperties probe, InstanceStatus status) {
