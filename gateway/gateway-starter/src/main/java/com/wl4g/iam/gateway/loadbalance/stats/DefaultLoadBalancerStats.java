@@ -351,7 +351,8 @@ public class DefaultLoadBalancerStats extends ApplicationTaskRunner<RunnerProper
     protected URI buildUri(ProbeProperties probe, InstanceStatus status) {
         ServiceInstance instance = status.getInstance();
         String scheme = instance.isSecure() ? "https://" : "http://";
-        return URI.create(scheme.concat(instance.getHost()).concat(":").concat(instance.getPort() + "").concat(probe.getPath()));
+        String portPart = instance.getPort() > 0 ? ":".concat(valueOf(instance.getPort())) : "";
+        return URI.create(scheme.concat(instance.getHost()).concat(portPart).concat(probe.getPath()));
     }
 
     protected synchronized void save(ProbeProperties probe, InstanceStatus status, ActiveProbe activeProbe) {

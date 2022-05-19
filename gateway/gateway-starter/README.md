@@ -406,7 +406,25 @@ TODO
 
 ### 2.13 Canary LoadBalancer
 
-TODO
+```bash
+## for testing positive example
+curl -vsSkL -XPOST \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Cache: y' \
+-H 'X-Iscg-Canary: v1' \
+"http://localhost:18085/productpage-with-CanaryLoadBalancer/post"
+
+## for testing positive example
+curl -vsSkL -XPOST \
+-H 'X-Iscg-Trace: y' \
+-H 'X-Iscg-Log: y' \
+-H 'X-Iscg-Log-Level: 10' \
+-H 'X-Iscg-Cache: y' \
+-H 'X-Iscg-Canary: v2' \
+"http://localhost:18085/productpage-with-CanaryLoadBalancer/post"
+```
 
 ## 3. Admin & Operation APIs
 

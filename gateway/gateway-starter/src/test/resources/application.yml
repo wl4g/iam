@@ -48,7 +48,7 @@ spring:
       ## Instrumentation version to be used to find a Tracer.
       #instrumentationVersion
       ## Sets the global default {@code Sampler} value.
-      traceIdRatioBased: 0.1 ## Default by 0.1
+      traceIdRatioBased: 1d ## Default by 0.1
       ## Returns the global default max number of attributes per {@link Span}.
       maxAttrs: 128 ## Default by 128
       ## Returns the global default max number of events per {@link Span}.
@@ -67,8 +67,8 @@ spring:
         sleuthBaggage.enabled: false
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelLogProperties
       log:
-        exporter.enabled: false
-        slf4j.enabled: true
+        exporter.enabled: true ## Default by false
+        slf4j.enabled: true ## Default by false
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProcessorProperties
       processor:
         batch:
@@ -83,9 +83,9 @@ spring:
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelExporterProperties
       exporter:
         sleuthSpanFilter.enabled: true
-        otlp:
-          endpoint: http://localhost:4317
-          timeout: 10000
+        #otlp:
+        #  endpoint: http://localhost:4317
+        #  timeout: 10000
         jaeger:
           endpoint: http://localhost:14250
           timeout: 10000
@@ -729,8 +729,8 @@ logging:
   file: ## see:org.springframework.boot.logging.LogFile#toString
     name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
   pattern:
-    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} [%-32.32X{requestId}] [%-8.8X{requestSeq}] %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
-    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{requestId} %5p] [%-8.8X{requestSeq} %5p] --- [%t] %-40.40logger{39} : %m%n%wEx'
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} [%-32.32X{traceId:-}] [%-8.8X{spanId}] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{requestId}] [%-8.8X{requestSeq}] --- [%t] %-40.40logger{39} : %m%n%wEx'
     dateformat: yyyy-MM-dd HH:mm:ss.SSS
     level: '%5p'
   logback:

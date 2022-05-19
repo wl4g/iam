@@ -14,8 +14,8 @@ spring:
   application.name: test-iam-gateway
   profiles:
     active: dev
-    include: "service-discovery,route-filter-splitting"
-    #include: "service-discovery,route-filter-composite"
+    #include: "service-discovery,route-filter-splitting"
+    include: "service-discovery,route-filter-composite"
   banner:
       location: classpath:META-INF/banner.txt
   freemarker:

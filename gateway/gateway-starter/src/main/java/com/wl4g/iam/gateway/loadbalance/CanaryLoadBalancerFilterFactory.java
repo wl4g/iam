@@ -197,7 +197,9 @@ public class CanaryLoadBalancerFilterFactory extends AbstractGatewayFilterFactor
 
             Response<ServiceInstance> response = choose(config, exchange);
             if (!response.hasServer()) {
-                throw NotFoundException.create(false, "Unable to find instance for " + requestUri.getHost());
+                String errmsg = "Unable to find instance for ".concat(requestUri.getHost());
+                log.warn(errmsg);
+                throw NotFoundException.create(false, errmsg);
             }
             URI uri = exchange.getRequest().getURI();
 
