@@ -11,12 +11,84 @@
 ## #### IAM Gateway Primary configuration. ####
 #
 spring:
+  main.allow-circular-references: true
+  ## see:https://reflectoring.io/spring-boot-tracing/
   sleuth:
+    enabled: true
+    ### see:org.springframework.cloud.sleuth.autoconfig.brave.SleuthProperties
+    #traceId128: false
+    #supportsJoin: false
+    ### see:org.springframework.cloud.sleuth.autoconfig.SleuthBaggageProperties
+    #baggage:
+    #  correlationEnabled: true
+    ### see:org.springframework.cloud.sleuth.autoconfig.SleuthOpentracingProperties
+    #opentracing:
+    #  enabled: true
+    ### see:org.springframework.cloud.sleuth.autoconfig.brave.ConditionalOnBraveEnabled
+    ### see:org.springframework.cloud.sleuth.autoconfig.SleuthTracerProperties
+    #tracer:
+    #  mode: AUTO
+    ### see:org.springframework.cloud.sleuth.autoconfig.brave.SamplerProperties
+    #sampler:
+    #  probability: 1.0
+    #  rate: 10
+    ### see:org.springframework.cloud.sleuth.autoconfig.brave.instrument.grpc.BraveGrpcAutoConfiguration
+    #grpc:
+    #  enabled: true
+    #zipkin:
+    #  #sender: WEB ## Default by null, options(WEB|KAFKA|...)
+    ## see:org.springframework.cloud.sleuth.autoconfig.otel.SleuthPropagationProperties
+    #propagation:
+    #  type: [B3] ## Default by B3, options(B3|AWS|JAEGER|W3C|ON_TRACE|CUSTOM)
     otel:
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProperties
+      config:
+      ## Instrumentation name to be used to find a Tracer.
+      instrumentationName: "org.springframework.cloud.spring-cloud-sleuth"
+      ## Instrumentation version to be used to find a Tracer.
+      #instrumentationVersion
+      ## Sets the global default {@code Sampler} value.
+      traceIdRatioBased: 0.1 ## Default by 0.1
+      ## Returns the global default max number of attributes per {@link Span}.
+      maxAttrs: 128 ## Default by 128
+      ## Returns the global default max number of events per {@link Span}.
+      maxEvents: 128 ## Default by 128
+      ## Returns the global default max number of link entries per {@link Span}.
+      maxLinks: 128 ## Default by 128
+      ## Returns the global default max number of attributes per event.
+      maxEventAttrs: 128 ## Default by 128
+      ## Returns the global default max number of attributes per link.
+      maxLinkAttrs: 128 ## Default by 128
+      resource:
+        enabled: true
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelPropagationProperties
+      propagation:
+        ## see:Enables default B3 Sleuth Baggage propagation. This will be automatically turned on when B3 propagation type gets picked.
+        sleuthBaggage.enabled: false
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelLogProperties
+      log:
+        exporter.enabled: false
+        slf4j.enabled: true
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProcessorProperties
+      processor:
+        batch:
+          ## The interval, in milliseconds, between two consecutive exports. Default is 5000.
+          scheduleDelay: 5000
+          ## The maximum queue size. Default is 2048.
+          maxQueueSize: 2048
+          ## The maximum batch size. Default is 512.
+          maxExportBatchSize: 512
+          ## The maximum allowed time, in milliseconds, to export data. Default is 30000.
+          exporterTimeout: 30000
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelExporterProperties
       exporter:
+        sleuthSpanFilter.enabled: true
+        otlp:
+          endpoint: http://localhost:4317
+          timeout: 10000
         jaeger:
           endpoint: http://localhost:14250
-  main.allow-circular-references: true
+          timeout: 10000
   ## Solve the problem of 'DataBufferLimitException: Exceeded limit on max bytes to buffer : 262144',
   ## but the lower version is invalid.
   ## see:https://github.com/spring-cloud/spring-cloud-gateway/issues/1924

@@ -57,6 +57,10 @@
 			<name>Aliyun maven google</name>
 			<url>https://maven.aliyun.com/repository/google</url>
 		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -89,6 +93,10 @@
 			<name>Aliyun maven google</name>
 			<url>https://maven.aliyun.com/repository/google</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<dependencyManagement>
 		<dependencies>
@@ -100,14 +108,21 @@
 				<scope>import</scope>
 			</dependency>
 			<!-- Tracing -->
+			<!-- <dependency> -->
+			<!-- <groupId>io.opentelemetry</groupId> -->
+			<!-- <artifactId>opentelemetry-bom</artifactId> -->
+			<!-- <version>${opentelemetry.version}</version> -->
+			<!-- <type>pom</type> -->
+			<!-- <scope>import</scope> -->
+			<!-- </dependency> -->
+			<!-- Upgrade to spring-cloud-gateway-3.1.2 -->
 			<dependency>
-				<groupId>io.opentelemetry</groupId>
-				<artifactId>opentelemetry-bom</artifactId>
-				<version>${opentelemetry.version}</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-gateway-dependencies</artifactId>
+				<version>${spring-cloud-gateway.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- Upgrade to spring-cloud-gateway-3.1.2 -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-gateway</artifactId>
@@ -138,6 +153,23 @@
 				<groupId>io.github.resilience4j</groupId>
 				<artifactId>resilience4j-spring-boot2</artifactId>
 				<version>1.7.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2021.0.2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+				<!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
+				<!-- see:https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
+				<version>1.1.0-M5</version>
+				<scope>import</scope>
+				<type>pom</type>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -241,32 +273,32 @@
 		<!-- <artifactId>javax.servlet-api</artifactId> -->
 		<!-- </dependency> -->
 		<!-- Tracing -->
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-sdk</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-otlp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-jaeger</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-zipkin</artifactId>
-			<!-- <optional>true</optional> -->
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-semconv</artifactId>
-			<version>${opentelemetry-semconv.version}</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-api</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-sdk</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-exporter-otlp</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-exporter-jaeger</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-exporter-zipkin</artifactId> -->
+		<!-- <optional>true</optional> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.opentelemetry</groupId> -->
+		<!-- <artifactId>opentelemetry-semconv</artifactId> -->
+		<!-- <version>${opentelemetry-semconv.version}</version> -->
+		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>io.grpc</groupId> -->
 		<!-- <artifactId>grpc-protobuf</artifactId> -->
@@ -277,6 +309,48 @@
 		<!-- <artifactId>grpc-netty-shaded</artifactId> -->
 		<!-- <version>${grpc-protobuf.version}</version> -->
 		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-sleuth-brave</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-otel-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-otlp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-otlp-trace</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-jaeger</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-jaeger-proto</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty-shaded</artifactId>
+			<version>1.43.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-okhttp</artifactId>
+			<version>1.43.0</version>
+		</dependency>
+
 		<!-- Metrics -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
