@@ -273,7 +273,7 @@ curl -vsSkL -XPOST \
 -H 'X-Iscg-Trace: y' \
 -H 'X-Iscg-Log: y' \
 -H 'X-Iscg-Log-Level: 10' \
--m POST \
+-X POST \
 'http://localhost:18085/productpage-with-IamRequestLimiter/post?response_type=json'
 
 HTTP/1.1 200 OK

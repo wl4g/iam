@@ -15,6 +15,15 @@ spring:
   ## see:https://reflectoring.io/spring-boot-tracing/
   sleuth:
     enabled: true
+    ## see:org.springframework.cloud.sleuth.autoconfig.instrument.web.TraceWebFluxConfiguration
+    ## see:org.springframework.cloud.sleuth.autoconfig.instrument.web.SleuthWebProperties
+    web:
+      ## [Note]: In order to use canary tracking instead of the original TraceWebFilter, that must be turned off.
+      ## see:com.wl4g.iam.gateway.trace.config.GrayTraceAutoConfiguration#canaryTraceWebFilter()
+      enabled: false
+      #skipPattern:
+      #filterOrder:
+      #ignoreAutoConfiguredSkipPatterns: false
     ### see:org.springframework.cloud.sleuth.autoconfig.brave.SleuthProperties
     #traceId128: false
     #supportsJoin: false
@@ -30,7 +39,7 @@ spring:
     #  mode: AUTO
     ### see:org.springframework.cloud.sleuth.autoconfig.brave.SamplerProperties
     #sampler:
-    #  probability: 1.0
+    #  probability: 
     #  rate: 10
     ### see:org.springframework.cloud.sleuth.autoconfig.brave.instrument.grpc.BraveGrpcAutoConfiguration
     #grpc:
@@ -40,6 +49,11 @@ spring:
     ## see:org.springframework.cloud.sleuth.autoconfig.otel.SleuthPropagationProperties
     #propagation:
     #  type: [B3] ## Default by B3, options(B3|AWS|JAEGER|W3C|ON_TRACE|CUSTOM)
+    ## see:https://docs.spring.io/spring-cloud-sleuth/docs/3.1.0-SNAPSHOT/reference/htmlsingle/#features-baggage
+    baggage:
+      remote-fields: 
+      local-fields: 
+      correlation-fields: 
     otel:
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProperties
       config:
@@ -729,8 +743,8 @@ logging:
   file: ## see:org.springframework.boot.logging.LogFile#toString
     name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
   pattern:
-    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} [%-32.32X{traceId:-}] [%-8.8X{spanId}] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
-    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{requestId}] [%-8.8X{requestSeq}] --- [%t] %-40.40logger{39} : %m%n%wEx'
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} [%-32.32X{X-B3-TraceId:-}] [%-32.32X{traceId:-}] [%-8.8X{spanId}] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{traceId}] [%-8.8X{spanId}] --- [%t] %-40.40logger{39} : %m%n%wEx'
     dateformat: yyyy-MM-dd HH:mm:ss.SSS
     level: '%5p'
   logback:

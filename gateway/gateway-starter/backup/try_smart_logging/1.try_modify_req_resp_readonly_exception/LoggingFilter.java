@@ -61,7 +61,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
-import com.wl4g.iam.gateway.trace.config.TraceProperties;
+import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 import lombok.extern.slf4j.Slf4j;

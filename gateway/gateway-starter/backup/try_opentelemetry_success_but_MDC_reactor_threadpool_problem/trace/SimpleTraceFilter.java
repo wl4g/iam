@@ -25,7 +25,7 @@
 //import org.springframework.core.Ordered;
 //import org.springframework.web.server.ServerWebExchange;
 //
-//import com.wl4g.iam.gateway.trace.config.TraceProperties;
+//import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 //
 //import reactor.core.publisher.Mono;
 //

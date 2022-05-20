@@ -12,13 +12,17 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
+		<spring-cloud-dependencies.version>2021.0.2</spring-cloud-dependencies.version>
 		<spring-cloud-gateway.version>3.1.2</spring-cloud-gateway.version>
 		<reactor-netty.version>2.6.7</reactor-netty.version>
 		<reactor-extra.version>3.4.8</reactor-extra.version>
 		<reactor-core.version>3.4.17</reactor-core.version>
-		<opentelemetry.version>1.14.0</opentelemetry.version>
-		<opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version>
-		<!-- <grpc-protobuf.version>1.46.0</grpc-protobuf.version> -->
+		<commons-lang.version>2.6</commons-lang.version>
+		<!-- Trace -->
+		<!-- <opentelemetry.version>1.14.0</opentelemetry.version> -->
+		<!-- <opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version> -->
+		<grpc.version>1.43.0</grpc.version>
+		<!-- Native -->
 		<graalvm.version>21.3.0</graalvm.version>
 		<spring-native.version>0.11.5</spring-native.version>
 		<native-maven-plugin.version>0.9.11</native-maven-plugin.version>
@@ -107,6 +111,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- Tracing -->
 			<!-- <dependency> -->
 			<!-- <groupId>io.opentelemetry</groupId> -->
@@ -115,7 +126,16 @@
 			<!-- <type>pom</type> -->
 			<!-- <scope>import</scope> -->
 			<!-- </dependency> -->
-			<!-- Upgrade to spring-cloud-gateway-3.1.2 -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+				<!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
+				<!-- Note: 1.0.0-M2 not otel implements of https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
+				<version>1.1.0-M5</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<!-- Gateway -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-gateway-dependencies</artifactId>
@@ -148,28 +168,11 @@
 				<artifactId>reactor-core</artifactId>
 				<version>${reactor-core.version}</version>
 			</dependency>
-			<!-- Circuitbreaker resilience4j conflict -->
+			<!-- Fix conflict for resilience4j circuitbreaker -->
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>
 				<artifactId>resilience4j-spring-boot2</artifactId>
 				<version>1.7.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>2021.0.2</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
-				<!-- see:https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
-				<version>1.1.0-M5</version>
-				<scope>import</scope>
-				<type>pom</type>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -246,9 +249,9 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<version>${commons-lang.version}</version>
 		</dependency>
-		<!-- Spring Security -->
+		<!-- Security -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.springframework.boot</groupId> -->
 		<!-- <artifactId>spring-boot-starter-security</artifactId> -->
@@ -266,8 +269,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- Trace -->
-		<!-- Webflux bridge for servlet filter -->
+		<!-- Webflux bridge for servlet -->
 		<!-- <dependency> -->
 		<!-- <groupId>javax.servlet</groupId> -->
 		<!-- <artifactId>javax.servlet-api</artifactId> -->
@@ -306,10 +308,14 @@
 		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>io.grpc</groupId> -->
-		<!-- <artifactId>grpc-netty-shaded</artifactId> -->
-		<!-- <version>${grpc-protobuf.version}</version> -->
+		<!-- <artifactId>grpc-okhttp</artifactId> -->
+		<!-- <version>${grpc.version}</version> -->
 		<!-- </dependency> -->
-
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty-shaded</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
@@ -340,21 +346,15 @@
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-exporter-jaeger-proto</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-netty-shaded</artifactId>
-			<version>1.43.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-okhttp</artifactId>
-			<version>1.43.0</version>
-		</dependency>
-
 		<!-- Metrics -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<!-- CircuitBreaker -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
 		</dependency>
 		<!-- see:https://cloud.spring.io/spring-cloud-circuitbreaker/reference/html/spring-cloud-circuitbreaker.html#collecting-metrics -->
 		<dependency>
@@ -362,15 +362,10 @@
 			<artifactId>resilience4j-micrometer</artifactId>
 			<!-- <version>1.7.1</version> -->
 		</dependency>
-		<!-- Loadbalancer -->
+		<!-- LoadBalancer -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
-		</dependency>
-		<!-- Circuitbreaker -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
 		</dependency>
 		<!-- Netflix -->
 		<!-- <dependency> -->

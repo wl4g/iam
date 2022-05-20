@@ -32,7 +32,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
-import com.wl4g.iam.gateway.trace.config.TraceProperties;
+import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
