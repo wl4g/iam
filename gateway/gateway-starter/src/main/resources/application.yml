@@ -27,9 +27,6 @@ spring:
     ### see:org.springframework.cloud.sleuth.autoconfig.brave.SleuthProperties
     #traceId128: false
     #supportsJoin: false
-    ### see:org.springframework.cloud.sleuth.autoconfig.SleuthBaggageProperties
-    #baggage:
-    #  correlationEnabled: true
     ### see:org.springframework.cloud.sleuth.autoconfig.SleuthOpentracingProperties
     #opentracing:
     #  enabled: true
@@ -48,12 +45,30 @@ spring:
     #  #sender: WEB ## Default by null, options(WEB|KAFKA|...)
     ## see:org.springframework.cloud.sleuth.autoconfig.otel.SleuthPropagationProperties
     #propagation:
+    #  tag.enabled: true
     #  type: [B3] ## Default by B3, options(B3|AWS|JAEGER|W3C|ON_TRACE|CUSTOM)
+    ## see:org.springframework.cloud.sleuth.autoconfig.SleuthBaggageProperties
     ## see:https://docs.spring.io/spring-cloud-sleuth/docs/3.1.0-SNAPSHOT/reference/htmlsingle/#features-baggage
     baggage:
-      remote-fields: 
-      local-fields: 
-      correlation-fields: 
+      ## Enables correlating the baggage context with logging contexts.
+      correlationEnabled: true
+      ## List of fields that should be propagated over the wire.
+      correlationFields: principal
+      ## List of fields that should automatically become tags.
+      tagFields:
+        - x-request-id
+        - principal
+        - region-code
+      ## List of fields that should be accessible within the JVM process but not propagated over the wire.
+      localFields:
+        - x-request-id
+        - principal
+        - region-code
+      ## List of fields that are referenced the same in-process as it is on the wire. For example, the field "x-vcap-request-id" would be set as-is including the prefix.
+      remoteFields:
+        - x-request-id
+        - principal
+        - region-code
     otel:
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProperties
       config:
@@ -743,8 +758,8 @@ logging:
   file: ## see:org.springframework.boot.logging.LogFile#toString
     name: /mnt/disk1/log/${spring.application.name}/${spring.application.name}.log
   pattern:
-    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} [%-32.32X{X-B3-TraceId:-}] [%-32.32X{traceId:-}] [%-8.8X{spanId}] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
-    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%-32.32X{traceId}] [%-8.8X{spanId}] --- [%t] %-40.40logger{39} : %m%n%wEx'
+    console: '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} [%clr(${spring.application.name})] [%clr(%-12.12X{principal})] [%clr(%-32.32X{traceId})] [%clr(%-8.8X{spanId})] %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [${spring.application.name}] [%-12.12X{principal}] [%-32.32X{traceId}] [%-8.8X{spanId}] --- [%t] %-40.40logger{39} : %m%n%wEx'
     dateformat: yyyy-MM-dd HH:mm:ss.SSS
     level: '%5p'
   logback:

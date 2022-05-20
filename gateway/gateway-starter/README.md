@@ -458,5 +458,5 @@ ab -n 10000 -c 1000 \
 -H 'X-Iscg-Fault: y' \
 -H 'X-Iscg-Canary: v1' \
 -m POST \
-'http://localhost:18085/productpage/post?action=createInstance&aliUid=1221&orderBizId=12345&orderId=123456789&productCode=121&skuId=yuncode215700000&trial=1&token=ada175ba95d1fc2585b9da0bcb5de663&response_type=json'
+'http://localhost:18085/productpage-with-IamRequestLimiter/post?&response_type=json'
 ```

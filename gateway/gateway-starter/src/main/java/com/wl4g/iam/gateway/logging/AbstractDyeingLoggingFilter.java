@@ -94,8 +94,9 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
         // Check if filtering flight logging is enabled.
         if (!isLoggingRequest(exchange)) {
             if (log.isDebugEnabled()) {
-                log.debug("Not to meet the conditional rule to enable logging. - headers: {}, queryParams: {}",
-                        exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
+                ServerHttpRequest request = exchange.getRequest();
+                log.debug("Not to meet the conditional rule to enable logging. - uri: {}, headers: {}, queryParams: {}",
+                        request.getURI(), request.getHeaders(), request.getQueryParams());
             }
             return chain.filter(exchange);
         }

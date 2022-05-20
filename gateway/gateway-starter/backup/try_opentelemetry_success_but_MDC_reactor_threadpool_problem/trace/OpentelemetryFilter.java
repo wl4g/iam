@@ -92,8 +92,9 @@ public class OpentelemetryFilter implements WebFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         if (!isTraceRequest(exchange)) {
             if (log.isDebugEnabled()) {
-                log.debug("Not to meet the conditional rule to enable tracing. - headers: {}, queryParams: {}",
-                        exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
+                ServerHttpRequest request = exchange.getRequest();
+                log.debug("Not to meet the conditional rule to enable tracing. - uri: {}, headers: {}, queryParams: {}",
+                        request.getURI(), request.getHeaders(), request.getQueryParams());
             }
             return chain.filter(exchange);
         }

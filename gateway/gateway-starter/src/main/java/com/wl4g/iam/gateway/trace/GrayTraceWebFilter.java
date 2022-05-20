@@ -16,16 +16,22 @@
 package com.wl4g.iam.gateway.trace;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
+
+import java.lang.reflect.Field;
 
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.sleuth.CurrentTraceContext;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.cloud.sleuth.http.HttpServerHandler;
 import org.springframework.cloud.sleuth.instrument.web.TraceWebFilter;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
 import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
+import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -76,12 +82,22 @@ public class GrayTraceWebFilter extends TraceWebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         if (!isTraceRequest(exchange)) {
             if (log.isDebugEnabled()) {
-                log.debug("Not to meet the conditional rule to enable tracing. - headers: {}, queryParams: {}",
-                        exchange.getRequest().getURI(), exchange.getRequest().getQueryParams());
+                ServerHttpRequest request = exchange.getRequest();
+                log.debug("Not to meet the conditional rule to enable tracing. - uri: {}, headers: {}, queryParams: {}",
+                        request.getURI(), request.getHeaders(), request.getQueryParams());
             }
             return chain.filter(exchange);
         }
-        return super.filter(exchange, chain);
+
+        /**
+         * see;{@link org.springframework.cloud.sleuth.otel.bridge.EventPublishingContextWrapper#apply(ContextStorage)}↓
+         * see;{@link org.springframework.cloud.sleuth.otel.bridge.Slf4jBaggageApplicationListener#onScopeAttached(ScopeAttachedEvent)}↓
+         * see:{@link io.opentelemetry.api.baggage.BaggageContextKey.KEY}↓
+         */
+        return exchange.getPrincipal().defaultIfEmpty(IamGatewayUtil.UNKNOWN_PRINCIPAL).flatMap(principal -> {
+            getTracer().getBaggage("principal").set(principal.getName());
+            return Mono.justOrEmpty(principal);
+        }).then(super.filter(exchange, chain));
     }
 
     /**
@@ -97,5 +113,11 @@ public class GrayTraceWebFilter extends TraceWebFilter {
         return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                 grayTraceConfig.getPreferOpenMatchExpression());
     }
+
+    protected Tracer getTracer() {
+        return getField(TRACER_FIELD, this, true);
+    }
+
+    public static final Field TRACER_FIELD = findField(TraceWebFilter.class, "tracer", Tracer.class);
 
 }
