@@ -40,23 +40,23 @@ import org.springframework.web.reactive.function.server.HandlerStrategies;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link RequestDyeingLoggingFilter}
+ * {@link RequestLoggingGlobalFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public class RequestDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
+public class RequestLoggingGlobalFilter extends BasedLoggingGlobalFilter {
 
-    public RequestDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+    public RequestLoggingGlobalFilter(LoggingProperties loggingConfig) {
         super(loggingConfig);
     }
 

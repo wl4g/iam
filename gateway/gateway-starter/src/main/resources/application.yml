@@ -13,6 +13,7 @@
 spring:
   main.allow-circular-references: true
   ## see:https://reflectoring.io/spring-boot-tracing/
+  ## The entry of bind attrs to reactor context see:org.springframework.cloud.sleuth.instrument.reactor.ReactorSleuth#runMonoSupplierInScope()
   sleuth:
     enabled: true
     ## see:org.springframework.cloud.sleuth.autoconfig.instrument.web.TraceWebFluxConfiguration
@@ -44,11 +45,11 @@ spring:
     #zipkin:
     #  #sender: WEB ## Default by null, options(WEB|KAFKA|...)
     ## see:org.springframework.cloud.sleuth.autoconfig.otel.SleuthPropagationProperties
-    #propagation:
-    #  tag.enabled: true
-    #  type: [B3] ## Default by B3, options(B3|AWS|JAEGER|W3C|ON_TRACE|CUSTOM)
+    propagation:
+      type: [B3,AWS,JAEGER,OT_TRACER,W3C] ## Default by B3, options(B3|AWS|JAEGER|W3C|OT_TRACER|CUSTOM)
+      tag.enabled: true
     ## see:org.springframework.cloud.sleuth.autoconfig.SleuthBaggageProperties
-    ## see:https://docs.spring.io/spring-cloud-sleuth/docs/3.1.0-SNAPSHOT/reference/htmlsingle/#features-baggage
+    ## see:https://docs.spring.io/spring-cloud-sleuth/docs/3.1.1/reference/htmlsingle/#features-baggage
     baggage:
       ## Enables correlating the baggage context with logging contexts.
       correlationEnabled: true
@@ -72,29 +73,34 @@ spring:
     otel:
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelProperties
       config:
-      ## Instrumentation name to be used to find a Tracer.
-      instrumentationName: "org.springframework.cloud.spring-cloud-sleuth"
-      ## Instrumentation version to be used to find a Tracer.
-      #instrumentationVersion
-      ## Sets the global default {@code Sampler} value.
-      traceIdRatioBased: 1d ## Default by 0.1
-      ## Returns the global default max number of attributes per {@link Span}.
-      maxAttrs: 128 ## Default by 128
-      ## Returns the global default max number of events per {@link Span}.
-      maxEvents: 128 ## Default by 128
-      ## Returns the global default max number of link entries per {@link Span}.
-      maxLinks: 128 ## Default by 128
-      ## Returns the global default max number of attributes per event.
-      maxEventAttrs: 128 ## Default by 128
-      ## Returns the global default max number of attributes per link.
-      maxLinkAttrs: 128 ## Default by 128
+        ## Instrumentation name to be used to find a Tracer.
+        instrumentationName: "org.springframework.cloud.spring-cloud-sleuth"
+        ## Instrumentation version to be used to find a Tracer.
+        #instrumentationVersion
+        ## Sets the global default {@code Sampler} value.
+        traceIdRatioBased: 1d ## Default by 0.1
+        ## Returns the global default max number of attributes per {@link Span}.
+        maxAttrs: 128 ## Default by 128
+        ## Returns the global default max number of events per {@link Span}.
+        maxEvents: 128 ## Default by 128
+        ## Returns the global default max number of link entries per {@link Span}.
+        maxLinks: 128 ## Default by 128
+        ## Returns the global default max number of attributes per event.
+        maxEventAttrs: 128 ## Default by 128
+        ## Returns the global default max number of attributes per link.
+        maxLinkAttrs: 128 ## Default by 128
       resource:
         enabled: true
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelPropagationProperties
+      ## see:org.springframework.cloud.sleuth.otel.propagation.CompositeTextMapPropagator
       propagation:
         ## see:Enables default B3 Sleuth Baggage propagation. This will be automatically turned on when B3 propagation type gets picked.
-        sleuthBaggage.enabled: false
+        sleuthBaggage.enabled: true
+        ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelPropagationConfiguration.PropagatorsConfiguration
+        compositeTextMapPropagator.enabled: true
+      ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelLogConfiguration
       ## see:org.springframework.cloud.sleuth.autoconfig.otel.OtelLogProperties
+      ## The scope fields into MDC see:org.springframework.cloud.sleuth.otel.bridge.Slf4jBaggageApplicationListener#onScopeAttached()
       log:
         exporter.enabled: true ## Default by false
         slf4j.enabled: true ## Default by false
@@ -237,7 +243,18 @@ spring:
         verbose:
           enabled: true ## Default by false
 
+  ## ######################
+  ## Infra configuration.
+  ## ######################
+  infra:
+    ## Note: That disable generic logging for the infrastructure and enable special logging for the gateway.
+    ## currently, the two implementations are almost identical, but in the future the gateway's logging
+    ## may add special functionality.
+    core.logging.enabled: false
+
+  ## ######################
   ## IAM gateway configuration.
+  ## ######################
   iam:
     gateway:
       server:
@@ -370,45 +387,47 @@ spring:
             #  symbol:
             #  key:
             #  value:
-        serviceName: ${spring.application.name}
-        exporter:
-          provider: jaeger ## Default by jaeger, Options(otlp|jaeger|zipkin)
-          otlp:
-            ## Otlp gRPC/http receiver server endpoint. Default by 'http://localhost:4317'
-            endpoint: http://localhost:4317
-            timeoutMs: 10_000 ## Default by 10000ms
-            headers: {} ## Default by {}
-          jaeger:
-            ## Jaeger gRPC/http receiver server endpoint. Default by 'http://localhost:14250'
-            endpoint: http://localhost:14250
-          zipkin:
-            ## Zipkin gRPC/http receiver server endpoint. Default by 'http://localhost:9411/api/v2/spans'
-            endpoint: http://localhost:9411/api/v2/spans
-        samper:
-          ## The samper type, default by traceidratio, Options(always_on|parentbased_always_off|parentbased_always_on|parentbased_traceidratio|traceidratio)
-          type: traceidratio
-          ## The traceId ratio based sampler ratio. range of [0.0-1.0]
-          ratio: 1.0d
-        bsp:
-          ## The interval, in milliseconds, between two consecutive exports. Default is 5000ms.
-          scheduleDelay: 5000
-          ## The maximum queue size. Default is 2048.
-          maxQueueSize: 2048
-          ## The maximum batch size. Default is 512.
-          maxExportBatchSize: 512
-          ## The maximum allowed time, in milliseconds, to export data. Default is 30000ms.
-          exportTimeout: 30000
-        spanLimits:
-          ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumEvents
-          maxNumEvents: 128
-          ## otlp.span.link.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumLinks
-          maxNumLinks: 128
-          ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributes
-          maxNumAttributes: 128
-          ## see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributesPerEvent
-          maxNumAttributesPerEvent: 128
-          ## see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributesPerLink
-          maxNumAttributesPerLink: 128
+        ################################################
+        ## @Deprecated, please using of prefix 'spring.sleuth.'
+        #serviceName: ${spring.application.name}
+        #exporter:
+        #  provider: jaeger ## Default by jaeger, Options(otlp|jaeger|zipkin)
+        #  otlp:
+        #    ## Otlp gRPC/http receiver server endpoint. Default by 'http://localhost:4317'
+        #    endpoint: http://localhost:4317
+        #    timeoutMs: 10_000 ## Default by 10000ms
+        #    headers: {} ## Default by {}
+        #  jaeger:
+        #    ## Jaeger gRPC/http receiver server endpoint. Default by 'http://localhost:14250'
+        #    endpoint: http://localhost:14250
+        #  zipkin:
+        #    ## Zipkin gRPC/http receiver server endpoint. Default by 'http://localhost:9411/api/v2/spans'
+        #    endpoint: http://localhost:9411/api/v2/spans
+        #samper:
+        #  ## The samper type, default by traceidratio, Options(always_on|parentbased_always_off|parentbased_always_on|parentbased_traceidratio|traceidratio)
+        #  type: traceidratio
+        #  ## The traceId ratio based sampler ratio. range of [0.0-1.0]
+        #  ratio: 1.0d
+        #bsp:
+        #  ## The interval, in milliseconds, between two consecutive exports. Default is 5000ms.
+        #  scheduleDelay: 5000
+        #  ## The maximum queue size. Default is 2048.
+        #  maxQueueSize: 2048
+        #  ## The maximum batch size. Default is 512.
+        #  maxExportBatchSize: 512
+        #  ## The maximum allowed time, in milliseconds, to export data. Default is 30000ms.
+        #  exportTimeout: 30000
+        #spanLimits:
+        #  ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumEvents
+        #  maxNumEvents: 128
+        #  ## otlp.span.link.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumLinks
+        #  maxNumLinks: 128
+        #  ## otlp.span.attribute.count.limit, see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributes
+        #  maxNumAttributes: 128
+        #  ## see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributesPerEvent
+        #  maxNumAttributesPerEvent: 128
+        #  ## see:io.opentelemetry.sdk.trace.SpanLimitsBuilder#maxNumAttributesPerLink
+        #  maxNumAttributesPerLink: 128
       logging:
         ## If this switch is enabled, then check whether the request header and parameters meet the current conditions for printing flight logs.
         ## If so, print according to the predetermined level, otherwise do not print. If this switch is set to false, printing logs will be
@@ -710,7 +729,9 @@ spring:
           expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
 
+  ## ######################
   ## Security configuration.
+  ## ######################
   security:
     oauth2:
       client:
@@ -726,6 +747,9 @@ spring:
               - profile
               - roles
 
+## ######################
+## Actuator management
+## ######################
 management:
   server:
     port: 18086
@@ -744,9 +768,11 @@ management:
       prometheus:
         enabled: true ## Default by true
 
+## ######################
 ## Logging configuration.
+## ######################
 ## see:https://docs.spring.io/spring-boot/docs/2.6.7/reference/htmlsingle/#features.logging.custom-log-configuration
-## see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer
+## see:com.wl4g.infra.core.logging.custom.logback.CustomLogbackConfigurer
 logging:
   register-shutdown-hook: false
   charset.file: UTF-8
@@ -787,7 +813,9 @@ logging:
     com:
       wl4g.iam.gateway: INFO
 
+## ######################
 ## Server configuration.
+## ######################
 server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   port: 18085
   address: 0.0.0.0

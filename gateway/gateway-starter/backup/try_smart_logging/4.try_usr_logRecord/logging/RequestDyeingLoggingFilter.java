@@ -40,7 +40,7 @@ import org.springframework.web.reactive.function.server.HandlerStrategies;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.logging.model.LogRecord;
 
 import lombok.extern.slf4j.Slf4j;

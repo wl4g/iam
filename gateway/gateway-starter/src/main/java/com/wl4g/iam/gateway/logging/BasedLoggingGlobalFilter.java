@@ -52,7 +52,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
@@ -63,19 +63,19 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link AbstractDyeingLoggingFilter}
+ * {@link BasedLoggingGlobalFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Ordered {
+public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered {
 
-    protected final DyeingLoggingProperties loggingConfig;
+    protected final LoggingProperties loggingConfig;
     protected final SpelRequestMatcher requestMatcher;
 
-    public AbstractDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+    public BasedLoggingGlobalFilter(LoggingProperties loggingConfig) {
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
         // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferMatchRuleDefinitions());
@@ -266,8 +266,8 @@ public abstract class AbstractDyeingLoggingFilter implements GlobalFilter, Order
     public static final String LOG_RESPONSE_BODY = LINE_SEPARATOR + "\\r\\n" + LINE_SEPARATOR + "{}";
     public static final String LOG_RESPONSE_END = LINE_SEPARATOR + "EOF" + LINE_SEPARATOR;
     public static final String VAR_ROUTE_ID = "routeId";
-    public static final String KEY_START_TIME = AbstractDyeingLoggingFilter.class.getName() + ".startTime";
-    public static final String KEY_VERBOSE_LEVEL = AbstractDyeingLoggingFilter.class.getName() + ".verboseLevel";
-    public static final String KEY_LOG_RECORD = AbstractDyeingLoggingFilter.class.getName() + ".logRecord";
+    public static final String KEY_START_TIME = BasedLoggingGlobalFilter.class.getName() + ".startTime";
+    public static final String KEY_VERBOSE_LEVEL = BasedLoggingGlobalFilter.class.getName() + ".verboseLevel";
+    public static final String KEY_LOG_RECORD = BasedLoggingGlobalFilter.class.getName() + ".logRecord";
 
 }

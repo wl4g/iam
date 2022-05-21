@@ -25,7 +25,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * {@link DyeingLoggingProperties}
+ * {@link LoggingMessageProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
@@ -34,7 +34,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DyeingLoggingProperties {
+public class LoggingProperties {
 
     /**
      * If this switch is enabled, then check whether the request header and

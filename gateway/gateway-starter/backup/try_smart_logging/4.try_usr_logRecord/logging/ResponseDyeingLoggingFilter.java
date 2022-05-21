@@ -44,7 +44,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 import lombok.extern.slf4j.Slf4j;

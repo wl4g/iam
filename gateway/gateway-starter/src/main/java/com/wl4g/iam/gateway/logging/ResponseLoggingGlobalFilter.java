@@ -44,7 +44,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,16 +52,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link ResponseDyeingLoggingFilter}
+ * {@link ResponseLoggingGlobalFilter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-02 v3.0.0
  * @since v3.0.0
  */
 @Slf4j
-public class ResponseDyeingLoggingFilter extends AbstractDyeingLoggingFilter {
+public class ResponseLoggingGlobalFilter extends BasedLoggingGlobalFilter {
 
-    public ResponseDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
+    public ResponseLoggingGlobalFilter(LoggingProperties loggingConfig) {
         super(loggingConfig);
     }
 

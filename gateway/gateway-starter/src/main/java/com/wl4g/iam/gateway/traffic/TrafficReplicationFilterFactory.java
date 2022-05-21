@@ -290,7 +290,7 @@ public class TrafficReplicationFilterFactory extends AbstractGatewayFilterFactor
          * The request object decorated as an editable request body to solve the
          * problem that the request body can only be read once.
          * 
-         * @see {@link com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter#decorateRequest()}
+         * @see {@link com.wl4g.iam.gateway.logging.RequestLoggingGlobalFilter#decorateRequest()}
          * @see {@link org.springframework.cloud.gateway.filter.factory.rewrite.ModifyRequestBodyGatewayFilterFactory#apply()}
          *
          * @param exchange

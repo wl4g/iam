@@ -20,32 +20,32 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_G
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter;
-import com.wl4g.iam.gateway.logging.ResponseDyeingLoggingFilter;
+import com.wl4g.iam.gateway.logging.RequestLoggingGlobalFilter;
+import com.wl4g.iam.gateway.logging.ResponseLoggingGlobalFilter;
 
 /**
- * {@link DyeingLoggingAutoConfiguration}
+ * {@link LoggingMessageAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */
-public class DyeingLoggingAutoConfiguration {
+public class LoggingAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = CONF_PREFIX_IAM_GATEWAY_LOGGING)
-    public DyeingLoggingProperties dyeingLoggingProperties() {
-        return new DyeingLoggingProperties();
+    public LoggingProperties loggingProperties() {
+        return new LoggingProperties();
     }
 
     @Bean
-    public RequestDyeingLoggingFilter requestDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
-        return new RequestDyeingLoggingFilter(loggingConfig);
+    public RequestLoggingGlobalFilter requestLoggingGlobalFilter(LoggingProperties loggingConfig) {
+        return new RequestLoggingGlobalFilter(loggingConfig);
     }
 
     @Bean
-    public ResponseDyeingLoggingFilter responseDyeingLoggingFilter(DyeingLoggingProperties loggingConfig) {
-        return new ResponseDyeingLoggingFilter(loggingConfig);
+    public ResponseLoggingGlobalFilter responseLoggingGlobalFilter(LoggingProperties loggingConfig) {
+        return new ResponseLoggingGlobalFilter(loggingConfig);
     }
 
 }

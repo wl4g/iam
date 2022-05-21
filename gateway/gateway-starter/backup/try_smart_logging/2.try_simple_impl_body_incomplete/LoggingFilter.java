@@ -75,7 +75,7 @@ import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.AppIdExtractor;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignAlgorithm;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 

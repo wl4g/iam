@@ -243,7 +243,18 @@ spring:
         verbose:
           enabled: true ## Default by false
 
+  ## ######################
+  ## Infra configuration.
+  ## ######################
+  infra:
+    ## Note: That disable generic logging for the infrastructure and enable special logging for the gateway.
+    ## currently, the two implementations are almost identical, but in the future the gateway's logging
+    ## may add special functionality.
+    core.logging.enabled: false
+
+  ## ######################
   ## IAM gateway configuration.
+  ## ######################
   iam:
     gateway:
       server:
@@ -718,7 +729,9 @@ spring:
           expectStatuses: [200] ## Default by 200
           #expect-body: ## Default by ''
 
+  ## ######################
   ## Security configuration.
+  ## ######################
   security:
     oauth2:
       client:
@@ -734,6 +747,9 @@ spring:
               - profile
               - roles
 
+## ######################
+## Actuator management
+## ######################
 management:
   server:
     port: 18086
@@ -752,9 +768,11 @@ management:
       prometheus:
         enabled: true ## Default by true
 
+## ######################
 ## Logging configuration.
+## ######################
 ## see:https://docs.spring.io/spring-boot/docs/2.6.7/reference/htmlsingle/#features.logging.custom-log-configuration
-## see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer
+## see:com.wl4g.infra.core.logging.custom.logback.CustomLogbackConfigurer
 logging:
   register-shutdown-hook: false
   charset.file: UTF-8
@@ -795,7 +813,9 @@ logging:
     com:
       wl4g.iam.gateway: INFO
 
+## ######################
 ## Server configuration.
+## ######################
 server: ## see:org.springframework.boot.autoconfigure.web.ServerProperties
   port: 18085
   address: 0.0.0.0

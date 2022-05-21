@@ -27,7 +27,7 @@ import com.wl4g.iam.gateway.circuitbreaker.config.IamCircuitBreakerAutoConfigura
 import com.wl4g.iam.gateway.fault.config.FaultAutoConfiguration;
 import com.wl4g.iam.gateway.ipfilter.config.IpFilterAutoConfiguration;
 import com.wl4g.iam.gateway.loadbalance.config.CanaryLoadbalanceAutoConfiguration;
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingAutoConfiguration;
+import com.wl4g.iam.gateway.logging.config.LoggingAutoConfiguration;
 import com.wl4g.iam.gateway.metrics.config.IamGatewayMetricsAutoConfiguration;
 import com.wl4g.iam.gateway.requestlimit.config.IamRequestLimiterAutoConfiguration;
 import com.wl4g.iam.gateway.requestsize.config.IamRequestSizeAutoConfiguration;
@@ -54,7 +54,7 @@ import reactor.core.publisher.Mono;
 @Import({ GatewayWebServerAutoConfiguration.class, IpFilterAutoConfiguration.class, IamRequestSizeAutoConfiguration.class,
         IamRequestLimiterAutoConfiguration.class, IamCircuitBreakerAutoConfiguration.class, RouteAutoConfiguration.class,
         CanaryLoadbalanceAutoConfiguration.class, IamSecurityAutoConfiguration.class, GrayTraceAutoConfiguration.class,
-        DyeingLoggingAutoConfiguration.class, IamGatewayMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
+        LoggingAutoConfiguration.class, IamGatewayMetricsAutoConfiguration.class, FaultAutoConfiguration.class,
         IamRetryAutoConfiguration.class, TrafficAutoConfiguration.class, ResponseCacheAutoConfiguration.class })
 public class IamGatewayAutoConfiguration {
 

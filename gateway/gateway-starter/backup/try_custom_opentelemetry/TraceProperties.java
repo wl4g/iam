@@ -26,7 +26,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 
 import lombok.Getter;
 import lombok.Setter;

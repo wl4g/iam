@@ -52,7 +52,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.google.common.base.Predicates;
-import com.wl4g.iam.gateway.logging.config.DyeingLoggingProperties;
+import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.logging.model.LogRecord;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;

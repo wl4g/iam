@@ -20,8 +20,8 @@ import static com.wl4g.iam.common.constant.GatewayIAMConstants.CONF_PREFIX_IAM_G
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.iam.gateway.logging.RequestDyeingLoggingFilter;
-import com.wl4g.iam.gateway.logging.ResponseDyeingLoggingFilter;
+import com.wl4g.iam.gateway.logging.RequestLoggingGlobalFilter;
+import com.wl4g.iam.gateway.logging.ResponseLoggingGlobalFilter;
 
 /**
  * {@link DyeingLoggingAutoConfiguration}
