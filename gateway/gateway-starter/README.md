@@ -460,3 +460,12 @@ ab -n 10000 -c 1000 \
 -m POST \
 'http://localhost:18085/productpage-with-IamRequestLimiter/post?&response_type=json'
 ```
+
+## 5. FAQ
+
+### 5.1 When the request limiter is configured, and then the log level is set to `com.wl4g.iam.gateway.requestlimit=TRACE`, an error will be displayed: `ERR Error running ... @user_script:1: user_script:1: attempt to call field 'replicate_commands' (a nil value)`
+
+- Refer1: [stackoverflow attempt-to-call-field-replicate-commands-a-nil-value](https://stackoverflow.com/questions/59809151/attempt-to-call-field-replicate-commands-a-nil-value)
+
+- Resolved: Since redis3.0 does not support the command 'replicate_commands()', just upgrade to redis3.2+
+
