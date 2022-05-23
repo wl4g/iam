@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.logging;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
@@ -182,8 +181,7 @@ public class RequestLoggingGlobalFilter extends BasedLoggingGlobalFilter {
                         // the request body, which has prevented the amount of
                         // data from being too large.
                         int length = Math.min(requestBodySegment.length, loggingConfig.getMaxPrintRequestBodyLength());
-                        String requestBodySegmentString = new String(requestBodySegment, 0, length, UTF_8);
-                        requestLogArgs.add(requestBodySegmentString);
+                        requestLogArgs.add(readToLogString(requestBodySegment, length));
                         log.info(requestLog.toString(), requestLogArgs.toArray());
                     } else if (log3_10) {
                         requestLog.append(LOG_REQUEST_END);

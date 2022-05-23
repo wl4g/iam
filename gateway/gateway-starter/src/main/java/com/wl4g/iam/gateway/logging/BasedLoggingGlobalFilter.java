@@ -20,17 +20,14 @@ import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.springframework.http.MediaType.APPLICATION_ATOM_XML;
 import static org.springframework.http.MediaType.APPLICATION_CBOR;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_XML;
 import static org.springframework.http.MediaType.APPLICATION_RSS_XML;
 import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.http.MediaType.TEXT_MARKDOWN;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
@@ -56,6 +53,8 @@ import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
+import com.wl4g.infra.core.logging.LoggingMessageUtil;
+import com.wl4g.infra.core.logging.reactive.BaseLoggingWebFilter;
 import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
 import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
 
@@ -149,6 +148,12 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
                 loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
     }
 
+    /**
+     * Determine request verbose logging level.
+     * 
+     * @param exchange
+     * @return
+     */
     protected int determineRequestVerboseLevel(ServerWebExchange exchange) {
         Integer requestVerboseLevel = TypeConverts
                 .parseIntOrNull(exchange.getRequest().getHeaders().getFirst(loggingConfig.getVerboseLevelRequestHeader()));
@@ -177,15 +182,7 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
      * @return
      */
     protected boolean isCompatibleWithPlainBody(MediaType mediaType) {
-        if (isNull(mediaType)) {
-            return false;
-        }
-        for (MediaType media : HAS_BODY_MEDIA_TYPES) {
-            if (media.isCompatibleWith(mediaType)) {
-                return true;
-            }
-        }
-        return false;
+        return LoggingMessageUtil.isCompatibleWithPlainBody(mediaType);
     }
 
     /**
@@ -195,7 +192,7 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
      * @return
      */
     protected boolean isUploadStreamMedia(MediaType mediaType) {
-        return nonNull(mediaType) && mediaType.isCompatibleWith(MULTIPART_FORM_DATA);
+        return LoggingMessageUtil.isUploadStreamMedia(mediaType);
     }
 
     /**
@@ -205,7 +202,19 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
      * @return
      */
     protected boolean isDownloadStreamMedia(MediaType mediaType) {
-        return nonNull(mediaType) && mediaType.isCompatibleWith(APPLICATION_OCTET_STREAM);
+        return LoggingMessageUtil.isDownloadStreamMedia(mediaType);
+    }
+
+    /**
+     * Reading to logging characters from request body stream segment or
+     * response body stream segment.
+     * 
+     * @param bodySegment
+     * @param expectMaxLen
+     * @return
+     */
+    protected String readToLogString(byte[] bodySegment, int expectMaxLen) {
+        return BaseLoggingWebFilter.readToLogString(bodySegment, expectMaxLen);
     }
 
     /**

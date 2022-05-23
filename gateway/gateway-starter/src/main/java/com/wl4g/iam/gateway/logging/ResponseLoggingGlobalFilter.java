@@ -15,7 +15,6 @@
  */
 package com.wl4g.iam.gateway.logging;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -144,11 +143,8 @@ public class ResponseLoggingGlobalFilter extends BasedLoggingGlobalFilter {
                     if (processBodyIfNeed) {
                         // Full print response body.
                         responseLog.append(LOG_RESPONSE_BODY);
-                        // Note: Only get the first small part of the data of
-                        // the response body, which has prevented the amount of
-                        // data from being too large.
                         int length = Math.min(responseBodySegment.length, loggingConfig.getMaxPrintResponseBodyLength());
-                        responseLogArgs.add(new String(responseBodySegment, 0, length, UTF_8));
+                        responseLogArgs.add(readToLogString(responseBodySegment, length));
                     }
                 }
             }
