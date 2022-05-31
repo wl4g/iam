@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-iam-example-springboot-gateway</artifactId>
+	<artifactId>iam-example-springboot-gateway</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS IAM Example for Springboot Auth based on Gateway</name>
-	<url>http://iam.dopaas.wl4g.com</url>
+	<name>IAM Example SpringBoot based Gateway</name>
+	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam-example</artifactId>
+		<artifactId>iam-example</artifactId>
 		<version>3.0.0</version>
 	</parent>
 	<properties>
@@ -18,7 +18,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-bom</artifactId>
+				<artifactId>iam-bom</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -28,11 +28,11 @@
 	<dependencies>
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-iam-client-springboot</artifactId> -->
+		<!-- <artifactId>iam-client-springboot</artifactId> -->
 		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-iam-client-springboot-mock</artifactId> -->
+		<!-- <artifactId>iam-client-springboot-mock</artifactId> -->
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
 		<!-- <dependency> -->
@@ -114,5 +114,5 @@
 			</build>
 		</profile>
 	</profiles>
-	<description>DoPaaS IAM Example for Springboot Auth based on Gateway Servers</description>
+	<description>IAM Example SpringBoot based Gateway</description>
 </project>

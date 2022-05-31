@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dopaas-iam-bom</artifactId>
+	<artifactId>iam-bom</artifactId>
 	<packaging>pom</packaging>
-	<name>DoPaaS IAM BOM</name>
-	<url>http://iam.dopaas.wl4g.com</url>
+	<name>IAM BOM</name>
+	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>dopaas-iam</artifactId>
+		<artifactId>iam-parent</artifactId>
 		<version>3.0.0</version>
 	</parent>
 	<properties>
@@ -19,166 +19,166 @@
 			<!-- IAM examples modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-example</artifactId>
+				<artifactId>iam-example</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-example-springboot-gateway</artifactId>
+				<artifactId>iam-example-springboot-gateway</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-example-springboot-sdkclient</artifactId>
+				<artifactId>iam-example-springboot-sdkclient</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM share modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-common</artifactId>
+				<artifactId>iam-common</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-core</artifactId>
+				<artifactId>iam-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM client modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-client</artifactId>
+				<artifactId>iam-client</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-client-springboot</artifactId>
+				<artifactId>iam-client-springboot</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-client-springboot-mock</artifactId>
+				<artifactId>iam-client-springboot-mock</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM gateway modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-gateway</artifactId>
+				<artifactId>iam-gateway</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-gateway-core</artifactId>
+				<artifactId>iam-gateway-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-gateway-starter</artifactId>
+				<artifactId>iam-gateway-starter</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM RCM modules -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm</artifactId>
+				<artifactId>iam-rcm</artifactId>
 				<version>${project.parent.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-analytic</artifactId>
+				<artifactId>iam-rcm-analytic</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-analytic-flink-core</artifactId>
+				<artifactId>iam-rcm-analytic-flink-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-analytic-flink-kafka</artifactId>
+				<artifactId>iam-rcm-analytic-flink-kafka</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-analytic-flink-pulsar</artifactId>
+				<artifactId>iam-rcm-analytic-flink-pulsar</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-analytic-flink-rocketmq</artifactId>
+				<artifactId>iam-rcm-analytic-flink-rocketmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-eventbus</artifactId>
+				<artifactId>iam-rcm-eventbus</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-eventbus-core</artifactId>
+				<artifactId>iam-rcm-eventbus-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-eventbus-kafka</artifactId>
+				<artifactId>iam-rcm-eventbus-kafka</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-eventbus-pulsar</artifactId>
+				<artifactId>iam-rcm-eventbus-pulsar</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-rcm-eventbus-rocketmq</artifactId>
+				<artifactId>iam-rcm-eventbus-rocketmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM service modules -->
 			<dependency>
                 <groupId>com.wl4g</groupId>
-                <artifactId>dopaas-iam-server</artifactId>
+                <artifactId>iam-server</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-captcha</artifactId>
+				<artifactId>iam-server-captcha</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-security</artifactId>
+				<artifactId>iam-server-security</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-data</artifactId>
+				<artifactId>iam-server-data</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-facade</artifactId>
+				<artifactId>iam-server-facade</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-starter-all</artifactId>
+				<artifactId>iam-server-starter-all</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-starter-data</artifactId>
+				<artifactId>iam-server-starter-data</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-starter-facade</artifactId>
+				<artifactId>iam-server-starter-facade</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>dopaas-iam-server-starter-web</artifactId>
+				<artifactId>iam-server-starter-web</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 		</dependencies>

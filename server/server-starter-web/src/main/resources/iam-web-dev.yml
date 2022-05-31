@@ -30,7 +30,7 @@ spring:
             - http://127.0.0.1:18080
             - '*'
     login-uri: http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/login.html
-    #login-uri: http://${IAM_ZONE:wl4g.debug}/#/login ## see:https://github.com/wl4g/dopaas-iam-view
+    #login-uri: http://${IAM_ZONE:wl4g.debug}/#/login ## see:https://github.com/wl4g/iam-view
     unauthorized-uri: http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/403.html
     success-endpoint: ${spring.application.name}@http://${IAM_ZONE:wl4g.debug}:18080${server.servlet.contextPath}/view/index.html
     acl:
