@@ -15,27 +15,6 @@
  */
 package com.wl4g.iam.filter;
 
-import static com.wl4g.infra.common.lang.Assert2.hasText;
-import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-import static com.wl4g.infra.common.lang.Assert2.isTrue;
-import static com.wl4g.infra.common.lang.Assert2.notNull;
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.infra.common.web.WebUtils2.applyQueryURL;
-import static com.wl4g.infra.common.web.WebUtils2.cleanURI;
-import static com.wl4g.infra.common.web.WebUtils2.getBaseURIForDefault;
-import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.infra.common.web.WebUtils2.isRelativeUri;
-import static com.wl4g.infra.common.web.WebUtils2.isTrue;
-import static com.wl4g.infra.common.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.infra.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.infra.common.web.WebUtils2.writeJson;
-import static com.wl4g.infra.common.web.WebUtils2.ResponseType.DEFAULT_RESPTYPE_NAME;
-import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
-import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
-import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_DATA_CIPHER_NAME;
@@ -56,6 +35,27 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.extParameterValue;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSession;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.unbind;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.infra.common.web.WebUtils.applyQueryURL;
+import static com.wl4g.infra.common.web.WebUtils.cleanURI;
+import static com.wl4g.infra.common.web.WebUtils.getBaseURIForDefault;
+import static com.wl4g.infra.common.web.WebUtils.isRelativeUri;
+import static com.wl4g.infra.common.web.WebUtils.isTrue;
+import static com.wl4g.infra.common.web.WebUtils.safeEncodeURL;
+import static com.wl4g.infra.common.web.WebUtils.toQueryParams;
+import static com.wl4g.infra.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.infra.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.infra.common.web.WebUtils2.writeJson;
+import static com.wl4g.infra.common.web.WebUtils2.ResponseType.DEFAULT_RESPTYPE_NAME;
+import static com.wl4g.infra.common.web.WebUtils2.ResponseType.isRespJSON;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.OK;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.singletonMap;
@@ -87,9 +87,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.infra.common.web.WebUtils2;
-import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.iam.authc.ServerIamAuthenticationToken.RedirectInfo;
 import com.wl4g.iam.common.bean.FastCasClientInfo;
@@ -109,6 +106,12 @@ import com.wl4g.iam.core.web.model.SessionInfo;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
+import com.wl4g.iam.rcm.eventbus.IamEventBusService;
+import com.wl4g.iam.rcm.eventbus.event.FailureAuthenticationEvent;
+import com.wl4g.iam.rcm.eventbus.event.IamEvent.EventType;
+import com.wl4g.infra.common.web.WebUtils2;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -127,35 +130,20 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthenticationToken>
         extends BasedRiskIamAuthenticationFilter<IamProperties> {
 
-    /**
-     * IAM authentication handler
-     */
-    @Autowired
-    protected AuthenticatingHandler authHandler;
+    protected @Autowired AuthenticatingHandler authHandler;
 
-    /**
-     * IAM security configure handler
-     */
-    @Autowired
-    protected ServerSecurityConfigurer configurer;
+    protected @Autowired ServerSecurityConfigurer configurer;
 
-    /**
-     * IAM server security processor
-     */
-    @Autowired
-    protected ServerSecurityCoprocessor coprocessor;
+    protected @Autowired ServerSecurityCoprocessor coprocessor;
 
     /**
      * Secure asymmetric cryptic service.
      */
-    @Autowired
-    protected GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
+    protected @Autowired GenericOperatorAdapter<CryptKind, SecureCryptService> cryptAdapter;
 
-    /**
-     * Enhanced cache manager.
-     */
-    @Autowired
-    protected IamCacheManager cacheManager;
+    protected @Autowired IamCacheManager cacheManager;
+
+    protected @Autowired IamEventBusService<?> eventBusService;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -311,6 +299,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         } else {
             log.error("{}, caused by: {}", tip, errmsg);
         }
+
+        // Event publish.
+        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), EventType.AUTHC_FAILURE, errmsg, ae));
+
         if (!isBlank(errmsg)) {
             /**
              * {@link LoginAuthenticatorController#errReads()}

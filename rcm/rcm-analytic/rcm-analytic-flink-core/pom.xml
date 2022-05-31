@@ -12,20 +12,33 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<hadoop.version>2.7.2</hadoop.version>
-		<flink.version>1.7.2</flink.version><!-- ali-emr-3.12 use flink-1.4.0 -->
-		<flink-kafka.version>${flink.version}</flink-kafka.version>
-		<flink-hbase.version>1.10.3</flink-hbase.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.flink</groupId>
+				<artifactId>flink-table</artifactId>
+				<version>${flink.version}</version>
+				<type>pom</type>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-iam-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- Flink -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.flink</groupId> -->
+		<!-- <artifactId>flink-table</artifactId> -->
+		<!-- <version>${flink.version}</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-table_${scala.version}</artifactId>
+			<artifactId>flink-streaming-java_${scala.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 		<dependency>
@@ -33,42 +46,47 @@
 			<artifactId>flink-streaming-scala_${scala.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
-		<!-- Flink + Kafka -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-connector-kafka-0.10_${scala.version}</artifactId>
-			<version>${flink-kafka.version}</version>
+			<artifactId>flink-clients_${scala.version}</artifactId>
+			<version>${flink.version}</version>
 		</dependency>
-		<!-- Flink + HBase -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-hbase_${scala.version}</artifactId>
-			<version>${flink-hbase.version}</version>
+			<artifactId>flink-shaded-jackson</artifactId>
+			<version>${flink-shaded-jackson.version}</version>
 		</dependency>
+		<!-- Flink-HBase -->
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<version>${hadoop.version}</version>
-			<!-- xml parser conflict with flink hdfs -->
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-hbase-2.2_${scala.version}</artifactId>
+			<version>${flink.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>${hadoop.version}</version>
-			<!--canal -> hadoop protobuf -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.protobuf</groupId>
-					<artifactId>protobuf-java</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		<!-- HDFS -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.hadoop</groupId> -->
+		<!-- <artifactId>hadoop-hdfs</artifactId> -->
+		<!-- <version>${hadoop.version}</version> -->
+		<!-- conflict with flink hdfs -->
+		<!-- <exclusions> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>xml-apis</groupId> -->
+		<!-- <artifactId>xml-apis</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.hadoop</groupId> -->
+		<!-- <artifactId>hadoop-client</artifactId> -->
+		<!-- <version>${hadoop.version}</version> -->
+		<!-- canal hadoop protobuf -->
+		<!-- <exclusions> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>com.google.protobuf</groupId> -->
+		<!-- <artifactId>protobuf-java</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
@@ -78,8 +96,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -87,24 +103,6 @@
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.scala-tools</groupId>
-				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.15.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<args>
-								<arg>-dependencyfile</arg>
-								<arg>${project.build.directory}/.scala_dependencies</arg>
-							</args>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,35 +119,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.scala-tools</groupId>
-										<artifactId>maven-scala-plugin</artifactId>
-										<versionRange>[2.15.2,)</versionRange>
-										<goals>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>

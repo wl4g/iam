@@ -33,6 +33,26 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-iam-core</artifactId>
 		</dependency>
+		<!-- EventBus -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-iam-rcm-eventbus-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-iam-rcm-eventbus-kafka</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-iam-rcm-eventbus-pulsar</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-iam-rcm-eventbus-rocketmq</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>

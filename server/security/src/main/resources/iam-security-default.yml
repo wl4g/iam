@@ -111,7 +111,7 @@ spring:
           kaptcha.textproducer.char.space: 3
           kaptcha.textproducer.char.string: 'ABCDEFGHJKMNQRSTUVWXYZ123456789'
           kaptcha.textproducer.char.length: 5
-      gif: {}
+      #gif: {}
       jigsaw:
         pool-size: 64
         pool-img-expire-sec: 1800
