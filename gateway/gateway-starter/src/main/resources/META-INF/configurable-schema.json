@@ -895,7 +895,9 @@
                                     "type": "array",
                                     "multi": "false",
                                     "repeat": "false",
-                                    "defaultValue": [],
+                                    "defaultValue": [
+                                        
+                                    ],
                                     "help": "The matching subnet CIDRs"
                                 }
                             ]
@@ -1019,6 +1021,40 @@
                     "repeat": "false",
                     "multi": "false",
                     "help": "",
+                    "strategy": {
+                        "ResponseCacheCleaner": {
+                            "help": {
+                                "zh_CN": "",
+                                "en_US": ""
+                            },
+                            "paths": {
+                                "/openapi": {
+                                    "/v1": {
+                                        "/device": {
+                                            "/info": "",
+                                            "/state": "",
+                                            "/config": "",
+                                            "/delete": ""
+                                        },
+                                        "/marketing": {
+                                            "/create": "",
+                                            "/list": "",
+                                            "/renew": "",
+                                            "/destroy": ""
+                                        }
+                                    },
+                                    "/v2": {
+                                        "/marketing": {
+                                            "/create": "",
+                                            "/list": "",
+                                            "/renew": "",
+                                            "/destroy": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "args": [
                         {
                             "name": "provider",

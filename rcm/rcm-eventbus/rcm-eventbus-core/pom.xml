@@ -32,7 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>iam-core</artifactId>
+			<artifactId>iam-rcm-eventbus-common</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

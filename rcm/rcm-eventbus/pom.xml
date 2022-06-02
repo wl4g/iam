@@ -11,10 +11,11 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
+		<module>rcm-eventbus-common</module>
 		<module>rcm-eventbus-core</module>
 		<module>rcm-eventbus-kafka</module>
 		<module>rcm-eventbus-pulsar</module>
-		<module>rcm-eventbus-rocketmq</module>
+		<module>rcm-eventbus-rabbitmq</module>
 	</modules>
 	<properties>
 		<java.version>1.8</java.version>

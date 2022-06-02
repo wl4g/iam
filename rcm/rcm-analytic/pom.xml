@@ -11,10 +11,16 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
-		<module>rcm-analytic-flink-core</module>
-		<module>rcm-analytic-flink-kafka</module>
-		<module>rcm-analytic-flink-pulsar</module>
-		<module>rcm-analytic-flink-rocketmq</module>
+		<module>rcm-analytic-core</module>
+		<module>rcm-analytic-hbase-kafka</module>
+		<module>rcm-analytic-hbase-pulsar</module>
+		<module>rcm-analytic-hbase-rabbitmq</module>
+		<module>rcm-analytic-elasticsearch7-kafka</module>
+		<module>rcm-analytic-elasticsearch7-pulsar</module>
+		<module>rcm-analytic-elasticsearch7-rabbitmq</module>
+		<module>rcm-analytic-hive-kafka</module>
+		<module>rcm-analytic-hive-pulsar</module>
+		<module>rcm-analytic-hive-rabbitmq</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

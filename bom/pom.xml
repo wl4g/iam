@@ -92,27 +92,62 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>iam-rcm-analytic-flink-core</artifactId>
+				<artifactId>iam-rcm-analytic-core</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>iam-rcm-analytic-flink-kafka</artifactId>
+				<artifactId>iam-rcm-analytic-hbase-kafka</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>iam-rcm-analytic-flink-pulsar</artifactId>
+				<artifactId>iam-rcm-analytic-hbase-pulsar</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>iam-rcm-analytic-flink-rocketmq</artifactId>
+				<artifactId>iam-rcm-analytic-hbase-rabbitmq</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-elasticsearch7-kafka</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-elasticsearch7-pulsar</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-elasticsearch7-rabbitmq</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-hive-kafka</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-hive-pulsar</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-analytic-hive-rabbitmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>iam-rcm-eventbus</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-rcm-eventbus-common</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
@@ -132,15 +167,15 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>iam-rcm-eventbus-rocketmq</artifactId>
+				<artifactId>iam-rcm-eventbus-rabbitmq</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- IAM service modules -->
 			<dependency>
-                <groupId>com.wl4g</groupId>
-                <artifactId>iam-server</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>iam-server</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>iam-server-captcha</artifactId>
