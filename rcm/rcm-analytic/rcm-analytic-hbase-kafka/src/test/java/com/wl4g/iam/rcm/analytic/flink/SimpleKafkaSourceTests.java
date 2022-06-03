@@ -93,7 +93,8 @@ public class SimpleKafkaSourceTests {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
-        DataStream<PartitionAndValue> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "testBasicRead");
+        DataStream<PartitionAndValue> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(),
+                "testSimpleKafkaSourceRead");
 
         stream.addSink(new RichSinkFunction<PartitionAndValue>() {
             @Override

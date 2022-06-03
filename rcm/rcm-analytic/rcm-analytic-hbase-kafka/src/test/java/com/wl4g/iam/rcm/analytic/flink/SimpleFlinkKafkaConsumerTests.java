@@ -53,7 +53,7 @@ public class SimpleFlinkKafkaConsumerTests {
         CommandLineFacade line = CommandLineTool.builder()
                 .option("b", "brokers", "localhost:9092", "Connect kafka brokers addresses.")
                 .mustOption("g", "groupId", "Kafka consumer group id.")
-                .option("t", "topicPattern", "iam_event", "Kafka consumer topic regex pattern.")
+                .option("t", "topicPattern", "test-topic", "Kafka consumer topic regex pattern.")
                 .longOption("checkpointMode", null,
                         "Sets the checkpoint mode, the default is null means not enabled. options: "
                                 + asList(CheckpointingMode.values()))
@@ -67,9 +67,7 @@ public class SimpleFlinkKafkaConsumerTests {
                         "The maximum parallelism for operator, if <=0, it will not be setup and keep the default behavior.")
                 .longOption("bufferTimeoutMillis", "-1",
                         "Parallelism for this operator, if <=0, it will not be setup and keep the default behavior.")
-                .longOption("outOfOrdernessMillis", "120000", "The maximum millis out-of-orderness watermark generator assumes.")
-                .longOption("idleTimeoutMillis", "30000", "The timeout millis for the idleness detection.")
-                .option("N", "jobName", "IamFlinkKafkaConsumerJob", "Flink kafka consumer job name.")
+                .option("N", "jobName", "testFlinkKafkaConsumerJob", "Flink kafka consumer job name.")
                 .helpIfEmpty(args)
                 .build(args);
 
@@ -82,8 +80,6 @@ public class SimpleFlinkKafkaConsumerTests {
         Integer parallelism = line.getInteger("parallelism");
         Integer maxParallelism = line.getInteger("maxParallelism");
         Long bufferTimeoutMillis = line.getLong("bufferTimeoutMillis");
-        Long outOfOrdernessMillis = line.getLong("outOfOrdernessMillis");
-        Long idleTimeoutMillis = line.getLong("idleTimeoutMillis");
         String jobName = line.get("jobName");
 
         Properties props = (Properties) System.getProperties().clone();
@@ -96,7 +92,6 @@ public class SimpleFlinkKafkaConsumerTests {
         props.setProperty(FlinkKafkaConsumerBase.KEY_DISABLE_METRICS, "true");
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content.zh/docs/connectors/datastream/kafka.md#kafka-consumer-topic-和分区发现
         props.setProperty(FlinkKafkaConsumerBase.KEY_PARTITION_DISCOVERY_INTERVAL_MILLIS, "30");
-        @SuppressWarnings("deprecation")
         FlinkKafkaConsumer<String> kafkaConsumer = new FlinkKafkaConsumer<>(Pattern.compile(topicPattern),
                 new SimpleStringSchema(), props);
         kafkaConsumer.setCommitOffsetsOnCheckpoints(true);
@@ -112,7 +107,9 @@ public class SimpleFlinkKafkaConsumerTests {
         kafkaConsumer.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(ofSeconds(20)));
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        DataStream<String> stream = env.addSource(kafkaConsumer);
+        env.setParallelism(1);
+        DataStream<String> stream = env.addSource(kafkaConsumer);// Legacy-API
+        // stream=env.fromSource(kafkaConsumer,WatermarkStrategy.noWatermarks(),"testSimpleKafkaSourceRead");//New-API
         stream.addSink(new PrintSinkFunction<>());
 
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#consumer-offset-committing
@@ -129,6 +126,7 @@ public class SimpleFlinkKafkaConsumerTests {
             env.setBufferTimeout(bufferTimeoutMillis);
         }
 
+        System.out.println("Execution ...");
         env.execute(jobName);
     }
 

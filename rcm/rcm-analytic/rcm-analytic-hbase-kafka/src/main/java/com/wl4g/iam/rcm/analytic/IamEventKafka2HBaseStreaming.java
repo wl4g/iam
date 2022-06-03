@@ -22,14 +22,18 @@ import static java.util.Objects.nonNull;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import org.apache.flink.connector.hbase.sink.HBaseSinkFunction;
+import org.apache.flink.connector.hbase2.sink.HBaseDynamicTableSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.KafkaSourceOptions;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 
+import com.wl4g.iam.rcm.analytic.core.IamEventKafkaRecordDeserializationSchema;
 import com.wl4g.iam.rcm.analytic.core.IamEventWatermarks;
 import com.wl4g.iam.rcm.eventbus.event.IamEvent;
 import com.wl4g.infra.common.cli.CommandLineTool;
@@ -48,8 +52,8 @@ public class IamEventKafka2HBaseStreaming {
     public static void main(String[] args) throws Exception {
         CommandLineFacade line = CommandLineTool.builder()
                 .option("b", "brokers", "localhost:9092", "Connect kafka brokers addresses.")
-                .mustOption("g", "groupId", "Kafka consumer group id.")
-                .option("t", "topicPattern", "iam_event", "Kafka consumer topic regex pattern.")
+                .mustOption("g", "groupId", "Kafka source consumer group id.")
+                .option("t", "topicPattern", "iam_event", "Kafka topic regex pattern.")
                 .longOption("checkpointMode", null,
                         "Sets the checkpoint mode, the default is null means not enabled. options: "
                                 + asList(CheckpointingMode.values()))
@@ -66,7 +70,8 @@ public class IamEventKafka2HBaseStreaming {
                 .longOption("outOfOrdernessMillis", "120000", "The maximum millis out-of-orderness watermark generator assumes.")
                 .longOption("idleTimeoutMillis", "30000", "The timeout millis for the idleness detection.")
                 .longOption("partitionDiscoveryIntervalMs", "30000", "The per millis for discover new partitions interval.")
-                .option("N", "jobName", "IamFlinkKafkaConsumerJob", "Flink kafka consumer job name.")
+                .longOption("enablePrintSink", "true", "Override sets to print sink function.")
+                .option("N", "jobName", "IamKafkaSourceJob", "Flink kafka source streaming job name.")
                 .helpIfEmpty(args)
                 .build(args);
 
@@ -82,6 +87,7 @@ public class IamEventKafka2HBaseStreaming {
         Long outOfOrdernessMillis = line.getLong("outOfOrdernessMillis");
         Long idleTimeoutMillis = line.getLong("idleTimeoutMillis");
         String partitionDiscoveryIntervalMs = line.get("partitionDiscoveryIntervalMs");
+        Boolean enablePrintSink = line.getBoolean("enablePrintSink");
         String jobName = line.get("jobName");
 
         Properties props = (Properties) System.getProperties().clone();
@@ -94,15 +100,6 @@ public class IamEventKafka2HBaseStreaming {
         // props.setProperty(FlinkKafkaConsumerBase.KEY_DISABLE_METRICS,"true");
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#dynamic-partition-discovery
         props.setProperty(KafkaSourceOptions.PARTITION_DISCOVERY_INTERVAL_MS.key(), partitionDiscoveryIntervalMs);
-
-        // Deprecated older usages:
-        //
-        // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content.zh/docs/connectors/datastream/kafka.md#kafka-consumer-topic-和分区发现
-        // props.setProperty(FlinkKafkaConsumerBase.KEY_PARTITION_DISCOVERY_INTERVAL_MILLIS,"30");
-        // FlinkKafkaConsumer<String> kafkaConsumer = new
-        // FlinkKafkaConsumer<>(Pattern.compile(topicPattern),new
-        // SimpleStringSchema(),props);
-        // DataStream<String> stream = env.addSource(kafkaConsumer);
 
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#starting-offset
         // Start from committed offset, also use EARLIEST as reset strategy if
@@ -118,11 +115,9 @@ public class IamEventKafka2HBaseStreaming {
                 .setGroupId(groupId)
                 .setTopicPattern(Pattern.compile(topicPattern))
                 .setStartingOffsets(offsets)
-                // TODO
-                // .setValueOnlyDeserializer(new EventDeSerializationSchema())
-                // .setDeserializer(recordDeserializer)
                 .setClientIdPrefix(jobName)
                 .setProperties(props)
+                .setDeserializer(new IamEventKafkaRecordDeserializationSchema())
                 .build();
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -141,6 +136,13 @@ public class IamEventKafka2HBaseStreaming {
         }
         if (bufferTimeoutMillis > 0) {
             stream.setBufferTimeout(bufferTimeoutMillis);
+        }
+
+        if (nonNull(enablePrintSink) && enablePrintSink) {
+            stream.addSink(new PrintSinkFunction<>());
+        } else {
+//            stream.addSink(new HBaseDynamicTableSink(tableName, hbaseTableSchema, hbaseConf, writeOptions, nullStringLiteral));
+//            stream.addSink(new HBaseSinkFunction<>(hTableName, conf, mutationConverter, bufferFlushMaxSizeInBytes, bufferFlushMaxMutations, bufferFlushIntervalMillis));
         }
 
         env.execute(jobName);
