@@ -9,7 +9,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-server</artifactId>
 		<version>3.0.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -50,7 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>iam-rcm-eventbus-rocketmq</artifactId>
+			<artifactId>iam-rcm-eventbus-rabbitmq</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

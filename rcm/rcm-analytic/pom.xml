@@ -29,6 +29,7 @@
 		<flink.version>1.14.4</flink.version>
 		<flink-shaded-jackson.version>2.12.4-14.0</flink-shaded-jackson.version>
 		<!-- <hadoop.version>2.7.2</hadoop.version> -->
+		<testcontainers.version>1.16.2</testcontainers.version>
 	</properties>
 	<build>
 		<plugins>

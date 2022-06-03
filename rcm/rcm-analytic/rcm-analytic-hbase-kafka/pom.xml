@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>iam-rcm-analytic-hbase-kafka</artifactId>
 	<packaging>jar</packaging>
-	<name>IAM RCM Analytic for Flink Kafka sink to HBase</name>
+	<name>IAM RCM Analytic Flink Kafka with HBase</name>
 	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -13,7 +13,6 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<final.name>iam-rcm-analytic-flink-kafka</final.name>
-		<testcontainers.version>1.16.2</testcontainers.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -28,18 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-runtime</artifactId>
-			<version>${flink.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-metrics-jmx</artifactId>
-			<version>${flink.version}</version>
-		</dependency>
-		<!-- Recommends -->
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-runtime-web_${scala.version}</artifactId>
+			<artifactId>flink-connector-hbase-2.2_${scala.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 		<!-- Testing -->
