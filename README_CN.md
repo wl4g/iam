@@ -2,6 +2,8 @@
 
 一个企业级开源统一身份认证和访问控制管理平台，开箱即用，支持微信/qq/google/facebook等其他SNS和openldap联合认证，AOP实现API级多因素认证；其中，增强企业级网关模块：支持如基于金丝雀请求响应缓存过滤器、金丝雀负载均衡器、通用签名认证过滤器、oidc v1/oauth2.x 认证过滤器、ip 过滤器、流量复制过滤器、基于配额请求限制器过滤器、基于金丝雀故障注入器过滤器、基于金丝雀人性化日志过滤器；其中消息总线和基于Flink/Kafka/Pulsar/Rabbitmq/HBase/ES/Hive等实时分析模块，支持如异常事件或风险实时告警预警，以及历史事件分析报告等。
 
+<font color=red>温馨提示：目前最新版及文档正在整理完善中，建议首先在测试环境部署，如有问题或建议请提交 Issue</font>
+
 <p align="center">
     <img src="https://github.com/wl4g/iam/tree/master/shots/iam-logo.png" width="150">
     <h3 align="center">IAM</h3>
@@ -186,10 +188,6 @@ This product is open source and free, and will continue to provide free communit
 - Copyright (c) 2018-present, wanglsir.
 
 产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
-
-## Donate
-
-无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠]()
 
 ## Stargazers over time
 

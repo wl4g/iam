@@ -2,6 +2,8 @@
 
 An enterprise-level open source unified identity authentication and access control management platform, out-of-the-box, supports WeChat/qq/google/facebook and other SNS and openldap joint authentication, AOP implements API-level multi-factor authentication; among them, the enterprise-level gateway module is enhanced: Supports such as canary request-based response cache filter, canary load balancer, universal signature authentication filter, oidc v1/oauth2.x authentication filter, ip filter, traffic replication filter, quota-based request limiter filter Injector, canary-based fault injector filter, and canary-based humanized log filter; among them, the message bus and real-time analysis modules based on Flink/Kafka/Pulsar/Rabbitmq/HBase/ES/Hive support functions such as abnormal events or Real-time risk warning and early warning, as well as historical event analysis reports, etc.
 
+<font color=red>Reminder: The latest version and documents are currently being sorted out and improved. It is recommended to deploy in the test environment first. If you have any questions or suggestions, please submit an Issue</font>
+
 <p align="center">
     <img src="https://github.com/wl4g/iam/tree/master/shots/iam-logo.png" width="150">
     <h3 align="center">IAM</h3>
@@ -23,34 +25,34 @@ An enterprise-level open source unified identity authentication and access contr
     </p>    
 </p>
 
-English version goes [here](README.md)
+中文文档 [here](README.md)
 
 ## 1. Features
 
-- 1. 简洁：API直观简洁，可快速上手
-- 2. 轻量级：环境依赖小，部署与接入成本较低
-- 3. 单点登录：只需要登录一次就可以访问所有相互信任的应用系统
-- 4. 分布式：接入 IAM/SSO 认证中心的应用，支持分布式部署
-- 5. HA：Server端与Client端，均支持集群部署，提高系统可用性
-- 6. 跨域：支持跨域应用接入 IAM/SSO 认证中心
-- 7. Cookie+Token均支持：支持基于Cookie和基于Token两种接入方式，并均提供Sample项目
-- 8. Web+APP均支持：支持Web和APP接入
-- 9. 实时性：系统登陆、注销状态，全部有IAM Server统一控制，与Client端准同步
-- 10. CS结构：基于CS结构，包括Server"认证中心"与Client"受保护应用"
-- 11. 路径排除：支持自定义多个排除路径，支持Ant表达式。用于排除 IAM/SSO 客户端不需要过滤的路径
-- 12. 支持多种模式部署运行（local模式）：传统单体应用，没有认证客户端一说，即，IAM server与BizApp在同一JVM进程，好处是部署、运维简单，适合小型管理类项目。
-- 13. 支持多种模式部署运行（cluster模式）：将认证中心与业务应用和认证客户端分离，即，IAM client与BizApp在同一JVM进程，IAM server在一个进程，适合微服务或跨站跨域的多应用需要统一认证的情况。
-- 14. 支持多种模式部署运行（gateway模式）：与cluster类似，区别是将认证客户端放到了网关，使BizApp专注于提供业务服务，实现了网关、业务应用、认证中心的完全分离， 即，gateway+IAM client、BizApp、IAM server，非常适合完全微服务架构的认证中心部署（量身定制）
-- 15. OIDC 支持
-- 16. 对比 [keycloak](https://github.com/keycloak/keycloak-quickstarts) [请参考这里](VS_KEYCLOAK.md)
+- 1. Concise: The API is intuitive and concise, allowing you to get started quickly
+- 2. Lightweight: less dependent on the environment, lower deployment and access costs
+- 3. Single sign-on: You only need to log in once to access all mutually trusted application systems
+- 4. Distributed: applications that access the IAM/SSO authentication center, support distributed deployment
+- 5. HA: Both Server and Client support cluster deployment to improve system availability
+- 6. Cross-domain: support cross-domain application access to IAM/SSO authentication center
+- 7. Both Cookie and Token are supported: both Cookie-based and Token-based access methods are supported, and both provide Sample projects
+- 8. Both Web+APP support: support Web and APP access
+- 9. Real-time: system login and logout status, all controlled by IAM Server and quasi-synchronized with the client
+- 10. CS structure: based on CS structure, including Server "certification center" and Client "protected application"
+- 11. Path exclusion: Support multiple custom exclusion paths, support Ant expressions. Used to exclude paths that IAM/SSO clients do not need to filter
+- 12. Support multiple modes of deployment and operation (local mode): Traditional single application, no authentication client, that is, IAM server and BizApp are in the same JVM process, the advantage is that deployment, operation and maintenance are simple, suitable for small management projects .
+- 13. Support multiple modes of deployment and operation (cluster mode): separate the authentication center from the business application and authentication client, that is, the IAM client and BizApp are in the same JVM process, and the IAM server is in the same process, which is suitable for microservices or cross-site cross-border Multiple applications in a domain require unified authentication.
+- 14. Support multiple modes of deployment and operation (gateway mode): Similar to cluster, the difference is that the authentication client is placed on the gateway, so that BizApp can focus on providing business services, and realize the complete separation of gateway, business application and authentication center, namely , gateway+IAM client, BizApp, IAM server, very suitable for authentication center deployment of complete microservice architecture (tailored)
+- 15. OIDC Support
+- 16. Comparison [keycloak](https://github.com/keycloak/keycloak-quickstarts) [please refer to here](VS_KEYCLOAK.md)
 
 ## 2. Server Deploy
 
-- Docker 部署
+- Docker
 
 TODO
 
-- 主机部署
+- Bare metal host
 
 TODO
 
@@ -58,16 +60,16 @@ TODO
 
 ### 3.1 Gateway Mode (Recommends)
 
-此模式的架构哲学是 sidecar，以业务层和通用层尽量分离为思想，在传统企业应用中，由于业务应用代码与各认证、中间件等 SDK 是以依赖的形式强耦合，导致 SDK 升级难、易出错等，严重影响业务应用的快速迭代和服务的稳定性，而使用 gateway 将认证等通用逻辑分离，让其只专注于业务逻辑，极大降低大规模微服务部署出错概率，同时各组件由不同团队专人维护有助于稳定性及快速迭代能力极大提升，让企业收益最大化。
+The architectural philosophy of this mode is sidecar, which is based on the idea of separating the business layer and the general layer as much as possible. In traditional enterprise applications, because the business application code and SDKs such as authentication and middleware are strongly coupled in the form of dependencies, it is difficult to upgrade the SDK. Error-prone, etc., seriously affect the rapid iteration of business applications and the stability of services, and the use of gateway to separate common logic such as authentication, so that it only focuses on business logic, greatly reducing the probability of large-scale microservice deployment errors, and each component is composed of Dedicated maintenance from different teams can greatly improve stability and rapid iteration capabilities, and maximize corporate profits.
 
 TODO
 
 ### 3.1 Spring Boot SDK Mode
 
-- 3.1，PC 集成(前后端分离)
-- 3.2，[安卓端接入（全局认证拦截器）](iam-client-example/src/main/java/com/wl4g/iam/example/android/AndroidIamUserCoordinator.java)
-- 3.3，微信公众号集成，
-- 3.4，服务端所有支持的yml配置(以及默认值):
+- 3.1, PC integration (front and rear separation)
+- 3.2, [Android Access (Global Authentication Interceptor)](iam-client-example/src/main/java/com/wl4g/iam/example/android/AndroidIamUserCoordinator.java)
+- 3.3, WeChat public account integration,
+- 3.4, all supported yml configurations on the server side (and defaults):
 
 ```xml
 <dependency>
@@ -162,20 +164,20 @@ mvn -U clean install -DskipTests -T 2C -P build:native
 
 ### 7.1 Integrate the server with SDK for custom development
 
-- 5.1，独立运行模式，使用iam的数据库表，适用于新系统集成;
-- 5.2，依赖嵌入模式，使用外部自定义数据库表，适用于旧系统改造集成;
+- 5.1, stand-alone operation mode, using iam's database table, suitable for new system integration;
+- 5.2, rely on embedded mode, use external custom database table, suitable for old system retrofit integration;
 
 TODO
 
 ## Development
 
-于2018年初，我在github上创建 IAM 项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
-至今，IAM/SSO 已接入某物联网平台的生产环境，稳定运行1year+，接入场景如电商业务，O2O业务和核心中间件配置动态化等。
-欢迎大家的关注和使用，IAM/SSO也将拥抱变化，持续发展。
+In early 2018, I created an IAM project repository on github and submitted the first commit, followed by system structure design, UI selection, interaction design...
+So far, IAM/SSO has been connected to the production environment of an IoT platform, running stably for 1 year+, and access scenarios such as e-commerce business, O2O business, and dynamic configuration of core middleware, etc.
+Welcome everyone's attention and use, IAM/SSO will also embrace changes and continue to develop.
 
 ## Contributing
 
-欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/wl4g/iam/issues/) 讨论新特性或者变更。
+Contributions to the project are welcome! For example, submit a PR to fix a bug, or create a new [Issue](https://github.com/wl4g/iam/issues/) to discuss new features or changes.
 
 ## Copyright and License
 
@@ -184,11 +186,7 @@ This product is open source and free, and will continue to provide free communit
 - Licensed under the Apache License v2.
 - Copyright (c) 2018-present, wanglsir.
 
-产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
-
-## Donate
-
-无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠]()
+The product is open source free, and will continue to provide free community technical support. Individuals or enterprises can freely access and use.
 
 ## Stargazers over time
 
