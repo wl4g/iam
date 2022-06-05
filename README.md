@@ -1,6 +1,6 @@
 # IAM
 
-A enterprise level unified identity authentication and access control management platform, supporting wechat/qq/google/facebook etc other SNS and openldap union authentication, and AOP implements for API level multi factor authentication, and among them the enterprise enhance gateway module, e.g support based canary request response cache filter, canary loadbalancer, generic sign authentication filter, oidc v1/oauth2.x authentication filter, ip filter, traffic replication filter, based quota request limiter filter, based canary fault injector filter, based canary humanize logging filter.
+An enterprise-level unified identity authentication and access control management platform that supports other SNS and openldap joint authentication such as WeChat/qq/google/facebook, AOP implements API-level multi-factor authentication; among them, the enterprise-level gateway module is enhanced: support such as canary-based request response cache filter, canary load balancer, universal signature authentication filter, oidc v1/oauth2.x authentication filter, ip filter, traffic replication filter, quota-based request limiter filter, canary-based Fault injector filter, canary-based humanized log filter; among them, the message bus and Flink/Kafka/Pulsar/Rabbitmq/HBase/ES/Hive based real-time analysis module support real-time alarm and early warning of abnormal events or risks, as well as historical event analysis reports, etc.
 
 ## Quick Start
 - Compile Installing
