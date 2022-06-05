@@ -1,14 +1,16 @@
 # IAM
 
-A Unified identity authentication and access control management implementation, supporting wechat/qq/facebook and other SNS authentication, opensaml API authorization, built-in interface level AOP secondary authentication implementation.
+A Unified identity authentication and access control management implementation, supporting wechat/qq/google/facebook etc other SNS and openldap union authentication, and AOP implements for API level multi factor authentication, and enhance enterpise gateway based on spring-cloud-gateway, e.g based canary request response cache filter, canary loadbalancer, generic sign authentication filter, ip filter, traffic replication filter, based quota request limiter filter, based canary fault injector filter, based canary humanize logging filter.
 
 ## Quick Start
 - Compile Installing
 
-```
+```bash
 cd dopaas-devops
+
 # Packaged as a single executable jar
 mvn -U clean install -DskipTests -T 2C -P springExecJar
+
 # Packaged as general software release package (directory structure)
 # mvn -U clean install -DskipTests -T 2C -P mvnAssTar
 ```

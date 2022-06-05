@@ -1,6 +1,6 @@
 # IAM (Identity Authentication and Access Identification Management)
 
-一个基于CAS协议的SSO登录认证企业级增强实现(PC/Android/iOS/WechatMp统一接口)，还支持QQ/Facebook等社交SNS授权认证，提供Opensaml开放API授权，内置接口级AOP二次认证实现等.
+一个统一的身份认证和访问控制管理实现，支持微信/qq/google/facebook等其他SNS和openldap联合认证，AOP实现API级多因素认证，基于spring-cloud-gateway增强企业网关，例如基于 金丝雀请求响应缓存过滤器、金丝雀负载均衡器、通用签名认证过滤器、ip过滤器、流量复制过滤器、基于配额请求限制器过滤器、基于金丝雀故障注入器过滤器、基于金丝雀人性化日志过滤器.
 
 <p align="center">
     <img src="https://github.com/wl4g/dopaas-iam/tree/master/shots/iam-logo.png" width="150">
