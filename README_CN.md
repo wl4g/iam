@@ -1,6 +1,6 @@
 # IAM (Identity Authentication and Access Identification Management)
 
-一个统一的身份认证和访问控制管理实现，支持微信/qq/google/facebook等其他SNS和openldap联合认证，AOP实现API级多因素认证，基于spring-cloud-gateway增强企业网关，例如基于 金丝雀请求响应缓存过滤器、金丝雀负载均衡器、通用签名认证过滤器、ip过滤器、流量复制过滤器、基于配额请求限制器过滤器、基于金丝雀故障注入器过滤器、基于金丝雀人性化日志过滤器.
+一个企业级统一身份认证和访问控制管理平台，支持微信/qq/google/facebook等其他SNS和openldap联合认证，AOP实现API级多因素认证，其中企业增强网关模块，例如支持基于 金丝雀请求响应缓存过滤器、金丝雀负载均衡器、通用签名认证过滤器、oidc v1/oauth2.x 认证过滤器、ip 过滤器、流量复制过滤器、基于配额请求限制器过滤器、基于金丝雀故障注入器过滤器、基于金丝雀人性化日志过滤器.
 
 <p align="center">
     <img src="https://github.com/wl4g/dopaas-iam/tree/master/shots/iam-logo.png" width="150">
