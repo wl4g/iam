@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-support</artifactId>
+			<artifactId>infra-support</artifactId>
 		</dependency>
 		<!-- Runtime's -->
 		<dependency>

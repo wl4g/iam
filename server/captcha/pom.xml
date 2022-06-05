@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-opencv</artifactId>
+			<artifactId>infra-opencv</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

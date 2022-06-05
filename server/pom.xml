@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>iam-server</artifactId>
 	<packaging>pom</packaging>
-	<name>IAM Services</name>
+	<name>IAM Service</name>
 	<url>https://iam.wl4g.com</url>
-	<description>IAM Services.</description>
+	<description>IAM Service.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-parent</artifactId>

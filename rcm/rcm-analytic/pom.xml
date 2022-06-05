@@ -70,7 +70,7 @@
 					<configLocation>/../checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/dopaas-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
 					<!-- <execution> -->
 					<!-- <id>checkstyle</id> -->
 					<!-- <phase>validate</phase> -->

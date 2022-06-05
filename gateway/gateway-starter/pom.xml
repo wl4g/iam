@@ -190,15 +190,15 @@
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-shell-cli</artifactId> -->
+		<!-- <artifactId>shell-cli</artifactId> -->
 		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-shell-springboot</artifactId> -->
+		<!-- <artifactId>shell-springboot</artifactId> -->
 		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-core</artifactId>
+			<artifactId>infra-core</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -493,7 +493,7 @@
 					<configLocation>/../checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/dopaas-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
 					<!-- <execution> -->
 					<!-- <id>checkstyle</id> -->
 					<!-- <phase>validate</phase> -->

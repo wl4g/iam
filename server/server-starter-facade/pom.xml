@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>iam-server-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>IAM Service Starter for Facade</name>
+	<name>IAM Service Starter Facade</name>
 	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -43,7 +43,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-support</artifactId>
+			<artifactId>infra-support</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -84,7 +84,7 @@
 					<configLocation>/../checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/dopaas-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
 					<!-- <execution> -->
 					<!-- <id>checkstyle</id> -->
 					<!-- <phase>validate</phase> -->

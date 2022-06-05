@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>iam-server-starter-all</artifactId>
 	<packaging>jar</packaging>
-	<name>IAM Service Starter for All</name>
+	<name>IAM Service Starter All in One</name>
 	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -35,15 +35,15 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-core</artifactId>
+					<artifactId>infra-integration-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-springcloud</artifactId>
+					<artifactId>infra-integration-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-springcloud-dubbo</artifactId>
+					<artifactId>infra-integration-springcloud-dubbo</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -53,15 +53,15 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-core</artifactId>
+					<artifactId>infra-integration-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-springcloud</artifactId>
+					<artifactId>infra-integration-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-springcloud-dubbo</artifactId>
+					<artifactId>infra-integration-springcloud-dubbo</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -71,22 +71,22 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-core</artifactId>
+					<artifactId>infra-integration-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-feign-springcloud</artifactId>
+					<artifactId>infra-integration-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-integration-springcloud-dubbo</artifactId>
+					<artifactId>infra-integration-springcloud-dubbo</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-integration-feign-common</artifactId>
+			<artifactId>infra-integration-feign-common</artifactId>
 		</dependency>
 		<!-- Test's -->
 		<dependency>

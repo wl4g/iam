@@ -33,11 +33,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-cli</artifactId>
+			<artifactId>shell-cli</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-shell-springboot</artifactId>
+			<artifactId>shell-springboot</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

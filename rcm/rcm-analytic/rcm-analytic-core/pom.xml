@@ -38,13 +38,13 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>dopaas-infra-core</artifactId>
+					<artifactId>infra-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-common</artifactId>
+			<artifactId>infra-common</artifactId>
 		</dependency>
 		<!-- FLINK required -->
 		<dependency>

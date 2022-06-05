@@ -3,12 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>iam-rcm-eventbus-pulsar</artifactId>
 	<packaging>jar</packaging>
-	<name>IAM RCM Eventbus for Pulsar</name>
+	<name>IAM RCM EventBus Pulsar</name>
 	<url>http://iam.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-rcm-eventbus</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.0</version>
+
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -70,7 +71,7 @@
 					<configLocation>/../checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/dopaas-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
 					<!-- <execution> -->
 					<!-- <id>checkstyle</id> -->
 					<!-- <phase>validate</phase> -->

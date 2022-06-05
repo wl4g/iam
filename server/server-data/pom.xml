@@ -44,21 +44,21 @@
 			configured. -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-infra-integration-feign-istio</artifactId>
+			<artifactId>infra-integration-feign-istio</artifactId>
 		</dependency>
 
 		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically 
 			configured. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud</artifactId> -->
+		<!-- <artifactId>infra-integration-feign-springcloud</artifactId> -->
 		<!-- </dependency> -->
 
 		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically 
 			configured. Notes: Only relying on feign's interface annotation. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
+		<!-- <artifactId>infra-integration-feign-springcloud-dubbo</artifactId> -->
 		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

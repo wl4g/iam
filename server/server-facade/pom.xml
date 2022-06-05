@@ -68,7 +68,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.wl4g</groupId>
-                    <artifactId>dopaas-infra-integration-feign-istio</artifactId>
+                    <artifactId>infra-integration-feign-istio</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -78,7 +78,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.wl4g</groupId>
-                    <artifactId>dopaas-infra-integration-feign-springcloud</artifactId>
+                    <artifactId>infra-integration-feign-springcloud</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -89,7 +89,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.wl4g</groupId>
-                    <artifactId>dopaas-infra-integration-feign-dubbo</artifactId>
+                    <artifactId>infra-integration-feign-dubbo</artifactId>
                 </dependency>
             </dependencies>
         </profile>
