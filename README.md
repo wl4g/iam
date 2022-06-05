@@ -5,7 +5,7 @@ An enterprise-level open source unified identity authentication and access contr
 <font color=red>Reminder: The latest version and documents are currently being sorted out and improved. It is recommended to deploy in the test environment first. If you have any questions or suggestions, please submit an Issue</font>
 
 <p align="center">
-    <img src="https://github.com/wl4g/iam/tree/master/shots/iam-logo.png" width="150">
+    <img src="https://github.com/wl4g/iam/raw/master/shots/iam-logo.png" width="150">
     <h3 align="center">IAM</h3>
     <p align="center">
         A enterprise-level universal unified authentication and authorization 5A management platform based on cloud native and Spring Cloud.
