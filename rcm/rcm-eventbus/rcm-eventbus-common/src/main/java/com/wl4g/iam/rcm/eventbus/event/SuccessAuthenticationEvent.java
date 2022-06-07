@@ -28,7 +28,8 @@ import javax.validation.constraints.NotNull;
 public class SuccessAuthenticationEvent extends IamEvent {
     private static final long serialVersionUID = -8912834545311079238L;
 
-    public SuccessAuthenticationEvent(@NotNull Object source, @NotNull EventType eventType, @Nullable String message) {
-        super(source, eventType, message);
+    public SuccessAuthenticationEvent(@NotNull Object source, @Nullable String message) {
+        super(source, message);
     }
+
 }

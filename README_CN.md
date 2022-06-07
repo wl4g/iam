@@ -5,7 +5,7 @@
 <font color=red>温馨提示：目前最新版及文档正在整理完善中，建议首先在测试环境部署，如有问题或建议请提交 Issue</font>
 
 <p align="center">
-    <img src="https://github.com/wl4g/iam/tree/master/shots/iam-logo.png" width="150">
+    <img src="https://github.com/wl4g/iam/raw/master/shots/iam-logo.png" width="150">
     <h3 align="center">IAM</h3>
     <p align="center">
         A enterprise-level universal unified authentication and authorization 5A management platform based on cloud native and Spring Cloud.

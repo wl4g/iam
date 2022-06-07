@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.analytic.core;
+package com.wl4g.iam.rcm.analytic.core.kafka;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -28,8 +28,6 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import com.wl4g.iam.rcm.eventbus.event.IamEvent;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent.EventType;
-import com.wl4g.iam.rcm.eventbus.event.SuccessAuthenticationEvent;
 
 import lombok.Getter;
 
@@ -53,10 +51,7 @@ public class IamEventKafkaRecordDeserializationSchema implements KafkaRecordDese
         }
         if (nonNull(record.value())) {
             String json = deserializer.deserialize(record.topic(), record.value());
-            // collector.collect(parseJSON(json, IamEvent.class));
-            // for testing
-            System.out.println("json:"+json);
-            collector.collect(new SuccessAuthenticationEvent("myPrincipal", EventType.AUTHC_SUCCESS, json));
+            collector.collect(IamEvent.from(json));
         }
     }
 

@@ -39,7 +39,7 @@ public class IamEventWatermarks extends BoundedOutOfOrdernessWatermarks<IamEvent
 
     @Override
     public void onEvent(IamEvent event, long eventTimestamp, WatermarkOutput output) {
-        super.onEvent(event, event.getTimstamp(), output);
+        super.onEvent(event, event.getTimestamp(), output);
     }
 
     /**

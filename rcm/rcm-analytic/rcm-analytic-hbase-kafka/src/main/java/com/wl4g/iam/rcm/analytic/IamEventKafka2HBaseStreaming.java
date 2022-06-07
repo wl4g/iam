@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.flink.connector.hbase.sink.HBaseSinkFunction;
-import org.apache.flink.connector.hbase2.sink.HBaseDynamicTableSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.KafkaSourceOptions;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -31,10 +30,13 @@ import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 
-import com.wl4g.iam.rcm.analytic.core.IamEventKafkaRecordDeserializationSchema;
 import com.wl4g.iam.rcm.analytic.core.IamEventWatermarks;
+import com.wl4g.iam.rcm.analytic.core.hbase.IamEventToMutationConverter;
+import com.wl4g.iam.rcm.analytic.core.kafka.IamEventKafkaRecordDeserializationSchema;
 import com.wl4g.iam.rcm.eventbus.event.IamEvent;
 import com.wl4g.infra.common.cli.CommandLineTool;
 import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
@@ -51,43 +53,62 @@ public class IamEventKafka2HBaseStreaming {
 
     public static void main(String[] args) throws Exception {
         CommandLineFacade line = CommandLineTool.builder()
+                // KAFKA options.
                 .option("b", "brokers", "localhost:9092", "Connect kafka brokers addresses.")
-                .mustOption("g", "groupId", "Kafka source consumer group id.")
                 .option("t", "topicPattern", "iam_event", "Kafka topic regex pattern.")
+                .mustOption("g", "groupId", "Kafka source consumer group id.")
+                .longOption("fromOffsetTime", "-1",
+                        "Start consumption from the first record with a timestamp greater than or equal to a certain timestamp. if <=0, it will not be setup and keep the default behavior.")
+                // Checkpoint options.
                 .longOption("checkpointMode", null,
                         "Sets the checkpoint mode, the default is null means not enabled. options: "
                                 + asList(CheckpointingMode.values()))
                 .longOption("checkpointMillis", "500",
                         "Checkpoint execution interval millis, only valid when checkpointMode is sets.")
-                .option("f", "fromOffsetTime", "-1",
-                        "Start consumption from the first record with a timestamp greater than or equal to a certain timestamp, if <=0, it will not be setup and keep the default behavior.")
-                .option("p", "parallelism", "-1",
-                        "The parallelism for operator, if <=0, it will not be setup and keep the default behavior.")
-                .option("P", "maxParallelism", "-1",
-                        "The maximum parallelism for operator, if <=0, it will not be setup and keep the default behavior.")
+                // Performance options.
+                .longOption("parallelism", "-1",
+                        "The parallelism for operator. if <=0, it will not be setup and keep the default behavior.")
+                .longOption("maxParallelism", "-1",
+                        "The maximum parallelism for operator. if <=0, it will not be setup and keep the default behavior.")
                 .longOption("bufferTimeoutMillis", "-1",
                         "Parallelism for this operator, if <=0, it will not be setup and keep the default behavior.")
                 .longOption("outOfOrdernessMillis", "120000", "The maximum millis out-of-orderness watermark generator assumes.")
                 .longOption("idleTimeoutMillis", "30000", "The timeout millis for the idleness detection.")
                 .longOption("partitionDiscoveryIntervalMs", "30000", "The per millis for discover new partitions interval.")
-                .longOption("enablePrintSink", "true", "Override sets to print sink function.")
-                .option("N", "jobName", "IamKafkaSourceJob", "Flink kafka source streaming job name.")
+                // Sink options.
+                .longOption("forceEnablePrintSink", "true", "Force override set to stdout print sink function.")
+                .longOption("hTableName", "t_iam_event", "Sink to HBase table name.")
+                .longOption("bufferFlushMaxSizeInBytes", "-1",
+                        "Sink to HBase write flush max buffer size. if <=0, it will not be setup and keep the default behavior.")
+                .longOption("bufferFlushMaxRows", "1000", "Sink to HBase write batch flush max mutations.")
+                .longOption("bufferFlushIntervalMillis", "5000", "Sink to HBase write batch flush interval millis.")
+                // Job options.
+                .longOption("jobName", "IamKafkaSourceJob", "Flink kafka source streaming job name.")
                 .helpIfEmpty(args)
                 .build(args);
 
+        // KAFKA options.
         String brokers = line.get("brokers");
-        String groupId = line.get("groupId");
         String topicPattern = line.get("topicPattern");
+        String groupId = line.get("groupId");
+        Long fromOffsetTime = line.getLong("fromOffsetTime");
+        // Checkpoint options.
         CheckpointingMode checkpointMode = line.getEnum("checkpointMode", CheckpointingMode.class);
         Long checkpointMillis = line.getLong("checkpointMillis");
-        Long fromOffsetTime = line.getLong("fromOffsetTime");
+        // Performance options.
         Integer parallelism = line.getInteger("parallelism");
         Integer maxParallelism = line.getInteger("maxParallelism");
         Long bufferTimeoutMillis = line.getLong("bufferTimeoutMillis");
         Long outOfOrdernessMillis = line.getLong("outOfOrdernessMillis");
         Long idleTimeoutMillis = line.getLong("idleTimeoutMillis");
         String partitionDiscoveryIntervalMs = line.get("partitionDiscoveryIntervalMs");
-        Boolean enablePrintSink = line.getBoolean("enablePrintSink");
+        // Sink options.
+        Boolean forceEnablePrintSink = line.getBoolean("forceEnablePrintSink");
+        String hTableName = line.get("hTableName");
+        Long bufferFlushMaxSizeInBytes = line.getLong("bufferFlushMaxSizeInBytes");
+        Long bufferFlushMaxRows = line.getLong("bufferFlushMaxRows");
+        Long bufferFlushIntervalMillis = line.getLong("bufferFlushIntervalMillis");
+        // Job options.
         String jobName = line.get("jobName");
 
         Properties props = (Properties) System.getProperties().clone();
@@ -138,11 +159,13 @@ public class IamEventKafka2HBaseStreaming {
             stream.setBufferTimeout(bufferTimeoutMillis);
         }
 
-        if (nonNull(enablePrintSink) && enablePrintSink) {
+        if (nonNull(forceEnablePrintSink) && forceEnablePrintSink) {
             stream.addSink(new PrintSinkFunction<>());
         } else {
-//            stream.addSink(new HBaseDynamicTableSink(tableName, hbaseTableSchema, hbaseConf, writeOptions, nullStringLiteral));
-//            stream.addSink(new HBaseSinkFunction<>(hTableName, conf, mutationConverter, bufferFlushMaxSizeInBytes, bufferFlushMaxMutations, bufferFlushIntervalMillis));
+            Configuration conf = HBaseConfiguration.create();
+            IamEventToMutationConverter converter = new IamEventToMutationConverter("");
+            stream.addSink(new HBaseSinkFunction<>(hTableName, conf, converter, bufferFlushMaxSizeInBytes, bufferFlushMaxRows,
+                    bufferFlushIntervalMillis));
         }
 
         env.execute(jobName);

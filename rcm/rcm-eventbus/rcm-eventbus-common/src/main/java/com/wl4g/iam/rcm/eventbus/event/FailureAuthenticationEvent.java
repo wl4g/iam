@@ -33,12 +33,18 @@ import lombok.ToString;
 public class FailureAuthenticationEvent extends IamEvent {
     private static final long serialVersionUID = -8942834545311079238L;
 
-    private final Throwable stacktrace;
+    public FailureAuthenticationEvent(@NotNull Object source, @Nullable String message, @Nullable Throwable stacktrace) {
+        super(source, message);
+        doPut("stacktrace", stacktrace);
+    }
 
-    public FailureAuthenticationEvent(@NotNull Object source, @NotNull EventType eventType, @Nullable String message,
-            @Nullable Throwable stacktrace) {
-        super(source, eventType, message);
-        this.stacktrace = stacktrace;
+    /**
+     * Gets attributes for stack trace.
+     * 
+     * @return
+     */
+    public Throwable getStacktrace() {
+        return doGet("stacktrace");
     }
 
 }
