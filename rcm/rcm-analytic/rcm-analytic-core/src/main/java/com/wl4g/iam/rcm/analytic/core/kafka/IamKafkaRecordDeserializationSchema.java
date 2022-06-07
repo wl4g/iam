@@ -15,6 +15,7 @@
  */
 package com.wl4g.iam.rcm.analytic.core.kafka;
 
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -27,37 +28,38 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.analytic.core.model.IamEventAnalyticalModel;
 
 import lombok.Getter;
 
 /**
- * {@link IamEventKafkaRecordDeserializationSchema}
+ * {@link IamKafkaRecordDeserializationSchema}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-06-03 v3.0.0
  * @since v3.0.0
  */
 @Getter
-public class IamEventKafkaRecordDeserializationSchema implements KafkaRecordDeserializationSchema<IamEvent> {
+public class IamKafkaRecordDeserializationSchema implements KafkaRecordDeserializationSchema<IamEventAnalyticalModel> {
     private static final long serialVersionUID = -3765473065594331694L;
 
     private transient Deserializer<String> deserializer = new StringDeserializer();
 
     @Override
-    public void deserialize(ConsumerRecord<byte[], byte[]> record, Collector<IamEvent> collector) throws IOException {
+    public void deserialize(ConsumerRecord<byte[], byte[]> record, Collector<IamEventAnalyticalModel> collector)
+            throws IOException {
         if (isNull(deserializer)) {
             this.deserializer = new StringDeserializer();
         }
         if (nonNull(record.value())) {
             String json = deserializer.deserialize(record.topic(), record.value());
-            collector.collect(IamEvent.from(json));
+            collector.collect(parseJSON(json, IamEventAnalyticalModel.class));
         }
     }
 
     @Override
-    public TypeInformation<IamEvent> getProducedType() {
-        return TypeInformation.of(IamEvent.class);
+    public TypeInformation<IamEventAnalyticalModel> getProducedType() {
+        return TypeInformation.of(IamEventAnalyticalModel.class);
     }
 
 }

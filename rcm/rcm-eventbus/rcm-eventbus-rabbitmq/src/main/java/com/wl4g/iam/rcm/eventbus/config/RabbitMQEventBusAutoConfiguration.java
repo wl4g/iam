@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.iam.common.constant.RcmIAMConstants;
 import com.wl4g.iam.rcm.eventbus.IamEventBusService;
-import com.wl4g.iam.rcm.eventbus.RabbitMQEventBusService;
+import com.wl4g.iam.rcm.eventbus.RabbitmqEventBusService;
 
 /**
  * {@link RabbitMQEventBusAutoConfiguration}
@@ -41,7 +41,7 @@ public class RabbitMQEventBusAutoConfiguration {
     public IamEventBusService<?> kafkaIamEventBusService(
             IamEventBusProperties eventBusConfig,
             RabbitMQEventBusProperties rocketmqEventConfig) {
-        return new RabbitMQEventBusService(eventBusConfig, rocketmqEventConfig);
+        return new RabbitmqEventBusService(eventBusConfig, rocketmqEventConfig);
     }
 
 }

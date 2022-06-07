@@ -21,14 +21,14 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.iam.rcm.eventbus.config.IamEventBusProperties;
 import com.wl4g.iam.rcm.eventbus.config.RabbitMQEventBusProperties;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEventBase;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;
 import lombok.Getter;
 
 /**
- * {@link RabbitMQEventBusService}
+ * {@link RabbitmqEventBusService}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-05-31 v3.0.0
@@ -37,7 +37,7 @@ import lombok.Getter;
 @Getter
 @CustomLog
 @AllArgsConstructor
-public class RabbitMQEventBusService implements IamEventBusService<Void>, InitializingBean {
+public class RabbitmqEventBusService implements IamEventBusService<Void>, InitializingBean {
 
     private final IamEventBusProperties eventBusConfig;
     private final RabbitMQEventBusProperties rocketEventBusConfig;
@@ -52,7 +52,7 @@ public class RabbitMQEventBusService implements IamEventBusService<Void>, Initia
     }
 
     @Override
-    public Future<Void> publish(IamEvent event) {
+    public Future<Void> publish(IamEventBase event) {
         log.debug("Send: {}", event); // TODO
         return null;
     }

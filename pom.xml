@@ -89,6 +89,49 @@
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 	</properties>
+	<!-- see:https://swenfang.github.io/2018/06/03/Maven-Priority/ -->
+	<repositories>
+		<repository>
+			<id>public</id>
+			<name>Aliyun maven public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
+		<repository>
+			<id>grails-core</id>
+			<name>Aliyun maven grails core</name>
+			<url>https://maven.aliyun.com/repository/grails-core</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Aliyun maven central</name>
+			<url>https://maven.aliyun.com/repository/central</url>
+		</repository>
+		<repository>
+			<id>spring</id>
+			<name>Aliyun maven spring</name>
+			<url>https://maven.aliyun.com/repository/spring</url>
+		</repository>
+		<repository>
+			<id>spring-release</id>
+			<name>Spring release</name>
+			<url>https://repo.spring.io/release</url>
+		</repository>
+		<repository>
+			<id>google</id>
+			<name>Aliyun maven google</name>
+			<url>https://maven.aliyun.com/repository/google</url>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring milestone</name>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
+		<repository>
+			<id>cloudera</id>
+			<name>Cloudera maven</name>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+		</repository>
+	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

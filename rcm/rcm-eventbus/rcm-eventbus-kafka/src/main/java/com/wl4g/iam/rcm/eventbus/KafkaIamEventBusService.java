@@ -29,7 +29,7 @@ import org.springframework.kafka.support.SendResult;
 
 import com.wl4g.iam.rcm.eventbus.config.IamEventBusProperties;
 import com.wl4g.iam.rcm.eventbus.config.KafkaEventBusProperties;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEventBase;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;
@@ -66,7 +66,7 @@ public class KafkaIamEventBusService implements IamEventBusService<SendResult<St
     }
 
     @Override
-    public Future<SendResult<String, String>> publish(IamEvent event) {
+    public Future<SendResult<String, String>> publish(IamEventBase event) {
         ProducerRecord<String, String> record = new ProducerRecord<>(eventBusConfig.getEventTopic(), toJSONString(event));
         log.debug("Send: {}", record);
         return kafkaTemplate.send(record);

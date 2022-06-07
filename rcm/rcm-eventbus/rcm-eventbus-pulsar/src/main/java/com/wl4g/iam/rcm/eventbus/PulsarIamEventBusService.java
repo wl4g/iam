@@ -21,7 +21,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.iam.rcm.eventbus.config.IamEventBusProperties;
 import com.wl4g.iam.rcm.eventbus.config.PulsarEventBusProperties;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEventBase;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;
@@ -52,7 +52,7 @@ public class PulsarIamEventBusService implements IamEventBusService<Void>, Initi
     }
 
     @Override
-    public Future<Void> publish(IamEvent event) {
+    public Future<Void> publish(IamEventBase event) {
         log.debug("Send: {}", event); // TODO
         return null;
     }

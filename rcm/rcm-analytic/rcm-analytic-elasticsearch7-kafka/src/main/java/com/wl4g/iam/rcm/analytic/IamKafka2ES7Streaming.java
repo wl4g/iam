@@ -15,13 +15,29 @@
  */
 package com.wl4g.iam.rcm.analytic;
 
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
+
+import com.wl4g.iam.rcm.analytic.core.elasticsearch7.IamES7StreamingSupport;
+import com.wl4g.iam.rcm.analytic.core.kafka.IamKafkaUtil;
+
 /**
- * {@link IamEventPulsar2HiveStreaming}
+ * {@link IamKafka2ES7Streaming}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-06-02 v3.0.0
+ * @version 2022-05-31 v3.0.0
  * @since v3.0.0
+ * @see https://stackoverflow.com/questions/69765972/migrating-from-flinkkafkaconsumer-to-kafkasource-no-windows-executed
  */
-public class IamEventPulsar2HiveStreaming {
+public class IamKafka2ES7Streaming extends IamES7StreamingSupport {
+
+    public static void main(String[] args) throws Exception {
+        new IamKafka2ES7Streaming().parse(args).run();
+    }
+
+    @Override
+    protected <T, S extends SourceSplit, E> Source<T, S, E> createSource() {
+        return IamKafkaUtil.createKafkaSource(this);
+    }
 
 }

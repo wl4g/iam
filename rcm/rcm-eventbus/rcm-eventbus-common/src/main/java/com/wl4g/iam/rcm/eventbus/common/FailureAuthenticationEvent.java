@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus.event;
+package com.wl4g.iam.rcm.eventbus.common;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
@@ -30,21 +31,15 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class FailureAuthenticationEvent extends IamEvent {
+public class FailureAuthenticationEvent extends IamEventBase {
     private static final long serialVersionUID = -8942834545311079238L;
 
-    public FailureAuthenticationEvent(@NotNull Object source, @Nullable String message, @Nullable Throwable stacktrace) {
-        super(source, message);
-        doPut("stacktrace", stacktrace);
-    }
+    private final Throwable stacktrace;
 
-    /**
-     * Gets attributes for stack trace.
-     * 
-     * @return
-     */
-    public Throwable getStacktrace() {
-        return doGet("stacktrace");
+    public FailureAuthenticationEvent(@NotNull Object source, @NotBlank String remoteIp, @NotBlank String coordinates,
+            @Nullable String message, @Nullable Throwable stacktrace) {
+        super(EventType.AUTHC_FAILURE, source, remoteIp, coordinates, message);
+        this.stacktrace = stacktrace;
     }
 
 }

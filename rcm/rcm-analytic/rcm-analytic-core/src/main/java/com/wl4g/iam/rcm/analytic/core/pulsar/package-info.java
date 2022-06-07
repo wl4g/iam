@@ -13,23 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus;
-
-import java.util.concurrent.Future;
-
-import com.wl4g.iam.rcm.eventbus.common.IamEventBase;
-
-/**
- * {@link IamEventBusService}
- * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-26 v3.0.0
- * @since v3.0.0
- */
-public interface IamEventBusService<R> {
-
-    Object getOriginal();
-
-    Future<R> publish(IamEventBase event);
-
-}
+package com.wl4g.iam.rcm.analytic.core.pulsar;

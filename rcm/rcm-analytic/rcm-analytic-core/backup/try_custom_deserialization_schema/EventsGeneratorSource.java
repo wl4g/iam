@@ -23,7 +23,7 @@ package com.wl4g.iam.rcm.analytic.core;
 //
 //import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 //
-//import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+//import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 //
 ///**
 // * A event stream source that generates the events on the fly. Useful for

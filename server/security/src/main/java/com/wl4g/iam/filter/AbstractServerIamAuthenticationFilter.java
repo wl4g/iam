@@ -107,8 +107,8 @@ import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.iam.rcm.eventbus.IamEventBusService;
-import com.wl4g.iam.rcm.eventbus.event.FailureAuthenticationEvent;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent.EventType;
+import com.wl4g.iam.rcm.eventbus.common.FailureAuthenticationEvent;
+import com.wl4g.iam.rcm.eventbus.common.SuccessAuthenticationEvent;
 import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
@@ -211,6 +211,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         try {
             IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
+            // Event publish.
+            // TODO getting actual coordinates.
+            eventBusService.publish(new SuccessAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", ""));
+
             /*
              * Save the token at the time of authentication, which can then be
              * used for extended logic usage.
@@ -301,7 +305,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         }
 
         // Event publish.
-        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), EventType.AUTHC_FAILURE, errmsg, ae));
+        // TODO getting actual coordinates.
+        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", errmsg, ae));
 
         if (!isBlank(errmsg)) {
             /**

@@ -13,15 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.analytic;
-
-/**
- * {@link IamEventPulsar2ES7Streaming}
- * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-06-02 v3.0.0
- * @since v3.0.0
- */
-public class IamEventPulsar2ES7Streaming {
-
-}
+package com.wl4g.iam.rcm.analytic.core.rabbitmq;

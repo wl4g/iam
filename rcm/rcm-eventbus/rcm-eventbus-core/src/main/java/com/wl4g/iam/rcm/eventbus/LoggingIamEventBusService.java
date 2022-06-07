@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEventBase;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;
@@ -33,7 +33,7 @@ import lombok.CustomLog;
  * @since v3.0.0
  */
 @CustomLog
-public class LoggingIamEventBusService implements IamEventBusService<IamEvent> {
+public class LoggingIamEventBusService implements IamEventBusService<IamEventBase> {
 
     @Override
     public Object getOriginal() {
@@ -41,15 +41,15 @@ public class LoggingIamEventBusService implements IamEventBusService<IamEvent> {
     }
 
     @Override
-    public Future<IamEvent> publish(IamEvent event) {
+    public Future<IamEventBase> publish(IamEventBase event) {
         log.info("On event: {}", event);
         return new NoneFuture(event);
     }
 
     @AllArgsConstructor
-    static class NoneFuture implements Future<IamEvent> {
+    static class NoneFuture implements Future<IamEventBase> {
 
-        private final IamEvent event;
+        private final IamEventBase event;
 
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
@@ -67,12 +67,12 @@ public class LoggingIamEventBusService implements IamEventBusService<IamEvent> {
         }
 
         @Override
-        public IamEvent get() throws InterruptedException, ExecutionException {
+        public IamEventBase get() throws InterruptedException, ExecutionException {
             return event;
         }
 
         @Override
-        public IamEvent get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        public IamEventBase get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
             return event;
         }
     }

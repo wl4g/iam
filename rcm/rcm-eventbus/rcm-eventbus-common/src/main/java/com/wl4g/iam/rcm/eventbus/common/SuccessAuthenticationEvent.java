@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.analytic;
+package com.wl4g.iam.rcm.eventbus.common;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
- * {@link IamEventRabbitMQ2HiveStreaming}
+ * {@link SuccessAuthenticationEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-06-02 v3.0.0
+ * @version 2022-05-30 v3.0.0
  * @since v3.0.0
  */
-public class IamEventRabbitMQ2HiveStreaming {
+public class SuccessAuthenticationEvent extends IamEventBase {
+    private static final long serialVersionUID = -8912834545311079238L;
+
+    public SuccessAuthenticationEvent(@NotNull Object source, @NotBlank String remoteIp, @NotBlank String coordinates,
+            @Nullable String message) {
+        super(EventType.AUTHC_SUCCESS, source, remoteIp, coordinates, message);
+    }
 
 }
