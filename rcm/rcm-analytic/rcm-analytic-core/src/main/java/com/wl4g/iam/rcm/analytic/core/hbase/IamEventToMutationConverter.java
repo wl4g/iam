@@ -37,7 +37,7 @@ import org.apache.flink.table.data.GenericRowData;
 import org.apache.flink.types.RowKind;
 import org.apache.hadoop.hbase.client.Mutation;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 
 /**
  * {@link IamEventToMutationConverter}
@@ -63,7 +63,7 @@ public class IamEventToMutationConverter implements HBaseMutationConverter<IamEv
     @Override
     public Mutation convertToMutation(@NotNull IamEvent record) {
         notNullOf(record, "record");
-        // TODO sort fields
+        // Note: 
         GenericRowData row = GenericRowData.of(RowKind.INSERT, record.getTimestamp(), record.getEventType(), record.getSource(),
                 record.getMessage());
         return getOrCreateHBaseSerde(record).createPutMutation(row);

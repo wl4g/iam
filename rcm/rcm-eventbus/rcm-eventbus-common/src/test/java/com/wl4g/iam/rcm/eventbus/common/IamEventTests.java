@@ -13,38 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus.event;
+package com.wl4g.iam.rcm.eventbus.common;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
-import lombok.Getter;
-import lombok.ToString;
+import org.junit.Test;
 
 /**
- * {@link FailureAuthenticationEvent}
+ * {@link IamEventTests}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-30 v3.0.0
+ * @version 2022-06-07 v3.0.0
  * @since v3.0.0
  */
-@Getter
-@ToString
-public class FailureAuthenticationEvent extends IamEvent {
-    private static final long serialVersionUID = -8942834545311079238L;
+public class IamEventTests {
 
-    public FailureAuthenticationEvent(@NotNull Object source, @Nullable String message, @Nullable Throwable stacktrace) {
-        super(source, message);
-        doPut("stacktrace", stacktrace);
+    @Test
+    public void testIamEventTo() {
+        IamEvent event = new IamEvent("user1", "successful");
+        System.out.println(IamEvent.to(event));
     }
 
-    /**
-     * Gets attributes for stack trace.
-     * 
-     * @return
-     */
-    public Throwable getStacktrace() {
-        return doGet("stacktrace");
+    @Test
+    public void testIamEventFrom() {
+        String json = "{\"eventType\":\"UNKNOWN\",\"source\":\"user1\",\"message\":\"successful\",\"timestamp\":1654589341786}";
+        IamEvent event = IamEvent.from(json);
+        System.out.println(event.getTimestamp());
+        System.out.println(event.getEventType());
+        System.out.println(event.getSource());
+        System.out.println(event.getMessage());
     }
 
 }

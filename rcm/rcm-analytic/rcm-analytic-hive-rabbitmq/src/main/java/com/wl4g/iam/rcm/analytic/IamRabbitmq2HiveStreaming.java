@@ -15,13 +15,28 @@
  */
 package com.wl4g.iam.rcm.analytic;
 
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
+
+import com.wl4g.iam.rcm.analytic.core.hive.IamHiveStreamingSupport;
+
 /**
- * {@link IamEventPulsar2HBaseStreaming}
+ * {@link IamEventRabbitMQ2HiveStreaming}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-06-02 v3.0.0
  * @since v3.0.0
  */
-public class IamEventPulsar2HBaseStreaming {
+public class IamRabbitmq2HiveStreaming extends IamHiveStreamingSupport {
+
+    public static void main(String[] args) throws Exception {
+        new IamRabbitmq2HiveStreaming().parse(args).run();
+    }
+
+    @Override
+    protected <T, S extends SourceSplit, E> Source<T, S, E> createSource() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
+    }
 
 }

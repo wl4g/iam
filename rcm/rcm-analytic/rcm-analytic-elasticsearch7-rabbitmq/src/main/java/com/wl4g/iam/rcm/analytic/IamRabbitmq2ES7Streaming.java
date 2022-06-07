@@ -15,13 +15,28 @@
  */
 package com.wl4g.iam.rcm.analytic;
 
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
+
+import com.wl4g.iam.rcm.analytic.core.elasticsearch7.IamES7StreamingSupport;
+
 /**
- * {@link IamEventRabbitMQ2HBaseStreaming}
+ * {@link IamRabbitmq2ES7Streaming}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-06-02 v3.0.0
  * @since v3.0.0
  */
-public class IamEventRabbitMQ2HBaseStreaming {
+public class IamRabbitmq2ES7Streaming extends IamES7StreamingSupport {
+
+    public static void main(String[] args) throws Exception {
+        new IamRabbitmq2ES7Streaming().parse(args).run();
+    }
+
+    @Override
+    protected <T, S extends SourceSplit, E> Source<T, S, E> createSource() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
+    }
 
 }

@@ -22,7 +22,7 @@ import org.apache.flink.api.common.eventtime.WatermarkOutput;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.eventtime.WatermarksWithIdleness;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 
 /**
  * {@link IamEventWatermarks}

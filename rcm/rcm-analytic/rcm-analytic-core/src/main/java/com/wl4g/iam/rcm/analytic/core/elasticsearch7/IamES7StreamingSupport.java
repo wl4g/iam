@@ -13,48 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus;
+package com.wl4g.iam.rcm.analytic.core.elasticsearch7;
 
-import java.util.concurrent.Future;
+import org.apache.commons.cli.ParseException;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 
-import org.springframework.beans.factory.InitializingBean;
-
-import com.wl4g.iam.rcm.eventbus.config.IamEventBusProperties;
-import com.wl4g.iam.rcm.eventbus.config.PulsarEventBusProperties;
+import com.wl4g.iam.rcm.analytic.core.IamFlinkStreamingBase;
 import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 
-import lombok.AllArgsConstructor;
-import lombok.CustomLog;
 import lombok.Getter;
 
 /**
- * {@link LoggingIamEventBusService}
+ * {@link IamES7StreamingSupport}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-30 v3.0.0
+ * @version 2022-06-07 v3.0.0
  * @since v3.0.0
  */
 @Getter
-@CustomLog
-@AllArgsConstructor
-public class PulsarIamEventBusService implements IamEventBusService<Void>, InitializingBean {
+public abstract class IamES7StreamingSupport extends IamFlinkStreamingBase {
 
-    private final IamEventBusProperties eventBusConfig;
-    private final PulsarEventBusProperties pulsarEventBusConfig;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    protected IamES7StreamingSupport() {
+        super();
+        // Sink options.
+        // TODO
     }
 
     @Override
-    public Object getOriginal() {
-        return null; // TODO
+    protected IamFlinkStreamingBase parse(String[] args) throws ParseException {
+        super.parse(args);
+        // Sink options.
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Future<Void> publish(IamEvent event) {
-        log.debug("Send: {}", event); // TODO
-        return null;
+    protected IamFlinkStreamingBase customStream(DataStreamSource<IamEvent> dataStream) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
     }
 
 }

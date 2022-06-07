@@ -24,8 +24,8 @@ package com.wl4g.iam.rcm.analytic.core;
 //import org.apache.flink.api.common.serialization.SerializationSchema;
 //import org.apache.flink.api.common.typeinfo.TypeInformation;
 //
-//import com.wl4g.iam.rcm.eventbus.event.IamEvent;
-//import com.wl4g.iam.rcm.eventbus.event.IamEvent.EventType;
+//import com.wl4g.iam.rcm.eventbus.common.IamEvent;
+//import com.wl4g.iam.rcm.eventbus.common.IamEvent.EventType;
 //
 ///**
 // * A serializer and deserializer for the {@link Event} schema.

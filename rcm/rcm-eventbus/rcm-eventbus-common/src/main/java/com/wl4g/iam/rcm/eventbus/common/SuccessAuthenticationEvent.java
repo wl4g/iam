@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus;
+package com.wl4g.iam.rcm.eventbus.common;
 
-import java.util.concurrent.Future;
-
-import com.wl4g.iam.rcm.eventbus.common.IamEvent;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 /**
- * {@link IamEventBusService}
+ * {@link SuccessAuthenticationEvent}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-26 v3.0.0
+ * @version 2022-05-30 v3.0.0
  * @since v3.0.0
  */
-public interface IamEventBusService<R> {
+public class SuccessAuthenticationEvent extends IamEvent {
+    private static final long serialVersionUID = -8912834545311079238L;
 
-    Object getOriginal();
-
-    Future<R> publish(IamEvent event);
+    public SuccessAuthenticationEvent(@NotNull Object source, @Nullable String message) {
+        super(source, message);
+    }
 
 }

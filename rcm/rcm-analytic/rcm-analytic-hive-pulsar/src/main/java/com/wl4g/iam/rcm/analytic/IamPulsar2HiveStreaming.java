@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus;
+package com.wl4g.iam.rcm.analytic;
 
-import java.util.concurrent.Future;
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
 
-import com.wl4g.iam.rcm.eventbus.common.IamEvent;
+import com.wl4g.iam.rcm.analytic.core.hive.IamHiveStreamingSupport;
 
 /**
- * {@link IamEventBusService}
+ * {@link IamPulsar2HiveStreaming}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-26 v3.0.0
+ * @version 2022-06-02 v3.0.0
  * @since v3.0.0
  */
-public interface IamEventBusService<R> {
+public class IamPulsar2HiveStreaming extends IamHiveStreamingSupport {
 
-    Object getOriginal();
+    public static void main(String[] args) throws Exception {
+        new IamPulsar2HiveStreaming().parse(args).run();
+    }
 
-    Future<R> publish(IamEvent event);
+    @Override
+    protected <T, S extends SourceSplit, E> Source<T, S, E> createSource() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
+    }
 
 }

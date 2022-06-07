@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus.event;
+package com.wl4g.iam.rcm.analytic;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
+
+import com.wl4g.iam.rcm.analytic.core.hbase.IamHBaseStreamingSupport;
 
 /**
- * {@link SuccessAuthenticationEvent}
+ * {@link IamRabbitmq2HBaseStreaming}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-30 v3.0.0
+ * @version 2022-06-02 v3.0.0
  * @since v3.0.0
  */
-public class SuccessAuthenticationEvent extends IamEvent {
-    private static final long serialVersionUID = -8912834545311079238L;
+public class IamRabbitmq2HBaseStreaming extends IamHBaseStreamingSupport {
 
-    public SuccessAuthenticationEvent(@NotNull Object source, @Nullable String message) {
-        super(source, message);
+    public static void main(String[] args) throws Exception {
+        new IamRabbitmq2HBaseStreaming().parse(args).run();
+    }
+
+    @Override
+    protected <T, S extends SourceSplit, E> Source<T, S, E> createSource() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
     }
 
 }

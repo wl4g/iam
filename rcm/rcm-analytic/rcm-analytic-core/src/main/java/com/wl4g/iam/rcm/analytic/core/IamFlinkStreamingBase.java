@@ -13,46 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.analytic;
+package com.wl4g.iam.rcm.analytic.core;
 
 import static java.time.Duration.ofMillis;
 import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 
 import java.util.Properties;
-import java.util.regex.Pattern;
 
-import org.apache.flink.connector.hbase.sink.HBaseSinkFunction;
-import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.commons.cli.ParseException;
+import org.apache.flink.api.common.JobExecutionResult;
+import org.apache.flink.api.connector.source.Source;
+import org.apache.flink.api.connector.source.SourceSplit;
 import org.apache.flink.connector.kafka.source.KafkaSourceOptions;
-import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 
-import com.wl4g.iam.rcm.analytic.core.IamEventWatermarks;
-import com.wl4g.iam.rcm.analytic.core.hbase.IamEventToMutationConverter;
-import com.wl4g.iam.rcm.analytic.core.kafka.IamEventKafkaRecordDeserializationSchema;
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 import com.wl4g.infra.common.cli.CommandLineTool;
 import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
+import lombok.Getter;
+
 /**
- * {@link IamEventKafka2HBaseStreaming}
+ * {@link IamFlinkStreamingBase}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2022-05-31 v3.0.0
+ * @version 2022-06-07 v3.0.0
  * @since v3.0.0
- * @see https://stackoverflow.com/questions/69765972/migrating-from-flinkkafkaconsumer-to-kafkasource-no-windows-executed
  */
-public class IamEventKafka2HBaseStreaming {
+@Getter
+public abstract class IamFlinkStreamingBase implements Runnable {
 
-    public static void main(String[] args) throws Exception {
-        CommandLineFacade line = CommandLineTool.builder()
+    // KAFKA options.
+    private String brokers;
+    private String topicPattern;
+    private String groupId;
+    private Long fromOffsetTime;
+
+    // Checkpoint options.
+    private CheckpointingMode checkpointMode;
+    private Long checkpointMillis;
+
+    // Performance options.
+    private Integer parallelism;
+    private Integer maxParallelism;
+    private Long bufferTimeoutMillis;
+    private Long outOfOrdernessMillis;
+    private Long idleTimeoutMillis;
+    private String partitionDiscoveryIntervalMs;
+
+    // Sink options.
+    private Boolean forceEnablePrintSink;
+
+    // Job options.
+    private String jobName;
+
+    // Command line.
+    protected transient final CommandLineTool.Builder builder;
+    protected transient CommandLineFacade line;
+    protected transient Properties props;
+
+    protected IamFlinkStreamingBase() {
+        this.builder = CommandLineTool.builder()
                 // KAFKA options.
                 .option("b", "brokers", "localhost:9092", "Connect kafka brokers addresses.")
                 .option("t", "topicPattern", "iam_event", "Kafka topic regex pattern.")
@@ -77,41 +102,74 @@ public class IamEventKafka2HBaseStreaming {
                 .longOption("partitionDiscoveryIntervalMs", "30000", "The per millis for discover new partitions interval.")
                 // Sink options.
                 .longOption("forceEnablePrintSink", "true", "Force override set to stdout print sink function.")
-                .longOption("hTableName", "t_iam_event", "Sink to HBase table name.")
-                .longOption("bufferFlushMaxSizeInBytes", "-1",
-                        "Sink to HBase write flush max buffer size. if <=0, it will not be setup and keep the default behavior.")
-                .longOption("bufferFlushMaxRows", "1000", "Sink to HBase write batch flush max mutations.")
-                .longOption("bufferFlushIntervalMillis", "5000", "Sink to HBase write batch flush interval millis.")
                 // Job options.
-                .longOption("jobName", "IamKafkaSourceJob", "Flink kafka source streaming job name.")
-                .helpIfEmpty(args)
-                .build(args);
+                .longOption("jobName", "IamKafkaSourceJob", "Flink kafka source streaming job name.");
+    }
 
+    /**
+     * Parsing command arguments to {@link CommandLineFacade}.
+     * 
+     * @param args
+     * @return
+     * @throws ParseException
+     */
+    protected IamFlinkStreamingBase parse(String[] args) throws ParseException {
+        this.line = builder.helpIfEmpty(args).build(args);
         // KAFKA options.
-        String brokers = line.get("brokers");
-        String topicPattern = line.get("topicPattern");
-        String groupId = line.get("groupId");
-        Long fromOffsetTime = line.getLong("fromOffsetTime");
+        this.brokers = line.get("brokers");
+        this.topicPattern = line.get("topicPattern");
+        this.groupId = line.get("groupId");
+        this.fromOffsetTime = line.getLong("fromOffsetTime");
         // Checkpoint options.
-        CheckpointingMode checkpointMode = line.getEnum("checkpointMode", CheckpointingMode.class);
-        Long checkpointMillis = line.getLong("checkpointMillis");
+        this.checkpointMode = line.getEnum("checkpointMode", CheckpointingMode.class);
+        this.checkpointMillis = line.getLong("checkpointMillis");
         // Performance options.
-        Integer parallelism = line.getInteger("parallelism");
-        Integer maxParallelism = line.getInteger("maxParallelism");
-        Long bufferTimeoutMillis = line.getLong("bufferTimeoutMillis");
-        Long outOfOrdernessMillis = line.getLong("outOfOrdernessMillis");
-        Long idleTimeoutMillis = line.getLong("idleTimeoutMillis");
-        String partitionDiscoveryIntervalMs = line.get("partitionDiscoveryIntervalMs");
+        this.parallelism = line.getInteger("parallelism");
+        this.maxParallelism = line.getInteger("maxParallelism");
+        this.bufferTimeoutMillis = line.getLong("bufferTimeoutMillis");
+        this.outOfOrdernessMillis = line.getLong("outOfOrdernessMillis");
+        this.idleTimeoutMillis = line.getLong("idleTimeoutMillis");
+        this.partitionDiscoveryIntervalMs = line.get("partitionDiscoveryIntervalMs");
         // Sink options.
-        Boolean forceEnablePrintSink = line.getBoolean("forceEnablePrintSink");
-        String hTableName = line.get("hTableName");
-        Long bufferFlushMaxSizeInBytes = line.getLong("bufferFlushMaxSizeInBytes");
-        Long bufferFlushMaxRows = line.getLong("bufferFlushMaxRows");
-        Long bufferFlushIntervalMillis = line.getLong("bufferFlushIntervalMillis");
+        this.forceEnablePrintSink = line.getBoolean("forceEnablePrintSink");
         // Job options.
-        String jobName = line.get("jobName");
+        this.jobName = line.get("jobName");
+        return this;
+    }
 
-        Properties props = (Properties) System.getProperties().clone();
+    /**
+     * Configuring custom FLINK environment properties.
+     * 
+     * @return
+     */
+    protected void customProps(Properties props) {
+    }
+
+    /**
+     * Create FLINK source.
+     * 
+     * @return
+     */
+    protected abstract <T, S extends SourceSplit, E> Source<T, S, E> createSource();
+
+    /**
+     * Configuring custom FLINK data stream.
+     * 
+     * @return
+     */
+    protected abstract IamFlinkStreamingBase customStream(DataStreamSource<IamEvent> dataStream);
+
+    /**
+     * Handling job execution result.
+     * 
+     * @param result
+     */
+    protected void handleJobExecutionResult(JobExecutionResult result) {
+    }
+
+    @Override
+    public void run() {
+        this.props = (Properties) System.getProperties().clone();
         // props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,brokers);
         // props.setProperty(ConsumerConfig.GROUP_ID_CONFIG,groupId);
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#consumer-offset-committing
@@ -122,53 +180,38 @@ public class IamEventKafka2HBaseStreaming {
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#dynamic-partition-discovery
         props.setProperty(KafkaSourceOptions.PARTITION_DISCOVERY_INTERVAL_MS.key(), partitionDiscoveryIntervalMs);
 
-        // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#starting-offset
-        // Start from committed offset, also use EARLIEST as reset strategy if
-        // committed offset doesn't exist
-        OffsetsInitializer offsets = OffsetsInitializer.committedOffsets(OffsetResetStrategy.EARLIEST);
-        if (fromOffsetTime > 0) { // By-default
-            // Start from the first record whose timestamp is greater than
-            // or equals a timestamp.
-            offsets = OffsetsInitializer.timestamp(fromOffsetTime);
-        }
-        KafkaSource<IamEvent> source = KafkaSource.<IamEvent> builder()
-                .setBootstrapServers(brokers)
-                .setGroupId(groupId)
-                .setTopicPattern(Pattern.compile(topicPattern))
-                .setStartingOffsets(offsets)
-                .setClientIdPrefix(jobName)
-                .setProperties(props)
-                .setDeserializer(new IamEventKafkaRecordDeserializationSchema())
-                .build();
+        // Custom properties.
+        customProps(props);
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // see:https://github.com/apache/flink/blob/release-1.14.4/docs/content/docs/connectors/datastream/kafka.md#consumer-offset-committing
         if (nonNull(checkpointMode)) {
             env.enableCheckpointing(checkpointMillis, checkpointMode);
         }
-        DataStreamSource<IamEvent> stream = env.fromSource(source,
+        DataStreamSource<IamEvent> dataStream = env.fromSource(createSource(),
                 IamEventWatermarks.newWatermarkStrategy(ofMillis(outOfOrdernessMillis), ofMillis(idleTimeoutMillis)),
                 jobName.concat("Source"));
         if (parallelism > 0) {
-            stream.setParallelism(parallelism);
+            dataStream.setParallelism(parallelism);
         }
         if (maxParallelism > 0) {
-            stream.setMaxParallelism(maxParallelism);
+            dataStream.setMaxParallelism(maxParallelism);
         }
         if (bufferTimeoutMillis > 0) {
-            stream.setBufferTimeout(bufferTimeoutMillis);
+            dataStream.setBufferTimeout(bufferTimeoutMillis);
         }
 
         if (nonNull(forceEnablePrintSink) && forceEnablePrintSink) {
-            stream.addSink(new PrintSinkFunction<>());
+            dataStream.addSink(new PrintSinkFunction<>());
         } else {
-            Configuration conf = HBaseConfiguration.create();
-            IamEventToMutationConverter converter = new IamEventToMutationConverter("");
-            stream.addSink(new HBaseSinkFunction<>(hTableName, conf, converter, bufferFlushMaxSizeInBytes, bufferFlushMaxRows,
-                    bufferFlushIntervalMillis));
+            customStream(dataStream);
         }
 
-        env.execute(jobName);
+        try {
+            handleJobExecutionResult(env.execute(jobName));
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 }

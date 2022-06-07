@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.iam.rcm.eventbus.event;
+package com.wl4g.iam.rcm.eventbus.common;
 
 import static com.wl4g.infra.common.lang.Assert2.isTrueOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
@@ -25,14 +25,13 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.util.EventObject;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
@@ -62,7 +61,7 @@ public class IamEvent extends EventObject {
      *            authentication request, etc.
      * @param message
      */
-    public @JsonCreator IamEvent(@NotNull Object source, @Nullable String message) {
+    public IamEvent(@NotNull Object source, @Nullable String message) {
         this(currentTimeMillis(), null, source, message);
     }
 
@@ -78,10 +77,9 @@ public class IamEvent extends EventObject {
      *            authentication request, etc.
      * @param message
      */
-    public @JsonCreator IamEvent(@Min(0) long timestamp, @Nullable EventType eventType, @NotNull Object source,
-            @Nullable String message) {
+    public IamEvent(@Min(0) long timestamp, @Nullable EventType eventType, @NotNull Object source, @Nullable String message) {
         super(notNullOf(source, "source"));
-        this.modelProperties = new HashMap<>(8);
+        this.modelProperties = new LinkedHashMap<>(8);
         setTimestamp(timestamp);
         setEventType(eventType);
         setSource(source);
@@ -102,9 +100,10 @@ public class IamEvent extends EventObject {
      * 
      * @return
      */
-    public void setTimestamp(@Min(0) long timestamp) {
+    public IamEvent setTimestamp(@Min(0) long timestamp) {
         isTrueOf(timestamp > 0, format("timestamp > 0, but is: %s", timestamp));
         modelProperties.put("timestamp", timestamp);
+        return this;
     }
 
     /**
@@ -121,8 +120,9 @@ public class IamEvent extends EventObject {
      * 
      * @return
      */
-    public void setEventType(EventType eventType) {
+    public IamEvent setEventType(EventType eventType) {
         doPut("eventType", isNull(eventType) ? EventType.of(getClass()) : eventType);
+        return this;
     }
 
     /**
@@ -139,8 +139,9 @@ public class IamEvent extends EventObject {
      * 
      * @return
      */
-    public void setMessage(@Nullable String message) {
+    public IamEvent setMessage(@Nullable String message) {
         doPut("message", message);
+        return this;
     }
 
     /**
@@ -148,9 +149,10 @@ public class IamEvent extends EventObject {
      * 
      * @return
      */
-    public void setSource(@Nullable Object source) {
+    public IamEvent setSource(@Nullable Object source) {
         this.source = notNullOf("source", "source");
         doPut("source", source);
+        return this;
     }
 
     /**
@@ -205,6 +207,7 @@ public class IamEvent extends EventObject {
         EventType eventType = EventType.of(node.at("/eventType").asText());
         Object source = node.at("/source").asText();
         String message = node.at("/message").asText();
+        // return parseJSON(json, IamEvent.class);
         return new IamEvent(timestamp, eventType, source, message);
     }
 

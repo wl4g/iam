@@ -27,7 +27,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 
 import lombok.Getter;
 

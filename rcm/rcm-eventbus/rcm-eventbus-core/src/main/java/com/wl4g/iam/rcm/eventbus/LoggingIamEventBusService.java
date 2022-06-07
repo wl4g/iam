@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.wl4g.iam.rcm.eventbus.event.IamEvent;
+import com.wl4g.iam.rcm.eventbus.common.IamEvent;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;

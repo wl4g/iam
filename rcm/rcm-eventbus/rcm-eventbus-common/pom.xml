@@ -30,6 +30,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>iam-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
