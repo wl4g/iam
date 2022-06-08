@@ -41,10 +41,7 @@ public class IamEventTests {
     public void testIamEventFrom() {
         String json = "{\"eventType\":\"UNKNOWN\",\"source\":\"user1\",\"message\":\"successful\",\"timestamp\":1654589341786}";
         IamEventBase event = IamEventBase.from(json);
-        System.out.println(event.getTimestamp());
-        System.out.println(event.getEventType());
-        System.out.println(event.getSource());
-        System.out.println(event.getMessage());
+        System.out.println(event);
     }
 
 }
