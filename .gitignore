@@ -42,6 +42,7 @@ logs/
 *.log
 .gradle/
 build/
+output/
 out/
 *.ipr
 *.iws
