@@ -34,7 +34,7 @@ import sys
 # e.g:https://geo.datav.aliyun.com/areas_v3/bound/440118.json
 GEO_BASE_URI = "https://geo.datav.aliyun.com/areas_v3/bound/"
 FOR_LEVEL_LE = 3  # By default: level<=3
-INIT_DELAY = 10  # Initial delay seconds.
+INIT_DELAY = 3  # Initial delay seconds.
 MAX_RETRIES = 3  # Max attempts with 403
 BATCH_TASKS = 50  # Add batch tasks count.
 
@@ -75,11 +75,14 @@ def do_retries_fetch(base_uri, adcode, name, level):
         while retries <= MAX_RETRIES:
             retries += 1
             backoff = random.random() * INIT_DELAY * retries
+            time.sleep(backoff)  # Prevent request limiting.
             print("Fetching of delay %ds for %s/%s/%s ..." %
                   (backoff, adcode, name, level))
             resp = do_fetch(url, outputFile, adcode, name, level)
-            if resp.status == 403:  # Has been limiting?
-                time.sleep(backoff)  # Prevent request limiting.
+            if resp.status == 200:
+                break
+            elif resp.status == 403:  # Has been limiting?
+                time.sleep(backoff)
     except Exception as e:
         print("Failed to fetch for %s/%s. reason: %s" % (name, suffix, e))
         with open(outputFile + ".err", "w", encoding="utf-8") as geofile:
