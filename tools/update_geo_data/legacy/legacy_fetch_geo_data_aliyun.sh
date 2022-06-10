@@ -39,7 +39,7 @@ function downloadAll() {
     local batchTaskArguments=[]
     local count=0
     local index=0
-    for line in `cat $BASE_DIR/adcode_cn.csv`; do
+    for line in `cat $BASE_DIR/../adcode_cn.csv`; do
       ((count+=1))
       if [[ $count == 1 || -n "$(echo $line|grep -E '^#')" ]]; then
         continue # Skip head or annotation rows.

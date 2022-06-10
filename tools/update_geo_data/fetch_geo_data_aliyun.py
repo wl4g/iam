@@ -57,7 +57,8 @@ def downLoad(base_uri, adcode, name, level):
     except Exception as e:
         print("Failed to download for %s. reason: %s" % (suffix, e))
         with open(OUTPUT_DIR + suffix + ".err", "w", encoding="utf-8") as geofile:
-            geofile.write("Failed to download for %s" % url)
+            geofile.write(
+                "ERROR: Failed to download for %s, caused by: %s" % (url, e))
             geofile.close
 
 
