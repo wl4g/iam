@@ -10,7 +10,7 @@
 │       ├── executor.sh  ## The concurrent executor tool implemented in pure shell.
 │       └── legacy_fetch_geodata_from_aliyun.sh  ## Pure shell implements of concurrently fetch China geodata from Alibyun (only China is supported)
 ├── area_global.csv  ## Fetch metadata of global geo data from GADM.
-├── fetch_geodata_from_gadm.py  ## 
+├── fetch_geodata_from_gadm.py  ## Fetich global geographic data from GADM.
 ```
 
 ## Quick start

@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+
+# The http dependency.
+requests==2.22.0
+#curlify==2.2.1
+
+# The gevent dependency.
+gevent==21.12.0
+
+# The opentelemetry dependency.
+#opentelemetry-api==1.5.0
+#opentelemetry-sdk==1.5.0
+#opentelemetry-exporter-otlp==1.5.0
+#opentelemetry-instrumentation-django==0.24b0
+#opentelemetry-instrumentation-elasticsearch==0.24b0
+#opentelemetry-instrumentation-dbapi==0.24b0
+#opentelemetry-instrumentation-redis==0.24b0
+#opentelemetry-instrumentation-requests==0.24b0
+#opentelemetry-instrumentation-celery==0.24b0
+#opentelemetry-instrumentation-logging==0.24b0

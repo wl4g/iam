@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
+import time
 import urllib.request
 from gevent import monkey
 import gevent
@@ -40,7 +42,9 @@ def downLoad(base_uri, adcode, name, level):
     if int(level) >= 2:
         suffix = adcode + ".json"
     url = base_uri + suffix
-    print('Downlaoding for %s/%s/%s' % (adcode, name, level))
+    print('Downlaodin11g for %s/%s/%s ...' % (adcode, name, level))
+    time.sleep(random.random() * 3)  # Prevent request limiting.
+    print('Downlaoding for %s/%s/%s ...' % (adcode, name, level))
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3941.4 Safari/537.36'
