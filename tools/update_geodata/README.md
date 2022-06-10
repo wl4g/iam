@@ -4,11 +4,12 @@
 
 ```txt
 ├── china
-│   ├── area_cn.csv  ## 
+│   ├── area_cn.csv  ## Fetch metadata of China geo data from Aliyun.
 │   ├── fetch_geodata_from_aliyun.py  ## 
 │   └── legacy  ## Legacy outdated fetch scripts.
 │       ├── executor.sh  ## The concurrent executor tool implemented in pure shell.
 │       └── legacy_fetch_geodata_from_aliyun.sh  ## Pure shell implements of concurrently fetch China geodata from Alibyun (only China is supported)
+├── area_global.csv  ## Fetch metadata of global geo data from GADM.
 ├── fetch_geodata_from_gadm.py  ## 
 ```
 
