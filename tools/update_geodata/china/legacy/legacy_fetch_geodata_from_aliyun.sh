@@ -80,10 +80,9 @@ function doDownload() {
     local suffixList="$3"
     for ((i=0;i<${#suffixList[@]};i++)); do
       local suffix=${suffixList[i]}
-    #   sleep $(($RANDOM/9731))
+      sleep $(($RANDOM/9731))  ## Prevent request limiting
       echo "[$(date '+%Y-%m-%d %H:%M:%S')] [tid-$taskId/idx-$index] - downloading for $suffix ..."
-    #   curl -sLO "${GEO_BASE_URL}/${suffix}"
-      touch $suffix
+      curl -sLO "${GEO_BASE_URL}/${suffix}"
     done
 }
 
