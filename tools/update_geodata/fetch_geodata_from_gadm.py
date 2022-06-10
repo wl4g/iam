@@ -21,7 +21,6 @@ import csv
 import os
 import sys
 import signal
-monkey.patch_all()  # Required for time-consuming operations
 
 # see:https://gadm.org/download_country_v3.html
 # see:https://gadm.org/download_country.html
@@ -30,16 +29,22 @@ monkey.patch_all()  # Required for time-consuming operations
 # e.g:https://geodata.ucdavis.edu/gadm/gadm4.0/shp/gadm40_JPN_shp.zip
 # e.g:https://geodata.ucdavis.edu/gadm/gadm4.0/shp/gadm40_GBR_shp.zip
 GEO_BASE_URI = "https://geodata.ucdavis.edu/gadm/gadm4.0/shp/"
-DOWNLOAD_LEVEL_LE = 3  # By default: level<=3
-CURRDIR = os.getcwd()
-OUTPUT_DIR = CURRDIR + "/output/"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+BATCH_TASKS = 10  # Add batch tasks count.
+
+os.environ['GEVENT_SUPPORT'] = 'True'
+monkey.patch_all()  # Required for time-consuming operations
+
+# current_dir = os.getcwd()
+entrypoint_dir, entrypoint_file = os.path.split(
+    os.path.abspath(sys.argv[0]))
+output_dir = entrypoint_dir + "/output/"
+os.makedirs(output_dir, exist_ok=True)
 
 
-def downLoad(base_uri, adcode, name):
+def do_fetch(base_uri, adcode, name):
     suffix = "gadm40_" + name[0:3].upper() + "_shp.zip"
     url = base_uri + suffix
-    saveFilename = OUTPUT_DIR + suffix
+    saveFilename = output_dir + suffix
     print('Fetching for %s/%s' % (adcode, name))
     try:
         urllib.request.urlretrieve(url, saveFilename)
@@ -51,8 +56,8 @@ def downLoad(base_uri, adcode, name):
             geofile.close
 
 
-def download_all(base_uri, download_level):
-    with open(CURRDIR + "/area_global.csv", "r", encoding="utf-8") as csvfile:
+def fetch_all():
+    with open(entrypoint_dir + "/area_global.csv", "r", encoding="utf-8") as csvfile:
         greenlets = []
         batchs = 0
         reader = csv.reader(csvfile)
@@ -60,21 +65,24 @@ def download_all(base_uri, download_level):
         for row in reader:
             adcode = row[0]
             name = row[1]
+
             # for testing
             # print("add task for '%s/%s'" % (adcode, name))
-            # downLoad(base_uri, adcode, name)
-            greenlets.append(gevent.spawn(downLoad, base_uri, adcode, name))
-            if len(greenlets) % 10 == 0:
+            # do_fetch(GEO_BASE_URI, adcode, name)
+
+            greenlets.append(gevent.spawn(
+                do_fetch, GEO_BASE_URI, adcode, name))
+            if len(greenlets) % BATCH_TASKS == 0:
                 batchs += 1
                 print("[%d] Submit batch tasks ..." % (batchs))
                 gevent.joinall(greenlets, timeout=30)
 
 
 if __name__ == "__main__":
-    print('Starting GADMGeoDataFetcher ...')
+    print('Starting GADM GeoData Fetcher ...')
     try:
         os.nice(5)
-        download_all(GEO_BASE_URI, DOWNLOAD_LEVEL_LE)
+        fetch_all()
     except KeyboardInterrupt:
         print("Cancel fetch tasks ...")
         # gevent.killall()

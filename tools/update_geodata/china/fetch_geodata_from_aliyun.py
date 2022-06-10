@@ -23,7 +23,9 @@ import csv
 import os
 import sys
 import signal
-monkey.patch_all()  # Required for time-consuming operations
+import os
+import sys
+
 
 # see:https://datav.aliyun.com/portal/school/atlas/area_selector
 # e.g:https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json
@@ -32,12 +34,18 @@ monkey.patch_all()  # Required for time-consuming operations
 # e.g:https://geo.datav.aliyun.com/areas_v3/bound/440118.json
 GEO_BASE_URI = "https://geo.datav.aliyun.com/areas_v3/bound/"
 FOR_LEVEL_LE = 3  # By default: level<=3
-INIT_DELAY = 3  # Initial delay seconds.
+INIT_DELAY = 10  # Initial delay seconds.
 MAX_RETRIES = 3  # Max attempts with 403
-CURRDIR = os.getcwd()
-OUTPUT_DIR = CURRDIR + "/output/"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+BATCH_TASKS = 50  # Add batch tasks count.
+
 os.environ['GEVENT_SUPPORT'] = 'True'
+monkey.patch_all()  # Required for time-consuming operations
+
+# current_dir = os.getcwd()
+entrypoint_dir, entrypoint_file = os.path.split(
+    os.path.abspath(sys.argv[0]))
+output_dir = entrypoint_dir + "/output/"
+os.makedirs(output_dir, exist_ok=True)
 
 
 def do_fetch(url, outputFile, adcode, name, level):
@@ -61,19 +69,19 @@ def do_retries_fetch(base_uri, adcode, name, level):
     if int(level) >= 2:
         suffix = adcode + ".json"
     url = base_uri + suffix
-    outputFile = OUTPUT_DIR + suffix
+    outputFile = output_dir + suffix
     try:
         retries = 0
         while retries <= MAX_RETRIES:
             retries += 1
+            backoff = random.random() * INIT_DELAY * retries
+            print("Fetching of delay %ds for %s/%s/%s ..." %
+                  (backoff, adcode, name, level))
             resp = do_fetch(url, outputFile, adcode, name, level)
             if resp.status == 403:  # Has been limiting?
-                backoff = random.random() * INIT_DELAY * retries
-                print("Fetching of delay '%d' for %s/%s/%s ..." %
-                      (backoff, adcode, name, level))
                 time.sleep(backoff)  # Prevent request limiting.
     except Exception as e:
-        print("Failed to fetch for %s. reason: %s" % (suffix, e))
+        print("Failed to fetch for %s/%s. reason: %s" % (name, suffix, e))
         with open(outputFile + ".err", "w", encoding="utf-8") as geofile:
             geofile.write(
                 "ERROR: Failed to fetch for %s, caused by: %s" % (url, e))
@@ -81,7 +89,7 @@ def do_retries_fetch(base_uri, adcode, name, level):
 
 
 def fetch_all():
-    with open(CURRDIR + "/china/area_cn.csv", "r", encoding="utf-8") as csvfile:
+    with open(entrypoint_dir + "/area_cn.csv", "r", encoding="utf-8") as csvfile:
         greenlets = []
         batchs = 0
         reader = csv.reader(csvfile)
@@ -91,20 +99,22 @@ def fetch_all():
             # parent = row[1]
             name = row[2]
             level = row[3]
-            # print("add task for '%s/%s/%s/%s'" % (adcode, parent, name, level))
-            do_retries_fetch(GEO_BASE_URI, adcode, name, level)
 
-            # if int(level) <= FOR_LEVEL_LE:
-            #     greenlets.append(gevent.spawn(
-            #         do_retries_fetch, GEO_BASE_URI, adcode, name, level))
-            # if len(greenlets) % 50 == 0:
-            #     batchs += 1
-            #     print("[%d] Submit batch tasks ..." % (batchs))
-            #     gevent.joinall(greenlets, timeout=30)
+            # for testing.
+            # print("add task for '%s/%s/%s/%s'" % (adcode, parent, name, level))
+            # do_retries_fetch(GEO_BASE_URI, adcode, name, level)
+
+            if int(level) <= FOR_LEVEL_LE:
+                greenlets.append(gevent.spawn(
+                    do_retries_fetch, GEO_BASE_URI, adcode, name, level))
+            if len(greenlets) % BATCH_TASKS == 0:
+                batchs += 1
+                print("[%d] Submit batch tasks ..." % (batchs))
+                gevent.joinall(greenlets, timeout=30)
 
 
 if __name__ == "__main__":
-    print('Starting AliyunGeoDataFetcher ...')
+    print('Starting Aliyun GeoData Fetcher ...')
     try:
         os.nice(5)
         fetch_all()
