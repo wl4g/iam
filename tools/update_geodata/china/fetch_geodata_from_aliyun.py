@@ -31,67 +31,83 @@ monkey.patch_all()  # Required for time-consuming operations
 # e.g:https://geo.datav.aliyun.com/areas_v3/bound/440100_full.json
 # e.g:https://geo.datav.aliyun.com/areas_v3/bound/440118.json
 GEO_BASE_URI = "https://geo.datav.aliyun.com/areas_v3/bound/"
-DOWNLOAD_LEVEL_LE = 3  # By default: level<=3
+FOR_LEVEL_LE = 3  # By default: level<=3
+INIT_DELAY = 3  # Initial delay seconds.
+MAX_RETRIES = 3  # Max attempts with 403
 CURRDIR = os.getcwd()
 OUTPUT_DIR = CURRDIR + "/output/"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.environ['GEVENT_SUPPORT'] = 'True'
 
 
-def downLoad(base_uri, adcode, name, level):
+def do_fetch(url, outputFile, adcode, name, level):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3941.4 Safari/537.36'
+    }
+    req = urllib.request.Request(url, headers=headers)
+    resp = urllib.request.urlopen(req, timeout=5)
+    if resp.status == 200:
+        data = resp.read()
+        with open(outputFile, "w", encoding="utf-8") as geofile:
+            geofile.write(data.decode('UTF-8'))
+            geofile.close
+    else:
+        raise RuntimeError("Response status %s is invalid" % resp.status)
+    return resp
+
+
+def do_retries_fetch(base_uri, adcode, name, level):
     suffix = adcode + "_full.json"
     if int(level) >= 2:
         suffix = adcode + ".json"
     url = base_uri + suffix
-    print('Downlaodin11g for %s/%s/%s ...' % (adcode, name, level))
-    time.sleep(random.random() * 3)  # Prevent request limiting.
-    print('Downlaoding for %s/%s/%s ...' % (adcode, name, level))
+    outputFile = OUTPUT_DIR + suffix
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3941.4 Safari/537.36'
-        }
-        req = urllib.request.Request(url, headers=headers)
-        resp = urllib.request.urlopen(req, timeout=5)
-        if resp.status == 200:
-            data = resp.read()
-            with open(OUTPUT_DIR + suffix, "w", encoding="utf-8") as geofile:
-                geofile.write(data.decode('UTF-8'))
-                geofile.close
-        else:
-            raise RuntimeError("Response status %s is invalid" % resp.status)
+        retries = 0
+        while retries <= MAX_RETRIES:
+            retries += 1
+            resp = do_fetch(url, outputFile, adcode, name, level)
+            if resp.status == 403:  # Has been limiting?
+                backoff = random.random() * INIT_DELAY * retries
+                print("Fetching of delay '%d' for %s/%s/%s ..." %
+                      (backoff, adcode, name, level))
+                time.sleep(backoff)  # Prevent request limiting.
     except Exception as e:
         print("Failed to fetch for %s. reason: %s" % (suffix, e))
-        with open(OUTPUT_DIR + suffix + ".err", "w", encoding="utf-8") as geofile:
+        with open(outputFile + ".err", "w", encoding="utf-8") as geofile:
             geofile.write(
                 "ERROR: Failed to fetch for %s, caused by: %s" % (url, e))
             geofile.close
 
 
-def download_all(base_uri, download_level):
-    with open(CURRDIR + "/area_cn.csv", "r", encoding="utf-8") as csvfile:
+def fetch_all():
+    with open(CURRDIR + "/china/area_cn.csv", "r", encoding="utf-8") as csvfile:
         greenlets = []
         batchs = 0
         reader = csv.reader(csvfile)
         headers = next(reader)
         for row in reader:
             adcode = row[0]
-            parent = row[1]
+            # parent = row[1]
             name = row[2]
             level = row[3]
             # print("add task for '%s/%s/%s/%s'" % (adcode, parent, name, level))
-            if int(level) <= download_level:
-                greenlets.append(gevent.spawn(
-                    downLoad, base_uri, adcode, name, level))
-            if len(greenlets) % 50 == 0:
-                batchs += 1
-                print("[%d] Submit batch tasks ..." % (batchs))
-                gevent.joinall(greenlets, timeout=30)
+            do_retries_fetch(GEO_BASE_URI, adcode, name, level)
+
+            # if int(level) <= FOR_LEVEL_LE:
+            #     greenlets.append(gevent.spawn(
+            #         do_retries_fetch, GEO_BASE_URI, adcode, name, level))
+            # if len(greenlets) % 50 == 0:
+            #     batchs += 1
+            #     print("[%d] Submit batch tasks ..." % (batchs))
+            #     gevent.joinall(greenlets, timeout=30)
 
 
 if __name__ == "__main__":
     print('Starting AliyunGeoDataFetcher ...')
     try:
         os.nice(5)
-        download_all(GEO_BASE_URI, DOWNLOAD_LEVEL_LE)
+        fetch_all()
     except KeyboardInterrupt:
         print("Cancel fetch tasks ...")
         # gevent.killall()
