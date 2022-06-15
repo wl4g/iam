@@ -57,5 +57,4 @@ rebel-remote.xml/show-service/
 classes
 *.class
 MANIFEST.MF
-*.csv
 *.cache*
