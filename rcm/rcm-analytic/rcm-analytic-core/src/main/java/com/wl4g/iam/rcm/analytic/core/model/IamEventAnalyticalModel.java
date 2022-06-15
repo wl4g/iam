@@ -79,21 +79,15 @@ public class IamEventAnalyticalModel {
     private String principal;
 
     /**
-     * Event remote client IP.
+     * Event remote client IP geographic information.
      */
     @JsonProperty(index = 40)
-    private String remoteIp;
-
-    /**
-     * Event remote client IP coordinates.
-     */
-    @JsonProperty(index = 50)
-    private String coordinates;
+    private IpGeoInformation ipGeoInfo;
 
     /**
      * Event message.
      */
-    @JsonProperty(index = 60)
+    @JsonProperty(index = 50)
     private String message;
 
     /**
@@ -142,6 +136,70 @@ public class IamEventAnalyticalModel {
         model.setMessage(event.getMessage());
         model.setAttributes(event.getAttributes());
         return model;
+    }
+
+    /**
+     * IP geographic information.
+     *
+     * for example:
+     * 
+     * <pre>
+     *  IP2LocationRecord:
+     *      IP Address = 1.1.1.1
+     *      Country Short = US
+     *      Country Long = United States of America
+     *      Region = California
+     *      City = Los Angeles
+     *      ISP = Not_Supported
+     *      Latitude = 34.05223
+     *      Longitude = -118.24368
+     *      Domain = Not_Supported
+     *      ZipCode = 90001
+     *      TimeZone = -07:00
+     *      NetSpeed = Not_Supported
+     *      IDDCode = Not_Supported
+     *      AreaCode = Not_Supported
+     *      WeatherStationCode = Not_Supported
+     *      WeatherStationName = Not_Supported
+     *      MCC = Not_Supported
+     *      MNC = Not_Supported
+     *      MobileBrand = Not_Supported
+     *      Elevation = 0.0
+     *      UsageType = Not_Supported
+     *      AddressType = Not_Supported
+     *      Category = Not_Supported
+     * </pre>
+     */
+    @Getter
+    @Setter
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IpGeoInformation {
+        private String ip;
+        private String countryShort;
+        private String countryLong;
+        private String region;
+        private String city;
+        private String isp;
+        private String latitude;
+        private String longitude;
+        private String domain;
+        private String zipCode;
+        private String timeZone;
+        private String netSpeed;
+        private String iddCode;
+        private String areaCode;
+        private String weatherStationCode;
+        private String weatherStationName;
+        private String mcc;
+        private String mnc;
+        private String mobileBrand;
+        private String elevation;
+        private String usageType;
+        private String addressType;
+        private String category;
     }
 
     /**

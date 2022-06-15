@@ -36,6 +36,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -165,16 +166,18 @@ public abstract class IamEventBase extends EventObject {
     }
 
     @Getter
+    @AllArgsConstructor
     public static enum EventType {
+        AUTHC_SUCCESS(0),
 
-        AUTHC_FAILURE,
+        AUTHC_FAILURE(1),
 
         // AUTHC_FAILURE_WITH_CREDENTIALS,
         // AUTHC_FAILURE_WITH_RISK,
 
-        AUTHC_SUCCESS,
+        UNKNOWN(9);
 
-        UNKNOWN;
+        private final int code;
 
         public static EventType of(String eventName) {
             for (EventType et : values()) {

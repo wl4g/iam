@@ -21,6 +21,7 @@ import org.apache.hadoop.hbase.client.Mutation;
 import org.junit.Test;
 
 import com.wl4g.iam.rcm.analytic.core.model.IamEventAnalyticalModel;
+import com.wl4g.iam.rcm.analytic.core.model.IamEventAnalyticalModel.IpGeoInformation;
 import com.wl4g.iam.rcm.eventbus.common.IamEventBase.EventType;
 
 /**
@@ -38,8 +39,12 @@ public class EventToMutationConverterTests {
                 .timestamp(currentTimeMillis())
                 .eventType(EventType.AUTHC_SUCCESS)
                 .principal("jack_6")
-                .remoteIp("2.2.28.22")
-                .coordinates("113.26268,20.18610")
+                .ipGeoInfo(IpGeoInformation.builder()
+                        .ip("2.2.28.22")
+                        .latitude("111.234235")
+                        .longitude("20.124521")
+                        .countryShort("CN")
+                        .build())
                 .message("my message 6")
                 .build();
 

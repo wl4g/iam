@@ -20,6 +20,7 @@ import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.StringUtils2.getBytes;
 import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.lang.reflect.Field;
 
@@ -59,7 +60,7 @@ public class EventToMutationConverter implements HBaseMutationConverter<IamEvent
     @Override
     public Mutation convertToMutation(@NotNull IamEventAnalyticalModel record) {
         notNullOf(record, "record");
-        Put put = new Put(generateRowKey(record));
+        Put put = new Put(generateRowkey(record));
         for (Field f : IamEventAnalyticalModel.ORDERED_FIELDS) {
             byte[] value = nullStringBytes;
             Object v = getField(f, record, true);
@@ -71,16 +72,82 @@ public class EventToMutationConverter implements HBaseMutationConverter<IamEvent
         return put;
     }
 
-    protected byte[] generateRowKey(@NotNull IamEventAnalyticalModel record) {
+    protected byte[] generateRowkey(@NotNull IamEventAnalyticalModel record) {
         // Use reversed time strings to avoid data hotspots.
-        String dateTime = DateFormatUtils.format(record.getTimestamp(), "SSSssmmHHddMMyy");
-        return new StringBuilder().append(dateTime)
+        String reverseDate = DateFormatUtils.format(record.getTimestamp(), "SSSssmmHHddMMyy");
+
+        // TODO transform to standard city/region/country name.
+        //
+        return new StringBuilder().append(reverseDate) // when
+                // who
                 .append(",")
                 .append(record.getPrincipal())
+                // what
                 .append(",")
-                .append(record.getEventType().name().toLowerCase())
+                .append(record.getEventType().getCode())
+                // where
+                .append(",")
+                .append(getGeoCityKey(record))
+                .append(",")
+                .append(getGeoRegionKey(record))
+                .append(",")
+                .append(getGeoCountryKey(record))
                 .toString()
                 .getBytes(UTF_8);
     }
+
+    protected String getGeoCityKey(@NotNull IamEventAnalyticalModel record) {
+        return fixFieldKey(record.getIpGeoInfo().getCity());
+    }
+
+    protected String getGeoRegionKey(@NotNull IamEventAnalyticalModel record) {
+        return fixFieldKey(record.getIpGeoInfo().getRegion());
+    }
+
+    protected String getGeoCountryKey(@NotNull IamEventAnalyticalModel record) {
+        return fixFieldKey(record.getIpGeoInfo().getCountryShort());
+    }
+
+    /**
+     * Fix for example:
+     * 
+     * <pre>
+     *  IP2LocationRecord:
+     *      IP Address = 1.1.1.1
+     *      Country Short = US
+     *      Country Long = United States of America
+     *      Region = California
+     *      City = Los Angeles
+     *      ISP = Not_Supported
+     *      Latitude = 34.05223
+     *      Longitude = -118.24368
+     *      Domain = Not_Supported
+     *      ZipCode = 90001
+     *      TimeZone = -07:00
+     *      NetSpeed = Not_Supported
+     *      IDDCode = Not_Supported
+     *      AreaCode = Not_Supported
+     *      WeatherStationCode = Not_Supported
+     *      WeatherStationName = Not_Supported
+     *      MCC = Not_Supported
+     *      MNC = Not_Supported
+     *      MobileBrand = Not_Supported
+     *      Elevation = 0.0
+     *      UsageType = Not_Supported
+     *      AddressType = Not_Supported
+     *      Category = Not_Supported
+     * </pre>
+     **/
+    protected String fixFieldKey(String field) {
+        String cleanFieldKey = trimToEmpty(field).toLowerCase().replace(" ", "_");
+
+        // Limit field max length.
+        if (cleanFieldKey.length() > DEFAULT_MAX_ROWKEY_FIELD_LENGTH) {
+            cleanFieldKey = cleanFieldKey.substring(0, DEFAULT_MAX_ROWKEY_FIELD_LENGTH);
+        }
+        return cleanFieldKey;
+    }
+
+    public static final int DEFAULT_MAX_ROWKEY_FIELD_LENGTH = 24;
 
 }
