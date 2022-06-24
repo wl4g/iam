@@ -17,6 +17,7 @@ package com.wl4g.iam.gateway.logging;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.lang.FastTimeClock.currentTimeMillis;
+import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
@@ -43,6 +44,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
+import org.springframework.expression.EvaluationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -52,6 +54,7 @@ import com.google.common.base.Predicates;
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.lang.TypeConverts;
+import com.wl4g.infra.common.web.WebUtils.WebRequestExtractor;
 import com.wl4g.infra.core.constant.CoreInfraConstants;
 import com.wl4g.infra.core.logging.LoggingMessageUtil;
 import com.wl4g.infra.core.logging.reactive.BaseLoggingWebFilter;
@@ -78,6 +81,16 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
         this.loggingConfig = notNullOf(loggingConfig, "loggingConfig");
         // Build gray request matcher.
         this.requestMatcher = new SpelRequestMatcher(loggingConfig.getPreferMatchRuleDefinitions());
+        // Check expression.
+        try {
+            // Pre-compile and warm up to evaluate checks at service startup,
+            // and avoid performance issues at runtime for unexpected errors,
+            // such as throwing stack information when evaluating exceptions.
+            this.requestMatcher.matches(new WebRequestExtractor() {
+            }, loggingConfig.getPreferOpenMatchExpression());
+        } catch (EvaluationException e) {
+            throw new EvaluationException(format("Invalid evaluation expression for reason: %s", e.getMessage()), e);
+        }
     }
 
     /**
@@ -115,7 +128,7 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
 
         // Sets the state of the dyed log request to notify the back-end
         // services to print the log for the current request.
-        request.mutate().header(loggingConfig.getSetDyeingLogStateRequestHeader(), traceId).build();
+        request.mutate().header(loggingConfig.getDyeingLogStateRequestHeader(), traceId).build();
 
         return doFilterInternal(exchange, chain, headers, traceId, requestMethod);
     }
@@ -144,8 +157,19 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
         Map<String, Supplier<Predicate<String>>> routeIdPredicateSupplier = singletonMap(VAR_ROUTE_ID,
                 () -> (Predicate<String>) Predicates.equalTo(route.getId()));
 
-        return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier);
+        try {
+            // Check if printing the log of the current request is enabled based
+            // on the current request parameters.
+            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier)
+                    || (determineRequestVerboseLevel(exchange) >= 10
+                            && requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                                    exchange.getRequest().getHeaders().getFirst(loggingConfig.getDyeingLogStateRequestHeader()),
+                                    routeIdPredicateSupplier));
+        } catch (Exception e) {
+            log.warn("Evaluating failed, logging disabled by default, reason: %s", e.getMessage());
+            return false;
+        }
     }
 
     /**

@@ -61,11 +61,11 @@ public class LoggingProperties {
     private String verboseLevelRequestHeader = "X-Iscg-Log-Level";
 
     /**
-     * Set the status header name of the dyed log request, which is used to
-     * notify the back-end services to enable log printing for the current
-     * request.
+     * The status additional header name of the dyed log request, e.g which is
+     * used to notify the back-end services to enable log printing for the
+     * current request.
      */
-    private String setDyeingLogStateRequestHeader = "X-Iscg-Log-Dyeing-State";
+    private String dyeingLogStateRequestHeader = "X-Iscg-Log-Dyeing-State";
 
     /**
      * In order to prevent the request body data from being too large, only the
