@@ -1,33 +1,34 @@
-|                        Feature                     |  DoPaaS IAM  | KeyCloak  |
+|                        Feature                     |  IAM  | KeyCloak  |
 | ---------------------------------------------- | ------------------- | -------------- |
-| oidc 1.0 支持  | √√  |  √√ |
-| 为每个客户端独立配置(如: oidc access_token sign alg) | √√  | √√  |
-| 默认支持国外主流 Identity Privoder |  √√ | √√  |
-| 默认支持国内主流 Identity Privoder(如: Wechat) |  √√ | x  |
-| 支持动态 Roles/socpes 映射  |  √√ | √√  |
-| 支持精细化 Identity Privoder 请求代理(如: 仅连接到 github social 认证时走 http/socks proxy)  |  √√ | x  |
-| 默认内嵌 H2 数据库 |  50% |  √√ |
-| 默认支持 Redis Cluster 缓存  | √√  | x  |
-| 默认支持 Captcha 附加验证  | √√  | ?  |
-| 默认支持 Jigsaw 滑块附加验证  | √√  | x  |
-| 默认支持 SMS 附加验证  | √√  | x  |
-| 默认支持 Dict 爆破自动检测锁定  | √√  | √√  |
-| 默认支持自动识别登录IP退出 (仅 FastCas 模式下 iam-server/iam-client-springboot 支持)  | √  | x  |
-| 默认支持密码登录时双向 RSA/ECDSA 加密(如: 登录提交时是否将password字段明文在表单中传递)  | √√  | x  |
-| 对 Spring 生态友好  |  √√ | x  |
-| 支持 Gateway 部署(如: 对开放式业务 API 服务的认证/计费/限流/路由一站式管理) |  90% | x  |
-| 支持 Docker 部署  |  √√ | √√  |
-| 支持 Helm 部署  |  80% | x  |   |
-| 支持 Kubernetes 部署  |  80% | √  |   |
-| (高性能)支持基于 Spring Native 微服务分布式部署  | 50% | x  |   |
-| 支持基于 Feign + Spring Boot 微服务分布式部署  | √√  | x  |
-| 支持基于 Feign + Spring Boot + Istio 微服务分布式部署  | 80%  | x  |
-| 支持基于 Feign + Spring Cloud 微服务分布式部署  | √√  | x  |
-| 支持基于 Feign + Dubbo 微服务分布式部署  | 80%  | x  |
-| 支持私有认证协议 (如: Fast Cas) |  √√ |  x |
-| 支持基于 (Kafka/Pulsar/RocketMQ) + Flink (异常)事件实时分析告警 | 50%  | x  |
-| saml2.0 支持  | x  |  √√ |
-| ldap 支持  | x  |  √√ |
-| kerberos 支持  | x  |  √√ |
+| oidc 1.0 support | √√ | √√ |
+| Independent configuration for each client (eg: oidc access_token sign alg) | √√ | √√ |
+| Support foreign mainstream Identity Privoder by default | √√ | √√ |
+| Default supports domestic mainstream Identity Privoder (eg: Wechat) | √√ | x |
+| Support dynamic Roles/socpes mapping | √√ | √√ |
+| Support refined Identity Privoder request proxy (eg: http/socks proxy only when connecting to github social authentication) | √√ | x |
+| Default embedded H2 database | 50% | √√ |
+| Support Redis Cluster cache by default | √√ | x |
+| Support Captcha additional authentication by default | √√ | ? |
+| Support Jigsaw slider additional validation by default | √√ | x |
+| Support SMS additional authentication by default | √√ | x |
+| By default, Dict blasting is automatically detected and locked | √√ | √√ |
+| By default, it supports automatic identification of login IP and exit (only supported by iam-server/iam-client-springboot in FastCas mode) | √ | x |
+| By default, two-way RSA/ECDSA encryption is supported during password login (eg: whether to pass the password field in plain text in the form when logging in and submit) | √√ | x |
+| Eco friendly to Spring | √√ | x |
+| Support Gateway deployment (eg: one-stop management of authentication/billing/current limiting/routing for open business API services) | 90% | x |
+| Support Docker deployment | √√ | √√ |
+| Supports Helm deployment | 80% | x | |
+| Support Kubernetes deployment | 80% | √ | |
+| (High performance) Support distributed deployment based on Spring Native microservices | 50% | x | |
+| Support distributed deployment of microservices based on Feign + Spring Boot | √√ | x |
+| Support distributed deployment of microservices based on Feign + Spring Boot + Istio | 80% | x |
+| Support distributed deployment of microservices based on Feign + Spring Cloud | √√ | x |
+| Support distributed deployment based on Feign + Dubbo microservices | 80% | x |
+| Support private authentication protocol (eg: Fast Cas) | √√ | x |
+| Support real-time alarm analysis based on (Kafka/Pulsar/RocketMQ) + Flink (abnormal) events | 50% | x |
+| saml2.0 support | x | √√ |
+| ldap support | x | √√ |
+| kerberos support | x | √√ |
+| Front-end unified entry (that is, when there are multiple external client applications, dynamic menus can be configured to integrate the front-end pages of these systems, breaking IAM as an authorized interface service, which is especially suitable for enterprise-level applications Unified authentication and integration of multiple systems) | √√ | x |
 
-- 说明：其中 `√` 表示支持；`√√` 表示支持完善；`x` 表示不支持；`?` 表示不确定是否支持；如 `80%` 表示已开发完善成度。
+- Description: `√` means support; `√√` means complete support; `x` means no support; `?` means not sure whether it is supported; for example, `80%` means it has been developed to a complete degree.

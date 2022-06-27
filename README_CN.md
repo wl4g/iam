@@ -44,7 +44,7 @@ English version goes [here](README.md)
 - 13. 支持多种模式部署运行（cluster模式）：将认证中心与业务应用和认证客户端分离，即，IAM client与BizApp在同一JVM进程，IAM server在一个进程，适合微服务或跨站跨域的多应用需要统一认证的情况。
 - 14. 支持多种模式部署运行（gateway模式）：与cluster类似，区别是将认证客户端放到了网关，使BizApp专注于提供业务服务，实现了网关、业务应用、认证中心的完全分离， 即，gateway+IAM client、BizApp、IAM server，非常适合完全微服务架构的认证中心部署（量身定制）
 - 15. OIDC 支持
-- 16. 对比 [keycloak](https://github.com/keycloak/keycloak-quickstarts) [请参考这里](VS_KEYCLOAK.md)
+- 16. 对比 [keycloak](https://github.com/keycloak/keycloak-quickstarts) [请参考这里](VS_KEYCLOAK_CN.md)
 
 ## 2. 服务端部署
 

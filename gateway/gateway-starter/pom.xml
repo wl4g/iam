@@ -394,12 +394,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-indexer</artifactId>
 		</dependency>
-		<!-- TODO 暂时注释，还需在未升级到jdk11的jdk8服务器上运行 -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.experimental</groupId> -->
-		<!-- <artifactId>spring-native</artifactId> -->
-		<!-- <version>${spring-native.version}</version> -->
-		<!-- </dependency> -->
 		<!-- Tests -->
 		<dependency>
 			<groupId>io.projectreactor</groupId>
@@ -567,6 +561,14 @@
 		</profile>
 		<profile>
 			<id>build:native</id>
+			<dependencies>
+				<!-- Note: minimum requirement jdk11+ -->
+				<dependency>
+					<groupId>org.springframework.experimental</groupId>
+					<artifactId>spring-native</artifactId>
+					<version>${spring-native.version}</version>
+				</dependency>
+			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
