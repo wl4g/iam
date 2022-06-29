@@ -32,7 +32,7 @@ import static com.wl4g.infra.common.web.WebUtils2.rejectRequestMethod;
 /**
  * {@link GenericAuthenticationFilter}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2019-08-13
  * @sine v1.0.0
  * @see

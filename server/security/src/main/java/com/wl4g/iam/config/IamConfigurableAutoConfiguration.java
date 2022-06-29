@@ -42,7 +42,7 @@ import com.wl4g.iam.core.exception.IamException;
 /**
  * Based context configurable auto configuration.
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年3月24日
  * @since
  */
@@ -60,7 +60,7 @@ public class IamConfigurableAutoConfiguration {
     /**
      * Check whether ServerSecurityConfigurer has been implemented.
      *
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019-07-27
      * @since
      */

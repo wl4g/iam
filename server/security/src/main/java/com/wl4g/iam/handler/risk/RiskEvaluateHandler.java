@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
  * 
  * {@link RiskEvaluateHandler}
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */
@@ -68,7 +68,7 @@ public interface RiskEvaluateHandler {
     /**
      * User properties items definitions.
      * 
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2020年3月19日
      * @since
      * @see <a href=

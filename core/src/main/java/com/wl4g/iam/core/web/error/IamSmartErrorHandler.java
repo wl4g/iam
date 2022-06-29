@@ -32,7 +32,7 @@ import static com.wl4g.infra.common.web.rest.RespBase.RetCode.*;
 /**
  * IAM authorization error configuring.
  *
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-11-02
  * @since
  */

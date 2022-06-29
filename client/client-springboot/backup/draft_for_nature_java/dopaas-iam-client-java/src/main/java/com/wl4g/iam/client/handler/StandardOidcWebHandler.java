@@ -20,7 +20,7 @@ import com.wl4g.iam.client.configure.IamConfigurer;
 /**
  * {@link StandardOidcWebHandler}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-09
  * @since
  * @see https://openid.net/specs/openid-connect-core-1_0.html

@@ -26,7 +26,7 @@ import com.wl4g.infra.core.kit.access.IPAccessControl.IPAccessProperties;
 /**
  * IP access configuration processor.
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年5月24日
  * @since

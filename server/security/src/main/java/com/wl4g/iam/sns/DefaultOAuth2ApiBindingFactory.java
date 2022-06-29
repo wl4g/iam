@@ -30,7 +30,7 @@ import com.wl4g.iam.sns.support.Oauth2UserProfile;
 /**
  * Default IAM Social connection factory
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月4日
  * @since

@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Multiple-factor risk identification control security utility.
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月19日 v1.0.0
  */
 public abstract class RiskSecurityUtils extends IamAuthenticatingUtils {

@@ -34,7 +34,7 @@ import com.wl4g.iam.core.authc.ClientRef;
 /**
  * Session attribute model.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月6日
  * @since
  */
@@ -80,7 +80,7 @@ public class SessionAttributeModel implements Serializable {
     /**
      * Session attributes cursor index information.
      *
-     * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version v1.0.0 2019-11-06
      * @since
      */
@@ -141,7 +141,7 @@ public class SessionAttributeModel implements Serializable {
     /**
      * Session attribute information.
      *
-     * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version v1.0.0 2019-10-31
      * @since
      */

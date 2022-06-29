@@ -78,7 +78,7 @@ public interface XsrfTokenRepository {
 	/**
 	 * {@link XsrfUtil}
 	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version 2020年5月8日 v1.0.0
 	 * @see
 	 */

@@ -22,7 +22,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
  * 3). These menu items can be sub menu items (Level 1 menu without secondary
  * menu) or parent menu items (menu items containing secondary menu)
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2017-08-07
  * @since
  */

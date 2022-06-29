@@ -59,7 +59,7 @@ import lombok.ToString;
 /**
  * IAM abstract configuration properties.
  *
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0.0 2018-09-22
  * @since
  */
@@ -236,7 +236,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * Session cache configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0
      * @date 2018年11月29日
      * @since
@@ -266,7 +266,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * Cookie configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0
      * @date 2018年11月29日
      * @since
@@ -296,7 +296,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * Session configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0
      * @date 2018年11月29日
      * @since
@@ -387,7 +387,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
      * customized (confused parameter names), In this way, even if the attacker
      * grabs the packet, it will increase their cracking workload.
      * 
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0
      * @date 2018年11月29日
      * @since
@@ -727,7 +727,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * Cipher request parameters configuration properties.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年3月28日 v1.0.0
      * @see
      */
@@ -803,7 +803,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * Web security and risk configuration properties.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年6月20日 v1.0.0
      * @see
      */
@@ -873,7 +873,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
      * authorization), the type of destination operation (e.g. login,
      * registration binding)
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0
      * @date 2019年1月7日
      * @since
@@ -945,7 +945,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * {@link IamVersion}
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年3月29日 v1.0.0
      * @see
      */
@@ -982,7 +982,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
     /**
      * {@link SafeFilterChainMap}
      *
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2020年5月25日
      * @since
      */

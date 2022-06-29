@@ -20,7 +20,7 @@ import com.wl4g.infra.core.constant.BaseConstants;
 /**
  * Based IAM configuration constants.
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-17
  * @sine v1.0
  * @see

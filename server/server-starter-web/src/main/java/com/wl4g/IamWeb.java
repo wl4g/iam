@@ -25,7 +25,7 @@ import com.wl4g.iam.annotation.EnableIamServer;
 /**
  * {@link IamWeb}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-11-14
  * @sine v1.0
  * @see

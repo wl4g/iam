@@ -58,7 +58,7 @@ public class SnsProperties {
     /**
      * Abstract socical networking services platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -75,7 +75,7 @@ public class SnsProperties {
     /**
      * Dingtalk open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -86,7 +86,7 @@ public class SnsProperties {
     /**
      * Linkedin open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -97,7 +97,7 @@ public class SnsProperties {
     /**
      * Twitter open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -108,7 +108,7 @@ public class SnsProperties {
     /**
      * Github open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -119,7 +119,7 @@ public class SnsProperties {
     /**
      * Google open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -130,7 +130,7 @@ public class SnsProperties {
     /**
      * Facebook open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -141,7 +141,7 @@ public class SnsProperties {
     /**
      * QQ open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -152,7 +152,7 @@ public class SnsProperties {
     /**
      * Wechat open platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */
@@ -181,7 +181,7 @@ public class SnsProperties {
     /**
      * Wechat public platform configuration properties
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年2月17日
      * @since
      */

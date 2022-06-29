@@ -23,7 +23,7 @@ import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
  * Thrown when an expected {@link XsrfToken} exists, but it does not match the
  * value present on the {@link HttpServletRequest}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */

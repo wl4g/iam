@@ -24,7 +24,7 @@ import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 /**
  * {@link SimplePrincipalInfoTests}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年7月16日
  * @since
  */

@@ -34,7 +34,7 @@ import com.wl4g.iam.core.web.model.SessionInfo;
 /**
  * Pre-processing handshake result model. {@link HandshakeModel}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月10日 v1.0.0
  * @see
  */

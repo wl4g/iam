@@ -18,7 +18,7 @@ package com.wl4g.iam.sns.support;
 /**
  * OAuth2 response_type definition
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月3日
  * @see https://www.cnblogs.com/giserliu/p/4372455.html

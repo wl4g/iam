@@ -22,7 +22,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
  * menu items. This type of menu item has two properties: name and sub_ Button,
  * and sub_ Button is an array of submenu items
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2017-08-07
  * @since
  */

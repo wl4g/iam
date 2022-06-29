@@ -20,7 +20,7 @@ import com.wl4g.iam.core.exception.InvalidGrantTicketException;
 /**
  * {@link NoSuchMockCredentialsException}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-14
  * @since
  */

@@ -92,7 +92,7 @@ public abstract class AbstractWechatOauth2Template<C extends AbstractSocialPrope
     /**
      * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年1月6日
      * @since
      */

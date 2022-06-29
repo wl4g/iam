@@ -30,7 +30,7 @@ import com.wl4g.iam.client.mock.config.MockIamAutoConfiguration;
  * It is used for convenient mock debugging in the development phase. Note: it
  * is mutually exclusive with {@link EnableIamClient}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-20
  * @since
  */

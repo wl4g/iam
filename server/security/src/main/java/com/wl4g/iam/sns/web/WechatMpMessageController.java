@@ -45,7 +45,7 @@ import javax.validation.constraints.NotBlank;
  * See:<a href=
  * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5</a>
  *
- * @author Wangl.sir<983708408@qq.com>
+ * @author James Wong<983708408@qq.com>
  * @version v1.02018年9月17日
  * @since
  */

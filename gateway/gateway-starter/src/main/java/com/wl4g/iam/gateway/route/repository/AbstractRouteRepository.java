@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
 /**
  * Abstract routes configuration repository. </br>
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-04
  * @since
  */

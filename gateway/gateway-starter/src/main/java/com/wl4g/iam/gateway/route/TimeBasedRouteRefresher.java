@@ -33,7 +33,7 @@ import com.wl4g.iam.gateway.route.config.RouteProperties;
 /**
  * Gateway configuration refresh scheduler coordinator.
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version 2019年6月2日
  * @since v1.0
  */

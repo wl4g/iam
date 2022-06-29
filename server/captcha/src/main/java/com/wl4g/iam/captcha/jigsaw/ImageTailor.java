@@ -40,7 +40,7 @@ import static org.springframework.util.Assert.isTrue;
 /**
  * Image tailor.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
@@ -502,7 +502,7 @@ public class ImageTailor {
     /**
      * Tailored image model.
      * 
-     * @author Wangl.sir
+     * @author James Wong
      * @version v1.0 2019年8月30日
      * @since
      */

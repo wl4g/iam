@@ -31,7 +31,7 @@ import com.wl4g.infra.common.serialize.ProtostuffUtils;
  * Support for automatic expiration support, which can be used for login failure
  * retry restrictions
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @time 2017年6月20日
  * @since

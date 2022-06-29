@@ -69,7 +69,7 @@ import com.wl4g.iam.service.UserService;
 /**
  * Standard IAM Security context handler
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月29日
  * @since

@@ -42,7 +42,7 @@ import com.wl4g.infra.common.log.SmartLogger;
 /**
  * CORS(CSRF attack) resolve filter
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年4月25日
  * @since
  */
@@ -68,7 +68,7 @@ public final class CorsSecurityFilter extends CorsFilter {
 	/**
 	 * Iam matches CORS processor.
 	 *
-	 * @author Wangl.sir
+	 * @author James Wong
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
@@ -92,7 +92,7 @@ public final class CorsSecurityFilter extends CorsFilter {
 	/**
 	 * HTTP servlet response wrapper for CORS protection.
 	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年6月11日
 	 * @since
 	 * @see {@link CorsProtectHttpServletResponse#reset()}

@@ -30,7 +30,7 @@ import com.wl4g.iam.core.security.xss.resolver.XssSecurityResolver;
 /**
  * XSS protection auto configuration.
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2020年05月06日
  * @since
  */

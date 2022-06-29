@@ -36,7 +36,7 @@ import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 /**
  * HTTP strict transport security filter
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年6月20日 v1.0.0
  * @see
  */

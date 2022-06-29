@@ -55,7 +55,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * Default oauth2 social networking services controller
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月2日
  * @since

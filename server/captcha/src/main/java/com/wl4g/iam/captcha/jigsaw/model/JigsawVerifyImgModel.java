@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * Analyze verify jigsaw image model.
  * 
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0 2019年8月30日
  * @since
  */
@@ -62,7 +62,7 @@ public class JigsawVerifyImgModel extends BaseVerifyCodeModel {
      * The time coordinate information of mouse pointer on slider can increase
      * CNN machine learning model checking.
      * 
-     * @author Wangl.sir
+     * @author James Wong
      * @version v1.0.0 2019-09-05
      * @since
      */

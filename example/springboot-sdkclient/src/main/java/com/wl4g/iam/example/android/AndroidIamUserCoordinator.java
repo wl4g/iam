@@ -228,7 +228,7 @@ public abstract class AndroidIamUserCoordinator {
     /**
      * Response wrap entity.
      * 
-     * @author Wangl.sir
+     * @author James Wong
      * @version v1.0 2019年7月25日
      * @since
      */

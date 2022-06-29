@@ -33,7 +33,7 @@ import com.wl4g.iam.sns.OAuth2ApiBindingFactory;
 /**
  * SNS client authorizer handler.(e.g: WeChat public account)
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年2月24日
  * @since
  */

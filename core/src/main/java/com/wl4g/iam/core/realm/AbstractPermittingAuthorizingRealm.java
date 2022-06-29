@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Abstract permission authorizing realm.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-11-23
  * @since
  */

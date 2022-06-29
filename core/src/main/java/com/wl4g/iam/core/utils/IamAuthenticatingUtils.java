@@ -39,7 +39,7 @@ import static java.lang.String.valueOf;
 /**
  * IAM authenticating security tools.
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年5月21日
  * @since
  */

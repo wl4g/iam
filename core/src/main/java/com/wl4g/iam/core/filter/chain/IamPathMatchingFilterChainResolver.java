@@ -37,7 +37,7 @@ import com.wl4g.infra.common.log.SmartLogger;
 /**
  * IAM request matching filter chain URI pattern resolver
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月27日
  * @since

@@ -361,7 +361,7 @@ public class CorsProperties implements InitializingBean, Serializable {
     /**
      * Iam enhanced logic CORS configuration validator.
      *
-     * @author Wangl.sir
+     * @author James Wong
      * @version v1.0 2019年8月21日
      * @since
      */

@@ -41,7 +41,7 @@ import com.wl4g.infra.common.log.SmartLogger;
 /**
  * IAM customize shiro-spring filter factory bean
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年4月25日
  * @since
  */

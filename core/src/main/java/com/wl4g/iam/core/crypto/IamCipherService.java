@@ -23,7 +23,7 @@ import com.wl4g.infra.core.framework.operator.Operator;
 /**
  * Data and parameter symmetric crypt service </br>
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月29日 v1.0.0
  * @see
  */
@@ -50,7 +50,7 @@ public interface IamCipherService extends Operator<CipherCryptKind> {
     /**
      * Iam symmetric secure crypt algorithm definitions.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年3月29日 v1.0.0
      * @see
      */

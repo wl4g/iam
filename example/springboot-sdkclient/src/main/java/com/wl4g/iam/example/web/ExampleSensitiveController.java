@@ -33,7 +33,7 @@ import com.wl4g.iam.example.authc.ExampleSecondaryAuthenticator;
  * This is a sensitive interface example controller to demonstrate how to use
  * secondary authentication to protect sensitive APIs
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月24日
  * @since
  */

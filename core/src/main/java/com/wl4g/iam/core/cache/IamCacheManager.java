@@ -21,7 +21,7 @@ import org.apache.shiro.cache.CacheManager;
 /**
  * Enhanced cache manager implements let shiro use redis caching
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @time 2017年4月13日
  * @since

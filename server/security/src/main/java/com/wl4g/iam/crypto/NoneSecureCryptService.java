@@ -22,7 +22,7 @@ import com.wl4g.infra.support.cache.locks.JedisLockManager;
 /**
  * None plain cryptographic service.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2022-03-20
  * @since 3.0.0
  */

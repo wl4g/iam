@@ -50,7 +50,7 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 /**
  * JIGSAW slider CAPTCHA verification handler.
  * 
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0 2019年8月28日
  * @since
  */

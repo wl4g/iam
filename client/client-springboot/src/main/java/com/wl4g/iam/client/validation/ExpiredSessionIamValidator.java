@@ -31,7 +31,7 @@ import static java.lang.String.format;
 /**
  * Expire session validator
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since

@@ -25,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 /**
  * {@link V1AccessToken}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
  */

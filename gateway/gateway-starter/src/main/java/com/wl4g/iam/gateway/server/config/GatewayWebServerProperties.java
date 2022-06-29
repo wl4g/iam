@@ -39,7 +39,7 @@ import lombok.ToString;
 /**
  * {@link GatewayWebServerProperties}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-10 v3.0.0
  * @since v3.0.0
  */

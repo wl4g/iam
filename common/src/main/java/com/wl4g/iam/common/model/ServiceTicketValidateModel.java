@@ -26,7 +26,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 /**
  * Concrete Implementation of the {@link ServiceTicketValidateModel}.
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @Long 2018年11月22日
  * @since

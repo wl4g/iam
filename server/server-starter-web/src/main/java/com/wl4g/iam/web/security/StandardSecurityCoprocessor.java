@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * {@link StandardSecurityCoprocessor}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年6月1日
  * @since
  */

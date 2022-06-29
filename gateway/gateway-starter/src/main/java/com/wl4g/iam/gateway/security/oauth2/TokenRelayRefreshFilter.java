@@ -27,7 +27,7 @@ package com.wl4g.iam.gateway.security.oauth2;
 // * closed. Implementierung in Anlehnung an
 // * {@link ServerOAuth2AuthorizedClientExchangeFilterFunction}
 // * 
-// * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+// * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 // * @version 2022-03-25 v3.0.0
 // * @since v3.0.0
 // */

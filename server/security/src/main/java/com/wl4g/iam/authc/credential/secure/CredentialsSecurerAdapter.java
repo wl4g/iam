@@ -26,7 +26,7 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 /**
  * Credentials securer adapter
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年4月6日
  * @since
  */

@@ -30,7 +30,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * IAM authentication grant ticket information.
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月12日
  * @since
@@ -124,7 +124,7 @@ public class GrantCredentialsInfo implements Serializable {
     /**
      * Grant ticket of application info
      * 
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2020年4月14日
      * @since
      */

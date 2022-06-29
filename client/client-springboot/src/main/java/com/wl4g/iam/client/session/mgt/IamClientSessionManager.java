@@ -47,7 +47,7 @@ import com.wl4g.iam.core.session.mgt.AbstractIamSessionManager;
 /**
  * IAM client session manager
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since

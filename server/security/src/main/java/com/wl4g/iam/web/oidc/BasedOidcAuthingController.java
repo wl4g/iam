@@ -52,7 +52,7 @@ import lombok.Getter;
 /**
  * Based OIDC IAM authentication controller.
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-03-18
  * @since v3.0.0
  * @see https://openid.net/specs/openid-connect-core-1_0.html

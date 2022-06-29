@@ -48,7 +48,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 /**
  * Role service implements.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2019年11月6日
  * @since

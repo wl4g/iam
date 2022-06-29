@@ -33,7 +33,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 /**
  * {@link EnhancedWildcardPermission}
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年12月13日
  * @since
  */
@@ -194,7 +194,7 @@ public class EnhancedWildcardPermission implements Permission, Serializable {
 	/**
 	 * Permission wildcard validity utils.
 	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年12月20日
 	 * @since
 	 */

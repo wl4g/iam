@@ -22,7 +22,7 @@ import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 /**
  * SMS authentication token
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
@@ -73,7 +73,7 @@ public class SmsAuthenticationToken extends ClientSecretIamAuthenticationToken {
     /**
      * SMS authentication action
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年4月19日
      * @since
      */

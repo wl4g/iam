@@ -122,7 +122,7 @@ import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
  * {@link org.apache.shiro.web.servlet.AbstractShiroFilter#getExecutionChain()}
  * {@link org.apache.shiro.web.servlet.AbstractShiroFilter#executeChain()}
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月27日
  * @since

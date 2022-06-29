@@ -1,11 +1,3 @@
-package com.wl4g.iam.rcm.analytic.core;
-
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 /*
  * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
@@ -21,6 +13,15 @@ import java.util.Map;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.wl4g.iam.rcm.analytic.core;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
@@ -40,7 +41,7 @@ import com.google.common.io.Resources;
 /**
  * {@link LoginEventCepStreamingDemo}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-06-15 v3.0.0
  * @since v3.0.0
  */

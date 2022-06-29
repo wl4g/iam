@@ -9,7 +9,7 @@ import com.wl4g.infra.core.framework.operator.Operator;
 /**
  * {@link CanaryLoadBalancerChooser}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  */

@@ -35,7 +35,7 @@ import com.wl4g.iam.core.subject.IamPrincipal.Parameter;
 /**
  * {@link StandardSecurityConfigurerFeignAdapter}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-01
  * @sine v1.0
  * @see

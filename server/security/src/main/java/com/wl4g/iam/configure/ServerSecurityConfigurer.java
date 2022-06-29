@@ -34,7 +34,7 @@ import com.wl4g.iam.core.exception.BindingConstraintsException;
 /**
  * IAM server security context handler
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月21日
  * @since

@@ -39,7 +39,7 @@ import static java.util.Objects.nonNull;
 /**
  * Organization service implements.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @date 2019-10-29 16:19:00
  */

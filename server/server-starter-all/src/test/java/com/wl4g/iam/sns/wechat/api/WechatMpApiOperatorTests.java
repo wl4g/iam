@@ -38,7 +38,7 @@ import com.wl4g.iam.sns.wechat.api.model.menu.WxmpViewButton;
 /**
  * {@link WechatMpApiOperatorTests}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2017-08-07
  * @since
  */

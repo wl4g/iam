@@ -33,7 +33,7 @@ import com.wl4g.infra.common.bridge.IamSecurityHolderBridges;
 /**
  * {@link RpcContextIamSecurityUtils}
  *
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-05
  * @sine v1.0
  * @see {@link com.wl4g.iam.web.interceptor.IamContextAutoConfiguration}

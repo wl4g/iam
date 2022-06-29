@@ -204,7 +204,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
     /**
      * Default print SMS verification template handle sender.
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年4月20日
      * @since
      */
@@ -226,7 +226,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
      * See:<a href=
      * "https://www.51-n.com/t-4274-1-1.html">https://www.51-n.com/t-4274-1-1.html</a>
      *
-     * @author Wangl.sir <983708408@qq.com>
+     * @author James Wong <983708408@qq.com>
      * @version v1.0 2019年4月22日
      * @since
      */

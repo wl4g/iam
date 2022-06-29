@@ -47,7 +47,7 @@ import com.wl4g.infra.core.web.BaseController;
 /**
  * Mock iam central authenticating endpoint
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年1月27日
  * @since
  */

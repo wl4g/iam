@@ -25,7 +25,7 @@ import lombok.Setter;
 /**
  * Session destroy client parameter model.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月11日
  * @since
  */

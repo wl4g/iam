@@ -42,7 +42,7 @@ import com.wl4g.iam.core.rpc.RpcContextIamSecurityAutoConfiguration;
  * {@link com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration} and
  * {@link com.wl4g.iam.annotation.EnableIamServer}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-12-20
  * @since
  */

@@ -20,7 +20,7 @@ import static com.wl4g.infra.common.lang.Assert2.hasLength;
 /**
  * A default XSRF token that is used to protect against CSRF attacks.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月7日
  */
 public final class DefaultXsrfToken implements XsrfToken {

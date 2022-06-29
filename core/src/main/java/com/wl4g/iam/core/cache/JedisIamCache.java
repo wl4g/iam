@@ -44,7 +44,7 @@ import redis.clients.jedis.params.SetParams;
 /**
  * REDIS enhanced implement cache
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日
  * @since

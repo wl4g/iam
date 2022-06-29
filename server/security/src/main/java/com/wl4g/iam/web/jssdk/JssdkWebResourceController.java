@@ -26,7 +26,7 @@ import com.wl4g.infra.core.web.embed.SimpleEmbedWebappEndpoint;
 /**
  * JSSDK embedded WebApps endpoint.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月10日
  * @since
  */

@@ -22,7 +22,7 @@ import com.wl4g.iam.verify.model.BaseVerifyCodeModel;
 /**
  * Apply jigsaw image model
  * 
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0 2019年8月30日
  * @since
  */

@@ -80,7 +80,7 @@ import reactor.netty.http.client.HttpClient;
 /**
  * {@link DefaultLoadBalancerStats}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-13 v3.0.0
  * @since v3.0.0
  */

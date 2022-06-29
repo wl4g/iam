@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * IAM fast-CAS ticket authentication configuration properties
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since

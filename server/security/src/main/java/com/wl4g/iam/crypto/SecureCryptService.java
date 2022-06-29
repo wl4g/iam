@@ -27,7 +27,7 @@ import com.wl4g.infra.core.framework.operator.Operator;
 /**
  * Secretkey asymmetric secure crypt service.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
@@ -108,7 +108,7 @@ public interface SecureCryptService extends Operator<CryptKind> {
     /**
      * Iam asymmetric secure crypt algorithm kind definitions.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年3月29日 v1.0.0
      * @see
      */

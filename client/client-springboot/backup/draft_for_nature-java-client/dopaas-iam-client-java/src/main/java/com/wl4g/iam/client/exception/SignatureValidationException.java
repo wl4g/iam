@@ -19,7 +19,7 @@ package com.wl4g.iam.client.exception;
  * IAM OpenApi signature validation exception
  * 
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年4月11日
  * @since

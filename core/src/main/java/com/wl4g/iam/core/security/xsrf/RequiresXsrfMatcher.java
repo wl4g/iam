@@ -31,7 +31,7 @@ import static org.springframework.http.HttpMethod.*;
 /**
  * {@link RequiresXsrfMatcher}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */

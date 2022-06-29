@@ -27,7 +27,7 @@ import com.wl4g.iam.client.handler.WebIamHandler;
 /**
  * {@link AbstractMappingDispatcher}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-03
  * @since
  */

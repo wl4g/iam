@@ -42,7 +42,7 @@ import com.wl4g.iam.core.handler.AuthenticatingHandler;
 /**
  * Default mock central authenticating handler implements
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-08
  * @sine v1.0.0
  * @see

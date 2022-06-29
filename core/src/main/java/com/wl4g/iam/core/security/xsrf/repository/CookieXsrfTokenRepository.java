@@ -49,7 +49,7 @@ import static org.springframework.web.util.WebUtils.getCookie;
  * conventions of AngularJS. When using with AngularJS be sure to use
  * {@link #withHttpOnlyFalse()}.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @author Rob Winch
  * @version v1.0 2020年4月27日
  * @since

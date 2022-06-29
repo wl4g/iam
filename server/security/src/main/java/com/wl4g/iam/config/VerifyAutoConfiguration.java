@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * IAM authentication(verify) configuration
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */

@@ -18,7 +18,7 @@ package com.wl4g.iam.common.model;
 /**
  * {@link LogoutModel}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-13
  * @since
  */

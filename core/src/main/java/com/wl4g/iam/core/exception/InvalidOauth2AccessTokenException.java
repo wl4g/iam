@@ -18,7 +18,7 @@ package com.wl4g.iam.core.exception;
 /**
  * {@link InvalidOauth2AccessTokenException}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-07
  * @since
  */

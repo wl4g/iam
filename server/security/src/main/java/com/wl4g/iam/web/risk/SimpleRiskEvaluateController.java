@@ -47,7 +47,7 @@ import com.wl4g.iam.web.login.model.SimpleRiskTokenModel;
  * inspection. It is recommended to use a more professional external
  * RiskControlService in the production environment.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */

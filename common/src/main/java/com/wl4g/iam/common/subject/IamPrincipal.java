@@ -57,7 +57,7 @@ import com.wl4g.iam.common.bean.User;
 /**
  * IAM principal account information.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */
@@ -209,7 +209,7 @@ public interface IamPrincipal extends Principal, Serializable {
     /**
      * {@link IamPrincipal} attributes wrapper.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年7月7日 v1.0.0
      * @see
      */
@@ -773,7 +773,7 @@ public interface IamPrincipal extends Principal, Serializable {
     /**
      * Principal organization tree info.
      * 
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年5月18日 v1.0.0
      * @see
      */
@@ -852,7 +852,7 @@ public interface IamPrincipal extends Principal, Serializable {
     /**
      * Organization info.
      *
-     * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
      * @version 2020年5月18日 v1.0.0
      * @see
      */

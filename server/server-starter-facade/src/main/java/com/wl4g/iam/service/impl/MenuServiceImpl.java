@@ -45,7 +45,7 @@ import com.wl4g.iam.service.OrganizationService;
 /**
  * Menu service implements.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @date 2019-10-30 15:48:00
  */

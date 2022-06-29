@@ -29,7 +29,7 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 /**
  * Abstract IAM authentication information.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年12月13日
  * @since
  */

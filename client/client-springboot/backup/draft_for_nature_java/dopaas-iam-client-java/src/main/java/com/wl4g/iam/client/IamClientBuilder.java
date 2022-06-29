@@ -30,7 +30,7 @@ import com.wl4g.iam.client.handler.WebIamHandler;
 /**
  * {@link IamClientBuilder}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-04
  * @sine v1.0.0
  * @see
@@ -109,7 +109,7 @@ public class IamClientBuilder {
 	/**
 	 * {@link DispatcherFactory}
 	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-08
 	 * @since
 	 */

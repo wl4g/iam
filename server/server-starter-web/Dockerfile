@@ -43,7 +43,7 @@
 
 # see:https://blogs.wl4g.com/archives/2969
 FROM openjdk:8u212-jre-alpine3.9 AS wl4g_springboot_base
-LABEL maintainer="Wanglsir<983708408@qq.com>, Wanglsir<Wanglsir@gmail.com>"
+LABEL maintainer="James Wong<983708408@qq.com, wanglsir@gmail.com>"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \

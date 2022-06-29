@@ -25,7 +25,7 @@ import com.wl4g.iam.core.authc.AbstractIamAuthenticationToken;
 /**
  * IAM abstract server authentication token
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
@@ -61,7 +61,7 @@ public abstract class ServerIamAuthenticationToken extends AbstractIamAuthentica
     /**
      * IAM client authentication redirection information.
      *
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019年10月18日
      * @since
      */

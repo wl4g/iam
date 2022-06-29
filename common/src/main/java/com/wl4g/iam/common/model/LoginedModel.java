@@ -22,7 +22,7 @@ import com.wl4g.infra.common.serialize.JacksonUtils;
 /**
  * Application grant ticket wrap
  * 
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月22日
  * @since ServiceTicket

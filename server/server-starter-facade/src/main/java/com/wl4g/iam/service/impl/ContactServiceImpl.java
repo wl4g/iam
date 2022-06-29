@@ -42,7 +42,7 @@ import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 /**
  * Notification to contacts service implements.
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
  * @version v1.0 2019-08-05
  * @sine v1.0

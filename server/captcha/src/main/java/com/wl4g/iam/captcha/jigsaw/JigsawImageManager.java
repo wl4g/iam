@@ -53,7 +53,7 @@ import static org.springframework.util.Assert.notNull;
 /**
  * JIGSAW image manager.
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-09-02
  * @since
  */

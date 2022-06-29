@@ -27,7 +27,7 @@ import com.google.common.annotations.Beta;
 /**
  * Sessions query model.
  *
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-31
  * @since
  */

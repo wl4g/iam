@@ -27,7 +27,7 @@ import com.wl4g.iam.configure.SecureConfigureAdapter;
  * Define security configuration adapter (security signature algorithm
  * configuration, etc.)
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月16日
  * @since
  */

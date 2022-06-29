@@ -56,7 +56,7 @@ import com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository;
  * Typically the {@link XsrfTokenRepository} implementation chooses to store the
  * </p>
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */

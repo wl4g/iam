@@ -24,7 +24,7 @@ import lombok.ToString;
 /**
  * {@link CaptchaProperties}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2019-03-23 v1.0.0
  * @since v1.0.0
  */
@@ -40,7 +40,7 @@ public class CaptchaProperties {
     /**
      * Kaptcha configuration properties
      * 
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019-09-02
      * @since
      */
@@ -75,7 +75,7 @@ public class CaptchaProperties {
     /**
      * Gif configuration properties.
      * 
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019-09-02
      * @since
      */
@@ -88,7 +88,7 @@ public class CaptchaProperties {
     /**
      * Jigsaw configuration properties.
      * 
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
      * @version v1.0 2019-09-02
      * @since
      */

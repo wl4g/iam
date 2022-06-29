@@ -36,7 +36,7 @@ import static com.wl4g.iam.core.utils.IamSecurityHolder.*;
 /**
  * Abstract authorizing realm.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-11-23
  * @since
  */

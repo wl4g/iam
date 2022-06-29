@@ -78,7 +78,7 @@ import com.wl4g.infra.common.log.SmartLogger;
  * Counting Bloom Filter can be used
  * </p>
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-05 v3.0.0
  * @since v3.0.0
  */

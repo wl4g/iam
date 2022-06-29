@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * {@link FastCasClientInfoController}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
  * @date 2019-09-16
  * @sine v1.0.0

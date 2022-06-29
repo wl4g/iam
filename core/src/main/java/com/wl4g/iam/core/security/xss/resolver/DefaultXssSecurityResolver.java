@@ -25,7 +25,7 @@ import com.wl4g.iam.core.config.XssProperties.CharTranslator;
 /**
  * {@link DefaultXssSecurityResolver}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月7日
  * @since
  */

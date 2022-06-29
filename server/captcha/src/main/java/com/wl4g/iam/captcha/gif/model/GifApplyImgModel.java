@@ -22,7 +22,7 @@ import com.wl4g.iam.verify.model.GenericApplyModel;
 /**
  * Apply GIF image CAPTCHA model
  * 
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0 2019年9月4日
  * @since
  */

@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono;
  * Redis routes information persistence class This class contains route
  * persistence and route refresh of distributed cluster.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-21
  * @since
  */

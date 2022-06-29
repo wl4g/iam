@@ -58,7 +58,7 @@ import com.wl4g.iam.core.web.model.SessionQueryModel;
 /**
  * Generic abstract API controller.
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月31日
  * @since
  */

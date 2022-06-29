@@ -36,7 +36,7 @@ import com.wl4g.iam.core.exception.VerificationException;
 /**
  * Verification handler
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
  * @since
@@ -115,7 +115,7 @@ public interface SecurityVerifier extends Operator<VerifyKind> {
     /**
      * Verification type definition.
      *
-     * @author Wangl.sir
+     * @author James Wong
      * @version v1.0 2019年8月29日
      * @since
      */

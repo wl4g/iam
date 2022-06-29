@@ -26,7 +26,7 @@ import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 /**
  * Composite verification adapter.
  *
- * @author Wangl.sir
+ * @author James Wong
  * @version v1.0 2019年8月29日
  * @since
  */

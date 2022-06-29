@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * Simple IAM principal information.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */

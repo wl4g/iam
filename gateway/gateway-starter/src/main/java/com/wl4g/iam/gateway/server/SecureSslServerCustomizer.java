@@ -116,7 +116,7 @@ import reactor.netty.tcp.SslProvider.Builder;
  * see:{@link io.netty.handler.ssl.ReferenceCountedOpenSslServerContext#setVerifyCallback()}￬
  * see:{@link io.netty.handler.ssl.Java8SslUtils#checkSniHostnameMatch()}￬
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-09 v3.0.0
  * @since v3.0.0
  * @see {@link org.springframework.boot.web.embedded.netty.SslServerCustomizer}

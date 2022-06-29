@@ -18,7 +18,7 @@ package com.wl4g.iam.client.configure;
 /**
  * {@link IamConfigurer}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-04
  * @since
  */

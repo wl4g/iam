@@ -21,7 +21,7 @@ import com.wl4g.iam.core.configure.SecurityCoprocessor;
 /**
  * IAM client security coprocessor.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-04-05
  * @since
  */

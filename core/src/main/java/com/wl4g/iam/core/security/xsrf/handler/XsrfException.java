@@ -24,7 +24,7 @@ import com.wl4g.iam.core.security.xsrf.repository.XsrfToken;
  * Thrown when an invalid or missing {@link XsrfToken} is found in the
  * HttpServletRequest {@link XsrfException}
  *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */

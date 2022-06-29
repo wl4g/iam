@@ -18,7 +18,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsName;
  * Grayscale load balancer rule for based least response time. </br>
  * 
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-09-03 v3.0.0
  * @since v3.0.0
  * @see {@link com.netflix.loadbalancer.WeightedResponseTimeRule}

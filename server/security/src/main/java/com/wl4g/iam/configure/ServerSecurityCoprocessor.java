@@ -28,7 +28,7 @@ import com.wl4g.iam.core.configure.SecurityCoprocessor;
 /**
  * IAM server security coprocessor
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0 2019年4月5日
  * @since
  */

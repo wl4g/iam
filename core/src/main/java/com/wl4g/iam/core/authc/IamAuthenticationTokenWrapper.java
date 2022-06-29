@@ -20,7 +20,7 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 /**
  * {@link IamAuthenticationTokenWrapper}
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年7月6日 v1.0.0
  * @see
  */

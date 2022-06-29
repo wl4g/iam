@@ -27,7 +27,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 /**
  * IAM authentication information.
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-11-23
  * @since
  */

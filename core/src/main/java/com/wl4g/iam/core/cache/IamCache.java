@@ -27,7 +27,7 @@ import com.wl4g.iam.core.cache.CacheKey.Serializer;
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
  *
- * @author Wangl.sir <983708408@qq.com>
+ * @author James Wong <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
  * @since
