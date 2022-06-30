@@ -15,7 +15,7 @@ spring:
     nacos:
       config:
         enabled: true
-        serverAddr: 127.0.0.1:8848
+        serverAddr: ${ISCG_NACOS_SERVER:127.0.0.1:8848}
         #username:
         #password:
         fileExtension: yml

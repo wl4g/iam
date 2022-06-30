@@ -1,0 +1,33 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+version: "3"
+networks:
+  iscg: ## IE: Iam spring cloud gateway
+    external: false
+services:
+  server:
+    image: wl4g/iam-gateway
+    container_name: iam-gateway
+    environment:
+      ## Please your modify by actual.
+      - ISCG_REDIS_NODES='localhost:6379,localhost:6380,localhost:6381,localhost:7379,localhost:7380,localhost:7381'
+      - ISCG_REDIS_PASSWORD=123456
+      #- ISCG_NACOS_SERVER='localhost:8848'
+    restart: always
+    networks:
+      - iscg
+    volumes:
+      - /mnt/disk1/iam-gateway/:/mnt/disk1/iam-gateway/
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "18085:18085"
+      - "18086:18086"

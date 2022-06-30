@@ -46,10 +46,10 @@
 		<finalName>${final.name}</finalName>
 		<resources>
 			<resource>
-                <directory>src/main/resources</directory>
-                <!-- When true and will check file encoding, causes the picture file copy to fail. -->
-                <filtering>false</filtering>
-            </resource>
+				<directory>src/main/resources</directory>
+				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
+				<filtering>false</filtering>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -106,7 +106,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>mvnAssTar</id>
+			<id>build:tar</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -136,7 +136,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>springExecJar</id>
+			<id>build:springjar</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -162,7 +162,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>docker:build:mvnAssTar</id>
+			<id>build:tar:docker</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -185,13 +185,15 @@
 							</execution>
 						</executions>
 					</plugin>
-					<!-- Usages: -->
-					<!-- [build]: mvn -Pdocker:build:mvnAssTar -->
-					<!-- [push]: mvn -Pdocker:build:mvnAssTar -->
-					<!-- [push]: mvn -Pdocker:build:mvnAssTar dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
+					<!-- Usages examples: -->
+					<!-- export DOCKER_HOST=tcp://localhost:2375 -->
+					<!-- [build]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=xxx -->
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.13</version>
 						<executions>
 							<execution>
 								<id>default</id>
@@ -202,7 +204,9 @@
 							</execution>
 						</executions>
 						<configuration>
+							<!-- see:https://github.com/spotify/dockerfile-maven/issues/154 -->
 							<contextDirectory>${project.basedir}</contextDirectory>
+							<dockerfile>${project.basedir}/build/docker/Dockerfile</dockerfile>
 							<repository>wl4g/${project.build.finalName}</repository>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<tag>${project.version}</tag>

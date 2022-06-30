@@ -156,7 +156,7 @@ mvn -U clean install -DskipTests -T 2C -P build:tar
 mvn -U clean install -DskipTests -T 2C -P build:springjar
 
 # 构建 mvnAssTar 的 docker 镜像
-mvn -U clean install -DskipTests -T 2C -P build:docker:tar
+mvn -U clean install -DskipTests -T 2C -P build:tar:docker
 
 # 构建 ELF native 执行文件
 mvn -U clean install -DskipTests -T 2C -P build:native

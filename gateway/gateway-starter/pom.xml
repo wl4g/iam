@@ -691,13 +691,15 @@
 							</execution>
 						</executions>
 					</plugin>
-					<!-- Usages: -->
-					<!-- [build]: mvn -Pdocker:build:mvnAssTar -->
-					<!-- [push]: mvn -Pdocker:build:mvnAssTar -->
-					<!-- [push]: mvn -Pdocker:build:mvnAssTar dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
+					<!-- Usages examples: -->
+					<!-- export DOCKER_HOST=tcp://localhost:2375 -->
+					<!-- [build]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker -->
+					<!-- [push]: mvn -Pbuild:tar:docker dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=xxx -->
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.13</version>
 						<executions>
 							<execution>
 								<id>default</id>
@@ -708,7 +710,9 @@
 							</execution>
 						</executions>
 						<configuration>
+							<!-- see:https://github.com/spotify/dockerfile-maven/issues/154 -->
 							<contextDirectory>${project.basedir}</contextDirectory>
+							<dockerfile>${project.basedir}/build/docker/Dockerfile</dockerfile>
 							<repository>wl4g/${project.build.finalName}</repository>
 							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 							<tag>${project.version}</tag>

@@ -234,7 +234,7 @@ spring:
       ## see:org.springframework.cloud.gateway.filter.GatewayMetricsFilter
       metrics:
         enabled: true ## Default no-set.
-        prefix: iam_gateway ## Default by 'spring.cloud.gateway'
+        prefix: ISCG_gateway ## Default by 'spring.cloud.gateway'
         tags:
           application: ${spring.application.name}
           profiles.include: ${spring.profiles.include}
