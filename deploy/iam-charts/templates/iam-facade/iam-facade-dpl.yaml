@@ -1,0 +1,177 @@
+# see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "iam.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "iam.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "iam.chart" . }}
+
+spec:
+  {{- if .Values.iam-facade.autoscaling.enabled }}
+  replicas: {{ .Values.iam-facade.autoscaling.replicaCount }}
+  {{- else }}
+  replicas: 2
+  {{- end }}
+
+  strategy:
+    type: {{ .Values.iam-facade.updateStrategy.type }}
+    {{- if eq .Values.iam-facade.updateStrategy.type "Recreate" }}
+    rollingUpdate: null
+    {{- end }}
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "iam.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
+  template:
+    metadata:
+      {{- with .Values.iam-facade.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: application
+        app.kubernetes.io/name: {{ include "iam.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+
+    spec:
+      {{- if .Values.initContainers }}
+      initContainers:
+{{ toYaml .Values.iam-facade.initContainers | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.iam-facade.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.iam-facade.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
+      serviceAccountName: {{ include "iam.fullname" . }}
+
+      {{- if .Values.iam-facade.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.iam-facade.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+
+      volumes:
+      ## agent configuration.
+      - name: agentconfig-volume
+        configMap:
+          name: iam-facade-agent-configmap
+          items:
+          - key: agent.config
+            path: agent.yaml
+      ## spring application core configuration.
+      ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+      - name: coreconfig-volume
+        configMap:
+          name: iam-facade-application-configmap
+          items:
+          {{- range $index, $value := .Values.iam-facade.coreConfigs}}
+          - key: {{$index}}.config
+            path: {{$index}}
+          {{- end}}
+      ## data(transactions).
+      - name: appdata-volume
+      {{- if not .Values.iam-facade.persistence.enabled }}
+        emptyDir: {}
+      {{- else if .Values.iam-facade.persistence.existingClaim }}
+        persistentVolumeClaim:
+        {{- with .Values.iam-facade.persistence.existingClaim }}
+          claimName: {{ tpl . $ }}
+        {{- end }}
+      {{- end }}
+      ## log.
+      - name: applog-volume
+        emptyDir: {}
+
+      restartPolicy: Always
+
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- if .Values.iam-facade.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.iam-facade.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.iam-facade.image.repository }}:{{ .Values.iam-facade.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.iam-facade.image.pullPolicy }}
+          #command: [ "/bin/sh", "-c", "env" ]
+          ports:
+            - name: api
+              containerPort: 18080
+              protocol: TCP
+            - name: prometheus
+              containerPort: 10108
+              protocol: TCP
+
+          ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+          #env:
+          #- name: APP_NAME
+          #  value: {{ .Release.Name }}
+          #- name: JAVA_OPTS
+          #  value: "-Djava.awt.headless=true"
+          #- name: SPRING_SERVER_PORT
+          #  value: '8080'
+
+          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+          envFrom:
+          - configMapRef:
+              name: env-iam-facade-configmap
+
+          volumeMounts:
+          ## sharding server and rules configuration.
+          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+          - name: coreconfig-volume
+            mountPath: /opt/apps/ecm/iam-facade-{{ .Chart.AppVersion }}-bin/conf/
+          ## datadir.
+          - name: appdata-volume
+            mountPath: /opt/apps/ecm/iam-facade-{{ .Chart.AppVersion }}-bin/data/
+          ## logdir.
+          - name: applog-volume
+            mountPath: /opt/apps/ecm/iam-facade-{{ .Chart.AppVersion }}-bin/log/
+
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 5
+            successThreshold: 1
+            httpGet:
+              scheme: HTTP
+              #httpHeaders:
+              path: /-/healthy
+              port: prometheus
+
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
+            successThreshold: 1
+            tcpSocket:
+              port: api
+
+          {{- if .Values.iam-facade.resources.enabled }}
+          resources:
+            {{- toYaml .Values.iam-facade.resources | nindent 12 }}
+          {{ end }}
+
+      {{- with .Values.iam-facade.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.iam-facade.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .Values.iam-facade.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-iam-facade-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "iam.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "iam.chart" . }}
+data:
+  ## NOTES: Environment variable values must use double or single quotes.
+  ## see:https://stackoverflow.com/questions/59354115/helm-upgrade-fails-with-error-expects-or-n-but-found-t
+  SPRING_APPLICATION_NAME: {{ .Release.Name }}
+  JAVA_OPTS: "-Djava.awt.headless=true"
+  SPRING_SERVER_PORT: "8080"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iam-facade-agent-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "iam.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "iam.chart" . }}
+data:
+  agent.config: {{ toYaml .Values.iam-facade.agentConfig | indent 2 }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iam-facade-application-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "iam.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "iam.chart" . }}
+data:
+{{- range $index, $value := .Values.iam-facade.applicationConfigs}}
+  {{ $index }}.config: {{ toYaml $value | indent 2 }}
+{{- end}}
