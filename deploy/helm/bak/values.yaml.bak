@@ -12,6 +12,7 @@
 
 ## This is the spec definition of iam-web instance deployed in Kubernetes.
 iam-web:
+  enabled: true
   image:
     repository: wl4g/iam-web
     tag: latest
@@ -92,61 +93,58 @@ iam-web:
 
   affinity: {}
   
-  agentConfig: {}
+  agentConfig: ""
 
   applicationConfigs:
     ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/iam-web-etc-pro.yml
-    etcProConfigMap:
-      iam-web-etc-pro.yml:
-        spring:
-          infra:
-            support:
-              jedis:
-                passwd: ${IAM_REDIS_PASSWD:123456}
-                connect-timeout: 10000
-                max-attempts: 10
-                # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-                nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
-    
-      ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/iam-web-pro.yml
-      proConfigMap:
-        iam-web-pro.yml: |-
-          spring:
-            iam:
-              cors:
-                rules:
-                  '[/**]':
-                    allows-origins:
-                      - https://${IAM_ZONE:wl4g.com}
-                      - http://${IAM_ZONE:wl4g.com}
-                      - https://*.${IAM_ZONE:wl4g.com}
-                      - http://*.${IAM_ZONE:wl4g.com}
-              login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
-              unauthorized-uri: /view/403.html
-              success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.com}/#/overview
-              acl:
-                secure: false # Turn off protection will trust any same intranet IP.
-                allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
-                denyIpRange: ${IAM_ACL_DENY}
-              captcha:
-                #jigsaw:
-                  #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
-              sns: # SNS configuration.
-                oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
-                wechat-mp:
-                  app-id: yourappid
-                  app-secret: yoursecret
-                  redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
-                wechat:
-                  app-id: yourappid
-                  app-secret: yoursecret
-                  redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
-                  href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
-                qq:
-                  app-id: 101542056 # Public testing.
-                  app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-                  redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
-    
+    iam-web-etc-pro.yml: |-
+      spring:
+        infra:
+          support:
+            jedis:
+              passwd: ${IAM_REDIS_PASSWD:123456}
+              connect-timeout: 10000
+              max-attempts: 10
+              # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+              nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+
+    iam-web-pro.yml: |-
+      spring:
+        iam:
+          cors:
+            rules:
+              '[/**]':
+                allows-origins:
+                  - https://${IAM_ZONE:wl4g.com}
+                  - http://${IAM_ZONE:wl4g.com}
+                  - https://*.${IAM_ZONE:wl4g.com}
+                  - http://*.${IAM_ZONE:wl4g.com}
+          login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
+          unauthorized-uri: /view/403.html
+          success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.com}/#/overview
+          acl:
+            secure: false # Turn off protection will trust any same intranet IP.
+            allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+            denyIpRange: ${IAM_ACL_DENY}
+          captcha:
+            #jigsaw:
+              #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+          sns: # SNS configuration.
+            oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+            wechat-mp:
+              app-id: yourappid
+              app-secret: yoursecret
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+            wechat:
+              app-id: yourappid
+              app-secret: yoursecret
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
+              href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            qq:
+              app-id: 101542056 # Public testing.
+              app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+
   service:
     ## Service type
     type: ClusterIP
@@ -203,6 +201,7 @@ iam-web:
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
 iam-facade:
+  enabled: true
   image:
     repository: wl4g/iam-facade
     tag: latest
@@ -283,9 +282,9 @@ iam-facade:
 
   affinity: {}
 
-  ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
-  etcProConfigMap:
-    iam-facade-etc-pro.yml:
+  applicationConfigs:
+    ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
+    iam-facade-etc-pro.yml: |-
       spring:
         infra:
           support:
@@ -296,8 +295,7 @@ iam-facade:
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
               nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
 
-    proConfigMap:
-      iam-facade-pro.yml: ""
+    iam-facade-pro.yml: ""
 
   service:
     ## Service type
@@ -355,6 +353,7 @@ iam-facade:
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
 iam-data:
+  enabled: true
   image:
     repository: wl4g/iam-data
     tag: latest
@@ -436,8 +435,8 @@ iam-data:
   affinity: {}
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
-  etcProConfigMap:
-    iam-data-etc-pro.yml:
+  applicationConfigs:
+    iam-data-etc-pro.yml: |-
       spring:
         # Spring datasource configuration.
         datasource:
@@ -456,8 +455,7 @@ iam-data:
             validationTimeout: 5000
             leakDetectionThreshold: 0
 
-    proConfigMap:
-      iam-data-pro.yml: ""
+    iam-data-pro.yml: ""
 
   service:
     ## Service type

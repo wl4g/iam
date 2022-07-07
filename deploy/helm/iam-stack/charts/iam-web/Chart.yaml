@@ -10,9 +10,9 @@
 # @see: https://helm.sh/zh/docs/topics/charts/
 #
 apiVersion: v2
-name: iam
-description: A Helm chart for IAM
-icon: https://github.com/wl4g/iam/logo.png
+name: iam-web
+description: A Helm chart for IAM WEB
+icon: https://raw.githubusercontent.com/wl4g/iam/master/shots/iam-logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -30,29 +30,10 @@ version: 0.1.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: latest
+appVersion: 3.0.0
 
 # Onwer maintainers.
 maintainers:
   - name: James Wong
     email: wanglsir@gmail.com
     url: https://github.com/wl4g
-
-# For best performance, these stateful storage services, which are relied upon below, usually use services
-# outside the kubernetes cluster (headless endpoints) in production environments.
-#dependencies:
-#  - name: redis
-#    version: "0.1.0"
-#    repository: "file://../redis-charts"
-#  - name: mysql
-#    version: "0.1.0"
-#    repository: "file://../mysql-charts"
-#  - name: flink
-#    version: "0.1.0"
-#    repository: "file://../flink-charts"
-#  - name: kafka
-#    version: "0.1.0"
-#    repository: "file://../kafka-charts"
-#  - name: hbase
-#    version: "0.1.0"
-#    repository: "file://../hbase-charts"

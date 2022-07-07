@@ -1,0 +1,64 @@
+{{- if eq .Values.governance.type "Istio" }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ template "iam-web.name" . }}-api
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+spec:
+  gateways:
+    - {{ template "iam-web.name" . }}-gw
+  hosts:
+  {{- if not (empty .Values.istio.domains) }}
+  - {{- toYaml .Values.istio.domains | nindent 4 }}
+  {{- else }}
+  - {{- .Values.governance.istio.domains | default "iam.wl4g.io" }}
+  {{- end }}
+  http:
+    {{- range $match := .Values.istio.routeMatchConfigs }}
+    - {{- $match }}
+    {{- end }}
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ template "iam-web.name" . }}-gw
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+      {{- if not (empty .Values.istio.domains) }}
+      - {{- toYaml .Values.istio.domains | nindent 4 }}
+      {{- else }}
+      - {{- .Values.governance.istio.domains | default "iam.wl4g.io" }}
+      {{- end }}
+      port:
+        {{- if eq .Values.governance.istio.mode "http" }}
+        name: http-{{ template "iam-web.name" . }}
+        number: 80
+        protocol: HTTP
+        {{- else if eq .Values.governance.istio.mode "https" }}
+        name: https-{{ template "iam-web.name" . }}
+        number: 443
+        protocol: HTTPS
+        tls:
+          mode: {{- .Values.governance.istio.https.tlsMode | default "SIMPLE" }}
+          # for example:
+          # openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=wl4g Inc./CN=*.wl4g.io' -keyout wl4g.io.key -out wl4g.io.crt
+          # kubectl create -n istio-system secret tls wl4g-credential --key=wl4g.io.key --cert=wl4g.io.crt
+          # kubectl apply -f istio-specs.yaml -n securesvc
+          credentialName: wl4g-credential
+        {{- end }}
+
+{{- end }}

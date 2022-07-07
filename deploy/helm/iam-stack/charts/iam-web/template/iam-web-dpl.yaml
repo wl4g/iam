@@ -2,68 +2,68 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "iam.fullname" . }}
+  name: {{ template "iam-web.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "iam.name" . }}
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ include "iam.chart" . }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
 
 spec:
-  {{- if .Values.iam-data.autoscaling.enabled }}
-  replicas: {{ .Values.iam-data.autoscaling.replicaCount }}
+  {{- if .Values.autoscaling.enabled }}
+  replicas: {{ .Values.autoscaling.replicaCount }}
   {{- else }}
   replicas: 2
   {{- end }}
 
   strategy:
-    type: {{ .Values.iam-data.updateStrategy.type }}
-    {{- if eq .Values.iam-data.updateStrategy.type "Recreate" }}
+    type: {{ .Values.updateStrategy.type }}
+    {{- if eq .Values.updateStrategy.type "Recreate" }}
     rollingUpdate: null
     {{- end }}
 
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "iam.name" . }}
+      app.kubernetes.io/name: {{ template "iam-web.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
 
   template:
     metadata:
-      {{- with .Values.iam-data.podAnnotations }}
+      {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/component: application
-        app.kubernetes.io/name: {{ include "iam.name" . }}
+        app.kubernetes.io/name: {{ template "iam-web.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
 
     spec:
       {{- if .Values.initContainers }}
       initContainers:
-{{ toYaml .Values.iam-data.initContainers | indent 8 }}
+{{ toYaml .Values.initContainers | indent 8 }}
       {{- end }}
 
-      {{- if .Values.iam-data.image.pullSecrets }}
+      {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- range .Values.iam-data.image.pullSecrets }}
+        {{- range .Values.image.pullSecrets }}
         - name: {{ . }}
         {{- end }}
       {{- end }}
 
-      serviceAccountName: {{ include "iam.fullname" . }}
+      serviceAccountName: {{ template "iam-web.fullname" . }}
 
-      {{- if .Values.iam-data.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.iam-data.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
 
       volumes:
       ## agent configuration.
       - name: agentconfig-volume
         configMap:
-          name: iam-data-agent-configmap
+          name: iam-web-agent-configmap
           items:
           - key: agent.config
             path: agent.yaml
@@ -71,19 +71,19 @@ spec:
       ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
       - name: coreconfig-volume
         configMap:
-          name: iam-data-application-configmap
+          name: iam-web-application-configmap
           items:
-          {{- range $index, $value := .Values.iam-data.coreConfigs}}
+          {{- range $index, $value := .Values.coreConfigs}}
           - key: {{$index}}.config
             path: {{$index}}
           {{- end}}
       ## data(transactions).
       - name: appdata-volume
-      {{- if not .Values.iam-data.persistence.enabled }}
+      {{- if not .Values.persistence.enabled }}
         emptyDir: {}
-      {{- else if .Values.iam-data.persistence.existingClaim }}
+      {{- else if .Values.persistence.existingClaim }}
         persistentVolumeClaim:
-        {{- with .Values.iam-data.persistence.existingClaim }}
+        {{- with .Values.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
@@ -95,11 +95,11 @@ spec:
 
       containers:
         - name: {{ .Chart.Name }}
-          {{- if .Values.iam-data.containerSecurityContext.enabled }}
-          securityContext: {{- omit .Values.iam-data.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.iam-data.image.repository }}:{{ .Values.iam-data.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.iam-data.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           #command: [ "/bin/sh", "-c", "env" ]
           ports:
             - name: api
@@ -121,19 +121,19 @@ spec:
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
           envFrom:
           - configMapRef:
-              name: env-iam-data-configmap
+              name: iam-web-env-configmap
 
           volumeMounts:
           ## sharding server and rules configuration.
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
           - name: coreconfig-volume
-            mountPath: /opt/apps/ecm/iam-data-{{ .Chart.AppVersion }}-bin/conf/
+            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/conf/
           ## datadir.
           - name: appdata-volume
-            mountPath: /opt/apps/ecm/iam-data-{{ .Chart.AppVersion }}-bin/data/
+            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/data/
           ## logdir.
           - name: applog-volume
-            mountPath: /opt/apps/ecm/iam-data-{{ .Chart.AppVersion }}-bin/log/
+            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/log/
 
           livenessProbe:
             initialDelaySeconds: 10
@@ -156,22 +156,22 @@ spec:
             tcpSocket:
               port: api
 
-          {{- if .Values.iam-data.resources.enabled }}
+          {{- if .Values.resources.enabled }}
           resources:
-            {{- toYaml .Values.iam-data.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
           {{ end }}
 
-      {{- with .Values.iam-data.nodeSelector }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      {{- with .Values.iam-data.affinity }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
-      {{- with .Values.iam-data.tolerations }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

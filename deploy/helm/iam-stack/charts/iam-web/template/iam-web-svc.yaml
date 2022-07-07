@@ -1,0 +1,204 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+## ---------------------------------- [begin] Application Service --------------------------------
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#discovering-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "iam-web.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+  {{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+  {{- end }}
+
+spec:
+  type: {{ .Values.service.type }}
+  {{- if eq .Values.service.type "LoadBalancer" }}
+  {{- if not (empty .Values.service.loadBalancerIP) }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if not (empty .Values.service.loadBalancerSourceRanges) }}
+  loadBalancerSourceRanges: {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  {{- if not (empty .Values.service.externalIPs) }}
+  ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#external-ips
+  externalIPs: {{- toYaml .Values.service.externalIPs | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  ports:
+  - name: api
+    port: {{ .Values.service.apiPort | default 8080 }}
+    protocol: TCP
+    targetPort: api
+    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
+    nodePort: {{ .Values.service.nodePorts.api }}
+    {{- else if eq .Values.service.type "ClusterIP" }}
+    nodePort: null
+    {{- end }}
+
+  {{- if not (empty .Values.service.prometheusPort) }}
+  - name: prometheus
+    port: {{ .Values.service.prometheusPort | default 10108 }}
+    protocol: TCP
+    targetPort: prometheus
+    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.prometheus)) }}
+    nodePort: {{ .Values.service.nodePorts.prometheus }}
+    {{- else if eq .Values.service.type "ClusterIP" }}
+    nodePort: null
+    {{- end }}
+
+  {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+## ---------------------------------- [end] Application Service ------------------------------------------------
+
+---
+
+## ---------------------------------- [begin] Application dependency Service ------------------------------------
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+subsets:
+- addresses:
+  - ip: {{ .Values.database.external.host }}
+  ports:
+  - name: external-mysql
+    port: {{ .Values.database.external.port }}
+    protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: redis-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+subsets:
+- addresses:
+ {{- range $index, $value := regexSplit "," .Values.redis.external.nodes -1 }}
+ {{- $parts := regexSplit ":" $value -1 }}
+  - ip: {{ index $parts 0 }}
+  ports:
+  - name: external-redis-{{$index}}
+    port: {{ index $parts 1 }}
+    protocol: TCP
+ {{- end}}
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .Values.trace.provider }}-{{ template "iam-web.name" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "iam-web.chart" . }}
+subsets:
+- addresses:
+# see:https://helm.sh/docs/chart_template_guide/function_list/#urlparse
+{{- if eq .Values.trace.provider "jaeger" }}
+  {{- $url := urlParse .Values.trace.jaeger.endpoint }}
+  {{- $parts := regexSplit ":" $url.host -1 }}
+  - ip: {{ index $parts 0 }}
+  ports:
+  - name: external-{{ .Values.trace.provider }}
+    port: {{ index $parts 1 }}
+    protocol: TCP
+{{- else if eq .Values.trace.provider "otel" }}
+  {{- $url := urlParse .Values.trace.otel.endpoint }}
+  {{- $parts := regexSplit ":" $url -1 }}
+  - ip: {{ index $parts 0 }}
+  ports:
+  - name: external-{{ .Values.trace.provider }}
+    port: {{ index $parts 1 }}
+    protocol: TCP
+{{- end}}
+## ------------------------------------ [end] Application dependency Service -----------------------------------------------
+

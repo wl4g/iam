@@ -2,8 +2,10 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "iam.fullname" . }}
+  name: {{ template "iam-stack.fullname" . }}
+
 ---
+
 kind: Role
 {{- if semverCompare ">=1.17-0" .Capabilities.KubeVersion.GitVersion }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -12,7 +14,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 {{- end }}
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "iam.fullname" . }}
+  name: {{ template "iam-stack.fullname" . }}
 rules:
 - apiGroups:
   - ""
@@ -22,7 +24,9 @@ rules:
   - get
   - watch
   - list
+
 ---
+
 kind: RoleBinding
 {{- if semverCompare ">=1.17-0" .Capabilities.KubeVersion.GitVersion }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -31,12 +35,12 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 {{- end }}
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "iam.fullname" . }}
+  name: {{ template "iam-stack.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "iam.fullname" . }}
+    name: {{ template "iam-stack.fullname" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ include "iam.fullname" . }}
+  name: {{ template "iam-stack.fullname" . }}
   apiGroup: rbac.authorization.k8s.io

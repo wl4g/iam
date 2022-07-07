@@ -1,0 +1,224 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+## This is the spec definition of application instance deployed in Kubernetes.
+image:
+  repository: wl4g/iam-web
+  tag: latest
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## see:https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  pullSecrets:
+  # - myRegistryKeySecretName
+
+## It is recommended to have odd number of nodes in a cluster, otherwise the application cluster cannot be automatically healed in case of net-split.
+autoscaling:
+  enabled: true
+  replicaCount: 2
+
+## The update strategy for deployments with persistent volumes(jobservice, registry
+## and chartmuseum): "RollingUpdate" or "Recreate"
+## Set it as "Recreate" when "RWM" for volumes isn't supported
+updateStrategy:
+  type: RollingUpdate
+
+## The name of a secret in the same kubernetes namespace which contains values to
+## be added to the environment (must be manually created)
+## This can be useful for passwords and logins, etc.
+
+# envFromSecret: "iam-web-secrets"
+
+## Additional deployment annotations
+podAnnotations: 
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "10108"
+
+persistence:
+  enabled: false
+  size: 20Mi
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  ## Existing PersistentVolumeClaims
+  ## The value is evaluated as a template
+  ## So, for example, the name can depend on .Release or .Chart
+  existingClaim: ""
+
+## see:https://blogs.wl4g.com/archives/2969
+resources:
+  enabled: false
+  requests:
+    cpu: 100m
+    memory: 1024Mi
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+
+## Containers that run before the creation of application containers. They can contain utilities or setup scripts.
+initContainers: {}
+  # - name: mysql-probe
+  #   image: alpine
+  #   command: ["sh", "-c", "for i in $(seq 1 300); do nc -zvw1 mysql 3306 && exit 0 || sleep 3; done; exit 1"]
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1000
+  fsGroupChangePolicy: Always
+  runAsUser: 1000
+  supplementalGroups:
+    - 1000
+
+containerSecurityContext:
+  enabled: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+agentConfig: ""
+
+applicationConfigs:
+  ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/iam-web-etc-pro.yml
+  iam-web-etc-pro.yml: |-
+    spring:
+      infra:
+        support:
+          jedis:
+            passwd: ${IAM_REDIS_PASSWD:123456}
+            connect-timeout: 10000
+            max-attempts: 10
+            # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+            nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+
+  iam-web-pro.yml: |-
+    spring:
+      iam:
+        cors:
+          rules:
+            '[/**]':
+              allows-origins:
+                - https://${IAM_ZONE:wl4g.com}
+                - http://${IAM_ZONE:wl4g.com}
+                - https://*.${IAM_ZONE:wl4g.com}
+                - http://*.${IAM_ZONE:wl4g.com}
+        login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
+        unauthorized-uri: /view/403.html
+        success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.com}/#/overview
+        acl:
+          secure: false # Turn off protection will trust any same intranet IP.
+          allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${IAM_ACL_DENY}
+        captcha:
+          #jigsaw:
+            #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+        sns: # SNS configuration.
+          oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+          wechat-mp:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+          wechat:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
+            href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+          qq:
+            app-id: 101542056 # Public testing.
+            app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+            redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+
+service:
+  ## Service type
+  type: ClusterIP
+  ## Application API
+  apiPortPort: 18080
+  ## Prometheus metrics API
+  prometheusPort: 10108
+  ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+  ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  nodePorts:
+    api:
+    prometheus:
+  ##
+  ## Set the LoadBalancer service type to internal only.
+  ## see:https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ## see:https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  loadBalancerIP:
+  loadBalancerSourceRanges:
+  #- 10.10.10.0/24
+  ##
+  ## Set the ExternalIPs
+  ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#external-ips
+  externalIPs: []
+  ## Provide any additional annotations which may be required. Evaluated as a template
+  annotations: {}
+
+governance:
+  ## Service governance type.
+  type: Ingress # Options: Ingress|Istio, recommends using istio.
+  ingress:
+   ## ingress for application api
+   api:
+     enabled: false
+     ingressClassName: nginx
+     annotations: {}
+       # kubernetes.io/ingress.class: nginx
+       # kubernetes.io/tls-acme: "true"
+     path: /
+     hosts:
+       - iam-web.iam.svc.cluster.local
+     tls: []
+   ##
+   ## ingress for application prometheus
+   prometheus:
+     enabled: false
+     ingressClassName: nginx
+     annotations: {}
+       # kubernetes.io/ingress.class: nginx
+       # kubernetes.io/tls-acme: "true"
+     path: /
+     hosts:
+       - iam-web.iam.svc.cluster.local
+     tls: []
+  istio:
+    mode: http # Options: http|https, recommends using https.
+    domains:
+      - iam.wl4g.io
+    routeMatchConfigs:
+      - match:
+        - uri:
+            exact: "/healthz"
+        rewrite:
+          uri: "/-/healthy" # Prometheus build-in health path.
+        route:
+          - destination:
+              host: iam-web.iam.svc.cluster.local
+              port:
+                number: 80
+      - match:
+        - uri:
+            prefix: "/nginx"
+        rewrite:
+          uri: "/"
+        route:
+          - destination:
+              host: nginx.simple.svc.cluster.local
+              port:
+                number: 80
+    https:
+      tlsMode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
+

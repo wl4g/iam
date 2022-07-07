@@ -1,0 +1,236 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+## ================================================== IAM WEB Configuration ===============================================================
+
+## This is the spec definition of iam-web instance deployed in Kubernetes.
+iam-web:
+  image:
+    repository: wl4g/iam-web
+    tag: latest
+
+  applicationConfigs:
+    ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/iam-web-etc-pro.yml
+    iam-web-etc-pro.yml: |-
+      spring:
+        infra:
+          support:
+            jedis:
+              passwd: ${IAM_REDIS_PASSWD:123456}
+              connect-timeout: 10000
+              max-attempts: 10
+              # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+              nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+
+    iam-web-pro.yml: |-
+      spring:
+        iam:
+          cors:
+            rules:
+              '[/**]':
+                allows-origins:
+                  - https://${IAM_ZONE:wl4g.com}
+                  - http://${IAM_ZONE:wl4g.com}
+                  - https://*.${IAM_ZONE:wl4g.com}
+                  - http://*.${IAM_ZONE:wl4g.com}
+          login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
+          unauthorized-uri: /view/403.html
+          success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.com}/#/overview
+          acl:
+            secure: false # Turn off protection will trust any same intranet IP.
+            allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
+            denyIpRange: ${IAM_ACL_DENY}
+          captcha:
+            #jigsaw:
+              #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+          sns: # SNS configuration.
+            oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+            wechat-mp:
+              app-id: yourappid
+              app-secret: yoursecret
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+            wechat:
+              app-id: yourappid
+              app-secret: yoursecret
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
+              href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            qq:
+              app-id: 101542056 # Public testing.
+              app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+              redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+
+## ================================================== IAM FACADE Configuration ===============================================================
+
+## This is the spec definition of iam-facade instance deployed in Kubernetes.
+iam-facade:
+  image:
+    repository: wl4g/iam-facade
+    tag: latest
+
+  applicationConfigs:
+    ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
+    iam-facade-etc-pro.yml: |-
+      spring:
+        infra:
+          support:
+            jedis:
+              passwd: ${IAM_REDIS_PASSWD:123456}
+              connect-timeout: 10000
+              max-attempts: 10
+              # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+              nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+
+    iam-facade-pro.yml: ""
+
+## ================================================== IAM DATA Configuration ===============================================================
+
+## This is the spec definition of iam-facade instance deployed in Kubernetes.
+iam-data:
+  image:
+    repository: wl4g/iam-data
+    tag: latest
+
+  ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
+  applicationConfigs:
+    iam-data-etc-pro.yml: |-
+      spring:
+        # Spring datasource configuration.
+        datasource:
+          type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
+          driverClassName: com.mysql.cj.jdbc.Driver
+          hikari:
+            jdbcUrl: ${IAM_DB_URL:jdbc:mysql://mysql.iam.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+            username: ${IAM_DB_USER:iam}
+            password: ${IAM_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
+            connectionTimeout: 30000
+            idleTimeout: 600000
+            initializationFailTimeout: 1
+            minimumIdle: 10
+            maxLifetime: 1800000
+            maximumPoolSize: 100
+            validationTimeout: 5000
+            leakDetectionThreshold: 0
+
+    iam-data-pro.yml: ""
+
+## ================================================== COMMON Configuration ===============================================================
+
+database:
+  # if external database is used, set "type" to "external" and fill the connection informations in "external" section
+  type: external
+  # TODO
+  #internal:
+  #  image:
+  #    repository: mysql
+  #    tag: 5.7.30
+  #  # The initial superuser password for internal database
+  #  password: "changeit"
+  #  # resources:
+  #  #  requests:
+  #  #    memory: 256Mi
+  #  #    cpu: 100m
+  #  nodeSelector: {}
+  #  tolerations: []
+  #  affinity: {}
+  #  ## The priority class to run the pod as
+  #  priorityClassName:
+  #  initContainer:
+  #    migrator: {}
+  #    # resources:
+  #    #  requests:
+  #    #    memory: 128Mi
+  #    #    cpu: 100m
+  #    permissions: {}
+  #    # resources:
+  #    #  requests:
+  #    #    memory: 128Mi
+  #    #    cpu: 100m
+  external:
+    host: "10.0.0.114"
+    port: "3306"
+    username: "iam"
+    password: "123456"
+    iamDataDatabase: "iam"
+
+redis:
+  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
+  type: external
+  # TODO
+  #internal:
+  #  image:
+  #    repository: redis
+  #    tag: 6.2-alpine
+  #  # resources:
+  #  #  requests:
+  #  #    memory: 256Mi
+  #  #    cpu: 100m
+  #  nodeSelector: {}
+  #  tolerations: []
+  #  affinity: {}
+  #  ## The priority class to run the pod as
+  #  priorityClassName:
+  external:
+    # support redis and redis-cluster.
+    # <redis:port0,redis1:port1,redis2:port2,...>
+    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    password: "zzx!@#$%"
+
+kafka:
+  enabled: false
+  # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
+  # For best performance it is recommended to use an external.
+  type: external
+  # TODO
+  #internal:
+  #  image:
+  #    repository: bitnami/kafka
+  #    tag: 6.2-alpine
+  #  # resources:
+  #  #  requests:
+  #  #    memory: 256Mi
+  #  #    cpu: 100m
+  #  nodeSelector: {}
+  #  tolerations: []
+  #  affinity: {}
+  #  ## The priority class to run the pod as
+  #  priorityClassName:
+  external:
+    # support kafka and kafka-cluster.
+    # <kafka:port0,kafka:port1,kafka:port2,...>
+    brokerList: "10.0.0.114:9092"
+
+trace:
+  enabled: false
+  # trace provider: jaeger or otel
+  # jaeger should be 1.26+
+  provider: jaeger
+  # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
+  sample_rate: 1
+  # namespace used to differentiate different harbor services
+  # namespace:
+  # attributes is a key value dict contains user defined attributes used to initialize trace provider
+  # attributes:
+  #   application: harbor
+  jaeger:
+    # jaeger supports two modes:
+    #   collector mode(uncomment endpoint and uncomment username, password if needed)
+    #   agent mode(uncomment agent_host and agent_port)
+    endpoint: http://jaeger.kube-tracing.svc.cluster.local:14268/api/traces
+    # username:
+    # password:
+    # agent_host: hostname
+    # export trace data by jaeger.thrift in compact mode
+    # agent_port: 6831
+  otel:
+    endpoint: otel.kube-tracing.svc.cluster.local:4318
+    url_path: /v1/traces
+    compression: false
+    insecure: true
+    timeout: 10s
