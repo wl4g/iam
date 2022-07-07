@@ -49,13 +49,13 @@ spec:
     nodePort: null
     {{- end }}
 
-  {{- if not (empty .Values.service.prometheusPort) }}
+  {{- if not (empty .Values.service.managementPort) }}
   - name: prometheus
-    port: {{ .Values.service.prometheusPort | default 10108 }}
+    port: {{ .Values.service.managementPort | default 10108 }}
     protocol: TCP
     targetPort: prometheus
-    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.prometheus)) }}
-    nodePort: {{ .Values.service.nodePorts.prometheus }}
+    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
+    nodePort: {{ .Values.service.nodePorts.management }}
     {{- else if eq .Values.service.type "ClusterIP" }}
     nodePort: null
     {{- end }}
@@ -105,6 +105,7 @@ spec:
 
 ---
 
+{{- if .Values.trace.enabled }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
@@ -122,6 +123,7 @@ spec:
   sessionAffinity: None
   clusterIP: None
   publishNotReadyAddresses: true
+{{- end}}
 
 ---
 
@@ -168,6 +170,7 @@ subsets:
 
 ---
 
+{{- if .Values.trace.enabled }}
 apiVersion: v1
 kind: Endpoints
 metadata:
@@ -197,4 +200,5 @@ subsets:
   - name: external-{{ .Values.trace.provider }}
     port: {{ index $parts 1 }}
     protocol: TCP
+{{- end}}
 {{- end}}

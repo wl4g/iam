@@ -123,10 +123,10 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
         if (isNull(keySpec)) { // Expired?
             try {
                 if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
-                    // Retry get.
+                    // Retry getting.
                     keySpec = cryptoCache.getMapField(cacheKey);
                     if (isNull(keySpec)) {
-                        doInitializingKeyPairSpecAll();
+                        initKeyPairSpecPool();
                     }
                 }
             } catch (Exception e) {
@@ -169,7 +169,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
      *
      * @return
      */
-    private synchronized void doInitializingKeyPairSpecAll() {
+    private synchronized void initKeyPairSpecPool() {
         // Create generate cryptic keyPairs
         for (int index = 0; index < config.getKeyPairPools(); index++) {
             // Generate keyPairSpec.

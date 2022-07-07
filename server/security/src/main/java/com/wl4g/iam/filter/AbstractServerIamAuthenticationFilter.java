@@ -306,7 +306,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
         // Event publish.
         // TODO getting actual coordinates.
-        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", errmsg, ae));
+//        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", errmsg, ae));
 
         if (!isBlank(errmsg)) {
             /**

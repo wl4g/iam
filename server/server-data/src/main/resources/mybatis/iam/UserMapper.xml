@@ -103,10 +103,10 @@
 				AND name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%'),
 			</if>
 			<if test="givenName != null">
-				AND given_name LIKE CONCAT('%',#{given_name,jdbcType=VARCHAR},'%'),
+				AND given_name LIKE CONCAT('%',#{givenName,jdbcType=VARCHAR},'%'),
 			</if>
 			<if test="familyName != null">
-				AND family_name = #{family_name,jdbcType=VARCHAR},
+				AND family_name = #{familyName,jdbcType=VARCHAR},
 			</if>
 			<if test="middleName != null">
 				AND middle_name = #{middleName,jdbcType=VARCHAR},
@@ -115,7 +115,7 @@
 				AND nickname = #{nickname,jdbcType=VARCHAR},
 			</if>
 			<if test="preferredUsername != null">
-				AND preferred_username = #{preferred_username,jdbcType=VARCHAR},
+				AND preferred_username = #{preferredUsername,jdbcType=VARCHAR},
 			</if>
 			<if test="gender != null">
 				AND gender = #{gender,jdbcType=VARCHAR},
@@ -257,11 +257,11 @@
 		VALUES (
 		#{id,jdbcType=BIGINT},
 		#{subject,jdbcType=VARCHAR},
-		#{given_name,jdbcType=VARCHAR},
-		#{family_name,jdbcType=VARCHAR},
+		#{givenName,jdbcType=VARCHAR},
+		#{familyName,jdbcType=VARCHAR},
 		#{middleName,jdbcType=VARCHAR},
 		#{nickname,jdbcType=VARCHAR},
-		#{preferred_username,jdbcType=VARCHAR},
+		#{preferredUsername,jdbcType=VARCHAR},
 		#{gender,jdbcType=VARCHAR},
 		#{locale,jdbcType=VARCHAR},
 		#{birthdate,jdbcType=TIMESTAMP},
@@ -411,10 +411,10 @@
 				#{name,jdbcType=VARCHAR},
 			</if>
 			<if test="givenName != null">
-				#{given_name,jdbcType=VARCHAR},
+				#{givenName,jdbcType=VARCHAR},
 			</if>
 			<if test="familyName != null">
-				#{family_name,jdbcType=VARCHAR},
+				#{familyName,jdbcType=VARCHAR},
 			</if>
 			<if test="middleName != null">
 				#{middleName,jdbcType=VARCHAR},
@@ -423,7 +423,7 @@
 				#{nickname,jdbcType=VARCHAR},
 			</if>
 			<if test="preferredUsername != null">
-				#{preferred_username,jdbcType=VARCHAR},
+				#{preferredUsername,jdbcType=VARCHAR},
 			</if>
 			<if test="gender != null">
 				#{gender,jdbcType=VARCHAR},
@@ -518,10 +518,10 @@
 				name = #{name,jdbcType=VARCHAR},
 			</if>
 			<if test="givenName != null">
-				given_name = #{given_name,jdbcType=VARCHAR},
+				given_name = #{givenName,jdbcType=VARCHAR},
 			</if>
 			<if test="familyName != null">
-				family_name = #{family_name,jdbcType=VARCHAR},
+				family_name = #{familyName,jdbcType=VARCHAR},
 			</if>
 			<if test="middleName != null">
 				middle_name = #{middleName,jdbcType=VARCHAR},
@@ -530,7 +530,7 @@
 				nickname = #{nickname,jdbcType=VARCHAR},
 			</if>
 			<if test="preferredUsername != null">
-				preferred_username = #{preferred_username,jdbcType=VARCHAR},
+				preferred_username = #{preferredUsername,jdbcType=VARCHAR},
 			</if>
 			<if test="gender != null">
 				gender = #{gender,jdbcType=VARCHAR},
@@ -624,38 +624,32 @@
 		<set>
 			subject = #{subject,jdbcType=VARCHAR},
 			name = #{name,jdbcType=VARCHAR},
-			given_name = #{given_name,jdbcType=VARCHAR},
-			family_name = #{family_name,jdbcType=VARCHAR},
+			given_name = #{givenName,jdbcType=VARCHAR},
+			family_name = #{familyName,jdbcType=VARCHAR},
 			middle_name = #{middleName,jdbcType=VARCHAR},
 			nickname = #{nickname,jdbcType=VARCHAR},
-			preferred_username = #{preferred_username,jdbcType=VARCHAR},
+			preferred_username = #{preferredUsername,jdbcType=VARCHAR},
 			gender = #{gender,jdbcType=VARCHAR},
 			locale = #{locale,jdbcType=VARCHAR},
 			birthdate = #{birthdate,jdbcType=TIMESTAMP},
 			picture = #{picture,jdbcType=VARCHAR},
 			zoneinfo = #{zoneinfo,jdbcType=VARCHAR},
-			password =
-			#{password,jdbcType=VARCHAR},
+			password = #{password,jdbcType=VARCHAR},
 			pub_salt = #{pubSalt,jdbcType=VARCHAR},
-			user_type =
-			#{userType,jdbcType=INTEGER},
-			enable =
-			#{enable,jdbcType=INTEGER},
+			user_type = #{userType,jdbcType=INTEGER},
+			enable = #{enable,jdbcType=INTEGER},
 			status = #{status,jdbcType=INTEGER},
 			email = #{email,jdbcType=VARCHAR},
 			phone = #{phone,jdbcType=VARCHAR},
 			wechat_open_id = #{wechatOpenId,jdbcType=VARCHAR},
 			wechat_union_id = #{wechatUnionId,jdbcType=VARCHAR},
-			facebook_id =
-			#{facebookId,jdbcType=VARCHAR},
+			facebook_id = #{facebookId,jdbcType=VARCHAR},
 			google_id = #{googleId,jdbcType=VARCHAR},
 			twitter_id = #{twitterId,jdbcType=VARCHAR},
-			linkedin_id =
-			#{linkedinId,jdbcType=VARCHAR},
+			linkedin_id = #{linkedinId,jdbcType=VARCHAR},
 			alipay_id = #{alipayId,jdbcType=VARCHAR},
 			github_id = #{githubId,jdbcType=VARCHAR},
-			aws_id =
-			#{awsId,jdbcType=VARCHAR},
+			aws_id = #{awsId,jdbcType=VARCHAR},
 			remark = #{remark,jdbcType=VARCHAR},
 			create_by = #{createBy,jdbcType=BIGINT},
 			create_date =

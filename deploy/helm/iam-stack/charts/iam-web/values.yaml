@@ -91,7 +91,7 @@ affinity: {}
 
 envConfigs:
   JAVA_OPTS: "-Djava.awt.headless=true"
-  SPRING_SERVER_PORT: "8080"
+  SPRING_SERVER_PORT: "18080"
 
 agentConfig: ""
 
@@ -102,15 +102,15 @@ appConfigs:
 service:
   ## Service type
   type: ClusterIP
-  ## Application API
+  ## Application service port.
   apiPort: 18080
-  ## Prometheus metrics API
-  prometheusPort: 10108
+  ## Management port.
+  managementPort: 10108
   ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
   ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   nodePorts:
     api:
-    prometheus:
+    management:
   ##
   ## Set the LoadBalancer service type to internal only.
   ## see:https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
@@ -133,16 +133,16 @@ governance:
    api:
      enabled: false
      ingressClassName: nginx
-     annotations: {}
-       # kubernetes.io/ingress.class: nginx
-       # kubernetes.io/tls-acme: "true"
+     annotations:
+       kubernetes.io/ingress.class: nginx
+       kubernetes.io/tls-acme: "true"
      path: /
      hosts:
        - iam-web.iam.svc.cluster.local
      tls: []
    ##
-   ## ingress for application prometheus
-   prometheus:
+   ## ingress for application management.
+   management:
      enabled: false
      ingressClassName: nginx
      annotations: {}
@@ -166,17 +166,17 @@ governance:
           - destination:
               host: iam-web.iam.svc.cluster.local
               port:
-                number: 80
+                number: 18080
       - match:
         - uri:
-            prefix: "/nginx"
+            prefix: "/metrics"
         rewrite:
-          uri: "/"
+          uri: "/actuator/metrics" # Spring actuator build-in metrics path.
         route:
           - destination:
-              host: nginx.simple.svc.cluster.local
+              host: iam-web.iam.svc.cluster.local
               port:
-                number: 80
+                number: 18080
     https:
       tlsMode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
 
@@ -289,7 +289,7 @@ trace:
     # export trace data by jaeger.thrift in compact mode
     # agent_port: 6831
   otel:
-    endpoint: 10.0.0.114:4318
+    endpoint: http://10.0.0.114:4318
     url_path: /v1/traces
     compression: false
     insecure: true

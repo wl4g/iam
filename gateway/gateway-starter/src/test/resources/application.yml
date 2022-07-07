@@ -752,7 +752,7 @@ spring:
 ## ######################
 management:
   server:
-    port: 18086
+    port: 10108
   security:
     enabled: false
   endpoint:

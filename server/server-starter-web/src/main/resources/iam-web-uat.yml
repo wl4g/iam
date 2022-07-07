@@ -21,9 +21,9 @@ spring:
             - https://*.${IAM_ZONE:wl4g.uat}
             - http://*.${IAM_ZONE:wl4g.uat}
     #login-uri: /view/login.html
-    login-uri: http://dopaas.${IAM_ZONE:wl4g.uat}/#/login
+    login-uri: http://iam.${IAM_ZONE:wl4g.uat}/#/login
     unauthorized-uri: /view/403.html
-    success-endpoint: umc-manager@http://umc.${IAM_ZONE:wl4g.uat}/umc-manager
+    success-endpoint: iam-web@http://iam.${IAM_ZONE:wl4g.uat}/iam-web
     acl:
       secure: false # Turn off protection will trust any same intranet IP.
       allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}

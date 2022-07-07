@@ -64,7 +64,7 @@ spec:
 ---
 {{- end }}
 
-{{- if .Values.governance.ingress.prometheus.enabled -}}
+{{- if .Values.governance.ingress.management.enabled -}}
   {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
   {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
@@ -81,17 +81,17 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
-  {{- if .Values.governance.ingress.prometheus.annotations }}
+  {{- if .Values.governance.ingress.management.annotations }}
   annotations:
-    {{- toYaml .Values.governance.ingress.prometheus.annotations | nindent 4 }}
+    {{- toYaml .Values.governance.ingress.management.annotations | nindent 4 }}
   {{- end }}
 
 spec:
-  {{- if and .Values.governance.ingress.prometheus.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.governance.ingress.prometheus.ingressClassName }}
+  {{- if and .Values.governance.ingress.management.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.governance.ingress.management.ingressClassName }}
   {{- end }}
   rules:
-  {{- range $host := .Values.governance.ingress.prometheus.hosts }}
+  {{- range $host := .Values.governance.ingress.management.hosts }}
   - host: {{ $host }}
     http:
       paths:
@@ -104,15 +104,15 @@ spec:
           service:
             name: {{ template "app.name" $ }}
             port:
-              number: {{ $.Values.service.prometheusPort }}
+              number: {{ $.Values.service.managementPort }}
           {{- else }}
           serviceName: {{ template "app.name" $ }}
-          servicePort: {{ $.Values.service.prometheusPort }}
+          servicePort: {{ $.Values.service.managementPort }}
           {{- end }}
   {{- end -}}
-  {{- if .Values.governance.ingress.prometheus.tls }}
+  {{- if .Values.governance.ingress.management.tls }}
   tls:
-    {{- toYaml .Values.governance.ingress.prometheus.tls | nindent 4 }}
+    {{- toYaml .Values.governance.ingress.management.tls | nindent 4 }}
   {{- end }}
 ---
 {{- end }}

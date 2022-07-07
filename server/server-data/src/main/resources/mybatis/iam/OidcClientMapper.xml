@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wl4g.iam.data.OidcClientDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.oidc.OidcClient">
+  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.OidcClient">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="realm_id" jdbcType="BIGINT" property="realmId" />
     <result column="client_id" jdbcType="VARCHAR" property="clientId" />
@@ -195,7 +195,7 @@
     delete from iam_oidc_client
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+  <insert id="insert" parameterType="com.wl4g.iam.common.bean.OidcClient">
     insert into iam_oidc_client (id, realm_id, client_id, client_secrets_json, 
       registration_token, jwks_uri, jwks_json, 
       client_name, client_type, env_type, login_theme, 
@@ -230,7 +230,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.OidcClient">
     insert into iam_oidc_client
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -483,7 +483,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.OidcClient">
     update iam_oidc_client
     <set>
       <if test="realmId != null">
@@ -612,7 +612,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.oidc.OidcClient">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.OidcClient">
     update iam_oidc_client
     set 
       realm_id = #{realmId,jdbcType=BIGINT},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wl4g.iam.data.OidcMapperDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.oidc.OidcMapper">
+  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.OidcMapper">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="mapper_type" jdbcType="VARCHAR" property="mapperType" />
@@ -84,7 +84,7 @@
     delete from iam_oidc_mapper
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
+  <insert id="insert" parameterType="com.wl4g.iam.common.bean.OidcMapper">
     insert into iam_oidc_mapper (id, name, mapper_type, 
       add_to_id_token, add_to_access_token, add_userinfo, 
       value_json, remark, create_by, 
@@ -96,7 +96,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
+  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.OidcMapper">
     insert into iam_oidc_mapper
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -181,7 +181,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.OidcMapper">
     update iam_oidc_mapper
     <set>
       <if test="name != null">
@@ -223,7 +223,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.oidc.OidcMapper">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.OidcMapper">
     update iam_oidc_mapper
     set name = #{name,jdbcType=VARCHAR},
       mapper_type = #{mapperType,jdbcType=VARCHAR},

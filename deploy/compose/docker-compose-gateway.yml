@@ -30,4 +30,4 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "18085:18085"
-      - "18086:18086"
+      - "10108:10108"

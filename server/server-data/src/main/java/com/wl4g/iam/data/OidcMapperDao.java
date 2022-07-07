@@ -42,7 +42,7 @@ public interface OidcMapperDao {
     @RequestMapping(method = GET, value = "/deleteByPrimaryKey")
     int deleteByPrimaryKey(@RequestParam("id") @Param("id") Long id);
 
-    @RequestMapping(method = POST, value = "/insertSelective")
+    @RequestMapping(method = POST, value = "/insert")
     int insert(@RequestBody OidcMapper row);
 
     @RequestMapping(method = POST, value = "/insertSelective")
@@ -51,15 +51,15 @@ public interface OidcMapperDao {
     @RequestMapping(method = GET, value = "/selectByPrimaryKey")
     OidcMapper selectByPrimaryKey(@RequestParam("id") @Param("id") Long id);
 
-    @RequestMapping(method = POST, value = "/insertSelective")
+    @RequestMapping(method = POST, value = "/selectBySelective")
     List<OidcMapper> selectBySelective(@RequestBody OidcMapper row);
 
     @RequestMapping(method = GET, value = "/selectByClientId")
     List<OidcMapper> selectByClientId(@RequestParam("clientId") @Param("clientId") String clientId);
 
-    @RequestMapping(method = POST, value = "/insertSelective")
+    @RequestMapping(method = POST, value = "/updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(@RequestBody OidcMapper row);
 
-    @RequestMapping(method = POST, value = "/insertSelective")
+    @RequestMapping(method = POST, value = "/updateByPrimaryKey")
     int updateByPrimaryKey(@RequestBody OidcMapper row);
 }

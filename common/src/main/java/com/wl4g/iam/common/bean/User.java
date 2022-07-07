@@ -42,11 +42,11 @@ public class User extends BaseBean implements Serializable {
 
     private String subject;
     private String name;
-    private String given_name;
-    private String family_name;
+    private String givenName;
+    private String familyName;
     private String middleName;
     private String nickname;
-    private String preferred_username;
+    private String preferredUsername;
     private String gender;
     private String locale;
     private Date birthdate;

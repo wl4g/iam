@@ -24,7 +24,7 @@ iam-web:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWD:123456}
+              passwd: ${IAM_REDIS_PASSWORD:123456}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
@@ -83,7 +83,7 @@ iam-facade:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWD:123456}
+              passwd: ${IAM_REDIS_PASSWORD:123456}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
@@ -111,7 +111,7 @@ iam-data:
           hikari:
             jdbcUrl: ${IAM_DB_URL:jdbc:mysql://mysql.iam.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
             username: ${IAM_DB_USER:iam}
-            password: ${IAM_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
+            password: ${IAM_DB_PASSWORD:DFDDD7F502E694F3E40D750FEEAE423D}
             connectionTimeout: 30000
             idleTimeout: 600000
             initializationFailTimeout: 1
@@ -225,14 +225,14 @@ trace:
     # jaeger supports two modes:
     #   collector mode(uncomment endpoint and uncomment username, password if needed)
     #   agent mode(uncomment agent_host and agent_port)
-    endpoint: http://jaeger.kube-tracing.svc.cluster.local:14268/api/traces
+    endpoint: 10.0.0.114:14268/api/traces
     # username:
     # password:
     # agent_host: hostname
     # export trace data by jaeger.thrift in compact mode
     # agent_port: 6831
   otel:
-    endpoint: otel.kube-tracing.svc.cluster.local:4318
+    endpoint: 10.0.0.114:4318
     url_path: /v1/traces
     compression: false
     insecure: true

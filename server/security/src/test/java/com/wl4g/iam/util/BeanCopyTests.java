@@ -35,21 +35,21 @@ public class BeanCopyTests {
     @Test
     public void testFailureSprintBeanUtilsCopyPropertiesIsSetFromNullableProperty() {
         User src = User.builder().name("admin").nickname("Mr.L").build();
-        User dst = User.builder().given_name("W.L").build();
+        User dst = User.builder().givenName("W.L").build();
         BeanUtils.copyProperties(src, dst);
         System.out.println(src);
         System.out.println(dst);
-        // assert nonNull(dst.getGiven_name());
+        // assert nonNull(dst.getGivenName());
     }
 
     @Test
     public void testBeanUtils2CopyPropertiesIsSetFromNullableProperty() throws Exception {
         User src = User.builder().name("admin").nickname("Mr.L").build();
-        User dst = User.builder().given_name("W.L").build();
+        User dst = User.builder().givenName("W.L").build();
         BeanUtils2.deepCopyFieldState(dst, src);
         System.out.println(src);
         System.out.println(dst);
-        assert nonNull(dst.getGiven_name());
+        assert nonNull(dst.getGivenName());
     }
 
 }

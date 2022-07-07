@@ -18,10 +18,6 @@
 		<reactor-extra.version>3.4.8</reactor-extra.version>
 		<reactor-core.version>3.4.17</reactor-core.version>
 		<commons-lang.version>2.6</commons-lang.version>
-		<!-- Trace -->
-		<!-- <opentelemetry.version>1.14.0</opentelemetry.version> -->
-		<!-- <opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version> -->
-		<grpc.version>1.43.0</grpc.version>
 		<!-- Native -->
 		<graalvm.version>21.3.0</graalvm.version>
 		<spring-native.version>0.11.5</spring-native.version>
@@ -117,23 +113,6 @@
 				<version>${spring-cloud-dependencies.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<!-- Tracing -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-bom</artifactId> -->
-			<!-- <version>${opentelemetry.version}</version> -->
-			<!-- <type>pom</type> -->
-			<!-- <scope>import</scope> -->
-			<!-- </dependency> -->
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
-				<!-- Note: 1.0.0-M2 not otel implements of https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
-				<version>1.1.0-M5</version>
-				<scope>import</scope>
-				<type>pom</type>
 			</dependency>
 			<!-- Gateway -->
 			<dependency>
@@ -274,47 +253,9 @@
 		<!-- <groupId>javax.servlet</groupId> -->
 		<!-- <artifactId>javax.servlet-api</artifactId> -->
 		<!-- </dependency> -->
-		<!-- Tracing -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-api</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-sdk</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-exporter-otlp</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-exporter-jaeger</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-exporter-zipkin</artifactId> -->
-		<!-- <optional>true</optional> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.opentelemetry</groupId> -->
-		<!-- <artifactId>opentelemetry-semconv</artifactId> -->
-		<!-- <version>${opentelemetry-semconv.version}</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.grpc</groupId> -->
-		<!-- <artifactId>grpc-protobuf</artifactId> -->
-		<!-- <version>${grpc-protobuf.version}</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.grpc</groupId> -->
-		<!-- <artifactId>grpc-okhttp</artifactId> -->
-		<!-- <version>${grpc.version}</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
-			<version>${grpc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
