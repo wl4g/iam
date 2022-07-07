@@ -6,7 +6,7 @@ This chart bootstraps an IAM deployment on a Kubernetes cluster using the Helm p
 
 + Kubernetes 1.6+
 + Helm
-+ Istio (Optional and recommends)
++ Istio 1.12+ (Optional and recommends)
 
 ## Installing the Chart
 
@@ -20,6 +20,9 @@ To install the chart with the release name `iam`:
 git clone https://github.com/wl4g/iam.git
 cd iam/deploy/charts/iam
 helm -n iam upgrade --install iam .
+
+# for debug template computed values.
+#helm --debug -n iam upgrade --install iam .
 ```
 
 + or, From chart repos

@@ -7,13 +7,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-## ---------------------------------- [begin] Application Service --------------------------------
 
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#discovering-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ template "app.name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
@@ -65,11 +64,9 @@ spec:
   selector:
     app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-## ---------------------------------- [end] Application Service ------------------------------------------------
 
 ---
 
-## ---------------------------------- [begin] Application dependency Service ------------------------------------
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
@@ -112,7 +109,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jaeger-{{ template "app.name" . }}-headless
+  ## for exmple: jaeger-myapp-headless
+  name: {{ .Values.trace.provider }}-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
@@ -200,5 +198,3 @@ subsets:
     port: {{ index $parts 1 }}
     protocol: TCP
 {{- end}}
-## ------------------------------------ [end] Application dependency Service -----------------------------------------------
-

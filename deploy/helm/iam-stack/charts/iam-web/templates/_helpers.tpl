@@ -31,9 +31,7 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{/*
-Create the name of the service account
-*/}}
+{{/* Create the name of the service account */}}
 {{- define "app.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
     {{ default (include "app.fullname" .) .Values.serviceAccount.name }}

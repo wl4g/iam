@@ -10,7 +10,7 @@
 # @see: https://helm.sh/zh/docs/topics/charts/
 #
 apiVersion: v2
-name: iam
+name: iam-stack
 description: A Helm chart for IAM
 icon: https://raw.githubusercontent.com/wl4g/iam/master/shots/iam-logo.png?token=GHSAT0AAAAAABWBQKN3QNYHECQ5LR4PCLKMYWGQIGA
 # A chart can be either an 'application' or a 'library' chart.

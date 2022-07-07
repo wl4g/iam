@@ -8,16 +8,17 @@
 # limitations under the License.
 #
 
-## ================================================== IAM WEB Configuration ===============================================================
+## ================================================== IAM WEB Configuration ==================================================
 
 ## This is the spec definition of iam-web instance deployed in Kubernetes.
 iam-web:
+  enabled: true
   image:
     repository: wl4g/iam-web
     tag: latest
 
-  applicationConfigs:
-    ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/iam-web-etc-pro.yml
+  ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/
+  appConfigs:
     iam-web-etc-pro.yml: |-
       spring:
         infra:
@@ -66,15 +67,16 @@ iam-web:
               app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
               redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
 
-## ================================================== IAM FACADE Configuration ===============================================================
+## ================================================== IAM FACADE Configuration ==================================================
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
 iam-facade:
+  enabled: true
   image:
     repository: wl4g/iam-facade
     tag: latest
 
-  applicationConfigs:
+  appConfigs:
     ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
     iam-facade-etc-pro.yml: |-
       spring:
@@ -89,16 +91,17 @@ iam-facade:
 
     iam-facade-pro.yml: ""
 
-## ================================================== IAM DATA Configuration ===============================================================
+## ================================================== IAM DATA Configuration ==================================================
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
 iam-data:
+  enabled: true
   image:
     repository: wl4g/iam-data
     tag: latest
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
-  applicationConfigs:
+  appConfigs:
     iam-data-etc-pro.yml: |-
       spring:
         # Spring datasource configuration.
