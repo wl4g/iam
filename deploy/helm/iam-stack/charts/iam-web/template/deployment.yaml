@@ -2,13 +2,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "iam-web.fullname" . }}
+  name: {{ template "app.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 
 spec:
   {{- if .Values.autoscaling.enabled }}
@@ -25,7 +25,7 @@ spec:
 
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ template "iam-web.name" . }}
+      app.kubernetes.io/name: {{ template "app.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
 
   template:
@@ -36,7 +36,7 @@ spec:
       {{- end }}
       labels:
         app.kubernetes.io/component: application
-        app.kubernetes.io/name: {{ template "iam-web.name" . }}
+        app.kubernetes.io/name: {{ template "app.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/version: {{ .Chart.AppVersion }}
 
@@ -53,7 +53,7 @@ spec:
         {{- end }}
       {{- end }}
 
-      serviceAccountName: {{ template "iam-web.fullname" . }}
+      serviceAccountName: {{ template "app.fullname" . }}
 
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
@@ -63,19 +63,19 @@ spec:
       ## agent configuration.
       - name: agentconfig-volume
         configMap:
-          name: iam-web-agent-configmap
+          name: {{ template "app.name" . }}-agent-configmap
           items:
           - key: agent.config
             path: agent.yaml
       ## spring application core configuration.
       ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
-      - name: coreconfig-volume
+      - name: appconfig-volume
         configMap:
-          name: iam-web-application-configmap
+          name: {{ template "app.name" . }}-app-configmap
           items:
-          {{- range $index, $value := .Values.coreConfigs}}
-          - key: {{$index}}.config
-            path: {{$index}}
+          {{- range $key, $value := .Values.appConfigs}}
+          - key: {{$key}}.config
+            path: {{$key}}
           {{- end}}
       ## data(transactions).
       - name: appdata-volume
@@ -121,19 +121,20 @@ spec:
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
           envFrom:
           - configMapRef:
-              name: iam-web-env-configmap
+              name: {{ template "app.name" . }}-env-configmap
 
           volumeMounts:
           ## sharding server and rules configuration.
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
-          - name: coreconfig-volume
-            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/conf/
+          - name: appconfig-volume
+            # e.g: /opt/apps/ecm/iam-web-3.0.0-bin/conf
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/conf/
           ## datadir.
           - name: appdata-volume
-            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/data/
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/data/
           ## logdir.
           - name: applog-volume
-            mountPath: /opt/apps/ecm/iam-web-{{ .Chart.AppVersion }}-bin/log/
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
 
           livenessProbe:
             initialDelaySeconds: 10

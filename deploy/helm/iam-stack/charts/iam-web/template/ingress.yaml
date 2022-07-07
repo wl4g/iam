@@ -11,12 +11,12 @@ apiVersion: extensions/v1beta1
 
 kind: Ingress
 metadata:
-  name: {{ printf "%s-%s" (template "iam-web.fullname" .) "api" }}
+  name: {{ printf "%s-%s" (template "app.fullname" .) "api" }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.ingress.api.annotations }}
   annotations:
     {{- toYaml .Values.ingress.api.annotations | nindent 4 }}
@@ -39,11 +39,11 @@ spec:
         backend:
           {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
           service:
-            name: {{ template "iam-web.fullname" $ }}
+            name: {{ template "app.fullname" $ }}
             port:
               number: {{ $.Values.service.apiPort }}
           {{- else }}
-          serviceName: {{ template "iam-web.fullname" $ }}
+          serviceName: {{ template "app.fullname" $ }}
           servicePort: {{ $.Values.service.apiPort }}
           {{- end }}
   {{- end -}}
@@ -65,12 +65,12 @@ apiVersion: extensions/v1beta1
 
 kind: Ingress
 metadata:
-  name: {{ printf "%s-%s" (template "iam-web.fullname" .) "prometheus" }}
+  name: {{ printf "%s-%s" (template "app.fullname" .) "prometheus" }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.ingress.prometheus.annotations }}
   annotations:
     {{- toYaml .Values.ingress.prometheus.annotations | nindent 4 }}
@@ -92,11 +92,11 @@ spec:
         backend:
           {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
           service:
-            name: {{ template "iam-web.fullname" $ }}
+            name: {{ template "app.fullname" $ }}
             port:
               number: {{ $.Values.service.prometheusPort }}
           {{- else }}
-          serviceName: {{ template "iam-web.fullname" $ }}
+          serviceName: {{ template "app.fullname" $ }}
           servicePort: {{ $.Values.service.prometheusPort }}
           {{- end }}
   {{- end -}}

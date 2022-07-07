@@ -3,20 +3,20 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ template "iam-web.name" . }}-api
+  name: {{ template "app.name" . }}-api
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 spec:
   gateways:
-    - {{ template "iam-web.name" . }}-gw
+    - {{ template "app.name" . }}-gw
   hosts:
   {{- if not (empty .Values.istio.domains) }}
   - {{- toYaml .Values.istio.domains | nindent 4 }}
   {{- else }}
-  - {{- .Values.governance.istio.domains | default "iam.wl4g.io" }}
+  - {{- .Values.governance.istio.domains | default "api.example.io" }}
   {{- end }}
   http:
     {{- range $match := .Values.istio.routeMatchConfigs }}
@@ -27,12 +27,12 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: {{ template "iam-web.name" . }}-gw
+  name: {{ template "app.name" . }}-gw
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 spec:
   selector:
     istio: ingressgateway
@@ -41,15 +41,15 @@ spec:
       {{- if not (empty .Values.istio.domains) }}
       - {{- toYaml .Values.istio.domains | nindent 4 }}
       {{- else }}
-      - {{- .Values.governance.istio.domains | default "iam.wl4g.io" }}
+      - {{- .Values.governance.istio.domains | default "app.example.io" }}
       {{- end }}
       port:
         {{- if eq .Values.governance.istio.mode "http" }}
-        name: http-{{ template "iam-web.name" . }}
+        name: http-{{ template "app.name" . }}
         number: 80
         protocol: HTTP
         {{- else if eq .Values.governance.istio.mode "https" }}
-        name: https-{{ template "iam-web.name" . }}
+        name: https-{{ template "app.name" . }}
         number: 443
         protocol: HTTPS
         tls:

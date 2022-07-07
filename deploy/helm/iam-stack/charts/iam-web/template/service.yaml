@@ -13,13 +13,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "iam-web.fullname" . }}
+  name: {{ template "app.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.service.annotations }}
   annotations:
 {{ toYaml .Values.service.annotations | indent 4 }}
@@ -63,7 +63,7 @@ spec:
 
   {{- end }}
   selector:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 ## ---------------------------------- [end] Application Service ------------------------------------------------
 
@@ -74,13 +74,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-{{ template "iam-web.name" . }}-headless
+  name: mysql-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -93,13 +93,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-{{ template "iam-web.name" . }}-headless
+  name: redis-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -112,13 +112,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jaeger-{{ template "iam-web.name" . }}-headless
+  name: jaeger-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -130,13 +130,13 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: mysql-{{ template "iam-web.name" . }}-headless
+  name: mysql-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
   - ip: {{ .Values.database.external.host }}
@@ -150,13 +150,13 @@ subsets:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: redis-{{ template "iam-web.name" . }}-headless
+  name: redis-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
  {{- range $index, $value := regexSplit "," .Values.redis.external.nodes -1 }}
@@ -173,13 +173,13 @@ subsets:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: {{ .Values.trace.provider }}-{{ template "iam-web.name" . }}-headless
+  name: {{ .Values.trace.provider }}-{{ template "app.name" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "iam-web.name" . }}
+    app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "iam-web.chart" . }}
+    helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
 # see:https://helm.sh/docs/chart_template_guide/function_list/#urlparse
