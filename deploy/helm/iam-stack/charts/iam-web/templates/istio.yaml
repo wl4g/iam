@@ -13,7 +13,7 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ template "app.name" . }}-api
+  name: {{ template "app.name" . }}-vs
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -21,18 +21,34 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 spec:
   gateways:
-    - {{ template "app.name" . }}-gw
+  - {{ template "app.name" . }}-gw
+  {{- if not (empty .Values.governance.istio.ingress.hosts) }}
   hosts:
-  {{- if not (empty .Values.governance.istio.domains) }}
-  - {{- toYaml .Values.governance.istio.domains | nindent 4 }}
-  {{- else }}
-  - {{- .Values.governance.istio.domains | default "api.example.io" }}
+  {{- toYaml .Values.governance.istio.ingress.hosts | nindent 4 }}
   {{- end }}
+  {{- if not (empty .Values.governance.istio.ingress.httpRoutes) }}
   http:
-    {{- range $match := .Values.governance.istio.routeMatchConfigs }}
-    - {{- $match }}
-    {{- end }}
-
+  {{- toYaml .Values.governance.istio.ingress.httpRoutes | nindent 4 }}
+  {{- end }}
+  {{- if not (empty .Values.governance.istio.ingress.tcpRoutes) }}
+  tcp:
+  {{- toYaml .Values.governance.istio.ingress.tcpRoutes | nindent 4 }}
+  {{- end }}
+  {{- if not (empty .Values.governance.istio.ingress.subsets) }}
+  subsets:
+  {{- toYaml .Values.governance.istio.ingress.subsets | nindent 4 }}
+  {{- end }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ template "app.name" . }}-rule
+spec:
+  host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- if not (empty .Values.governance.istio.ingress.subsets) }}
+  subsets:
+  {{- toYaml .Values.governance.istio.ingress.subsets | nindent 4 }}
+  {{- end }}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -48,27 +64,70 @@ spec:
     istio: ingressgateway
   servers:
     - hosts:
-      {{- if not (empty .Values.governance.istio.domains) }}
-      - {{- toYaml .Values.governance.istio.domains | nindent 4 }}
-      {{- else }}
-      - {{- .Values.governance.istio.domains | default "app.example.io" }}
+      {{- range $host := .Values.governance.istio.ingress.hosts }}
+      - {{ $host }}
       {{- end }}
       port:
-        {{- if eq .Values.governance.istio.mode "http" }}
+        {{- if eq .Values.governance.istio.ingress.mode "http" }}
         name: http-{{ template "app.name" . }}
         number: 80
         protocol: HTTP
-        {{- else if eq .Values.governance.istio.mode "https" }}
+        {{- else if eq .Values.governance.istio.ingress.mode "https" }}
         name: https-{{ template "app.name" . }}
         number: 443
         protocol: HTTPS
         tls:
-          mode: {{- .Values.governance.istio.https.tlsMode | default "SIMPLE" }}
-          # for example:
+          mode: {{- .Values.governance.istio.ingress.tls.mode | default "SIMPLE" }}
+          # for manual example:
           # openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=wl4g Inc./CN=*.wl4g.io' -keyout wl4g.io.key -out wl4g.io.crt
           # kubectl create -n istio-system secret tls wl4g-credential --key=wl4g.io.key --cert=wl4g.io.crt
           # kubectl apply -f istio-specs.yaml -n securesvc
           credentialName: wl4g-credential
         {{- end }}
+---
+## see:https://developer.aliyun.com/article/772279
+## see::https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services
+{{- range $app := .Values.governance.istio.egress }}
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: {{ $app.name }}-svc
+  namespace: {{ $app.namespace | default "default" }}
+spec:
+  hosts:
+  - details.bookinfo.com
+  location: MESH_INTERNAL
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+    targetPort: 8080
+  resolution: STATIC
+  workloadSelector:
+    labels:
+      app: {{ $app.name }}
+---
+## Note: WorkloadEntry objects correspond to VMs (ECS instances) one-to-one.
+{{- range $index, $addr := $app.instanceAddresses }}
+apiVersion: networking.istio.io/v1beta1
+kind: WorkloadEntry
+metadata:
+  name: {{ $app.name }}-{{ $index }}
+spec:
+  # use of the service account indicates that the workload has a
+  # sidecar proxy bootstrapped with this service account. Pods with
+  # sidecars will automatically communicate with the workload using
+  # istio mutual TLS.
+  {{- if not (empty $app.serviceAccount) }}
+  serviceAccount: {{ $app.serviceAccount }}
+  {{- end}}
+  address: {{ $addr }}
+  labels:
+    app: {{ $app.name }}
+    class: {{ $app.class }}
+    version: {{ $app.version }}
+---
+{{- end }}
+{{- end }}
 
 {{- end }}

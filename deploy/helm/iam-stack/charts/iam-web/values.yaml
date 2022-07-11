@@ -23,7 +23,7 @@ image:
 ## It is recommended to have odd number of nodes in a cluster, otherwise the application cluster cannot be automatically healed in case of net-split.
 autoscaling:
   enabled: true
-  replicaCount: 2
+  replicaCount: 1
 
 ## The update strategy for deployments with persistent volumes(jobservice, registry
 ## and chartmuseum): "RollingUpdate" or "Recreate"
@@ -127,7 +127,7 @@ service:
 
 governance:
   ## Service governance type.
-  type: Ingress # Options: Ingress|Istio, recommends using istio.
+  type: Istio # Options: Ingress|Istio, recommends using istio.
   ingress:
    ## ingress for application api
    api:
@@ -153,65 +153,108 @@ governance:
        - iam-web.iam.svc.cluster.local
      tls: []
   istio:
-    mode: http # Options: http|https, recommends using https.
-    domains:
-      - iam.wl4g.io
-    routeMatchConfigs:
-      - match:
-        - uri:
-            exact: "/healthz"
-        rewrite:
-          uri: "/-/healthy" # Prometheus build-in health path.
-        route:
-          - destination:
-              host: iam-web.iam.svc.cluster.local
-              port:
-                number: 18080
-      - match:
-        - uri:
-            prefix: "/metrics"
-        rewrite:
-          uri: "/actuator/metrics" # Spring actuator build-in metrics path.
-        route:
-          - destination:
-              host: iam-web.iam.svc.cluster.local
-              port:
-                number: 18080
-    https:
-      tlsMode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
+    ingress:
+      hosts:
+        - iam.wl4g.io
+      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+      httpRoutes:
+        - match:
+          - uri:
+              exact: "/healthz"
+          rewrite:
+            uri: "/-/healthy" # Prometheus build-in health path.
+          route:
+            - destination:
+                host: iam-web.iam.svc.cluster.local
+                port:
+                  number: 18080
+                subset: v1
+              weight: 100
+        - match:
+          - uri:
+              prefix: "/metrics"
+          rewrite:
+            uri: "/actuator/metrics" # Spring actuator build-in metrics path.
+          route:
+            - destination:
+                host: iam-web.iam.svc.cluster.local
+                port:
+                  number: 18080
+                subset: v1
+              weight: 100
+        - match:
+          - uri:
+              prefix: "/"
+          route:
+            - destination:
+                host: iam-web.iam.svc.cluster.local
+                port:
+                  number: 18080
+                subset: v1
+              weight: 100
+          ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
+          fault:
+            # delay:
+            #   percentage:
+            #     value: 0.1
+            #   fixedDelay: 5s
+            # abort:
+            #   percentage:
+            #     value: 0.1
+            #   httpStatus: 400
+      ## Canary traffic governance configuration.
+      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
+      subsets:
+        - name: v1
+          labels:
+            version: v1
+        - name: v2
+          labels:
+            version: v2
+      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
+      tcpRoutes:
+      # - match:
+      #   - port: 27017
+      #   route:
+      #   - destination:
+      #       host: mongo.backup.svc.cluster.local
+      #       port:
+      #         number: 5555
+      mode: http # Options: http|https, recommends using https.
+      tls:
+        mode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
+    ## Depends external bare metal or VM services.
+    ## see:https://istio.io/v1.14/docs/reference/config/networking/workload-entry/
+    ## see:https://developer.aliyun.com/article/772279
+    egress:
+    - name: example-wx-payment
+      class: thirdparty-external-service
+      version: v1
+      namespace: default
+      serviceAccount: 
+      hosts:
+      - example-wx-payment.default.svc.cluster.local
+      instanceAddresses:
+      - 157.255.174.121 # or: api.mch.weixin.qq.com
 
 ## ================================================== COMMON Configuration ===============================================================
 
-database:
+redis:
+  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
+  type: external
+  internal: ## see:https://bitnami.com/stack/redis/helm
+    enabled: false
+  external:
+    ## support redis and redis-cluster.
+    ## <redis:port0,redis1:port1,redis2:port2,...>
+    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    password: "zzx!@#$%"
+
+mysql:
   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
   type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: mysql
-  #    tag: 5.7.30
-  #  # The initial superuser password for internal database
-  #  password: "changeit"
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
-  #  initContainer:
-  #    migrator: {}
-  #    # resources:
-  #    #  requests:
-  #    #    memory: 128Mi
-  #    #    cpu: 100m
-  #    permissions: {}
-  #    # resources:
-  #    #  requests:
-  #    #    memory: 128Mi
-  #    #    cpu: 100m
+  internal: ## see:https://bitnami.com/stack/mysql/helm
+    enabled: false
   external:
     host: "10.0.0.114"
     port: "3306"
@@ -219,48 +262,13 @@ database:
     password: "123456"
     iamDataDatabase: "iam"
 
-redis:
-  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
-  type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: redis
-  #    tag: 6.2-alpine
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
-  external:
-    # support redis and redis-cluster.
-    # <redis:port0,redis1:port1,redis2:port2,...>
-    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    password: "zzx!@#$%"
-
 kafka:
   enabled: false
   # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
   # For best performance it is recommended to use an external.
   type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: bitnami/kafka
-  #    tag: 6.2-alpine
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
+  internal: ## see:https://bitnami.com/stack/kafka/helm
+    enabled: false
   external:
     # support kafka and kafka-cluster.
     # <kafka:port0,kafka:port1,kafka:port2,...>

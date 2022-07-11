@@ -45,98 +45,97 @@ import com.wl4g.iam.core.exception.UnableDecryptionCipherParameterException;
  */
 public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 
-	final protected SmartLogger log = getLogger(getClass());
+    final protected SmartLogger log = getLogger(getClass());
 
-	/**
-	 * {@link AbstractIamProperties}
-	 */
-	final private AbstractIamProperties<? extends ParamProperties> config;
+    /**
+     * {@link AbstractIamProperties}
+     */
+    final private AbstractIamProperties<? extends ParamProperties> config;
 
-	public CipherRequestWrapper(AbstractIamProperties<? extends ParamProperties> config, HttpServletRequest request) {
-		super(request);
-		notNullOf(config, "config");
-		this.config = config;
-	}
+    public CipherRequestWrapper(AbstractIamProperties<? extends ParamProperties> config, HttpServletRequest request) {
+        super(request);
+        this.config = notNullOf(config, "config");
+    }
 
-	@Override
-	public String getParameter(String name) {
-		return decryptParamCipherIfNecessary(name, super.getParameter(name));
-	}
+    @Override
+    public String getParameter(String name) {
+        return decryptParamCipherIfNecessary(name, super.getParameter(name));
+    }
 
-	@Override
-	public String[] getParameterValues(String name) {
-		String[] paramValues = super.getParameterValues(name);
-		if (isEmptyArray(paramValues)) {
-			return null;
-		}
+    @Override
+    public String[] getParameterValues(String name) {
+        String[] paramValues = super.getParameterValues(name);
+        if (isEmptyArray(paramValues)) {
+            return null;
+        }
 
-		for (int i = 0; i < paramValues.length; i++) {
-			paramValues[i] = decryptParamCipherIfNecessary(name, paramValues[i]);
-		}
+        for (int i = 0; i < paramValues.length; i++) {
+            paramValues[i] = decryptParamCipherIfNecessary(name, paramValues[i]);
+        }
 
-		return paramValues;
-	}
+        return paramValues;
+    }
 
-	@Override
-	public Map<String, String[]> getParameterMap() {
-		Map<String, String[]> paramMapAll = new LinkedHashMap<>();
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        Map<String, String[]> paramMapAll = new LinkedHashMap<>();
 
-		Map<String, String[]> tmpMap = super.getParameterMap();
-		for (String key : tmpMap.keySet()) {
-			String[] values = tmpMap.get(key);
-			for (int i = 0; i < values.length; i++) {
-				values[i] = decryptParamCipherIfNecessary(key, values[i]);
-			}
-			paramMapAll.put(key, values);
-		}
+        Map<String, String[]> tmpMap = super.getParameterMap();
+        for (String key : tmpMap.keySet()) {
+            String[] values = tmpMap.get(key);
+            for (int i = 0; i < values.length; i++) {
+                values[i] = decryptParamCipherIfNecessary(key, values[i]);
+            }
+            paramMapAll.put(key, values);
+        }
 
-		return paramMapAll;
-	}
+        return paramMapAll;
+    }
 
-	@SuppressWarnings("unchecked")
-	protected <O, I> O decryptParamCipherIfNecessary(String paramName, I paramValue) {
-		if (!isNull(paramValue) && paramValue instanceof String && !isBlank((String) paramValue)) {
-			try {
-				for (String defineParam : config.getCipher().getCipherParameterHeader()) {
-					if (matchParameter(defineParam, paramName)) {
-						log.debug("Decrypting cipher parameter name: {}, origin value: {}", paramName, paramValue);
-						return (O) doDecryptParameterValue((String) paramValue);
-					}
-				}
-			} catch (Exception ex) {
-				throw new UnableDecryptionCipherParameterException(
-						format("Unable decrypting cipher parameter failure of: %s ", paramValue), ex);
-			}
-		}
-		return (O) paramValue;
-	}
+    @SuppressWarnings("unchecked")
+    protected <O, I> O decryptParamCipherIfNecessary(String paramName, I paramValue) {
+        if (!isNull(paramValue) && paramValue instanceof String && !isBlank((String) paramValue)) {
+            try {
+                for (String defineParam : config.getCipher().getCipherParameterHeader()) {
+                    if (matchParameter(defineParam, paramName)) {
+                        log.debug("Decrypting cipher parameter name: {}, origin value: {}", paramName, paramValue);
+                        return (O) doDecryptParameterValue((String) paramValue);
+                    }
+                }
+            } catch (Exception ex) {
+                throw new UnableDecryptionCipherParameterException(
+                        format("Unable decrypting cipher parameter failure of: %s ", paramValue), ex);
+            }
+        }
+        return (O) paramValue;
+    }
 
-	/**
-	 * Matching define parameter name and request parameter name.
-	 * 
-	 * @param defineParam
-	 * @param param
-	 * @return
-	 */
-	protected boolean matchParameter(String defineParam, String param) {
-		isTrue(defineParam.contains(CIPHER_HEADER_PREFIX),
-				"Illegal define cipher headerEncryptParameter: %s, Shouldn't be here. Please check the configuration? ",
-				defineParam);
+    /**
+     * Matching define parameter name and request parameter name.
+     * 
+     * @param defineParam
+     * @param param
+     * @return
+     */
+    protected boolean matchParameter(String defineParam, String param) {
+        isTrue(defineParam.contains(CIPHER_HEADER_PREFIX),
+                "Illegal define cipher headerEncryptParameter: %s, Shouldn't be here. Please check the configuration? ",
+                defineParam);
 
-		// Cleanup defineParameter of header prefix.
-		defineParam = defineParam.substring(defineParam.indexOf(CIPHER_HEADER_PREFIX) + CIPHER_HEADER_PREFIX.length());
+        // Cleanup defineParameter of header prefix.
+        defineParam = defineParam.substring(defineParam.indexOf(CIPHER_HEADER_PREFIX) + CIPHER_HEADER_PREFIX.length());
 
-		// Matching header parameter.
-		return (config.getCipher().isCaseSensitive() && defineParam.equals(param))
-				|| (!config.getCipher().isCaseSensitive() && defineParam.equalsIgnoreCase(param));
-	}
+        // Matching header parameter.
+        return (config.getCipher().isCaseSensitive() && defineParam.equals(param))
+                || (!config.getCipher().isCaseSensitive() && defineParam.equalsIgnoreCase(param));
+    }
 
-	/**
-	 * Do eecryption cipher parameter.
-	 * 
-	 * @param value
-	 * @return
-	 */
-	protected abstract String doDecryptParameterValue(String value);
+    /**
+     * Do eecryption cipher parameter.
+     * 
+     * @param value
+     * @return
+     */
+    protected abstract String doDecryptParameterValue(String value);
 
 }

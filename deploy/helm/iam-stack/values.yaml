@@ -125,36 +125,22 @@ iam-data:
 
 ## ================================================== COMMON Configuration ===============================================================
 
-database:
+redis:
+  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
+  type: external
+  internal: ## see:https://bitnami.com/stack/redis/helm
+    enabled: false
+  external:
+    ## support redis and redis-cluster.
+    ## <redis:port0,redis1:port1,redis2:port2,...>
+    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    password: "zzx!@#$%"
+
+mysql:
   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
   type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: mysql
-  #    tag: 5.7.30
-  #  # The initial superuser password for internal database
-  #  password: "changeit"
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
-  #  initContainer:
-  #    migrator: {}
-  #    # resources:
-  #    #  requests:
-  #    #    memory: 128Mi
-  #    #    cpu: 100m
-  #    permissions: {}
-  #    # resources:
-  #    #  requests:
-  #    #    memory: 128Mi
-  #    #    cpu: 100m
+  internal: ## see:https://bitnami.com/stack/mysql/helm
+    enabled: false
   external:
     host: "10.0.0.114"
     port: "3306"
@@ -162,48 +148,13 @@ database:
     password: "123456"
     iamDataDatabase: "iam"
 
-redis:
-  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
-  type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: redis
-  #    tag: 6.2-alpine
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
-  external:
-    # support redis and redis-cluster.
-    # <redis:port0,redis1:port1,redis2:port2,...>
-    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    password: "zzx!@#$%"
-
 kafka:
   enabled: false
   # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
   # For best performance it is recommended to use an external.
   type: external
-  # TODO
-  #internal:
-  #  image:
-  #    repository: bitnami/kafka
-  #    tag: 6.2-alpine
-  #  # resources:
-  #  #  requests:
-  #  #    memory: 256Mi
-  #  #    cpu: 100m
-  #  nodeSelector: {}
-  #  tolerations: []
-  #  affinity: {}
-  #  ## The priority class to run the pod as
-  #  priorityClassName:
+  internal: ## see:https://bitnami.com/stack/kafka/helm
+    enabled: false
   external:
     # support kafka and kafka-cluster.
     # <kafka:port0,kafka:port1,kafka:port2,...>
@@ -225,14 +176,14 @@ trace:
     # jaeger supports two modes:
     #   collector mode(uncomment endpoint and uncomment username, password if needed)
     #   agent mode(uncomment agent_host and agent_port)
-    endpoint: 10.0.0.114:14268/api/traces
+    endpoint: http://10.0.0.114:14268/api/traces
     # username:
     # password:
     # agent_host: hostname
     # export trace data by jaeger.thrift in compact mode
     # agent_port: 6831
   otel:
-    endpoint: 10.0.0.114:4318
+    endpoint: http://10.0.0.114:4318
     url_path: /v1/traces
     compression: false
     insecure: true

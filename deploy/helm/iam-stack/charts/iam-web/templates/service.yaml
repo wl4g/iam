@@ -139,10 +139,10 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
-  - ip: {{ .Values.database.external.host }}
+  - ip: {{ .Values.mysql.external.host }}
   ports:
   - name: external-mysql
-    port: {{ .Values.database.external.port }}
+    port: {{ .Values.mysql.external.port }}
     protocol: TCP
 
 ---

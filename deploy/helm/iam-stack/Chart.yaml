@@ -45,27 +45,29 @@ dependencies:
     condition: iam-web.enabled
     repository: "file://charts/iam-web"
     version: "^3.0.0"
-  #- name: "iam-facade"
-  #  condition: iam-facade.enabled
-  #  repository: "https://helm.registry.wl4g.com/iam-charts"
-  #  version: "^3.0.0"
-  #- name: "iam-data"
-  #  condition: iam-data.enabled
-  #  repository: "https://helm.registry.wl4g.com/iam-charts"
-  #  version: "^3.0.0"
-  #- name: redis
-  #  version: "0.1.0"
-  #  repository: "file://../redis-charts"
-  #- name: mysql
-  #  version: "0.1.0"
-  #  repository: "file://../mysql-charts"
+  - name: "iam-facade"
+    condition: iam-facade.enabled
+    repository: "https://helm.registry.wl4g.com/iam-charts"
+    version: "^3.0.0"
+  - name: "iam-data"
+    condition: iam-data.enabled
+    repository: "https://helm.registry.wl4g.com/iam-charts"
+    version: "^3.0.0"
+  - name: bitnami/redis-cluster
+    condition: redis.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "7.6.4"
+  - name: bitnami/mysql
+    condition: mysql.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "9.1.8"
+  - name: bitnami/kafka
+    condition: kafka.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "18.0.0"
   #- name: flink
-  #  version: "0.1.0"
-  #  repository: "file://../flink-charts"
-  #- name: kafka
-  #  version: "0.1.0"
-  #  repository: "file://../kafka-charts"
+  #   repository: "file://../flink-charts"
+  #   version: "0.1.0"
   #- name: hbase
-  #  version: "0.1.0"
-  #  repository: "file://../hbase-charts"
-
+  #   repository: "file://../hbase-charts"
+  #   version: "0.1.0"
