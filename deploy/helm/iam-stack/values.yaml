@@ -9,13 +9,17 @@
 #
 
 ## ================================================== IAM WEB Configuration ==================================================
+## (This parent charts will override the value of child charts.)
 
-## This is the spec definition of iam-web instance deployed in Kubernetes.
+## This is the spec definition of application instance deployed in Kubernetes.
 iam-web:
   enabled: true
   image:
     repository: wl4g/iam-web
-    tag: latest
+    tag: 3.0.0
+
+  envConfigs:
+    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/
   appConfigs:
@@ -28,7 +32,7 @@ iam-web:
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-              nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+              nodes: ${IAM_REDIS_NODES:redis-cluster-0:6379,redis-cluster-1:6379,redis-cluster-2:6379,redis-cluster-3:6379,redis-cluster-4:6379,redis-cluster-5:6379}
 
     iam-web-pro.yml: |-
       spring:
@@ -76,6 +80,9 @@ iam-facade:
     repository: wl4g/iam-facade
     tag: latest
 
+  envConfigs:
+    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+
   appConfigs:
     ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
     iam-facade-etc-pro.yml: |-
@@ -87,7 +94,7 @@ iam-facade:
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-              nodes: ${IAM_REDIS_NODES:0.redis.iam.svc.cluster.local:6379,1.redis.iam.svc.cluster.local:6379,2.redis.iam.svc.cluster.local:6379,3.redis.iam.svc.cluster.local:6379,4.redis.iam.svc.cluster.local:6379,5.redis.iam.svc.cluster.local:6379}
+              nodes: ${IAM_REDIS_NODES:redis-cluster-0:6379,redis-cluster-1:6379,redis-cluster-2:6379,redis-cluster-3:6379,redis-cluster-4:6379,redis-cluster-5:6379}
 
     iam-facade-pro.yml: ""
 
@@ -99,6 +106,9 @@ iam-data:
   image:
     repository: wl4g/iam-data
     tag: latest
+
+  envConfigs:
+    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
   appConfigs:
@@ -132,7 +142,7 @@ redis:
     enabled: false
   external:
     ## support redis and redis-cluster.
-    ## <redis:port0,redis1:port1,redis2:port2,...>
+    ## <redis:portredis-cluster-01:portredis-cluster-12:port2,...>
     nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     password: "zzx!@#$%"
 

@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ template "app.name" . }}
+
+---
+
+kind: Role
+{{- if semverCompare ">=1.17-0" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: rbac.authorization.k8s.io/v1
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- end }}
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ template "app.name" . }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  - podsecuritypolicies
+  - pods
+  - services
+  verbs:
+  - get
+  - watch
+  - list
+
+---
+
+kind: RoleBinding
+{{- if semverCompare ">=1.17-0" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: rbac.authorization.k8s.io/v1
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- end }}
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ template "app.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "app.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "app.name" . }}
+  apiGroup: rbac.authorization.k8s.io

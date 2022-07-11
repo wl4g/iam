@@ -10,7 +10,7 @@
 
 ## This is the spec definition of application instance deployed in Kubernetes.
 image:
-  repository: wl4g/iam-web
+  repository: wl4g/iam-data
   tag: latest
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
@@ -138,7 +138,7 @@ governance:
        kubernetes.io/tls-acme: "true"
      path: /
      hosts:
-       - iam-web.iam.svc.cluster.local
+       - iam-data.iam.svc.cluster.local
      tls: []
    ##
    ## ingress for application management.
@@ -150,7 +150,7 @@ governance:
        # kubernetes.io/tls-acme: "true"
      path: /
      hosts:
-       - iam-web.iam.svc.cluster.local
+       - iam-data.iam.svc.cluster.local
      tls: []
   istio:
     ingress:
@@ -165,7 +165,7 @@ governance:
             uri: "/-/healthy" # Prometheus build-in health path.
           route:
             - destination:
-                host: iam-web.iam.svc.cluster.local
+                host: iam-data.iam.svc.cluster.local
                 port:
                   number: 18080
                 subset: v1
@@ -177,7 +177,7 @@ governance:
             uri: "/actuator/metrics" # Spring actuator build-in metrics path.
           route:
             - destination:
-                host: iam-web.iam.svc.cluster.local
+                host: iam-data.iam.svc.cluster.local
                 port:
                   number: 18080
                 subset: v1
@@ -187,7 +187,7 @@ governance:
               prefix: "/"
           route:
             - destination:
-                host: iam-web.iam.svc.cluster.local
+                host: iam-data.iam.svc.cluster.local
                 port:
                   number: 18080
                 subset: v1
@@ -250,29 +250,29 @@ redis:
     nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     password: "zzx!@#$%"
 
-# mysql:
-#   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
-#   type: external
-#   internal: ## see:https://bitnami.com/stack/mysql/helm
-#     enabled: false
-#   external:
-#     host: "10.0.0.114"
-#     port: "3306"
-#     username: "iam"
-#     password: "123456"
-#     iamDataDatabase: "iam"
-
-kafka:
-  enabled: false
-  # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
-  # For best performance it is recommended to use an external.
+mysql:
+  # if external database is used, set "type" to "external" and fill the connection informations in "external" section
   type: external
-  internal: ## see:https://bitnami.com/stack/kafka/helm
+  internal: ## see:https://bitnami.com/stack/mysql/helm
     enabled: false
   external:
-    # support kafka and kafka-cluster.
-    # <kafka:port0,kafka:port1,kafka:port2,...>
-    brokerList: "10.0.0.114:9092"
+    host: "10.0.0.114"
+    port: "3306"
+    username: "iam"
+    password: "123456"
+    iamDataDatabase: "iam"
+
+# kafka:
+#   enabled: false
+#   # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
+#   # For best performance it is recommended to use an external.
+#   type: external
+#   internal: ## see:https://bitnami.com/stack/kafka/helm
+#     enabled: false
+#   external:
+#     # support kafka and kafka-cluster.
+#     # <kafka:port0,kafka:port1,kafka:port2,...>
+#     brokerList: "10.0.0.114:9092"
 
 trace:
   enabled: false

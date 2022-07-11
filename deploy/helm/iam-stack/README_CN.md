@@ -110,3 +110,6 @@ The following table lists the configurable parameters of the IAM chart and their
 ### How to troubleshoot Pods that are missing os tools
 
 - Use ephemeral containers to debug running or crashed Pods: [kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/)
+
+- Parent charts override the property values of child charts see:
+[whmzsu.github.io/helm-doc-zh-cn/chart_template_guide/subcharts_and_globals-zh_cn.html](https://whmzsu.github.io/helm-doc-zh-cn/chart_template_guide/subcharts_and_globals-zh_cn.html)
