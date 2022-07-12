@@ -7,16 +7,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# This parent charts will override the value of child charts.
+# see:https://github.com/whmzsu/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md
 
 ## ================================================== IAM WEB Configuration ==================================================
-## (This parent charts will override the value of child charts.)
 
 ## This is the spec definition of application instance deployed in Kubernetes.
 iam-web:
   enabled: true
   image:
     repository: wl4g/iam-web
-    tag: 3.0.0
+    tag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"

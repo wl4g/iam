@@ -10,6 +10,7 @@
 
 {{- if eq .Values.governance.type "Istio" }}
 ---
+## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#VirtualService
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -34,11 +35,8 @@ spec:
   tcp:
   {{- toYaml .Values.governance.istio.ingress.tcpRoutes | nindent 4 }}
   {{- end }}
-  {{- if not (empty .Values.governance.istio.ingress.subsets) }}
-  subsets:
-  {{- toYaml .Values.governance.istio.ingress.subsets | nindent 4 }}
-  {{- end }}
 ---
+## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
