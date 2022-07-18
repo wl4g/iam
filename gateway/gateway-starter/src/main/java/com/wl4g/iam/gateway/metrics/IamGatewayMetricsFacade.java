@@ -239,7 +239,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 samples = sampleRegistry.get(metricsName.getName());
                 if (isNull(samples)) {
                     sampleRegistry.put(metricsName.getName(),
-                            new GaugeMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
+                            samples = new GaugeMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
                 }
             }
         }
@@ -253,7 +253,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 samples = sampleRegistry.get(metricsName.getName());
                 if (isNull(samples)) {
                     sampleRegistry.put(metricsName.getName(),
-                            new CounterMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
+                            samples = new CounterMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
                 }
             }
         }
@@ -267,7 +267,7 @@ public class IamGatewayMetricsFacade implements InitializingBean {
                 samples = sampleRegistry.get(metricsName.getName());
                 if (isNull(samples)) {
                     sampleRegistry.put(metricsName.getName(),
-                            new SummaryMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
+                            samples = new SummaryMetricFamily(metricsName.getName(), metricsName.getHelp(), asList(labelNames)));
                 }
             }
         }

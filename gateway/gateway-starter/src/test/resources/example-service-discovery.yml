@@ -15,7 +15,7 @@ spring:
     cluster:
       nodes: ${ISCG_REDIS_NODES:redis.iam.wl4g.debug:6379,redis.iam.wl4g.debug:6380,redis.iam.wl4g.debug:6381,redis.iam.wl4g.debug:7379,redis.iam.wl4g.debug:7380,redis.iam.wl4g.debug:7381}
     timeout: 10000ms
-    password: ${REDIS_PASSWD:zzx!@#$%}
+    password: ${REDIS_PASSWORD:zzx!@#$%}
     lettuce:
       pool:
         max-active: 10

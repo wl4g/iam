@@ -14,16 +14,19 @@
 
 ## This is the spec definition of application instance deployed in Kubernetes.
 iam-web:
-  enabled: true
+  enabled: false
   image:
     repository: wl4g/iam-web
     tag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    IAM_REDIS_PASSWORD: "zzx!@#$%"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/
   appConfigs:
+    # iam-web-etc-fat.yml: ""
+    # iam-web-etc-uat.yml: ""
     iam-web-etc-pro.yml: |-
       spring:
         infra:
@@ -35,6 +38,8 @@ iam-web:
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
               nodes: ${IAM_REDIS_NODES:redis-cluster-0:6379,redis-cluster-1:6379,redis-cluster-2:6379,redis-cluster-3:6379,redis-cluster-4:6379,redis-cluster-5:6379}
 
+    # iam-web-fat.yml: ""
+    # iam-web-uat.yml: ""
     iam-web-pro.yml: |-
       spring:
         iam:
@@ -76,16 +81,19 @@ iam-web:
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
 iam-facade:
-  enabled: true
+  enabled: false
   image:
     repository: wl4g/iam-facade
     tag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    IAM_REDIS_PASSWORD: "zzx!@#$%"
 
   appConfigs:
     ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
+    # iam-facade-etc-fat.yml: ""
+    # iam-facade-etc-uat.yml: ""
     iam-facade-etc-pro.yml: |-
       spring:
         infra:
@@ -97,7 +105,9 @@ iam-facade:
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
               nodes: ${IAM_REDIS_NODES:redis-cluster-0:6379,redis-cluster-1:6379,redis-cluster-2:6379,redis-cluster-3:6379,redis-cluster-4:6379,redis-cluster-5:6379}
 
-    iam-facade-pro.yml: ""
+    # iam-facade-fat.yml: ""
+    # iam-facade-uat.yml: ""
+    # iam-facade-pro.yml: ""
 
 ## ================================================== IAM DATA Configuration ==================================================
 
@@ -109,20 +119,23 @@ iam-data:
     tag: latest
 
   envConfigs:
+    APP_ACTIVE: "uat"
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    IAM_REDIS_PASSWORD: "zzx!@#$%"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
   appConfigs:
-    iam-data-etc-pro.yml: |-
+    # iam-data-etc-fat.yml: ""
+    iam-data-etc-uat.yml: |-
       spring:
         # Spring datasource configuration.
         datasource:
           type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
           driverClassName: com.mysql.cj.jdbc.Driver
           hikari:
-            jdbcUrl: ${IAM_DB_URL:jdbc:mysql://mysql.iam.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+            jdbcUrl: ${IAM_DB_URL:jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
             username: ${IAM_DB_USER:iam}
-            password: ${IAM_DB_PASSWORD:DFDDD7F502E694F3E40D750FEEAE423D}
+            password: ${IAM_DB_PASSWORD:iam}
             connectionTimeout: 30000
             idleTimeout: 600000
             initializationFailTimeout: 1
@@ -132,7 +145,11 @@ iam-data:
             validationTimeout: 5000
             leakDetectionThreshold: 0
 
-    iam-data-pro.yml: ""
+    # iam-data-etc-pro.yml: ""
+
+    # iam-data-fat.yml: ""
+    # iam-data-uat.yml: ""
+    # iam-data-pro.yml: ""
 
 ## ================================================== COMMON Configuration ===============================================================
 
@@ -143,11 +160,13 @@ redis:
     enabled: false
   external:
     ## support redis and redis-cluster.
-    ## <redis:portredis-cluster-01:portredis-cluster-12:port2,...>
-    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    ## <redisIp0,redisIp1...>
+    ips: "10.0.0.114"
+    ## <redisPort0,redisPort1...>
+    ports: "6379,6380,6381,7379,7380,7381"
     password: "zzx!@#$%"
 
-mysql:
+database:
   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
   type: external
   internal: ## see:https://bitnami.com/stack/mysql/helm
@@ -157,7 +176,7 @@ mysql:
     port: "3306"
     username: "iam"
     password: "123456"
-    iamDataDatabase: "iam"
+    schema: "iam"
 
 kafka:
   enabled: false

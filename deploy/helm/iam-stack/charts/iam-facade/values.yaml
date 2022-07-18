@@ -91,6 +91,7 @@ affinity: {}
 
 envConfigs:
   JAVA_OPTS: "-Djava.awt.headless=true"
+  APP_ACTIVE: "pro"
   SPRING_SERVER_PORT: "18080"
 
 agentConfig: ""
@@ -129,29 +130,29 @@ governance:
   ## Service governance type.
   type: Istio # Options: Ingress|Istio, recommends using istio.
   ingress:
-   ## ingress for application api
-   api:
-     enabled: false
-     ingressClassName: nginx
-     annotations:
-       kubernetes.io/ingress.class: nginx
-       kubernetes.io/tls-acme: "true"
-     path: /
-     hosts:
-       - iam-facade.iam.svc.cluster.local
-     tls: []
-   ##
-   ## ingress for application management.
-   management:
-     enabled: false
-     ingressClassName: nginx
-     annotations: {}
-       # kubernetes.io/ingress.class: nginx
-       # kubernetes.io/tls-acme: "true"
-     path: /
-     hosts:
-       - iam-facade.iam.svc.cluster.local
-     tls: []
+    ## ingress for application api
+    api:
+      enabled: false
+      ingressClassName: nginx
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        kubernetes.io/tls-acme: "true"
+      path: /
+      hosts:
+        - iam-facade.iam.svc.cluster.local
+      tls: []
+    ##
+    ## ingress for application management.
+    management:
+      enabled: false
+      ingressClassName: nginx
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      path: /
+      hosts:
+        - iam-facade.iam.svc.cluster.local
+      tls: []
   istio:
     ingress:
       hosts:
@@ -159,17 +160,15 @@ governance:
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
       httpRoutes:
         - match:
-          - uri:
+          - uri: # Related Tips: The prometheus build-in health path is '/-/healthy'.
               exact: "/healthz"
           rewrite:
-            uri: "/-/healthy" # Prometheus build-in health path.
+            uri: "/actuator/health"
           route:
             - destination:
                 host: iam-facade.iam.svc.cluster.local
                 port:
-                  number: 18080
-                subset: v1
-              weight: 100
+                  number: 10108
         - match:
           - uri:
               prefix: "/metrics"
@@ -179,9 +178,7 @@ governance:
             - destination:
                 host: iam-facade.iam.svc.cluster.local
                 port:
-                  number: 18080
-                subset: v1
-              weight: 100
+                  number: 10108
         - match:
           - uri:
               prefix: "/"
@@ -189,19 +186,19 @@ governance:
             - destination:
                 host: iam-facade.iam.svc.cluster.local
                 port:
-                  number: 18080
+                  number: 18081
                 subset: v1
               weight: 100
           ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
-          fault:
-            # delay:
-            #   percentage:
-            #     value: 0.1
-            #   fixedDelay: 5s
-            # abort:
-            #   percentage:
-            #     value: 0.1
-            #   httpStatus: 400
+          # fault:
+          #   delay:
+          #     percentage:
+          #       value: 0.1
+          #     fixedDelay: 5s
+          #   abort:
+          #     percentage:
+          #       value: 0.1
+          #     httpStatus: 400
       ## Canary traffic governance configuration.
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
       subsets:
@@ -246,11 +243,13 @@ redis:
     enabled: false
   external:
     ## support redis and redis-cluster.
-    ## <redis:port0,redis1:port1,redis2:port2,...>
-    nodes: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    ## <redisIp0,redisIp1...>
+    ips: "10.0.0.114"
+    ## <redisPort0,redisPort1...>
+    ports: "6379,6380,6381,7379,7380,7381"
     password: "zzx!@#$%"
 
-# mysql:
+# database:
 #   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
 #   type: external
 #   internal: ## see:https://bitnami.com/stack/mysql/helm
@@ -260,7 +259,7 @@ redis:
 #     port: "3306"
 #     username: "iam"
 #     password: "123456"
-#     iamDataDatabase: "iam"
+#     schema: "iam"
 # 
 # kafka:
 #   enabled: false

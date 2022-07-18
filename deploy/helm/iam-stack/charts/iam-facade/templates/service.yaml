@@ -67,9 +67,9 @@ spec:
 ---
 
 ## TODO:不支持短路与运算？
-{{- if not (empty .Values.mysql) }}
-{{- if not (empty .Values.mysql.type) }}
-{{- if eq .Values.mysql.type "external" }}
+{{- if not (empty .Values.database) }}
+{{- if not (empty .Values.database.type) }}
+{{- if eq .Values.database.type "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
@@ -99,10 +99,10 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
-  - ip: {{ .Values.mysql.external.host }}
+  - ip: {{ .Values.database.external.host }}
   ports:
   - name: external-mysql
-    port: {{ .Values.mysql.external.port }}
+    port: {{ .Values.database.external.port }}
     protocol: TCP
 {{- end}}
 {{- end}}
@@ -142,14 +142,15 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
- {{- range $index, $value := regexSplit "," .Values.redis.external.nodes -1 }}
- {{- $parts := regexSplit ":" $value -1 }}
-  - ip: {{ index $parts 0 }}
+  {{- range $index, $ip := regexSplit "," .Values.redis.external.ips -1 }}
+  - ip: {{ $ip }}
+  {{- end}}
   ports:
+  {{- range $index, $port := regexSplit "," .Values.redis.external.ports -1 }}
   - name: external-redis-{{$index}}
-    port: {{ index $parts 1 }}
+    port: {{ $port }}
     protocol: TCP
- {{- end}}
+  {{- end}}
 {{- end}}
 {{- end}}
 {{- end}}
