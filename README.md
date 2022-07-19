@@ -103,7 +103,7 @@ java -javaagent:/opt/apps/some-javaagent/opentelemetry/opentelemetry-javaagent.j
 
 ## 6. Developer's Guide
 
-- Maven mirrors Settings
+### Maven mirrors Settings
 
 ```xml
 mv $HOME/.m2/settings.xml $HOME/.m2/settings_bak.xml
@@ -144,23 +144,33 @@ cat <<-'EOF' >$HOME/.m2/settings.xml
 EOF
 ```
 
-- Compiling
+### Building distribution
 
 ```bash
 cd iam
 
 # Build as a generic release package (directory structure).
-mvn -U clean install -DskipTests -T 2C -P build:tar
+mvn -U clean install -DskipTests -T 2C -Pbuild:tar -Pbuild:framework:feign-istio
 
 # Build as spring boot single executable jar.
-mvn -U clean install -DskipTests -T 2C -P build:springjar
+mvn -U clean install -DskipTests -T 2C -Pbuild:springjar -Pbuild:framework:feign-istio
 
 # Build as a docker image based on the tar distribution.
-mvn -U clean install -DskipTests -T 2C -P build:docker:tar
+mvn -U clean install -DskipTests -T 2C -Pbuild:docker:tar -Pbuild:framework:feign-istio
 
 # Build an ELF native executable based on the graalvm native image.
-mvn -U clean install -DskipTests -T 2C -P build:native
+mvn -U clean install -DskipTests -T 2C -Pbuild:native -Pbuild:framework:feign-istio
 ```
+
+- Supports profiles are:
+
+  - `-Pbuild:tar`
+  - `-Pbuild:springjar`
+  - `-Pbuild:docker:tar`
+  - `-Pbuild:native` (alpha)
+  - `-Pbuild:framework:feign-istio`
+  - `-Pbuild:framework:feign-springcloud`
+  - `-Pbuild:framework:feign-dubbo`
 
 ### 7.1 Integrate the server with SDK for custom development
 

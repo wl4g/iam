@@ -103,7 +103,7 @@ java -javaagent:/opt/apps/some-javaagent/opentelemetry/opentelemetry-javaagent.j
 
 ## 6. 开发者指南
 
-- Maven mirrors 配置
+### Maven mirrors 配置
 
 ```xml
 mv $HOME/.m2/settings.xml $HOME/.m2/settings_bak.xml
@@ -144,23 +144,33 @@ cat <<-'EOF' >$HOME/.m2/settings.xml
 EOF
 ```
 
-- 编译构建
+### 构建发布包
 
 ```bash
 cd iam
 
 # 构建通用发布包(目录结构)
-mvn -U clean install -DskipTests -T 2C -P build:tar
+mvn -U clean install -DskipTests -T 2C -P build:tar -Pbuild:framework:feign-istio
 
 # 构建 spring 单可执行 jar
-mvn -U clean install -DskipTests -T 2C -P build:springjar
+mvn -U clean install -DskipTests -T 2C -P build:springjar -Pbuild:framework:feign-istio
 
 # 构建 mvnAssTar 的 docker 镜像
-mvn -U clean install -DskipTests -T 2C -P build:tar:docker
+mvn -U clean install -DskipTests -T 2C -P build:tar:docker -Pbuild:framework:feign-istio
 
 # 构建 ELF native 执行文件
-mvn -U clean install -DskipTests -T 2C -P build:native
+mvn -U clean install -DskipTests -T 2C -P build:native -Pbuild:framework:feign-istio
 ```
+
+- Supports profiles are:
+
+  - `-Pbuild:tar`
+  - `-Pbuild:springjar`
+  - `-Pbuild:docker:tar`
+  - `-Pbuild:native` (alpha)
+  - `-Pbuild:framework:feign-istio`
+  - `-Pbuild:framework:feign-springcloud`
+  - `-Pbuild:framework:feign-dubbo`
 
 ### 7.1 将服务端以 SDK 集成定制开发
 

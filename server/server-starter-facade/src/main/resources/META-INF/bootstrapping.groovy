@@ -30,40 +30,37 @@ import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
  */
 class IamFacadeBootstrappingConfigurer implements IBootstrappingConfigurer {
 
-	@Override
-	def int getOrder() {
-		return -100
-	}
+    @Override
+    def int getOrder() {
+        return -100
+    }
 
-	def Banner.Mode bannerMode(Banner.Mode prevMode) {
-		return Banner.Mode.LOG;
-	}
+    def Banner.Mode bannerMode(Banner.Mode prevMode) {
+        return Banner.Mode.LOG;
+    }
 
-	@Override
-	def Properties defaultProperties(Properties prevDefaultProperties) {
-		def defaultProperties = new Properties()
-		// Preset spring.config.name
-		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-facade,iam-facade-etc")
+    @Override
+    void defaultProperties(Properties prevDefaultProperties) {
+        // Preset spring.config.name
+        // for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
+        def configName = new StringBuffer("application,iam-facade,iam-facade-etc")
 
-		// Preset spring.config.location
-		// for example: spring auto load for 'classpath:/application-facade-dev.yml'
-		def location = new StringBuffer("classpath:/")
-		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",iam-facade-scf");
-			location.append(",classpath:/scf/")
-		} else if (isPresent("com.wl4g.infra.integration.feign.core.annotation.FeignConsumer")) {
-			configName.append(",iam-facade-sbf");
-			location.append(",classpath:/sbf/")
-		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			configName.append(",iam-facade-dubbo");
-			location.append(",classpath:/dubbo/")
-		}
+        // Preset spring.config.location
+        // for example: spring auto load for 'classpath:/application-facade-dev.yml'
+        def location = new StringBuffer("classpath:/")
+        if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
+            configName.append(",iam-facade-scf");
+            location.append(",classpath:/scf/")
+        } else if (isPresent("com.wl4g.infra.integration.feign.core.annotation.FeignConsumer")) {
+            configName.append(",iam-facade-sbf");
+            location.append(",classpath:/sbf/")
+        } else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
+            configName.append(",iam-facade-dubbo");
+            location.append(",classpath:/dubbo/")
+        }
 
-		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
-		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
-
-		return defaultProperties
-	}
+        prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
+        prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
+    }
 
 }

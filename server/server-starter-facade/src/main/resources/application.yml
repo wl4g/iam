@@ -16,7 +16,7 @@
 spring:
   application.name: iam-facade
   profiles:
-    include: common,util
+    include: common,util,apm
     active: dev
   banner:
       location: classpath:META-INF/banner.txt

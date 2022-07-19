@@ -40,8 +40,7 @@ class IamDataBootstrappingConfigurer implements IBootstrappingConfigurer {
 	}
 
 	@Override
-	def Properties defaultProperties(Properties prevDefaultProperties) {
-		def defaultProperties = new Properties()
+	void defaultProperties(Properties prevDefaultProperties) {
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application,iam-data,iam-data-etc")
@@ -60,10 +59,8 @@ class IamDataBootstrappingConfigurer implements IBootstrappingConfigurer {
 			location.append(",classpath:/dubbo/")
 		}
 
-		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
-		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
-
-		return defaultProperties
+		prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
+		prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 	}
 
 }
