@@ -38,8 +38,9 @@ updateStrategy:
 # envFromSecret: "myapp-secrets"
 
 ## Additional deployment annotations
-podAnnotations: 
+podAnnotations:
   prometheus.io/scrape: "true"
+  prometheus.io/path: /actuator/prometheus
   prometheus.io/port: "10108"
 
 persistence:
@@ -156,7 +157,7 @@ governance:
   istio:
     ingress:
       hosts:
-        - iam.wl4g.io
+        - iam-web.wl4g.io
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
       httpRoutes:
         - match:

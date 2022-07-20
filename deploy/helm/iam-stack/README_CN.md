@@ -21,8 +21,8 @@ git clone https://github.com/wl4g/iam.git
 cd iam/deploy/helm/
 helm -n iam upgrade --install iam iam-stack
 
-# for debug template computed values
-#helm --debug -n iam upgrade --install iam iam-stack
+# for debugging template computed values
+#helm -n iam upgrade --install --dry-run --debug iam iam-stack
 ```
 
 + or, From chart repos

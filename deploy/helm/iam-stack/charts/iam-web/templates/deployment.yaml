@@ -45,6 +45,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if eq .Values.governance.type "Istio" }}
+        ## Must match 'namespaceSelector' to take effect.
+        ## see:https://preliminary.istio.io/latest/docs/ops/configuration/mesh/injection-concepts/
         sidecar.istio.io/inject: "true"
       {{- end }}
       labels:
@@ -115,10 +117,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           #command: [ "/bin/sh", "-c", "env" ]
           ports:
-            - name: api
+            - name: http-api
               containerPort: {{ .Values.service.apiPort }}
               protocol: TCP
-            - name: management
+            - name: http-management
               containerPort: {{ .Values.service.managementPort }}
               protocol: TCP
 
@@ -157,14 +159,14 @@ spec:
             failureThreshold: 30
             successThreshold: 1
             # tcpSocket:
-            #   port: api
+            #   port: http-api
             httpGet:
               scheme: HTTP
               httpHeaders:
               - name: Accept
                 value: "application/json"
               path: /actuator/health
-              port: management
+              port: http-management
 
           ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes
           readinessProbe:
@@ -176,7 +178,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /actuator/health
-              port: management
+              port: http-management
 
           ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
           livenessProbe:
@@ -190,7 +192,7 @@ spec:
               - name: Accept
                 value: "application/json"
               path: /actuator/health
-              port: management
+              port: http-management
 
           {{- if .Values.resources.enabled }}
           resources:

@@ -96,9 +96,9 @@ spec:
   - details.bookinfo.com
   location: MESH_INTERNAL
   ports:
-  - number: 80
-    name: http
+  - name: http
     protocol: HTTP
+    number: 80
     targetPort: 8080
   resolution: STATIC
   workloadSelector:

@@ -39,10 +39,10 @@ spec:
   {{- end }}
   {{- end }}
   ports:
-  - name: api
+  - name: http-api
     port: {{ .Values.service.apiPort | default 8080 }}
     protocol: TCP
-    targetPort: api
+    targetPort: http-api
     {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
     nodePort: {{ .Values.service.nodePorts.api }}
     {{- else if eq .Values.service.type "ClusterIP" }}
@@ -50,10 +50,10 @@ spec:
     {{- end }}
 
   {{- if not (empty .Values.service.managementPort) }}
-  - name: management
+  - name: http-management
     port: {{ .Values.service.managementPort | default 10108 }}
     protocol: TCP
-    targetPort: prometheus
+    targetPort: http-management
     {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
     nodePort: {{ .Values.service.nodePorts.management }}
     {{- else if eq .Values.service.type "ClusterIP" }}
