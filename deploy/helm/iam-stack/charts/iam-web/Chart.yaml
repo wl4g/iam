@@ -37,3 +37,21 @@ maintainers:
   - name: James Wong
     email: wanglsir@gmail.com
     url: https://github.com/wl4g
+
+# For best performance, these stateful storage services, which are relied upon below, usually use services
+# outside the kubernetes cluster (headless endpoints) in production environments.
+dependencies:
+  - name: bitnami/redis-cluster
+    condition: redis.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "7.6.4"
+  - name: bitnami/kafka
+    condition: kafka.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "18.0.0"
+  # - name: flink
+  #   repository: "file://../flink-charts"
+  #   version: "0.1.0"
+  # - name: hbase
+  #   repository: "file://../hbase-charts"
+  #   version: "0.1.0"

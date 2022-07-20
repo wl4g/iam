@@ -40,9 +40,12 @@ spec:
 
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if eq .Values.governance.type "Istio" }}
+        sidecar.istio.io/inject: "true"
       {{- end }}
       labels:
         app.kubernetes.io/component: application
@@ -113,10 +116,10 @@ spec:
           #command: [ "/bin/sh", "-c", "env" ]
           ports:
             - name: api
-              containerPort: 18080
+              containerPort: {{ .Values.service.apiPort }}
               protocol: TCP
-            - name: prometheus
-              containerPort: 10108
+            - name: management
+              containerPort: {{ .Values.service.managementPort }}
               protocol: TCP
 
           ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
@@ -125,7 +128,7 @@ spec:
           #  value: {{ .Release.Name }}
           #- name: JAVA_OPTS
           #  value: "-Djava.awt.headless=true"
-          #- name: SPRING_SERVER_PORT
+          #- name: SERVER_PORT
           #  value: '8080'
 
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
@@ -146,30 +149,53 @@ spec:
           - name: applog-volume
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
 
-          livenessProbe:
-            initialDelaySeconds: 10
+          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
+          startupProbe:
+            initialDelaySeconds: 15
             periodSeconds: 5
-            timeoutSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 30
+            successThreshold: 1
+            # tcpSocket:
+            #   port: api
+            httpGet:
+              scheme: HTTP
+              httpHeaders:
+              - name: Accept
+                value: "application/json"
+              path: /actuator/health
+              port: management
+
+          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
             failureThreshold: 5
             successThreshold: 1
             httpGet:
               scheme: HTTP
-              #httpHeaders:
-              path: /-/healthy
-              port: prometheus
+              path: /actuator/health
+              port: management
 
-          readinessProbe:
-            initialDelaySeconds: 15
-            periodSeconds: 20
-            timeoutSeconds: 10
-            failureThreshold: 5
+          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
+          livenessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
             successThreshold: 1
-            tcpSocket:
-              port: api
+            httpGet:
+              scheme: HTTP
+              httpHeaders:
+              - name: Accept
+                value: "application/json"
+              path: /actuator/health
+              port: management
 
           {{- if .Values.resources.enabled }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests: {{- toYaml .Values.resources.requests | nindent 14 }}
+            limits: {{- toYaml .Values.resources.limits | nindent 14 }}
           {{ end }}
 
       {{- with .Values.nodeSelector }}

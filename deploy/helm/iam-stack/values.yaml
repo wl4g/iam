@@ -166,8 +166,8 @@ redis:
     ports: "6379,6380,6381,7379,7380,7381"
     password: "zzx!@#$%"
 
-database:
-  # if external database is used, set "type" to "external" and fill the connection informations in "external" section
+mysql:
+  # if external mysql is used, set "type" to "external" and fill the connection informations in "external" section
   type: external
   internal: ## see:https://bitnami.com/stack/mysql/helm
     enabled: false

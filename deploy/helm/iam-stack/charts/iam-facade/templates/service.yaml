@@ -50,7 +50,7 @@ spec:
     {{- end }}
 
   {{- if not (empty .Values.service.managementPort) }}
-  - name: prometheus
+  - name: management
     port: {{ .Values.service.managementPort | default 10108 }}
     protocol: TCP
     targetPort: prometheus
@@ -67,9 +67,9 @@ spec:
 ---
 
 ## TODO:不支持短路与运算？
-{{- if not (empty .Values.database) }}
-{{- if not (empty .Values.database.type) }}
-{{- if eq .Values.database.type "external" }}
+{{- if not (empty .Values.mysql) }}
+{{- if not (empty .Values.mysql.type) }}
+{{- if eq .Values.mysql.type "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
@@ -99,10 +99,10 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 subsets:
 - addresses:
-  - ip: {{ .Values.database.external.host }}
+  - ip: {{ .Values.mysql.external.host }}
   ports:
   - name: external-mysql
-    port: {{ .Values.database.external.port }}
+    port: {{ .Values.mysql.external.port }}
     protocol: TCP
 {{- end}}
 {{- end}}

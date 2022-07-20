@@ -18,17 +18,17 @@ To install the chart with the release name `iam`:
 
 ```bash
 git clone https://github.com/wl4g/iam.git
-cd iam/deploy/charts/iam
-helm -n iam upgrade --install iam .
+cd iam/deploy/helm/
+helm -n iam upgrade --install iam iam-stack
 
-# for debug template computed values.
-#helm --debug -n iam upgrade --install iam .
+# for debug template computed values
+#helm --debug -n iam upgrade --install iam iam-stack
 ```
 
 + or, From chart repos
 
 ```bash
-helm repo add IAM https://helm.wl4g.io/iam/charts
+helm repo add iam https://helm.wl4g.io/iam/charts
 helm -n iam upgrade --install iam wl4g/iam
 ```
 

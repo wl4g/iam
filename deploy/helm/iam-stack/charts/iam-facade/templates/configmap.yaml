@@ -21,7 +21,7 @@ metadata:
 data:
   ## NOTES: Environment variable values must use double or single quotes.
   ## see:https://stackoverflow.com/questions/59354115/helm-upgrade-fails-with-error-expects-or-n-but-found-t
-  SPRING_APPLICATION_NAME: "{{ .Release.Name }}"
+  #SPRING_APPLICATION_NAME: "{{ .Release.Name }}"
 {{- range $key, $value := .Values.envConfigs}}
   {{ $key }}: "{{ $value }}"
 {{- end}}

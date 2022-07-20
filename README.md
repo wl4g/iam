@@ -25,7 +25,7 @@ An enterprise-level open source unified identity authentication and access contr
     </p>    
 </p>
 
-中文文档 [here](README.md)
+中文文档 [here](README_CN.md)
 
 ## 1. Features
 

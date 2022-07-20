@@ -56,13 +56,13 @@ persistence:
 
 ## see:https://blogs.wl4g.com/archives/2969
 resources:
-  enabled: false
+  enabled: true
   requests:
     cpu: 100m
-    memory: 1024Mi
+    memory: 256Mi
   limits:
-    cpu: 500m
-    memory: 1024Mi
+    cpu: 900m
+    memory: 2048Mi
 
 ## Containers that run before the creation of application containers. They can contain utilities or setup scripts.
 initContainers: {}
@@ -92,7 +92,7 @@ affinity: {}
 envConfigs:
   JAVA_OPTS: "-Djava.awt.headless=true"
   APP_ACTIVE: "pro"
-  SPRING_SERVER_PORT: "18080"
+  SERVER_PORT: "18080"
 
 agentConfig: ""
 
@@ -249,8 +249,8 @@ redis:
     ports: "6379,6380,6381,7379,7380,7381"
     password: "zzx!@#$%"
 
-# database:
-#   # if external database is used, set "type" to "external" and fill the connection informations in "external" section
+# mysql:
+#   # if external mysql is used, set "type" to "external" and fill the connection informations in "external" section
 #   type: external
 #   internal: ## see:https://bitnami.com/stack/mysql/helm
 #     enabled: false

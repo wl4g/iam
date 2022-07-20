@@ -1,6 +1,10 @@
-#### 服务端(dopaas-iam-server)所支持完整配置项：
+# IAM Security Configuration
 
-```
+## 支持完整配置项
+
+### iam-web full configuration
+
+```yaml
 spring:
   cloud:
     devops:
@@ -67,8 +71,9 @@ spring:
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
 ```
 
-#### 客户端(dopaas-iam-client)所支持完整配置项：
-```
+### iam-client full configuration
+
+```yaml
 spring:
   cloud:
     devops:
@@ -111,4 +116,3 @@ spring:
           cookie:
             name: IAMTOKEN_${spring.application.name}
 ```
-
