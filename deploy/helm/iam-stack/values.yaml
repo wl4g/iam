@@ -77,6 +77,12 @@ iam-web:
               app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
               redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
 
+  governance:
+    istio:
+      ingress:
+        ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
+        domain: wl4g.io ## Top level 1 domain.
+
 ## ================================================== IAM FACADE Configuration ==================================================
 
 ## This is the spec definition of iam-facade instance deployed in Kubernetes.
