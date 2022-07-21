@@ -23,17 +23,63 @@ metadata:
 spec:
   gateways:
   - {{ template "app.name" . }}-gw
-  {{- if not (empty .Values.governance.istio.ingress.hosts) }}
   hosts:
-  {{- toYaml .Values.governance.istio.ingress.hosts | nindent 4 }}
+  ## The default host. 
+  - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
+  ## The custom hosts.
+  {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
+  {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
   {{- end }}
-  {{- if not (empty .Values.governance.istio.ingress.httpRoutes) }}
+  ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
   http:
-  {{- toYaml .Values.governance.istio.ingress.httpRoutes | nindent 4 }}
-  {{- end }}
-  {{- if not (empty .Values.governance.istio.ingress.tcpRoutes) }}
+    - match:
+      - uri: # Related Tips: The prometheus build-in health path is '/-/healthy'.
+          exact: "/healthz"
+        ignoreUriCase: true
+      rewrite:
+        uri: "/actuator/health"
+      route:
+        - destination:
+            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: {{ .Values.service.managementPort | default 10108 }}
+    - match:
+      - uri:
+          prefix: "/metrics"
+        ignoreUriCase: true
+      rewrite:
+        uri: "/actuator/prometheus" # Spring actuator default metrics path.
+      route:
+        - destination:
+            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: {{ .Values.service.managementPort | default 10108 }}
+    - match:
+      - uri:
+          prefix: "/"
+        ignoreUriCase: true
+      route:
+        - destination:
+            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: {{ .Values.service.apiPort | default 8080 }}
+            subset: v1
+          weight: 100
+      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
+      {{- with .Values.governance.istio.ingress.http.fault }}
+      fault:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
+  {{- if .Values.governance.istio.ingress.tcp.enabled }}
   tcp:
-  {{- toYaml .Values.governance.istio.ingress.tcpRoutes | nindent 4 }}
+    - match:
+      - port: {{ .Values.governance.istio.ingress.tcp.frontPort | default 1883 }}
+      route:
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port: 
+            number: {{ .Values.governance.istio.ingress.tcp.backendPort | default 1883 }}
   {{- end }}
 ---
 ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
@@ -43,10 +89,15 @@ metadata:
   name: {{ template "app.name" . }}-rule
 spec:
   host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-  {{- if not (empty .Values.governance.istio.ingress.subsets) }}
+  ## Canary traffic governance configuration.
+  ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
   subsets:
-  {{- toYaml .Values.governance.istio.ingress.subsets | nindent 4 }}
-  {{- end }}
+    - name: v1
+      labels:
+        app.kubernetes.io/version: {{ .Values.governance.istio.ingress.http.subsets.v1 | default "v1" }}
+    - name: v2
+      labels:
+        app.kubernetes.io/version: {{ .Values.governance.istio.ingress.http.subsets.v2 | default "v2" }}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -62,20 +113,23 @@ spec:
     istio: ingressgateway
   servers:
     - hosts:
-      {{- range $host := .Values.governance.istio.ingress.hosts }}
-      - {{ $host }}
+      ## The default host. 
+      - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
+      ## The custom hosts.
+      {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
+      {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
       {{- end }}
       port:
-        {{- if eq .Values.governance.istio.ingress.mode "http" }}
+        {{- if eq .Values.governance.istio.ingress.http.scheme "http" }}
         name: http-{{ template "app.name" . }}
         number: 80
         protocol: HTTP
-        {{- else if eq .Values.governance.istio.ingress.mode "https" }}
+        {{- else if eq .Values.governance.istio.ingress.http.scheme "https" }}
         name: https-{{ template "app.name" . }}
         number: 443
         protocol: HTTPS
         tls:
-          mode: {{- .Values.governance.istio.ingress.tls.mode | default "SIMPLE" }}
+          mode: {{- .Values.governance.istio.ingress.http.tls.mode | default "SIMPLE" }}
           # for manual example:
           # openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=wl4g Inc./CN=*.wl4g.io' -keyout wl4g.io.key -out wl4g.io.crt
           # kubectl create -n istio-system secret tls wl4g-credential --key=wl4g.io.key --cert=wl4g.io.crt

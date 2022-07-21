@@ -156,71 +156,33 @@ governance:
       tls: []
   istio:
     ingress:
-      hosts:
-        - iam-facade.wl4g.io
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
-      httpRoutes:
-        - match:
-          - uri: # Related Tips: The prometheus build-in health path is '/-/healthy'.
-              exact: "/healthz"
-          rewrite:
-            uri: "/actuator/health"
-          route:
-            - destination:
-                host: iam-facade.iam.svc.cluster.local
-                port:
-                  number: 10108
-        - match:
-          - uri:
-              prefix: "/metrics"
-          rewrite:
-            uri: "/actuator/metrics" # Spring actuator build-in metrics path.
-          route:
-            - destination:
-                host: iam-facade.iam.svc.cluster.local
-                port:
-                  number: 10108
-        - match:
-          - uri:
-              prefix: "/"
-          route:
-            - destination:
-                host: iam-facade.iam.svc.cluster.local
-                port:
-                  number: 18081
-                subset: v1
-              weight: 100
-          ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
-          # fault:
-          #   delay:
-          #     percentage:
-          #       value: 0.1
-          #     fixedDelay: 5s
-          #   abort:
-          #     percentage:
-          #       value: 0.1
-          #     httpStatus: 400
-      ## Canary traffic governance configuration.
-      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
-      subsets:
-        - name: v1
-          labels:
-            version: v1
-        - name: v2
-          labels:
-            version: v2
+      domain: wl4g.io ## Top level 1 domain.
+      customHosts: []
+      http:
+        ## Canary traffic governance configuration.
+        ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
+        subsets:
+          v1: 3.0.0
+          v2: 3.0.0
+        scheme: http # Options: http|https, recommends using https.
+        tls:
+          mode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
+        ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
+        fault:
+        #   delay:
+        #     percentage:
+        #       value: 0.1
+        #     fixedDelay: 5s
+        #   abort:
+        #     percentage:
+        #       value: 0.1
+        #     httpStatus: 400
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
-      tcpRoutes:
-      # - match:
-      #   - port: 27017
-      #   route:
-      #   - destination:
-      #       host: mongo.backup.svc.cluster.local
-      #       port:
-      #         number: 5555
-      mode: http # Options: http|https, recommends using https.
-      tls:
-        mode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
+      tcp:
+        enabled: false
+        frontPort: 1883
+        backendPort: 1883
     ## Depends external bare metal or VM services.
     ## see:https://istio.io/v1.14/docs/reference/config/networking/workload-entry/
     ## see:https://developer.aliyun.com/article/772279
