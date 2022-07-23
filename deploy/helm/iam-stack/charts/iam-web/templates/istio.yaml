@@ -9,12 +9,55 @@
 #
 
 {{- if eq .Values.governance.type "Istio" }}
+
+## ----------------------------- Mesh App Igress Rules -----------------------------
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ template "app.name" . }}-gw
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "app.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "app.chart" . }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+      ## Add app ingress default host.
+      - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
+      ## Add app ingress custom extension hosts.
+      {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
+      {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
+      {{- end }}
+      port:
+        {{- if eq .Values.governance.istio.ingress.http.scheme "http" }}
+        name: http-{{ template "app.name" . }}
+        number: 80
+        protocol: HTTP
+        {{- else if eq .Values.governance.istio.ingress.http.scheme "https" }}
+        name: https-{{ template "app.name" . }}
+        number: 443
+        protocol: HTTPS
+        tls:
+          mode: {{- .Values.governance.istio.ingress.http.tls.mode | default "SIMPLE" }}
+          # for manual example:
+          # openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=wl4g Inc./CN=*.wl4g.io' -keyout wl4g.io.key -out wl4g.io.crt
+          # kubectl create -n istio-system secret tls wl4g-credential --key=wl4g.io.key --cert=wl4g.io.crt
+          # kubectl apply -f istio-specs.yaml -n securesvc
+          credentialName: wl4g-credential
+        {{- end }}
 ---
 ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#VirtualService
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: {{ template "app.name" . }}-vs
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -24,9 +67,9 @@ spec:
   gateways:
   - {{ template "app.name" . }}-gw
   hosts:
-  ## The default host. 
+  ## Add default ingress host.
   - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
-  ## The custom hosts.
+  ## Add custom extension hosts.
   {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
   {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
   {{- end }}
@@ -87,6 +130,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
   name: {{ template "app.name" . }}-rule
+  namespace: {{ .Release.Namespace}}
 spec:
   host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
   ## Canary traffic governance configuration.
@@ -99,72 +143,66 @@ spec:
       labels:
         app.kubernetes.io/version: {{ .Values.governance.istio.ingress.http.subsets.v2 | default "v2" }}
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: Gateway
-metadata:
-  name: {{ template "app.name" . }}-gw
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - hosts:
-      ## The default host. 
-      - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
-      ## The custom hosts.
-      {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
-      {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
-      {{- end }}
-      port:
-        {{- if eq .Values.governance.istio.ingress.http.scheme "http" }}
-        name: http-{{ template "app.name" . }}
-        number: 80
-        protocol: HTTP
-        {{- else if eq .Values.governance.istio.ingress.http.scheme "https" }}
-        name: https-{{ template "app.name" . }}
-        number: 443
-        protocol: HTTPS
-        tls:
-          mode: {{- .Values.governance.istio.ingress.http.tls.mode | default "SIMPLE" }}
-          # for manual example:
-          # openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=wl4g Inc./CN=*.wl4g.io' -keyout wl4g.io.key -out wl4g.io.crt
-          # kubectl create -n istio-system secret tls wl4g-credential --key=wl4g.io.key --cert=wl4g.io.crt
-          # kubectl apply -f istio-specs.yaml -n securesvc
-          credentialName: wl4g-credential
-        {{- end }}
+
+## ----------------------------- Mesh App Egress Rules -----------------------------
+
 ---
 ## see:https://developer.aliyun.com/article/772279
-## see::https://istio.io/latest/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services
+## see:https://istio.io/v1.14/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services
+## see:https://istio.io/v1.14/zh/docs/reference/config/networking/service-entry/
 {{- range $app := .Values.governance.istio.egress }}
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: {{ $app.name }}-svc
-  namespace: {{ $app.namespace | default "default" }}
+  name: {{ $app.name }}-se
+  namespace: {{ $app.namespace }}
 spec:
   hosts:
-  - details.bookinfo.com
-  location: MESH_INTERNAL
+  ## Add egress external service default host.
+  - {{ $app.name }}.{{ $app.namespace }}.svc.cluster.local
+  ## Add custom extension hosts.
+  {{- if not (empty $app.customHosts) }}
+  {{- toYaml $app.customHosts | nindent 2 }}
+  {{- end }}
+  ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/service-entry/#ServiceEntry-Location
+  ## Location specifies whether the service is part of Istio mesh or outside the mesh. Location determines the
+  ## behavior of several features, such as service-to-service mTLS authentication, policy enforcement, etc. 
+  ## When communicating with services outside the mesh, Istio mTLS authentication is disabled, and policy 
+  ## enforcement is performed on the client-side as opposed to server-side.
+  location: {{ $app.location | default "MESH_EXTERNAL" }} ## MESH_INTERNAL|MESH_EXTERNAL
   ports:
-  - name: http
+  ## Add egress external service default ports.
+  {{- if empty $app.instancePorts }}
+  - name: http-{{ $app.name }}
     protocol: HTTP
     number: 80
-    targetPort: 8080
-  resolution: STATIC
+    targetPort: 80
+  - name: https-{{ $app.name }}
+    protocol: HTTPS
+    number: 443
+    targetPort: 443
+  {{- else }}
+  ## Add egress external service custom ports.
+  {{- range $index, $port := $app.instancePorts }}
+  - name: {{ $port.protocol | lower }}-{{ $app.name }}-{{ $index }}
+    protocol: {{ $port.protocol }}
+    number: {{ $port.targetPort }}
+    targetPort: {{ $port.targetPort }}
+  {{- end }}
+  {{- end }}
+  resolution: STATIC ## STATIC|DNS
   workloadSelector:
     labels:
       app: {{ $app.name }}
 ---
 ## Note: WorkloadEntry objects correspond to VMs instance one-to-one.
+## see:https://istio.io/v1.14/zh/docs/reference/config/networking/workload-entry/#WorkloadEntry
 {{- range $index, $addr := $app.instanceAddresses }}
 apiVersion: networking.istio.io/v1beta1
 kind: WorkloadEntry
 metadata:
-  name: {{ $app.name }}-{{ $index }}
+  name: {{ $app.name }}-we-{{ $index }}
+  namespace: {{ $app.namespace }}
 spec:
   # use of the service account indicates that the workload has a
   # sidecar proxy bootstrapped with this service account. Pods with
@@ -176,7 +214,7 @@ spec:
   address: {{ $addr }}
   labels:
     app: {{ $app.name }}
-    class: {{ $app.class }}
+    classify: {{ $app.classify }}
     version: {{ $app.version }}
 ---
 {{- end }}

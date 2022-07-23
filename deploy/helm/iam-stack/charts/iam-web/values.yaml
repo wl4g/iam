@@ -188,12 +188,16 @@ governance:
     ## see:https://developer.aliyun.com/article/772279
     egress:
     - name: example-wx-payment
-      class: thirdparty-external-service
+      classify: thirdparty-external-service
       version: v1
+      location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
       namespace: default
       serviceAccount: 
-      hosts:
-      - example-wx-payment.default.svc.cluster.local
+      customHosts:
+      - api.mch.weixin.qq.com
+      instancePorts:
+      - protocol: HTTPS
+        targetPort: 443
       instanceAddresses:
       - 157.255.174.121 # or: api.mch.weixin.qq.com
 

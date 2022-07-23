@@ -19,10 +19,13 @@ To install the chart with the release name `iam`:
 ```bash
 git clone https://github.com/wl4g/iam.git
 cd iam/deploy/helm/
+
+# Run app.
 helm -n iam upgrade --install iam iam-stack
 
-# for debugging template computed values
-#helm -n iam upgrade --install --dry-run --debug iam iam-stack
+# Run debugging template computed values.
+helm -n iam upgrade --install iam iam-stack \
+--dry-run --debug --set="iam-data.enabled=false,iam-facade.enabled=false"
 ```
 
 + or, From chart repos
