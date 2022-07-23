@@ -11,7 +11,8 @@
 ## This is the spec definition of application instance deployed in Kubernetes.
 image:
   repository: wl4g/iam-web
-  tag: latest
+  baselineTag: latest
+  upgradeTag: latest
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -139,8 +140,9 @@ governance:
         kubernetes.io/ingress.class: nginx
         kubernetes.io/tls-acme: "true"
       path: /
-      hosts:
-        - iam-web.iam.svc.cluster.local
+      ## The default host are: <service>.<namespace>.svc.cluster.local
+      customHosts:
+        #- myapp.default.svc.cluster.local
       tls: []
     ##
     ## ingress for application management.
@@ -151,20 +153,29 @@ governance:
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
       path: /
-      hosts:
-        - iam-web.iam.svc.cluster.local
+      ## The default host are: <service>.<namespace>.svc.cluster.local
+      customHosts:
+        #- myapp.default.svc.cluster.local
       tls: []
   istio:
     ingress:
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
-      domain: wl4g.io ## Top level 1 domain.
+      domain: wl4g.io ## Top level one domain.
       customHosts: []
       http:
-        ## Canary traffic governance configuration.
+        ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
         subsets:
-          v1: 3.0.0
-          v2: 3.0.0
+          ## The baseline version see to: .Values.image.baselineTag
+          baseline:
+            ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
+            loadBalancer: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+            weight: 80 ## The ensure smooth splitting traffic, default value: 80%
+          ## The upgrade version see to: .Values.image.upgradeTag
+          upgrade:
+            ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
+            loadBalancer: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+            weight: 20 ## The ensure smooth splitting traffic, default value: 20%
         scheme: http # Options: http|https, recommends using https.
         tls:
           mode: SIMPLE # Options: SIMPLE|STRICT, recommends using STRICT.
@@ -178,6 +189,17 @@ governance:
         #     percentage:
         #       value: 0.1
         #     httpStatus: 400
+        ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/virtual-service/#HTTPRetry
+        retries:
+         attempts: 5
+         perTryTimeout: 3s
+         #retryOn: gateway-error,connect-failure,refused-stream
+        ## The circuit breaker limiter rules.
+        ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#OutlierDetection
+        outlierDetection:
+          consecutive5xxErrors: 7
+          interval: 5m
+          baseEjectionTime: 15m
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
       tcp:
         enabled: false
@@ -196,6 +218,10 @@ governance:
       customHosts:
       - api.mch.weixin.qq.com
       instancePorts:
+      - protocol: HTTP
+        targetPort: 8080
+      - protocol: HTTP
+        targetPort: 80
       - protocol: HTTPS
         targetPort: 443
       instanceAddresses:

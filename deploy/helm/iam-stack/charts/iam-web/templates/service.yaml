@@ -21,7 +21,7 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.service.annotations }}
   annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
+  {{ toYaml .Values.service.annotations | indent 4 }}
   {{- end }}
 
 spec:
@@ -64,6 +64,7 @@ spec:
   selector:
     app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+
 ---
 
 ## TODO:不支持短路与运算？
@@ -86,7 +87,9 @@ spec:
   sessionAffinity: None
   clusterIP: None
   publishNotReadyAddresses: true
+
 ---
+
 apiVersion: v1
 kind: Endpoints
 metadata:
@@ -107,6 +110,7 @@ subsets:
 {{- end}}
 {{- end}}
 {{- end}}
+
 ---
 
 ## TODO:不支持短路与运算？
@@ -129,7 +133,9 @@ spec:
   sessionAffinity: None
   clusterIP: None
   publishNotReadyAddresses: true
+
 ---
+
 apiVersion: v1
 kind: Endpoints
 metadata:
@@ -154,6 +160,7 @@ subsets:
 {{- end}}
 {{- end}}
 {{- end}}
+
 ---
 
 {{- if .Values.trace.enabled }}
@@ -174,7 +181,9 @@ spec:
   sessionAffinity: None
   clusterIP: None
   publishNotReadyAddresses: true
+
 ---
+
 apiVersion: v1
 kind: Endpoints
 metadata:

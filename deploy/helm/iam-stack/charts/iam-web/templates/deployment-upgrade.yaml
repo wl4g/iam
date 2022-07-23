@@ -8,11 +8,11 @@
 # limitations under the License.
 #
 
-# see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
+## see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "app.name" . }}
+  name: {{ template "app.name" . }}-upgrade
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
@@ -53,12 +53,13 @@ spec:
         app.kubernetes.io/component: application
         app.kubernetes.io/name: {{ template "app.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/version: {{ .Chart.AppVersion }}
+        ## for canary governance labels.
+        app.kubernetes.io/canaryVersion: {{ .Values.image.upgradeTag | default .Chart.AppVersion }}
 
     spec:
       {{- if .Values.initContainers }}
       initContainers:
-{{ toYaml .Values.initContainers | indent 8 }}
+      {{ toYaml .Values.initContainers | indent 8 }}
       {{- end }}
 
       {{- if .Values.image.pullSecrets }}
@@ -113,7 +114,7 @@ spec:
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.upgradeTag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           #command: [ "/bin/sh", "-c", "env" ]
           ports:
@@ -143,13 +144,16 @@ spec:
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
           - name: appconfig-volume
             # e.g: /opt/apps/ecm/myapp-1.0.0-bin/conf
-            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/conf/
+            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/conf/
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/conf/
           ## datadir.
           - name: appdata-volume
-            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/data/
+            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/data/
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/data/
           ## logdir.
           - name: applog-volume
-            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
+            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
+            mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/log/
 
           ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
           startupProbe:

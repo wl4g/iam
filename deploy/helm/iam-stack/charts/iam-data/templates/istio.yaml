@@ -75,44 +75,70 @@ spec:
   {{- end }}
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
   http:
-    - match:
+    ## The health api routes.
+    - route:
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: {{ .Values.service.managementPort | default 10108 }}
+      timeout: 10s
+      match:
       - uri: # Related Tips: The prometheus build-in health path is '/-/healthy'.
           exact: "/healthz"
         ignoreUriCase: true
       rewrite:
         uri: "/actuator/health"
-      route:
-        - destination:
-            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-            port:
-              number: {{ .Values.service.managementPort | default 10108 }}
-    - match:
+    ## The metrics api routes.
+    - route:
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: {{ .Values.service.managementPort | default 10108 }}
+      timeout: 10s
+      match:
       - uri:
-          prefix: "/metrics"
+          exact: "/metrics"
         ignoreUriCase: true
       rewrite:
         uri: "/actuator/prometheus" # Spring actuator default metrics path.
-      route:
-        - destination:
-            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-            port:
-              number: {{ .Values.service.managementPort | default 10108 }}
-    - match:
+    ## The primary business api routes.
+    - route:
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: {{ .Values.service.apiPort | default 8080 }}
+          subset: baseline
+        ## The ensure smooth splitting traffic, default value: 80%
+        weight: {{ .Values.governance.istio.ingress.http.subsets.baseline.weight | default 80 }}
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: {{ .Values.service.apiPort | default 8080 }}
+          subset: upgrade
+        ## The ensure smooth splitting traffic, default value: 20%
+        weight: {{ .Values.governance.istio.ingress.http.subsets.upgrade.weight | default 20 }}
+      timeout: 10s
+      match:
       - uri:
           prefix: "/"
         ignoreUriCase: true
-      route:
-        - destination:
-            host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-            port:
-              number: {{ .Values.service.apiPort | default 8080 }}
-            subset: v1
-          weight: 100
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
       {{- with .Values.governance.istio.ingress.http.fault }}
       fault:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/virtual-service/#HTTPRetry
+      {{- with .Values.governance.istio.ingress.http.retries }}
+      retries:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    ## The default fallback routes(no matcher).
+    #- route:
+    #  - destination:
+    #      host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+    #      port:
+    #        number: {{ .Values.service.apiPort | default 8080 }}
+    #    weight: 100
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
   {{- if .Values.governance.istio.ingress.tcp.enabled }}
   tcp:
@@ -124,7 +150,9 @@ spec:
           port: 
             number: {{ .Values.governance.istio.ingress.tcp.backendPort | default 1883 }}
   {{- end }}
+
 ---
+
 ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
@@ -133,15 +161,57 @@ metadata:
   namespace: {{ .Release.Namespace}}
 spec:
   host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-  ## Canary traffic governance configuration.
+  ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings
+  trafficPolicy:
+    loadBalancer:
+      ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
+      simple: LEAST_REQUEST # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+      #consistentHash:
+      #  httpCookie:
+      #    name: user
+      #    ttl: 0s
+    connectionPool:
+      ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#ConnectionPoolSettings-HTTPSettings
+      http:
+        http1MaxPendingRequests: 65535
+        http2MaxRequests: 200000
+        maxRetries: 10
+        idleTimeout: 3600s
+      tcp:
+        maxConnections: 1000
+        connectTimeout: 500ms
+        tcpKeepalive:
+          ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#ConnectionPoolSettings-TCPSettings-TcpKeepalive
+          ## Maximum number of keepalive probes to send without response before deciding the connection is dead.
+          ## Default is to use the OS level configuration (unless overridden, Linux defaults to 9.)
+          #probes: 9
+          time: 7200s
+          interval: 60s
+    ## The circuit breaker limiter rules.
+    ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#OutlierDetection
+    {{- with .Values.governance.istio.ingress.http.outlierDetection }}
+    outlierDetection:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  ## The canary traffic governance, ie: rules for grouping pods.
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
   subsets:
-    - name: v1
+    - name: baseline
       labels:
-        app.kubernetes.io/version: {{ .Values.governance.istio.ingress.http.subsets.v1 | default "v1" }}
-    - name: v2
+        ## for canary governance labels.
+        app.kubernetes.io/canaryVersion: {{ .Values.image.baselineTag | default "v1_fallback_please_check_conf" }}
+      trafficPolicy:
+        loadBalancer:
+          ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
+          simple: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+    - name: upgrade
       labels:
-        app.kubernetes.io/version: {{ .Values.governance.istio.ingress.http.subsets.v2 | default "v2" }}
+        ## for canary governance labels.
+        app.kubernetes.io/canaryVersion: {{ .Values.image.upgradeTag | default "v2_fallback_please_check_conf" }}
+      trafficPolicy:
+        loadBalancer:
+          ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
+          simple: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
 ---
 
 ## ----------------------------- Mesh App Egress Rules -----------------------------
@@ -185,12 +255,12 @@ spec:
   ## Add egress external service custom ports.
   {{- range $index, $port := $app.instancePorts }}
   - name: {{ $port.protocol | lower }}-{{ $app.name }}-{{ $index }}
-    protocol: {{ $port.protocol }}
+    protocol: {{ $port.protocol | upper }}
     number: {{ $port.targetPort }}
     targetPort: {{ $port.targetPort }}
   {{- end }}
   {{- end }}
-  resolution: STATIC ## STATIC|DNS
+  resolution: DNS ## STATIC|DNS
   workloadSelector:
     labels:
       app: {{ $app.name }}
