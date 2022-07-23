@@ -37,6 +37,15 @@ helm -n iam upgrade --install iam wl4g/iam
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
 
++ Upgrade with Canary example:
+
+```bash
+helm -n iam upgrade --install iam iam-stack --set="\
+    iam-web.image.baselineTag=1.0.0,iam-web.image.upgradeTag=latest,\
+    iam-facade.image.baselineTag=1.0.0,iam-facade.image.upgradeTag=latest,\
+    iam-data.image.baselineTag=1.0.0,iam-data.image.upgradeTag=latest"
+```
+
 + Veifying example
 
 ```bash

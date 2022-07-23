@@ -17,7 +17,8 @@ iam-web:
   enabled: true
   image:
     repository: wl4g/iam-web
-    tag: latest
+    baselineTag: latest
+    upgradeTag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
@@ -90,7 +91,8 @@ iam-facade:
   enabled: true
   image:
     repository: wl4g/iam-facade
-    tag: latest
+    baselineTag: latest
+    upgradeTag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
@@ -122,7 +124,8 @@ iam-data:
   enabled: true
   image:
     repository: wl4g/iam-data
-    tag: latest
+    baselineTag: latest
+    upgradeTag: latest
 
   envConfigs:
     APP_ACTIVE: "uat"

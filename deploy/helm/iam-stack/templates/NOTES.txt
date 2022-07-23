@@ -1,6 +1,10 @@
 {{- $webApp := "iam-web" }}
 {{- $initUserName := "admin" }}
 
+{{- $iamWebBaselineTag := index .Values "iam-web" "image" "baselineTag" }}
+{{- $iamFacadeBaselineTag := index .Values "iam-facade" "image" "baselineTag"}}
+{{- $iamDataBaselineTag := index .Values "iam-data" "image" "baselineTag" }}
+
 1. Get your '{{ $initUserName }}' user password by running:
 
     kubectl get secret -n {{ .Release.Namespace }} {{ $webApp }} -o jsonpath="{.data.init-password}" | base64 --decode ; echo
@@ -24,3 +28,10 @@
 {{- end }}
 
 5. Login with the password from step 1 and the username: '{{ $initUserName }}'
+
+6. Here an example of what you should execution command-line on your next grayscale (canary) upgrade:
+
+    helm -n iam upgrade --install iam iam-stack --set="\
+        iam-web.image.baselineTag={{ $iamWebBaselineTag }},iam-web.image.upgradeTag=latest,\
+        iam-facade.image.baselineTag={{ $iamFacadeBaselineTag }},iam-facade.image.upgradeTag=latest,\
+        iam-data.image.baselineTag={{ $iamDataBaselineTag }},iam-data.image.upgradeTag=latest"
