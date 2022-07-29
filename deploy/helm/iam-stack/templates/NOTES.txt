@@ -32,6 +32,16 @@
 6. Here an example of what you should execution command-line on your next grayscale (canary) upgrade:
 
     helm -n iam upgrade --install iam iam-stack --set="\
-        iam-web.image.baselineTag={{ $iamWebBaselineTag }},iam-web.image.upgradeTag=latest,\
-        iam-facade.image.baselineTag={{ $iamFacadeBaselineTag }},iam-facade.image.upgradeTag=latest,\
-        iam-data.image.baselineTag={{ $iamDataBaselineTag }},iam-data.image.upgradeTag=latest"
+        iam-web.image.baselineTag={{ $iamWebBaselineTag }},\
+        iam-web.image.upgradeTag=latest,\
+        iam-facade.image.baselineTag={{ $iamFacadeBaselineTag }},\
+        iam-facade.image.upgradeTag=latest,\
+        iam-data.image.baselineTag={{ $iamDataBaselineTag }},\
+        iam-data.image.upgradeTag=latest,\
+        iam-web.governance.istio.ingress.http.canary.baseline.weight=80,\
+        iam-web.governance.istio.ingress.http.canary.upgrade.weight=20,\
+        iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
+        iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
+        iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
+        iam-data.governance.istio.ingress.http.canary.upgrade.weight=20,\
+        "

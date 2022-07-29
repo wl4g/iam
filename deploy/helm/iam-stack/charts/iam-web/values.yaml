@@ -165,7 +165,7 @@ governance:
       http:
         ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
-        subsets:
+        canary:
           ## The baseline version see to: .Values.image.baselineTag
           baseline:
             ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB

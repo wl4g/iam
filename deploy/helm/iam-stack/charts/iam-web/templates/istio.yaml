@@ -109,14 +109,14 @@ spec:
             number: {{ .Values.service.apiPort | default 8080 }}
           subset: baseline
         ## The ensure smooth splitting traffic, default value: 80%
-        weight: {{ .Values.governance.istio.ingress.http.subsets.baseline.weight | default 80 }}
+        weight: {{ .Values.governance.istio.ingress.http.canary.baseline.weight | default 80 }}
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
             number: {{ .Values.service.apiPort | default 8080 }}
           subset: upgrade
         ## The ensure smooth splitting traffic, default value: 20%
-        weight: {{ .Values.governance.istio.ingress.http.subsets.upgrade.weight | default 20 }}
+        weight: {{ .Values.governance.istio.ingress.http.canary.upgrade.weight | default 20 }}
       timeout: 10s
       match:
       - uri:

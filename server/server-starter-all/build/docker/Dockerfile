@@ -45,8 +45,8 @@
 FROM openjdk:8u212-jre-alpine3.9 AS wl4g_springboot_base
 LABEL maintainer="James Wong<983708408@qq.com, wanglsir@gmail.com>"
 
-RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
-&& echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
+RUN echo "http://mirrors.aliyun.com/alpine/v3.9/main" > /etc/apk/repositories \
+&& echo "http://mirrors.aliyun.com/alpine/v3.9/community" >> /etc/apk/repositories \
 && apk update upgrade \
 && apk add --no-cache procps unzip curl bash tini tzdata ttf-dejavu fontconfig \
 && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

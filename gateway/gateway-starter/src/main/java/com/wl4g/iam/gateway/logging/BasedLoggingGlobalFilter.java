@@ -160,9 +160,9 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
         try {
             // Check if printing the log of the current request is enabled based
             // on the current request parameters.
-            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier)
-                    || (determineRequestVerboseLevel(exchange) >= 10
+            return (requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier))
+                    || (determineRequestVerboseLevel(exchange) > 10
                             && requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                                     exchange.getRequest().getHeaders().getFirst(loggingConfig.getDyeingLogStateRequestHeader()),
                                     routeIdPredicateSupplier));
