@@ -2,13 +2,13 @@
 
 This chart bootstraps an IAM deployment on a Kubernetes cluster using the Helm package manager. 
 
-## Prerequisites
+## 1. Prerequisites
 
 + Kubernetes 1.6+
 + Helm
 + Istio 1.12+ (Optional and recommends)
 
-## Installing the Chart
+## 2. Installing the Chart
 
 - [helm charts values.yaml](iam/values.yaml)
 
@@ -52,7 +52,54 @@ helm -n iam upgrade --install iam iam-stack --set="\
 # TODO
 ```
 
-## Uninstalling the Chart
+## 3. Canary Deploying Example
+
+- Step 1: Initial deploying. (baseline version only)
+
+```bash
+helm -n iam upgrade --install iam iam-stack --set="\
+    iam-web.image.baselineTag=1.0.0,\
+    iam-facade.image.baselineTag=1.0.0,\
+    iam-data.image.baselineTag=1.0.0"
+```
+
+- Step 2: Upgrade deploying using canary mode. (weighted by traffic)
+
+```bash
+helm -n iam upgrade --install iam iam-stack --set="\
+    iam-web.image.baselineTag=1.0.0,\
+    iam-web.image.upgradeTag=1.0.1,\
+    iam-facade.image.baselineTag=1.0.0,\
+    iam-facade.image.upgradeTag=1.0.1,\
+    iam-data.image.baselineTag=1.0.0,\
+    iam-data.image.upgradeTag=1.0.1,\
+    iam-web.governance.istio.ingress.http.canary.baseline.weight=80,\
+    iam-web.governance.istio.ingress.http.canary.upgrade.weight=20,\
+    iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
+    iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
+    iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
+    iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
+```
+
+- Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
+
+```bash
+helm -n iam upgrade --install iam iam-stack --set="\
+    iam-web.image.baselineTag=1.0.1,\
+    iam-web.image.upgradeTag=,\
+    iam-facade.image.baselineTag=1.0.1,\
+    iam-facade.image.upgradeTag=,\
+    iam-data.image.baselineTag=1.0.1,\
+    iam-data.image.upgradeTag=,\
+    iam-web.governance.istio.ingress.http.canary.baseline.weight=100,\
+    iam-web.governance.istio.ingress.http.canary.upgrade.weight=0,\
+    iam-facade.governance.istio.ingress.http.canary.baseline.weight=100,\
+    iam-facade.governance.istio.ingress.http.canary.upgrade.weight=0,\
+    iam-data.governance.istio.ingress.http.canary.baseline.weight=100,\
+    iam-data.governance.istio.ingress.http.canary.upgrade.weight=0"
+```
+
+## 4. Uninstalling the Chart
 
 To uninstall/delete the `iam` deployment:
 
@@ -60,7 +107,7 @@ To uninstall/delete the `iam` deployment:
 helm del iam
 ```
 
-## Configurable
+## 5. Configurable
 
 The following table lists the configurable parameters of the SpringBoot APP(IAM) chart and their default values.
 
@@ -179,7 +226,7 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `trace.otel.insecure` | Otel insecure | true |
 | `trace.otel.timeout` | Otel timeout. | 10s |
 
-## FAQ
+## 6. FAQ
 
 ### How to troubleshoot Pods that are missing os tools
 
