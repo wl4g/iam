@@ -159,43 +159,38 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `<app>.governance.ingress.api.enabled` | Enable api governance with legacy ingress | false |
 | `<app>.governance.ingress.api.ingressClassName` | Set the legacy ingress class for APP api |  nginx  |
 | `<app>.governance.ingress.api.path` | Ingress path for APP api |  / |
-| `<app>.governance.ingress.api.hosts` | Ingress hosts for APP prometheus | &lt;app&gt;.APP.svc.cluster.local |
+| `<app>.governance.ingress.api.customHosts` | Ingress hosts for APP prometheus | e.g: &lt;app&gt;.APP.svc.cluster.local |
 | `<app>.governance.ingress.api.tls` | Ingress tls for APP prometheus | [] |
 | `<app>.governance.ingress.api.annotations` | Ingress annotations for APP management | {} |
 | `<app>.governance.ingress.management.enabled` |  Enable ingress for APP management |  false |
 | `<app>.governance.ingress.management.ingressClassName` |    Set the ingress class for APP management |  nginx  |
 | `<app>.governance.ingress.management.path` | Ingress path for APP management |    / |
-| `<app>.governance.ingress.management.hosts` | Ingress hosts for APP management API | &lt;app&gt;.iam.svc.cluster.local |
+| `<app>.governance.ingress.management.customHosts` | Ingress hosts for APP management API | e.g: &lt;app&gt;.iam.svc.cluster.local |
 | `<app>.governance.ingress.management.tls` | Ingress tls for APP management |  [] |
 | `<app>.governance.ingress.management.annotations` | Ingress annotations for APP management | {} |
-| `<app>.governance.istio.ingress.hosts` | Istio ingress hosts | iam.wl4g.io |
-| `<app>.governance.istio.ingress.httpRoutes` | Istio ingress http routes configuration | false |
-| `<app>.governance.istio.ingress.httpRoutes[0].match` | - | - |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].uri.prefix` | - | / |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].route[0].destination.host` | - | &lt;app&gt;.iam.svc.cluster.local |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].route[0].destination.port.number` | - | 18080 |
-| --- For Example Gray Deployements. --- | | |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].route[0].destination.subset` | - | v1 |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].route[0].destination.weight` | - | 100 |
-| --- | | |
-| --- For Example Fault Injection Deployements. (Usually no configuration is required) --- | | |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].fault.delay.percentage.value` | - | 0.1 |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].fault.delay.fixedDelay` | - | 5s |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].fault.abort.percentage.value` | - | 0.1 |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[0].fault.abort.httpStatus` | - | 400 |
-| --- | | |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[1].uri.prefix` | - | /healthz |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[1].rewrite.uri` | - | /actuator/health |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[1].route[0].destination.host` | - | &lt;app&gt;.iam.svc.cluster.local |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[1].route[0].destination.port.number` | - | 10108 |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[2].uri.prefix` | - | /metrics |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[2].rewrite.uri` | - | /actuator/metrics |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[2].route[0].destination.host` | - | &lt;app&gt;.iam.svc.cluster.local |
-| `<app>.governance.istio.ingress.httpRoutes[0].match[2].route[0].destination.port.number` | - | 10108 |
-| `<app>.governance.istio.ingress.subsets` | Istio ingress subsets configuration | false |
-| `<app>.governance.istio.ingress.subsets[0].name` | - | v1 |
-| `<app>.governance.istio.ingress.subsets[0].labels` | - | version=v1 |
-| `<app>.governance.istio.ingress.tcpRoutes` | Istio ingress tcp routes configuration | `nil` |
+| `<app>.governance.istio.ingress.domain` | Istio ingress top domain | wl4g.io |
+| `<app>.governance.istio.ingress.customHosts` | Istio ingress hosts | e.g: some-example.com |
+| `<app>.governance.istio.ingress.http.canary.uriPrefix` | - | `/` |
+| `<app>.governance.istio.ingress.http.canary.cookieRegex` | - | `^(.*?;)?(email=[^;]*@wl4g.io)(;.*)?$` |
+| `<app>.governance.istio.ingress.http.canary.baseline.loadBalancer` | - | ROUND_ROBIN |
+| `<app>.governance.istio.ingress.http.canary.baseline.weight` | - | 80 |
+| `<app>.governance.istio.ingress.http.canary.upgrade.loadBalancer` | - | ROUND_ROBIN |
+| `<app>.governance.istio.ingress.http.canary.upgrade.weight` | - | 20 |
+| `<app>.governance.istio.ingress.http.scheme` | - | http |
+| `<app>.governance.istio.ingress.http.tls.mode` | - | SIMPLE |
+| `<app>.governance.istio.ingress.http.fault.delay.percentage.value` | - | 0.1 |
+| `<app>.governance.istio.ingress.http.fault.delay.fixedDelay` | - | 5s |
+| `<app>.governance.istio.ingress.http.fault.abort.percentage.value` | - | 0.1 |
+| `<app>.governance.istio.ingress.http.fault.abort.fixedDelay` | - | 5s |
+| `<app>.governance.istio.ingress.http.fault.abort.httpStatus` | - | 400 |
+| `<app>.governance.istio.ingress.http.retries.attempts` | - | 5 |
+| `<app>.governance.istio.ingress.http.retries.perTryTimeout` | - | 30s |
+| `<app>.governance.istio.ingress.http.outlierDetection.consecutive5xxErrors` | - | 7 |
+| `<app>.governance.istio.ingress.http.outlierDetection.interval` | - | 5m |
+| `<app>.governance.istio.ingress.http.outlierDetection.baseEjectionTime` | - | 15m |
+| `<app>.governance.istio.ingress.tcp.enabled` | Enable tcp istio ingress | false |
+| `<app>.governance.istio.ingress.tcp.frontPort` | Enable tcp istio ingress | 1883 |
+| `<app>.governance.istio.ingress.tcp.backendPort` | Enable tcp istio ingress | 1883 |
 | --- Common Depends Services. --- | | |
 | `redis.type` | Depends of redis cluster. (internal/external) | external |
 | `redis.internal.enabled` | Enable internal redis cluster | false |

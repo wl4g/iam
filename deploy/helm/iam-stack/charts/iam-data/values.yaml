@@ -172,7 +172,11 @@ governance:
       http:
         ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
+        ## see:https://istio.io/latest/zh/blog/2017/0.1-canary/
         canary:
+          uriPrefix: /
+          ## e.g. experiment only with internal users.
+          cookieRegex: "^(.*?;)?(email=[^;]*@wl4g.io)(;.*)?$"
           ## The baseline version see to: .Values.image.baselineTag
           baseline:
             ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB

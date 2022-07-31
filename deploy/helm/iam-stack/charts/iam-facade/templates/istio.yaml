@@ -124,7 +124,10 @@ spec:
       timeout: 10s
       match:
       - uri:
-          prefix: "/"
+          prefix: {{ .Values.governance.istio.ingress.http.canary.uriPrefix | default "/" }}
+      - headers:
+          cookie:
+            regex: {{ .Values.governance.istio.ingress.http.canary.cookieRegex | default "(.+)" }}
         ignoreUriCase: true
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
       {{- with .Values.governance.istio.ingress.http.fault }}
@@ -136,13 +139,13 @@ spec:
       retries:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    ## The default fallback routes(no matcher).
-    #- route:
-    #  - destination:
-    #      host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
-    #      port:
-    #        number: {{ .Values.service.apiPort | default 8080 }}
-    #    weight: 100
+    ## The default fallback route(no matcher).
+    - route:
+      - destination:
+          host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: {{ .Values.service.apiPort | default 8080 }}
+          subset: baseline
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
   {{- if .Values.governance.istio.ingress.tcp.enabled }}
   tcp:
