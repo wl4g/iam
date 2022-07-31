@@ -103,6 +103,7 @@ spec:
         uri: "/actuator/prometheus" # Spring actuator default metrics path.
     ## The primary business api routes.
     - route:
+      {{- if not (empty .Values.image.baselineTag) }}
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
@@ -110,6 +111,8 @@ spec:
           subset: baseline
         ## The ensure smooth splitting traffic, default value: 80%
         weight: {{ .Values.governance.istio.ingress.http.canary.baseline.weight | default 80 }}
+      {{- end }}
+      {{- if not (empty .Values.image.upgradeTag) }}
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
@@ -117,6 +120,7 @@ spec:
           subset: upgrade
         ## The ensure smooth splitting traffic, default value: 20%
         weight: {{ .Values.governance.istio.ingress.http.canary.upgrade.weight | default 20 }}
+      {{- end }}
       timeout: 10s
       match:
       - uri:
@@ -196,22 +200,26 @@ spec:
   ## The canary traffic governance, ie: rules for grouping pods.
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
   subsets:
+    {{- if not (empty .Values.image.baselineTag) }}
     - name: baseline
       labels:
         ## for canary governance labels.
-        app.kubernetes.io/canaryVersion: {{ .Values.image.baselineTag | default "v1_fallback_please_check_conf" }}
+        app.kubernetes.io/canaryVersion: {{ .Values.image.baselineTag | default "tips:please:check:baselineTag" }}
       trafficPolicy:
         loadBalancer:
           ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
           simple: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+    {{- end }}
+    {{- if not (empty .Values.image.upgradeTag) }}
     - name: upgrade
       labels:
         ## for canary governance labels.
-        app.kubernetes.io/canaryVersion: {{ .Values.image.upgradeTag | default "v2_fallback_please_check_conf" }}
+        app.kubernetes.io/canaryVersion: {{ .Values.image.upgradeTag | default "tips:please:check:upgradeTag" }}
       trafficPolicy:
         loadBalancer:
           ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
           simple: ROUND_ROBIN # UNSPECIFIED|RANDOM|PASSTHROUGH|LEAST_REQUEST|ROUND_ROBIN|LEAST_CONN
+    {{- end }}
 ---
 
 ## ----------------------------- Mesh App Egress Rules -----------------------------

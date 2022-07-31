@@ -12,7 +12,7 @@
 image:
   repository: wl4g/iam-facade
   baselineTag: latest
-  upgradeTag: latest
+  upgradeTag: 
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -24,7 +24,14 @@ image:
 ## It is recommended to have odd number of nodes in a cluster, otherwise the application cluster cannot be automatically healed in case of net-split.
 autoscaling:
   enabled: true
-  replicaCount: 1
+  ## The total number of replicas for this application (greater than or equal to 0, default is 1).
+  ## Note: if that when using istio grayscale (canary) deployment, it represents the 
+  ## total number of baseline pods + upgrade pods, where the number of replicas is calculated
+  ## according to the ceil of the product of the canary weight, for example:
+  ## replicaTotal=1,baseline.weight=50,upgrade.weight=50, then: baseline.replica=1,upgrade.replica=1 
+  ## is calculated by ceil.
+  ## Note: this is only an approximation, the actual total may be slightly larger than this value.
+  replicaTotal: 1
 
 ## The update strategy for deployments with persistent volumes(jobservice, registry
 ## and chartmuseum): "RollingUpdate" or "Recreate"
@@ -165,7 +172,7 @@ governance:
       http:
         ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
-        subsets:
+        canary:
           ## The baseline version see to: .Values.image.baselineTag
           baseline:
             ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB

@@ -8,6 +8,8 @@
 # limitations under the License.
 #
 
+{{- if not (empty .Values.image.upgradeTag) }}
+
 ## see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
 apiVersion: apps/v1
 kind: Deployment
@@ -22,9 +24,18 @@ metadata:
 
 spec:
   {{- if .Values.autoscaling.enabled }}
-  replicas: {{ .Values.autoscaling.replicaCount }}
+  {{- if eq .Values.governance.type "Istio" }}
+  ## The calculated by rounding off according to the traffic weight ratio.
+  ## see:https://helm.sh/docs/chart_template_guide/function_list/#math-functions
+  ## For older versions of helm may not support float64 type division:
+  ## see:https://github.com/helm/helm/issues/10414
+  ## see:https://github.com/Masterminds/sprig/pull/181
+  replicas: {{ ceil (mulf .Values.autoscaling.replicaTotal (divf .Values.governance.istio.ingress.http.canary.upgrade.weight 100)) }}
   {{- else }}
-  replicas: 2
+  replicas: {{ .Values.autoscaling.replicaTotal }}
+  {{- end }}
+  {{- else }}
+  replicas: 1
   {{- end }}
 
   strategy:
@@ -218,3 +229,5 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+{{- end }}

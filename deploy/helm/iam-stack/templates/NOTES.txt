@@ -24,12 +24,12 @@
 
     export nodeIp=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | grep inet | awk -F ' ' '{print $2}' | cut -f1 -d/ | head -1)
     export istioInNodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
-    curl -v -H 'Host: {{ $webApp }}.{{ $domain }}' ${nodeIp}:${istioInNodePort}/login
+    curl -vk -H 'Host: {{ $webApp }}.{{ $domain }}' ${nodeIp}:${istioInNodePort}/login
 {{- end }}
 
 5. Login with the password from step 1 and the username: '{{ $initUserName }}'
 
-6. Here an example of what you should execution command-line on your next grayscale (canary) upgrade:
+6. Here an example of what you should execution command-line on your next grayscale upgrade (canary):
 
     helm -n iam upgrade --install iam iam-stack --set="\
         iam-web.image.baselineTag={{ $iamWebBaselineTag }},\
@@ -43,5 +43,4 @@
         iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
         iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
         iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
-        iam-data.governance.istio.ingress.http.canary.upgrade.weight=20,\
-        "
+        iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
