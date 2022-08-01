@@ -176,7 +176,7 @@ governance:
         canary:
           uriPrefix: /
           ## e.g. experiment only with internal users.
-          cookieRegex: "^(.*?;)?(email=[^;]*@wl4g.io)(;.*)?$"
+          cookieRegex: "(.*)_email=([a-zA-Z0-9_-]+)@wl4g.io(.*)"
           ## The baseline version see to: .Values.image.baselineTag
           baseline:
             ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
@@ -220,7 +220,7 @@ governance:
     ## see:https://istio.io/v1.14/docs/reference/config/networking/workload-entry/
     ## see:https://developer.aliyun.com/article/772279
     egress:
-    - name: example-wx-payment
+    - name: iam-web-example-wx-payment
       classify: thirdparty-external-service
       version: v1
       location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
