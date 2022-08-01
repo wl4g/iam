@@ -18,7 +18,7 @@ iam-web:
   image:
     repository: wl4g/iam-web
     baselineTag: latest
-    upgradeTag: latest
+    upgradeTag: 
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
