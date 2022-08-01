@@ -41,9 +41,12 @@ helm -n iam upgrade --install iam wl4g/iam
 
 ```bash
 helm -n iam upgrade --install iam iam-stack --set="\
-    iam-web.image.baselineTag=1.0.0,iam-web.image.upgradeTag=latest,\
-    iam-facade.image.baselineTag=1.0.0,iam-facade.image.upgradeTag=latest,\
-    iam-data.image.baselineTag=1.0.0,iam-data.image.upgradeTag=latest"
+iam-web.image.baselineTag=1.0.0,\
+iam-web.image.upgradeTag=latest,\
+iam-facade.image.baselineTag=1.0.0,\
+iam-facade.image.upgradeTag=latest,\
+iam-data.image.baselineTag=1.0.0,\
+iam-data.image.upgradeTag=latest"
 ```
 
 + Veifying example
@@ -67,36 +70,36 @@ helm -n iam upgrade --install iam iam-stack --set="\
 
 ```bash
 helm -n iam upgrade --install iam iam-stack --set="\
-    iam-web.image.baselineTag=1.0.0,\
-    iam-web.image.upgradeTag=1.0.1,\
-    iam-facade.image.baselineTag=1.0.0,\
-    iam-facade.image.upgradeTag=1.0.1,\
-    iam-data.image.baselineTag=1.0.0,\
-    iam-data.image.upgradeTag=1.0.1,\
-    iam-web.governance.istio.ingress.http.canary.baseline.weight=80,\
-    iam-web.governance.istio.ingress.http.canary.upgrade.weight=20,\
-    iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
-    iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
-    iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
-    iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
+iam-web.image.baselineTag=1.0.0,\
+iam-web.image.upgradeTag=1.0.1,\
+iam-facade.image.baselineTag=1.0.0,\
+iam-facade.image.upgradeTag=1.0.1,\
+iam-data.image.baselineTag=1.0.0,\
+iam-data.image.upgradeTag=1.0.1,\
+iam-web.governance.istio.ingress.http.canary.baseline.weight=80,\
+iam-web.governance.istio.ingress.http.canary.upgrade.weight=20,\
+iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
+iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
+iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
+iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
 - Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
 
 ```bash
 helm -n iam upgrade --install iam iam-stack --set="\
-    iam-web.image.baselineTag=1.0.1,\
-    iam-web.image.upgradeTag=,\
-    iam-facade.image.baselineTag=1.0.1,\
-    iam-facade.image.upgradeTag=,\
-    iam-data.image.baselineTag=1.0.1,\
-    iam-data.image.upgradeTag=,\
-    iam-web.governance.istio.ingress.http.canary.baseline.weight=100,\
-    iam-web.governance.istio.ingress.http.canary.upgrade.weight=0,\
-    iam-facade.governance.istio.ingress.http.canary.baseline.weight=100,\
-    iam-facade.governance.istio.ingress.http.canary.upgrade.weight=0,\
-    iam-data.governance.istio.ingress.http.canary.baseline.weight=100,\
-    iam-data.governance.istio.ingress.http.canary.upgrade.weight=0"
+iam-web.image.baselineTag=1.0.1,\
+iam-web.image.upgradeTag=,\
+iam-facade.image.baselineTag=1.0.1,\
+iam-facade.image.upgradeTag=,\
+iam-data.image.baselineTag=1.0.1,\
+iam-data.image.upgradeTag=,\
+iam-web.governance.istio.ingress.http.canary.baseline.weight=100,\
+iam-web.governance.istio.ingress.http.canary.upgrade.weight=0,\
+iam-facade.governance.istio.ingress.http.canary.baseline.weight=100,\
+iam-facade.governance.istio.ingress.http.canary.upgrade.weight=0,\
+iam-data.governance.istio.ingress.http.canary.baseline.weight=100,\
+iam-data.governance.istio.ingress.http.canary.upgrade.weight=0"
 ```
 
 ## 4. Uninstalling the Chart
