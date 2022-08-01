@@ -122,10 +122,12 @@ spec:
         weight: {{ .Values.governance.istio.ingress.http.canary.upgrade.weight | default 20 }}
       {{- end }}
       timeout: 10s
+      ## Multiple matchers represent and operations.
+      ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#StringMatch
       match:
       - uri:
           prefix: {{ .Values.governance.istio.ingress.http.canary.uriPrefix | default "/" }}
-      - headers:
+        headers:
           cookie:
             regex: {{ .Values.governance.istio.ingress.http.canary.cookieRegex | default "(.+)" }}
         ignoreUriCase: true
