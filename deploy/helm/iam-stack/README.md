@@ -21,10 +21,10 @@ git clone https://github.com/wl4g/iam.git
 cd iam/deploy/helm/
 
 # Run app.
-helm -n iam upgrade --install iam iam-stack
+helm -n iam upgrade --install --create-namespace iam iam-stack
 
 # Run debugging template computed values.
-helm -n iam upgrade --install iam iam-stack \
+helm -n iam upgrade --install --create-namespace iam iam-stack \
 --dry-run --debug --set="iam-data.enabled=false,iam-facade.enabled=false"
 ```
 
@@ -32,15 +32,15 @@ helm -n iam upgrade --install iam iam-stack \
 
 ```bash
 helm repo add iam https://helm.wl4g.io/iam/charts
-helm -n iam upgrade --install iam wl4g/iam
+helm -n iam upgrade --install --create-namespace iam wl4g/iam
 ```
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
 
-+ Upgrade with Canary example:
++ Upgrade with Canary deploy example:
 
 ```bash
-helm -n iam upgrade --install iam iam-stack --set="\
+helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
 iam-web.image.baselineTag=1.0.0,\
 iam-web.image.upgradeTag=latest,\
 iam-facade.image.baselineTag=1.0.0,\
@@ -49,10 +49,12 @@ iam-data.image.baselineTag=1.0.0,\
 iam-data.image.upgradeTag=latest"
 ```
 
-+ Veifying example
++ Upgrade Dependents example:
 
 ```bash
-# TODO
+helm dependency build
+helm dependency update
+helm dependency list
 ```
 
 ## 3. Canary Deploying Example
@@ -60,7 +62,7 @@ iam-data.image.upgradeTag=latest"
 - Step 1: Initial deploying. (baseline version only)
 
 ```bash
-helm -n iam upgrade --install iam iam-stack --set="\
+helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
     iam-web.image.baselineTag=1.0.0,\
     iam-facade.image.baselineTag=1.0.0,\
     iam-data.image.baselineTag=1.0.0"
@@ -69,7 +71,7 @@ helm -n iam upgrade --install iam iam-stack --set="\
 - Step 2: Upgrade deploying using canary mode. (weighted by traffic)
 
 ```bash
-helm -n iam upgrade --install iam iam-stack --set="\
+helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
 iam-web.image.baselineTag=1.0.0,\
 iam-web.image.upgradeTag=1.0.1,\
 iam-facade.image.baselineTag=1.0.0,\
@@ -87,7 +89,7 @@ iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
 - Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
 
 ```bash
-helm -n iam upgrade --install iam iam-stack --set="\
+helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
 iam-web.image.baselineTag=1.0.1,\
 iam-web.image.upgradeTag=,\
 iam-facade.image.baselineTag=1.0.1,\
@@ -194,35 +196,35 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `<app>.governance.istio.ingress.tcp.enabled` | Enable tcp istio ingress | false |
 | `<app>.governance.istio.ingress.tcp.frontPort` | Enable tcp istio ingress | 1883 |
 | `<app>.governance.istio.ingress.tcp.backendPort` | Enable tcp istio ingress | 1883 |
-| --- Common Depends Services. --- | | |
-| `redis.type` | Depends of redis cluster. (internal/external) | external |
-| `redis.internal.enabled` | Enable internal redis cluster | false |
-| `redis.external.ips` | External redis cluster node ips | false |
-| `redis.external.ports` | External redis cluster node ports | 6379,6380,6381,7379,7380,7381 |
-| `redis.external.password` | External redis cluster password | nil |
-| `database.type` | Depends of redis cluster. (internal/external) | external |
-| `database.internal.enabled` | Enable internal database.() | false |
-| `database.external.host` | External database host(mysql) | false |
-| `database.external.port` | External database port(mysql) | 3306 |
-| `database.external.username` | External redis cluster username | nil |
-| `database.external.password` | External redis cluster password | nil |
-| `kafka.enabled` | Enable kafka module.| false |
-| `kafka.type` | Kafka broker type. (internal/external) | external |
-| `kafka.internal.enabled` | Enable internal kafka. | false |
-| `kafka.external.brokerList` | External kafka broker connect string | `10.0.0.114:9092` |
-| `trace.enabled` | Enable trace module. | false |
-| `trace.provider` | Trace receiver provider. (jaeger/ziplin/otel) | jaeger |
-| `trace.sample_rate` | Trace simpler rate. | 1 |
-| `trace.jaeger.endpoint` | Jaeger endpoint. | `http://10.0.0.114:4318` |
-| `trace.jaeger.username` | Jaeger username. | `nil` |
-| `trace.jaeger.password` | Jaeger password. | `nil` |
-| `trace.jaeger.agent_host` | Jaeger agent host. | `hostname` |
-| `trace.jaeger.agent_port` | Jaeger agent port. | `6831` |
-| `trace.otel.endpoint` | Otel endpoint. | `http://10.0.0.114:4318` |
-| `trace.otel.url_path` | Otel endpoint path. | `/v1/traces` |
-| `trace.otel.compression` | Otel enable compression. | false |
-| `trace.otel.insecure` | Otel insecure | true |
-| `trace.otel.timeout` | Otel timeout. | 10s |
+| --- Global Dependents Components. --- | | |
+| `global.redis.type` | Depends of redis cluster. (internal/external) | external |
+| `global.redis.internal.enabled` | Enable internal redis cluster | false |
+| `global.redis.external.ips` | External redis cluster node ips | false |
+| `global.redis.external.ports` | External redis cluster node ports | 6379,6380,6381,7379,7380,7381 |
+| `global.redis.external.password` | External redis cluster password | nil |
+| `global.database.type` | Depends of redis cluster. (internal/external) | external |
+| `global.database.internal.enabled` | Enable internal database.() | false |
+| `global.database.external.host` | External database host(mysql) | false |
+| `global.database.external.port` | External database port(mysql) | 3306 |
+| `global.database.external.username` | External redis cluster username | nil |
+| `global.database.external.password` | External redis cluster password | nil |
+| `global.kafka.enabled` | Enable kafka module.| false |
+| `global.kafka.type` | Kafka broker type. (internal/external) | external |
+| `global.kafka.internal.enabled` | Enable internal kafka. | false |
+| `global.kafka.external.brokerList` | External kafka broker connect string | `10.0.0.114:9092` |
+| `global.trace.enabled` | Enable trace module. | false |
+| `global.trace.provider` | Trace receiver provider. (jaeger/ziplin/otel) | jaeger |
+| `global.trace.sample_rate` | Trace simpler rate. | 1 |
+| `global.trace.jaeger.endpoint` | Jaeger endpoint. | `http://10.0.0.114:4318` |
+| `global.trace.jaeger.username` | Jaeger username. | `nil` |
+| `global.trace.jaeger.password` | Jaeger password. | `nil` |
+| `global.trace.jaeger.agent_host` | Jaeger agent host. | `hostname` |
+| `global.trace.jaeger.agent_port` | Jaeger agent port. | `6831` |
+| `global.trace.otel.endpoint` | Otel endpoint. | `http://10.0.0.114:4318` |
+| `global.trace.otel.url_path` | Otel endpoint path. | `/v1/traces` |
+| `global.trace.otel.compression` | Otel enable compression. | false |
+| `global.trace.otel.insecure` | Otel insecure | true |
+| `global.trace.otel.timeout` | Otel timeout. | 10s |
 
 ## 6. FAQ
 

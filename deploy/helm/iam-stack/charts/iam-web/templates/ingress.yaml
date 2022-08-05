@@ -24,7 +24,7 @@ metadata:
   name: {{ template "app.name" . }}-api
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.governance.ingress.api.annotations }}
@@ -98,7 +98,7 @@ metadata:
   name: {{ template "app.name" . }}-prometheus
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.governance.ingress.management.annotations }}

@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
   {{- if .Values.service.annotations }}
@@ -63,155 +63,4 @@ spec:
   {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-
----
-
-## TODO:不支持短路与运算？
-{{- if not (empty .Values.mysql) }}
-{{- if not (empty .Values.mysql.type) }}
-{{- if eq .Values.mysql.type "external" }}
-## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-spec:
-  type: ClusterIP
-  sessionAffinity: None
-  clusterIP: None
-  publishNotReadyAddresses: true
-
----
-
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: mysql-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-subsets:
-- addresses:
-  - ip: {{ .Values.mysql.external.host }}
-  ports:
-  - name: external-mysql
-    port: {{ .Values.mysql.external.port }}
-    protocol: TCP
-{{- end}}
-{{- end}}
-{{- end}}
-
----
-
-## TODO:不支持短路与运算？
-{{- if not (empty .Values.redis) }}
-{{- if not (empty .Values.redis.type) }}
-{{- if eq .Values.redis.type "external" }}
-## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-spec:
-  type: ClusterIP
-  sessionAffinity: None
-  clusterIP: None
-  publishNotReadyAddresses: true
-
----
-
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: redis-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-subsets:
-- addresses:
-  {{- range $index, $ip := regexSplit "," .Values.redis.external.ips -1 }}
-  - ip: {{ $ip }}
-  {{- end}}
-  ports:
-  {{- range $index, $port := regexSplit "," .Values.redis.external.ports -1 }}
-  - name: external-redis-{{$index}}
-    port: {{ $port }}
-    protocol: TCP
-  {{- end}}
-{{- end}}
-{{- end}}
-{{- end}}
-
----
-
-{{- if .Values.trace.enabled }}
-## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
-apiVersion: v1
-kind: Service
-metadata:
-  ## for exmple: jaeger-myapp-headless
-  name: {{ .Values.trace.provider }}-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-spec:
-  type: ClusterIP
-  sessionAffinity: None
-  clusterIP: None
-  publishNotReadyAddresses: true
-
----
-
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: {{ .Values.trace.provider }}-{{ template "app.name" . }}-headless
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    helm.sh/chart: {{ template "app.chart" . }}
-subsets:
-- addresses:
-# see:https://helm.sh/docs/chart_template_guide/function_list/#urlparse
-{{- if eq .Values.trace.provider "jaeger" }}
-  {{- $url := urlParse .Values.trace.jaeger.endpoint }}
-  {{- $parts := regexSplit ":" $url.host -1 }}
-  - ip: {{ index $parts 0 }}
-  ports:
-  - name: external-{{ .Values.trace.provider }}
-    port: {{ index $parts 1 }}
-    protocol: TCP
-{{- else if eq .Values.trace.provider "otel" }}
-  {{- $url := urlParse .Values.trace.otel.endpoint }}
-  {{- $parts := regexSplit ":" $url -1 }}
-  - ip: {{ index $parts 0 }}
-  ports:
-  - name: external-{{ .Values.trace.provider }}
-    port: {{ index $parts 1 }}
-    protocol: TCP
-{{- end}}
-{{- end}}
+    app.kubernetes.io/release: {{ .Release.Name }}

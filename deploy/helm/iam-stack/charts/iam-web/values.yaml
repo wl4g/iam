@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -177,6 +177,7 @@ governance:
           uriPrefix: /
           ## e.g. experiment only with internal users.
           cookieRegex: "(.*)_email=([a-zA-Z0-9_-]+)@wl4g.io(.*)"
+          headerRegex:
           ## The baseline version see to: .Values.image.baselineTag
           baseline:
             ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-SimpleLB
@@ -224,6 +225,7 @@ governance:
       classify: thirdparty-external-service
       version: v1
       location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
+      resolution: DNS ## STATIC|DNS
       namespace: default
       serviceAccount: 
       customHosts:
@@ -237,71 +239,4 @@ governance:
         targetPort: 443
       instanceAddresses:
       - 157.255.174.121 # or: api.mch.weixin.qq.com
-
-## ================================================== COMMON Configuration ===============================================================
-
-redis:
-  # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
-  type: external
-  internal: ## see:https://bitnami.com/stack/redis/helm
-    enabled: false
-  external:
-    ## support redis and redis-cluster.
-    ## <redisIp0,redisIp1...>
-    ips: "10.0.0.114"
-    ## <redisPort0,redisPort1...>
-    ports: "6379,6380,6381,7379,7380,7381"
-    password: "zzx!@#$%"
-
-# mysql:
-#   # if external mysql is used, set "type" to "external" and fill the connection informations in "external" section
-#   type: external
-#   internal: ## see:https://bitnami.com/stack/mysql/helm
-#     enabled: false
-#   external:
-#     host: "10.0.0.114"
-#     port: "3306"
-#     username: "iam"
-#     password: "123456"
-#     schema: "iam"
-
-kafka:
-  enabled: false
-  # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
-  # For best performance it is recommended to use an external.
-  type: external
-  internal: ## see:https://bitnami.com/stack/kafka/helm
-    enabled: false
-  external:
-    # support kafka and kafka-cluster.
-    # <kafka:port0,kafka:port1,kafka:port2,...>
-    brokerList: "10.0.0.114:9092"
-
-trace:
-  enabled: false
-  # trace provider: jaeger or otel
-  # jaeger should be 1.26+
-  provider: jaeger
-  # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
-  sample_rate: 1
-  # namespace used to differentiate different harbor services
-  # namespace:
-  # attributes is a key value dict contains user defined attributes used to initialize trace provider
-  # attributes:
-  #   application: harbor
-  jaeger:
-    # jaeger supports two modes:
-    #   collector mode(uncomment endpoint and uncomment username, password if needed)
-    #   agent mode(uncomment agent_host and agent_port)
-    endpoint: http://10.0.0.114:14268/api/traces
-    # username:
-    # password:
-    # agent_host: hostname
-    # export trace data by jaeger.thrift in compact mode
-    # agent_port: 6831
-  otel:
-    endpoint: http://10.0.0.114:4318
-    url_path: /v1/traces
-    compression: false
-    insecure: true
-    timeout: 10s
+ 

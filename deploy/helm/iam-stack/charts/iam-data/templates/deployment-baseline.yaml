@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 
@@ -47,7 +47,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "app.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/release: {{ .Release.Name }}
 
   template:
     metadata:
@@ -63,7 +63,7 @@ spec:
       labels:
         app.kubernetes.io/component: application
         app.kubernetes.io/name: {{ template "app.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/release: {{ .Release.Name }}
         ## for canary governance labels.
         app.kubernetes.io/canaryVersion: {{ .Values.image.baselineTag | default .Chart.AppVersion }}
     spec:

@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 spec:
@@ -60,7 +60,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 spec:
@@ -128,8 +128,13 @@ spec:
       - uri:
           prefix: {{ .Values.governance.istio.ingress.http.canary.uriPrefix | default "/" }}
         headers:
+          {{- if not (empty .Values.governance.istio.ingress.http.canary.cookieRegex) }}
           cookie:
-            regex: {{ .Values.governance.istio.ingress.http.canary.cookieRegex | default "(.+)" }}
+            regex: {{ .Values.governance.istio.ingress.http.canary.cookieRegex }}
+          {{- else if not (empty .Values.governance.istio.ingress.http.canary.headerRegex) }}
+          x-canary-email:
+            regex: {{ .Values.governance.istio.ingress.http.canary.headerRegex }}
+          {{- end }}
         ignoreUriCase: true
       ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPFaultInjection-Delay
       {{- with .Values.governance.istio.ingress.http.fault }}
@@ -273,7 +278,7 @@ spec:
     targetPort: {{ $port.targetPort }}
   {{- end }}
   {{- end }}
-  resolution: DNS ## STATIC|DNS
+  resolution: {{ $app.resolution | default "DNS" }} ## STATIC|DNS
   workloadSelector:
     labels:
       app: {{ $app.name }}

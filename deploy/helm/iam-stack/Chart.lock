@@ -1,0 +1,33 @@
+dependencies:
+- name: iam-web
+  repository: file://charts/iam-web
+  version: 0.1.0
+- name: iam-facade
+  repository: file://charts/iam-facade
+  version: 0.1.0
+- name: iam-data
+  repository: file://charts/iam-data
+  version: 0.1.0
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 17.0.8
+- name: mysql
+  repository: https://charts.bitnami.com/bitnami
+  version: 9.2.5
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.6.25
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.0.7
+- name: zookeeper
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.0.6
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.31
+- name: minio
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.7.17
+digest: sha256:1ba21d707f19161ca5ad863c9f47ced15b310ff8f51e35c3eba3d202c742e20c
+generated: "2022-08-06T01:53:42.085370382+08:00"

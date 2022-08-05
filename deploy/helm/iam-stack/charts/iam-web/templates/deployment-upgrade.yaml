@@ -18,7 +18,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 
@@ -47,7 +47,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "app.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/release: {{ .Release.Name }}
 
   template:
     metadata:
@@ -63,7 +63,7 @@ spec:
       labels:
         app.kubernetes.io/component: application
         app.kubernetes.io/name: {{ template "app.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/release: {{ .Release.Name }}
         ## for canary governance labels.
         app.kubernetes.io/canaryVersion: {{ .Values.image.upgradeTag | default .Chart.AppVersion }}
 
