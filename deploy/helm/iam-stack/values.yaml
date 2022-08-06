@@ -82,7 +82,7 @@ iam-web:
     istio:
       ingress:
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
-        domain: wl4g.io ## Top level 1 domain.
+        domain: wl4g.io ## Top domain.
 
 ## ----------------------------------- IamFacade Configuration -----------------------------------
 
@@ -141,9 +141,8 @@ iam-data:
     # iam-data-etc-fat.yml: ""
     iam-data-etc-uat.yml: |-
       spring:
-        # Spring datasource configuration.
         datasource:
-          provider: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
+          type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
           driverClassName: com.mysql.cj.jdbc.Driver
           hikari:
             jdbcUrl: ${IAM_DB_URL}
@@ -164,143 +163,452 @@ iam-data:
     # iam-data-pro.yml: ""
 
 ## ----------------------------------- Global Dependents Components. -----------------------------------
-
 global:
-  mysql:
-    enabled: true
-    # if external MySQL is used, set "type" to "external" and fill the connection informations in "external" section
-    provider: external
-    internal: ## see:https://bitnami.com/stack/mysql/helm
-      enabled: false
-    external:
-      host: "10.0.0.114"
-      port: "3306"
-      username: "iam"
-      password: "iam"
-      schema: "iam"
+  config:
+    trace:
+      enabled: true
+      # trace provider: jaeger or otel jaeger should be 1.26+
+      provider: jaeger
+      # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
+      sample_rate: 1
+      # namespace used to differentiate different harbor services
+      # namespace:
+      # The key value dict contains user defined attributes used to initialize trace provider
+      # attributes:
+      #   application: harbor
+      jaeger:
+        # jaeger supports two modes:
+        #   collector mode(uncomment endpoint and uncomment username, password if needed)
+        #   agent mode(uncomment agent_host and agent_port)
+        # username:
+        # password:
+        # agent_host: hostname
+        # export trace data by jaeger.thrift in compact mode
+        # agent_port: 6831
+      otel:
+        url_path: /v1/traces
+        compression: false
+        insecure: true
+        timeout: 10s
 
-  postgresql:
-    enabled: false
-    # if external PostgreSQL is used, set "type" to "external" and fill the connection informations in "external" section
-    provider: external
-    internal: ## see:https://bitnami.com/stack/mysql/helm
-      enabled: false
-    external:
-      host: "10.0.0.114"
-      port: "5432"
-      username: "iam"
-      password: "iam"
-      schema: "iam"
-
-  redis:
-    enabled: true
-    # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
-    provider: external
-    internal: ## see:https://bitnami.com/stack/redis/helm
-      enabled: false
-    external:
-      ## support redis and redis-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "6379,6380,6381,7379,7380,7381"
-      password: "zzx!@#$%"
-
-  zookeeper:
-    enabled: true
-    # if external Zookeeper is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/zookeeper/helm
-      enabled: false
-    external:
-      # support zookeeper and zookeeper-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "2181"
-
-  kafka:
-    enabled: true
-    # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/kafka/helm
-      enabled: false
-    external:
-      # support kafka and kafka-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "9092"
-
-  mongodb:
-    enabled: false
-    # if external MongoDB is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/mongodb/helm
-      enabled: false
-    external:
-      # support mongodb and mongodb-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "27017"
-
-  elasticsearch:
-    enabled: false
-    # if external ElasticSearch is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/elasticsearch/helm
-      enabled: false
-    external:
-      # support elasticsearch and elasticsearch-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "9300"
-
-  solr:
-    enabled: false
-    # if external Apache Solr is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/solr/helm
-      enabled: false
-    external:
-      # support solr and solr-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "8983"
-
-  minio:
-    enabled: true
-    # if external MinIO is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    provider: external
-    internal: ## see:https://bitnami.com/stack/minio/helm
-      enabled: false
-    external:
-      # support minio and minio-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "9000"
-
-  trace:
-    enabled: true
-    # trace provider: jaeger or otel
-    # jaeger should be 1.26+
-    provider: jaeger
-    # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
-    sample_rate: 1
-    # namespace used to differentiate different harbor services
-    # namespace:
-    # attributes is a key value dict contains user defined attributes used to initialize trace provider
-    # attributes:
-    #   application: harbor
-    jaeger:
-      # jaeger supports two modes:
-      #   collector mode(uncomment endpoint and uncomment username, password if needed)
-      #   agent mode(uncomment agent_host and agent_port)
-      endpoint: http://10.0.0.114:14268/api/traces
-      # username:
-      # password:
-      # agent_host: hostname
-      # export trace data by jaeger.thrift in compact mode
-      # agent_port: 6831
+  components:
+    ## see:https://open-telemetry.github.io/opentelemetry-helm-charts
     otel:
-      endpoint: http://10.0.0.114:4318
-      url_path: /v1/traces
-      compression: false
-      insecure: true
-      timeout: 10s
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        ## endpoint example: http://10.0.0.114:4318/api/traces
+        instancePorts:
+        - protocol: TCP
+          targetPort: 4318
+        instanceAddresses:
+        - 10.0.0.114
+        location: MESH_EXTERNAL
+        customHosts: []
+
+    ## see:https://jaegertracing.github.io/helm-charts/
+    jaeger:
+      internal:
+        enabled: false
+      external:
+        enabled: true
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        ## endpoint example: http://10.0.0.114:14268/api/traces
+        instancePorts:
+        - protocol: TCP
+          targetPort: 14268
+        instanceAddresses:
+        - 10.0.0.114
+        location: MESH_EXTERNAL
+        customHosts: []
+
+    ## see:https://github.com/wl4g/shardingproxy
+    ## see:https://bitnami.com/stack/mysql/helm
+    mysql:
+      internal:
+        enabled: false
+      external:
+        enabled: true
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 3308 ## Native default: 3306
+        instanceAddresses:
+        - 172.24.47.4
+        - 172.24.47.5
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-master-1
+        - emr-master-2
+
+    ## see:https://github.com/wl4g/shardingproxy
+    ## see:https://bitnami.com/stack/postgresql/helm
+    postgresql:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 3308 ## Native default: 5432
+        instanceAddresses:
+        - 172.24.47.4
+        - 172.24.47.5
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-master-1
+        - emr-master-2
+
+    ## see:https://bitnami.com/stack/redis/helm
+    redis:
+      internal:
+        enabled: false
+      external:
+        enabled: true
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 6379
+        - protocol: TCP
+          targetPort: 6380
+        - protocol: TCP
+          targetPort: 6381
+        instanceAddresses:
+        - 172.24.47.9
+        - 172.24.47.10
+        - 172.24.47.11
+        location: MESH_EXTERNAL
+        customHosts:
+        - k8s-worker-node2
+        - k8s-worker-node3
+        - k8s-worker-node4
+
+    ## see:https://bitnami.com/stack/cassandra/helm
+    cassandra:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9042
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    ## see:https://bitnami.com/stack/minio/helm
+    minio:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9000
+        - protocol: TCP
+          targetPort: 9090
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    ## see:https://bitnami.com/stack/mongodb/helm
+    mongodb:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 27017
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    ## see:https://bitnami.com/stack/elasticsearch/helm
+    elasticsearch:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9200
+        - protocol: TCP
+          targetPort: 9300
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    ## see:https://bitnami.com/stack/solr/helm
+    solr:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 7983
+        - protocol: TCP
+          targetPort: 8983
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    ## see:https://bitnami.com/stack/zookeeper/helm
+    zookeeper:
+      internal:
+        enabled: false
+      external:
+        enabled: true
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 2181
+        instanceAddresses:
+        - 172.24.47.4
+        - 172.24.47.5
+        - 172.24.47.6
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-master-1
+        - emr-master-2
+        - emr-worker-1
+
+    ## see:https://bitnami.com/stack/kafka/helm
+    kafka:
+      internal:
+        enabled: false
+      external:
+        enabled: true
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9092
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    hmaster:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 16000
+        - protocol: TCP
+          targetPort: 16010
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-master-1
+        - emr-master-2
+
+    hregionserver:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 16020
+        - protocol: TCP
+          targetPort: 16030
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    namenode:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9870
+        - protocol: TCP
+          targetPort: 8020
+        - protocol: TCP
+          targetPort: 8022
+        instanceAddresses:
+        - 172.24.47.4
+        - 172.24.47.5
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-master-1
+        - emr-master-2
+
+    nodemanager:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 8040
+        - protocol: TCP
+          targetPort: 8041
+        - protocol: TCP
+          targetPort: 7337
+        - protocol: TCP
+          targetPort: 8042
+        - protocol: TCP
+          targetPort: 13562
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3
+
+    datanode:
+      internal:
+        enabled: false
+      external:
+        enabled: false
+        namespace:
+        serviceAccount:
+        labels:
+          classify: external-service
+          version: v1
+        instancePorts:
+        - protocol: TCP
+          targetPort: 9867
+        - protocol: TCP
+          targetPort: 9864
+        - protocol: TCP
+          targetPort: 9866
+        - protocol: TCP
+          targetPort: 32828
+        instanceAddresses:
+        - 172.24.47.6
+        - 172.24.47.7
+        - 172.24.47.8
+        location: MESH_EXTERNAL
+        customHosts:
+        - emr-worker-1
+        - emr-worker-2
+        - emr-worker-3

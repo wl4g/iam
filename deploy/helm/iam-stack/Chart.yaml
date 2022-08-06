@@ -56,42 +56,47 @@ dependencies:
     repository: "file://charts/iam-data"
     version: "~0.1.0"
   - name: "redis"
-    condition: global.redis.internal.enabled
+    condition: global.components.redis.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~17.0.x"
   - name: "mysql"
-    condition: global.mysql.internal.enabled
+    condition: global.components.mysql.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~9.2.x"
   - name: "postgresql"
-    condition: global.postgresql.internal.enabled
+    condition: global.components.postgresql.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~11.6.17"
   - name: "kafka"
-    condition: global.kafka.internal.enabled
+    condition: global.components.kafka.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~18.0.3"
   - name: "zookeeper"
-    condition: global.zookeeper.internal.enabled
+    condition: global.components.zookeeper.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~10.0.2"
   - name: "mongodb"
-    condition: global.mongodb.internal.enabled
+    condition: global.components.mongodb.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~12.1.27"
   - name: "elasticsearch"
-    condition: global.elasticsearch.internal.enabled
+    condition: global.components.elasticsearch.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~19.1.6"
   - name: "solr"
-    condition: global.solr.internal.enabled
+    condition: global.components.solr.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~6.0.6"
+  - name: "cassandra"
+    condition: global.components.cassandra.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "~9.2.11"
   - name: "minio"
-    condition: global.minio.internal.enabled
+    condition: global.components.minio.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~11.7.13"
   # - name: "vault"
-  #   condition: global.vault.enabled
+  #   condition: global.components.vault.disabled
   #   repository: https://helm.releases.hashicorp.com
   #   version: "~0.6.0"
+

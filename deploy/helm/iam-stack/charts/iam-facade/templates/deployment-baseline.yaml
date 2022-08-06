@@ -150,7 +150,6 @@ spec:
               name: {{ template "app.name" . }}-env-configmap
 
           volumeMounts:
-          ## sharding server and rules configuration.
           ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
           - name: appconfig-volume
             # e.g: /opt/apps/ecm/myapp-1.0.0-bin/conf

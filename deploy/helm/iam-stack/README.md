@@ -30,7 +30,34 @@ helm repo add iam https://registry.wl4g.io/repository/helm-release
 
 ## 3. Upgrade Installing with Canary
 
-+ Step 1: Initial deploying. (baseline version only)
++ Step 1: (Optional) Create image repository secret. for example:
+
+```bash
+k -n iam create secret docker-registry ccr-tencentyun-secret \
+--docker-server='ccr.ccs.tencentyun.com/wl4g' \
+--docker-username='<username>' \
+--docker-password='<password>'
+
+# Or:
+k -n iam create secret docker-registry cr-aliyun-secret \
+--docker-server='registry.cn-shenzhen.aliyuncs.com/wl4g' \
+--docker-username='<username>' \
+--docker-password='<password>'
+
+# Or:
+k -n iam create secret docker-registry cr-nexus3-secret \
+--docker-server='cr.registry.wl4g.com/wl4g' \
+--docker-username='<username>' \
+--docker-password='<password>'
+
+# Or:
+k -n iam create secret docker-registry hub-docker-secret \
+--docker-server='docker.io/wl4g' \
+--docker-username='<username>' \
+--docker-password='<password>'
+```
+
++ Step 2: Initial deploying. (baseline version only)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -39,7 +66,7 @@ iam-facade.image.baselineTag=1.0.0,\
 iam-data.image.baselineTag=1.0.0"
 ```
 
-+ Step 2: Upgrade deploying using canary mode. (weighted by traffic)
++ Step 3: Upgrade deploying using canary mode. (weighted by traffic)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -57,7 +84,7 @@ iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
 iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
-+ Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
++ Step 4: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\

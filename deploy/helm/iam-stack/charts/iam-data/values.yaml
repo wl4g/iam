@@ -17,9 +17,11 @@ image:
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## see:https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
   pullSecrets:
-  # - myRegistryKeySecretName
+    - hub-docker-secret
+    - cr-aliyun-secret
+    - ccr-tencentyun-secret
+    - cr-nexus3-secret
 
 ## It is recommended to have odd number of nodes in a cluster, otherwise the application cluster cannot be automatically healed in case of net-split.
 autoscaling:
@@ -137,7 +139,7 @@ service:
 
 governance:
   ## Service governance type.
-  type: Istio # Options: Ingress|Istio, recommends using istio.
+  provider: Istio # Options: Ingress|Istio, recommends using istio.
   ingress: # The legacy ingress.
     ## ingress for application api
     api:
@@ -226,8 +228,8 @@ governance:
       version: v1
       location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
       resolution: DNS ## STATIC|DNS
-      namespace: default
-      serviceAccount: 
+      namespace:
+      serviceAccount:
       customHosts:
       - api.mch.weixin.qq.com
       instancePorts:

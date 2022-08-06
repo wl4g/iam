@@ -8,6 +8,8 @@
 # limitations under the License.
 #
 
+{{- $releaseNamespace := .Release.Namespace }}
+
 {{- if eq .Values.governance.provider "Istio" }}
 
 ## ----------------------------- Mesh App Igress Rules -----------------------------
@@ -242,12 +244,12 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: {{ $app.name }}-se
-  namespace: {{ $app.namespace }}
+  name: {{ $app.name }}-serviceentry
+  namespace: {{ $app.namespace | default $releaseNamespace }}
 spec:
   hosts:
   ## Add egress external service default host.
-  - {{ $app.name }}.{{ $app.namespace }}.svc.cluster.local
+  - {{ $app.name }}.{{ $app.namespace | default $releaseNamespace }}.svc.cluster.local
   ## Add custom extension hosts.
   {{- if not (empty $app.customHosts) }}
   {{- toYaml $app.customHosts | nindent 2 }}
@@ -289,8 +291,8 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: WorkloadEntry
 metadata:
-  name: {{ $app.name }}-we-{{ $index }}
-  namespace: {{ $app.namespace }}
+  name: {{ $app.name }}-workloadentry-{{ $index }}
+  namespace: {{ $app.namespace | default $releaseNamespace }}
 spec:
   # use of the service account indicates that the workload has a
   # sidecar proxy bootstrapped with this service account. Pods with

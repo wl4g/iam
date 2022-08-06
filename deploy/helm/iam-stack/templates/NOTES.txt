@@ -18,14 +18,14 @@
 
 3. The access requests routed through Istio-ingressgateway using NodePort:
 
-    export nodeIp=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | grep inet | awk -F ' ' '{print $2}' | cut -f1 -d/ | head -1)
-    export istioInNodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
-    curl -vk -H 'Host: {{ $webApp }}.{{ $domain }}' ${nodeIp}:${istioInNodePort}/login
+    export nodeIP=$(ip a | grep -E '^[0-9]+: (em|eno|enp|ens|eth|wlp)+[0-9]' -A2 | grep inet | awk -F ' ' '{print $2}' | cut -f1 -d/ | head -1)
+    export nodePort=$(kubectl -n istio-system get svc istio-ingressgateway -ojson | jq -r '.spec.ports[] | select (.name == "http2") | .nodePort')
+    curl -vk -H 'Host: {{ $webApp }}.{{ $domain }}' ${nodeIP}:${nodePort}/login
 {{- end }}
 
 4. Get your '{{ $initUserName }}' user password by running:
 
-    kubectl get secret -n {{ .Release.Namespace }} {{ $webApp }} -o jsonpath="{.data.init-password}" | base64 --decode ; echo
+    kubectl get secret -n {{ .Release.Namespace }} {{ $webApp }} -o jsonpath="{.data.init-password}" | base64 -d; echo
 
 5. Login with the password from step 4 and the username: '{{ $initUserName }}'
 
