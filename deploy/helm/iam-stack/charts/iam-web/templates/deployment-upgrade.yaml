@@ -24,7 +24,7 @@ metadata:
 
 spec:
   {{- if .Values.autoscaling.enabled }}
-  {{- if eq .Values.governance.type "Istio" }}
+  {{- if eq .Values.governance.provider "Istio" }}
   ## The calculated by rounding off according to the traffic weight ratio.
   ## see:https://helm.sh/docs/chart_template_guide/function_list/#math-functions
   ## For older versions of helm may not support float64 type division:
@@ -40,7 +40,7 @@ spec:
 
   strategy:
     type: {{ .Values.updateStrategy.type }}
-    {{- if eq .Values.updateStrategy.type "Recreate" }}
+    {{- if eq .Values.updateStrategy.provider "Recreate" }}
     rollingUpdate: null
     {{- end }}
 
@@ -55,7 +55,7 @@ spec:
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if eq .Values.governance.type "Istio" }}
+      {{- if eq .Values.governance.provider "Istio" }}
         ## Must match 'namespaceSelector' to take effect.
         ## see:https://preliminary.istio.io/latest/docs/ops/configuration/mesh/injection-concepts/
         sidecar.istio.io/inject: "true"

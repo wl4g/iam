@@ -9,13 +9,13 @@
 #
 
 ## TODO: Short-circuit AND operation is not supported?
-{{- if .Values.global.mysql.enabled }}
-{{- if eq .Values.global.mysql.type "external" }}
+{{- if .Values.global.minio.enabled }}
+{{- if eq .Values.global.minio.provider "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-{{ .Chart.Name }}-headless
+  name: minio-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: mysql-{{ .Chart.Name }}-headless
+  name: minio-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -40,10 +40,14 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 subsets:
 - addresses:
-  - ip: {{ .Values.global.mysql.external.host }}
+  {{- range $index, $ip := regexSplit "," .Values.global.minio.external.ips -1 }}
+  - ip: {{ $ip }}
+  {{- end}}
   ports:
-  - name: external-mysql
-    port: {{ .Values.global.mysql.external.port }}
+  {{- range $index, $port := regexSplit "," .Values.global.minio.external.ports -1 }}
+  - name: external-minio-{{$index}}
+    port: {{ $port }}
     protocol: TCP
+  {{- end}}
 {{- end}}
 {{- end}}

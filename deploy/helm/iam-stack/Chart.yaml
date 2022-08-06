@@ -79,6 +79,14 @@ dependencies:
     condition: global.mongodb.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"
     version: "~12.1.27"
+  - name: "elasticsearch"
+    condition: global.elasticsearch.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "~19.1.6"
+  - name: "solr"
+    condition: global.solr.internal.enabled
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "~6.0.6"
   - name: "minio"
     condition: global.minio.internal.enabled
     repository: "https://charts.bitnami.com/bitnami"

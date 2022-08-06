@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-{{- if eq .Values.governance.type "Ingress" }}
+{{- if eq .Values.governance.provider "Ingress" }}
 ---
 {{- if .Values.governance.ingress.api.enabled -}}
 {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}

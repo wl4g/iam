@@ -26,8 +26,14 @@ dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.31
+- name: elasticsearch
+  repository: https://charts.bitnami.com/bitnami
+  version: 19.1.6
+- name: solr
+  repository: https://charts.bitnami.com/bitnami
+  version: 6.0.6
 - name: minio
   repository: https://charts.bitnami.com/bitnami
-  version: 11.7.17
-digest: sha256:1ba21d707f19161ca5ad863c9f47ced15b310ff8f51e35c3eba3d202c742e20c
-generated: "2022-08-06T01:53:42.085370382+08:00"
+  version: 11.7.18
+digest: sha256:01dd594aa4e9c22f50534d0a0e28fd1b12dbc17f49d2cab90c5d94173f4228fb
+generated: "2022-08-06T13:23:25.88796396+08:00"

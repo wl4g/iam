@@ -26,7 +26,7 @@ metadata:
 
 spec:
   type: {{ .Values.service.type }}
-  {{- if eq .Values.service.type "LoadBalancer" }}
+  {{- if eq .Values.service.provider "LoadBalancer" }}
   {{- if not (empty .Values.service.loadBalancerIP) }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
@@ -43,9 +43,9 @@ spec:
     port: {{ .Values.service.apiPort | default 8080 }}
     protocol: TCP
     targetPort: http-api
-    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
+    {{- if and (or (eq .Values.service.provider "NodePort") (eq .Values.service.provider "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
     nodePort: {{ .Values.service.nodePorts.api }}
-    {{- else if eq .Values.service.type "ClusterIP" }}
+    {{- else if eq .Values.service.provider "ClusterIP" }}
     nodePort: null
     {{- end }}
 
@@ -54,9 +54,9 @@ spec:
     port: {{ .Values.service.managementPort | default 10108 }}
     protocol: TCP
     targetPort: http-management
-    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
+    {{- if and (or (eq .Values.service.provider "NodePort") (eq .Values.service.provider "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
     nodePort: {{ .Values.service.nodePorts.management }}
-    {{- else if eq .Values.service.type "ClusterIP" }}
+    {{- else if eq .Values.service.provider "ClusterIP" }}
     nodePort: null
     {{- end }}
 

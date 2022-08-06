@@ -8,67 +8,38 @@ This chart bootstraps an IAM deployment on a Kubernetes cluster using the Helm p
 + Helm
 + Istio 1.12+ (Optional and recommends)
 
-## 2. Installing the Chart
+## 2. Getting the Chart
 
-- [helm charts values.yaml](iam/values.yaml)
-
-To install the chart with the release name `iam`:
++ [helm charts global values.yaml](./values.yaml)
 
 + From github
 
 ```bash
 git clone https://github.com/wl4g/iam.git
 cd iam/deploy/helm/
-
-# Run app.
-helm -n iam upgrade --install --create-namespace iam iam-stack
-
-# Run debugging template computed values.
-helm -n iam upgrade --install --create-namespace iam iam-stack \
---dry-run --debug --set="iam-data.enabled=false,iam-facade.enabled=false"
 ```
 
-+ or, From chart repos
++ Or From chart repos
 
 ```bash
-helm repo add iam https://helm.wl4g.io/iam/charts
-helm -n iam upgrade --install --create-namespace iam wl4g/iam
+helm repo add iam https://registry.wl4g.io/repository/helm-release
 ```
 
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
+> If you only want to test or simulate running, add the options `--dry-run --debug`
 
-+ Upgrade with Canary deploy example:
+## 3. Upgrade Installing with Canary
+
++ Step 1: Initial deploying. (baseline version only)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
 iam-web.image.baselineTag=1.0.0,\
-iam-web.image.upgradeTag=latest,\
 iam-facade.image.baselineTag=1.0.0,\
-iam-facade.image.upgradeTag=latest,\
-iam-data.image.baselineTag=1.0.0,\
-iam-data.image.upgradeTag=latest"
+iam-data.image.baselineTag=1.0.0"
 ```
 
-+ Upgrade Dependents example:
-
-```bash
-helm dependency build
-helm dependency update
-helm dependency list
-```
-
-## 3. Canary Deploying Example
-
-- Step 1: Initial deploying. (baseline version only)
-
-```bash
-helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
-    iam-web.image.baselineTag=1.0.0,\
-    iam-facade.image.baselineTag=1.0.0,\
-    iam-data.image.baselineTag=1.0.0"
-```
-
-- Step 2: Upgrade deploying using canary mode. (weighted by traffic)
++ Step 2: Upgrade deploying using canary mode. (weighted by traffic)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -86,7 +57,7 @@ iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
 iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
 ```
 
-- Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
++ Step 3: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -102,6 +73,30 @@ iam-facade.governance.istio.ingress.http.canary.baseline.weight=100,\
 iam-facade.governance.istio.ingress.http.canary.upgrade.weight=0,\
 iam-data.governance.istio.ingress.http.canary.baseline.weight=100,\
 iam-data.governance.istio.ingress.http.canary.upgrade.weight=0"
+```
+
+## 4. Rebuild dependents Charts
+
+```bash
+helm dependency build
+
+helm dependency update
+
+helm dependency list
+NAME           VERSION   REPOSITORY                          STATUS
+iam-web        ~0.1.0    file://charts/iam-web               ok    
+iam-facade     ~0.1.0    file://charts/iam-facade            ok    
+iam-data       ~0.1.0    file://charts/iam-data              ok    
+redis          ~17.0.x   https://charts.bitnami.com/bitnami  ok    
+mysql          ~9.2.x    https://charts.bitnami.com/bitnami  ok    
+postgresql     ~11.6.17  https://charts.bitnami.com/bitnami  ok    
+kafka          ~18.0.3   https://charts.bitnami.com/bitnami  ok    
+zookeeper      ~10.0.2   https://charts.bitnami.com/bitnami  ok    
+mongodb        ~12.1.27  https://charts.bitnami.com/bitnami  ok    
+elasticsearch  ~19.1.6   https://charts.bitnami.com/bitnami  ok    
+solr           ~6.0.6    https://charts.bitnami.com/bitnami  ok    
+minio          ~11.7.13  https://charts.bitnami.com/bitnami  ok
+...
 ```
 
 ## 4. Uninstalling the Chart
@@ -151,7 +146,7 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `<app>.envConfigs` | SpringBoot APP startup environments. | JAVA_OPTS="-Djava.awt.headless=true"</br>APP_ACTIVE="pro"</br>SPRING_SERVER_PORT="8080" |
 | `<app>.agentConfig` | SpringBoot APP startup javaagent configuration.(Usually no configuration is required) |`{}`|
 | `<app>.appConfigs`  | for example IAM web configurations. see to: [github.com/wl4g/iam/tree/master/server/server-starter-web/src/main/resources/](https://github.com/wl4g/iam/tree/master/server/server-starter-web/src/main/resources/)|`{}`|
-| `<app>.service.type`  | Kubernetes Service type. | ClusterIP |
+| `<app>.service.provider`  | Kubernetes Service provider. | ClusterIP |
 | `<app>.service.apiPortPort`  | Port for api. |18080|
 | `<app>.service.prometheusPortPort`  | Port for prometheus. |10108|
 | `<app>.service.nodePorts.api`  | Kubernetes node port for api. |  nil  |
@@ -160,7 +155,7 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `<app>.service.loadBalancerSourceRanges` |  Address(es) that are allowed when service is LoadBalancer | [] |
 | `<app>.service.externalIPs` |   ExternalIPs for the service | [] |
 | `<app>.service.annotations` |   Service annotations | `{}` (evaluated as a template)|
-| `<app>.governance.type` | Service governance type.(Ingress/Istio) | Istio |
+| `<app>.governance.provider` | Service governance provider.(Ingress/Istio) | Istio |
 | `<app>.governance.ingress.api.enabled` | Enable api governance with legacy ingress | false |
 | `<app>.governance.ingress.api.ingressClassName` | Set the legacy ingress class for APP api |  nginx  |
 | `<app>.governance.ingress.api.path` | Ingress path for APP api |  / |
@@ -196,23 +191,56 @@ The following table lists the configurable parameters of the SpringBoot APP(IAM)
 | `<app>.governance.istio.ingress.tcp.enabled` | Enable tcp istio ingress | false |
 | `<app>.governance.istio.ingress.tcp.frontPort` | Enable tcp istio ingress | 1883 |
 | `<app>.governance.istio.ingress.tcp.backendPort` | Enable tcp istio ingress | 1883 |
-| --- Global Dependents Components. --- | | |
-| `global.redis.type` | Depends of redis cluster. (internal/external) | external |
+| --- (Optional) Global Dependents Components. --- | | |
+| `global.redis.enabled` | Enable redis cluster component. | true |
+| `global.redis.provider` | Depends of redis cluster. (internal/external) | external |
 | `global.redis.internal.enabled` | Enable internal redis cluster | false |
 | `global.redis.external.ips` | External redis cluster node ips | false |
 | `global.redis.external.ports` | External redis cluster node ports | 6379,6380,6381,7379,7380,7381 |
 | `global.redis.external.password` | External redis cluster password | nil |
-| `global.database.type` | Depends of redis cluster. (internal/external) | external |
-| `global.database.internal.enabled` | Enable internal database.() | false |
-| `global.database.external.host` | External database host(mysql) | false |
-| `global.database.external.port` | External database port(mysql) | 3306 |
-| `global.database.external.username` | External redis cluster username | nil |
-| `global.database.external.password` | External redis cluster password | nil |
-| `global.kafka.enabled` | Enable kafka module.| false |
-| `global.kafka.type` | Kafka broker type. (internal/external) | external |
+| `global.mysql.enabled` | Enable mysql component. | true |
+| `global.mysql.provider` | Depends of mysql provider. (internal/external) | external |
+| `global.mysql.internal.enabled` | Enable internal mysql.() | false |
+| `global.mysql.external.host` | External mysql host(mysql) | false |
+| `global.mysql.external.port` | External mysql port(mysql) | 3306 |
+| `global.mysql.external.username` | External mysql username | nil |
+| `global.mysql.external.password` | External mysql password | nil |
+| `global.postgresql.enabled` | Enable postgresql component.| false |
+| `global.postgresql.provider` | Use postgresql provider. (internal/external) | external |
+| `global.postgresql.internal.enabled` | Enable internal postgresql. | false |
+| `global.postgresql.external.ips` | External postgresql server ips. | `127.0.0.1` |
+| `global.postgresql.external.ports` | External postgresql server ports. | `5432` |
+| `global.zookeeper.enabled` | Enable zookeeper component.| false |
+| `global.zookeeper.provider` | Use zookeeper provider. (internal/external) | external |
+| `global.zookeeper.internal.enabled` | Enable internal zookeeper. | false |
+| `global.zookeeper.external.ips` | External zookeeper server ips. | `127.0.0.1` |
+| `global.zookeeper.external.ports` | External zookeeper server ports. | `5432` |
+| `global.kafka.enabled` | Enable kafka component.| false |
+| `global.kafka.provider` | Use kafka provider. (internal/external) | external |
 | `global.kafka.internal.enabled` | Enable internal kafka. | false |
-| `global.kafka.external.brokerList` | External kafka broker connect string | `10.0.0.114:9092` |
-| `global.trace.enabled` | Enable trace module. | false |
+| `global.kafka.external.ips` | External kafka server ips. | `127.0.0.1` |
+| `global.kafka.external.ports` | External kafka server ports. | `5432` |
+| `global.mongodb.enabled` | Enable mongodb component.| false |
+| `global.mongodb.provider` | Use mongodb provider. (internal/external) | external |
+| `global.mongodb.internal.enabled` | Enable internal mongodb. | false |
+| `global.mongodb.external.ips` | External mongodb server ips. | `127.0.0.1` |
+| `global.mongodb.external.ports` | External mongodb server ports. | `27017` |
+| `global.elasticsearch.enabled` | Enable elasticsearch component.| false |
+| `global.elasticsearch.provider` | Use elasticsearch provider. (internal/external) | external |
+| `global.elasticsearch.internal.enabled` | Enable internal elasticsearch. | false |
+| `global.elasticsearch.external.ips` | External elasticsearch server ips. | `127.0.0.1` |
+| `global.elasticsearch.external.ports` | External elasticsearch server ports. | `9300` |
+| `global.solr.enabled` | Enable solr component.| false |
+| `global.solr.provider` | Use solr provider. (internal/external) | external |
+| `global.solr.internal.enabled` | Enable internal solr. | false |
+| `global.solr.external.ips` | External solr server ips. | `127.0.0.1` |
+| `global.solr.external.ports` | External solr server ports. | `8983` |
+| `global.minio.enabled` | Enable minio component.| false |
+| `global.minio.provider` | Use minio provider. (internal/external) | external |
+| `global.minio.internal.enabled` | Enable internal minio. | false |
+| `global.minio.external.ips` | External minio server ips. | `127.0.0.1` |
+| `global.minio.external.ports` | External minio server ports. | `9000` |
+| `global.trace.enabled` | Enable trace component. | false |
 | `global.trace.provider` | Trace receiver provider. (jaeger/ziplin/otel) | jaeger |
 | `global.trace.sample_rate` | Trace simpler rate. | 1 |
 | `global.trace.jaeger.endpoint` | Jaeger endpoint. | `http://10.0.0.114:4318` |

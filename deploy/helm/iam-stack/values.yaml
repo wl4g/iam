@@ -18,7 +18,7 @@ iam-web:
   image:
     repository: wl4g/iam-web
     baselineTag: latest
-    upgradeTag: 
+    upgradeTag: latest
 
   envConfigs:
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
@@ -33,7 +33,7 @@ iam-web:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWORD:123456}
+              passwd: ${IAM_REDIS_PASSWORD}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
@@ -48,13 +48,13 @@ iam-web:
             rules:
               '[/**]':
                 allows-origins:
-                  - https://${IAM_ZONE:wl4g.com}
-                  - http://${IAM_ZONE:wl4g.com}
-                  - https://*.${IAM_ZONE:wl4g.com}
-                  - http://*.${IAM_ZONE:wl4g.com}
-          login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.com}/#/login
+                  - https://${IAM_ZONE:wl4g.io}
+                  - http://${IAM_ZONE:wl4g.io}
+                  - https://*.${IAM_ZONE:wl4g.io}
+                  - http://*.${IAM_ZONE:wl4g.io}
+          login-uri: ${IAM_SCHEMA:https}://dopaas.${IAM_ZONE:wl4g.io}/#/login
           unauthorized-uri: /view/403.html
-          success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.com}/#/overview
+          success-endpoint: iam-web@https://iam.${IAM_ZONE:wl4g.io}/#/overview
           acl:
             secure: false # Turn off protection will trust any same intranet IP.
             allowIpRange: ${IAM_ACL_ALLOW:127.0.0.1}
@@ -67,16 +67,16 @@ iam-web:
             wechat-mp:
               app-id: yourappid
               app-secret: yoursecret
-              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechatmp/callback
+              redirect-url: https://iam.${IAM_ZONE:wl4g.io}${server.servlet.contextPath}/sns/wechatmp/callback
             wechat:
               app-id: yourappid
               app-secret: yoursecret
-              redirect-url: https://iam.${IAM_ZONE:wl4g.com}${server.servlet.contextPath}/sns/wechat/callback
-              href: https://${IAM_ZONE:wl4g.com}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+              redirect-url: https://iam.${IAM_ZONE:wl4g.io}${server.servlet.contextPath}/sns/wechat/callback
+              href: https://${IAM_ZONE:wl4g.io}/${server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
             qq:
               app-id: 101542056 # Public testing.
               app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-              redirect-url: https://iam.${IAM_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+              redirect-url: https://iam.${IAM_ZONE:wl4g.io}{server.servlet.contextPath}/sns/qq/callback
 
   governance:
     istio:
@@ -107,11 +107,11 @@ iam-facade:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWORD:123456}
+              passwd: ${IAM_REDIS_PASSWORD}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-              nodes: ${IAM_REDIS_NODES:redis-0:6379,redis-1:6379,redis-2:6379,redis-3:6379,redis-4:6379,redis-5:6379}
+              nodes: ${IAM_REDIS_NODES}
 
     # iam-facade-fat.yml: ""
     # iam-facade-uat.yml: ""
@@ -131,6 +131,10 @@ iam-data:
     APP_ACTIVE: "uat"
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     IAM_REDIS_PASSWORD: "zzx!@#$%"
+    # IAM_DB_URL: "jdbc:mysql://mysql-iam-stack-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    IAM_DB_URL: "jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    IAM_DB_USER: "iam"
+    IAM_DB_PASSWORD: "iam"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
   appConfigs:
@@ -139,12 +143,12 @@ iam-data:
       spring:
         # Spring datasource configuration.
         datasource:
-          type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
+          provider: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
           driverClassName: com.mysql.cj.jdbc.Driver
           hikari:
-            jdbcUrl: ${IAM_DB_URL:jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
-            username: ${IAM_DB_USER:iam}
-            password: ${IAM_DB_PASSWORD:iam}
+            jdbcUrl: ${IAM_DB_URL}
+            username: ${IAM_DB_USER}
+            password: ${IAM_DB_PASSWORD}
             connectionTimeout: 30000
             idleTimeout: 600000
             initializationFailTimeout: 1
@@ -165,7 +169,7 @@ global:
   mysql:
     enabled: true
     # if external MySQL is used, set "type" to "external" and fill the connection informations in "external" section
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/mysql/helm
       enabled: false
     external:
@@ -178,7 +182,7 @@ global:
   postgresql:
     enabled: false
     # if external PostgreSQL is used, set "type" to "external" and fill the connection informations in "external" section
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/mysql/helm
       enabled: false
     external:
@@ -191,7 +195,7 @@ global:
   redis:
     enabled: true
     # if external Redis is used, set "type" to "external" and fill the connection informations in "external" section
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/redis/helm
       enabled: false
     external:
@@ -200,11 +204,23 @@ global:
       ports: "6379,6380,6381,7379,7380,7381"
       password: "zzx!@#$%"
 
+  zookeeper:
+    enabled: true
+    # if external Zookeeper is used, set "type" to "external" and fill the connection informations in "external" section.
+    # For best performance it is recommended to use an external.
+    provider: external
+    internal: ## see:https://bitnami.com/stack/zookeeper/helm
+      enabled: false
+    external:
+      # support zookeeper and zookeeper-cluster. e.g: <172.8.8.2,172.8.8.3...>
+      ips: "10.0.0.114"
+      ports: "2181"
+
   kafka:
     enabled: true
     # if external Kafka is used, set "type" to "external" and fill the connection informations in "external" section.
     # For best performance it is recommended to use an external.
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/kafka/helm
       enabled: false
     external:
@@ -212,39 +228,51 @@ global:
       ips: "10.0.0.114"
       ports: "9092"
 
-  zookeeper:
-    enabled: true
-    # if external Zookeeper is used, set "type" to "external" and fill the connection informations in "external" section.
-    # For best performance it is recommended to use an external.
-    type: external
-    internal: ## see:https://bitnami.com/stack/zookeeper/helm
-      enabled: false
-    external:
-      # support kafka and kafka-cluster. e.g: <172.8.8.2,172.8.8.3...>
-      ips: "10.0.0.114"
-      ports: "2181"
-
   mongodb:
     enabled: false
     # if external MongoDB is used, set "type" to "external" and fill the connection informations in "external" section.
     # For best performance it is recommended to use an external.
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/mongodb/helm
       enabled: false
     external:
-      # support kafka and kafka-cluster. e.g: <172.8.8.2,172.8.8.3...>
+      # support mongodb and mongodb-cluster. e.g: <172.8.8.2,172.8.8.3...>
       ips: "10.0.0.114"
       ports: "27017"
+
+  elasticsearch:
+    enabled: false
+    # if external ElasticSearch is used, set "type" to "external" and fill the connection informations in "external" section.
+    # For best performance it is recommended to use an external.
+    provider: external
+    internal: ## see:https://bitnami.com/stack/elasticsearch/helm
+      enabled: false
+    external:
+      # support elasticsearch and elasticsearch-cluster. e.g: <172.8.8.2,172.8.8.3...>
+      ips: "10.0.0.114"
+      ports: "9300"
+
+  solr:
+    enabled: false
+    # if external Apache Solr is used, set "type" to "external" and fill the connection informations in "external" section.
+    # For best performance it is recommended to use an external.
+    provider: external
+    internal: ## see:https://bitnami.com/stack/solr/helm
+      enabled: false
+    external:
+      # support solr and solr-cluster. e.g: <172.8.8.2,172.8.8.3...>
+      ips: "10.0.0.114"
+      ports: "8983"
 
   minio:
     enabled: true
     # if external MinIO is used, set "type" to "external" and fill the connection informations in "external" section.
     # For best performance it is recommended to use an external.
-    type: external
+    provider: external
     internal: ## see:https://bitnami.com/stack/minio/helm
       enabled: false
     external:
-      # support kafka and kafka-cluster. e.g: <172.8.8.2,172.8.8.3...>
+      # support minio and minio-cluster. e.g: <172.8.8.2,172.8.8.3...>
       ips: "10.0.0.114"
       ports: "9000"
 

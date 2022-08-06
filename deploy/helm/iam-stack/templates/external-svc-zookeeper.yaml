@@ -9,13 +9,13 @@
 #
 
 ## TODO: Short-circuit AND operation is not supported?
-{{- if .Values.global.kafka.enabled }}
-{{- if eq .Values.global.kafka.type "external" }}
+{{- if .Values.global.zookeeper.enabled }}
+{{- if eq .Values.global.zookeeper.provider "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-{{ .Chart.Name }}-headless
+  name: zookeeper-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: kafka-{{ .Chart.Name }}-headless
+  name: zookeeper-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -40,12 +40,12 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 subsets:
 - addresses:
-  {{- range $index, $ip := regexSplit "," .Values.global.kafka.external.ips -1 }}
+  {{- range $index, $ip := regexSplit "," .Values.global.zookeeper.external.ips -1 }}
   - ip: {{ $ip }}
   {{- end}}
   ports:
-  {{- range $index, $port := regexSplit "," .Values.global.kafka.external.ports -1 }}
-  - name: external-kafka-{{$index}}
+  {{- range $index, $port := regexSplit "," .Values.global.zookeeper.external.ports -1 }}
+  - name: external-zookeeper-{{$index}}
     port: {{ $port }}
     protocol: TCP
   {{- end}}

@@ -9,13 +9,13 @@
 #
 
 ## TODO: Short-circuit AND operation is not supported?
-{{- if .Values.global.postgresql.enabled }}
-{{- if eq .Values.global.postgresql.type "external" }}
+{{- if .Values.global.kafka.enabled }}
+{{- if eq .Values.global.kafka.provider "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgresql-{{ .Chart.Name }}-headless
+  name: kafka-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: postgresql-{{ .Chart.Name }}-headless
+  name: kafka-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -40,10 +40,14 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 subsets:
 - addresses:
-  - ip: {{ .Values.global.postgresql.external.host }}
+  {{- range $index, $ip := regexSplit "," .Values.global.kafka.external.ips -1 }}
+  - ip: {{ $ip }}
+  {{- end}}
   ports:
-  - name: external-postgresql
-    port: {{ .Values.global.postgresql.external.port }}
+  {{- range $index, $port := regexSplit "," .Values.global.kafka.external.ports -1 }}
+  - name: external-kafka-{{$index}}
+    port: {{ $port }}
     protocol: TCP
+  {{- end}}
 {{- end}}
 {{- end}}

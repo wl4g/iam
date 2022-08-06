@@ -9,13 +9,13 @@
 #
 
 ## TODO: Short-circuit AND operation is not supported?
-{{- if .Values.global.redis.enabled }}
-{{- if eq .Values.global.redis.type "external" }}
+{{- if .Values.global.solr.enabled }}
+{{- if eq .Values.global.solr.provider "external" }}
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#headless-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-{{ .Chart.Name }}-headless
+  name: solr-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -31,7 +31,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: redis-{{ .Chart.Name }}-headless
+  name: solr-{{ .Chart.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -40,12 +40,12 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 subsets:
 - addresses:
-  {{- range $index, $ip := regexSplit "," .Values.global.redis.external.ips -1 }}
+  {{- range $index, $ip := regexSplit "," .Values.global.solr.external.ips -1 }}
   - ip: {{ $ip }}
   {{- end}}
   ports:
-  {{- range $index, $port := regexSplit "," .Values.global.redis.external.ports -1 }}
-  - name: external-redis-{{$index}}
+  {{- range $index, $port := regexSplit "," .Values.global.solr.external.ports -1 }}
+  - name: external-solr-{{$index}}
     port: {{ $port }}
     protocol: TCP
   {{- end}}
