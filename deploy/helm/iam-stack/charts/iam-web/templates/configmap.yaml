@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us James Wrong <983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,18 +15,16 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 data:
-  ## NOTES: Environment variable values must use double or single quotes.
-  ## see:https://stackoverflow.com/questions/59354115/helm-upgrade-fails-with-error-expects-or-n-but-found-t
-{{- if not (empty .Values.envConfigs)}}
+{{- if not (empty .Values.envConfigs) }}
   {{- range $key, $value := .Values.envConfigs}}
   {{ $key }}: "{{ $value }}"
   {{- end}}
-{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
-  {{- range $key, $value := .Values.global.envConfigs}}
+{{- else if not (empty .Values.global.envConfigs) }}
+  {{- range $key, $value := .Values.global.envConfigs }}
   {{ $key }}: "{{ $value }}"
   {{- end}}
 {{- end}}
@@ -40,14 +38,18 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 data:
-{{- if not (empty .Values.agentConfig)}}
-  agent.config: {{ toYaml .Values.agentConfig | indent 2 }}
-{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
-  agent.config: {{ toYaml .Values.global.agentConfig | indent 2 }}
+{{- if not (empty .Values.agentConfigs)}}
+  {{- range $key, $value := .Values.agentConfigs}}
+  {{ $key }}: "{{ $value }}"
+  {{- end}}
+{{- else if not (empty .Values.global.agentConfigs) }}
+  {{- range $key, $value := .Values.global.agentConfigs}}
+  {{ $key }}: "{{ $value }}"
+  {{- end}}
 {{- end}}
 
 ---
@@ -59,7 +61,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 data:
@@ -67,7 +69,7 @@ data:
   {{- range $key, $value := .Values.appConfigs}}
   {{ $key }}: "{{ $value }}"
   {{- end}}
-{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
+{{- else if not (empty .Values.global.appConfigs) }}
   {{- range $key, $value := .Values.global.appConfigs}}
   {{ $key }}: "{{ $value }}"
   {{- end}}

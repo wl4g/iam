@@ -157,7 +157,7 @@ global:
     IAM_DB_USER: "iam"
     IAM_DB_PASSWORD: "iam"
 
-  agentConfig: ""
+  agentConfigs: {}
 
   appConfigs: {}
 

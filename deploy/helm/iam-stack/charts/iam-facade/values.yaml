@@ -105,7 +105,7 @@ envConfigs:
   APP_ACTIVE: "pro"
   SERVER_PORT: "18081"
 
-agentConfig: ""
+agentConfigs: {}
 
 ## see: ../../values.yaml#appConfigs
 appConfigs:

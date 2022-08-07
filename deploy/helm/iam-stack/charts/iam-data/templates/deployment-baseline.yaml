@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us James Wrong <983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -10,7 +10,6 @@
 
 {{- if not (empty .Values.image.baselineTag) }}
 
-## see:https://kubernetes.io/zh/docs/concepts/workloads/controllers/deployment/
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,18 +17,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 
 spec:
   {{- if .Values.autoscaling.enabled }}
-  {{- if eq .Values.governance.provider "Istio" }}
-  ## The calculated by rounding off according to the traffic weight ratio.
-  ## see:https://helm.sh/docs/chart_template_guide/function_list/#math-functions
-  ## For older versions of helm may not support float64 type division:
-  ## see:https://github.com/helm/helm/issues/10414
-  ## see:https://github.com/Masterminds/sprig/pull/181
+  {{- if eq .Values.governance.type "Istio" }}
   replicas: {{ ceil (mulf .Values.autoscaling.replicaTotal (divf .Values.governance.istio.ingress.http.canary.baseline.weight 100)) }}
   {{- else }}
   replicas: {{ .Values.autoscaling.replicaTotal }}
@@ -40,14 +34,14 @@ spec:
 
   strategy:
     type: {{ .Values.updateStrategy.type }}
-    {{- if eq .Values.updateStrategy.provider "Recreate" }}
+    {{- if eq .Values.updateStrategy.type "Recreate" }}
     rollingUpdate: null
     {{- end }}
 
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "app.name" . }}
-      app.kubernetes.io/release: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 
   template:
     metadata:
@@ -55,15 +49,13 @@ spec:
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if eq .Values.governance.provider "Istio" }}
-        ## Must match 'namespaceSelector' to take effect.
-        ## see:https://preliminary.istio.io/latest/docs/ops/configuration/mesh/injection-concepts/
+      {{- if eq .Values.governance.type "Istio" }}
         sidecar.istio.io/inject: "true"
       {{- end }}
       labels:
         app.kubernetes.io/component: application
         app.kubernetes.io/name: {{ template "app.name" . }}
-        app.kubernetes.io/release: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
         ## for canary governance labels.
         app.kubernetes.io/canaryVersion: {{ .Values.image.baselineTag | default .Chart.AppVersion }}
     spec:
@@ -86,24 +78,43 @@ spec:
       {{- end }}
 
       volumes:
-      ## agent configuration.
+      ## Agent configuration.
       - name: agentconfig-volume
         configMap:
           name: {{ template "app.name" . }}-agent-configmap
           items:
-          - key: agent.config
-            path: agent.yaml
-      ## spring application core configuration.
-      ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+          {{- if not (empty .Values.agentConfigs)}}
+            {{- range $key, $value := .Values.agentConfigs}}
+          - key: {{$key}}.config
+            path: {{$key}}
+            {{- end}}
+          {{- else if not (empty .Values.global.agentConfigs) }}
+            {{- range $key, $value := .Values.agentConfigs}}
+          - key: {{$key}}.config
+            path: {{$key}}
+            {{- end}}
+          {{- end}}
+
+      ## Application core configuration.
+      {{- if or (not (empty .Values.appConfigs)) (not (empty .Values.global.appConfigs)) }}
       - name: appconfig-volume
         configMap:
           name: {{ template "app.name" . }}-app-configmap
           items:
-          {{- range $key, $value := .Values.appConfigs}}
+          {{- if not (empty .Values.appConfigs)}}
+            {{- range $key, $value := .Values.appConfigs}}
           - key: {{$key}}.config
             path: {{$key}}
+            {{- end}}
+          {{- else if not (empty .Values.global.appConfigs) }}
+            {{- range $key, $value := .Values.appConfigs}}
+          - key: {{$key}}.config
+            path: {{$key}}
+            {{- end}}
           {{- end}}
-      ## data(transactions).
+      {{- end}}
+
+      ## Data (transactions).
       - name: appdata-volume
       {{- if not .Values.persistence.enabled }}
         emptyDir: {}
@@ -113,7 +124,8 @@ spec:
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
-      ## log.
+
+      ## Logs.
       - name: applog-volume
         emptyDir: {}
 
@@ -135,34 +147,25 @@ spec:
               containerPort: {{ .Values.service.managementPort }}
               protocol: TCP
 
-          ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-          #env:
-          #- name: APP_NAME
-          #  value: {{ .Release.Name }}
-          #- name: JAVA_OPTS
-          #  value: "-Djava.awt.headless=true"
-          #- name: SERVER_PORT
-          #  value: '8080'
-
-          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
           envFrom:
           - configMapRef:
               name: {{ template "app.name" . }}-env-configmap
 
           volumeMounts:
-          ## see:https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-specific-path-in-the-volume
+          {{- if or (not (empty .Values.appConfigs)) (not (empty .Values.global.appConfigs)) }}
           - name: appconfig-volume
-            # e.g: /opt/apps/ecm/myapp-1.0.0-bin/conf
+            # e.g: /opt/apps/ecm/myapp-master-bin/conf
             #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/conf/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/conf/
-          ## datadir.
+          {{- end }}
           - name: appdata-volume
+            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/data/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/data/
           ## logdir.
           - name: applog-volume
+            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/log/
 
-          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes
           startupProbe:
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -179,7 +182,6 @@ spec:
               path: /actuator/health
               port: http-management
 
-          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes
           readinessProbe:
             initialDelaySeconds: 5
             periodSeconds: 5
@@ -191,7 +193,6 @@ spec:
               path: /actuator/health
               port: http-management
 
-          ## see:https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#http-probes
           livenessProbe:
             periodSeconds: 10
             timeoutSeconds: 2
