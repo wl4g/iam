@@ -40,7 +40,7 @@ maintainers:
 
 ## For best performance, these stateful storage services, which are relied upon below, usually use services
 ## outside the kubernetes cluster (headless endpoints) in production environments.
-## Global values see to: https://github.com/whmzsu/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md
+## Global values see to: https://github.com/wl4g-k8s/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md#全局-chart-值
 ## Check version matching see to: https://github.com/Masterminds/semver#tilde-range-comparisons-patch
 dependencies:
   - name: "iam-web"

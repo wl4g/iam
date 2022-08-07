@@ -5,7 +5,7 @@
 {{- $iamFacadeBaselineTag := index .Values "iam-facade" "image" "baselineTag"}}
 {{- $iamDataBaselineTag := index .Values "iam-data" "image" "baselineTag" }}
 
-{{- if eq (index .Values $webApp "governance" "type") "Istio" }}
+{{- if eq (index .Values $webApp "governance" "provider") "Istio" }}
     {{- $domain := index .Values $webApp "governance" "istio" "ingress" "domain" }}
 1. Add istio injection label:
 

@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 # This parent charts will override the value of child charts.
-# Global values see to: https://github.com/whmzsu/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md
+# Global values see to: https://github.com/wl4g-k8s/helm-doc-zh-cn/blob/master/chart_template_guide/subcharts_and_globals-zh_cn.md#全局-chart-值
 
 ## ----------------------------------- IamWeb Configuration -----------------------------------
 
@@ -19,12 +19,6 @@ iam-web:
     repository: wl4g/iam-web
     baselineTag: latest
     upgradeTag: latest
-
-  envConfigs:
-    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
-    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
-    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    IAM_REDIS_PASSWORD: "zzx!@#$%"
 
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-web/src/main/resources/
   appConfigs:
@@ -96,12 +90,6 @@ iam-facade:
     baselineTag: latest
     upgradeTag: latest
 
-  envConfigs:
-    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
-    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
-    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    IAM_REDIS_PASSWORD: "zzx!@#$%"
-
   appConfigs:
     ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-facade/src/main/resources/iam-facade-etc-pro.yml
     # iam-facade-etc-fat.yml: ""
@@ -131,17 +119,6 @@ iam-data:
     baselineTag: latest
     upgradeTag: latest
 
-  envConfigs:
-    APP_ACTIVE: "uat"
-    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
-    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
-    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    IAM_REDIS_PASSWORD: "zzx!@#$%"
-    # IAM_DB_URL: "jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-    IAM_DB_URL: "jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-    IAM_DB_USER: "iam"
-    IAM_DB_PASSWORD: "iam"
-
   ## see:https://github.com/wl4g/iam/blob/master/server/server-starter-data/src/main/resources/iam-data-etc-pro.yml
   appConfigs:
     # iam-data-etc-fat.yml: ""
@@ -170,6 +147,20 @@ iam-data:
 
 ## ----------------------------------- Global Dependents Components. -----------------------------------
 global:
+  envConfigs:
+    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
+    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
+    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    IAM_REDIS_PASSWORD: "zzx!@#$%"
+    # IAM_DB_URL: "jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    IAM_DB_URL: "jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    IAM_DB_USER: "iam"
+    IAM_DB_PASSWORD: "iam"
+
+  agentConfig: ""
+
+  appConfigs: {}
+
   components:
     ## see:https://open-telemetry.github.io/opentelemetry-helm-charts
     otlp:

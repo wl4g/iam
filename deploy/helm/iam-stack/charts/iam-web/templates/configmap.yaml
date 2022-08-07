@@ -21,9 +21,14 @@ metadata:
 data:
   ## NOTES: Environment variable values must use double or single quotes.
   ## see:https://stackoverflow.com/questions/59354115/helm-upgrade-fails-with-error-expects-or-n-but-found-t
-  #SPRING_APPLICATION_NAME: "{{ .Release.Name }}"
-{{- range $key, $value := .Values.envConfigs}}
+{{- if not (empty .Values.envConfigs)}}
+  {{- range $key, $value := .Values.envConfigs}}
   {{ $key }}: "{{ $value }}"
+  {{- end}}
+{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
+  {{- range $key, $value := .Values.global.envConfigs}}
+  {{ $key }}: "{{ $value }}"
+  {{- end}}
 {{- end}}
 
 ---
@@ -39,7 +44,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 data:
+{{- if not (empty .Values.agentConfig)}}
   agent.config: {{ toYaml .Values.agentConfig | indent 2 }}
+{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
+  agent.config: {{ toYaml .Values.global.agentConfig | indent 2 }}
+{{- end}}
 
 ---
 
@@ -54,6 +63,12 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
 data:
-{{- range $key, $value := .Values.appConfigs}}
-  {{ $key }}.config: {{ toYaml $value | indent 2 }}
+{{- if not (empty .Values.appConfigs)}}
+  {{- range $key, $value := .Values.appConfigs}}
+  {{ $key }}: "{{ $value }}"
+  {{- end}}
+{{- else}} ## The configuration items of the application are used first, and the global configuration items are used for fallback.
+  {{- range $key, $value := .Values.global.appConfigs}}
+  {{ $key }}: "{{ $value }}"
+  {{- end}}
 {{- end}}
