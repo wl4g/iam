@@ -21,6 +21,8 @@ iam-web:
     upgradeTag: latest
 
   envConfigs:
+    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
+    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     IAM_REDIS_PASSWORD: "zzx!@#$%"
 
@@ -95,6 +97,8 @@ iam-facade:
     upgradeTag: latest
 
   envConfigs:
+    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
+    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     IAM_REDIS_PASSWORD: "zzx!@#$%"
 
@@ -129,9 +133,11 @@ iam-data:
 
   envConfigs:
     APP_ACTIVE: "uat"
+    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
+    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
     IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
     IAM_REDIS_PASSWORD: "zzx!@#$%"
-    # IAM_DB_URL: "jdbc:mysql://mysql-iam-stack-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    # IAM_DB_URL: "jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
     IAM_DB_URL: "jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
     IAM_DB_USER: "iam"
     IAM_DB_PASSWORD: "iam"
@@ -164,36 +170,9 @@ iam-data:
 
 ## ----------------------------------- Global Dependents Components. -----------------------------------
 global:
-  config:
-    trace:
-      enabled: true
-      # trace provider: jaeger or otel jaeger should be 1.26+
-      provider: jaeger
-      # set sample_rate to 1 if you wanna sampling 100% of trace data; set 0.5 if you wanna sampling 50% of trace data, and so forth
-      sample_rate: 1
-      # namespace used to differentiate different harbor services
-      # namespace:
-      # The key value dict contains user defined attributes used to initialize trace provider
-      # attributes:
-      #   application: harbor
-      jaeger:
-        # jaeger supports two modes:
-        #   collector mode(uncomment endpoint and uncomment username, password if needed)
-        #   agent mode(uncomment agent_host and agent_port)
-        # username:
-        # password:
-        # agent_host: hostname
-        # export trace data by jaeger.thrift in compact mode
-        # agent_port: 6831
-      otel:
-        url_path: /v1/traces
-        compression: false
-        insecure: true
-        timeout: 10s
-
   components:
     ## see:https://open-telemetry.github.io/opentelemetry-helm-charts
-    otel:
+    otlp:
       internal:
         enabled: false
       external:
@@ -210,6 +189,7 @@ global:
         instanceAddresses:
         - 10.0.0.114
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts: []
 
     ## see:https://jaegertracing.github.io/helm-charts/
@@ -230,6 +210,7 @@ global:
         instanceAddresses:
         - 10.0.0.114
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts: []
 
     ## see:https://github.com/wl4g/shardingproxy
@@ -251,6 +232,7 @@ global:
         - 172.24.47.4
         - 172.24.47.5
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-master-1
         - emr-master-2
@@ -274,6 +256,7 @@ global:
         - 172.24.47.4
         - 172.24.47.5
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-master-1
         - emr-master-2
@@ -301,6 +284,7 @@ global:
         - 172.24.47.10
         - 172.24.47.11
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - k8s-worker-node2
         - k8s-worker-node3
@@ -325,6 +309,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -351,6 +336,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -375,6 +361,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -401,6 +388,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -427,6 +415,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -451,6 +440,7 @@ global:
         - 172.24.47.5
         - 172.24.47.6
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-master-1
         - emr-master-2
@@ -475,6 +465,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -499,6 +490,7 @@ global:
         - 172.24.47.6
         - 172.24.47.7
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-master-1
         - emr-master-2
@@ -523,6 +515,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -549,6 +542,7 @@ global:
         - 172.24.47.4
         - 172.24.47.5
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-master-1
         - emr-master-2
@@ -579,6 +573,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2
@@ -588,7 +583,7 @@ global:
       internal:
         enabled: false
       external:
-        enabled: false
+        enabled: true
         namespace:
         serviceAccount:
         labels:
@@ -608,6 +603,7 @@ global:
         - 172.24.47.7
         - 172.24.47.8
         location: MESH_EXTERNAL
+        resolution: NONE
         customHosts:
         - emr-worker-1
         - emr-worker-2

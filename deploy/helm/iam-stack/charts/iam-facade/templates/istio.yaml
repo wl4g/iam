@@ -11,14 +11,12 @@
 {{- $releaseNamespace := .Release.Namespace }}
 
 {{- if eq .Values.governance.provider "Istio" }}
-
 ## ----------------------------- Mesh App Igress Rules -----------------------------
 
----
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: {{ template "app.name" . }}-gw
+  name: {{ template "app.name" . }}-ingressgateway
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
@@ -67,7 +65,7 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 spec:
   gateways:
-  - {{ template "app.name" . }}-gw
+  - {{ template "app.name" . }}-ingressgateway
   hosts:
   ## Add default ingress host.
   - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
@@ -280,6 +278,9 @@ spec:
     targetPort: {{ $port.targetPort }}
   {{- end }}
   {{- end }}
+  ## Validate Error: multiple hosts provided with non-HTTP, non-TLS ports.
+  ## see:https://stackoverflow.com/questions/64206521/how-the-request-is-routed-when-using-egress-gateway
+  ## see:https://github.com/istio/istio/blob/1.14.3/pkg/config/validation/validation.go#L3268-L3269
   resolution: {{ $app.resolution | default "DNS" }} ## STATIC|DNS
   workloadSelector:
     labels:

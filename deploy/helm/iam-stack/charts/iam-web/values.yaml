@@ -227,6 +227,9 @@ governance:
       classify: thirdparty-external-service
       version: v1
       location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
+      ## Validate Error: multiple hosts provided with non-HTTP, non-TLS ports.
+      ## see:https://stackoverflow.com/questions/64206521/how-the-request-is-routed-when-using-egress-gateway
+      ## see:https://github.com/istio/istio/blob/1.14.3/pkg/config/validation/validation.go#L3268-L3269
       resolution: DNS ## STATIC|DNS
       namespace:
       serviceAccount:
