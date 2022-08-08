@@ -100,6 +100,8 @@ tolerations: []
 
 affinity: {}
 
+restartPolicy: Always
+
 preStartScript: ""
 
 envConfigs:
