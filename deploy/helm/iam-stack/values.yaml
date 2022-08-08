@@ -148,6 +148,7 @@ iam-data:
 ## ----------------------------------- Global Dependents Components. -----------------------------------
 global:
   preStartScript: |-
+    #!/bin/sh
     #export IAM_OTLP_ENDPOINT="http://10.0.0.114:4318"
     export IAM_JAEGER_ENDPOINT="http://10.0.0.114:14268"
     export IAM_REDIS_NODES="10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"

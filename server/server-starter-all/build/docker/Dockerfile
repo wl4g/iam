@@ -129,9 +129,9 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \$
 ## Print run commands.\n\
 [ -n \"\$APP_DEBUG\" ] && echo \$CMD_EXEC\n\
 \
-## Pre hook.\n\
+## Pre hook(environment).\n\
 ## Relevant info see to:https://v1-23.docs.kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/#define-poststart-and-prestop-handlers\n\
-[ -f \"/etc/\${APP_NAME}/pre-start\" ] && echo \"Exec pre-start hook: '/etc/\${APP_NAME}/pre-start'\" && /etc/\${APP_NAME}/pre-start \n\
+[ -f \"/etc/\${APP_NAME}/pre-start\" ] && echo \"Exec pre-start hook: '/etc/\${APP_NAME}/pre-start'\" && . /etc/\${APP_NAME}/pre-start \n\
 \
 ## Execution.\n\
 echo \"Starting \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT} ...\"\n\
