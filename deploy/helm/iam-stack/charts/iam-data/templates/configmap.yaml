@@ -8,6 +8,8 @@
 # limitations under the License.
 #
 
+{{- if or (not (empty .Values.envConfigs)) (not (empty .Values.global.envConfigs)) }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -28,9 +30,32 @@ data:
   {{ $key }}: "{{ $value }}"
   {{- end}}
 {{- end}}
+{{- end}}
 
+{{- if or (not (empty .Values.preStartScript)) (not (empty .Values.global.preStartScript)) }}
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app.name" . }}-prestart-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ template "app.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "app.chart" . }}
+data:
+{{- if not (empty .Values.preStartScript) }}
+  pre-start.config: |-
+    {{ .Values.preStartScript | nindent 4 }}
+{{- else if not (empty .Values.global.preStartScript) }}
+  pre-start.config: |-
+    {{ .Values.global.preStartScript | nindent 4 }}
+{{- end}}
+{{- end}}
 
+{{- if or (not (empty .Values.agentConfigs)) (not (empty .Values.global.agentConfigs)) }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -51,9 +76,10 @@ data:
   {{ $key }}: "{{ $value }}"
   {{- end}}
 {{- end}}
+{{- end}}
 
+{{- if or (not (empty .Values.appConfigs)) (not (empty .Values.global.appConfigs)) }}
 ---
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -73,4 +99,5 @@ data:
   {{- range $key, $value := .Values.global.appConfigs}}
   {{ $key }}: "{{ $value }}"
   {{- end}}
+{{- end}}
 {{- end}}

@@ -147,15 +147,17 @@ iam-data:
 
 ## ----------------------------------- Global Dependents Components. -----------------------------------
 global:
-  envConfigs:
-    #IAM_OTLP_ENDPOINT: "http://10.0.0.114:4318"
-    IAM_JAEGER_ENDPOINT: "http://10.0.0.114:14268"
-    IAM_REDIS_NODES: "10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
-    IAM_REDIS_PASSWORD: "zzx!@#$%"
-    # IAM_DB_URL: "jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-    IAM_DB_URL: "jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-    IAM_DB_USER: "iam"
-    IAM_DB_PASSWORD: "iam"
+  preStartScript: |-
+    #export IAM_OTLP_ENDPOINT="http://10.0.0.114:4318"
+    export IAM_JAEGER_ENDPOINT="http://10.0.0.114:14268"
+    export IAM_REDIS_NODES="10.0.0.114:6379,10.0.0.114:6380,10.0.0.114:6381,10.0.0.114:7379,10.0.0.114:7380,10.0.0.114:7381"
+    export IAM_REDIS_PASSWORD="zzx!@#$%"
+    #export IAM_DB_URL="jdbc:mysql://mysql-iam-data-headless.iam.svc.cluster.local:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    export IAM_DB_URL="jdbc:mysql://10.0.0.114:3306/iam?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
+    export IAM_DB_USER="iam"
+    export IAM_DB_PASSWORD="iam"
+
+  envConfigs: {}
 
   agentConfigs: {}
 
