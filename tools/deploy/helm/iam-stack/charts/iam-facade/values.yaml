@@ -90,7 +90,7 @@ podSecurityContext:
     - 1000
 
 containerSecurityContext:
-  enabled: false
+  enabled: true
   runAsNonRoot: true
   runAsUser: 1000
 
