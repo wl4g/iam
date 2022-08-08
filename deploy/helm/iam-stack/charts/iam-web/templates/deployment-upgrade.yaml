@@ -152,18 +152,20 @@ spec:
               name: {{ template "app.name" . }}-env-configmap
 
           volumeMounts:
+          ## Config directory.
           {{- if or (not (empty .Values.appConfigs)) (not (empty .Values.global.appConfigs)) }}
           - name: appconfig-volume
             # e.g: /opt/apps/ecm/myapp-master-bin/conf
             #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/conf/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/conf/
           {{- end }}
+
+          ## Data directory.
           - name: appdata-volume
-            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/data/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/data/
-          ## logdir.
+
+          ## Logs directory.
           - name: applog-volume
-            #mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-{{ .Chart.AppVersion }}-bin/log/
             mountPath: /opt/apps/ecm/{{ template "app.name" . }}-package/{{ template "app.name" . }}-current/log/
 
           startupProbe:

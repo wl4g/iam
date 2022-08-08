@@ -78,7 +78,7 @@ ENV APP_LOG "${APP_HOME}/log"
 ##
 COPY target/${APP_BIN_NAME}.tar /tmp/${APP_BIN_NAME}.tar
 
-RUN mkdir -p ${APP_HOME} ${APP_DATA} ${APP_LOG} && ln -snf ${APP_HOME} ${APP_HOME_LINK} \
+RUN mkdir -p ${APP_HOME} ${APP_DATA} ${APP_LOG} /etc/${APP_NAME}/ && ln -snf ${APP_HOME} ${APP_HOME_LINK} \
 && tar -xf /tmp/${APP_BIN_NAME}.tar --strip-components=1 -C ${APP_HOME} \
 && rm -rf /tmp/${APP_BIN_NAME}.tar \
 \
@@ -129,6 +129,10 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \$
 ## Print run commands.\n\
 [ -n \"\$APP_DEBUG\" ] && echo \$CMD_EXEC\n\
 \
+## Pre hook.\n\
+## Relevant info see to:https://v1-23.docs.kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/#define-poststart-and-prestop-handlers\n\
+[ -f \"/etc/\${APP_NAME}/pre-start\" ] && echo \"Exec pre-start hook: '/etc/\${APP_NAME}/pre-start'\" && /etc/\${APP_NAME}/pre-start \n\
+\
 ## Execution.\n\
 echo \"Starting \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT} ...\"\n\
 exec \${CMD_EXEC}\n\
@@ -139,8 +143,8 @@ echo \"Started \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT}\"\n"
 ## see:https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
 ##
 RUN adduser ${APP_NAME} --disabled-password \
-&& chown -R ${APP_NAME}:${APP_NAME} ${APP_HOME_PARENT} ${APP_DATA} ${APP_LOG} /docker-entrypoint.sh \
-&& chmod -R 755 ${APP_HOME_PARENT} /docker-entrypoint.sh
+&& chown -R ${APP_NAME}:${APP_NAME} ${APP_HOME_PARENT} ${APP_DATA} ${APP_LOG} /etc/${APP_NAME} /docker-entrypoint.sh \
+&& chmod -R 755 ${APP_HOME_PARENT} /etc/${APP_NAME} /docker-entrypoint.sh
 USER ${APP_NAME}
 
 ##
