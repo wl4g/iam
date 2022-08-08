@@ -87,6 +87,10 @@ RUN mkdir -p ${APP_HOME} ${APP_DATA} ${APP_LOG} /etc/${APP_NAME}/ && ln -snf ${A
 && echo -e "#!/bin/bash" >>/docker-entrypoint.sh \
 && echo -e "\
 \
+## Pre hook(environment).\n\
+## Relevant info see to:https://v1-23.docs.kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/#define-poststart-and-prestop-handlers\n\
+[ -f \"/etc/\${APP_NAME}/pre-start\" ] && echo \"Exec pre-start hook: '/etc/\${APP_NAME}/pre-start'\" && . /etc/\${APP_NAME}/pre-start \n\
+\
 ## Define the mutable APP properties.\n\
 export APP_NOHUP=\$(echo \$APP_NOHUP|tr '[a-z]' '[A-Z]')\n\
 export APP_DEBUG=\$(echo \$APP_DEBUG|tr '[a-z]' '[A-Z]')\n\
@@ -128,10 +132,6 @@ export CMD_EXEC=\"\${CMD_NOHUP} java -server \${JAVA_OPTS} \${JAVA_HEAP_OPTS} \$
 \
 ## Print run commands.\n\
 [ -n \"\$APP_DEBUG\" ] && echo \$CMD_EXEC\n\
-\
-## Pre hook(environment).\n\
-## Relevant info see to:https://v1-23.docs.kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/#define-poststart-and-prestop-handlers\n\
-[ -f \"/etc/\${APP_NAME}/pre-start\" ] && echo \"Exec pre-start hook: '/etc/\${APP_NAME}/pre-start'\" && . /etc/\${APP_NAME}/pre-start \n\
 \
 ## Execution.\n\
 echo \"Starting \${APP_NAME}:\${APP_VERSION}(\${APP_ACTIVE}) on \${APP_PORT} ...\"\n\

@@ -156,7 +156,7 @@ mvn -U clean install -DskipTests -T 2C -Pbuild:tar -Pbuild:framework:feign-istio
 mvn -U clean install -DskipTests -T 2C -Pbuild:springjar -Pbuild:framework:feign-istio
 
 # Build as a docker image based on the tar distribution.
-mvn -U clean install -DskipTests -T 2C -Pbuild:docker:tar -Pbuild:framework:feign-istio
+mvn -U clean install -DskipTests -T 2C -Pbuild:tar:docker -Pbuild:framework:feign-istio
 
 # Build an ELF native executable based on the graalvm native image.
 mvn -U clean install -DskipTests -T 2C -Pbuild:native -Pbuild:framework:feign-istio
@@ -166,7 +166,7 @@ mvn -U clean install -DskipTests -T 2C -Pbuild:native -Pbuild:framework:feign-is
 
   - `-Pbuild:tar`
   - `-Pbuild:springjar`
-  - `-Pbuild:docker:tar`
+  - `-Pbuild:tar:docker`
   - `-Pbuild:native` (alpha)
   - `-Pbuild:framework:feign-istio`
   - `-Pbuild:framework:feign-springcloud`

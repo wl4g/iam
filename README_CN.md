@@ -166,7 +166,7 @@ mvn -U clean install -DskipTests -T 2C -P build:native -Pbuild:framework:feign-i
 
   - `-Pbuild:tar`
   - `-Pbuild:springjar`
-  - `-Pbuild:docker:tar`
+  - `-Pbuild:tar:docker`
   - `-Pbuild:native` (alpha)
   - `-Pbuild:framework:feign-istio`
   - `-Pbuild:framework:feign-springcloud`
