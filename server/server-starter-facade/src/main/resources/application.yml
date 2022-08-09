@@ -20,6 +20,8 @@ spring:
     active: dev
   banner:
       location: classpath:META-INF/banner.txt
+  main:
+    allow-circular-references: true
   iam:
     service:
       dict.cache.name: iam:service:cache:dictionaries
