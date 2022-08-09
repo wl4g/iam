@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us James Wrong <983708408@qq.com>
+# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,6 +12,9 @@
 
 {{- range $name, $app := .Values.global.components }}
 {{- if $app.external.enabled }}
+## see:https://developer.aliyun.com/article/772279
+## see:https://istio.io/v1.14/zh/docs/tasks/traffic-management/egress/egress-control/#controlled-access-to-external-services
+## see:https://istio.io/v1.14/zh/docs/reference/config/networking/service-entry/
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
@@ -19,12 +22,22 @@ metadata:
   namespace: {{ $app.external.namespace | default $releaseNamespace }}
 spec:
   hosts:
+  ## Add egress external service default host.
   - {{ $name }}-headless.{{ $app.external.namespace | default $releaseNamespace }}.svc.cluster.local
-  {{- if not (empty $app.external.customHosts) }}
-  {{- toYaml $app.external.customHosts | nindent 2 }}
+  ## Add external extension hosts.
+  {{- range $index1, $addr := $app.external.instanceAddresses }}
+  {{- range $index2, $host := $addr.hosts }}
+  - {{ $host }}
   {{- end }}
+  {{- end }}
+  ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/service-entry/#ServiceEntry-Location
+  ## Location specifies whether the service is part of Istio mesh or outside the mesh. Location determines the
+  ## behavior of several features, such as service-to-service mTLS authentication, policy enforcement, etc. 
+  ## When communicating with services outside the mesh, Istio mTLS authentication is disabled, and policy 
+  ## enforcement is performed on the client-side as opposed to server-side.
   location: {{ $app.external.location | default "MESH_EXTERNAL" }}
   ports:
+  ## Add egress external service default ports.
   {{- if empty $app.external.instancePorts }}
   - name: http-{{ $name }}
     protocol: HTTP
@@ -35,6 +48,7 @@ spec:
     number: 443
     targetPort: 443
   {{- else }}
+  ## Add egress external service ports.
   {{- range $index, $port := $app.external.instancePorts }}
   - name: {{ $port.protocol | lower }}-{{ $name }}-{{ $index }}
     protocol: {{ $port.protocol | upper }}
@@ -50,6 +64,8 @@ spec:
     labels:
       app: {{ $name }}
 ---
+## Note: WorkloadEntry objects correspond to VMs instance one-to-one.
+## see:https://istio.io/v1.14/zh/docs/reference/config/networking/workload-entry/#WorkloadEntry
 {{- range $index, $addr := $app.external.instanceAddresses }}
 apiVersion: networking.istio.io/v1beta1
 kind: WorkloadEntry
@@ -57,10 +73,14 @@ metadata:
   name: {{ $name }}-workloadentry-{{ $index }}
   namespace: {{ $app.external.namespace | default $releaseNamespace }}
 spec:
+  # use of the service account indicates that the workload has a
+  # sidecar proxy bootstrapped with this service account. Pods with
+  # sidecars will automatically communicate with the workload using
+  # istio mutual TLS.
   {{- if not (empty $app.external.serviceAccount) }}
   serviceAccount: {{ $app.external.serviceAccount }}
   {{- end}}
-  address: {{ $addr }}
+  address: {{ $addr.ip }}
   labels:
     app: {{ $name }}
     classify: {{ $app.external.labels.classify }}

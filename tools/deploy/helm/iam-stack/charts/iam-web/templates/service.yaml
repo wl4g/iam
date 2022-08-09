@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ metadata:
 
 spec:
   type: {{ .Values.service.type }}
-  {{- if eq .Values.service.provider "LoadBalancer" }}
+  {{- if eq .Values.service.type "LoadBalancer" }}
   {{- if not (empty .Values.service.loadBalancerIP) }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
@@ -43,9 +43,9 @@ spec:
     port: {{ .Values.service.apiPort | default 8080 }}
     protocol: TCP
     targetPort: http-api
-    {{- if and (or (eq .Values.service.provider "NodePort") (eq .Values.service.provider "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
+    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
     nodePort: {{ .Values.service.nodePorts.api }}
-    {{- else if eq .Values.service.provider "ClusterIP" }}
+    {{- else if eq .Values.service.type "ClusterIP" }}
     nodePort: null
     {{- end }}
 
@@ -54,9 +54,9 @@ spec:
     port: {{ .Values.service.managementPort | default 10108 }}
     protocol: TCP
     targetPort: http-management
-    {{- if and (or (eq .Values.service.provider "NodePort") (eq .Values.service.provider "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
+    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
     nodePort: {{ .Values.service.nodePorts.management }}
-    {{- else if eq .Values.service.provider "ClusterIP" }}
+    {{- else if eq .Values.service.type "ClusterIP" }}
     nodePort: null
     {{- end }}
 

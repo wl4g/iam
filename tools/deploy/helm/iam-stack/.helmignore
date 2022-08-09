@@ -3,6 +3,8 @@
 # negation (prefixed with !). Only one pattern per line.
 .DS_Store
 # Common VCS dirs
+# Must, otherwise it will cause the directory to be too large: 
+# failed to create: Request entity too large: limit is 3145728
 .git/
 .gitignore
 .bzr/

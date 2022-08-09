@@ -28,36 +28,42 @@ helm repo add iam https://registry.wl4g.io/repository/helm-release
 > If you want to install an unstable version, you need to add `--devel` when you execute the `helm install` command.
 > If you only want to test or simulate running, add the options `--dry-run --debug`
 
-## 3. Upgrade Installing with Canary
+## 3. Installing with Canary
 
-+ Step 1: (Optional) Create image repository secret. for example:
++ Step 1: Create and setup namespace
 
 ```bash
-k -n iam create secret docker-registry ccr-tencentyun-secret \
+kubectl label ns iam istio-injection=enabled --overwrite
+```
+
++ Step 2: (Choose One) Create image repository secret. for example:
+
+```bash
+kubectl -n iam create secret docker-registry ccr-tencentcloud-secret \
 --docker-server='ccr.ccs.tencentyun.com/wl4g' \
 --docker-username='<username>' \
 --docker-password='<password>'
 
 # Or:
-k -n iam create secret docker-registry cr-aliyun-secret \
---docker-server='registry.cn-shenzhen.aliyuncs.com/wl4g' \
---docker-username='<username>' \
---docker-password='<password>'
+#kubectl -n iam create secret docker-registry cr-aliyun-secret \
+#--docker-server='registry.cn-shenzhen.aliyuncs.com/wl4g' \
+#--docker-username='<username>' \
+#--docker-password='<password>'
 
 # Or:
-k -n iam create secret docker-registry cr-nexus3-secret \
---docker-server='cr.registry.wl4g.com/wl4g' \
---docker-username='<username>' \
---docker-password='<password>'
+#kubectl -n iam create secret docker-registry cr-nexus3-secret \
+#--docker-server='cr.registry.wl4g.com/wl4g' \
+#--docker-username='<username>' \
+#--docker-password='<password>'
 
 # Or:
-k -n iam create secret docker-registry hub-docker-secret \
---docker-server='docker.io/wl4g' \
---docker-username='<username>' \
---docker-password='<password>'
+#kubectl -n iam create secret docker-registry hub-docker-secret \
+#--docker-server='docker.io/wl4g' \
+#--docker-username='<username>' \
+#--docker-password='<password>'
 ```
 
-+ Step 2: Initial deploying. (baseline version only)
++ Step 3: Initial deploying. (baseline version only)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -66,7 +72,7 @@ iam-facade.image.baselineTag=1.0.0,\
 iam-data.image.baselineTag=1.0.0"
 ```
 
-+ Step 3: Upgrade deploying using canary mode. (weighted by traffic)
++ Step 4: Upgrade deploying using canary mode. (weighted by traffic)
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -81,10 +87,15 @@ iam-web.governance.istio.ingress.http.canary.upgrade.weight=20,\
 iam-facade.governance.istio.ingress.http.canary.baseline.weight=80,\
 iam-facade.governance.istio.ingress.http.canary.upgrade.weight=20,\
 iam-data.governance.istio.ingress.http.canary.baseline.weight=80,\
-iam-data.governance.istio.ingress.http.canary.upgrade.weight=20"
+iam-data.governance.istio.ingress.http.canary.upgrade.weight=20,\
+global.components.jaeger.internal.enabled=true,\
+global.components.redis.internal.enabled=true,\
+global.components.zookeeper.internal.enabled=true,\
+global.components.kafka.internal.enabled=true,\
+global.components.mysql.internal.enabled=true"
 ```
 
-+ Step 4: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
++ Step 5: After confirming that the upgrade is successful, use the new version as the benchmark, remove the old version, and switch all traffic to the new version
 
 ```bash
 helm -n iam upgrade --install --create-namespace iam iam-stack --set="\
@@ -99,10 +110,19 @@ iam-web.governance.istio.ingress.http.canary.upgrade.weight=0,\
 iam-facade.governance.istio.ingress.http.canary.baseline.weight=100,\
 iam-facade.governance.istio.ingress.http.canary.upgrade.weight=0,\
 iam-data.governance.istio.ingress.http.canary.baseline.weight=100,\
-iam-data.governance.istio.ingress.http.canary.upgrade.weight=0"
+iam-data.governance.istio.ingress.http.canary.upgrade.weight=0
+global.components.jaeger.internal.enabled=true,\
+global.components.redis.internal.enabled=true,\
+global.components.zookeeper.internal.enabled=true,\
+global.components.kafka.internal.enabled=true,\
+global.components.mysql.internal.enabled=true"
 ```
 
-## 4. Rebuild dependents Charts
+## 4. Rebuild dependents
+
+- ***Notice:*** The following dependent third-party component charts are generated based on generic templates.
+In fact, IAM's required dependencies are only a subset of them, which are enabled on demand, automatic deployment
+of all third-party dependent components is disabled by default.
 
 ```bash
 helm dependency build
@@ -110,19 +130,24 @@ helm dependency build
 helm dependency update
 
 helm dependency list
-NAME           VERSION   REPOSITORY                          STATUS
-iam-web        ~0.1.0    file://charts/iam-web               ok    
-iam-facade     ~0.1.0    file://charts/iam-facade            ok    
-iam-data       ~0.1.0    file://charts/iam-data              ok    
-redis          ~17.0.x   https://charts.bitnami.com/bitnami  ok    
-mysql          ~9.2.x    https://charts.bitnami.com/bitnami  ok    
-postgresql     ~11.6.17  https://charts.bitnami.com/bitnami  ok    
-kafka          ~18.0.3   https://charts.bitnami.com/bitnami  ok    
-zookeeper      ~10.0.2   https://charts.bitnami.com/bitnami  ok    
-mongodb        ~12.1.27  https://charts.bitnami.com/bitnami  ok    
-elasticsearch  ~19.1.6   https://charts.bitnami.com/bitnami  ok    
-solr           ~6.0.6    https://charts.bitnami.com/bitnami  ok    
-minio          ~11.7.13  https://charts.bitnami.com/bitnami  ok
+NAME            VERSION     REPOSITORY                                  STATUS
+iam-web         ~0.1.0      file://charts/iam-web                       ok
+iam-facade      ~0.1.0      file://charts/iam-facade                    ok
+iam-data        ~0.1.0      file://charts/iam-data                      ok
+jaeger          ~0.57.1     https://jaegertracing.github.io/helm-charts ok    
+jaeger-operator ~2.33.0     https://jaegertracing.github.io/helm-charts ok    
+zookeeper       ~10.0.2     https://charts.bitnami.com/bitnami          ok    
+kafka           ~18.0.3     https://charts.bitnami.com/bitnami          ok    
+emqx            ~5.0.3      https://repos.emqx.io/charts                ok    
+emqx-operator   ~1.0.9      https://repos.emqx.io/charts                ok    
+redis           ~17.0.x     https://charts.bitnami.com/bitnami          ok    
+mysql           ~9.2.x      https://charts.bitnami.com/bitnami          ok    
+postgresql      ~11.6.17    https://charts.bitnami.com/bitnami          ok    
+mongodb         ~12.1.27    https://charts.bitnami.com/bitnami          ok    
+elasticsearch   ~19.1.6     https://charts.bitnami.com/bitnami          ok    
+solr            ~6.0.6      https://charts.bitnami.com/bitnami          ok    
+cassandra       ~9.2.11     https://charts.bitnami.com/bitnami          ok    
+minio           ~11.7.13    https://charts.bitnami.com/bitnami          ok
 ...
 ```
 
@@ -131,7 +156,7 @@ minio          ~11.7.13  https://charts.bitnami.com/bitnami  ok
 To uninstall/delete the `iam` deployment:
 
 ```bash
-helm del iam
+helm -n iam del iam
 ```
 
 ## 5. Configurable

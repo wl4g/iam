@@ -42,7 +42,7 @@ metadata:
 subsets:
 - addresses:
   {{- range $index, $addr := $app.external.instanceAddresses }}
-  - ip: {{ $addr }}
+  - ip: {{ $addr.ip }}
   {{- end}}
   ports:
   {{- range $index, $port := $app.external.instancePorts }}

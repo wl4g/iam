@@ -11,12 +11,15 @@
 {{- $releaseNamespace := .Release.Namespace }}
 
 {{- if eq .Values.governance.provider "Istio" }}
+
 ## ----------------------------- Mesh App Igress Rules -----------------------------
 
+---
+## see:https://istio.io/latest/docs/tasks/traffic-management/egress/egress-gateway/
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: {{ template "app.name" . }}-ingressgateway
+  name: {{ template "app.name" . }}-gw
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ template "app.name" . }}
@@ -65,7 +68,7 @@ metadata:
     helm.sh/chart: {{ template "app.chart" . }}
 spec:
   gateways:
-  - {{ template "app.name" . }}-ingressgateway
+  - {{ template "app.name" . }}-gw
   hosts:
   ## Add default ingress host.
   - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
@@ -249,8 +252,10 @@ spec:
   ## Add egress external service default host.
   - {{ $app.name }}.{{ $app.namespace | default $releaseNamespace }}.svc.cluster.local
   ## Add custom extension hosts.
-  {{- if not (empty $app.customHosts) }}
-  {{- toYaml $app.customHosts | nindent 2 }}
+  {{- range $index1, $addr := $app.instanceAddresses }}
+  {{- range $index2, $host := $addr.hosts }}
+  - {{ $host }}
+  {{- end }}
   {{- end }}
   ## see:https://istio.io/v1.14/zh/docs/reference/config/networking/service-entry/#ServiceEntry-Location
   ## Location specifies whether the service is part of Istio mesh or outside the mesh. Location determines the
@@ -259,8 +264,8 @@ spec:
   ## enforcement is performed on the client-side as opposed to server-side.
   location: {{ $app.location | default "MESH_EXTERNAL" }} ## MESH_INTERNAL|MESH_EXTERNAL
   ports:
-  ## Add egress external service default ports.
   {{- if empty $app.instancePorts }}
+  ## Add egress external service default ports.
   - name: http-{{ $app.name }}
     protocol: HTTP
     number: 80
@@ -278,9 +283,6 @@ spec:
     targetPort: {{ $port.targetPort }}
   {{- end }}
   {{- end }}
-  ## Validate Error: multiple hosts provided with non-HTTP, non-TLS ports.
-  ## see:https://stackoverflow.com/questions/64206521/how-the-request-is-routed-when-using-egress-gateway
-  ## see:https://github.com/istio/istio/blob/1.14.3/pkg/config/validation/validation.go#L3268-L3269
   resolution: {{ $app.resolution | default "DNS" }} ## STATIC|DNS
   workloadSelector:
     labels:
@@ -302,11 +304,11 @@ spec:
   {{- if not (empty $app.serviceAccount) }}
   serviceAccount: {{ $app.serviceAccount }}
   {{- end}}
-  address: {{ $addr }}
+  address: {{ $addr.ip }}
   labels:
     app: {{ $app.name }}
-    classify: {{ $app.classify }}
-    version: {{ $app.version }}
+    classify: {{ $app.labels.classify }}
+    version: {{ $app.labels.version }}
 ---
 {{- end }}
 {{- end }}

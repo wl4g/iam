@@ -223,29 +223,28 @@ governance:
         enabled: false
         frontPort: 1883
         backendPort: 1883
-    ## Depends external bare metal or VM services.
+    ## The depends external bare metal or VM services.
     ## see:https://istio.io/v1.14/docs/reference/config/networking/workload-entry/
     ## see:https://developer.aliyun.com/article/772279
     egress:
-    - name: iam-facade-example-wx-payment
-      classify: thirdparty-external-service
-      version: v1
-      location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
-      ## Validate Error: multiple hosts provided with non-HTTP, non-TLS ports.
-      ## see:https://stackoverflow.com/questions/64206521/how-the-request-is-routed-when-using-egress-gateway
-      ## see:https://github.com/istio/istio/blob/1.14.3/pkg/config/validation/validation.go#L3268-L3269
-      resolution: DNS ## STATIC|DNS
-      namespace:
-      serviceAccount:
-      customHosts:
-      - api.mch.weixin.qq.com
-      instancePorts:
-      - protocol: HTTP
-        targetPort: 8080
-      - protocol: HTTP
-        targetPort: 80
-      - protocol: HTTPS
-        targetPort: 443
-      instanceAddresses:
-      - 157.255.174.121 # or: api.mch.weixin.qq.com
+    # - name: iam-facade-example-wx-payment
+    #   namespace:
+    #   serviceAccount:
+    #   labels:
+    #     classify: thirdparty-external-service
+    #     version: v1
+    #   ## Validate Error: multiple hosts provided with non-HTTP, non-TLS ports.
+    #   ## see:https://stackoverflow.com/questions/64206521/how-the-request-is-routed-when-using-egress-gateway
+    #   ## see:https://github.com/istio/istio/blob/1.14.3/pkg/config/validation/validation.go#L3268-L3269
+    #   resolution: DNS ## STATIC|DNS
+    #   location: MESH_EXTERNAL ## MESH_INTERNAL|MESH_EXTERNAL
+    #   instancePorts:
+    #   - protocol: HTTP
+    #     targetPort: 80
+    #   - protocol: HTTPS
+    #     targetPort: 443
+    #   instanceAddresses:
+    #   - ip: 157.255.174.121
+    #     hosts:
+    #     - api.mch.weixin.qq.com
  
