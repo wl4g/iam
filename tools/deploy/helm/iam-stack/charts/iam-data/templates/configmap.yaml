@@ -23,11 +23,13 @@ metadata:
 data:
 {{- if not (empty .Values.envConfigs) }}
   {{- range $key, $value := .Values.envConfigs}}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- else if not (empty .Values.global.envConfigs) }}
   {{- range $key, $value := .Values.global.envConfigs }}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- end}}
 {{- end}}
@@ -69,11 +71,13 @@ metadata:
 data:
 {{- if not (empty .Values.agentConfigs)}}
   {{- range $key, $value := .Values.agentConfigs}}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- else if not (empty .Values.global.agentConfigs) }}
   {{- range $key, $value := .Values.global.agentConfigs}}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- end}}
 {{- end}}
@@ -93,11 +97,13 @@ metadata:
 data:
 {{- if not (empty .Values.appConfigs)}}
   {{- range $key, $value := .Values.appConfigs}}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- else if not (empty .Values.global.appConfigs) }}
   {{- range $key, $value := .Values.global.appConfigs}}
-  {{ $key }}: "{{ $value }}"
+  {{ $key | nindent 2 }}.config: |-
+    {{ $value | nindent 4 }}
   {{- end}}
 {{- end}}
 {{- end}}
