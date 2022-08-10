@@ -7,15 +7,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# #### Gateway server bootstrap configuration. ####
-#
 spring:
   application.name: iam-gateway
-  profiles:
-    include: route
-    active: dev
   banner:
-      location: classpath:META-INF/banner.txt
-  freemarker:
-    checkTemplateLocation: false
+    location: classpath:META-INF/banner.txt
+  ## The SpringBoot2.4+ use following configuration.
+  config:
+    #use-legacy-processing: true
+    #activate:
+    #  on-profile:
+    #    - dev
+    #    - production
+  profiles:
+    include: route ## examples has: discovery,route-splitting,route-composite
+    active: dev

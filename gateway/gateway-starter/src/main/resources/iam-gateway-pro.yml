@@ -21,6 +21,20 @@ spring:
         max-active: 10
         max-wait: -1ms
   cloud:
+    nacos:
+      config:
+        enabled: true
+        serverAddr: ${ISCG_NACOS_SERVER:127.0.0.1:8848}
+        #username:
+        #password:
+        fileExtension: yml
+        name: ${spring.application.name}-route
+        group: DEFAULT_GROUP
+        timeout: 3000
+        maxRetry: 3
+        configLongPollTimeout: 30_000
+        namespace: ${spring.application.name}
+        clusterName: ${spring.application.name}
     discovery:
       client:
         # see:org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient

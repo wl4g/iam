@@ -8,10 +8,13 @@
 # limitations under the License.
 #
 #
-## #### IAM Gateway Primary configuration. ####
+## #### IAM Gateway Configuration. ####
 #
 spring:
-  main.allow-circular-references: true
+  main:
+    allow-circular-references: true
+  freemarker:
+    checkTemplateLocation: false
   ## see:https://reflectoring.io/spring-boot-tracing/
   ## The entry of bind attrs to reactor context see:org.springframework.cloud.sleuth.instrument.reactor.ReactorSleuth#runMonoSupplierInScope()
   sleuth:

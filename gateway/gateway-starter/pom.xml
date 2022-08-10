@@ -196,6 +196,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- Discovery -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-kubernetes-client-discovery</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
@@ -221,6 +226,7 @@
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
+		<!-- Commons Utility -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
@@ -382,10 +388,10 @@
 				<directory>src/main/resources</directory>
 				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
 				<filtering>false</filtering>
-				<excludes>
-					<exclude>*.yml</exclude>
-					<exclude>*.yaml</exclude>
-				</excludes>
+				<includes>
+					<include>*.yml</include>
+					<include>*.yaml</include>
+				</includes>
 			</resource>
 		</resources>
 		<plugins>
