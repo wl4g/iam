@@ -24,6 +24,7 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 
 import org.springframework.boot.Banner
 
+import com.wl4g.infra.common.runtime.JvmRuntimeTool
 import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
 
 /**
@@ -36,29 +37,28 @@ class IamGatewayBootstrappingConfigurer implements IBootstrappingConfigurer {
         return -100
     }
 
-    def Banner.Mode bannerMode(Banner.Mode prevMode) {
-        return Banner.Mode.LOG;
-    }
-
     @Override
-    def Properties defaultProperties(Properties prevDefaultProperties) {
-        def defaultProperties = new Properties()
+    void defaultProperties(Properties prevDefaultProperties) {
         // Preset spring.config.name
-        // for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
         def configName = new StringBuffer("bootstrap,application,iam-gateway")
 
-        // Preset spring.config.location
-        // for example: spring auto load for 'classpath:/application-data-dev.yml'
-        def location = new StringBuffer("classpath:/")
-        if (isPresent("com.alibaba.cloud.nacos.NacosConfigAutoConfiguration")) {
-            configName.append(",iam-gateway-nacos");
-            //location.append(",classpath:/nacos/")
+        // Preset spring.config.additional-location
+        def additionalLocation = new StringBuffer()
+
+        // When running in JVM debug mode, the example configuration directory is automatically included.
+        if (JvmRuntimeTool.isJvmInDebugging) {
+            configName.append(",example");
+            additionalLocation.append(",optional:classpath:/example/")
         }
 
-        defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
-        defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
+        // for example: spring auto load for 'classpath:/iam-gateway-nacos-dev.yml'
+        if (isPresent("com.alibaba.cloud.nacos.NacosConfigAutoConfiguration")) {
+            configName.append(",iam-gateway-nacos");
+            //additionalLocation.append(",classpath:/nacos/")
+        }
 
-        return defaultProperties
+        prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
+        prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, additionalLocation.toString())
     }
 
 }

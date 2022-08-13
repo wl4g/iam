@@ -30,37 +30,36 @@ import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
  */
 class IamDataBootstrappingConfigurer implements IBootstrappingConfigurer {
 
-	@Override
-	def int getOrder() {
-		return -100
-	}
+    @Override
+    def int getOrder() {
+        return -100
+    }
 
-	def Banner.Mode bannerMode(Banner.Mode prevMode) {
-		return Banner.Mode.LOG;
-	}
+    @Override
+    void defaultProperties(Properties prevDefaultProperties) {
+        // Preset spring.config.name
+        // for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
+        def configName = new StringBuffer("application,iam-data,iam-data-etc")
 
-	@Override
-	void defaultProperties(Properties prevDefaultProperties) {
-		// Preset spring.config.name
-		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,iam-data,iam-data-etc")
+        // Preset spring.config.additional-location
+        def additionalLocation = new StringBuffer("classpath:/")
 
-		// Preset spring.config.location
-		// for example: spring auto load for 'classpath:/application-data-dev.yml'
-		def location = new StringBuffer("classpath:/")
-		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",iam-data-scf");
-			location.append(",classpath:/scf/")
-		} else if (isPresent("com.wl4g.infra.integration.feign.core.annotation.FeignConsumer")) {
-			configName.append(",iam-data-sbf");
-			location.append(",classpath:/sbf/")
-		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
-			configName.append(",iam-data-dubbo");
-			location.append(",classpath:/dubbo/")
-		}
+        // According to different heterogeneous runtime environments (multi RPC frameworks),
+        // automatically identify and contain different configuration directories.
+        if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
+            configName.append(",iam-data-scf");
+            additionalLocation.append(",classpath:/scf/")
+        } else if (isPresent("com.wl4g.infra.integration.feign.core.annotation.FeignConsumer")) {
+            configName.append(",iam-data-sbf");
+            additionalLocation.append(",classpath:/sbf/")
+        } else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
+            configName.append(",iam-data-dubbo");
+            additionalLocation.append(",classpath:/dubbo/")
+        }
 
-		prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
-		prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
-	}
+        // Preset 'spring.config.additional-location', external resources does not override resources in classpath.
+        prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
+        prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, additionalLocation.toString())
+    }
 
 }

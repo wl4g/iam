@@ -1,0 +1,160 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- if eq .Values.governance.provider "Ingress" }}
+---
+{{- if .Values.governance.ingress.api.enabled -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+
+kind: Ingress
+metadata:
+  name: {{ template "app.name" . }}-api
+  labels:
+    app.kubernetes.io/name: {{ template "app.name" . }}
+    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "app.chart" . }}
+  {{- if .Values.governance.ingress.api.annotations }}
+  annotations:
+    {{- toYaml .Values.governance.ingress.api.annotations | nindent 4 }}
+  {{- end }}
+
+spec:
+  {{- if and .Values.governance.ingress.api.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.governance.ingress.api.ingressClassName }}
+  {{- end }}
+
+  rules:
+  {{- if empty .Values.governance.ingress.api.customHosts }}
+  - host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+    http:
+      paths:
+      - path: /
+        {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+        pathType: ImplementationSpecific
+        {{- end }}
+        backend:
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+          service:
+            name: {{ template "app.name" $ }}
+            port:
+              number: {{ .Values.service.apiPort }}
+          {{- else }}
+          serviceName: {{ template "app.name" $ }}
+          servicePort: {{ .Values.service.apiPort }}
+          {{- end }}
+  {{- else }}
+  {{- range $host := .Values.governance.ingress.api.customHosts }}
+  - host: {{ $host }}
+    http:
+      paths:
+      - path: /
+        {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+        pathType: ImplementationSpecific
+        {{- end }}
+        backend:
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+          service:
+            name: {{ template "app.name" $ }}
+            port:
+              number: {{ .Values.service.apiPort }}
+          {{- else }}
+          serviceName: {{ template "app.name" $ }}
+          servicePort: {{ .Values.service.apiPort }}
+          {{- end }}
+  {{- end -}}
+  {{- end -}}
+  {{- if .Values.governance.ingress.api.tls }}
+  tls:
+    {{- toYaml .Values.governance.ingress.api.tls | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+
+{{- if .Values.governance.ingress.management.enabled -}}
+  {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+  {{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+  {{- else -}}
+apiVersion: extensions/v1beta1
+  {{- end }}
+
+kind: Ingress
+metadata:
+  name: {{ template "app.name" . }}-prometheus
+  labels:
+    app.kubernetes.io/name: {{ template "app.name" . }}
+    app.kubernetes.io/release: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ template "app.chart" . }}
+  {{- if .Values.governance.ingress.management.annotations }}
+  annotations:
+    {{- toYaml .Values.governance.ingress.management.annotations | nindent 4 }}
+  {{- end }}
+
+spec:
+  {{- if and .Values.governance.ingress.management.ingressClassName (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.governance.ingress.management.ingressClassName }}
+  {{- end }}
+  rules:
+  {{- if empty .Values.governance.ingress.management.customHosts }}
+  - host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+    http:
+      paths:
+      - path: /
+        {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+        pathType: ImplementationSpecific
+        {{- end }}
+        backend:
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+          service:
+            name: {{ template "app.name" $ }}
+            port:
+              number: {{ $.Values.service.managementPort }}
+          {{- else }}
+          serviceName: {{ template "app.name" $ }}
+          servicePort: {{ $.Values.service.managementPort }}
+          {{- end }}
+  {{- else }}
+  {{- range $host := .Values.governance.ingress.management.customHosts }}
+  - host: {{ $host }}
+    http:
+      paths:
+      - path: /
+        {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+        pathType: ImplementationSpecific
+        {{- end }}
+        backend:
+          {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+          service:
+            name: {{ template "app.name" $ }}
+            port:
+              number: {{ $.Values.service.managementPort }}
+          {{- else }}
+          serviceName: {{ template "app.name" $ }}
+          servicePort: {{ $.Values.service.managementPort }}
+          {{- end }}
+  {{- end -}}
+  {{- end }}
+  {{- if .Values.governance.ingress.management.tls }}
+  tls:
+    {{- toYaml .Values.governance.ingress.management.tls | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+
+{{- end }}

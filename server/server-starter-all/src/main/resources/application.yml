@@ -20,6 +20,8 @@ spring:
     active: dev
   banner:
     location: classpath:META-INF/banner.txt
+  main:
+    allow-circular-references: true
   infra:
     rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
 

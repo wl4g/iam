@@ -1,0 +1,55 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <jameswong1376@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- $releaseNamespace := .Release.Namespace }}
+
+{{- range $name, $app := .Values.global.components }}
+{{- if $app.external.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-headless
+  namespace: {{ $app.external.namespace | default $releaseNamespace }}
+  labels:
+    app.kubernetes.io/name: {{ $name }}
+    app.kubernetes.io/classify: {{ $app.external.labels.classify }}
+    app.kubernetes.io/canary-version: {{ $app.external.labels.version }}
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  clusterIP: None
+  publishNotReadyAddresses: true
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ $name }}-headless
+  namespace: {{ $app.external.namespace | default $releaseNamespace }}
+  labels:
+    app.kubernetes.io/name: {{ $name }}
+    app.kubernetes.io/classify: {{ $app.external.labels.classify }}
+    app.kubernetes.io/canary-version: {{ $app.external.labels.version }}
+    app.kubernetes.io/managed-by: Helm
+subsets:
+- addresses:
+  {{- range $index, $addr := $app.external.instanceAddresses }}
+  - ip: {{ $addr.ip }}
+  {{- end}}
+  ports:
+  {{- range $index, $port := $app.external.instancePorts }}
+  - name: {{ $port.protocol | default "TCP" | lower }}-{{ $name }}-{{$index}}
+    port: {{ $port.targetPort }}
+    protocol: {{ $port.protocol | default "TCP" }}
+  {{- end}}
+---
+{{- end}}
+{{- end}}

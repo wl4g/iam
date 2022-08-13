@@ -8,10 +8,29 @@
 # limitations under the License.
 #
 #
-## #### IAM Gateway Primary configuration. ####
+## #### IAM Gateway Configuration. ####
 #
 spring:
-  main.allow-circular-references: true
+  application.name: iam-gateway
+  banner:
+    location: classpath:META-INF/banner.txt
+  ## The SpringBoot2.4+ use following configuration.
+  ## see:https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Config-Data-Migration-Guide
+  config:
+    ## see:https://docs.spring.io/spring-boot/docs/2.6.7/reference/htmlsingle/#features.external-config.files.importing
+    import: optional:classpath:iam-gateway.yml
+  #  use-legacy-processing: true
+  #  activate:
+  #    on-profile:
+  #      - dev
+  #      - production
+  profiles:
+    include: route ## examples has: discovery,route-splitting,route-composite
+    active: dev
+  main:
+    allow-circular-references: true
+  freemarker:
+    checkTemplateLocation: false
   ## see:https://reflectoring.io/spring-boot-tracing/
   ## The entry of bind attrs to reactor context see:org.springframework.cloud.sleuth.instrument.reactor.ReactorSleuth#runMonoSupplierInScope()
   sleuth:

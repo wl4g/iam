@@ -29,7 +29,7 @@ import com.wl4g.iam.client.springboot.config.IamClientAutoConfiguration2;
 /**
  * {@link EnableAutoIamClient}
  *
- * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong<jamewong1376@gmail.com>
  * @version v1.0 2020-09-09
  * @since
  */

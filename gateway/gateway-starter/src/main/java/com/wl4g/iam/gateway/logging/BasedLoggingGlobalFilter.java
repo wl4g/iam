@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2025 the original authors James Wong.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,9 +160,9 @@ public abstract class BasedLoggingGlobalFilter implements GlobalFilter, Ordered 
         try {
             // Check if printing the log of the current request is enabled based
             // on the current request parameters.
-            return requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
-                    loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier)
-                    || (determineRequestVerboseLevel(exchange) >= 10
+            return (requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
+                    loggingConfig.getPreferOpenMatchExpression(), routeIdPredicateSupplier))
+                    || (determineRequestVerboseLevel(exchange) > 10
                             && requestMatcher.matches(new ReactiveRequestExtractor(exchange.getRequest()),
                                     exchange.getRequest().getHeaders().getFirst(loggingConfig.getDyeingLogStateRequestHeader()),
                                     routeIdPredicateSupplier));

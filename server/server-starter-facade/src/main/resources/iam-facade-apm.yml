@@ -121,7 +121,7 @@ spring:
       exporter:
         sleuthSpanFilter.enabled: true
         #otlp:
-        #  endpoint: http://localhost:4317
+        #  endpoint: ${IAM_OLTP_ENDPOINT:http://localhost:4317}
         #  timeout: 10000
         jaeger:
           endpoint: ${IAM_JAEGER_ENDPOINT:http://localhost:14250}
