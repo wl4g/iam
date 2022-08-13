@@ -101,5 +101,5 @@ case $1 in
     ;;
   *)
     print_help
-  exit 2
+    ;;
 esac
