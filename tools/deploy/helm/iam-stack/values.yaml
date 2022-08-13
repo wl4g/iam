@@ -147,6 +147,15 @@ iam-data:
 
 ## ----------------------------------- Global Dependents Components. -----------------------------------
 global:
+  ##
+  ## This is a script pre-start hook that is automatically executed before starting the container and
+  ## can be used to customize the pre-launch actions (such as setup environments, etc.)
+  ##
+  ## Tip: The advantage of the following pre-start hook script mechanism is that it is more flexible
+  ## than directly mounting the configuration through configmap+volume. For example, it cannot control
+  ## the order of exporting environment variables, that is, variable evaluation cannot be used,
+  ## such as export A=123; export B="${A}"
+  ##
   preStartScript: |-
     #!/bin/sh
     #export SPRING_SLEUTH_OTEL_EXPORTER_OTLP_ENDPOENT="http://otlp-collector.otlp.svc.cluster.local:4317"
@@ -166,6 +175,14 @@ global:
 
   appConfigs: {}
 
+  ##
+  ## The following are the global public dependent components examples configuration, which support the internal
+  ## components that are automatically deployed using the current charts, or the services deployed in the VM 
+  ## externally using Kubernetes (such as MySQL/MongoDB/HBase services for high performance, etc.)
+  ##
+  ## Notice: Automatic deployment is disabled by default for all components, you can partially enable it
+  ## according to actual needs.
+  ##
   components:
     ## see:https://open-telemetry.github.io/opentelemetry-helm-charts
     otlp:

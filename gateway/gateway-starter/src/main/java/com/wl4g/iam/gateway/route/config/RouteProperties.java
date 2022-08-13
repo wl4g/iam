@@ -8,7 +8,7 @@ import lombok.Setter;
 /**
  * {@link IamSecurityProperties}
  *
- * @author James Wong <wanglsir@gmail.com, 983708408@qq.com>
+ * @author James Wong<jamewong1376@gmail.com>
  * @version v1.0 2020-07-23
  * @since
  */

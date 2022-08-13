@@ -1,4 +1,4 @@
-# Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+# Copyright 2017 ~ 2025 the original authors James Wong<jamewong1376@gmail.com>. 
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@
 
 # see:https://blogs.wl4g.com/archives/2969
 FROM openjdk:8u212-jre-alpine3.9 AS wl4g_springboot_base
-LABEL maintainer="James Wong<983708408@qq.com, wanglsir@gmail.com>"
+LABEL maintainer="James Wong<jameswong1376@gmail.com>"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.9/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.9/community" >> /etc/apk/repositories \
@@ -53,7 +53,7 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.9/main" > /etc/apk/repositories \
 && echo "Asia/Shanghai" > /etc/timezone
 
 FROM wl4g_springboot_base
-LABEL maintainer="Wanglsir<983708408@qq.com, Wanglsir@gmail.com>"
+LABEL maintainer="James Wong<jameswong1376@gmail.com>"
 
 ##
 ## Define the immutable properties.

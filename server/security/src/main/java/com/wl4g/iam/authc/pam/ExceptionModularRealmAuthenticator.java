@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2025 the original authors James Wong.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.wl4g.infra.common.log.SmartLogger;
  * Enhanced modular authentication processor that throws out exception handling
  * information
  *
- * @author James Wong <983708408@qq.com>
+ * @author James Wong<jamewong1376@gmail.com>
  * @version v1.0 2019年1月26日
  * @since
  */
