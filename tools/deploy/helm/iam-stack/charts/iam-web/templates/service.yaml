@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -8,14 +8,16 @@
 # limitations under the License.
 #
 
+{{- $serviceType := .Values.service.type }}
+
 ## see:https://kubernetes.io/zh/docs/concepts/services-networking/service/#discovering-services
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "app.name" . }}
+  name: {{ .Chart.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ template "app.name" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/release: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ template "app.chart" . }}
@@ -25,8 +27,8 @@ metadata:
   {{- end }}
 
 spec:
-  type: {{ .Values.service.type }}
-  {{- if eq .Values.service.type "LoadBalancer" }}
+  type: {{ $serviceType }}
+  {{- if eq $serviceType "LoadBalancer" }}
   {{- if not (empty .Values.service.loadBalancerIP) }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
@@ -38,29 +40,22 @@ spec:
   externalIPs: {{- toYaml .Values.service.externalIPs | nindent 4 }}
   {{- end }}
   {{- end }}
+
   ports:
-  - name: http-api
-    port: {{ .Values.service.apiPort | default 8080 }}
-    protocol: TCP
-    targetPort: http-api
-    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.api)) }}
-    nodePort: {{ .Values.service.nodePorts.api }}
-    {{- else if eq .Values.service.type "ClusterIP" }}
+  {{- range $name, $expose := .Values.service.exposes }}
+  - name: {{ $expose.protocol7 | lower }}-{{ $name }}
+    port: {{ $expose.port | default 8080 }}
+    protocol: {{ $expose.protocol4 | default "TCP" }}
+    ## Notice: If the TCP protocol is monitored here but the application layer is the HTTP protocol,
+    ## the port name must start with 'http-', otherwise the istio-proxy startupProbe/livenessProbe will fail???
+    targetPort: {{ $expose.protocol7 | lower }}-{{ $name }}
+    {{- if and (or (eq $serviceType "NodePort") (eq $serviceType "LoadBalancer")) (not (empty $expose.nodePort)) }}
+    nodePort: {{ $expose.nodePort }}
+    {{- else if eq $serviceType "ClusterIP" }}
     nodePort: null
     {{- end }}
-
-  {{- if not (empty .Values.service.managementPort) }}
-  - name: http-management
-    port: {{ .Values.service.managementPort | default 10108 }}
-    protocol: TCP
-    targetPort: http-management
-    {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.management)) }}
-    nodePort: {{ .Values.service.nodePorts.management }}
-    {{- else if eq .Values.service.type "ClusterIP" }}
-    nodePort: null
-    {{- end }}
-
   {{- end }}
+
   selector:
     app.kubernetes.io/name: {{ template "app.name" . }}
     app.kubernetes.io/release: {{ .Release.Name }}

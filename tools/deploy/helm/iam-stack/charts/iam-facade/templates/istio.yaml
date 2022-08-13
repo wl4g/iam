@@ -9,6 +9,8 @@
 #
 
 {{- $releaseNamespace := .Release.Namespace }}
+{{- $primaryHttpServiceExposeName := .Values.governance.istio.ingress.http.primaryHttpServiceExposeName }}
+{{- $primaryHttpServiceExposePort := index .Values.service.exposes $primaryHttpServiceExposeName "port" | default 8080 }}
 
 {{- if eq .Values.governance.provider "Istio" }}
 
@@ -110,7 +112,7 @@ spec:
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
-            number: {{ .Values.service.apiPort | default 8080 }}
+            number: {{ $primaryHttpServiceExposePort }}
           subset: baseline
         ## The ensure smooth splitting traffic, default value: 80%
         weight: {{ .Values.governance.istio.ingress.http.canary.baseline.weight | default 80 }}
@@ -119,7 +121,7 @@ spec:
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
-            number: {{ .Values.service.apiPort | default 8080 }}
+            number: {{ $primaryHttpServiceExposePort }}
           subset: upgrade
         ## The ensure smooth splitting traffic, default value: 20%
         weight: {{ .Values.governance.istio.ingress.http.canary.upgrade.weight | default 20 }}
@@ -154,7 +156,7 @@ spec:
       - destination:
           host: {{ template "app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
           port:
-            number: {{ .Values.service.apiPort | default 8080 }}
+            number: {{ $primaryHttpServiceExposePort }}
           subset: baseline
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
   {{- if .Values.governance.istio.ingress.tcp.enabled }}

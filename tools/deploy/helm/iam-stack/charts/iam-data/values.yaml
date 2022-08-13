@@ -116,17 +116,7 @@ appConfigs:
   # application.yml: ""
 
 service:
-  ## Service type
   type: ClusterIP
-  ## Application service port.
-  apiPort: 18082
-  ## Management port.
-  managementPort: 10108
-  ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
-  ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  nodePorts:
-    api:
-    management:
   ##
   ## Set the LoadBalancer service type to internal only.
   ## see:https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
@@ -140,6 +130,23 @@ service:
   externalIPs: []
   ## Provide any additional annotations which may be required. Evaluated as a template
   annotations: {}
+  exposes:
+    ## Application primary http service port.
+    api:
+      port: 18082
+      protocol4: TCP
+      protocol7: HTTP
+      ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+      ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+      nodePort:
+    ## Management port.
+    management:
+      port: 10108
+      protocol4: TCP
+      protocol7: HTTP
+      ## Specify the nodePort(s) value for the LoadBalancer and NodePort service types.
+      ## see:https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+      nodePort:
 
 governance:
   ## Service governance type.
@@ -176,6 +183,8 @@ governance:
       domain: wl4g.io ## Top level one domain.
       customHosts: []
       http:
+        ## see to: .Values.service.expose.<name>
+        primaryHttpServiceExposeName: api
         ## The canary traffic governance, ie: rules for grouping pods.
         ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#Destination
         ## see:https://istio.io/latest/zh/blog/2017/0.1-canary/
