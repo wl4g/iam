@@ -37,7 +37,9 @@ spec:
       - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
       ## Add app ingress custom extension hosts.
       {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
-      {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
+      {{- range $index, $host := .Values.governance.istio.ingress.customHosts }}
+      - {{ $host }}
+      {{- end }}
       {{- end }}
       port:
         {{- if eq .Values.governance.istio.ingress.http.scheme "http" }}
@@ -76,7 +78,9 @@ spec:
   - {{ template "app.name" . }}.{{- .Values.governance.istio.ingress.domain }}
   ## Add custom extension hosts.
   {{- if not (empty .Values.governance.istio.ingress.customHosts) }}
-  {{- toYaml .Values.governance.istio.ingress.customHosts | nindent 4 }}
+  {{- range $index, $host := .Values.governance.istio.ingress.customHosts }}
+  - {{ $host }}
+  {{- end }}
   {{- end }}
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#HTTPRouteDestination
   http:
@@ -116,6 +120,12 @@ spec:
           subset: baseline
         ## The ensure smooth splitting traffic, default value: 80%
         weight: {{ .Values.governance.istio.ingress.http.canary.baseline.weight | default 80 }}
+        ## see:https://istio.io/latest/docs/reference/config/networking/virtual-service/#Headers
+        ## see:https://stackoverflow.com/questions/66314276/how-to-remove-or-modify-header-from-istio-ingress-gateway
+        headers:
+          response:
+            add:
+              x-app-version: {{ .Values.image.baselineTag }}
       {{- end }}
       {{- if not (empty .Values.image.upgradeTag) }}
       - destination:
@@ -125,6 +135,12 @@ spec:
           subset: upgrade
         ## The ensure smooth splitting traffic, default value: 20%
         weight: {{ .Values.governance.istio.ingress.http.canary.upgrade.weight | default 20 }}
+        ## see:https://istio.io/latest/docs/reference/config/networking/virtual-service/#Headers
+        ## see:https://stackoverflow.com/questions/66314276/how-to-remove-or-modify-header-from-istio-ingress-gateway
+        headers:
+          response:
+            add:
+              x-app-version: {{ .Values.image.upgradeTag }}
       {{- end }}
       timeout: 10s
       ## Multiple matchers represent and operations.
@@ -158,6 +174,12 @@ spec:
           port:
             number: {{ $primaryHttpServiceExposePort }}
           subset: baseline
+        ## see:https://istio.io/latest/docs/reference/config/networking/virtual-service/#Headers
+        ## see:https://stackoverflow.com/questions/66314276/how-to-remove-or-modify-header-from-istio-ingress-gateway
+        headers:
+          response:
+            add:
+              x-app-version: {{ .Values.image.baselineTag }}
   ## see:https://istio.io/v1.14/docs/reference/config/networking/virtual-service/#TCPRoute
   {{- if .Values.governance.istio.ingress.tcp.enabled }}
   tcp:
