@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.Organization">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name_en" property="nameEn" jdbcType="VARCHAR" />
-		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="organization_code" property="orgCode" jdbcType="VARCHAR" />
 		<result column="parent_code" property="parentCode" jdbcType="VARCHAR" />
 		<result column="name_zh" property="nameZh" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="INTEGER" />
@@ -94,7 +94,7 @@
 		del_flag)
 		values
 		(#{id,jdbcType=BIGINT}, #{nameEn,jdbcType=VARCHAR},
-		#{organizationCode,jdbcType=VARCHAR},
+		#{orgCode,jdbcType=VARCHAR},
 		#{nameZh,jdbcType=VARCHAR},
 		#{type,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT},
 		#{enable,jdbcType=INTEGER},
@@ -113,7 +113,7 @@
 			<if test="nameEn != null">
 				name_en,
 			</if>
-			<if test="organizationCode != null">
+			<if test="orgCode != null">
 				organization_code,
 			</if>
 			<if test="nameZh != null">
@@ -157,8 +157,8 @@
 			<if test="nameEn != null">
 				#{nameEn,jdbcType=VARCHAR},
 			</if>
-			<if test="organizationCode != null">
-				#{organizationCode,jdbcType=VARCHAR},
+			<if test="orgCode != null">
+				#{orgCode,jdbcType=VARCHAR},
 			</if>
 			<if test="nameZh != null">
 				#{nameZh,jdbcType=VARCHAR},
@@ -201,8 +201,8 @@
 			<if test="nameEn != null">
 				name_en = #{nameEn,jdbcType=VARCHAR},
 			</if>
-			<if test="organizationCode != null">
-				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			<if test="orgCode != null">
+				organization_code = #{orgCode,jdbcType=VARCHAR},
 			</if>
 			<if test="nameZh != null">
 				name_zh = #{nameZh,jdbcType=VARCHAR},
@@ -244,7 +244,7 @@
 		update iam_organization
 		set name_en = #{nameEn,jdbcType=VARCHAR},
 		organization_code =
-		#{organizationCode,jdbcType=VARCHAR},
+		#{orgCode,jdbcType=VARCHAR},
 		name_zh = #{nameZh,jdbcType=VARCHAR},
 		type =
 		#{type,jdbcType=INTEGER},
