@@ -19,7 +19,7 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_AF
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_SNS_BASE;
 import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.IllegalAuthorizer;
 import static com.wl4g.iam.common.model.SecondaryAuthcValidateModel.Status.InvalidAuthorizer;
-import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
+import static com.wl4g.infra.context.web.BaseController.REDIRECT_PREFIX;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

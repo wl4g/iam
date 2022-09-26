@@ -23,7 +23,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.iam.core.exception.IllegalRequestException;
 
 import static com.wl4g.infra.common.lang.Assert2.hasText;

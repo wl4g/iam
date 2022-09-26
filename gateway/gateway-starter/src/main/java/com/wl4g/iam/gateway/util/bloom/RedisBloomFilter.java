@@ -157,7 +157,7 @@ public class RedisBloomFilter<T> {
     }
 
     /**
-     * {@link BloomConfig}
+     * {@link BloomGenerator}
      * 
      * <p>
      * 1. What is the definition of Bloom-filter?
@@ -214,7 +214,7 @@ public class RedisBloomFilter<T> {
         private final int bitSize;
 
         /**
-         * Build of {@link BloomConfig} instance.
+         * Build of {@link BloomGenerator} instance.
          * 
          * @param funnel
          * @param expectedInsertions

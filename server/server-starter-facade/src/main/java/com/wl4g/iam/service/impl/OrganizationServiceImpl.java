@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service.impl;
 
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.User;
 import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.infra.common.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.nonNull;
 
 /**
@@ -108,7 +108,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Assert.notNull(id, "id is null");
         Organization group = new Organization();
         group.setId(id);
-        group.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        group.setDelFlag(BaseBean.DEL_FLAG_DELETED);
         organizationDao.updateByPrimaryKeySelective(group);
     }
 

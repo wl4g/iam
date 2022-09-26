@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * {@link AreaService}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @date 2020-05-25
  * @sine v1.0

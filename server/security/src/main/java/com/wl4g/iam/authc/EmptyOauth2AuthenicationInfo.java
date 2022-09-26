@@ -24,7 +24,7 @@ import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 /**
  * {@link EmptyOauth2AuthenicationInfo}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2019年07月9日 v1.0.0
  * @see
  */

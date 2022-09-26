@@ -44,7 +44,7 @@ import com.wl4g.iam.core.exception.OidcException;
 import com.wl4g.iam.handler.oidc.v1.DefaultV1OidcAuthingHandler;
 import com.wl4g.infra.common.resource.StreamResource;
 import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
-import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
+import com.wl4g.infra.context.utils.bean.BeanCopierUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,7 +55,7 @@ import lombok.experimental.SuperBuilder;
 /**
  * {@link V1OidcClientConfig}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-25 v3.0.0
  * @since v3.0.0
  */

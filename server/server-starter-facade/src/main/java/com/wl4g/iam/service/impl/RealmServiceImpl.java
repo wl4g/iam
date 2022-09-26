@@ -23,12 +23,12 @@ import org.springframework.util.Assert;
 import com.wl4g.iam.common.bean.RealmBean;
 import com.wl4g.iam.data.RealmBeanDao;
 import com.wl4g.iam.service.RealmService;
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 /**
  * {@link RealmServiceImpl}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-26 v3.0.0
  * @since v3.0.0
  */
@@ -56,7 +56,7 @@ public class RealmServiceImpl implements RealmService {
     @Override
     public void del(Long id) {
         Assert.notNull(id, "id is null");
-        RealmBean record = RealmBean.builder().id(id).delFlag(BaseBean.DEL_FLAG_DELETE).build();
+        RealmBean record = RealmBean.builder().id(id).delFlag(BaseBean.DEL_FLAG_DELETED).build();
         realmDao.updateByPrimaryKeySelective(record);
     }
 

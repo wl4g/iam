@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
 import lombok.Setter;

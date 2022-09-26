@@ -69,7 +69,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
-import com.wl4g.infra.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.context.task.ApplicationTaskRunner;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;

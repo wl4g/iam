@@ -35,8 +35,8 @@ import org.springframework.web.server.WebFilterChain;
 import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
-import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
+import com.wl4g.infra.context.utils.web.ReactiveRequestExtractor;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -54,7 +54,7 @@ import reactor.core.publisher.Mono;
  * 
  * The {@link org.springframework.web.server.WebFilter} interface is implemented
  * here instead of the GlobalFilter interface, because it needs to correspond to
- * {@link com.wl4g.infra.core.logging.trace.reactive.SimpleTraceMDCWebFilter}.
+ * {@link com.wl4g.infra.context.logging.trace.reactive.SimpleTraceMDCWebFilter}.
  * 
  * {@link org.springframework.web.server.WebFilter} is executed first, followed
  * by {@link org.springframework.cloud.gateway.filter.GlobalFilter},

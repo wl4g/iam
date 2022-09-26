@@ -48,14 +48,12 @@ public abstract class KeyStoreUtil {
         if (storeName == null) {
             return null;
         }
-
         File storeFile = new File(storeName);
 
-        try {
+        try (FileInputStream in = new FileInputStream(storeFile);) {
             if (storeFile.isFile()) {
-                return createKeyStore(new FileInputStream(storeFile), storeType, storeValue);
+                return createKeyStore(in, storeType, storeValue);
             }
-
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader() == null ? KeyStoreUtil.class.getClassLoader()
                     : Thread.currentThread().getContextClassLoader();
             URL resource = classLoader.getResource(storeName);

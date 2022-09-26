@@ -59,7 +59,6 @@
 		<module>core</module>
 		<module>example</module>
 		<module>gateway</module>
-		<module>rcm</module>
 		<module>server</module>
 	</modules>
 	<properties>

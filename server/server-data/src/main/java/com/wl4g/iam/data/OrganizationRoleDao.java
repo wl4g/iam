@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * {@link OrganizationRoleDao}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version v1.0 2020-0520
  * @sine v1.0
  * @see

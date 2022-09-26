@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.iam.core.annotation.UnsafeXss;
 
 import javax.servlet.http.HttpServletRequest;

@@ -41,7 +41,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
-import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
+import com.wl4g.infra.context.utils.bean.BeanCopierUtils;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.common.subject.IamPrincipalWrapper;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;

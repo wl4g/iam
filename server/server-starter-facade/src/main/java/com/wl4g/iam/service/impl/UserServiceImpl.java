@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.TypeConverts.parseLongOrNull;
-import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.infra.common.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.util.Objects.isNull;
 
 import java.util.HashSet;
@@ -29,8 +29,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.infra.common.id.SnowflakeIdGenerator;
-import com.wl4g.infra.core.bean.BaseBean;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.common.bean.BaseBean;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.iam.common.bean.Menu;
 import com.wl4g.iam.common.bean.Organization;
 import com.wl4g.iam.common.bean.Role;
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     public void del(Long userId) {
         User user = new User();
         user.setId(userId);
-        user.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        user.setDelFlag(BaseBean.DEL_FLAG_DELETED);
         userDao.updateByPrimaryKeySelective(user);
     }
 

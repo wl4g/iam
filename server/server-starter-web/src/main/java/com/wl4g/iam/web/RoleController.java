@@ -16,7 +16,7 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.iam.common.bean.Role;
 import com.wl4g.iam.service.RoleService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

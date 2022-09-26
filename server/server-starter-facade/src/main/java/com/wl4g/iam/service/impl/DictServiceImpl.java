@@ -16,7 +16,7 @@
 package com.wl4g.iam.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.data.DictDao;
@@ -36,13 +36,13 @@ import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.infra.common.bean.BaseBean.DEL_FLAG_DELETED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * {@link DictService}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @date 2019-08-13
  * @sine v1.0
@@ -89,7 +89,7 @@ public class DictServiceImpl implements DictService {
         Dict dict = new Dict();
         dict.setKey(key);
         dict.preUpdate();
-        dict.setDelFlag(DEL_FLAG_DELETE);
+        dict.setDelFlag(DEL_FLAG_DELETED);
         dictDao.updateByPrimaryKeySelective(dict);
         jedisService.del(config.getDictCacheName());
     }

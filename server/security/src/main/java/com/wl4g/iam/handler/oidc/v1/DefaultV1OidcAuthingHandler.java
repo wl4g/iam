@@ -72,7 +72,7 @@ import com.wl4g.infra.support.cache.jedis.JedisService;
 /**
  * {@link DefaultV1OidcAuthingHandler}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-18 v1.0.0
  * @since v1.0.0
  */

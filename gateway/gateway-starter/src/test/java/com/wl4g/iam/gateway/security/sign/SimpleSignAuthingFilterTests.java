@@ -39,7 +39,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
 import com.wl4g.iam.gateway.security.config.IamSecurityProperties;
-import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory;
 import com.wl4g.iam.gateway.security.sign.SimpleSignAuthingFilterFactory.SignHashingMode;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 
@@ -123,8 +122,12 @@ public class SimpleSignAuthingFilterTests {
         String uri = format("%s?appId=%s&appSecret=%s&nonce=%s&timestamp=%s&signature=%s", TEST_ROUTE_PATH, TEST_APPID,
                 TEST_APPSECRET, nonce, timestamp, sign);
 
-        webClient.get().uri(uri).accept(MediaType.APPLICATION_JSON).exchange().expectBody(String.class).consumeWith(
-                result -> out.println("Result: " + result.getRawStatusCode() + " - " + result.getResponseBody()));
+        webClient.get()
+                .uri(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectBody(String.class)
+                .consumeWith(result -> out.println("Result: " + result.getRawStatusCode() + " - " + result.getResponseBody()));
 
         Thread.sleep(1000);
     }

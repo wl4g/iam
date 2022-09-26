@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.constant;
 
-import com.wl4g.infra.core.constant.BaseConstants;
+import com.wl4g.infra.common.lang.EnvironmentUtil;
 
 /**
  * Based IAM configuration constants.
@@ -25,7 +25,7 @@ import com.wl4g.infra.core.constant.BaseConstants;
  * @sine v1.0
  * @see
  */
-public abstract class IAMConstants extends BaseConstants {
+public abstract class IAMConstants extends EnvironmentUtil {
 
     public static final String CONF_PREFIX_IAM = "spring.iam";
     public static final String CONF_PREFIX_IAM_SECURITY_SNS = CONF_PREFIX_IAM + ".sns";

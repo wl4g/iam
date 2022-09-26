@@ -26,7 +26,7 @@ import com.wl4g.infra.common.bean.BeanUtils2;
 /**
  * {@link BeanCopyTests}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-27 v3.0.0
  * @since v3.0.0
  */

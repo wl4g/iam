@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.service;
 
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.iam.common.bean.Dict;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +31,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * {@link DictService}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @date 2019-08-13
  * @sine v1.0

@@ -29,7 +29,7 @@ import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 /**
  * Iam web jssdk auto configuration.
  * 
- * @author James Wong &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version v1.0.0 2019-10-20
  * @since
  */

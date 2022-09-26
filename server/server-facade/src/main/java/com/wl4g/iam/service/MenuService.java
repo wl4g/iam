@@ -32,7 +32,7 @@ import com.wl4g.iam.common.bean.Menu;
 /**
  * {@link MenuService}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @date 2019-10-30
  * @sine v1.0

@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.common.bean;
 
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 public class Dict extends BaseBean {
     private static final long serialVersionUID = -7546448616357790576L;

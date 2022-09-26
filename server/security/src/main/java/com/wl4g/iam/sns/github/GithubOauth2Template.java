@@ -34,7 +34,7 @@ import lombok.ToString;
 /**
  * {@link GithubOauth2Template}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2021-03-23 v1.0.0
  * @since v1.0.0
  */

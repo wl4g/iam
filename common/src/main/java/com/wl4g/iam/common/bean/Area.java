@@ -16,7 +16,7 @@
 package com.wl4g.iam.common.bean;
 
 import java.util.List;
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 public class Area extends BaseBean {
     private static final long serialVersionUID = 6055405466492698537L;

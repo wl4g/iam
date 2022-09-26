@@ -17,7 +17,7 @@ package com.wl4g.iam.service.impl;
 
 import com.wl4g.infra.common.id.SnowflakeIdGenerator;
 import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.infra.support.notification.GenericNotifyMessage;
 import com.wl4g.infra.support.notification.MessageNotifier;
 import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
@@ -36,13 +36,13 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
+import static com.wl4g.infra.common.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.infra.common.bean.BaseBean.ENABLED;
 
 /**
  * Notification to contacts service implements.
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @version v1.0 2019-08-05
  * @sine v1.0

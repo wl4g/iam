@@ -23,7 +23,7 @@ import lombok.Getter;
 /**
  * {@link CallbackResult}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2020年2月7日 v1.0.0
  * @see
  */

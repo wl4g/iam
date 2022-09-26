@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wl4g.infra.common.lang.Exceptions;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.common.web.rest.RespBase.RetCode;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.iam.core.annotation.FastCasController;
 import com.wl4g.iam.common.model.LogoutModel;
 

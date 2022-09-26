@@ -18,7 +18,7 @@ package com.wl4g.iam.core.subject;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
 
-import com.wl4g.infra.core.utils.bean.BeanCopierUtils;
+import com.wl4g.infra.context.utils.bean.BeanCopierUtils;
 import com.wl4g.iam.common.subject.SimpleIamPrincipal;
 
 /**

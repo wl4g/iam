@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.cache.IamCache;
