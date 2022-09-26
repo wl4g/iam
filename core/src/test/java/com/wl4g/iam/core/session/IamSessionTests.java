@@ -19,28 +19,27 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import com.wl4g.infra.common.serialize.ProtostuffUtils;
 import com.wl4g.iam.common.bean.SocialAuthorizeInfo;
-import com.wl4g.iam.core.session.IamSession;
 
 public class IamSessionTests {
 
-	public static void main(String[] args) {
-		IamSession session = new IamSession();
-		session.setHost("127.0.0.1");
-		SocialAuthorizeInfo info = new SocialAuthorizeInfo("provideraaaa", "openIdbbbb");
-		info.getUserProfile().put("a1", 11);
-		info.getUserProfile().put("b2", "2222");
-		session.setAttribute("userProfile", info);
+    public static void main(String[] args) {
+        IamSession session = new IamSession();
+        session.setHost("127.0.0.1");
+        SocialAuthorizeInfo info = new SocialAuthorizeInfo("provideraaaa", "openIdbbbb");
+        info.getUserProfile().put("a1", 11);
+        info.getUserProfile().put("b2", "2222");
+        session.setAttribute("userProfile", info);
 
-		byte[] res = ProtostuffUtils.serialize(session);
-		IamSession s2 = ProtostuffUtils.deserialize(res, IamSession.class);
-		System.out.println(s2.getAttribute("userProfile"));
+        byte[] res = ProtostuffUtils.serialize(session);
+        IamSession s2 = ProtostuffUtils.deserialize(res, IamSession.class);
+        System.out.println(s2.getAttribute("userProfile"));
 
-		System.out.println("-----------------");
+        System.out.println("-----------------");
 
-		byte[] data = SerializationUtils.serialize(new IamSession("111"));
-		IamSession s = SerializationUtils.deserialize(data);
-		System.out.println(s);
+        byte[] data = SerializationUtils.serialize(new IamSession("111"));
+        IamSession s = SerializationUtils.deserialize(data);
+        System.out.println(s);
 
-	}
+    }
 
 }
