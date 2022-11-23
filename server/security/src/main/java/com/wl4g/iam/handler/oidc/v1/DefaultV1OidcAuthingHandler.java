@@ -67,7 +67,7 @@ import com.wl4g.iam.handler.AbstractAuthenticatingHandler;
 import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig;
 import com.wl4g.iam.web.oidc.v1.V1OidcClientConfig.JWKConfig;
 import com.wl4g.infra.common.codec.CodecSource;
-import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.common.jedis.JedisService;
 
 /**
  * {@link DefaultV1OidcAuthingHandler}

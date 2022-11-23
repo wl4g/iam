@@ -68,7 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.common.jedis.cursor.ScanCursor;
 import com.wl4g.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.common.constant.FastCasIAMConstants;

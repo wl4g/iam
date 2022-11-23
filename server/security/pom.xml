@@ -233,6 +233,7 @@
 										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
 										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
 										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+										<jsSourceInclude>sysloader-2.2.0.js</jsSourceInclude>
 									</jsSourceIncludes>
 								</configuration>
 							</execution>
@@ -272,6 +273,7 @@
 										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
 										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
 										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+										<jsSourceInclude>sysloader-2.2.0.js</jsSourceInclude>
 									</jsSourceIncludes>
 								</configuration>
 							</execution>
