@@ -212,10 +212,11 @@
 		// Default settings.
 		var defaultSettings = {
 			deploy: {
-	    		//baseUri: "http://localhost:18080/iam-web", // Using auto extra configure
-				defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-	   			defaultServerPort: 18080, // IAM server的port
-	   			defaultContextPath: "/iam-web" // IAM server的contextPath
+	    		// baseUri: "http://localhost:18080/iam-web", // Using auto extra configure
+				// defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+	   			// defaultServerPort: null,
+                // enableFallbackServerPort: false,
+	   			// defaultContextPath: "/iam-web" // IAM Server 的 contextPath
 	 		},
 	 		// 初始相关配置(Event)
 	 		init: {
