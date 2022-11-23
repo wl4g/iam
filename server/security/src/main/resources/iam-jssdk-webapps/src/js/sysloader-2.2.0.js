@@ -1,7 +1,7 @@
 /**
  * SuperOps-Cloud WebSDK Bootstrap latest | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2050 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
- * Licensed under Apache2.0 (@see https://github.com/wl4g/super-cloudops/blob/master/LICENSE)
+ * Licensed under Apache2.0 (@see https://github.com/wl4g/iam/blob/master/LICENSE)
  */
 var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 (function(window, document, initDefaultModules) {
@@ -55,7 +55,9 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			// 当确定是本地开发环境时, 指定的地址(方便调试用)
 			devServerHost: null, // 默认: {opt.host.protocol}//{opt.host.name}:{opt.host.port}
 			// 目标接口服务端口
-			serverPort: 8080,
+			serverPort: null,
+			// 当 serverPort 为空时，是否降级从 location 获取.
+			enableFallbackServerPort: false,
 			// 目标接口服务的二级(子级)域名前缀(e.g: iam.wl4g.com/iam.console.wl4g.com)
 			serverHostForSubLevelDomain: "iam", // iam.console
 		};
@@ -63,10 +65,20 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		// Overlay config options
 		opt = Object.assign(defaultOpt, opt);
 
-		// Build apiServer base URI
-		var hostname = opt.host;
-		var port = opt.serverPort ? opt.serverPort : location.port;
 		var protocol = location.protocol;
+		var hostname = opt.host;
+		var servPort = opt.serverPort;
+		var servPortString = "";
+        if (servPort == null && opt.enableFallbackServerPort) {
+            servPort = location.port;
+        }
+        if (servPort != null 
+            && parseInt(servPort) > 0
+            && parseInt(servPort) != 80
+            && parseInt(servPort) != 443) {
+            servPortString = ":" + servPort;
+        }
+
 	 	// 1. 以下情况会认为是本地开发环境部署:
 	 	// a. 当访问的地址是IP;
 	 	// b. 当访问域名的后缀是.debug/.local/.dev等。
@@ -76,7 +88,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
         		return opt.devServerHost;
 			}
         	// 默认根据当前页面地址生成
-        	return protocol + "//" + hostname + ":" + port;
+        	return protocol + "//" + hostname + servPortString;
         }
         // 2. 使用域名访问时走服务器部署结构:(根据顶级域名自动生成二级域名, 以作为目标接口服务的baseURI)
         else {
@@ -84,7 +96,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
         	if(hostname.indexOf("com.cn") > 0) {
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
-        	return protocol + "//" + opt.serverHostForSubLevelDomain + "." + topDomainName;
+        	return protocol + "//" + opt.serverHostForSubLevelDomain + "." + topDomainName + servPortString;
         }
 	};
 
