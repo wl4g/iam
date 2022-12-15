@@ -29,7 +29,7 @@ iam-web:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWORD}
+              password: ${IAM_REDIS_PASSWORD}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
@@ -99,7 +99,7 @@ iam-facade:
         infra:
           support:
             jedis:
-              passwd: ${IAM_REDIS_PASSWORD}
+              password: ${IAM_REDIS_PASSWORD}
               connect-timeout: 10000
               max-attempts: 10
               # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
