@@ -106,12 +106,10 @@ import com.wl4g.iam.core.web.model.SessionInfo;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-import com.wl4g.iam.rcm.eventbus.IamEventBusService;
-import com.wl4g.iam.rcm.eventbus.common.FailureAuthenticationEvent;
-import com.wl4g.iam.rcm.eventbus.common.SuccessAuthenticationEvent;
+//import com.wl4g.iam.rcm.eventbus.IamEventBusService;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -143,7 +141,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
     protected @Autowired IamCacheManager cacheManager;
 
-    protected @Autowired IamEventBusService<?> eventBusService;
+//    protected @Autowired IamEventBusService<?> eventBusService;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {

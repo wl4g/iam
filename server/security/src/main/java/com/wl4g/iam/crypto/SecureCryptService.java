@@ -22,7 +22,7 @@ import java.security.spec.KeySpec;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.infra.common.codec.Base58;
 import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.common.framework.operator.Operator;
 
 /**
  * Secretkey asymmetric secure crypt service.

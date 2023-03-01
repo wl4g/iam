@@ -33,7 +33,7 @@ import com.wl4g.infra.common.jedis.JedisClient;
 import com.wl4g.infra.common.jedis.cursor.ScanCursor;
 import com.wl4g.infra.common.jedis.cursor.ScanCursor.ClusterScanParams;
 import com.wl4g.infra.common.jedis.cursor.ScanCursor.CursorSpec;
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.locks.JedisLockManager;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;

@@ -89,7 +89,7 @@ import com.wl4g.iam.core.web.error.IamSmartErrorHandler;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.core.web.error.AbstractErrorAutoConfiguration.ErrorHandlerProperties;
 import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.infra.support.cache.jedis.JedisClientFactoryBean;

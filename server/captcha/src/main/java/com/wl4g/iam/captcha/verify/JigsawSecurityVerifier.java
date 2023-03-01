@@ -17,7 +17,7 @@ package com.wl4g.iam.captcha.verify;
 
 import com.wl4g.infra.common.codec.CheckSums;
 import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.captcha.config.CaptchaProperties;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.jigsaw.ImageTailor.TailoredImage;

@@ -35,7 +35,7 @@ import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.infra.common.jedis.cursor.ScanCursor;
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.locks.JedisLockManager;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.client.validation.IamValidator;
 import com.wl4g.iam.common.constant.FastCasIAMConstants;

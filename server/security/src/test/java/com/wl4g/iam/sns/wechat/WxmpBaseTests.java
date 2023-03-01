@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.sns.wechat;
 
-import static com.wl4g.infra.common.serialize.JacksonUtils.getDefaultObjectMapper;
+import static com.wl4g.infra.common.serialize.JacksonUtils.newDefaultObjectMapper;
 import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -36,7 +36,7 @@ public class WxmpBaseTests {
 		WxmpAccessToken token = parseJSON(json, WxmpAccessToken.class);
 		System.out.println(token);
 
-		getDefaultObjectMapper().configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+		newDefaultObjectMapper().configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
 		token = parseJSON(json, WxmpAccessToken.class);
 		System.out.println(token);
 

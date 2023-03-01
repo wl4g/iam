@@ -16,7 +16,7 @@
 package com.wl4g.iam.web.verifiy;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.NoSuchOperatorException;
+import com.wl4g.infra.common.framework.operator.NoSuchOperatorException;
 import com.wl4g.iam.annotation.VerifyAuthController;
 import com.wl4g.iam.core.exception.AccessRejectedException;
 import com.wl4g.iam.verify.CompositeSecurityVerifierAdapter;

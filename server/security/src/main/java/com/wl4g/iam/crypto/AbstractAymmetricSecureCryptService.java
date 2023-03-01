@@ -37,7 +37,7 @@ import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.locks.JedisLockManager;
 import com.wl4g.iam.config.properties.CryptoProperties;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCache;

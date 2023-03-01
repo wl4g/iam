@@ -25,7 +25,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IntervalIamKeyResolver.IntervalKeyR
 import com.wl4g.iam.gateway.requestlimit.key.IpRangeIamKeyResolver.IpRangeKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.PathIamKeyResolver.PathKeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.key.PrincipalIamKeyResolver.PrincipalKeyResolverStrategy;
-import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.common.framework.operator.Operator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

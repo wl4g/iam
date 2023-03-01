@@ -15,8 +15,6 @@
  */
 package com.wl4g.iam.config;
 
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_BASE;
 import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM;
 import static java.util.stream.Collectors.toList;
@@ -27,6 +25,7 @@ import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,9 +33,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.core.kit.access.IPAccessControl;
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
 import com.wl4g.iam.authc.credential.SmsCredentialsHashedMatcher;
@@ -45,8 +41,8 @@ import com.wl4g.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.iam.authc.pam.ExceptionModularRealmAuthenticator;
 import com.wl4g.iam.config.properties.CryptoProperties;
 import com.wl4g.iam.config.properties.IamProperties;
-import com.wl4g.iam.configure.NoOpSecurityCoprocessor;
 import com.wl4g.iam.configure.DefaultSecureConfigureAdapter;
+import com.wl4g.iam.configure.NoOpSecurityCoprocessor;
 import com.wl4g.iam.configure.SecureConfigureAdapter;
 import com.wl4g.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.iam.core.authz.EnhancedModularRealmAuthorizer;
@@ -104,6 +100,9 @@ import com.wl4g.iam.verify.SmsSecurityVerifier;
 import com.wl4g.iam.verify.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.iam.verify.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.iam.web.fastcas.FastCasServerAuthingController;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.locks.JedisLockManager;
+import com.wl4g.infra.core.kit.access.IPAccessControl;
 
 /**
  * IAM server auto configuration.

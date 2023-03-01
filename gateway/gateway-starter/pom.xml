@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-gateway</artifactId>
-		<version>3.0.0</version>
+		<version>3.1.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -404,10 +404,10 @@
 				<directory>src/main/resources</directory>
 				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
 				<filtering>false</filtering>
-				<excludes>
-					<exclude>*.yml</exclude>
-					<exclude>*.yaml</exclude>
-				</excludes>
+                <!-- <excludes>-->
+                <!-- 	<exclude>*.yml</exclude>-->
+                <!-- 	<exclude>*.yaml</exclude>-->
+                <!-- </excludes>-->
 			</resource>
 		</resources>
 		<plugins>

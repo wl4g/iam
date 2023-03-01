@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.infra.common.lang.HostUtils;
+import com.wl4g.infra.common.net.HostUtils;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
