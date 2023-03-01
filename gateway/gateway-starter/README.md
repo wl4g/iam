@@ -143,7 +143,7 @@ curl -vsSkL -XPOST \
 
 ### 2.7 Simple Sign Authing
 
-- Preconditions1 (startup configuration, `src/test/resources/example-route-filter-splitting.yml`)
+- Preconditions1 (startup configuration, `src/test/resources/example/example-route-splitting.yml` or `src/test/resources/example/example-route-composite.yml`)
 
 ```yaml
 ...
