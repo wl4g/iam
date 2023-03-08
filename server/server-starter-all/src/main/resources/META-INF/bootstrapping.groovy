@@ -23,10 +23,10 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 
 import org.springframework.boot.Banner
 
-import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
+import com.wl4g.infra.context.boot.listener.IBootstrappingConfigurer
 
 /**
- * IAM web implementation of {@link IBootstrappingConfigurer}
+ * IAM standalone implementation of {@link IBootstrappingConfigurer}
  */
 class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 
@@ -39,9 +39,7 @@ class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 		return Banner.Mode.LOG;
 	}
 
-	@Override
-	def Properties defaultProperties(Properties prevDefaultProperties) {
-		def defaultProperties = new Properties()
+	def void defaultProperties(Properties prevDefaultProperties) {
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application,iam-standalone,iam-web,iam-facade,iam-data")
@@ -52,7 +50,7 @@ class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
 			configName.append(",iam-web-scf");
 			location.append(",classpath:/scf/")
-		} else if (isPresent("com.wl4g.infra.rpc.feign.core.annotation.FeignConsumer")) {
+		} else if (isPresent("com.wl4g.infra.integration.feign.core.annotation.FeignConsumer")) {
 			configName.append(",iam-web-sbf");
 			location.append(",classpath:/sbf/")
 		} else if (isPresent("com.alibaba.dubbo.rpc.Filter") && isPresent("com.alibaba.boot.dubbo.autoconfigure.DubboAutoConfiguration")) {
@@ -60,10 +58,8 @@ class IamWebBootstrappingConfigurer implements IBootstrappingConfigurer {
 			location.append(",classpath:/dubbo/")
 		}
 
-		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
-		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
-
-		return defaultProperties
+		prevDefaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
+		prevDefaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())
 	}
 
 }

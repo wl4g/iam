@@ -19,7 +19,7 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeSet;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-import static com.wl4g.infra.core.bean.BaseBean.DEFAULT_SUPER_USER;
+import static com.wl4g.infra.common.bean.BaseBean.DEFAULT_SUPER_USER;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
@@ -165,7 +165,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
             // User organization sets.
             Set<Organization> orgSet = organService.getUserOrganizations(user);
             List<OrganizationInfo> orgs = safeSet(orgSet).stream()
-                    .map(o -> new OrganizationInfo().withOrganizationCode(o.getOrganizationCode())
+                    .map(o -> new OrganizationInfo().withOrgCode(o.getOrgCode())
                             .withParent(o.getParentCode())
                             .withType(o.getType())
                             .withName(o.getNameEn())

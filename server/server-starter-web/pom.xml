@@ -1,341 +1,344 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>iam-server-starter-web</artifactId>
-	<packaging>jar</packaging>
-	<name>IAM Service Starter Web</name>
-	<url>http://iam.wl4g.com</url>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>iam-server</artifactId>
-		<version>3.0.0</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<properties>
-		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>iam-web</final.name>
-		<bootstrap-classname>com.wl4g.IamWeb</bootstrap-classname>
-	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-bom</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>iam-server-facade</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>iam-server-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>iam-server-captcha</artifactId>
-		</dependency>
-		<!-- </dependency> -->
-		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-netty-shaded</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-sleuth-brave</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- Spring sleuth tracing -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-sleuth-otel-autoconfigure</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-otlp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-otlp-trace</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-jaeger</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-jaeger-proto</artifactId>
-		</dependency>
-		<!-- Metrics -->
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<finalName>${final.name}</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<!-- When true and will check file encoding, causes the picture file copy to fail. -->
-				<filtering>false</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Tests.java</include>
-					</includes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<configLocation>/../checkstyle/google_checks.xml</configLocation>
-				</configuration>
-				<executions>
-					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
-					<!-- <execution> -->
-					<!-- <id>checkstyle</id> -->
-					<!-- <phase>validate</phase> -->
-					<!-- <goals> -->
-					<!-- <goal>check</goal> -->
-					<!-- </goals> -->
-					<!-- <configuration> -->
-					<!-- <failOnViolation>true</failOnViolation> -->
-					<!-- </configuration> -->
-					<!-- </execution> -->
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<id>build:tar</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<finalName>iam-web-${project.version}-bin</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assemble/package.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build:springjar</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<mainClass>${bootstrap-classname}</mainClass>
-							<finalName>${final.name}-${project.version}-bin</finalName>
-							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
-							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
-							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
-							<layout>ZIP</layout>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>repackage</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>build:tar:docker</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<finalName>${final.name}-${project.version}-bin</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assemble/package.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- Usages examples: -->
-					<!-- export DOCKER_HOST=tcp://localhost:2375 -->
-					<!-- [build]: mvn -Pbuild:tar:docker -->
-					<!-- [push]: mvn -Pbuild:tar:docker -->
-					<!-- [push]: mvn -Pbuild:tar:docker dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=xxx -->
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.4.13</version>
-						<executions>
-							<execution>
-								<id>default</id>
-								<goals>
-									<goal>build</goal>
-									<!-- <goal>push</goal> -->
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<!-- see:https://github.com/spotify/dockerfile-maven/issues/154 -->
-							<contextDirectory>${project.basedir}</contextDirectory>
-							<dockerfile>${project.basedir}/build/docker/Dockerfile</dockerfile>
-							<repository>wl4g/${project.build.finalName}</repository>
-							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-							<tag>${project.version}</tag>
-							<readTimeoutMillis>60000</readTimeoutMillis>
-							<connectTimeoutMillis>20000</connectTimeoutMillis>
-							<buildArgs>
-								<!-- for generate image captcha. -->
-								<ADD_LIBRARY>ttf-dejavu fontconfig</ADD_LIBRARY>
-								<APP_NAME>${project.build.finalName}</APP_NAME>
-								<APP_VERSION>${project.version}</APP_VERSION>
-								<APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
-							</buildArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<!-- Source -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- Javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
-									<!-- <additionalparam>-Xdoclint:none</additionalparam> --> <!-- 2.0.0 -->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- GPG -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>sonatype-nexus-staging</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-							<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<distributionManagement>
-				<snapshotRepository>
-					<id>sonatype-nexus-snapshots</id>
-					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-				</snapshotRepository>
-				<repository>
-					<id>sonatype-nexus-staging</id>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>iam-server-starter-web</artifactId>
+    <packaging>jar</packaging>
+    <name>IAM Service Starter Web</name>
+    <url>http://iam.wl4g.com</url>
+    <parent>
+        <groupId>com.wl4g</groupId>
+        <artifactId>iam-server</artifactId>
+        <version>3.1.0</version>
+    </parent>
+    <properties>
+        <java.version>1.8</java.version>
+        <maven-source-plugin.version>2.4</maven-source-plugin.version>
+        <final.name>iam-web</final.name>
+        <bootstrap-classname>com.wl4g.IamWeb</bootstrap-classname>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-bom</artifactId>
+                <version>${project.parent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>iam-server-facade</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>iam-server-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>iam-server-captcha</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>infra-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-sleuth-brave</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Spring sleuth tracing -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-otel-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp-trace</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-jaeger</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-jaeger-proto</artifactId>
+        </dependency>
+        <!-- Metrics -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${final.name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- When true and will check file encoding, causes the picture file copy to fail. -->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>/../tools/checkstyle/google_checks.xml</configLocation>
+                </configuration>
+                <executions>
+                    <!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+                    <!-- <execution> -->
+                    <!-- <id>checkstyle</id> -->
+                    <!-- <phase>validate</phase> -->
+                    <!-- <goals> -->
+                    <!-- <goal>check</goal> -->
+                    <!-- </goals> -->
+                    <!-- <configuration> -->
+                    <!-- <failOnViolation>true</failOnViolation> -->
+                    <!-- </configuration> -->
+                    <!-- </execution> -->
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>build:tar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <finalName>iam-web-${project.version}-bin</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assemble/package.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build:springjar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>${bootstrap-classname}</mainClass>
+                            <finalName>${final.name}-${project.version}-bin</finalName>
+                            <!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
+                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+                            <layout>ZIP</layout>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build:tar:docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <finalName>${final.name}-${project.version}-bin</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assemble/package.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Usages examples: -->
+                    <!-- export DOCKER_HOST=tcp://localhost:2375 -->
+                    <!-- [build]: mvn -Pbuild:tar:docker -->
+                    <!-- [push]: mvn -Pbuild:tar:docker -->
+                    <!-- [push]: mvn -Pbuild:tar:docker dockerfile:build dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=xxx -->
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>dockerfile-maven-plugin</artifactId>
+                        <version>1.4.13</version>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <goals>
+                                    <goal>build</goal>
+                                    <!-- <goal>push</goal> -->
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- see:https://github.com/spotify/dockerfile-maven/issues/154 -->
+                            <contextDirectory>${project.basedir}</contextDirectory>
+                            <dockerfile>${project.basedir}/build/docker/Dockerfile</dockerfile>
+                            <repository>wl4g/${project.build.finalName}</repository>
+                            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                            <tag>${project.version}</tag>
+                            <readTimeoutMillis>60000</readTimeoutMillis>
+                            <connectTimeoutMillis>20000</connectTimeoutMillis>
+                            <buildArgs>
+                                <!-- for generate image captcha. -->
+                                <ADD_LIBRARY>ttf-dejavu fontconfig</ADD_LIBRARY>
+                                <APP_NAME>${project.build.finalName}</APP_NAME>
+                                <APP_VERSION>${project.version}</APP_VERSION>
+                                <APP_MAINCLASS>${bootstrap-classname}</APP_MAINCLASS>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
+                                    <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
+                                    <!-- 2.0.0 -->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

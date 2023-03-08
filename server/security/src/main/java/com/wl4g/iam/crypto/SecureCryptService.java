@@ -22,7 +22,7 @@ import java.security.spec.KeySpec;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
 import com.wl4g.infra.common.codec.Base58;
 import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.common.framework.operator.Operator;
 
 /**
  * Secretkey asymmetric secure crypt service.
@@ -108,7 +108,7 @@ public interface SecureCryptService extends Operator<CryptKind> {
     /**
      * Iam asymmetric secure crypt algorithm kind definitions.
      * 
-     * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+     * @author James Wong &lt;jameswong1376@gmail.com&gt;
      * @version 2020年3月29日 v1.0.0
      * @see
      */

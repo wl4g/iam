@@ -16,10 +16,10 @@
 package com.wl4g.iam.notification;
 
 import com.wl4g.StandaloneIam;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.support.notification.GenericNotifyMessage;
-import com.wl4g.infra.support.notification.MessageNotifier;
-import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.notification.GenericNotifierParam;
+import com.wl4g.infra.common.notification.MessageNotifier;
+import com.wl4g.infra.common.notification.MessageNotifier.NotifierKind;
 
 import static com.wl4g.infra.support.constant.SupportInfraConstant.CONF_PREFIX_INFRA_SUPPORT;
 
@@ -57,10 +57,10 @@ public class CompositeMessageNotifierTests {
     // @Test
     public void aliyunVmsCaptchaTest1() {
         System.out.println("Send starting...");
-        GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts1");
+        GenericNotifierParam msg = new GenericNotifierParam("18007448807", "tts1");
         // Add placeholder parameters for a specific template
         msg.addParameter("code", "12345");
-        notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
+        notifierAdapter.forOperator(NotifierKind.ALIYUN_VMS).send(msg);
         System.out.println("Send end.");
     }
 
@@ -74,14 +74,14 @@ public class CompositeMessageNotifierTests {
     @Test
     public void aliyunVmsNotificationTest2() {
         System.out.println("Send starting...");
-        GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts2");
+        GenericNotifierParam msg = new GenericNotifierParam("18007448807", "tts2");
         // Add placeholder parameters for a specific template
         msg.addParameter("product", "Devops Cloud");
         msg.addParameter("source", "测试设备1");
         msg.addParameter("state", "异常中");
         msg.addParameter("level", "严重");
         msg.addParameter("msg", "此条为测试消息");
-        notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
+        notifierAdapter.forOperator(NotifierKind.ALIYUN_VMS).send(msg);
         System.out.println("Send end.");
     }
 

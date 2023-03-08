@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>iam-parent</artifactId>
-	<version>3.0.0</version>
+	<version>3.1.0</version>
 	<packaging>pom</packaging>
 	<name>IAM Parent (Identity Authentication Management)</name>
 	<url>https://iam.wl4g.com</url>
@@ -31,9 +31,9 @@
 	</issueManagement>
 	<developers>
 		<developer>
-			<id>Wangl01</id>
-			<name>Wanglsir</name>
-			<email>wanglsir@gmail.com,983708408@qq.com</email>
+			<id>James Wong</id>
+			<name>James Wong</name>
+			<email>jameswong1376@gmail.com</email>
 			<roles>
 				<role>owner</role>
 				<role>maintainer</role>
@@ -59,15 +59,13 @@
 		<module>core</module>
 		<module>example</module>
 		<module>gateway</module>
-		<module>rcm</module>
 		<module>server</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-boot.version>2.6.7</spring-boot.version>
-		<!-- Infra -->
-		<infra.version>3.0.0</infra.version>
+		<spring-boot.version>2.7.3</spring-boot.version>
+		<infra.version>3.1.10</infra.version>
 		<shell.version>3.5.0</shell.version>
 		<!-- Maven plugins -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>

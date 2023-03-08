@@ -29,7 +29,7 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.core.utils.web.WebUtils3.*;
+import static com.wl4g.infra.context.utils.web.WebUtils3.*;
 import static com.wl4g.iam.common.subject.IamPrincipal.OrganizationInfo;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -86,7 +86,7 @@ public abstract class IamOrganizationUtils {
         orgCode = new String(Base58.decodeBase58(orgCode), UTF_8);
         if (isBlank(orgCode) || equalsAnyIgnoreCase(orgCode, "ALL", "*")) {
             List<OrganizationInfo> organs = getSessionOrganizations();
-            return organs.stream().map(a -> a.getOrganizationCode()).collect(toList());
+            return organs.stream().map(a -> a.getOrgCode()).collect(toList());
         } else {
             return getPermittedChildOrganCodes(orgCode);
         }
@@ -107,7 +107,7 @@ public abstract class IamOrganizationUtils {
                 List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
 
                 notEmptyOf(parentOrgans, "organizationCode");
-                return parentOrgans.get(0).getOrganizationCode();
+                return parentOrgans.get(0).getOrgCode();
             } else {
                 return orgCode;
             }
@@ -130,7 +130,7 @@ public abstract class IamOrganizationUtils {
         } else {
             orgs = getPermittedChildOrganizations(orgCode);
         }
-        return safeList(orgs).stream().map(o -> o.getOrganizationCode()).collect(toList());
+        return safeList(orgs).stream().map(o -> o.getOrgCode()).collect(toList());
     }
 
     /**
@@ -161,7 +161,7 @@ public abstract class IamOrganizationUtils {
      */
     private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String orgCode) {
         Optional<OrganizationInfo> opt = safeList(organs).stream()
-                .filter(o -> StringUtils.equals(o.getOrganizationCode(), orgCode))
+                .filter(o -> StringUtils.equals(o.getOrgCode(), orgCode))
                 .filter(o -> !isNull(o))
                 .findFirst();
         return opt.orElse(null);
@@ -176,7 +176,7 @@ public abstract class IamOrganizationUtils {
      */
     private static void addChildrenOrganizations(List<OrganizationInfo> orgs, String orgCode, List<OrganizationInfo> childrens) {
         for (OrganizationInfo org : orgs) {
-            String _orgCode = org.getOrganizationCode();
+            String _orgCode = org.getOrgCode();
             String parent = org.getParent();
             if (StringUtils.equals(parent, orgCode)) {
                 childrens.add(org);
@@ -193,7 +193,7 @@ public abstract class IamOrganizationUtils {
      */
     private static void addChildrenOrganizationTree(List<OrganizationInfo> orgs, OrganizationInfoTree tree) {
         for (OrganizationInfo org : orgs) {
-            if (StringUtils.equals(tree.getOrganizationCode(), org.getParent())) {
+            if (StringUtils.equals(tree.getOrgCode(), org.getParent())) {
                 OrganizationInfoTree child = new OrganizationInfoTree(org);
                 tree.getChildren().add(child);
                 addChildrenOrganizationTree(orgs, child);
@@ -212,7 +212,7 @@ public abstract class IamOrganizationUtils {
         for (OrganizationInfo o : organs) {
             // Find parent organization
             Optional<OrganizationInfo> opt = organs.stream()
-                    .filter(p -> StringUtils.equals(p.getOrganizationCode(), o.getParent()))
+                    .filter(p -> StringUtils.equals(p.getOrgCode(), o.getParent()))
                     .findAny();
             if (!opt.isPresent()) {
                 parentOrgans.add(o);
@@ -234,7 +234,7 @@ public abstract class IamOrganizationUtils {
         private List<OrganizationInfoTree> children = new ArrayList<>();
 
         public OrganizationInfoTree(OrganizationInfo organ) {
-            super(organ.getOrganizationCode(), organ.getParent(), organ.getType(), organ.getName(), organ.getAreaId());
+            super(organ.getOrgCode(), organ.getParent(), organ.getType(), organ.getName(), organ.getAreaId());
         }
 
         public List<OrganizationInfoTree> getChildren() {

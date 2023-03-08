@@ -21,7 +21,7 @@ import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
-import static com.wl4g.infra.core.utils.AopUtils2.*;
+import static com.wl4g.infra.context.utils.AopUtils2.*;
 import static com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockFilter;
 import static com.wl4g.iam.client.mock.configure.MockConfigurationFactory.MockFilter.MockFilterType;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;

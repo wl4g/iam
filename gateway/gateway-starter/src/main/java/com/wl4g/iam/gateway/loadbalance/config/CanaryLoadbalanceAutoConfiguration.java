@@ -44,8 +44,8 @@ import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy;
 import com.wl4g.iam.gateway.loadbalance.stats.ReachableStrategy.DefaultLatestReachableStrategy;
 import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;

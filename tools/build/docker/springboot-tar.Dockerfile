@@ -199,9 +199,12 @@
 ##        --name=${appName} ${appName}:latest
 ##
 
+## see:https://docs.docker.com/develop/develop-images/multistage-build/
 ## see:https://blogs.wl4g.com/archives/2969
 FROM openjdk:8u212-jre-alpine3.9 AS wl4g_springboot_base
 LABEL maintainer="James Wong<jameswong1376@gmail.com>"
+
+#WORKDIR /tmp/build/base/
 
 ARG ADD_LIBRARY # Optional
 ## Spaces are automatically recognized as '+' characters, so they need to be restore to spaces before use.
@@ -216,6 +219,10 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.9/main" > /etc/apk/repositories \
 
 FROM wl4g_springboot_base
 LABEL maintainer="James Wong<jameswong1376@gmail.com>"
+
+## see:https://docs.docker.com/develop/develop-images/multistage-build/
+#WORKDIR /tmp/build/app/
+#COPY --from=wl4g_springboot_base /tmp/build/base/myexe /bin/myexe
 
 ##
 ## Define the immutable properties.

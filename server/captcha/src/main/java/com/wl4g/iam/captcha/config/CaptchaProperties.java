@@ -24,7 +24,7 @@ import lombok.ToString;
 /**
  * {@link CaptchaProperties}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2019-03-23 v1.0.0
  * @since v1.0.0
  */

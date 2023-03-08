@@ -29,11 +29,11 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.infra.support.cache.jedis.JedisClient;
-import com.wl4g.infra.support.cache.jedis.ScanCursor;
-import com.wl4g.infra.support.cache.jedis.ScanCursor.ClusterScanParams;
-import com.wl4g.infra.support.cache.jedis.ScanCursor.CursorSpec;
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.jedis.JedisClient;
+import com.wl4g.infra.common.jedis.cursor.ScanCursor;
+import com.wl4g.infra.common.jedis.cursor.ScanCursor.ClusterScanParams;
+import com.wl4g.infra.common.jedis.cursor.ScanCursor.CursorSpec;
+import com.wl4g.infra.common.locks.JedisLockManager;
 import com.wl4g.iam.core.cache.CacheKey;
 import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.cache.JedisIamCacheManager;

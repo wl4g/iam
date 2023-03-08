@@ -54,7 +54,7 @@ import com.wl4g.iam.gateway.metrics.IamGatewayMetricsFacade.MetricsTag;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 
 import lombok.Getter;
 import lombok.Setter;

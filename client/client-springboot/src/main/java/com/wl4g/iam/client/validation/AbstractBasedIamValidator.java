@@ -35,7 +35,7 @@ import static java.lang.String.format;
 
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.utils.bean.BeanMapConvert;
+import com.wl4g.infra.context.utils.bean.BeanMapConvert;
 import com.wl4g.iam.client.config.IamClientProperties;
 import com.wl4g.iam.common.model.BaseValidateModel;
 

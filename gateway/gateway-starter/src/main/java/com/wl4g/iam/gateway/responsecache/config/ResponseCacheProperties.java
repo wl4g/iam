@@ -24,7 +24,7 @@ import java.util.List;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

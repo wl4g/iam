@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.web.model;
 
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.infra.support.cache.jedis.ScanCursor.CursorSpec.parse;
+import static com.wl4g.infra.common.jedis.cursor.ScanCursor.CursorSpec.parse;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.infra.common.codec.CodecSource;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.context.web.BaseController;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.iam.common.bean.User;

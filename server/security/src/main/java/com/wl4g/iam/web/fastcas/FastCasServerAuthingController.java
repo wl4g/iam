@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.utils.web.WebUtils3;
+import com.wl4g.infra.context.utils.web.WebUtils3;
 import com.wl4g.iam.common.subject.IamPrincipal;
 import com.wl4g.iam.core.annotation.FastCasController;
 import com.wl4g.iam.common.model.LogoutModel;

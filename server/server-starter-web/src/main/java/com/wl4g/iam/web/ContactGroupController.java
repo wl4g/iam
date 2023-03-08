@@ -16,8 +16,8 @@
 package com.wl4g.iam.web;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.context.web.BaseController;
+import com.wl4g.infra.common.bean.page.PageHolder;
 import com.wl4g.iam.common.bean.ContactGroup;
 import com.wl4g.iam.service.ContactGroupService;
 

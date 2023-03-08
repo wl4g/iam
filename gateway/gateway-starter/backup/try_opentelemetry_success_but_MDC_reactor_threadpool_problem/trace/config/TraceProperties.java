@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.iam.gateway.logging.config.LoggingProperties;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
 import lombok.Setter;

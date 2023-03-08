@@ -27,7 +27,7 @@ import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.wl4g.infra.core.constant.BaseConstants;
+import com.wl4g.infra.common.lang.EnvironmentUtil;
 
 /**
  * {@link IamGatewayUtil}
@@ -65,34 +65,34 @@ public abstract class IamGatewayUtil {
      * https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.1.1.RELEASE/single/spring-cloud-gateway.html#_global_filters_2
      * </p>
      */
-    public static abstract class SafeFilterOrdered extends BaseConstants {
+    public static abstract class SafeFilterOrdered extends EnvironmentUtil {
 
-        public static final int ORDER_IPFILTER = getIntegerProperty("ISCG_ORDER_IPFILTER", -100);
+        public static final int ORDER_IPFILTER = getIntProperty("ISCG_ORDER_IPFILTER", -100);
 
-        public static final int ORDER_REQUEST_SIZE = getIntegerProperty("ISCG_ORDER_REQUEST_SIZE", -90);
+        public static final int ORDER_REQUEST_SIZE = getIntProperty("ISCG_ORDER_REQUEST_SIZE", -90);
 
-        public static final int ORDER_FAULT = getIntegerProperty("ISCG_ORDER_FAULT", -80);
+        public static final int ORDER_FAULT = getIntProperty("ISCG_ORDER_FAULT", -80);
 
-        public static final int ORDER_SIMPLE_SIGN = getIntegerProperty("ISCG_ORDER_SIMPLE_SIGN", -70);
+        public static final int ORDER_SIMPLE_SIGN = getIntProperty("ISCG_ORDER_SIMPLE_SIGN", -70);
 
-        public static final int ORDER_TRACE = getIntegerProperty("ISCG_ORDER_TRACE", -60);
+        public static final int ORDER_TRACE = getIntProperty("ISCG_ORDER_TRACE", -60);
 
         /**
          * Depends: traceId, principal(optional, The dyeing print according to
          * principal log)
          */
-        public static final int ORDER_LOGGING = getIntegerProperty("ISCG_ORDER_LOGGING", -50);
+        public static final int ORDER_LOGGING = getIntProperty("ISCG_ORDER_LOGGING", -50);
 
         /**
          * Depends: principal(request limit by principal)
          */
-        public static final int ORDER_REQUEST_LIMITER = getIntegerProperty("ISCG_ORDER_REQUEST_LIMITER", -40);
+        public static final int ORDER_REQUEST_LIMITER = getIntProperty("ISCG_ORDER_REQUEST_LIMITER", -40);
 
-        public static final int ORDER_TRAFFIC_REPLICATION = getIntegerProperty("ISCG_ORDER_TRAFFIC_REPLICATION", -30);
+        public static final int ORDER_TRAFFIC_REPLICATION = getIntProperty("ISCG_ORDER_TRAFFIC_REPLICATION", -30);
 
-        public static final int ORDER_RESPONSE_CACHE = getIntegerProperty("ISCG_ORDER_RESPONSE_CACHE", -20);
+        public static final int ORDER_RESPONSE_CACHE = getIntProperty("ISCG_ORDER_RESPONSE_CACHE", -20);
 
-        public static final int ORDER_RETRY = getIntegerProperty("ISCG_ORDER_RETRY", -10);
+        public static final int ORDER_RETRY = getIntProperty("ISCG_ORDER_RETRY", -10);
 
         //
         // The order of the default built-in filters is here (When order is not
@@ -102,17 +102,16 @@ public abstract class IamGatewayUtil {
         // SetStatus ...
         //
 
-        public static final int ORDER_CIRCUITBREAKER = getIntegerProperty("ISCG_ORDER_CIRCUITBREAKER", 1000);
+        public static final int ORDER_CIRCUITBREAKER = getIntProperty("ISCG_ORDER_CIRCUITBREAKER", 1000);
 
         /**
          * see:{@link org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter#LOAD_BALANCER_CLIENT_FILTER_ORDER}
          * see:{@link org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter#ROUTE_TO_URL_FILTER_ORDER}
          */
-        public static final int ORDER_CANARY_LOADBALANCER = getIntegerProperty("ISCG_ORDER_CANARY_LOADBALANCER",
+        public static final int ORDER_CANARY_LOADBALANCER = getIntProperty("ISCG_ORDER_CANARY_LOADBALANCER",
                 RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER + 149);
 
-        public static final int ORDER_HTTPS_TO_HTTP = getIntegerProperty("ISCG_ORDER_HTTPS_TO_HTTP",
-                ORDER_CANARY_LOADBALANCER + 10);
+        public static final int ORDER_HTTPS_TO_HTTP = getIntProperty("ISCG_ORDER_HTTPS_TO_HTTP", ORDER_CANARY_LOADBALANCER + 10);
 
     }
 

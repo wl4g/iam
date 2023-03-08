@@ -893,7 +893,7 @@ public interface IamPrincipal extends Principal, Serializable {
             setAreaId(areaId);
         }
 
-        public String getOrganizationCode() {
+        public String getOrgCode() {
             return organizationCode;
         }
 
@@ -906,7 +906,7 @@ public interface IamPrincipal extends Principal, Serializable {
             this.organizationCode = organizationCode;
         }
 
-        public OrganizationInfo withOrganizationCode(String organizationCode) {
+        public OrganizationInfo withOrgCode(String organizationCode) {
             // hasTextOf(organizationCode, "organizationCode");
             this.organizationCode = organizationCode;
             return this;

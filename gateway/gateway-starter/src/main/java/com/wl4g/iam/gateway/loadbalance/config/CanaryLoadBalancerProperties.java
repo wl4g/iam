@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.iam.gateway.loadbalance.chooser.CanaryLoadBalancerChooser.LoadBalancerAlgorithm;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher.MatchHttpRequestRule;
 
 import lombok.Getter;
 import lombok.Setter;

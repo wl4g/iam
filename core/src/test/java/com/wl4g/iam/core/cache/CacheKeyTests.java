@@ -15,12 +15,10 @@
  */
 package com.wl4g.iam.core.cache;
 
-import com.wl4g.iam.core.cache.CacheKey;
-
 public class CacheKeyTests {
 
-	public static void main(String[] args) {
-		System.out.println(CacheKey.getRealTypeKeyToString(9));
-	}
+    public static void main(String[] args) {
+        System.out.println(CacheKey.getRealTypeKeyToString(9));
+    }
 
 }

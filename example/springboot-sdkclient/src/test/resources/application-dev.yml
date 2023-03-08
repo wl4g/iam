@@ -14,7 +14,7 @@ spring:
   infra:
       support:
         jedis:
-          passwd: ${IAM_REDIS_PASSWORD:zzx!@#$%}
+          password: ${IAM_REDIS_PASSWORD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.

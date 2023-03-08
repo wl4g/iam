@@ -23,12 +23,12 @@ import org.springframework.util.Assert;
 import com.wl4g.iam.common.bean.OidcClient;
 import com.wl4g.iam.data.OidcClientDao;
 import com.wl4g.iam.service.OidcClientService;
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 /**
  * {@link OidcClientServiceImpl}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-26 v3.0.0
  * @since v3.0.0
  */
@@ -61,7 +61,7 @@ public class OidcClientServiceImpl implements OidcClientService {
     @Override
     public void del(Long id) {
         Assert.notNull(id, "id is null");
-        OidcClient record = OidcClient.builder().id(id).delFlag(BaseBean.DEL_FLAG_DELETE).build();
+        OidcClient record = OidcClient.builder().id(id).delFlag(BaseBean.DEL_FLAG_DELETED).build();
         oidClientDao.updateByPrimaryKeySelective(record);
     }
 

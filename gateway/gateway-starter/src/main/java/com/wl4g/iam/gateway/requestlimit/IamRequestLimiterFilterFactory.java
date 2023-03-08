@@ -44,7 +44,7 @@ import com.wl4g.iam.gateway.requestlimit.key.IamKeyResolver.KeyResolverStrategy;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimiterPrivoder;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 
 import lombok.AllArgsConstructor;
 import lombok.CustomLog;

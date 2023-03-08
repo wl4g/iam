@@ -24,7 +24,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.iam.common.subject.IamPrincipal;
-import com.wl4g.iam.core.authc.IamAuthenticationInfo;
 
 /**
  * Abstract IAM authentication information.

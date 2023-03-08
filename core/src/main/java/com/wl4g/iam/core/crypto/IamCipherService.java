@@ -18,7 +18,7 @@ package com.wl4g.iam.core.crypto;
 import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.iam.core.crypto.IamCipherService.CipherCryptKind;
 
-import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.common.framework.operator.Operator;
 
 /**
  * Data and parameter symmetric crypt service </br>

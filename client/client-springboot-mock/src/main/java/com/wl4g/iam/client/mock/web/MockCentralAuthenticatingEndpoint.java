@@ -41,8 +41,8 @@ import com.wl4g.iam.core.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.iam.core.handler.AuthenticatingHandler;
 import com.wl4g.iam.core.web.AuthenticatingController;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.utils.web.WebUtils3;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.utils.web.WebUtils3;
+import com.wl4g.infra.context.web.BaseController;
 
 /**
  * Mock iam central authenticating endpoint

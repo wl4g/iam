@@ -18,7 +18,7 @@ package com.wl4g.iam.common.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 public class Contact extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;

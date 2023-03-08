@@ -18,7 +18,7 @@ package com.wl4g.iam.sns.handler;
 import static com.wl4g.infra.common.lang.Assert2.hasText;
 import static com.wl4g.iam.common.constant.IAMConstants.CONF_PREFIX_IAM_SECURITY_SNS;
 import static com.wl4g.infra.common.lang.Assert2.notEmpty;
-import static com.wl4g.infra.core.web.BaseController.REDIRECT_PREFIX;
+import static com.wl4g.infra.context.web.BaseController.REDIRECT_PREFIX;
 import static java.lang.String.format;
 
 import java.util.Map;

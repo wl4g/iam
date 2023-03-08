@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.iam.common.bean.Dict;
 import com.wl4g.iam.service.DictService;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.page.PageHolder;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.common.bean.page.PageHolder;
+import com.wl4g.infra.context.web.BaseController;
 
 /**
  * Dictionaries controller

@@ -16,7 +16,7 @@
 package com.wl4g.iam.core.cache;
 
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.support.cache.jedis.util.RedisSpecUtil.safeFormat;
+import static com.wl4g.infra.common.jedis.util.RedisSpecUtil.safeFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import com.wl4g.infra.support.cache.jedis.JedisClient;
+import com.wl4g.infra.common.jedis.JedisClient;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching

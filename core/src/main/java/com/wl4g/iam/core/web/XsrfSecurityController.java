@@ -15,7 +15,7 @@
  */
 package com.wl4g.iam.core.web;
 
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.core.annotation.XsrfController;
 import com.wl4g.iam.core.config.AbstractIamProperties;

@@ -147,3 +147,8 @@ spring:
           enabled: true ## Default by false
           samples: 32
           timeoutThresholdMs: 5_000
+
+management:
+  server:
+    address: 0.0.0.0
+    port: 10109

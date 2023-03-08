@@ -21,7 +21,7 @@ import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.infra.support.cache.jedis.util.RedisSpecUtil.isSuccess;
+import static com.wl4g.infra.common.jedis.util.RedisSpecUtil.isSuccess;
 import static com.wl4g.iam.core.cache.CacheKey.toKeyBytes;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
@@ -36,7 +36,7 @@ import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.support.cache.jedis.JedisClient;
+import com.wl4g.infra.common.jedis.JedisClient;
 import com.wl4g.iam.core.cache.CacheKey.Serializer;
 
 import redis.clients.jedis.params.SetParams;

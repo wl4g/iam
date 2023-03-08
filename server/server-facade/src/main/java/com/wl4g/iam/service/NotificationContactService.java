@@ -31,7 +31,7 @@ import com.wl4g.iam.service.fallback.ContactServiceFallbackFactory;
 /**
  * {@link NotificationContactService}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @author vjay
  * @version v1.0 2019-08-05
  * @sine v1.0

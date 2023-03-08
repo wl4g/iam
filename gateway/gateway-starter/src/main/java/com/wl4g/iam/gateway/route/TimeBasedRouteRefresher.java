@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 
 import com.wl4g.infra.common.task.RunnerProperties;
-import com.wl4g.infra.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.context.task.ApplicationTaskRunner;
 import com.wl4g.iam.gateway.route.config.RouteProperties;
 
 /**

@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com, 983708408@qq.com>
+# All rights reserved. Contact us James Wrong <jameswong1376@gmail.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -186,12 +186,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           #command: [ "/bin/sh", "-c", "env" ]
           ports:
-            - name: http-api
-              containerPort: {{ .Values.service.apiPort }}
-              protocol: TCP
-            - name: http-management
-              containerPort: {{ .Values.service.managementPort }}
-              protocol: TCP
+          ports:
+            {{- range $name, $expose := .Values.service.exposes }}
+            - name: {{ $expose.protocol7 | lower }}-{{ $name }}
+              containerPort: {{ $expose.port | default 8080 }}
+              protocol: {{ $expose.protocol4 | default "TCP" }}
+            {{- end }}
 
           ## see:https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
           #env:

@@ -32,7 +32,17 @@
             var twoDomain = that.settings.deploy.defaultTwoDomain;
             var contextPath = that.settings.deploy.defaultContextPath;
             contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
-    
+            var servPortString = "";
+            if (Common.Util.isEmpty(servPort)&& that.settings.deploy.enableFallbackServerPort) {
+                servPort = location.port;
+            }
+            if (!Common.Util.isEmpty(servPort)
+                && parseInt(servPort) > 0
+                && parseInt(servPort) != 80
+                && parseInt(servPort) != 443) {
+                servPortString = ":" + servPort;
+            }
+
             // 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
              // 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:18080/iam-web, 10.0.0.12:14046/ci-server)都部署于同一台机。
              // 1.1，当访问的地址是IP；
@@ -41,15 +51,16 @@
                 || hostname == 'localhost'
                 || hostname == '127.0.0.1'
                 || hostname.endsWith('.debug')
+                || hostname.endsWith('.test')
                 || hostname.endsWith('.local')
                 || hostname.endsWith('.dev')) {
-                return protocol + "//" + hostname + ":" + servPort + contextPath;
+                return protocol + "//" + hostname + servPortString + contextPath;
             }
             // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
             // (接口地址如：iam-web.wl4g.com/iam-web, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
             else {
                 var topDomainName = Common.Util.extTopDomainString(hostname);
-                return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
+                return protocol + "//" + twoDomain + "." + topDomainName + servPortString+ contextPath;
             }
         };
 
@@ -325,7 +336,8 @@
             deploy: {
                 baseUri: null, // IAM后端服务baseURI
                 defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-                defaultServerPort: 18080, // 默认IAM Server的port
+                defaultServerPort: null, // (18080)
+                enableFallbackServerPort: false, // 当 defaultServerPort 为空时，是否从 location.port 拼接
                 defaultContextPath: "/iam-web", // 默认IAM Server的context-path
             },
             // 初始相关配置(Event)

@@ -15,19 +15,19 @@
  */
 package com.wl4g.iam.authc.credential.secure;
 
-import static com.wl4g.infra.common.codec.CheckSums.crc32;
-import static com.wl4g.infra.common.lang.Assert2.hasText;
-import static com.wl4g.infra.common.lang.Assert2.notNullOf;
-import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.BEAN_SESSION_RESOURCE_MSG_BUNDLER;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.KEY_SECRET_INFO;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.checkSession;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.infra.common.codec.CheckSums.crc32;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
@@ -41,10 +41,6 @@ import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.infra.common.codec.CodecSource;
-import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 import com.wl4g.iam.configure.SecureConfig;
 import com.wl4g.iam.core.authc.IamAuthenticationInfo;
@@ -52,6 +48,10 @@ import com.wl4g.iam.core.cache.IamCacheManager;
 import com.wl4g.iam.core.session.IamSession.RelationAttrKey;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
+import com.wl4g.infra.common.codec.CodecSource;
+import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * Abstract credentials securer adapter
@@ -251,9 +251,11 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
         }
 
         // Mysterious decryption them.
-        final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decrypt(keyPairSpec.getKeySpec(),
-                token.getCredentials());
-        hasText(plainCredentials, AuthenticationException.class, "Invalid credentials");
+        final String plainCredentials = cryptAdapter.forOperator(token.getKind())
+                .decrypt(keyPairSpec.getKeySpec(), token.getCredentials());
+        if (isBlank(plainCredentials)) {
+            throw new AuthenticationException("Invalid credentials");
+        }
         return new CredentialsToken(token.getPrincipal(), plainCredentials, token.getKind(), true);
     }
 

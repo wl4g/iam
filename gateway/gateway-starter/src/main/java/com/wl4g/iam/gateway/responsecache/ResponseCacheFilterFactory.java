@@ -69,8 +69,8 @@ import com.wl4g.iam.gateway.responsecache.config.ResponseCacheProperties.CachedP
 import com.wl4g.iam.gateway.util.IamGatewayUtil;
 import com.wl4g.iam.gateway.util.IamGatewayUtil.SafeFilterOrdered;
 import com.wl4g.infra.common.bean.ConfigBeanUtils;
-import com.wl4g.infra.core.utils.web.ReactiveRequestExtractor;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
+import com.wl4g.infra.context.utils.web.ReactiveRequestExtractor;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

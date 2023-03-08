@@ -62,7 +62,7 @@ import com.wl4g.iam.gateway.logging.config.LoggingProperties;
 import com.wl4g.iam.gateway.trace.config.GrayTraceProperties;
 import com.wl4g.infra.common.lang.FastTimeClock;
 import com.wl4g.infra.core.web.matcher.ReactiveRequestExtractor;
-import com.wl4g.infra.core.web.matcher.SpelRequestMatcher;
+import com.wl4g.infra.context.web.matcher.SpelRequestMatcher;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

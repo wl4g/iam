@@ -54,7 +54,7 @@ import com.wl4g.iam.gateway.requestlimit.limiter.IamRequestLimiter.RequestLimite
 import com.wl4g.iam.gateway.requestlimit.limiter.quota.RedisQuotaIamRequestLimiter;
 import com.wl4g.iam.gateway.requestlimit.limiter.rate.RedisRateIamRequestLimiter;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;

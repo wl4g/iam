@@ -4,7 +4,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.wl4g.iam.gateway.loadbalance.CanaryLoadBalancerFilterFactory;
-import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.common.framework.operator.Operator;
 
 /**
  * {@link CanaryLoadBalancerChooser}

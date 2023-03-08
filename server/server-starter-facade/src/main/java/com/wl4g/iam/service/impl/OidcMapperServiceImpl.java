@@ -23,12 +23,12 @@ import org.springframework.util.Assert;
 import com.wl4g.iam.common.bean.OidcMapper;
 import com.wl4g.iam.data.OidcMapperDao;
 import com.wl4g.iam.service.OidcMapperService;
-import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.common.bean.BaseBean;
 
 /**
  * {@link OidcMapperServiceImpl}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2022-03-26 v3.0.0
  * @since v3.0.0
  */
@@ -63,7 +63,7 @@ public class OidcMapperServiceImpl implements OidcMapperService {
         Assert.notNull(id, "id is null");
         OidcMapper record = new OidcMapper();
         record.setId(id);
-        record.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        record.setDelFlag(BaseBean.DEL_FLAG_DELETED);
         oidcMapperDao.updateByPrimaryKeySelective(record);
     }
 

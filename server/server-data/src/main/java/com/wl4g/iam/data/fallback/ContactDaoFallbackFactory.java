@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 ~ 2025 the original author or authors.
- * <Wanglsir@gmail.com, 983708408@qq.com> Technology CO.LTD.
+ * <jameswong1376@gmail.com> Technology CO.LTD.
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ import feign.hystrix.FallbackFactory;
 /**
  * {@link ContactDaoFallbackFactory}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version v1.0 2021-01-07
  * @sine v1.0
  * @see

@@ -48,7 +48,7 @@ import com.wl4g.iam.gateway.loadbalance.chooser.chain.DefaultCanaryLoadBalancerR
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats;
 import com.wl4g.iam.gateway.loadbalance.stats.LoadBalancerStats.ServiceInstanceStatus;
 import com.wl4g.infra.common.log.SmartLogger;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;

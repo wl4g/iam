@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.common.locks.JedisLockManager;
 import com.wl4g.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.iam.captcha.verify.GifSecurityVerifier;
 import com.wl4g.iam.captcha.verify.JigsawSecurityVerifier;
@@ -31,7 +31,7 @@ import com.wl4g.iam.core.cache.IamCacheManager;
 /**
  * {@link CaptchaAutoConfiguration}
  * 
- * @author James Wong &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author James Wong &lt;jameswong1376@gmail.com&gt;
  * @version 2019-03-24 v1.0.0
  * @since v1.0.0
  */

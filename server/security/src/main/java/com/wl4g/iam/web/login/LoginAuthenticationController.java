@@ -76,7 +76,7 @@ import com.wl4g.iam.web.login.model.HandshakeModel;
 import com.wl4g.iam.web.login.model.IamPrincipalPermitsModel;
 import com.wl4g.iam.web.login.model.SmsCheckModel;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 
 /**
  * IAM login authentication controller

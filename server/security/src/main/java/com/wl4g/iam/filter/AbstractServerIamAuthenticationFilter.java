@@ -106,12 +106,10 @@ import com.wl4g.iam.core.web.model.SessionInfo;
 import com.wl4g.iam.core.web.servlet.IamCookie;
 import com.wl4g.iam.crypto.SecureCryptService;
 import com.wl4g.iam.crypto.SecureCryptService.CryptKind;
-import com.wl4g.iam.rcm.eventbus.IamEventBusService;
-import com.wl4g.iam.rcm.eventbus.common.FailureAuthenticationEvent;
-import com.wl4g.iam.rcm.eventbus.common.SuccessAuthenticationEvent;
+//import com.wl4g.iam.rcm.eventbus.IamEventBusService;
+import com.wl4g.infra.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.infra.common.web.WebUtils2;
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -143,7 +141,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
     protected @Autowired IamCacheManager cacheManager;
 
-    protected @Autowired IamEventBusService<?> eventBusService;
+//    protected @Autowired IamEventBusService<?> eventBusService;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -192,6 +190,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         /**
          * Bind authenticate token, e.g: for online session management and
          * analysis.
+         * 
          * @See:{@link com.wl4g.devops.iam.common.web.GenericApiEndpoint#convertIamSessionInfo(IamSession)}
          */
         bind(new RelationAttrKey(KEY_AUTHC_TOKEN), new IamAuthenticationTokenWrapper(token));
@@ -210,10 +209,6 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
             throws Exception {
         try {
             IamAuthenticationToken tk = (IamAuthenticationToken) token;
-
-            // Event publish.
-            // TODO getting actual coordinates.
-            eventBusService.publish(new SuccessAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", ""));
 
             /*
              * Save the token at the time of authentication, which can then be
@@ -303,10 +298,6 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         } else {
             log.error("{}, caused by: {}", tip, errmsg);
         }
-
-        // Event publish.
-        // TODO getting actual coordinates.
-//        eventBusService.publish(new FailureAuthenticationEvent(token.getPrincipal(), tk.getHost(), "-1,-1", errmsg, ae));
 
         if (!isBlank(errmsg)) {
             /**
@@ -462,6 +453,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
         fullParams.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
         /**
          * Echo iam-web session info. (Optional) </br>
+         * 
          * @see:{@link com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint#handshake()}
          */
         fullParams.put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));

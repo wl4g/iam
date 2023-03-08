@@ -8,8 +8,7 @@
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-server</artifactId>
-		<version>3.0.0</version>
-		<relativePath>../pom.xml</relativePath>
+		<version>3.1.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -36,10 +35,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>iam-server-facade</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>iam-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -107,7 +102,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<configLocation>/../checkstyle/google_checks.xml</configLocation>
+					<configLocation>/../tools/checkstyle/google_checks.xml</configLocation>
 				</configuration>
 				<executions>
 					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->

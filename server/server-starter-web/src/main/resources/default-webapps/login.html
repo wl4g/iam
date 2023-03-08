@@ -32,7 +32,9 @@
 				// If it is null, it will be automatically parsed from location by default.				
 				//baseUri: "http://localhost:18080/iam-web/",
 				//defaultTwoDomain: "iam",
-				//defaultContextPath: "/iam-web"
+				//defaultServerPort: 18080,
+				//enableFallbackServerPort: false,
+				//defaultContextPath: "/iam-web",
 				defaultContextPath: location.pathname.split("/")[1]
 			}
 		};

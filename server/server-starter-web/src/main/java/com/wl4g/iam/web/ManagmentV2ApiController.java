@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.infra.common.web.rest.RespBase;
-import com.wl4g.infra.core.utils.bean.BeanMapConvert;
-import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.context.utils.bean.BeanMapConvert;
+import com.wl4g.infra.context.web.BaseController;
 import com.wl4g.iam.common.bean.FastCasClientInfo;
 import com.wl4g.iam.core.web.model.SessionAttributeModel;
 import com.wl4g.iam.service.FastCasClientService;
