@@ -23,7 +23,7 @@ import static org.springframework.boot.context.config.ConfigFileApplicationListe
 
 import org.springframework.boot.Banner
 
-import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
+import com.wl4g.infra.context.boot.listener.IBootstrappingConfigurer
 
 /**
  * IAM data implementation of {@link IBootstrappingConfigurer}

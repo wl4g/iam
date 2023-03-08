@@ -1,6 +1,6 @@
 # ISCG (IAM Spring Cloud Gateway)
 
-## 1. Developer's Guide
+## 1. Developer Guide
 
 - Building
 

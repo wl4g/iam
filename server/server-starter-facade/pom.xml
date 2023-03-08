@@ -39,10 +39,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>iam-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>infra-support</artifactId>
 		</dependency>
 		<!-- Spring sleuth tracing -->
