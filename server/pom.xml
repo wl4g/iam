@@ -11,7 +11,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>iam-parent</artifactId>
 		<version>3.1.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<organization>
 		<name>wl4g</name>
