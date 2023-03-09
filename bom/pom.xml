@@ -1,306 +1,401 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>iam-bom</artifactId>
-	<packaging>pom</packaging>
-	<name>IAM BOM</name>
-	<url>http://iam.wl4g.com</url>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>iam-parent</artifactId>
-		<version>3.1.0</version>
-	</parent>
-	<properties>
-		<java.version>1.8</java.version>
-		<!-- Trace -->
-		<!-- <opentelemetry.version>1.14.0</opentelemetry.version> -->
-		<!-- <opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version> -->
-		<grpc.version>1.43.0</grpc.version>
-		<spring-sleuth-otel.version>1.1.0-M5</spring-sleuth-otel.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<!-- IAM examples modules -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-example</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-example-springboot-gateway</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-example-springboot-sdkclient</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- IAM share modules -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-common</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- IAM client modules -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-client</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-client-springboot</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-client-springboot-mock</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- IAM gateway modules -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-gateway</artifactId>
-				<version>${project.parent.version}</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-gateway-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-gateway-starter</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- IAM service modules -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-captcha</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-security</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-data</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-facade</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-starter-all</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-starter-data</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-starter-facade</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>iam-server-starter-web</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- Opentelemetry tracing -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-api</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-sdk</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-exporter-otlp</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-exporter-jaeger</artifactId> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-exporter-zipkin</artifactId> -->
-			<!-- <optional>true</optional> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-semconv</artifactId> -->
-			<!-- <version>${opentelemetry-semconv.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.grpc</groupId> -->
-			<!-- <artifactId>grpc-protobuf</artifactId> -->
-			<!-- <version>${grpc-protobuf.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.grpc</groupId> -->
-			<!-- <artifactId>grpc-okhttp</artifactId> -->
-			<!-- <version>${grpc.version}</version> -->
-			<!-- Spring sleuth tracing -->
-			<!-- </dependency> -->
-			<dependency>
-				<groupId>io.grpc</groupId>
-				<artifactId>grpc-netty-shaded</artifactId>
-				<version>${grpc.version}</version>
-			</dependency>
-			<!-- Spring sleuth tracing -->
-			<!-- <dependency> -->
-			<!-- <groupId>io.opentelemetry</groupId> -->
-			<!-- <artifactId>opentelemetry-bom</artifactId> -->
-			<!-- <version>${opentelemetry.version}</version> -->
-			<!-- <type>pom</type> -->
-			<!-- <scope>import</scope> -->
-			<!-- </dependency> -->
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
-				<!-- Note: 1.0.0-M2 not otel implements of https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
-				<version>${spring-sleuth-otel.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive><!-- Nutrition for package. implementation - version -->
-						<manifestEntries>
-							<Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
-							<Bundle-Description>${project.description}</Bundle-Description>
-							<Implementation-Version>${project.version}</Implementation-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<!-- Source -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- Javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
-									<!-- <additionalparam>-Xdoclint:none</additionalparam> --> <!-- 2.0.0 -->
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- GPG -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>sonatype-nexus-staging</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-							<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<distributionManagement>
-				<snapshotRepository>
-					<id>sonatype-nexus-snapshots</id>
-					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-				</snapshotRepository>
-				<repository>
-					<id>sonatype-nexus-staging</id>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>iam-bom</artifactId>
+    <packaging>pom</packaging>
+    <name>IAM BOM</name>
+    <url>http://iam.wl4g.com</url>
+    <parent>
+        <groupId>com.wl4g</groupId>
+        <artifactId>iam-parent</artifactId>
+        <version>3.1.0</version>
+    </parent>
+    <properties>
+        <java.version>1.8</java.version>
+        <!-- Trace -->
+        <opentelemetry.version>1.14.0</opentelemetry.version>
+        <opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version>
+        <grpc.version>1.43.0</grpc.version>
+        <spring-sleuth-otel.version>1.1.0</spring-sleuth-otel.version>
+        <maven-source-plugin.version>2.4</maven-source-plugin.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <!-- IAM examples modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-example</artifactId>
+                <version>${project.parent.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-example-springboot-gateway</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-example-springboot-sdkclient</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <!-- IAM share modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-common</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-core</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <!-- IAM client modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-client</artifactId>
+                <version>${project.parent.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-client-springboot</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-client-springboot-mock</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <!-- IAM gateway modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-gateway</artifactId>
+                <version>${project.parent.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-gateway-core</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-gateway-starter</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <!-- IAM service modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-captcha</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-security</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-data</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-facade</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-starter-all</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-starter-data</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-starter-facade</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>iam-server-starter-web</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <!-- Opentelemetry -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-api</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-otlp</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-jaeger</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-zipkin</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>${opentelemetry-semconv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc-protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-okhttp</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty-shaded</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <!-- Spring sleuth tracing -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+                <!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
+                <!-- Note: 1.0.0-M2 not otel implements of https://github.com/spring-projects-experimental/spring-cloud-sleuth-otel/search?q=FinishedSpanWriter -->
+                <version>${spring-sleuth-otel.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <!-- Infra modules -->
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-parent</artifactId>
+                <version>${infra.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-bom</artifactId>
+                <version>${infra.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-common</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-common-java11</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-context</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-core</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-data</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-support</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration</artifactId>
+                <version>${infra.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration-feign-common</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration-feign-core</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration-feign-istio</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration-feign-springcloud</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>infra-integration-feign-dubbo</artifactId>
+                <version>${infra.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>shell-bom</artifactId>
+                <version>${shell.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <!-- Nutrition for package. implementation - version -->
+                        <manifestEntries>
+                            <Bundle-Version>${parsedVersion.osgiVersion}</Bundle-Version>
+                            <Bundle-Description>${project.description}</Bundle-Description>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalOptions>-Xdoclint:none</additionalOptions> <!-- 3.0.0+ -->
+                                    <!-- <additionalparam>-Xdoclint:none</additionalparam> -->
+                                    <!-- 2.0.0 -->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
