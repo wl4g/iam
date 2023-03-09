@@ -30,10 +30,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>iam-server-security</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>infra-opencv</artifactId>
-		</dependency>
+    <!-- <dependency> -->
+    <!--		<groupId>com.wl4g</groupId> -->
+    <!--		<artifactId>infra-opencv</artifactId> -->
+    <!--	</dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
