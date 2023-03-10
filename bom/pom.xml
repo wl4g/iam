@@ -12,6 +12,7 @@
     </parent>
     <properties>
         <java.version>1.8</java.version>
+        <antlr.version>3.0.1</antlr.version>
         <!-- Trace -->
         <opentelemetry.version>1.14.0</opentelemetry.version>
         <opentelemetry-semconv.version>1.14.0-alpha</opentelemetry-semconv.version>
@@ -128,6 +129,17 @@
                 <groupId>com.wl4g</groupId>
                 <artifactId>iam-server-starter-web</artifactId>
                 <version>${project.parent.version}</version>
+            </dependency>
+            <!-- Runtimes -->
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr</artifactId>
+                <version>${antlr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr-runtime</artifactId>
+                <version>${antlr.version}</version>
             </dependency>
             <!-- Opentelemetry -->
             <dependency>

@@ -24,7 +24,7 @@ import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LO
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_LOGIN_PERMITS;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_APPLY_CAPTCHA;
 import static com.wl4g.iam.common.constant.FastCasIAMConstants.URI_IAM_SERVER_VERIFY_BASE;
-import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.V2_0_0;
+import static com.wl4g.iam.core.config.AbstractIamProperties.IamVersion.V2;
 import static com.wl4g.iam.core.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static com.wl4g.iam.core.utils.IamAuthenticatingUtils.sessionStatus;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.bind;
@@ -134,10 +134,13 @@ public class LoginAuthenticationController extends BaseIamController {
         saveWebXsrfTokenIfNecessary(xTokenRepository, request, response, false);
 
         // Reponed handshake result.
-        HandshakeModel handshake = new HandshakeModel(V2_0_0.getVersion());
+        HandshakeModel handshake = new HandshakeModel(V2.getVersion());
         // Current supports crypt algorithms.
-        handshake.setAlgorithms(
-                cryptAdapter.getRunningKinds().stream().map(k -> encodeBase58(k.getAlgorithm())).collect(toList()));
+        handshake.setAlgorithms(cryptAdapter.getRunningKinds()
+                .stream()
+                .filter(k -> !isBlank(k.getAlgorithm()))
+                .map(k -> encodeBase58(k.getAlgorithm()))
+                .collect(toList()));
         // Assgin sessionKeyId
         handshake.getSession().setSessionKey(config.getParam().getSid());
         handshake.getSession().setSessionValue(getSession(true).getId());

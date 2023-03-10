@@ -114,7 +114,7 @@ public class ImageTailor {
     private int borderLeftYMax;
 
     public ImageTailor() {
-        this(46, 46, 8, "wanglsir@gmail.com");
+        this(46, 46, 8, "wl4g.com");
     }
 
     public ImageTailor(String watermark) {

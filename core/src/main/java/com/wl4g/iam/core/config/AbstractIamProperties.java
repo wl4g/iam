@@ -951,7 +951,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
      */
     public static enum IamVersion {
 
-        V2_0_0("v2.0.0");
+        V2("v2");
 
         private String version;
 
