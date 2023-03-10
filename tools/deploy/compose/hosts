@@ -1,12 +1,21 @@
 
 # for IAM (FAT environment) static DNS.
-127.0.0.1       wl4g.fat            # The IAM UI external service (nginx).
-127.0.0.1       iam.wl4g.fat        # The IAM web external service.
-127.0.0.1       rds.iam.wl4g.fat    # The IAM DB(MySQL) internal service. 
-127.0.0.1       redis.iam.wl4g.fat  # The IAM Redis internal service.
+127.0.0.1       wl4g.fat                                # The IAM UI external service (nginx).
+127.0.0.1       iam.wl4g.fat                            # The IAM web external service.
+
+127.0.0.1       rds.iam.wl4g.fat                        # The IAM DB(MySQL) internal service. 
+127.0.0.1       redis.iam.wl4g.fat                      # The IAM Redis internal service.
+127.0.0.1       iam-data.default.svc.cluster.local      # The IAM Data internal service.
+127.0.0.1       iam-facade.default.svc.cluster.local    # The IAM Facade internal service.
+127.0.0.1       iam-web.default.svc.cluster.local       # The IAM Web internal service.
+
 
 # for IAM (UAT environment) static DNS.
-10.0.0.163      wl4g.fat            # The IAM UI external service (nginx).
-10.0.0.163      iam.wl4g.fat        # The IAM web external service.
-10.0.0.163      rds.iam.wl4g.fat    # The IAM DB(MySQL) internal service. 
-10.0.0.163      redis.iam.wl4g.fat  # The IAM Redis internal service.
+10.0.0.163      wl4g.fat                                # The IAM UI external service (nginx).
+10.0.0.163      iam.wl4g.fat                            # The IAM web external service.
+
+10.0.0.163      rds.iam.wl4g.fat                        # The IAM DB(MySQL) internal service. 
+10.0.0.163      redis.iam.wl4g.fat                      # The IAM Redis internal service.
+10.0.0.163      iam-data.default.svc.cluster.local      # The IAM Data internal service.
+10.0.0.163      iam-facade.default.svc.cluster.local    # The IAM Facade internal service.
+10.0.0.163      iam-web.default.svc.cluster.local       # The IAM Web internal service.
