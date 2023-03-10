@@ -17,7 +17,7 @@ spring:
   application.name: iam-data
   profiles:
     include: common,util,apm
-    active: dev
+    active: fat
   banner:
     location: classpath:META-INF/banner.txt
   main:
