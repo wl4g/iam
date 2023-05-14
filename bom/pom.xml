@@ -67,23 +67,6 @@
                 <artifactId>iam-client-springboot-mock</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
-            <!-- IAM gateway modules -->
-            <dependency>
-                <groupId>com.wl4g</groupId>
-                <artifactId>iam-gateway</artifactId>
-                <version>${project.parent.version}</version>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>com.wl4g</groupId>
-                <artifactId>iam-gateway-core</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.wl4g</groupId>
-                <artifactId>iam-gateway-starter</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
             <!-- IAM service modules -->
             <dependency>
                 <groupId>com.wl4g</groupId>

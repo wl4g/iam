@@ -1,1 +1,0 @@
-../../../../tools/build/docker/springboot-tar.Dockerfile

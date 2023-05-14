@@ -33,7 +33,7 @@
             var contextPath = that.settings.deploy.defaultContextPath;
             contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
             var servPortString = "";
-            if (Common.Util.isEmpty(servPort)&& that.settings.deploy.enableFallbackServerPort) {
+            if (Common.Util.isEmpty(servPort) && that.settings.deploy.enableFallbackServerPort) {
                 servPort = location.port;
             }
             if (!Common.Util.isEmpty(servPort)
@@ -60,7 +60,7 @@
             // (接口地址如：iam-web.wl4g.com/iam-web, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
             else {
                 var topDomainName = Common.Util.extTopDomainString(hostname);
-                return protocol + "//" + twoDomain + "." + topDomainName + servPortString+ contextPath;
+                return protocol + "//" + twoDomain + "." + topDomainName + servPortString + contextPath;
             }
         };
 
